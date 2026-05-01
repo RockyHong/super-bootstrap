@@ -1,10 +1,10 @@
 ---
-name: sp-bootstrap
+name: super-bootstrap
 description: "Bootstrap or sync the superpowers development pipeline in any repo. Walks all phases — creates what's missing, syncs what's drifted, skips what's current. Scaffolds fixed macro docs (overview, techstack, superpowers/) and adaptive persistent docs (specs/, building, help/) based on project needs. Bakes in doc-sync discipline — docs travel with code. Solo dev workflow."
 tags: [bootstrap, scaffold, setup, meta, docs]
 ---
 
-# SP Bootstrap — Superpowers Pipeline for Any Repo
+# Super Bootstrap — Superpowers Pipeline for Any Repo
 
 Set up (or retrofit) the superpowers-driven development pipeline in a project. The pipeline bootstraps itself — scaffold first, then use the pipeline to complete its own setup across sessions.
 
@@ -71,7 +71,7 @@ This isn't a nice-to-have. This is what makes the docs trustworthy. Without it, 
 The chicken-and-egg problem: you need the pipeline to track work, but setting up the pipeline IS work. Solution: **scaffold the pipeline cold, then use it to finish its own bootstrap.**
 
 ```
-Session 1 (/sp-bootstrap):
+Session 1 (/super-bootstrap):
   Quick scan → Q&A alignment → scaffold/sync pipeline → write bootstrap plan → commit
   Pipeline is now LIVE (or synced). /todo works. Deep analysis is tracked as tasks.
 
@@ -80,7 +80,7 @@ Session 2+ (/todo → pick a task):
   - [ ] Product overview distillation → docs/overview.md
   - [ ] Enhance CLAUDE.md with coding standards, commands
   - [ ] Seed persistent specs (if applicable)
-  - [ ] Run /resolve-claude-config
+  - [ ] Resolve skills/MCPs/hooks (Task 4 — auto-curated)
 ```
 
 Each task is session-sized. Context window stays clean. User runs `/todo` to see what's next.
@@ -502,15 +502,33 @@ Replace stub sections with full content derived from techstack and overview anal
 - [ ] **Update CLAUDE.md**
 - [ ] **Commit**: `docs: finalize CLAUDE.md with full analysis`
 
-### Task 4: Skill Resolution
+### Task 4: Skill / MCP / Hook Resolution
 
-Match the project's techstack to available skills.
+Auto-curate Claude Code tooling matched to detected stack. Harness-internal — user sees one batch, replies. No manual search, no plugin install gate.
 
 **Depends on:** Task 1 (needs detected stack)
 
-- [ ] **Run `/resolve-claude-config`** — let it scan and propose skills
-- [ ] **Review and approve skill selections**
-- [ ] **Commit if skills were added**
+**Process — automated:**
+
+1. **Take detected stack from Task 1** — runtime, framework, key tools, project size, monorepo state.
+2. **Curate recommendations** across:
+   - Anthropic plugin marketplace (`claude-plugins-official`)
+   - [awesome-skills.com](https://awesome-skills.com) / [skills.sh](https://skills.sh)
+   - [tonsofskills.com](https://tonsofskills.com) / `ccpi` CLI
+   - [mcpmarket.com](https://mcpmarket.com) (MCP servers)
+   - Fast-path: if `claude-code-setup` plugin installed, invoke `/setup` and merge its picks
+3. **Filter to stack-matched only** — drop generic / spray suggestions.
+4. **Present batch to user with rationale per pick:**
+   ```
+   Recommendations for {project} ({stack}):
+     [SKILL]    name    — matched signal, one-line value
+     [MCP]      name    — matched signal, one-line value
+     [HOOK]     name    — matched signal, one-line value
+     [SUBAGENT] name    — matched signal, one-line value
+   Accept all / reject specific / discuss thoughts?
+   ```
+5. **Apply approved** via `claude plugin install <slug>@<market>` or settings edit.
+6. **Commit if anything added.**
 
 ### Task 5: Seed Feature Specs *(only if `docs/specs/` was scaffolded)*
 
@@ -592,7 +610,7 @@ After committing (or reporting no changes needed), present results based on repo
 
 > **Pipeline synced.** {N} items updated, {M} already current.
 > {If temporal artifacts flagged: "Flagged {K} stale temporal files for cleanup."}
-> {If served skills stale: "Served skills are >30 days old — consider running `/resolve-claude-config`."}
+> {If served skills stale: "Skill/MCP recommendations are >90 days old — consider re-running `/super-bootstrap` to refresh."}
 
 If the user wants to continue, proceed with the next pending task from the bootstrap plan (if any remain).
 

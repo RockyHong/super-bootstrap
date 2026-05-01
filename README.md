@@ -1,4 +1,4 @@
-# sp-bootstrap
+# super-bootstrap
 
 Bootstrap or sync a **superpowers-style development pipeline** in any repo. Solo-dev opinionated. Project-adaptive.
 
@@ -6,14 +6,16 @@ A single Claude Code skill that scaffolds the doc structure and CLAUDE.md workfl
 
 ## What it does
 
-Run `/sp-bootstrap` in any repo. The skill:
+Run `/super-bootstrap` in any repo. The skill:
 
 1. **Quick scan** — detects stack (manifests, structure, git state, existing CLAUDE.md)
 2. **Q&A alignment** — confirms understanding before writing anything (project type, users, state, monorepo, etc.)
 3. **Scaffold or sync** —
    - Fresh repo: creates `docs/overview.md`, `docs/techstack.md`, `docs/superpowers/{specs,plans}/`, skeleton CLAUDE.md, bootstrap plan
    - Bootstrapped repo: validates each pipeline-owned artifact, syncs only what's drifted, leaves project-owned content alone
-4. **Hands off** — pipeline is now live; remaining deep-analysis tasks (techstack distillation, product overview, etc.) become `/todo` items for future sessions
+4. **Hands off** — pipeline is now live; remaining deep-analysis tasks (techstack distillation, product overview, skill/MCP curation) become `/todo` items for future sessions
+
+One-time / quarterly seed integrator. Repo gets the harness baked in (CLAUDE.md + docs/) — the skill itself isn't needed in-repo long-term. Re-run only for sync drift.
 
 ## Why it exists
 
@@ -29,26 +31,39 @@ Drop the skill into Claude Code's skill directory:
 
 ```bash
 # Local-only (this device)
-mkdir -p ~/.claude/skills/sp-bootstrap
-cp SKILL.md ~/.claude/skills/sp-bootstrap/SKILL.md
+mkdir -p ~/.claude/skills/super-bootstrap
+cp SKILL.md ~/.claude/skills/super-bootstrap/SKILL.md
 
 # Or per-project (committed, available to cloud Claude)
-mkdir -p .claude/skills/sp-bootstrap
-cp SKILL.md .claude/skills/sp-bootstrap/SKILL.md
+mkdir -p .claude/skills/super-bootstrap
+cp SKILL.md .claude/skills/super-bootstrap/SKILL.md
 ```
 
 Claude Code auto-discovers skills via the `description` frontmatter — no registration needed.
 
 ## Use
 
-In any Claude Code session, type `/sp-bootstrap`. The skill walks Phase 1 → 4. Each phase confirms with you before writing.
+In any Claude Code session, type `/super-bootstrap`. The skill walks Phase 1 → 4. Each phase confirms with you before writing.
 
 For repos that already have the pipeline, the same command runs as a **sync pass** — only drifted artifacts get touched.
 
+## How Task 4 (skill / MCP / hook curation) works
+
+Task 4 is harness-automated. Claude takes the detected stack, queries multiple catalogs, filters to stack-matched picks, and presents one batch for accept/reject/discuss.
+
+Sources queried:
+
+- Anthropic plugin marketplace (`claude-plugins-official`)
+- [awesome-skills.com](https://awesome-skills.com) / [skills.sh](https://skills.sh)
+- [tonsofskills.com](https://tonsofskills.com) / `ccpi` CLI
+- [mcpmarket.com](https://mcpmarket.com) (MCP servers)
+- Fast-path: if `claude-code-setup` plugin installed, `/setup` output gets merged
+
+No manual searching. No plugin install gate. User sees one batch with rationale per pick, replies once.
+
 ## Pairs well with
 
-- **`claude-code-setup`** (Anthropic plugin) — run after sp-bootstrap Task 4 for skill/MCP/hook recommendations matched to your stack
-- **`claude plugin install`** — install recommendations from any marketplace
+- **`claude plugin install`** — install accepted recommendations from any marketplace
 - **`/todo`** (skill) — drives the bootstrap plan one session at a time, keeps context windows clean
 
 ## Scope
@@ -59,7 +74,6 @@ For repos that already have the pipeline, the same command runs as a **sync pass
 
 ## Notes
 
-- Task 4 (Skill Resolution) currently mentions `/resolve-claude-config` — that's a fork-specific command from the [<private-origin>](https://github.com/<private-origin>) origin repo. Replace with `/setup` (claude-code-setup plugin) or marketplace browsing for your own setup.
 - The skill is markdown only. No scripts, no dependencies. Read it, fork it, modify the templates inside as needed.
 
 ## License
