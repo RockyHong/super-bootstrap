@@ -27,16 +27,23 @@ The pipeline's real power isn't brainstorm → plan → execute. It's that **doc
 
 ## Install
 
-Drop the skill into Claude Code's skill directory:
+**Recommended — via marketplace:**
+
+```shell
+/plugin marketplace add <private-origin>/super-bootstrap
+/plugin install super-bootstrap@super-bootstrap
+```
+
+**Manual — clone + copy:**
 
 ```bash
 # Local-only (this device)
 mkdir -p ~/.claude/skills/super-bootstrap
-cp SKILL.md ~/.claude/skills/super-bootstrap/SKILL.md
+cp plugins/super-bootstrap/skills/super-bootstrap/SKILL.md ~/.claude/skills/super-bootstrap/SKILL.md
 
 # Or per-project (committed, available to cloud Claude)
 mkdir -p .claude/skills/super-bootstrap
-cp SKILL.md .claude/skills/super-bootstrap/SKILL.md
+cp plugins/super-bootstrap/skills/super-bootstrap/SKILL.md .claude/skills/super-bootstrap/SKILL.md
 ```
 
 Claude Code auto-discovers skills via the `description` frontmatter — no registration needed.

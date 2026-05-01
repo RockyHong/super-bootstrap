@@ -1,0 +1,25 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "super-bootstrap",
+  "description": "Self-hosted marketplace for the super-bootstrap skill — superpowers pipeline bootstrap for any repo.",
+  "owner": {
+    "name": "<private-origin>",
+    "email": "contact@rockyhong.com"
+  },
+  "plugins": [
+    {
+      "name": "super-bootstrap",
+      "source": "./plugins/super-bootstrap",
+      "description": "Bootstrap or sync the superpowers development pipeline in any repo. Solo-dev opinionated. Project-adaptive.",
+      "version": "1.0.0",
+      "category": "development",
+      "tags": ["bootstrap", "scaffold", "setup", "meta", "docs"],
+      "author": {
+        "name": "<private-origin>",
+        "email": "contact@rockyhong.com"
+      },
+      "homepage": "https://github.com/<private-origin>/super-bootstrap",
+      "license": "MIT"
+    }
+  ]
+}
