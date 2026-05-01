@@ -79,3 +79,43 @@ Filter rule: stack-matched only, drop generic/spray suggestions.
 ## Execution Plan
 
 Top-down. Each step gates next. No parallel.
+
+## Wet Test Plan (run in fresh session, not this one)
+
+**Target:** `<user-repo>` (real personal repo).
+
+**Pre-flight (one time):**
+
+```powershell
+# Install skill globally so /super-bootstrap is discoverable
+mkdir -Force ~/.claude/skills/super-bootstrap
+cp <repo>\SKILL.md ~/.claude/skills/super-bootstrap/SKILL.md
+```
+
+**Procedure:**
+
+1. Open fresh Claude Code session in `<user-repo>`.
+2. Type `/super-bootstrap`.
+3. Walk through Phase 1 → 4. Answer Q&A as it comes.
+4. Note anything that breaks, feels wrong, or needs polish.
+
+**Validation checklist:**
+
+- [ ] Phase 1 detects Chrome Extension stack (manifest.json + package.json combo)
+- [ ] Phase 2 Q&A flow makes sense for this repo type
+- [ ] Phase 3 scaffolds expected `docs/` + `CLAUDE.md`
+- [ ] Task 4 auto-curates skills/MCPs (no `/resolve-claude-config` refs)
+- [ ] Sync re-run is idempotent (run twice, second pass = no-op)
+- [ ] No fork-specific leaks (greps clean for `resolve-claude-config`, `<private-origin>`)
+
+**Issue logging:**
+
+Bring findings back to this repo's session. Append to ROADMAP under new section `## Wet Test Findings` with: line ref, problem, fix idea.
+
+**After test passes (cleanup at D8):**
+
+- Delete `CONTEXT.md`, `ROADMAP.md`
+- Decide marketplace target (Q8c)
+- Decide awesome-list PRs (Q8d)
+- Rename repo dir `sp-bootstrap` → `super-bootstrap` (Q8a, last)
+
