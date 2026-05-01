@@ -76,17 +76,31 @@ Filter rule: stack-matched only, drop generic/spray suggestions.
 7. **Park TODOs** — graphify rewire skill, publication path (marketplace.json + awesome-list PRs).
 8. **Publication** — last mile.
 
-   ### D8c — Marketplace target
-   **Locked: self-hosted only (path a) for v1.** `.claude-plugin/marketplace.json` in this repo. Anthropic `claude-plugins-official` PR (path b) deferred behind traction trigger.
+   ### D8c+d — Phased rollout
 
-   **Traction thresholds (any 2 hits → advance to b):**
-   - ≥20 GitHub stars (organic)
-   - ≥3 forks
-   - ≥2 external issues
-   - ≥5 external installs (clone-count proxy)
-   - ≥4 weeks elapsed regardless
+   **Locked: phased rollout, not traction-thresholded.** Active iteration beats passive waiting.
 
-   Action: optionally `/schedule` weekly traction check.
+   **Phase 1 — Soft launch (1 week)**
+   - GitHub repo public
+   - Self-hosted marketplace via `.claude-plugin/marketplace.json`
+   - Share with 2-5 dev friends, capture install/run feedback
+   - Monitor: issues, install errors, friction points
+
+   **Phase 2 — Polish (1-3 days)**
+   - Fix surfaced issues
+   - Tweak Q&A wording, README, install instructions
+   - Address obvious gaps
+
+   **Phase 3 — Public push (1 day)**
+   - Anthropic `claude-plugins-official` PR (path b)
+   - Essential awesome-list PRs: `hesreallyhim/awesome-claude-code`, `travisvn/awesome-claude-skills`
+   - Skip other lists v1 (avoid spray + maintenance burden)
+
+   **Phase 4 — Monitor + iterate (ongoing)**
+   - Track stars/issues, respond
+   - On Anthropic rejection → loop back Phase 2 with their feedback
+
+   **No cool-down risk:** Anthropic PRs can be closed and re-PR'd freely. Awesome-list maintainers accept re-submissions after improvements.
 
 ## Execution Plan
 
