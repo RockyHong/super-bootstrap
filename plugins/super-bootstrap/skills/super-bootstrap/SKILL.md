@@ -91,6 +91,20 @@ Each task is session-sized. Context window stays clean. User runs `/todo` to see
 
 Gather just enough to scaffold. Do NOT deep-analyze yet.
 
+### Sensitive-File Blocklist (applies to all source-file reads)
+
+Throughout this skill — Phase 1 detection, Task 1 sampling, anywhere Claude reads source files — **skip paths matching:**
+
+```
+.env*           *secret*        *credential*
+*.pem           *.key           id_rsa*
+id_ed25519*     *.p12           *.pfx
+*.jks           *.keystore      .npmrc
+.netrc          *.crt           *.cer
+```
+
+When skipping, surface to user: `⊘ skipped <path> (matches secret blocklist)`. Reason: sampled file content lands in `techstack.md` / `overview.md` and gets auto-committed. Secrets in committed docs = secrets in git history forever.
+
 ### Manifest Detection
 
 Check which of these exist (don't read fully — just detect presence and skim):
@@ -245,7 +259,23 @@ Source of truth for what {project} does and why. Each spec covers product-level 
 
 If no CLAUDE.md exists, create one. If one exists, enhance it (add missing sections, preserve existing content).
 
-**On existing repos with pipeline sections:** Diff each pipeline-owned section against the current skeleton template. If drifted, show the old vs new to the user and offer to update. If current, skip. Never touch project-owned sections.
+**On existing repos with pipeline sections:** Diff each pipeline-owned section against the current skeleton template. **Never silently overwrite.** For each drifted section:
+
+```
+CLAUDE.md sync — drift detected:
+
+  [{Section Name}] section drifted from current template:
+  ───────────────────────────────────────────────
+  - {removed line}
+  + {added line}
+  ───────────────────────────────────────────────
+
+  Update? (y / n / show full diff)
+```
+
+User must approve each section's update before write. If current, skip. Never touch project-owned sections.
+
+This protects against (a) legit template updates the user wants to review and (b) bad-actor template injection on a future re-run — you see what's about to change in your CLAUDE.md before it's overwritten.
 
 The skeleton contains the **workflow engine** — enough for any Claude session to know the rules — but leaves techstack and coding standards as stubs pointing to the bootstrap plan.
 
@@ -518,15 +548,43 @@ Auto-curate Claude Code tooling matched to detected stack. Harness-internal — 
    - [mcpmarket.com](https://mcpmarket.com) (MCP servers)
    - Fast-path: if `claude-code-setup` plugin installed, invoke `/setup` and merge its picks
 3. **Filter to stack-matched only** — drop generic / spray suggestions.
-4. **Present batch to user with rationale per pick:**
+4. **Trust signal lookup per pick** — for any plugin NOT from `claude-plugins-official`, fetch (via WebFetch or `gh api`):
+   - Repo URL + GitHub stars
+   - Last-commit recency (e.g. "3d ago", "14mo ago")
+   - License (or "no license" — flag as ⚠)
+   - Permissions exercised (read-only? shell? network? auto-exec hook?)
+
+   Hooks are elevated risk: they auto-exec on every tool call (PreToolUse / PostToolUse / UserPromptSubmit). Always tag hooks with `⚠ HOOK = auto-executes. Audit source before accept.`
+
+5. **Present batch to user with full trust signal per pick:**
    ```
    Recommendations for {project} ({stack}):
-     [SKILL]    name    — matched signal, one-line value
-     [MCP]      name    — matched signal, one-line value
-     [HOOK]     name    — matched signal, one-line value
-     [SUBAGENT] name    — matched signal, one-line value
+
+     [SKILL]    {name}@{source}
+                ★ {stars} · last commit {recency} · {license}
+                Permissions: {read-only / shell / network / etc.}
+                Why: {matched signal, one-line value}
+
+     [HOOK]     {name}@{source}
+                ★ {stars} · last commit {recency} · {license}
+                Permissions: ⚠ {what triggers + what it runs}
+                Why: {matched signal}
+                ⚠ HOOK = auto-executes. Audit source before accept.
+
+     [MCP]      {name}@{source}
+                ★ {stars} · last commit {recency} · {license}
+                Permissions: {network / shell / file-system / etc.}
+                Why: {matched signal}
+
+     [SUBAGENT] {name}@{source}
+                ★ {stars} · last commit {recency} · {license}
+                Permissions: {what tools the subagent inherits}
+                Why: {matched signal}
+
    Accept all / reject specific / discuss thoughts?
    ```
+
+   Picks from `claude-plugins-official` can drop the trust block (Anthropic-vetted) — keep just `Why:`.
 5. **Apply approved — write `.claude/settings.json` always.** This is the source of truth: project-scope intent, committed, travels with repo, cloud-friendly. Device install (`claude plugin install`) is optional convenience layered on top — not a substitute.
    - Add each pick to `enabledPlugins`.
    - For any plugin NOT from `claude-plugins-official`, add its source to `extraKnownMarketplaces` so cloud sessions / fresh machines can resolve.

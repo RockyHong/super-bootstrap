@@ -54,6 +54,33 @@ In any Claude Code session, type `/super-bootstrap`. The skill walks Phase 1 →
 
 For repos that already have the pipeline, the same command runs as a **sync pass** — only drifted artifacts get touched.
 
+## What this writes to your repo
+
+**Always created / modified:**
+
+```
+docs/superpowers/specs/         (.gitkeep — temporal spec folder)
+docs/superpowers/plans/         (.gitkeep — temporal plan folder)
+docs/superpowers/plans/bootstrap.md   (bootstrap task list, deleted at Task 6)
+CLAUDE.md                       (creates new, or layers workflow sections onto existing)
+.claude/settings.json           (after Task 4 — adds enabledPlugins from your approved batch)
+```
+
+**Created only if Q&A confirms:**
+
+```
+docs/specs/index.md             (persistent feature spec catalog)
+docs/specs/.gitkeep
+docs/building.md                (build/distribution instructions)
+docs/help/                      (user-facing guides folder)
+```
+
+**Auto-commits:** yes — runs `/commit` after each phase. Review the diff before approving. The skill never force-pushes.
+
+**Sensitive files skipped during scan:** `.env*`, `*secret*`, `*credential*`, `*.pem`, `*.key`, `id_rsa*`, `id_ed25519*`, `*.p12`, `*.pfx`, `*.jks`, `*.keystore`, `.npmrc`, `.netrc`, `*.crt`, `*.cer`. Skipped paths surface as `⊘ skipped <path>` so you can verify.
+
+**On re-run (sync mode):** every drifted CLAUDE.md section shows a per-section diff and prompts `Update? (y/n/show full diff)` before overwrite. Project-owned sections are never touched.
+
 ## How Task 4 (skill / MCP / hook curation) works
 
 Task 4 is harness-automated. Claude takes the detected stack, queries multiple catalogs, filters to stack-matched picks, and presents one batch for accept/reject/discuss.
@@ -66,7 +93,19 @@ Sources queried:
 - [mcpmarket.com](https://mcpmarket.com) (MCP servers)
 - Fast-path: if `claude-code-setup` plugin installed, `/setup` output gets merged
 
-No manual searching. No plugin install gate. User sees one batch with rationale per pick, replies once.
+No manual searching. No plugin install gate.
+
+Each non-Anthropic pick shows a **trust block** before you approve:
+
+```
+[HOOK]  auto-test@github:randoorg/auto-test
+        ★ 4 · last commit 14mo ago · no license
+        Permissions: ⚠ runs `npm test` on every PostToolUse
+        Why: catches breakage early
+        ⚠ HOOK = auto-executes. Audit source before accept.
+```
+
+Stars, recency, license, and permission scope so you can spot abandoned or sketchy picks before they land in your `.claude/settings.json`. Hooks are flagged separately because they auto-execute on every tool call. Anthropic-vetted picks (`claude-plugins-official`) skip the trust block.
 
 ## Pairs well with
 
