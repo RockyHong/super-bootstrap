@@ -39,6 +39,7 @@ Some projects need more structure. Examples:
 - `docs/specs/` + `index.md` — persistent feature specs (what each feature does and why). For multi-feature products.
 - `docs/building.md` — build/distribution instructions. For projects with non-trivial builds.
 - `docs/help/` — user-facing guides. For products with end users.
+- `docs/backlog.md` — deferred items tracker (BUG / DEBT / GAP). For active or maintenance projects with shipping code.
 
 What goes here is discovered during Q&A (Phase 2). A 3-file CLI? No specs folder needed. A multi-module product? Scaffold `docs/specs/` with an index and seed entries.
 
@@ -169,6 +170,8 @@ Before writing anything, confirm your understanding with the user. Ask these **o
 
 9. **If user-facing product:** "Do you want a `docs/help/` folder for user-facing guides (troubleshooting, privacy, FAQ)?"
 
+10. **If active or maintenance project (not greenfield):** "Do you want `docs/backlog.md`? Single tracker for deferred items — `BUG-###` (broken, has fix), `DEBT-###` (working but rotting), `GAP-###` (design gap, needs brainstorm). Solo-dev queue, scanned at commit by doc sync. Default yes for shipping code, skip for greenfield."
+
 ### Alignment Confirmation
 
 After questions, present a short summary:
@@ -191,6 +194,7 @@ Doc structure I'll scaffold:
     {specs/ + index.md       ← if confirmed}
     {building.md             ← if confirmed}
     {help/                   ← if confirmed}
+    {backlog.md              ← if confirmed}
 
 Sound right?
 ```
@@ -229,6 +233,7 @@ docs/
     index.md     ← catalog of persistent feature specs
   building.md    ← build/distribution instructions
   help/          ← user-facing guides
+  backlog.md     ← deferred items tracker (BUG / DEBT / GAP)
 ```
 
 Add `.gitkeep` in each empty folder. If `docs/` already exists, nest alongside.
@@ -253,6 +258,28 @@ Source of truth for what {project} does and why. Each spec covers product-level 
 | Spec | Covers |
 |---|---|
 | *(seeded during bootstrap Task 5 or as features land)* | |
+````
+
+If `docs/backlog.md` is scaffolded, create it with:
+
+````markdown
+# Backlog
+
+Single tracker for deferred items — things found but not fixing now. Solo-dev queue. Scanned by doc sync at commit. When picking up new work, scan related items here to bundle.
+
+**Three categories** distinguished by ID prefix:
+
+- **`BUG-###`** — broken behavior with a clear fix. Routes direct to implementation.
+- **`DEBT-###`** — working but rotting (test fixture rot, stale dep, cleanup owed). Routes direct to implementation.
+- **`GAP-###`** — design gap, never properly specced. Routes through `superpowers:brainstorming` first, then spec → plan → execute.
+
+Format per item: stable ID, short title, affected area, why it matters, proposed fix (BUG/DEBT) or what's missing (GAP). Newest at top. When resolved, **delete the item** — git history is the archive.
+
+---
+
+## Open
+
+*(seeded as items are surfaced during reviews, audits, or development)*
 ````
 
 ### 3b: Write Skeleton CLAUDE.md
@@ -313,13 +340,15 @@ The user always picks the route.
 
 This is a named pipeline step — every route includes it between user review and commit.
 
-**Before every commit**, scan `docs/` for files that describe behavior touched by the diff (specs, overview, techstack, building, help). If any doc is potentially stale:
+**Before every commit**, scan `docs/` for files that describe behavior touched by the diff (specs, overview, techstack, building, help, backlog). If any doc is potentially stale:
 
 1. Report it to the user — doc path, what looks outdated, relevant diff context
 2. Resolve together — update the doc or acknowledge it's still accurate
 3. Never silently fix. Never silently skip. Stale docs are worse than missing ones.
 
 **Temporal cleanup:** If the current work completes a feature branch, delete its spec and plan files from `docs/superpowers/specs/` and `docs/superpowers/plans/`. These are work orders — once merged, they're noise.
+
+**Backlog cleanup:** If the current work resolves a `BUG-###`, `DEBT-###`, or `GAP-###` item from `docs/backlog.md`, delete that item from the file. Git history is the archive — keep `backlog.md` as a list of what's still open.
 
 This is the pipeline's core discipline. Implementation without doc sync is incomplete.
 
@@ -458,6 +487,7 @@ This project is operated by a single developer across multiple Claude Code sessi
 {- `docs/specs/` — **Persistent feature specs** — source of truth per feature ([index](docs/specs/index.md))}
 {- `docs/building.md` — Build/distribution instructions}
 {- `docs/help/` — User-facing guides}
+{- `docs/backlog.md` — **Deferred items** — `BUG-###` / `DEBT-###` / `GAP-###` queue, deleted on resolve}
 - `docs/superpowers/specs/` — Design specs from brainstorming (temporal — deleted after merge)
 - `docs/superpowers/plans/` — Implementation plans (temporal — deleted after merge)
 
@@ -619,6 +649,21 @@ Write initial persistent specs for the project's existing features.
 - [ ] **Present to user for review**
 - [ ] **Commit**: `docs: seed persistent feature specs`
 
+### Task 5b: Seed Backlog *(only if `docs/backlog.md` was scaffolded)*
+
+Walk the project once and seed any obvious deferred items already visible in code or recent history.
+
+**Depends on:** Task 1 and Task 2 (needs stack + overview to spot gaps)
+
+- [ ] **Scan for `TODO` / `FIXME` / `XXX` / `HACK` markers** in source — each is a candidate `DEBT-###` or `BUG-###`
+- [ ] **Review test output** — failing or skipped tests with no recent fix attempt → `BUG-###` or `DEBT-###`
+- [ ] **Note design gaps surfaced during Q&A or overview drafting** — areas where behavior was hand-waved → `GAP-###`
+- [ ] **Cap at ~5 items** — backlog is a queue, not a dump. If more candidates exist, list them but seed only the highest-signal ones
+- [ ] **Present to user for review** — user prunes/approves
+- [ ] **Commit**: `docs: seed backlog`
+
+If no obvious items exist, leave the file with just its header — that's fine. The tracker grows organically as reviews surface things.
+
 ### Task 6: Cleanup
 
 - [ ] **Delete this file** (`docs/superpowers/plans/bootstrap.md`) — bootstrap is complete
@@ -659,6 +704,7 @@ Use `/commit` to stage and commit:
 - `docs/superpowers/plans/bootstrap.md`
 - `docs/specs/index.md` (if scaffolded)
 - `docs/specs/.gitkeep` (if scaffolded)
+- `docs/backlog.md` (if scaffolded)
 - Any other adaptive doc files/folders created
 
 Commit message: `chore: scaffold superpowers pipeline`
@@ -678,6 +724,7 @@ After committing (or reporting no changes needed), present results based on repo
 > 3. Enhance CLAUDE.md with full standards
 > 4. Skill resolution
 > {5. Seed feature specs → `docs/specs/` (if scaffolded)}
+> {5b. Seed backlog → `docs/backlog.md` (if scaffolded)}
 >
 > Run `/todo` in any session to see what's next. Each task is session-sized — you can knock them out one at a time or batch them.
 >
@@ -700,7 +747,7 @@ If the user wants to continue, proceed with the next pending task from the boots
 - **Detect, don't assume** — every section grounded in what was found in the repo
 - **Solo dev first** — no team workflows, no complex branching
 - **Docs travel with code** — every commit checks for stale docs. Implementation without doc sync is incomplete. This is the pipeline's real power.
-- **Fixed macro, adaptive micro** — `overview.md`, `techstack.md`, `superpowers/` are always scaffolded. `specs/`, `building.md`, `help/` are scaffolded only when the project warrants them.
+- **Fixed macro, adaptive micro** — `overview.md`, `techstack.md`, `superpowers/` are always scaffolded. `specs/`, `building.md`, `help/`, `backlog.md` are scaffolded only when the project warrants them.
 - **Two kinds of specs** — temporal (superpowers) = work orders, deleted after merge. Persistent (project) = source of truth, evolve with the product. Never confuse them.
 - **Clear doc ownership** — `techstack.md` owns tech, `overview.md` owns product, `CLAUDE.md` owns workflow, `specs/` owns feature behavior. No duplication across docs.
 - **One pipeline, adaptive** — fresh repos get scaffolded, existing repos get synced. Same phases, same walk-through, different actions per artifact state.

@@ -48,7 +48,10 @@ flowchart TD
 - **`CLAUDE.md`** — layered, not overwritten. Pipeline sections added or synced; your existing sections untouched. Per-section diff shown before every write.
 - **`.claude/settings.json`** — merges `enabledPlugins` + `extraKnownMarketplaces`. Other settings preserved.
 - **`.claude/` plugin cache** — lands next session when Claude Code auto-resolves the new plugins.
-- **`docs/superpowers/{specs,plans}/`** — new pipeline workspace.
+- **`docs/superpowers/{specs,plans}/`** — new pipeline workspace. `/todo` skill (bundled) scans this for active work.
+- **`docs/backlog.md`** *(adaptive)* — single tracker for deferred BUG/DEBT/GAP items, scaffolded if you opt in during Q&A.
+
+Plugin also bundles `/todo` (active work scanner) and `/commit` (session-isolated, doc-sync-gated, conventional, no push). Both encode the harness rules so the handoff isn't broken on fresh machines.
 
 ## Scope
 
