@@ -99,7 +99,8 @@ Top-down. Each step gates next. No parallel.
 
 ### Bug found + fixed
 - **Task 4 install scope ambiguity**: `.claude/settings.json` was written project-scope (good) but only `caveman` source declared in `extraKnownMarketplaces`. `fullstack-dev-skills` source missing — cloud Claude Code / fresh machines can't resolve.
-- **Fix in SKILL.md (Task 4 step 5)**: enforce project-scope only (never `claude plugin install` device-wide), require all non-default sources in `extraKnownMarketplaces`. Cloud-friendly mandate added.
+- **Fix in SKILL.md (Task 4 step 5, revision 2)**: `.claude/settings.json` is non-negotiable (project-scope intent, cloud-friendly, travels). All non-default sources MUST be declared in `extraKnownMarketplaces`. Device install (`claude plugin install`) is optional convenience — skill does NOT shell out; user's call. No conflict between the two (Claude dedupes).
+- **Why no Q&A choice**: newbie ICP doesn't know cloud vs device tradeoff. Defaults must "just work". settings.json works for both newbies (cloud auto-resolve) and lazy device-wide users (layered on top). Asking adds friction without value.
 
 ### Bonus observations
 - 5 detailed feature specs seeded (Task 5)

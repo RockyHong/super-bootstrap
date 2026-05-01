@@ -527,9 +527,9 @@ Auto-curate Claude Code tooling matched to detected stack. Harness-internal — 
      [SUBAGENT] name    — matched signal, one-line value
    Accept all / reject specific / discuss thoughts?
    ```
-5. **Apply approved — project-scope only.** Edit `.claude/settings.json` directly (NEVER shell out to `claude plugin install`, which is device-wide and won't reach cloud Claude Code or fresh machines).
+5. **Apply approved — write `.claude/settings.json` always.** This is the source of truth: project-scope intent, committed, travels with repo, cloud-friendly. Device install (`claude plugin install`) is optional convenience layered on top — not a substitute.
    - Add each pick to `enabledPlugins`.
-   - For any plugin NOT from `claude-plugins-official`, add its source to `extraKnownMarketplaces` so cloud sessions can resolve.
+   - For any plugin NOT from `claude-plugins-official`, add its source to `extraKnownMarketplaces` so cloud sessions / fresh machines can resolve.
    - Example shape:
      ```json
      {
@@ -542,9 +542,12 @@ Auto-curate Claude Code tooling matched to detected stack. Harness-internal — 
        }
      }
      ```
+   - One-line transparency to user: "Pinning plugins per-project in `.claude/settings.json` so cloud Claude and fresh machines reproduce this toolset."
 6. **Commit if anything added.**
 
-**Why project-scope only:** device-wide install (`~/.claude/`) doesn't propagate to cloud Claude Code, GitHub Actions, or fresh machines. `.claude/settings.json` is committed config — travels with the repo. Pipeline assumption: solo dev across multiple sessions including cloud. Project-scope is non-negotiable.
+**Why settings.json is non-negotiable:** `enabledPlugins` declares intent. Resolution happens at session start — Claude reads settings.json, finds device-installed plugins or auto-resolves via marketplaces. Without settings.json, project intent is lost (cloud and fresh machines can't reproduce). Device install alone doesn't travel.
+
+**Why device install is optional:** layering `claude plugin install <slug>` on top is fine — speeds local load, no conflict (Claude dedupes). Skill does NOT shell out to it; user's call.
 
 ### Task 5: Seed Feature Specs *(only if `docs/specs/` was scaffolded)*
 
