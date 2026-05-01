@@ -1,6 +1,6 @@
 # super-bootstrap
 
-Skip the per-project Claude setup grind. One command picks your skills, writes `CLAUDE.md`, pins your config, **and wires the [superpowers](https://github.com/obra/superpowers) pipeline** — so Claude gets a workflow to follow, not just a toolbelt.
+Skip the per-project Claude setup grind. One command picks your skills, writes `CLAUDE.md`, pins your config, **and gives Claude a route-aware workflow** (small tasks stay light; large ones lean on the [superpowers](https://github.com/obra/superpowers) pipeline). Workflow, not just a toolbelt.
 
 ## Install
 
@@ -24,7 +24,7 @@ Then it walks these phases:
 1. **Scan + Q&A** — detects stack, asks ~6 questions to confirm
 2. **Curate** — picks skills/MCPs matched to your stack, trust signals per pick
 3. **Scaffold** — writes `CLAUDE.md`, pins config, drops in pipeline workspace
-4. **Handoff** — [superpowers](https://github.com/obra/superpowers) pipeline takes over (brainstorm → spec → plan → execute). Doc-sync gate fires on every commit, blocking stale-doc commits
+4. **Handoff** — Claude routes by task size: small → direct implement, medium → quick brainstorm, large → full [superpowers](https://github.com/obra/superpowers) pipeline (brainstorm → spec → plan → execute). Doc-sync gate fires on every commit regardless of route, blocking stale-doc commits
 5. **Done** — start building. Harness keeps Claude in sync as you go.
 
 Auto-commits each phase. Re-run anytime to sync drift.
@@ -40,7 +40,7 @@ flowchart TD
 
     curate -.->|example picks| picks["react-expert<br/>postgres-pro<br/>Linear MCP<br/>commit-commands"]
     scaffold -.->|writes| files["CLAUDE.md<br/>.claude/settings.json<br/>docs/superpowers/"]
-    handoff -.->|drives with| engine["superpowers pipeline<br/>+ doc-sync gate"]
+    handoff -.->|drives with| engine["route triage<br/>+ doc-sync gate<br/>(superpowers for large tasks)"]
 ```
 
 ## What it touches
