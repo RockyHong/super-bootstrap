@@ -527,8 +527,24 @@ Auto-curate Claude Code tooling matched to detected stack. Harness-internal — 
      [SUBAGENT] name    — matched signal, one-line value
    Accept all / reject specific / discuss thoughts?
    ```
-5. **Apply approved** via `claude plugin install <slug>@<market>` or settings edit.
+5. **Apply approved — project-scope only.** Edit `.claude/settings.json` directly (NEVER shell out to `claude plugin install`, which is device-wide and won't reach cloud Claude Code or fresh machines).
+   - Add each pick to `enabledPlugins`.
+   - For any plugin NOT from `claude-plugins-official`, add its source to `extraKnownMarketplaces` so cloud sessions can resolve.
+   - Example shape:
+     ```json
+     {
+       "enabledPlugins": {
+         "superpowers@claude-plugins-official": true,
+         "caveman@caveman": true
+       },
+       "extraKnownMarketplaces": {
+         "caveman": { "source": { "source": "github", "repo": "JuliusBrussee/caveman" } }
+       }
+     }
+     ```
 6. **Commit if anything added.**
+
+**Why project-scope only:** device-wide install (`~/.claude/`) doesn't propagate to cloud Claude Code, GitHub Actions, or fresh machines. `.claude/settings.json` is committed config — travels with the repo. Pipeline assumption: solo dev across multiple sessions including cloud. Project-scope is non-negotiable.
 
 ### Task 5: Seed Feature Specs *(only if `docs/specs/` was scaffolded)*
 

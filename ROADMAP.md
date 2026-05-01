@@ -80,6 +80,31 @@ Filter rule: stack-matched only, drop generic/spray suggestions.
 
 Top-down. Each step gates next. No parallel.
 
+## Wet Test Findings (Run 1 — <user-repo>, 2026-05-02)
+
+**Result: PASS on 8/9 criteria, 1 untested (idempotency), 1 bug found + fixed.**
+
+### Pass
+- [1] Discovery — `/super-bootstrap` invoked, 8 commits produced
+- [2] Phase 1 detection — TS+React+Tailwind+Webpack+MV3 identified
+- [3] Phase 2 Q&A — branched correctly (specs/, building.md confirmed)
+- [4] Phase 3 scaffold — superpowers/, specs/, bootstrap.md created+deleted at Task 6
+- [5] Task 4 — auto-curated 4 plugins, `.claude/settings.json` written
+- [7] Zero fork leaks — grep clean
+- [8] Solo-dev gate — passed silently
+- [9] Doc-sync verbatim — present in CLAUDE.md
+
+### Untested
+- [6] Idempotency — single run only; second-run sync test pending
+
+### Bug found + fixed
+- **Task 4 install scope ambiguity**: `.claude/settings.json` was written project-scope (good) but only `caveman` source declared in `extraKnownMarketplaces`. `fullstack-dev-skills` source missing — cloud Claude Code / fresh machines can't resolve.
+- **Fix in SKILL.md (Task 4 step 5)**: enforce project-scope only (never `claude plugin install` device-wide), require all non-default sources in `extraKnownMarketplaces`. Cloud-friendly mandate added.
+
+### Bonus observations
+- 5 detailed feature specs seeded (Task 5)
+- Project-specific MV3 Architecture Rules section added to CLAUDE.md (derived from techstack analysis)
+
 ## Wet Test Plan (run in fresh session, not this one)
 
 **Target:** `<user-repo>` (real personal repo).
