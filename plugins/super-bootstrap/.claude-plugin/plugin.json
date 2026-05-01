@@ -3,10 +3,10 @@
   "description": "Bootstrap or sync the superpowers development pipeline in any repo. Walks all phases — creates what's missing, syncs what's drifted, skips what's current. Scaffolds fixed macro docs (overview, techstack, superpowers/) and adaptive persistent docs (specs/, building, help/) based on project needs. Bakes in doc-sync discipline — docs travel with code. Solo dev workflow.",
   "version": "1.0.0",
   "author": {
-    "name": "<private-origin>",
+    "name": "Rocky Hong",
     "email": "contact@rockyhong.com"
   },
-  "homepage": "https://github.com/<private-origin>/super-bootstrap",
+  "homepage": "https://github.com/rockyhong/super-bootstrap",
   "license": "MIT",
   "keywords": ["bootstrap", "scaffold", "setup", "meta", "docs", "superpowers", "harness", "pipeline"]
 }

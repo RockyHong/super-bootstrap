@@ -30,7 +30,7 @@ The pipeline's real power isn't brainstorm → plan → execute. It's that **doc
 **Recommended — via marketplace:**
 
 ```shell
-/plugin marketplace add <private-origin>/super-bootstrap
+/plugin marketplace add rockyhong/super-bootstrap
 /plugin install super-bootstrap@super-bootstrap
 ```
 

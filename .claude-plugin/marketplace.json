@@ -3,7 +3,7 @@
   "name": "super-bootstrap",
   "description": "Self-hosted marketplace for the super-bootstrap skill — superpowers pipeline bootstrap for any repo.",
   "owner": {
-    "name": "<private-origin>",
+    "name": "Rocky Hong",
     "email": "contact@rockyhong.com"
   },
   "plugins": [
@@ -15,10 +15,10 @@
       "category": "development",
       "tags": ["bootstrap", "scaffold", "setup", "meta", "docs"],
       "author": {
-        "name": "<private-origin>",
+        "name": "Rocky Hong",
         "email": "contact@rockyhong.com"
       },
-      "homepage": "https://github.com/<private-origin>/super-bootstrap",
+      "homepage": "https://github.com/rockyhong/super-bootstrap",
       "license": "MIT"
     }
   ]
