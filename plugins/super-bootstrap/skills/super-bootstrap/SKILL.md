@@ -366,7 +366,7 @@ Default ordering when context feels heavy: subagent dispatch → compact (if war
 
 ## Coding Principles
 
-Behavioral guardrails to reduce common LLM coding mistakes. Adapted from Andrej Karpathy's observations. Bias toward caution over speed; for trivial tasks use judgment.
+Behavioral guardrails to reduce common LLM coding mistakes. Adapted from [Andrej Karpathy's observations](https://github.com/forrestchang/andrej-karpathy-skills) (via `forrestchang/andrej-karpathy-skills`). Bias toward caution over speed; for trivial tasks use judgment.
 
 ### 1. Think Before Coding
 

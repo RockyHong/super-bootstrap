@@ -64,6 +64,7 @@ Supports a wide range of stacks — picks pulled from Anthropic's marketplace, a
 | Tool | Role |
 |---|---|
 | [superpowers](https://github.com/obra/superpowers) | Workflow pipeline (brainstorm → spec → plan → execute) baked into the CLAUDE.md |
+| [andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | Source of the Coding Principles section in the scaffolded CLAUDE.md (Karpathy-derived guardrails) |
 | [claude-code-setup](https://claude.com/plugins/claude-code-setup) | Anthropic's plugin recommender — fast-path source if installed |
 | [Anthropic plugin marketplace](https://claude.com/plugins) | Vetted skills, MCPs, hooks, subagents |
 | [awesome-skills](https://awesome-skills.com) | Community skill catalog |
