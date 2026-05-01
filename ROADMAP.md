@@ -82,7 +82,7 @@ Top-down. Each step gates next. No parallel.
 
 ## Wet Test Findings (Run 1 — <user-repo>, 2026-05-02)
 
-**Result: PASS on 8/9 criteria, 1 untested (idempotency), 1 bug found + fixed.**
+**Result: PASS 9/9 criteria across 2 runs. 1 bug found + fixed during Run 1.**
 
 ### Pass
 - [1] Discovery — `/super-bootstrap` invoked, 8 commits produced
@@ -94,8 +94,8 @@ Top-down. Each step gates next. No parallel.
 - [8] Solo-dev gate — passed silently
 - [9] Doc-sync verbatim — present in CLAUDE.md
 
-### Untested
-- [6] Idempotency — single run only; second-run sync test pending
+### Pass (added in Run 2)
+- [6] Idempotency — second run reports per-artifact "current" status, no commit needed, project-owned content (package-lock.json deletion) untouched, solo-dev gate handled 3 git identities as same dev
 
 ### Bug found + fixed
 - **Task 4 install scope ambiguity**: `.claude/settings.json` was written project-scope (good) but only `caveman` source declared in `extraKnownMarketplaces`. `fullstack-dev-skills` source missing — cloud Claude Code / fresh machines can't resolve.
