@@ -74,7 +74,19 @@ Filter rule: stack-matched only, drop generic/spray suggestions.
 5. ~~Branch rename~~ → **D5 done.** `master` → `main`.
 6. ~~SKILL.md + README edits~~ → **D6 done.** `name` → `super-bootstrap`, title updated, Task 4 rewritten per D2, all `/resolve-claude-config` refs scrubbed, README rewritten with curation transparency section, internal name refs renamed.
 7. **Park TODOs** — graphify rewire skill, publication path (marketplace.json + awesome-list PRs).
-8. **Publication** — last mile. Includes: delete `CONTEXT.md`, delete `ROADMAP.md`, register marketplace, awesome-list PRs.
+8. **Publication** — last mile.
+
+   ### D8c — Marketplace target
+   **Locked: self-hosted only (path a) for v1.** `.claude-plugin/marketplace.json` in this repo. Anthropic `claude-plugins-official` PR (path b) deferred behind traction trigger.
+
+   **Traction thresholds (any 2 hits → advance to b):**
+   - ≥20 GitHub stars (organic)
+   - ≥3 forks
+   - ≥2 external issues
+   - ≥5 external installs (clone-count proxy)
+   - ≥4 weeks elapsed regardless
+
+   Action: optionally `/schedule` weekly traction check.
 
 ## Execution Plan
 
