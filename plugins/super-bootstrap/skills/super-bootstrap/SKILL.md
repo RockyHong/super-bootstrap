@@ -10,10 +10,10 @@ Set up (or retrofit) the superpowers-driven development pipeline in a project. T
 
 Designed for a solo developer working across multiple Claude Code sessions and cloud Claude Code.
 
-<HARD-GATE>
-This skill is scoped to **solo developer** workflows. Before proceeding, check contributor count (`git shortlog -sn --all | head -5`). If >1 active contributor, warn:
-> "This repo has multiple contributors. The pipeline assumes solo dev — simple branching, no PRs for self-review, no merge conflicts. Proceed anyway?"
-</HARD-GATE>
+<INFO-NOTE>
+This skill is tuned for **solo developer** workflows. During Phase 1, check contributor count (`git shortlog -sn --all | head -5`). If >1 active contributor, surface to user as info — don't block:
+> "FYI: detected multiple contributors. The pipeline's CLAUDE.md assumes solo dev (simple branching, no PRs for self-review). You can edit those sections after bootstrap if your team's workflow differs."
+</INFO-NOTE>
 
 ## Core Technique: Docs Travel With Code
 
