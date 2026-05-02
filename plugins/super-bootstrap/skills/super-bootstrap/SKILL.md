@@ -36,10 +36,10 @@ These are non-negotiable. `overview.md` and `techstack.md` are living documents 
 
 Some projects need more structure. Examples:
 
-- `docs/specs/` + `index.md` — persistent feature specs (what each feature does and why). For multi-feature products.
+- `docs/specs/` — persistent feature specs, one `.md` per feature. Each spec opens with `# {Feature Name}` + a one-paragraph intro, so `ls docs/specs/` and `head -n3 docs/specs/*.md` ARE the catalog (no separate index file). For multi-feature products.
 - `docs/backlog.md` — deferred items tracker (BUG / DEBT / GAP). For active or maintenance projects with shipping code.
 
-What goes here is discovered during Q&A (Phase 2). A 3-file CLI? No specs folder needed. A multi-module product? Scaffold `docs/specs/` with an index and seed entries.
+What goes here is discovered during Q&A (Phase 2). A 3-file CLI? No specs folder needed. A multi-module product? Scaffold `docs/specs/` and seed initial spec files.
 
 ### The Sync Discipline (baked into CLAUDE.md, non-negotiable)
 
@@ -142,7 +142,7 @@ Before writing anything, confirm your understanding with the user. Ask these **o
 
 6. **If existing docs/:** "Are these docs current, or should I treat them as potentially stale?"
 
-7. **If multi-feature product (not a tiny CLI or single-purpose lib):** "Do you want persistent feature specs? These are living docs that describe what each feature does and why — updated as the product evolves. They'd live in `docs/specs/` with an index. Worth it for your project, or overkill?"
+7. **If multi-feature product (not a tiny CLI or single-purpose lib):** "Do you want persistent feature specs? These are living docs that describe what each feature does and why — updated as the product evolves. One `.md` per feature in `docs/specs/`, each starting with `# {Feature Name}` + a one-paragraph intro. Folder + filenames are the catalog — no separate index file. Worth it for your project, or overkill?"
 
 8. **If active or maintenance project (not greenfield):** "Do you want `docs/backlog.md`? Single tracker for deferred items — `BUG-###` (broken, has fix), `DEBT-###` (working but rotting), `GAP-###` (design gap, needs brainstorm). Solo-dev queue, scanned at commit by doc sync. Default yes for shipping code, skip for greenfield."
 
@@ -165,7 +165,7 @@ Doc structure I'll scaffold:
     techstack.md             ← always
     superpowers/specs/       ← always (temporal)
     superpowers/plans/       ← always (temporal)
-    {specs/ + index.md       ← if confirmed}
+    {specs/                  ← if confirmed (one .md per feature)}
     {backlog.md              ← if confirmed}
 
 Sound right?
@@ -204,14 +204,13 @@ docs/
 **Created if confirmed during Q&A (adaptive):**
 ```
 docs/
-  specs/
-    index.md     ← catalog of persistent feature specs
+  specs/         ← persistent feature specs, one .md per feature (seeded by Task 5)
   backlog.md     ← deferred items tracker (BUG / DEBT / GAP)
 ```
 
 For each: create if missing, skip if present. Add `.gitkeep` in empty folders. If `docs/` already exists, nest alongside. Report status per directory.
 
-If `docs/specs/` is scaffolded, copy `assets/specs-index.md` to `docs/specs/index.md` and substitute `{project}`.
+`docs/specs/` is scaffolded as an empty folder with `.gitkeep`. There is no index file — the folder + filename convention IS the catalog. Spec files are seeded by Task 5 of the bootstrap plan, each one opening with `# {Feature Name}` and a one-paragraph intro.
 
 If `docs/backlog.md` is scaffolded, copy `assets/backlog.md` to `docs/backlog.md` (no substitutions).
 
@@ -298,7 +297,6 @@ Otherwise use `/commit` to stage:
 - `docs/superpowers/specs/.gitkeep`
 - `docs/superpowers/plans/.gitkeep`
 - `docs/superpowers/plans/bootstrap.md` (if newly written)
-- `docs/specs/index.md` (if scaffolded)
 - `docs/specs/.gitkeep` (if scaffolded)
 - `docs/backlog.md` (if scaffolded)
 - Any other adaptive doc files/folders created

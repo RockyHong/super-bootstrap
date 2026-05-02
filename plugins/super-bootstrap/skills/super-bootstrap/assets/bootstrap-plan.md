@@ -47,7 +47,7 @@ Replace stub sections with full content derived from techstack and overview anal
 
 - [ ] **Write Coding Standards section** — derived from techstack.md patterns (import style, error handling, naming, etc.)
 - [ ] **Update Tech Stack section** — remove "pending" marker, add reference to `docs/techstack.md`
-- [ ] **Update Planning section** — add references to `docs/overview.md` and `docs/techstack.md`. If `docs/specs/` exists, include the spec index reference with a note like: `docs/specs/` — **Feature specs** — source of truth per feature ([index](docs/specs/index.md))
+- [ ] **Update Planning section** — add references to `docs/overview.md` and `docs/techstack.md`. If `docs/specs/` exists, include a spec-folder reference with a note like: `docs/specs/` — **Feature specs** — one `.md` per feature, source of truth for what it does and why. Folder + filenames are the catalog (no index file).
 - [ ] **Verify doc sync wording** — the CLAUDE.md should have doc sync as a named pipeline step in every route (between user review and commit), with temporal cleanup paragraph in the Doc Sync section. This is non-negotiable pipeline behavior.
 - [ ] **Add any project-specific sections** — ownership boundaries, protocol references, design system refs — only if the project has them
 - [ ] **Present changes to user**
@@ -137,8 +137,7 @@ Write initial persistent specs for the project's existing features.
 **Depends on:** Task 2 (needs product overview to identify features)
 
 - [ ] **Identify 3-5 major features** from overview.md module index and code structure
-- [ ] **For each feature, write a spec** — product-level: intent, user flow, cross-module interactions, design decisions. Code-light — no API tables or implementation details.
-- [ ] **Update `docs/specs/index.md`** — add each spec to the table with a one-liner describing what it covers
+- [ ] **For each feature, write a spec at `docs/specs/{feature-slug}.md`** — first line `# {Feature Name}`, second line a one-paragraph intro stating what the feature does and why it exists, then product-level body: intent, user flow, cross-module interactions, design decisions. Code-light — no API tables or implementation details. Filename + heading convention is the catalog; no separate index file to update.
 - [ ] **Present to user for review**
 - [ ] **Commit**: `docs: seed persistent feature specs`
 

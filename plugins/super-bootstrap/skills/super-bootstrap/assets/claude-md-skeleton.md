@@ -175,7 +175,7 @@ This project is operated by a single developer across multiple Claude Code sessi
 
 - `docs/overview.md` — Product context, data flow, module index (once written)
 - `docs/techstack.md` — Tech choices and architecture rules (once written)
-{- `docs/specs/` — **Persistent feature specs** — source of truth per feature ([index](docs/specs/index.md))}
+{- `docs/specs/` — **Persistent feature specs** — one `.md` per feature, source of truth for what it does and why. Folder + filenames are the catalog (no index file). Each spec starts with `# {Feature Name}` + a one-paragraph intro, so `head -n3 docs/specs/*.md` gives a quick scan.}
 {- `docs/backlog.md` — **Deferred items** — `BUG-###` / `DEBT-###` / `GAP-###` queue, deleted on resolve}
 - `docs/superpowers/specs/` — Design specs from brainstorming (temporal — deleted after merge)
 - `docs/superpowers/plans/` — Implementation plans (temporal — deleted after merge)
