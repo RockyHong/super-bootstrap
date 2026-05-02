@@ -6,6 +6,20 @@
 
 **Context:** Pipeline scaffolded on {date}. Skeleton CLAUDE.md is live with workflow rules. These tasks complete the deep analysis and finalize the setup.
 
+## Tasks
+
+| # | Task | Output | Depends on | Conditional |
+|---|------|--------|------------|-------------|
+| 1 | Techstack Analysis | `docs/techstack.md` | — | always |
+| 2 | Product Overview | `docs/overview.md` | — | always |
+| 3 | Enhance CLAUDE.md | `CLAUDE.md` final form | 1, 2 | always |
+| 4 | Skill / MCP / Hook Resolution | `.claude/settings.json` | 1 | always |
+| 5 | Seed Feature Specs | `docs/specs/*.md` + index | 2 | only if `docs/specs/` scaffolded |
+| 5b | Seed Backlog | `docs/backlog.md` rows | 1, 2 | only if `docs/backlog.md` scaffolded |
+| 6 | Cleanup | delete this file | all above | always |
+
+Tasks 1, 2, 4 can run in parallel sessions. Task 3 gates on 1+2. Task 5/5b gates on prerequisites + scaffold flag.
+
 ---
 
 ### Task 1: Techstack Analysis

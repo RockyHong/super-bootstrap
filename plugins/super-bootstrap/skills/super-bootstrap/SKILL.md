@@ -86,6 +86,19 @@ Each task is session-sized. Context window stays clean. User runs `/todo` to see
 
 ---
 
+## Bundled Assets
+
+`assets/` ships four template files. Each is referenced inline by the phase that uses it — listed here as a manifest so the bundle is scannable without grep:
+
+- **`claude-md-skeleton.md`** → CLAUDE.md template with placeholder tokens. Used by Phase 3b.
+- **`bootstrap-plan.md`** → deferred-task list copied to `docs/superpowers/plans/bootstrap.md`. Drives Sessions 2+ via `/todo`. Used by Phase 3c.
+- **`specs-index.md`** → catalog template for `docs/specs/index.md`. *Adaptive — only if persistent specs confirmed in Phase 2.* Used by Phase 3a.
+- **`backlog.md`** → BUG / DEBT / GAP tracker template. *Adaptive — only if backlog confirmed in Phase 2.* Used by Phase 3a.
+
+All four are pure templates. The skill substitutes placeholders and writes to target — no logic embedded in the assets themselves.
+
+---
+
 ## Phase 1: Quick Scan (lightweight, parallel reads)
 
 Gather just enough to scaffold. Do NOT deep-analyze yet.
