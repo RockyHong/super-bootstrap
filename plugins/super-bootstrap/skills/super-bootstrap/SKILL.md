@@ -177,18 +177,21 @@ Wait for confirmation before proceeding. If anything is off, correct and re-conf
 
 ## Phase 3: Scaffold / Sync
 
-With alignment confirmed (or skipped on existing repos), scaffold or sync the pipeline. On a fresh repo this creates everything. On a bootstrapped repo it validates each artifact and only touches what's drifted.
+With alignment confirmed, walk each pipeline artifact in order: folders → CLAUDE.md → bootstrap plan → commit. Same flow on fresh and existing repos — fresh just sees "all new" at every step.
 
-**Sync logic** — for each pipeline-owned artifact:
-- Missing → create it
-- Exists, matches current template → skip ("✓ current")
-- Exists, drifted from template → show diff to user, offer fix
+**Per-artifact rule** (applied uniformly in 3a / 3b / 3c):
+- Missing → write from template
+- Exists, matches template → skip (`✓ current`)
+- Exists, drifted from template → show diff, get approval per change, then write
+- Project-owned content → never touch, even on drift
 
-**Pipeline-owned** (checked/synced): CLAUDE.md sections (Development Workflow, Doc Sync, Context Hygiene, Coding Principles, Edit Discipline, Solo Dev Assumptions, Git Notes, Planning), `docs/superpowers/specs/`, `docs/superpowers/plans/`, bootstrap plan lifecycle.
+**Pipeline-owned** (subject to drift check): CLAUDE.md sections (Development Workflow, Doc Sync, Context Hygiene, Coding Principles, Edit Discipline, Solo Dev Assumptions, Git Notes, Planning), `docs/superpowers/specs/`, `docs/superpowers/plans/`, `docs/superpowers/plans/bootstrap.md`.
 
 **Project-owned** (never touched): Project Structure, Tech Stack, Commands, Coding Standards, or any custom sections the project added.
 
-### 3a: Folder Structure
+### 3a: Folders
+
+Folders don't drift — only two states: missing or present.
 
 **Always created (fixed macro):**
 ```
@@ -206,19 +209,19 @@ docs/
   backlog.md     ← deferred items tracker (BUG / DEBT / GAP)
 ```
 
-Add `.gitkeep` in each empty folder. If `docs/` already exists, nest alongside.
-
-**On existing repos:** Check each expected directory exists. If missing, create it. If present, skip. Report status per directory.
+For each: create if missing, skip if present. Add `.gitkeep` in empty folders. If `docs/` already exists, nest alongside. Report status per directory.
 
 If `docs/specs/` is scaffolded, copy `assets/specs-index.md` to `docs/specs/index.md` and substitute `{project}`.
 
 If `docs/backlog.md` is scaffolded, copy `assets/backlog.md` to `docs/backlog.md` (no substitutions).
 
-### 3b: Write Skeleton CLAUDE.md
+### 3b: CLAUDE.md
 
-If no CLAUDE.md exists, create one. If one exists, enhance it (add missing sections, preserve existing content).
+**Source:** `assets/claude-md-skeleton.md`.
 
-**On existing repos with pipeline sections:** Diff each pipeline-owned section against the current skeleton template. **Never silently overwrite.** For each drifted section:
+**No CLAUDE.md** → fill placeholders, write to project root.
+
+**CLAUDE.md exists** → diff each pipeline-owned section against the skeleton template. For each drifted section:
 
 ```
 CLAUDE.md sync — drift detected:
@@ -232,13 +235,11 @@ CLAUDE.md sync — drift detected:
   Update? (y / n / show full diff)
 ```
 
-User must approve each section's update before write. If current, skip. Never touch project-owned sections.
+User must approve each section's update before write. If current, skip. Never touch project-owned sections — preserve existing Project Structure, Tech Stack, Commands, Coding Standards, custom additions.
 
-This protects against (a) legit template updates the user wants to review and (b) bad-actor template injection on a future re-run — you see what's about to change in your CLAUDE.md before it's overwritten.
+Drift approval protects against (a) legit template updates the user wants to review and (b) bad-actor template injection on a future re-run — you see what's about to change in your CLAUDE.md before it's overwritten.
 
 The skeleton contains the **workflow engine** — enough for any Claude session to know the rules — but leaves techstack and coding standards as stubs pointing to the bootstrap plan.
-
-**Source:** `assets/claude-md-skeleton.md`. Read it, fill placeholders, write to project root as `CLAUDE.md`.
 
 **Placeholders:**
 - `{Project Name}` — repo name
@@ -254,9 +255,16 @@ The skeleton contains the **workflow engine** — enough for any Claude session 
 - Shell notes, design system refs, protocol refs — only if the project has them
 - The `> pending` markers tell future sessions that deep analysis hasn't happened yet
 
-### 3c: Write Bootstrap Plan
+### 3c: Bootstrap plan
 
-Copy `assets/bootstrap-plan.md` to `docs/superpowers/plans/bootstrap.md`. Substitute `{project name}` and `{date}`.
+**Source:** `assets/bootstrap-plan.md` → `docs/superpowers/plans/bootstrap.md`.
+
+**No bootstrap.md** → copy template, substitute `{project name}` and `{date}`, adapt tasks (see below).
+
+**bootstrap.md exists** → user is mid-bootstrap from a prior session, with in-progress task state. Never silently overwrite. Diff vs template and ask:
+- **Keep existing** (default) → skip, preserve user's checkbox state
+- **Reset from template** → confirm explicitly, then overwrite
+- **Merge** (rare) → present both, let user pick task-by-task
 
 Adapt the plan to what the project actually needs:
 - If `docs/techstack.md` already exists and is good, skip Task 1 or reduce it to a review
@@ -266,37 +274,36 @@ Adapt the plan to what the project actually needs:
 - If `docs/backlog.md` was NOT scaffolded, drop Task 5b
 - Add tasks for any project-specific needs discovered during Q&A
 
-### 3d: Sync Report (existing repos only)
+### 3d: Sync report + commit
 
-On repos that already had the pipeline, present a summary before committing:
+**Sync report** — always shown before commit. Fresh repos see "all new"; existing repos see drift fixes and current items.
 
 ```
-| Artifact                    | Status      | Action             |
-|-----------------------------|-------------|--------------------|
+| Artifact                    | Status      | Action              |
+|-----------------------------|-------------|---------------------|
 | CLAUDE.md: Routes           | ⚠ drifted   | updated (approved)  |
-| CLAUDE.md: Doc Sync         | ✓ current   | —                  |
-| CLAUDE.md: Solo Dev         | ✓ current   | —                  |
-| docs/superpowers/specs/     | ✓ exists    | —                  |
-| docs/superpowers/plans/     | ✓ exists    | —                  |
+| CLAUDE.md: Doc Sync         | ✓ current   | —                   |
+| CLAUDE.md: Solo Dev         | ✓ current   | —                   |
+| docs/superpowers/specs/     | ✓ exists    | —                   |
+| docs/superpowers/plans/     | ✓ exists    | —                   |
+| docs/superpowers/plans/bootstrap.md | ⚠ exists | kept (user state)  |
 | Temporal artifacts          | ⚠ stale     | flagged for cleanup |
-| Served skills               | ✓ fresh     | —                  |
+| Served skills               | ✓ fresh     | —                   |
 ```
 
-If everything is current, report that and skip the commit.
+If every row is `✓ current` and nothing changed on disk, report and skip the commit.
 
-### 3e: Commit the Scaffold
-
-Use `/commit` to stage and commit:
+Otherwise use `/commit` to stage:
 - `CLAUDE.md` (new or modified)
 - `docs/superpowers/specs/.gitkeep`
 - `docs/superpowers/plans/.gitkeep`
-- `docs/superpowers/plans/bootstrap.md`
+- `docs/superpowers/plans/bootstrap.md` (if newly written)
 - `docs/specs/index.md` (if scaffolded)
 - `docs/specs/.gitkeep` (if scaffolded)
 - `docs/backlog.md` (if scaffolded)
 - Any other adaptive doc files/folders created
 
-Commit message: `chore: scaffold superpowers pipeline`
+Commit message: `chore: scaffold superpowers pipeline` on fresh repos, `chore: sync superpowers pipeline` when only drift fixes shipped.
 
 ---
 
