@@ -41,8 +41,6 @@ Before staging, scan `docs/` for files that describe behavior touched by the dif
 - `docs/overview.md` — behavior/data-flow changes
 - `docs/techstack.md` — dep / tooling / architecture changes
 - `docs/specs/*.md` — feature behavior (if scaffolded)
-- `docs/building.md` — build / distribution changes (if scaffolded)
-- `docs/help/*.md` — user-facing behavior (if scaffolded)
 - `docs/backlog.md` — items resolved or new items surfaced (if scaffolded)
 - `docs/superpowers/specs+plans/*.md` — temporal cleanup if work completes
 

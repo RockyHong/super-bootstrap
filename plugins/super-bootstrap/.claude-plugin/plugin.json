@@ -1,6 +1,6 @@
 {
   "name": "super-bootstrap",
-  "description": "Bootstrap or sync the superpowers development pipeline in any repo. Walks all phases — creates what's missing, syncs what's drifted, skips what's current. Scaffolds fixed macro docs (overview, techstack, superpowers/) and adaptive persistent docs (specs/, building, help/) based on project needs. Bakes in doc-sync discipline — docs travel with code. Solo dev workflow.",
+  "description": "Bootstrap or sync the superpowers development pipeline in any repo. Walks all phases — creates what's missing, syncs what's drifted, skips what's current. Scaffolds fixed macro docs (overview, techstack, superpowers/) and adaptive persistent docs (specs/, backlog) based on project needs. Bakes in doc-sync discipline — docs travel with code. Solo dev workflow.",
   "version": "1.0.0",
   "author": {
     "name": "Rocky Hong",
