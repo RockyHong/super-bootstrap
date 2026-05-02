@@ -143,7 +143,9 @@ User may explicitly override ("yes proceed anyway") → continue with stub-only 
 
 ## Phase 2: Q&A Alignment
 
-Before writing anything, confirm understanding with the user. **Each question is an LLM-prefilled MCQ:** based on Phase 1 detection, infer the answer, present it as the default option with 2-4 alternatives + an `(other: __)` slot for elaboration. Cite the signal so the user can sanity-check the inference at a glance.
+**Phase 2 ALWAYS runs, including on re-run.** Don't skip because "the repo is already bootstrapped" or "answers are encoded in existing docs." Required Q1-Q4 are non-skippable every invocation. Q4 (external tools) is especially load-bearing — it is the fresh product-level signal for Phase 3c MCP curation and is **not derivable from any existing doc**. On re-run, prefill defaults from existing artifacts (overview.md → Q1/Q2/Q3, settings.json picks → Q4 hint) so confirms collapse to one keystroke — but the user still confirms. Conditional Q5-Q9 fire only if signal triggers.
+
+Before writing anything, confirm understanding with the user. **Each question is an LLM-prefilled MCQ:** based on Phase 1 detection (and existing docs on re-run), infer the answer, present it as the default option with 2-4 alternatives + an `(other: __)` slot for elaboration. Cite the signal so the user can sanity-check the inference at a glance.
 
 Most answers are obvious from scan — user hits confirm quickly. If detection is high-confidence on every required Q, batch all four into one screen with a single `(y) confirm all  /  (n) push back on specific items`. If lower confidence, present one at a time so user reads each inference.
 
@@ -263,8 +265,11 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 
 - **Missing** → fill placeholders, write.
 - **Exists, drifted in pipeline-owned section** → diff that section vs template, present to user, get approval per section, write approved.
-- **Exists, current** → skip, mark `✓ current`.
+- **Exists, current** → mark `✓ current`. **Still show the per-section comparison briefly** (one-line per pipeline-owned section: `[Runtime] ✓ matches`, `[Framework] ✓ matches`, etc.) — asserting "current" without showing the comparison is a gap.
 - **Project-owned content** → never touched, even on drift.
+- **Legacy / unrecognized format** — if existing doc structure doesn't align with template sections (different headings, merged sections, doc was written by an older version of this skill or by hand) → surface as **legacy format detected**, propose: `(a) rewrite to current skeleton format (preserves grown sections), (b) leave as-is and accept template drift, (c) show full template-vs-current diff`. **Do not silently skip drift detection** because section names don't match — that hides real drift.
+
+**Per-section diff output is mandatory** — even when conclusion is `✓ current`, show the comparison so the user (and the next session's audit) can verify. Hand-wave assertions like "skeleton sections match the template" without a per-section listing are insufficient.
 
 ```
 {file path} sync — drift detected:
@@ -313,12 +318,16 @@ Auto-curate Claude Code tooling matched to detected stack AND product context. *
 
 **Process:**
 
-1. **Curate recommendations** across:
-   - Anthropic plugin marketplace (`claude-plugins-official`)
-   - [awesome-skills.com](https://awesome-skills.com) / [skills.sh](https://skills.sh)
-   - [tonsofskills.com](https://tonsofskills.com) / `ccpi` CLI
-   - [mcpmarket.com](https://mcpmarket.com) (MCP servers)
-   - Fast-path: if `claude-code-setup` plugin installed, invoke `/setup` and merge its picks
+1. **Live source query — non-skippable, runs every invocation.** Stable project ≠ stable upstream. Marketplaces add picks, deprecate picks, change licenses, between any two `/super-bootstrap` runs. The only way to detect that drift is to actually query — even when the project hasn't changed.
+
+   Issue WebFetch / Bash queries against each source. Examples:
+   - **Anthropic plugin marketplace** — `WebFetch https://github.com/anthropics/claude-plugins-official` (or `gh api repos/anthropics/claude-plugins-official/contents/plugins`) — Anthropic-vetted picks.
+   - **awesome-skills** — `WebFetch https://awesome-skills.com` (or `https://skills.sh`) — fetch index, filter by stack signals.
+   - **tonsofskills** — `WebFetch https://tonsofskills.com`. Or `Bash: ccpi search <stack>` if the `ccpi` CLI is installed.
+   - **mcpmarket** — `WebFetch https://mcpmarket.com` (MCP servers).
+   - **Fast-path** — if `claude-code-setup` plugin is installed locally, invoke `/setup` and merge its picks.
+
+   If a single source is unreachable (404 / rate limit / network), note the failure inline and continue with the others — **never skip the whole step**. Skipping = stale picks = silent failure mode of the entire phase.
 
 2. **Filter to matched picks only** — drop generic / spray suggestions. Match against stack signals AND product/workflow signals. A Notion MCP isn't "off-stack" if Q&A surfaced docs-heavy workflow.
 
@@ -330,11 +339,11 @@ Auto-curate Claude Code tooling matched to detected stack AND product context. *
 
    Hooks are elevated risk: auto-exec on every tool call (PreToolUse / PostToolUse / UserPromptSubmit). Always tag hooks: `⚠ HOOK = auto-executes. Audit source before accept.`
 
-4. **Re-run delta** — if `.claude/settings.json` already has pinned picks, diff the new curation against the pinned set:
-   - Pinned + still recommended → keep silently, no surface
+4. **Re-run delta** — if `.claude/settings.json` already has pinned picks, diff the new curation against the pinned set. **Re-fetch trust signals on every pinned pick** (not just new ones) — license can change, last-commit can age, repo can be archived.
+   - Pinned + still recommended + trust block unchanged → keep silently, mark `✓ pinned`
+   - Pinned + still recommended + trust block moved (license / last-commit / archive status changed) → re-show that pick's trust block, ask user to re-confirm
    - New pick recommended (upstream added it; or stack signal changed) → propose as **add**
    - Pinned but no longer recommended (deprecated upstream; license changed; stack changed) → propose as **drop** with reason
-   - License / last-commit recency moved on a pinned pick → re-show that pick's trust block
 
 5. **Present batch with full trust signal per new / changed pick:**
    ```
