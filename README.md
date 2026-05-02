@@ -21,26 +21,24 @@ Run in any repo:
 
 Then it walks these phases:
 
-1. **Scan + Q&A** — detects stack, asks ~6 questions to confirm
-2. **Curate** — picks skills/MCPs matched to your stack, trust signals per pick
-3. **Scaffold** — writes `CLAUDE.md`, pins config, drops in pipeline workspace
-4. **Handoff** — Claude routes by task size: small → direct implement, medium → quick brainstorm, large → full [superpowers](https://github.com/obra/superpowers) pipeline (brainstorm → spec → plan → execute). Doc-sync gate fires on every commit regardless of route, blocking stale-doc commits
-5. **Done** — start building. Harness keeps Claude in sync as you go.
+1. **Scan + Q&A** — detects stack, asks a few questions to confirm
+2. **Scaffold** — writes `CLAUDE.md`, pins config, drops in pipeline workspace, seeds a bootstrap plan with deferred analysis tasks
+3. **Handoff** — Claude routes by task size: small → direct implement, medium → quick brainstorm, large → full [superpowers](https://github.com/obra/superpowers) pipeline (brainstorm → spec → plan → execute). Doc-sync gate fires on every commit regardless of route, blocking stale-doc commits
+4. **Iterate** — `/todo` walks the bootstrap plan one session at a time: techstack deep-dive, product overview, skill/MCP curation, etc. Each task is session-sized, so context stays clean.
 
-Auto-commits each phase. Re-run anytime to sync drift.
+Commits the scaffold. Re-run anytime to sync drift.
 
 ```mermaid
 flowchart TD
     repo["your repo<br/>(e.g. TS + React + Postgres)"]
-    repo --> scan["1. Scan + Q&A<br/>~6 questions, ~2 min"]
-    scan --> curate["2. Curate skills/MCPs<br/>matched to stack"]
-    curate --> scaffold["3. Scaffold config"]
-    scaffold --> handoff["4. Handoff to Claude"]
-    handoff --> done["5. Done<br/>harness keeps Claude<br/>in sync as you build"]
+    repo --> scan["1. Scan + Q&A<br/>a few questions"]
+    scan --> scaffold["2. Scaffold config<br/>+ seed bootstrap plan"]
+    scaffold --> handoff["3. Handoff to Claude"]
+    handoff --> iterate["4. Iterate via /todo<br/>deferred analysis tasks"]
 
-    curate -.->|example picks| picks["react-expert<br/>postgres-pro<br/>Linear MCP<br/>commit-commands"]
     scaffold -.->|writes| files["CLAUDE.md<br/>.claude/settings.json<br/>docs/superpowers/"]
-    handoff -.->|drives with| engine["route triage<br/>+ doc-sync gate<br/>(superpowers for large tasks)"]
+    handoff -.->|drives with| engine["route triage<br/>+ doc-sync gate<br/>(superpowers for Large)"]
+    iterate -.->|example tasks| tasks["techstack.md<br/>overview.md<br/>skill/MCP curation"]
 ```
 
 ## What it touches

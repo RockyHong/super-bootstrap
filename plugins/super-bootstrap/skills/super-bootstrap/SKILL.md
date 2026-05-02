@@ -286,8 +286,6 @@ Adapt the plan to what the project actually needs:
 | docs/superpowers/specs/     | ✓ exists    | —                   |
 | docs/superpowers/plans/     | ✓ exists    | —                   |
 | docs/superpowers/plans/bootstrap.md | ⚠ exists | kept (user state)  |
-| Temporal artifacts          | ⚠ stale     | flagged for cleanup |
-| Served skills               | ✓ fresh     | —                   |
 ```
 
 If every row is `✓ current` and nothing changed on disk, report and skip the commit.
@@ -311,26 +309,13 @@ After committing (or reporting no changes needed), present results based on repo
 
 **Fresh repos (just scaffolded):**
 
-> **Pipeline is live.** Skeleton CLAUDE.md is driving workflow. Tasks remain to complete the bootstrap:
+> **Pipeline is live.** Skeleton CLAUDE.md is driving workflow. Deferred analysis tasks (techstack deep-dive, overview, skill/MCP curation, etc.) are queued in `docs/superpowers/plans/bootstrap.md`.
 >
-> 1. Techstack analysis → `docs/techstack.md`
-> 2. Product overview → `docs/overview.md`
-> 3. Enhance CLAUDE.md with full standards
-> 4. Skill resolution
-> {5. Seed feature specs → `docs/specs/` (if scaffolded)}
-> {6. Seed backlog → `docs/backlog.md` (if scaffolded)}
->
-> Run `/todo` in any session to see what's next. Each task is session-sized — you can knock them out one at a time or batch them.
->
-> Want to start Task 1 now, or pick this up later?
+> Next session: `/clear` (or fresh session), then `/todo` to pick a task.
 
 **Existing repos (sync pass):**
 
 > **Pipeline synced.** {N} items updated, {M} already current.
-> {If temporal artifacts flagged: "Flagged {K} stale temporal files for cleanup."}
-> {If served skills stale: "Skill/MCP recommendations are >90 days old — consider re-running `/super-bootstrap` to refresh."}
-
-If the user wants to continue, proceed with the next pending task from the bootstrap plan (if any remain).
 
 ## Principles
 
