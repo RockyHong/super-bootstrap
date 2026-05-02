@@ -6,7 +6,7 @@
 
 **Context:** Pipeline scaffolded on {date}. Skeleton CLAUDE.md is live with workflow rules. These tasks complete the deep analysis and finalize the setup.
 
-**Parallelism:** Tasks 1, 2, 4 are independent — can run in parallel sessions. Each task's `Depends on:` line states its prerequisites.
+**Parallelism:** Tasks 1 and 2 are independent — can run in parallel sessions. Tasks 3, 4, 5, 5b all gate on 1 and/or 2. Each task's `Depends on:` line states its prerequisites.
 
 ---
 
@@ -56,21 +56,22 @@ Replace stub sections with full content derived from techstack and overview anal
 
 ### Task 4: Skill / MCP / Hook Resolution
 
-Auto-curate Claude Code tooling matched to detected stack. Harness-internal — user sees one batch, replies. No manual search, no plugin install gate.
+Auto-curate Claude Code tooling matched to detected stack AND product context. Harness-internal — user sees one batch, replies. No manual search, no plugin install gate.
 
-**Depends on:** Task 1 (needs detected stack)
+**Depends on:** Task 1 (stack-matched picks — language/framework skills, runtime MCPs) and Task 2 (product/project-level picks — Notion / Linear / Jira / Slack / GitHub MCPs based on workflow context)
 
 **Process — automated:**
 
-1. **Take detected stack from Task 1** — runtime, framework, key tools, project size, monorepo state.
-2. **Curate recommendations** across:
+1. **Take detected stack from Task 1** — runtime, framework, key tools, project size, monorepo state. Drives stack-matched picks (e.g. `react-expert` for React, `postgres-pro` for Postgres).
+2. **Take product context from Task 2** — user type, workflow style, external systems mentioned (issue tracker, docs platform, comms). Drives project-management / docs / comms MCP picks (e.g. Notion MCP for docs-heavy, Linear / Jira MCP for active dev, Slack MCP for team comm, GitHub MCP for PR-heavy workflow).
+3. **Curate recommendations** across:
    - Anthropic plugin marketplace (`claude-plugins-official`)
    - [awesome-skills.com](https://awesome-skills.com) / [skills.sh](https://skills.sh)
    - [tonsofskills.com](https://tonsofskills.com) / `ccpi` CLI
    - [mcpmarket.com](https://mcpmarket.com) (MCP servers)
    - Fast-path: if `claude-code-setup` plugin installed, invoke `/setup` and merge its picks
-3. **Filter to stack-matched only** — drop generic / spray suggestions.
-4. **Trust signal lookup per pick** — for any plugin NOT from `claude-plugins-official`, fetch (via WebFetch or `gh api`):
+4. **Filter to matched picks only** — drop generic / spray suggestions. Match against stack signals (Step 1) AND product/workflow signals (Step 2). A Notion MCP isn't "off-stack" if Task 2 surfaced docs-heavy workflow.
+5. **Trust signal lookup per pick** — for any plugin NOT from `claude-plugins-official`, fetch (via WebFetch or `gh api`):
    - Repo URL + GitHub stars
    - Last-commit recency (e.g. "3d ago", "14mo ago")
    - License (or "no license" — flag as ⚠)
@@ -78,7 +79,7 @@ Auto-curate Claude Code tooling matched to detected stack. Harness-internal — 
 
    Hooks are elevated risk: they auto-exec on every tool call (PreToolUse / PostToolUse / UserPromptSubmit). Always tag hooks with `⚠ HOOK = auto-executes. Audit source before accept.`
 
-5. **Present batch to user with full trust signal per pick:**
+6. **Present batch to user with full trust signal per pick:**
    ```
    Recommendations for {project} ({stack}):
 
@@ -107,7 +108,7 @@ Auto-curate Claude Code tooling matched to detected stack. Harness-internal — 
    ```
 
    Picks from `claude-plugins-official` can drop the trust block (Anthropic-vetted) — keep just `Why:`.
-6. **Apply approved — write `.claude/settings.json` always.** This is the source of truth: project-scope intent, committed, travels with repo, cloud-friendly. Device install (`claude plugin install`) is optional convenience layered on top — not a substitute.
+7. **Apply approved — write `.claude/settings.json` always.** This is the source of truth: project-scope intent, committed, travels with repo, cloud-friendly. Device install (`claude plugin install`) is optional convenience layered on top — not a substitute.
    - Add each pick to `enabledPlugins`.
    - For any plugin NOT from `claude-plugins-official`, add its source to `extraKnownMarketplaces` so cloud sessions / fresh machines can resolve.
    - Example shape:
@@ -123,7 +124,7 @@ Auto-curate Claude Code tooling matched to detected stack. Harness-internal — 
      }
      ```
    - One-line transparency to user: "Pinning plugins per-project in `.claude/settings.json` so cloud Claude and fresh machines reproduce this toolset."
-7. **Commit if anything added.**
+8. **Commit if anything added.**
 
 **Why settings.json is non-negotiable:** `enabledPlugins` declares intent. Resolution happens at session start — Claude reads settings.json, finds device-installed plugins or auto-resolves via marketplaces. Without settings.json, project intent is lost (cloud and fresh machines can't reproduce). Device install alone doesn't travel.
 
