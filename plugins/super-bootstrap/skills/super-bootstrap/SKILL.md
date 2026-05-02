@@ -90,37 +90,17 @@ Each task is session-sized. Context window stays clean. User runs `/todo` to see
 
 Gather just enough to scaffold. Do NOT deep-analyze yet.
 
-### Sensitive-File Blocklist (applies to all source-file reads)
+### Sampling Discipline (applies to all source-file reads)
 
-Throughout this skill — Phase 1 detection, Task 1 sampling, anywhere Claude reads source files — **skip paths matching:**
+Throughout this skill — Phase 1 detection, Task 1 sampling, anywhere Claude reads source files — **paraphrase structure into committed docs; never paste raw file contents.** Skip files whose names suggest secrets (e.g. `.env*`, `*.key`, `*.pem`, `id_*`, `*credential*`, `*secret*`, `.npmrc`, `.netrc`, `*.p12` / `*.pfx`, `*.keystore`, `kubeconfig` — illustrative, judge by name).
 
-```
-.env*           *secret*        *credential*
-*.pem           *.key           id_rsa*
-id_ed25519*     *.p12           *.pfx
-*.jks           *.keystore      .npmrc
-.netrc          *.crt           *.cer
-```
+When skipping, surface to user: `⊘ skipped <path> (likely secret)`.
 
-When skipping, surface to user: `⊘ skipped <path> (matches secret blocklist)`. Reason: sampled file content lands in `techstack.md` / `overview.md` and gets auto-committed. Secrets in committed docs = secrets in git history forever.
+Reason: reading alone isn't the breach — Claude's context isn't shared. The breach is **quoting raw content into auto-committed docs** (`techstack.md`, `overview.md`): a gitignored secret becomes permanent in git history. Defense lives in the write step. The illustrative list seeds pattern recognition for the skip step; new secret-bearing patterns are judged by name, not table lookup.
 
 ### Manifest Detection
 
-Check which of these exist (don't read fully — just detect presence and skim):
-
-| File | Stack signal |
-|---|---|
-| `package.json` | Node.js — skim `scripts`, `type` field, top-level deps |
-| `tsconfig.json` | TypeScript |
-| `Cargo.toml` | Rust |
-| `pyproject.toml` / `requirements.txt` | Python |
-| `go.mod` | Go |
-| `Gemfile` | Ruby |
-| `pom.xml` / `build.gradle` | Java/Kotlin |
-| `composer.json` | PHP |
-| `pubspec.yaml` | Dart/Flutter |
-| `CMakeLists.txt` / `Makefile` | C/C++ |
-| `.csproj` / `*.sln` | C#/.NET |
+Detect language/runtime by manifest files at repo root (e.g. `package.json`, `tsconfig.json`, `pyproject.toml` / `requirements.txt`, `Cargo.toml`, `go.mod`, `Gemfile`, `pom.xml` / `build.gradle`, `composer.json`, `pubspec.yaml`, `CMakeLists.txt` / `Makefile`, `*.csproj` / `*.sln` — illustrative, not exhaustive). Don't read fully — skim each for runtime/version, top-level deps, scripts/build commands. Cover unlisted stacks (Bun, Deno, Zig, Elixir, Gleam, etc.) by analogy from the manifest's contents.
 
 ### Quick Structure
 
