@@ -21,46 +21,44 @@ Run in any repo with code:
 
 Then it walks these phases:
 
-1. **Scan + Q&A** — detects stack, asks a few questions to confirm. Aborts if true greenfield (no code) — see Scope.
-2. **Scaffold** — writes `CLAUDE.md`, seeds skeleton `docs/techstack.md` + `docs/overview.md` with detected facts, drops in pipeline workspace
-3. **Curate** — picks skills / MCPs / hooks matched to your stack + workflow tools, with trust signals per pick. Pinned in `.claude/settings.json`. Runs every `/super-bootstrap` to refresh against live source updates
-4. **Handoff** — Claude routes by task size: small → direct implement, medium → quick brainstorm, large → full [superpowers](https://github.com/obra/superpowers) pipeline (brainstorm → spec → plan → execute). Doc-sync gate fires on every commit, growing the skeleton docs and blocking stale-doc commits
+1. **Scan + Q&A** — detects your stack, confirms with a few questions. Stops if the repo is empty.
+2. **Scaffold** — writes `CLAUDE.md` and outline `docs/techstack.md` + `docs/overview.md` from what was detected.
+3. **Curate** — picks skills / MCPs / hooks for your stack, trust signal per pick. Re-run to refresh.
+4. **Handoff** — Claude routes by task size: small → implement, medium → quick brainstorm, large → full [superpowers](https://github.com/obra/superpowers) pipeline. Doc-sync runs on every commit, filling in the outline docs.
 
-Commits the scaffold. Re-run anytime to refresh picks and sync drift.
+Commits the scaffold. Re-run any time.
 
 ```mermaid
 flowchart TD
     repo["your repo<br/>(has code)"]
     repo --> scan["1. Scan + Q&A<br/>a few questions"]
-    scan --> scaffold["2. Scaffold + seed<br/>CLAUDE.md, skeleton docs"]
-    scaffold --> curate["3. Curate skill/MCP/hook<br/>against live sources"]
+    scan --> scaffold["2. Scaffold + seed<br/>CLAUDE.md, outline docs"]
+    scaffold --> curate["3. Curate skills / MCPs / hooks<br/>fresh each run"]
     curate --> handoff["4. Handoff to Claude"]
 
-    scaffold -.->|writes| files["CLAUDE.md<br/>docs/techstack.md (skeleton)<br/>docs/overview.md (skeleton)<br/>docs/superpowers/"]
+    scaffold -.->|writes| files["CLAUDE.md<br/>docs/techstack.md (outline)<br/>docs/overview.md (outline)<br/>docs/superpowers/"]
     curate -.->|writes| pins[".claude/settings.json<br/>(enabledPlugins +<br/>extraKnownMarketplaces)"]
-    handoff -.->|drives with| engine["route triage<br/>+ doc-sync gate<br/>(grows skeleton docs<br/>over commits)"]
+    handoff -.->|drives with| engine["route triage<br/>+ doc-sync on commit<br/>(fills in outline docs<br/>over time)"]
 ```
 
 ## What it touches
 
-- **`CLAUDE.md`** — layered, not overwritten. Pipeline sections added or synced; your existing sections untouched. Per-section diff shown before every write.
-- **`docs/techstack.md`** — seeded as a skeleton with detected runtime / framework / build commands. Architecture rules / coding patterns grow via doc-sync over commits.
-- **`docs/overview.md`** — seeded as a skeleton with Q&A answers (problem / user / current state). Module index / data flow / key boundaries grow via doc-sync over commits.
-- **`.claude/settings.json`** — merges `enabledPlugins` + `extraKnownMarketplaces`. Other settings preserved. Picks delta'd against live sources on every re-run.
-- **`.claude/` plugin cache** — lands next session when Claude Code auto-resolves the new plugins.
-- **`docs/superpowers/{specs,plans}/`** — pipeline workspace. `/todo` (bundled) scans this for active work.
-- **`docs/specs/`** *(adaptive)* — persistent feature specs, scaffolded if you opt in during Q&A.
-- **`docs/backlog.md`** *(adaptive)* — single tracker for deferred BUG/DEBT/GAP items, scaffolded if you opt in.
+- **`CLAUDE.md`** — layered, not overwritten. Per-section diff before every write.
+- **`docs/techstack.md`** — outline from detected runtime / framework / build. Rules + patterns fill in over commits.
+- **`docs/overview.md`** — outline from your Q&A (problem / user / current state). Module index + data flow fill in over commits.
+- **`.claude/settings.json`** — merges `enabledPlugins` + `extraKnownMarketplaces`. Other settings preserved.
+- **`.claude/` plugin cache** — lands next session when Claude Code resolves the new plugins.
+- **`docs/superpowers/{specs,plans}/`** — pipeline workspace. `/todo` scans this for active work.
+- **`docs/specs/`** *(adaptive)* — persistent feature specs, opt-in during Q&A.
+- **`docs/backlog.md`** *(adaptive)* — BUG/DEBT/GAP tracker, opt-in.
 
-Plugin also bundles `/todo` (active work scanner) and `/commit` (session-isolated, doc-sync-gated, conventional, no push). Both encode the harness rules so the handoff isn't broken on fresh machines.
+Bundles `/todo` (active work scanner) and `/commit` (session-isolated, doc-sync-gated, conventional, no push), so a fresh clone gets the same setup.
 
 ## Scope
 
-**For projects with code.** Super-bootstrap installs **harness** (workflow + doc-sync + skill picks + skeleton docs), not **product**. Phase 1 detects manifests, source files, and README — needs at least one to scaffold against.
+**Needs code in the repo** — a manifest, a source file, or a README. Empty repos: come back once you've written something. For brand-new ideation, use a product-ideation skill first.
 
-**True greenfield (empty repo, product still in ideation) is out of scope.** A friendly gate aborts and asks you to add at least a manifest, an entry-point file, or a brief README first. Use a product-ideation skill / plugin for empty-repo work; super-bootstrap kicks in once code exists.
-
-Best for solo devs juggling multiple repos who want quick Claude bootstrap per project. Supports a wide range of stacks — picks pulled from Anthropic's marketplace, awesome-skills, tonsofskills, and mcpmarket, matched to your detected stack and workflow tools. Sensitive files (`.env*`, `*.key`, `*credential*`, etc.) skipped from scan.
+Best for solo devs juggling multiple repos. Wide stack support — picks pulled from Anthropic's marketplace, awesome-skills, tonsofskills, and mcpmarket, matched to your stack and tools. Sensitive files (`.env*`, `*.key`, `*credential*`) skipped from scan.
 
 ## References
 
