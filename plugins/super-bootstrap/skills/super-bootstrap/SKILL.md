@@ -147,7 +147,21 @@ User may explicitly override ("yes proceed anyway") → continue with stub-only 
 
 Before writing anything, confirm understanding with the user. **Each question is an LLM-prefilled MCQ:** based on Phase 1 detection (and existing docs on re-run), infer the answer, present it as the default option with 2-4 alternatives + an `(other: __)` slot for elaboration. Cite the signal so the user can sanity-check the inference at a glance.
 
-Most answers are obvious from scan — user hits confirm quickly. If detection is high-confidence on every required Q, batch all four into one screen with a single `(y) confirm all  /  (n) push back on specific items`. If lower confidence, present one at a time so user reads each inference.
+**Render-tier pattern — pick the cheapest one that fits.** Don't render full per-Q MCQ when a one-line synthesis carries the same information.
+
+- **Tier 1 — all required Q's high-confidence + unambiguous** (every signal concrete: README explicit, manifest clear, git activity unambiguous, no missing tool config) → **collapse to a single synthesis line + one y/n**. Don't render Q1-Q4 prose. Skipping the per-Q ceremony is the default for clean, well-described projects.
+
+  Example:
+  ```
+  Detected: {one-line synthesis covering project / user / state / tools}.
+  Sound right? (y) confirm all  /  (n) show per-Q breakdown
+  ```
+
+- **Tier 2 — mixed confidence** (some Q's obvious, some ambiguous) → fold the confident Q's into the synthesis sentence; render full MCQ only for the ambiguous Q's.
+
+- **Tier 3 — low confidence on most required Q's** (sparse README, ambiguous package type, contradictory signals) → full per-Q MCQ format, presented serially so user reads each inference.
+
+If the user replies `(n)` or pushes back on Tier 1, **promote to Tier 3** for the breakdown — show full per-Q MCQ so they can correct specific items.
 
 Format pattern:
 
