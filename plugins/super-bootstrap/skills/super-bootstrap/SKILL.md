@@ -6,7 +6,7 @@ tags: [bootstrap, scaffold, setup, meta, docs]
 
 # Super Bootstrap — Superpowers Pipeline for Any Repo
 
-Set up (or retrofit) the superpowers-driven development pipeline in a project. The pipeline bootstraps itself — scaffold first, then use the pipeline to complete its own setup across sessions.
+Set up (or sync) the superpowers-driven development pipeline in a project. Installs harness — workflow rules, doc-sync gate, skeleton docs, curated skill/MCP/hook picks — in one scaffold session. The doc-sync gate at every later commit grows the skeleton docs over time, so there's no deferred deep-scan stage.
 
 Designed for a solo developer working across multiple Claude Code sessions and cloud Claude Code.
 
@@ -30,7 +30,7 @@ docs/
     plans/             ← implementation plans (temporal — deleted after merge)
 ```
 
-These are non-negotiable. `overview.md` and `techstack.md` are living documents — they evolve with the code.
+`overview.md` and `techstack.md` are seeded as **skeletons** at scaffold time — Runtime / Framework / Build & Dist / Problem / User / State sections carry detected facts and Q&A answers. Grown sections (Architecture Rules / Coding Patterns / Rejected Alternatives / Module Index / Data Flow / Key Boundaries) start empty and fill incrementally via the doc-sync gate as features land. No deep one-shot pump-prime.
 
 ### Adaptive Persistent Docs (project-specific, discovered during Q&A)
 
@@ -67,22 +67,29 @@ This isn't a nice-to-have. This is what makes the docs trustworthy. Without it, 
 
 ## How It Works
 
-The chicken-and-egg problem: you need the pipeline to track work, but setting up the pipeline IS work. Solution: **scaffold the pipeline cold, then use it to finish its own bootstrap.**
+Super-bootstrap installs **harness**, not **product**. Workflow rules, doc-sync gate, skill picks, skeleton docs — all land in one scaffold session. Doc-sync at every commit grows the skeleton docs over time as code lands. No deferred deep-scan tasks; the pipeline's own continuous mechanism IS the growth path.
 
 ```
-Session 1 (/super-bootstrap):
-  Quick scan → Q&A alignment → scaffold/sync pipeline → write bootstrap plan → commit
-  Pipeline is now LIVE (or synced). /todo works. Deep analysis is tracked as tasks.
+/super-bootstrap session:
+  Quick scan + greenfield gate → Q&A alignment → scaffold (folders, CLAUDE.md,
+  skeleton techstack.md, skeleton overview.md, bootstrap-plan) →
+  curate skill/MCP/hook against live sources → sync report + commit
 
-Session 2+ (/todo → pick a task):
-  - [ ] Deep techstack analysis → docs/techstack.md
-  - [ ] Product overview distillation → docs/overview.md
-  - [ ] Enhance CLAUDE.md with coding standards, commands
-  - [ ] Seed persistent specs (if applicable)
-  - [ ] Resolve skills/MCPs/hooks (Task 4 — auto-curated)
+  Pipeline is now LIVE. Skeleton docs carry detected facts. Picks pinned in
+  .claude/settings.json. Any adaptive seeding (specs / backlog) queued in
+  bootstrap-plan for later /todo sessions.
+
+Per-commit (forever after):
+  Doc-sync gate fires → if diff touches behavior covered by a doc, propose
+  updating that doc → user approves → doc + code commit together.
+
+/super-bootstrap re-run (any time):
+  Drift-check pipeline-owned sections → refresh skill/MCP/hook picks against
+  live sources → commit if anything changed. Adaptive seeding tasks dropped
+  from regenerated bootstrap-plan if their docs already exist.
 ```
 
-Each task is session-sized. Context window stays clean. User runs `/todo` to see what's next.
+ICP: projects that already have code. True greenfield (empty repo, product still in ideation) is **out of scope** — Phase 1 has a friendly gate.
 
 ---
 
@@ -92,7 +99,7 @@ Gather just enough to scaffold. Do NOT deep-analyze yet.
 
 ### Sampling Discipline (applies to all source-file reads)
 
-Throughout this skill — Phase 1 detection, Task 1 sampling, anywhere Claude reads source files — **paraphrase structure into committed docs; never paste raw file contents.** Skip files whose names suggest secrets (e.g. `.env*`, `*.key`, `*.pem`, `id_*`, `*credential*`, `*secret*`, `.npmrc`, `.netrc`, `*.p12` / `*.pfx`, `*.keystore`, `kubeconfig` — illustrative, judge by name).
+Throughout this skill — Phase 1 detection, anywhere Claude reads source files — **paraphrase structure into committed docs; never paste raw file contents.** Skip files whose names suggest secrets (e.g. `.env*`, `*.key`, `*.pem`, `id_*`, `*credential*`, `*secret*`, `.npmrc`, `.netrc`, `*.p12` / `*.pfx`, `*.keystore`, `kubeconfig` — illustrative, judge by name).
 
 When skipping, surface to user: `⊘ skipped <path> (likely secret)`.
 
@@ -120,6 +127,18 @@ If it exists, read it. The pipeline may already be partially or fully present �
 
 **Output of Phase 1:** A mental model of "what kind of project is this" — stack name, structure shape, maturity level. NOT a deep analysis.
 
+### Greenfield Gate
+
+After Phase 1 detection: if **no manifests + no source files (any extension) + README missing or under 3 substantive lines**, abort with:
+
+> Super-bootstrap installs **harness**, not **product**. Detected an empty repo: no manifests, no source files, no meaningful README.
+>
+> Add at least one of: a manifest (`package.json` / `pyproject.toml` / `Cargo.toml` / etc.), an entry-point source file, or a brief README describing the product. Then re-run.
+>
+> For greenfield product ideation, this isn't the right tool — try a product-ideation skill or just write a short README first.
+
+User may explicitly override ("yes proceed anyway") → continue with stub-only scaffold (most skeleton sections will sit empty until code starts landing). Default = abort.
+
 ---
 
 ## Phase 2: Q&A Alignment
@@ -134,17 +153,19 @@ Before writing anything, confirm your understanding with the user. Ask these **o
 
 3. **"What's the current state?"** — Greenfield? Active development? Maintenance mode? Mid-rewrite? This determines how aggressive the bootstrap should be.
 
+4. **"What external tools are in your workflow?"** — issue tracker / docs platform / comms (Notion / Linear / Jira / Slack / GitHub-only / etc.). Drives product-level MCP picks in Phase 3c. Accept "none" or "GitHub only" — both are signal.
+
 ### Conditional Questions
 
-4. **If monorepo detected:** "What are the packages/apps and how do they relate?"
+5. **If monorepo detected:** "What are the packages/apps and how do they relate?"
 
-5. **If existing CLAUDE.md:** "Anything in the current CLAUDE.md that's wrong or outdated? Anything you want to keep as-is?"
+6. **If existing CLAUDE.md:** "Anything in the current CLAUDE.md that's wrong or outdated? Anything you want to keep as-is?"
 
-6. **If existing docs/:** "Are these docs current, or should I treat them as potentially stale?"
+7. **If existing docs/:** "Are these docs current, or should I treat them as potentially stale?"
 
-7. **If multi-feature product (not a tiny CLI or single-purpose lib):** "Do you want persistent feature specs? These are living docs that describe what each feature does and why — updated as the product evolves. One `.md` per feature in `docs/specs/`, each starting with `# {Feature Name}` + a one-paragraph intro. Folder + filenames are the catalog — no separate index file. Worth it for your project, or overkill?"
+8. **If multi-feature product (not a tiny CLI or single-purpose lib):** "Do you want persistent feature specs? These are living docs that describe what each feature does and why — updated as the product evolves. One `.md` per feature in `docs/specs/`, each starting with `# {Feature Name}` + a one-paragraph intro. Folder + filenames are the catalog — no separate index file. Worth it for your project, or overkill?"
 
-8. **If active or maintenance project (not greenfield):** "Do you want `docs/backlog.md`? Single tracker for deferred items — `BUG-###` (broken, has fix), `DEBT-###` (working but rotting), `GAP-###` (design gap, needs brainstorm). Solo-dev queue, scanned at commit by doc sync. Default yes for shipping code, skip for greenfield."
+9. **If active or maintenance project (not greenfield):** "Do you want `docs/backlog.md`? Single tracker for deferred items — `BUG-###` (broken, has fix), `DEBT-###` (working but rotting), `GAP-###` (design gap, needs brainstorm). Solo-dev queue, scanned at commit by doc sync. Default yes for shipping code, skip for greenfield."
 
 ### Alignment Confirmation
 
@@ -177,17 +198,26 @@ Wait for confirmation before proceeding. If anything is off, correct and re-conf
 
 ## Phase 3: Scaffold / Sync
 
-With alignment confirmed, walk each pipeline artifact in order: folders → CLAUDE.md → bootstrap plan → commit. Same flow on fresh and existing repos — fresh just sees "all new" at every step.
+With alignment confirmed, walk each pipeline artifact in order: folders → pipeline docs → curate picks → sync report + commit. Same flow on fresh and re-run repos — fresh just sees "all new" at every step.
 
 **Per-artifact rule** (applied uniformly in 3a / 3b / 3c):
-- Missing → write from template
+- Missing → write from template / curate fresh
 - Exists, matches template → skip (`✓ current`)
 - Exists, drifted from template → show diff, get approval per change, then write
 - Project-owned content → never touch, even on drift
 
-**Pipeline-owned** (subject to drift check): CLAUDE.md sections (Development Workflow, Doc Sync, Context Hygiene, Coding Principles, Edit Discipline, Solo Dev Assumptions, Git Notes, Planning), `docs/superpowers/specs/`, `docs/superpowers/plans/`, `docs/superpowers/plans/bootstrap.md`.
+**Pipeline-owned** (subject to drift check):
+- CLAUDE.md sections: Development Workflow, Doc Sync, Context Hygiene, Coding Principles, Edit Discipline, Solo Dev Assumptions, Git Notes, Planning
+- `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution
+- `docs/overview.md` skeleton sections: Problem, User, Current State
+- `docs/superpowers/specs/`, `docs/superpowers/plans/`, `docs/superpowers/plans/bootstrap.md`
+- `.claude/settings.json` plugin pins (`enabledPlugins`, `extraKnownMarketplaces`)
 
-**Project-owned** (never touched): Project Structure, Tech Stack, Commands, Coding Standards, or any custom sections the project added.
+**Project-owned** (never touched):
+- CLAUDE.md: Project Structure, Tech Stack summary, Commands, Coding Standards, any custom sections
+- `docs/techstack.md` grown sections: Architecture Rules, Coding Patterns, Rejected Alternatives
+- `docs/overview.md` grown sections: Module Index, Data Flow, Key Boundaries
+- Other settings in `.claude/settings.json` outside the plugin-pin keys
 
 ### 3a: Folders
 
@@ -204,26 +234,36 @@ docs/
 **Created if confirmed during Q&A (adaptive):**
 ```
 docs/
-  specs/         ← persistent feature specs, one .md per feature (seeded by Task 5)
+  specs/         ← persistent feature specs, one .md per feature (seeded by Task 1 of bootstrap-plan)
   backlog.md     ← deferred items tracker (BUG / DEBT / GAP)
 ```
 
 For each: create if missing, skip if present. Add `.gitkeep` in empty folders. If `docs/` already exists, nest alongside. Report status per directory.
 
-`docs/specs/` is scaffolded as an empty folder with `.gitkeep`. There is no index file — the folder + filename convention IS the catalog. Spec files are seeded by Task 5 of the bootstrap plan, each one opening with `# {Feature Name}` and a one-paragraph intro.
+`docs/specs/` is scaffolded as an empty folder with `.gitkeep`. There is no index file — the folder + filename convention IS the catalog. Spec files are seeded by Task 1 of the bootstrap plan, each opening with `# {Feature Name}` and a one-paragraph intro.
 
 If `docs/backlog.md` is scaffolded, copy `assets/backlog.md` to `docs/backlog.md` (no substitutions).
 
-### 3b: CLAUDE.md
+### 3b: Pipeline docs
 
-**Source:** `assets/claude-md-skeleton.md`.
+Walk each pipeline doc and apply the per-artifact rule. Sources:
 
-**No CLAUDE.md** → fill placeholders, write to project root.
+| Asset | Destination |
+|---|---|
+| `assets/claude-md-skeleton.md` | `CLAUDE.md` (project root) |
+| `assets/techstack-skeleton.md` | `docs/techstack.md` |
+| `assets/overview-skeleton.md` | `docs/overview.md` |
+| `assets/bootstrap-plan.md` | `docs/superpowers/plans/bootstrap.md` |
 
-**CLAUDE.md exists** → diff each pipeline-owned section against the skeleton template. For each drifted section:
+**Per-doc handling:**
+
+- **Missing** → fill placeholders, write.
+- **Exists, drifted in pipeline-owned section** → diff that section vs template, present to user, get approval per section, write approved.
+- **Exists, current** → skip, mark `✓ current`.
+- **Project-owned content** → never touched, even on drift.
 
 ```
-CLAUDE.md sync — drift detected:
+{file path} sync — drift detected:
 
   [{Section Name}] section drifted from current template:
   ───────────────────────────────────────────────
@@ -234,72 +274,142 @@ CLAUDE.md sync — drift detected:
   Update? (y / n / show full diff)
 ```
 
-User must approve each section's update before write. If current, skip. Never touch project-owned sections — preserve existing Project Structure, Tech Stack, Commands, Coding Standards, custom additions.
+Drift approval protects against (a) legit template updates the user wants to review and (b) bad-actor template injection on a future re-run — you see what's about to change before it's overwritten.
 
-Drift approval protects against (a) legit template updates the user wants to review and (b) bad-actor template injection on a future re-run — you see what's about to change in your CLAUDE.md before it's overwritten.
-
-The skeleton contains the **workflow engine** — enough for any Claude session to know the rules — but leaves techstack and coding standards as stubs pointing to the bootstrap plan.
+**Special case — `bootstrap.md`** carries user state (checkbox progress from prior session). Don't auto-merge. Prompt: **Keep existing** (default) / **Reset from template** / **Merge** (rare, task-by-task).
 
 **Placeholders:**
 - `{Project Name}` — repo name
-- `{detected tree — top-level only}` — output of Phase 1 root `ls`, with brief annotations
-- `{detected, e.g., Node.js 20+}` — Tech Stack bullets from manifest detection
-- `{detected from scripts/Makefile/Cargo}` — runnable commands as they exist now
+- `{date}` — today's date
+- `{detected tree — top-level only}` — Phase 1 root `ls` with brief annotations
+- Manifest detection facts (Runtime / Framework / Key Dependencies / Build & Distribution) → fill into both CLAUDE.md Tech Stack summary AND `techstack.md` skeleton sections
+- Q&A answers (Problem / User / Current State) → fill into `overview.md` skeleton sections
 - Bracketed conditional lines `{- docs/specs/ — ...}` — keep only if the corresponding adaptive doc was confirmed in Phase 2 Q&A; drop the whole line otherwise
 
-#### Adaptation notes
+**Bootstrap-plan task adaptation:**
 
-- Only include sections relevant to the detected stack
-- If CLAUDE.md already exists with good content (commands, structure, etc.), preserve it and layer workflow on top
-- Shell notes, design system refs, protocol refs — only if the project has them
-- The `> pending` markers tell future sessions that deep analysis hasn't happened yet
+The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed backlog` / `Task 3: Cleanup`. Adapt at write time:
 
-### 3c: Bootstrap plan
+- `docs/specs/` NOT scaffolded → drop Task 1
+- `docs/backlog.md` NOT scaffolded → drop Task 2
+- Re-run with `docs/specs/` already populated → drop Task 1
+- Re-run with `docs/backlog.md` already populated → drop Task 2
+- Add tasks for any project-specific needs surfaced during Q&A
+- Task 3 (Cleanup) always retained
 
-**Source:** `assets/bootstrap-plan.md` → `docs/superpowers/plans/bootstrap.md`.
+If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that's fine, signals bootstrap is essentially complete.
 
-**No bootstrap.md** → copy template, substitute `{project name}` and `{date}`, adapt tasks (see below).
+### 3c: Curate skill / MCP / hook
 
-**bootstrap.md exists** → user is mid-bootstrap from a prior session, with in-progress task state. Never silently overwrite. Diff vs template and ask:
-- **Keep existing** (default) → skip, preserve user's checkbox state
-- **Reset from template** → confirm explicitly, then overwrite
-- **Merge** (rare) → present both, let user pick task-by-task
+Auto-curate Claude Code tooling matched to detected stack AND product context. **Runs every `/super-bootstrap`** — refresh on every run keeps picks fresh against upstream source updates (new skills published, deprecated removals, license changes). Harness-internal: user sees one batch, replies. No manual search, no plugin install gate.
 
-Adapt the plan to what the project actually needs:
-- If `docs/techstack.md` already exists and is good, skip Task 1 or reduce it to a review
-- If `docs/overview.md` already exists, same
-- If CLAUDE.md is already comprehensive, Task 3 becomes a light touch-up
-- If `docs/specs/` was NOT scaffolded, drop Task 5
-- If `docs/backlog.md` was NOT scaffolded, drop Task 6
-- Add tasks for any project-specific needs discovered during Q&A
+**Inputs (no deferred deep work needed):**
+- Phase 1 quick-scan: runtime, framework, key tools, monorepo state → drives **stack-matched picks** (e.g. `react-expert` for React, `postgres-pro` for Postgres)
+- Phase 2 Q&A: user type, current state, **external tools** (Notion / Linear / Jira / Slack / GitHub-only / etc.) → drives **product/workflow-level MCP picks** (e.g. Notion MCP for docs-heavy, Linear MCP for active dev, Slack MCP for team comm, GitHub MCP for PR-heavy workflow)
+
+**Process:**
+
+1. **Curate recommendations** across:
+   - Anthropic plugin marketplace (`claude-plugins-official`)
+   - [awesome-skills.com](https://awesome-skills.com) / [skills.sh](https://skills.sh)
+   - [tonsofskills.com](https://tonsofskills.com) / `ccpi` CLI
+   - [mcpmarket.com](https://mcpmarket.com) (MCP servers)
+   - Fast-path: if `claude-code-setup` plugin installed, invoke `/setup` and merge its picks
+
+2. **Filter to matched picks only** — drop generic / spray suggestions. Match against stack signals AND product/workflow signals. A Notion MCP isn't "off-stack" if Q&A surfaced docs-heavy workflow.
+
+3. **Trust signal lookup per pick** — for any plugin NOT from `claude-plugins-official`, fetch (via WebFetch or `gh api`):
+   - Repo URL + GitHub stars
+   - Last-commit recency (e.g. "3d ago", "14mo ago")
+   - License (or "no license" — flag as ⚠)
+   - Permissions exercised (read-only? shell? network? auto-exec hook?)
+
+   Hooks are elevated risk: auto-exec on every tool call (PreToolUse / PostToolUse / UserPromptSubmit). Always tag hooks: `⚠ HOOK = auto-executes. Audit source before accept.`
+
+4. **Re-run delta** — if `.claude/settings.json` already has pinned picks, diff the new curation against the pinned set:
+   - Pinned + still recommended → keep silently, no surface
+   - New pick recommended (upstream added it; or stack signal changed) → propose as **add**
+   - Pinned but no longer recommended (deprecated upstream; license changed; stack changed) → propose as **drop** with reason
+   - License / last-commit recency moved on a pinned pick → re-show that pick's trust block
+
+5. **Present batch with full trust signal per new / changed pick:**
+   ```
+   Skill / MCP / hook curation for {project} ({stack}):
+
+     [SKILL]    {name}@{source}                 [+ add | ✓ keep | − drop]
+                ★ {stars} · last commit {recency} · {license}
+                Permissions: {read-only / shell / network / etc.}
+                Why: {matched signal, one-line value}
+
+     [HOOK]     {name}@{source}                 [+ add]
+                ★ {stars} · last commit {recency} · {license}
+                Permissions: ⚠ {what triggers + what it runs}
+                Why: {matched signal}
+                ⚠ HOOK = auto-executes. Audit source before accept.
+
+     [MCP]      {name}@{source}                 [+ add]
+                ★ {stars} · last commit {recency} · {license}
+                Permissions: {network / shell / file-system / etc.}
+                Why: {matched signal}
+
+   Accept all / reject specific / discuss thoughts?
+   ```
+
+   Picks from `claude-plugins-official` can drop the trust block (Anthropic-vetted) — keep just `Why:`.
+
+6. **Apply approved — write `.claude/settings.json`.** Source of truth: project-scope intent, committed, travels with repo, cloud-friendly. Device install (`claude plugin install`) is optional convenience layered on top.
+   - Add accepted picks to `enabledPlugins`. Drop rejected picks.
+   - For any plugin NOT from `claude-plugins-official`, ensure its source is in `extraKnownMarketplaces` so cloud sessions / fresh machines can resolve.
+   - Example shape:
+     ```json
+     {
+       "enabledPlugins": {
+         "superpowers@claude-plugins-official": true,
+         "caveman@caveman": true
+       },
+       "extraKnownMarketplaces": {
+         "caveman": { "source": { "source": "github", "repo": "JuliusBrussee/caveman" } }
+       }
+     }
+     ```
+   - One-line transparency: "Pinning plugins per-project in `.claude/settings.json` so cloud Claude and fresh machines reproduce this toolset."
+
+**Why settings.json is non-negotiable:** `enabledPlugins` declares intent. Resolution happens at session start — Claude reads settings.json, finds device-installed plugins or auto-resolves via marketplaces. Without settings.json, project intent is lost (cloud and fresh machines can't reproduce). Device install alone doesn't travel.
 
 ### 3d: Sync report + commit
 
-**Sync report** — always shown before commit. Fresh repos see "all new"; existing repos see drift fixes and current items.
+**Sync report** — always shown before commit. Fresh repos see "all new"; re-run repos see drift fixes, picks delta, and current items.
 
 ```
-| Artifact                    | Status      | Action              |
-|-----------------------------|-------------|---------------------|
-| CLAUDE.md: Routes           | ⚠ drifted   | updated (approved)  |
-| CLAUDE.md: Doc Sync         | ✓ current   | —                   |
-| CLAUDE.md: Solo Dev         | ✓ current   | —                   |
-| docs/superpowers/specs/     | ✓ exists    | —                   |
-| docs/superpowers/plans/     | ✓ exists    | —                   |
-| docs/superpowers/plans/bootstrap.md | ⚠ exists | kept (user state)  |
+| Artifact                            | Status      | Action              |
+|-------------------------------------|-------------|---------------------|
+| CLAUDE.md: Workflow                 | ⚠ drifted   | updated (approved)  |
+| CLAUDE.md: Doc Sync                 | ✓ current   | —                   |
+| CLAUDE.md: Solo Dev                 | ✓ current   | —                   |
+| docs/techstack.md: Runtime          | ⚠ drifted   | updated (approved)  |
+| docs/techstack.md: Framework        | ✓ current   | —                   |
+| docs/overview.md: Problem           | ✓ current   | —                   |
+| docs/superpowers/specs/             | ✓ exists    | —                   |
+| docs/superpowers/plans/             | ✓ exists    | —                   |
+| docs/superpowers/plans/bootstrap.md | ⚠ exists    | kept (user state)   |
+| .claude/settings.json: picks        | ⚠ delta     | +2 add, −1 drop     |
 ```
 
 If every row is `✓ current` and nothing changed on disk, report and skip the commit.
 
 Otherwise use `/commit` to stage:
 - `CLAUDE.md` (new or modified)
+- `docs/techstack.md` (new or skeleton-section drift)
+- `docs/overview.md` (new or skeleton-section drift)
+- `.claude/settings.json` (new or picks delta)
 - `docs/superpowers/specs/.gitkeep`
 - `docs/superpowers/plans/.gitkeep`
-- `docs/superpowers/plans/bootstrap.md` (if newly written)
+- `docs/superpowers/plans/bootstrap.md` (if newly written or regenerated)
 - `docs/specs/.gitkeep` (if scaffolded)
 - `docs/backlog.md` (if scaffolded)
-- Any other adaptive doc files/folders created
+- Any other adaptive files / folders created
 
-Commit message: `chore: scaffold superpowers pipeline` on fresh repos, `chore: sync superpowers pipeline` when only drift fixes shipped.
+Commit message: `chore: scaffold superpowers pipeline` on fresh repos, `chore: sync superpowers pipeline` when only drift fixes / picks delta shipped.
 
 ---
 
@@ -307,27 +417,25 @@ Commit message: `chore: scaffold superpowers pipeline` on fresh repos, `chore: s
 
 After committing (or reporting no changes needed), present results based on repo state:
 
-**Fresh repos (just scaffolded):**
+**First-run (just scaffolded):**
 
-> **Pipeline is live.** Skeleton CLAUDE.md is driving workflow. Deferred analysis tasks (techstack deep-dive, overview, skill/MCP curation, etc.) are queued in `docs/superpowers/plans/bootstrap.md`.
+> **Pipeline is live.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts — grown sections fill via doc-sync as features land. Skill / MCP / hook picks pinned in `.claude/settings.json`.
 >
-> Next session: `/clear` (or fresh session), then `/todo` to pick a task.
+> {If bootstrap.md has Task 1 / Task 2 active: "Optional adaptive seeding queued in `docs/superpowers/plans/bootstrap.md` (specs / backlog). Next session: `/clear`, then `/todo`."}
+> {If bootstrap.md is cleanup-only: "Bootstrap essentially complete — `/todo` will show the cleanup task."}
 
-**Existing repos (sync pass):**
+**Re-run / sync pass:**
 
-> **Pipeline synced.** {N} items updated, {M} already current.
+> **Pipeline synced.** {N items updated, M already current.}{If picks delta: " Picks: +K added, −L dropped against live sources."}
 
 ## Principles
 
-- **Scaffold first, analyze later** — get the pipeline running before doing deep work
-- **The pipeline bootstraps itself** — deep analysis is tracked as pipeline tasks, provable by `/todo`
-- **Session-sized tasks** — each task fits in one Claude session without blowing context
-- **Pre-distillation Q&A** — confirm understanding before writing anything permanent
-- **Detect, don't assume** — every section grounded in what was found in the repo
-- **Solo dev first** — no team workflows, no complex branching
-- **Docs travel with code** — every commit checks for stale docs. Implementation without doc sync is incomplete. This is the pipeline's real power.
-- **Fixed macro, adaptive micro** — `overview.md`, `techstack.md`, `superpowers/` are always scaffolded. `specs/`, `backlog.md` are scaffolded only when the project warrants them.
-- **Two kinds of specs** — temporal (superpowers) = work orders, deleted after merge. Persistent (project) = source of truth, evolve with the product. Never confuse them.
-- **Clear doc ownership** — `techstack.md` owns tech, `overview.md` owns product, `CLAUDE.md` owns workflow, `specs/` owns feature behavior. No duplication across docs.
-- **One pipeline, adaptive** — fresh repos get scaffolded, existing repos get synced. Same phases, same walk-through, different actions per artifact state.
-- **User approves everything** — present drafts, get approval, then write
+- **Harness, not product** — bootstrap installs workflow + skeleton docs + curated picks. Greenfield product ideation (empty repo, no code) is out of scope. Phase 1 has a friendly gate.
+- **Skeleton at scaffold, grown via sync** — detected facts and Q&A answers seeded immediately into `techstack.md` / `overview.md`. Architecture Rules, Coding Patterns, Module Index, Data Flow, Key Boundaries start empty and fill incrementally per-commit. Doc-sync IS the growth mechanism — no deferred deep-scan tasks.
+- **Refresh on every run** — picks curated against live sources every `/super-bootstrap`. Upstream marketplace changes (new picks, deprecations, license shifts) surface as a delta against `.claude/settings.json`.
+- **Detect, then confirm** — Phase 1 grounds seeded facts in repo evidence; Phase 2 Q&A confirms; user approves drift / picks / drafts before any write.
+- **Docs travel with code** — doc-sync gate on every commit. Implementation without doc-sync is incomplete. The pipeline's real power.
+- **Fixed macro, adaptive micro** — `overview.md` / `techstack.md` / `superpowers/` always scaffolded. `specs/` / `backlog.md` only when the project warrants them.
+- **Two kinds of specs** — temporal (`docs/superpowers/specs/`) = work orders, deleted after merge. Persistent (`docs/specs/`) = source of truth, evolves with product. Never confuse.
+- **Clear doc ownership** — `techstack.md` owns tech, `overview.md` owns product, `CLAUDE.md` owns workflow, `docs/specs/` owns feature behavior. No duplication.
+- **One pipeline, adaptive** — same phases on fresh and re-run; actions differ per artifact state. Solo dev first.

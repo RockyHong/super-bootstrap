@@ -153,11 +153,11 @@ This project is operated by a single developer across multiple Claude Code sessi
 
 ## Tech Stack
 
+Quick summary — see `docs/techstack.md` for the living doc:
+
 - **Runtime**: {detected, e.g., Node.js 20+, ESM}
 - **Framework**: {detected, e.g., Next.js 14}
 {...other detected layers, one bullet each}
-
-> Full techstack analysis pending — see `docs/superpowers/plans/bootstrap.md` task list.
 
 ## Commands
 
@@ -173,8 +173,8 @@ This project is operated by a single developer across multiple Claude Code sessi
 
 ## Planning
 
-- `docs/overview.md` — Product context, data flow, module index (once written)
-- `docs/techstack.md` — Tech choices and architecture rules (once written)
+- `docs/overview.md` — Product context, data flow, module index. Skeleton seeded at scaffold; Module Index / Data Flow / Key Boundaries grow via doc-sync.
+- `docs/techstack.md` — Tech choices, architecture rules, coding patterns. Skeleton seeded at scaffold; Architecture Rules / Coding Patterns / Rejected Alternatives grow via doc-sync.
 {- `docs/specs/` — **Persistent feature specs** — one `.md` per feature, source of truth for what it does and why. Folder + filenames are the catalog (no index file). Each spec starts with `# {Feature Name}` + a one-paragraph intro, so `head -n3 docs/specs/*.md` gives a quick scan.}
 {- `docs/backlog.md` — **Deferred items** — `BUG-###` / `DEBT-###` / `GAP-###` queue, deleted on resolve}
 - `docs/superpowers/specs/` — Design specs from brainstorming (temporal — deleted after merge)
