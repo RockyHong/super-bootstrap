@@ -143,53 +143,57 @@ User may explicitly override ("yes proceed anyway") → continue with stub-only 
 
 ## Phase 2: Q&A Alignment
 
-Before writing anything, confirm your understanding with the user. Ask these **one at a time**, serial:
+Before writing anything, confirm understanding with the user. **Each question is an LLM-prefilled MCQ:** based on Phase 1 detection, infer the answer, present it as the default option with 2-4 alternatives + an `(other: __)` slot for elaboration. Cite the signal so the user can sanity-check the inference at a glance.
 
-### Required Questions
+Most answers are obvious from scan — user hits confirm quickly. If detection is high-confidence on every required Q, batch all four into one screen with a single `(y) confirm all  /  (n) push back on specific items`. If lower confidence, present one at a time so user reads each inference.
 
-1. **"What does this project do?"** — Even if README exists, ask. The user's answer reveals what they think matters vs what the docs say. Compare with README if it exists; flag discrepancies.
+Format pattern:
 
-2. **"Who uses it?"** — End users? Developers? Internal tool? Library consumers? This shapes how `overview.md` will be written later.
+```
+Q{n}. {Question}
 
-3. **"What's the current state?"** — Greenfield? Active development? Maintenance mode? Mid-rewrite? This determines how aggressive the bootstrap should be.
+Inferred: {default answer}  ({signal — what scan found})
 
-4. **"What external tools are in your workflow?"** — issue tracker / docs platform / comms (Notion / Linear / Jira / Slack / GitHub-only / etc.). Drives product-level MCP picks in Phase 3c. Accept "none" or "GitHub only" — both are signal.
+  (a) {default answer}              ← pre-checked
+  (b) {alternative 1}
+  (c) {alternative 2}
+  ...
+  (e) other: __
+```
 
-### Conditional Questions
+User responds with a single key for the obvious case, or types in `e: ...` to elaborate / correct.
 
-5. **If monorepo detected:** "What are the packages/apps and how do they relate?"
+### Required Questions (always asked, prefilled)
 
-6. **If existing CLAUDE.md:** "Anything in the current CLAUDE.md that's wrong or outdated? Anything you want to keep as-is?"
+1. **What does this project do?** — Signal: README first paragraph, manifest description (`package.json` / `Cargo.toml` / `pyproject.toml`), root doc files, repo name. Default: synthesized one-line summary. Options: confirm / elaborate.
 
-7. **If existing docs/:** "Are these docs current, or should I treat them as potentially stale?"
+2. **Who uses it?** — Signal: package type (CLI / library / web app / desktop / mobile / internal tool), distribution channel (npm / PyPI / cargo / web), README badges. Defaults: developers (library) / end users (app) / internal team (CLI) / library consumers / other.
 
-8. **If multi-feature product (not a tiny CLI or single-purpose lib):** "Do you want persistent feature specs? These are living docs that describe what each feature does and why — updated as the product evolves. One `.md` per feature in `docs/specs/`, each starting with `# {Feature Name}` + a one-paragraph intro. Folder + filenames are the catalog — no separate index file. Worth it for your project, or overkill?"
+3. **Current state?** — Signal: git log recency (`git log --oneline --since="30 days ago"` count), branch count, last-commit age, test fixture freshness, "deprecated" / "WIP" / "alpha" markers in README. Defaults: active development / maintenance mode / greenfield / mid-rewrite / other. Cite the signal (e.g. "12 commits last 30 days" or "no commits since 2024-08").
 
-9. **If active or maintenance project (not greenfield):** "Do you want `docs/backlog.md`? Single tracker for deferred items — `BUG-###` (broken, has fix), `DEBT-###` (working but rotting), `GAP-###` (design gap, needs brainstorm). Solo-dev queue, scanned at commit by doc sync. Default yes for shipping code, skip for greenfield."
+4. **External tools in your workflow?** — Signal: `.github/`, `.gitlab/`, config files for Linear / Notion / Jira / Slack, deps with service-name hints, README mentions. Multi-select (comma-separated). Defaults: GitHub-only / Notion / Linear / Jira / Slack / Trello / ClickUp / other. Default GitHub-only if nothing else detected.
+
+### Conditional Questions (only if signal triggers)
+
+5. **Monorepo — confirm packages and their roles?** (only if workspace config detected: `pnpm-workspace.yaml`, `turbo.json`, Cargo workspace, etc.) — Default: list packages from workspace config; user confirms or elaborates roles.
+
+6. **Existing CLAUDE.md — keep / drift-review / replace?** (only if `CLAUDE.md` exists) — Defaults: keep as-is + layer pipeline sections / per-section drift review with approval / replace entirely with skeleton / other.
+
+7. **Existing `docs/` — current / stale / replace?** (only if `docs/` has files) — Defaults: current and authoritative / potentially stale (flag during doc-sync) / replace during scaffold / other.
+
+8. **Persistent feature specs in `docs/specs/`?** (only if multi-feature signal — not a 3-file CLI or single-purpose lib) — Defaults: yes scaffold + seed via Task 1 of bootstrap-plan / no overkill for this project / other. Cite the signal (e.g. "8 top-level `src/` modules").
+
+9. **Backlog tracker (`docs/backlog.md`)?** (only if active or maintenance) — Defaults: yes (default for shipping code) / no / other.
 
 ### Alignment Confirmation
 
-After questions, present a short summary:
+After Q's, brief one-line summary so user catches any misread:
 
 ```
-Here's what I understand:
-- Project: {name} — {one-line description}
-- Stack: {runtime} + {framework} + {key tools}
-- State: {greenfield/active/maintenance}
-- User: {who uses it}
-- Structure: {monorepo/single package/other}
-{- Existing CLAUDE.md: {keep/enhance/replace}}
+Plan: scaffold {fixed macro docs} {+ adaptive: specs} {+ adaptive: backlog};
+curate skills/MCPs for {stack signal} + {workflow tools}.
 
-Doc structure I'll scaffold:
-  docs/
-    overview.md              ← always
-    techstack.md             ← always
-    superpowers/specs/       ← always (temporal)
-    superpowers/plans/       ← always (temporal)
-    {specs/                  ← if confirmed (one .md per feature)}
-    {backlog.md              ← if confirmed}
-
-Sound right?
+Sound right? (y / push back)
 ```
 
 Wait for confirmation before proceeding. If anything is off, correct and re-confirm.
