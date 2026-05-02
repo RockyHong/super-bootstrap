@@ -6,7 +6,7 @@
 
 **Context:** Pipeline scaffolded on {date}. Skeleton CLAUDE.md is live with workflow rules. These tasks complete the deep analysis and finalize the setup.
 
-**Parallelism:** Tasks 1 and 2 are independent — can run in parallel sessions. Tasks 3, 4, 5, 5b all gate on 1 and/or 2. Each task's `Depends on:` line states its prerequisites.
+**Parallelism:** Tasks 1 and 2 are independent — can run in parallel sessions. Tasks 3, 4, 5, 6 all gate on 1 and/or 2. Each task's `Depends on:` line states its prerequisites.
 
 ---
 
@@ -142,7 +142,7 @@ Write initial persistent specs for the project's existing features.
 - [ ] **Present to user for review**
 - [ ] **Commit**: `docs: seed persistent feature specs`
 
-### Task 5b: Seed Backlog *(only if `docs/backlog.md` was scaffolded)*
+### Task 6: Seed Backlog *(only if `docs/backlog.md` was scaffolded)*
 
 Walk the project once and seed any obvious deferred items already visible in code or recent history.
 
@@ -157,7 +157,7 @@ Walk the project once and seed any obvious deferred items already visible in cod
 
 If no obvious items exist, leave the file with just its header — that's fine. The tracker grows organically as reviews surface things.
 
-### Task 6: Cleanup
+### Task 7: Cleanup
 
 - [ ] **Delete this file** (`docs/superpowers/plans/bootstrap.md`) — bootstrap is complete
 - [ ] **Verify `/todo` shows no active work** (unless the user has started real project work)

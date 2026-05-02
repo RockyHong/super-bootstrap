@@ -271,7 +271,7 @@ Adapt the plan to what the project actually needs:
 - If `docs/overview.md` already exists, same
 - If CLAUDE.md is already comprehensive, Task 3 becomes a light touch-up
 - If `docs/specs/` was NOT scaffolded, drop Task 5
-- If `docs/backlog.md` was NOT scaffolded, drop Task 5b
+- If `docs/backlog.md` was NOT scaffolded, drop Task 6
 - Add tasks for any project-specific needs discovered during Q&A
 
 ### 3d: Sync report + commit
@@ -320,7 +320,7 @@ After committing (or reporting no changes needed), present results based on repo
 > 3. Enhance CLAUDE.md with full standards
 > 4. Skill resolution
 > {5. Seed feature specs → `docs/specs/` (if scaffolded)}
-> {5b. Seed backlog → `docs/backlog.md` (if scaffolded)}
+> {6. Seed backlog → `docs/backlog.md` (if scaffolded)}
 >
 > Run `/todo` in any session to see what's next. Each task is session-sized — you can knock them out one at a time or batch them.
 >
