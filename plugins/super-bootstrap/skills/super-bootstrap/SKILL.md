@@ -24,7 +24,7 @@ Mirror Phase 1 detection from `/harness-bootstrap` (manifest scan, source-file s
 - No `README.md` OR `README.md` has fewer than 3 substantive lines (lines that aren't headings, blank, or boilerplate badges).
 - No `docs/overview.md` AND no `docs/techstack.md` (if these exist from a prior `/super-bootstrap` greenfield run, treat as non-greenfield — pick up where left off, dispatch to harness).
 
-Any of these absent → **non-greenfield**, skip to Phase 3 (dispatch).
+If ANY condition fails (a manifest exists, OR a source file exists, OR README has 3+ substantive lines, OR seed docs exist) → **non-greenfield**, skip to Phase 3 (dispatch).
 
 ## Phase 1: Greenfield ideation Q&A
 
@@ -157,23 +157,38 @@ If `docs/backlog.md` already exists with content (re-run case), do NOT overwrite
 
 ## Phase 3: Dispatch to `/harness-bootstrap`
 
-Invoke `/harness-bootstrap` directly. It will detect the seed docs (`overview.md` + `techstack.md` exist), pre-fill its Phase 2 Q&A defaults from them, and proceed through scaffold → curate → sync → commit.
+After seed files are written (greenfield path) or immediately after Phase 0 returns non-greenfield, present a one-line summary and invoke `/harness-bootstrap` via the Skill tool. The harness will detect the seed docs (or existing manifest/source), pre-fill its Phase 2 Q&A defaults, and proceed through scaffold → curate → sync → commit.
 
 The handoff is **file-based**: this skill writes the seed docs and exits. `/harness-bootstrap` reads them on next invocation. No in-memory state, no tight coupling. User can pause between (ideate today, harness tomorrow) — the seed files persist.
 
-For pre-existing repos (Phase 0 said non-greenfield), this whole skill collapses to a one-line announcement and immediate dispatch:
+**Greenfield path — after writing seeds:**
+
+```
+Seed files written:
+  - docs/overview.md
+  - docs/techstack.md
+  - docs/backlog.md
+
+Dispatching to /harness-bootstrap to install the harness.
+```
+
+Then invoke `/harness-bootstrap` via the Skill tool.
+
+**Non-greenfield path — Phase 0 returned non-greenfield:**
 
 ```
 Detected non-greenfield repo (manifest + source files present).
 Dispatching to /harness-bootstrap.
 ```
 
-Then run `/harness-bootstrap`. Done.
+Then invoke `/harness-bootstrap` via the Skill tool.
+
+If the user prefers to invoke harness manually later (e.g. wants to review seed files first), present the option: "Seeds written; ready when you are. Run `/harness-bootstrap` to continue, or pause and resume later." The seed files persist; nothing is lost by waiting.
 
 ## Principles
 
 - **Lean Q&A, not PRD-mining.** Six questions max, four required. Skeleton-section depth only. Grown sections live for doc-sync, not pre-code speculation.
-- **One BIG backlog item, not five candidates.** Bootstrap doesn't know the roadmap. Pretending it does (LLM-guessed feature list) is noise. Single deterministic next-action via `/sb-todo` → `/sp:brainstorming` is the route.
+- **One BIG backlog item, not five candidates.** Bootstrap doesn't know the roadmap. Pretending it does (LLM-guessed feature list) is noise. Single deterministic next-action via `/sb-todo` → `superpowers:brainstorming` is the route.
 - **Files-as-contract handoff.** Write seed docs, exit. `/harness-bootstrap` consumes them. User can pause between phases.
 - **Pre-exist repos: thin pass-through.** Non-greenfield → immediate dispatch. Don't add ceremony.
 - **Never force harness on emptiness.** If user invokes `/harness-bootstrap` directly on truly empty repo, it redirects here. The redirect is one-way: this skill seeds, then dispatches. No infinite ping-pong.
