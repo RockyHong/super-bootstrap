@@ -6,12 +6,11 @@ Skip the per-project Claude setup grind. One command picks your skills, writes `
 
 Solo devs juggling multiple repos.
 
-**Repo needs at least one of:**
-- a manifest (`package.json` / `pyproject.toml` / `Cargo.toml` / etc.),
-- source files in any language, or
-- a README that describes the product / deps / structure.
+**Two paths, one entry:**
+- **Pre-existing repo** (has manifest, source files, or descriptive README) → `/super-bootstrap` detects code, dispatches to `/harness-bootstrap` which scaffolds the harness.
+- **Greenfield** (empty repo, no plan yet) → `/super-bootstrap` runs lean ideation Q&A (~6 questions), seeds `overview.md` + `techstack.md` + `backlog.md` (with one big roadmap item), then dispatches to `/harness-bootstrap`.
 
-Doc-only repos are fine if intent and shape are clear. Pure greenfield (empty repo, no plan written yet) is out of scope — sketch a brief README first, or run a product-ideation skill before this one.
+Doc-only repos with clear intent skip ideation. Truly empty repos enter ideation. The gate auto-routes — you only ever type `/super-bootstrap`.
 
 **How picks are chosen:** matched to your detected stack + workflow tools, deduped across sources with provenance, labeled by trust signal (Anthropic-vetted / popular / fresh / unaudited).
 
@@ -32,27 +31,43 @@ Run it:
 /super-bootstrap
 ```
 
-Then it walks these phases:
+`/super-bootstrap` is the gate. It detects greenfield vs. pre-existing and routes:
 
-1. **Scan + Q&A** — detects your stack, confirms with a few questions. Stops if the repo is empty.
-2. **Scaffold** — writes `CLAUDE.md` and outline `docs/techstack.md` + `docs/overview.md` from what was detected.
+**Pre-existing repo** — dispatches to `/harness-bootstrap` immediately. Harness walks:
+
+1. **Scan + Q&A** — detects stack, confirms with a few questions.
+2. **Scaffold** — writes `CLAUDE.md` and skeleton `docs/techstack.md` + `docs/overview.md`.
 3. **Curate** — picks skills / MCPs / hooks for your stack. Re-run refreshes against live sources.
-4. **Handoff** — Claude routes by task size: small → implement, medium → quick brainstorm, large → full [superpowers](https://github.com/obra/superpowers) pipeline. Doc-sync runs on every commit, filling in the outline docs.
+4. **Handoff** — Claude routes by task size: small → implement, medium → quick brainstorm, large → full [superpowers](https://github.com/obra/superpowers) pipeline. Doc-sync runs on every commit, filling skeleton docs.
 
-Commits the scaffold. Re-run any time.
+**Greenfield** — `/super-bootstrap` runs ideation first (~6 questions: problem / user / stack-pick from 2-3 LLM-proposed options / external-tools / optional distribution + ICP), writes `docs/overview.md` + `docs/techstack.md` + `docs/backlog.md` (with one BIG roadmap item), then dispatches to `/harness-bootstrap`. After harness lives, `/sb-todo` shows the BIG item; running `/sp:brainstorming` populates the backlog with feature breakdown + first-feature spec + plan.
+
+Commits scaffold output. Re-run any time — `/harness-bootstrap` directly skips the gate.
 
 ```mermaid
 flowchart TD
-    repo["your repo"]
-    repo --> scan["1. Scan + Q&A<br/>a few questions"]
-    scan --> scaffold["2. Scaffold + seed<br/>CLAUDE.md, outline docs"]
-    scaffold --> curate["3. Curate skills / MCPs / hooks<br/>fresh each run"]
-    curate --> handoff["4. Handoff to Claude"]
-
-    scaffold -.->|writes| files["CLAUDE.md<br/>docs/techstack.md (outline)<br/>docs/overview.md (outline)<br/>docs/superpowers/<br/>.claude/rules/ (path-scoped)"]
-    curate -.->|writes| pins[".claude/settings.json<br/>(enabledPlugins +<br/>extraKnownMarketplaces)"]
-    handoff -.->|drives with| engine["route triage<br/>+ doc-sync on commit<br/>(fills in outline docs<br/>over time)"]
+    user(["user types /super-bootstrap"])
+    user --> gate{"greenfield?"}
+    gate -->|yes| ideate["ideation Q&A<br/>(6 questions)"]
+    gate -->|no| harness
+    ideate -->|writes| seeds["docs/overview.md<br/>docs/techstack.md<br/>docs/backlog.md (1 BIG item)"]
+    seeds --> harness["/harness-bootstrap"]
+    harness --> scan["scan + Q&A"]
+    scan --> scaffold["scaffold CLAUDE.md<br/>+ skeleton docs"]
+    scaffold --> curate["curate skills / MCPs / hooks"]
+    curate --> commit["commit + handoff"]
+    commit -.->|drives with| engine["route triage<br/>+ doc-sync on commit<br/>(fills skeletons over time)"]
+    commit -.->|next move| sbtodo["/sb-todo → /sp:brainstorming<br/>(greenfield: populates backlog)"]
 ```
+
+## Skills shipped
+
+| Skill | What it does |
+|---|---|
+| `/super-bootstrap` | Public entry. Detects greenfield, runs ideation Q&A if so, then dispatches to `/harness-bootstrap`. |
+| `/harness-bootstrap` | Installs the harness — CLAUDE.md, skeleton docs, path-scoped rules, curated picks. |
+| `/sb-commit` | Session-isolated, doc-sync-gated commit. No push. |
+| `/sb-todo` | Active-work scanner — reads `docs/superpowers/specs+plans/` and `docs/backlog.md`. |
 
 ## How files are handled
 
@@ -63,7 +78,7 @@ flowchart TD
 | `docs/`, `.claude/rules/` | **Seeded** with new files from detected stack. User-grown content never touched on re-run. |
 | `.env*`, `*.key`, `*credential*` | **Skipped** from scan entirely — never read, never written. |
 
-Bundles `/todo` (active work scanner) and `/commit` (session-isolated, doc-sync-gated, conventional, no push), so a fresh clone gets the same setup.
+Bundles `/sb-todo` (active-work scanner) and `/sb-commit` (session-isolated, doc-sync-gated, conventional, no push), so a fresh clone of any bootstrapped repo invokes the same namespaced commands. Names are prefixed to avoid collision with other plugins (e.g. `commit-commands:commit`).
 
 ## Sources
 
