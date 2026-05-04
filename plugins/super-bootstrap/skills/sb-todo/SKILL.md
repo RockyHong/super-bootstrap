@@ -1,6 +1,6 @@
 ---
-name: todo
-description: "Scan docs/superpowers/ for active specs and plans. Show status table with cycle stage, progress, and blockers. Suggest what to tackle next. Pairs with /super-bootstrap — works in any repo with the superpowers pipeline."
+name: sb-todo
+description: "Scan docs/superpowers/ for active specs and plans. Show status table with cycle stage, progress, and blockers. Suggest what to tackle next. Bundled with super-bootstrap — works in any repo with the superpowers pipeline."
 tags: [todo, scan, status, pipeline, superpowers]
 ---
 
@@ -8,7 +8,7 @@ tags: [todo, scan, status, pipeline, superpowers]
 
 Scan the project's `docs/superpowers/` folder for active design specs and implementation plans. Show what's in flight, what's blocked, and what to do next.
 
-Pairs with `/super-bootstrap`. The bootstrap plan tells future sessions to "Run `/todo`" — this is that command.
+Bundled with `/super-bootstrap`. The harness CLAUDE.md and bootstrap plan tell future sessions to "Run `/sb-todo`" — this is that command.
 
 ## Protocol
 
@@ -97,5 +97,5 @@ If specs and plans exist for the same feature (matched by date prefix or name):
 
 - **Read-only** — this skill only reports. It never modifies files.
 - **Fast** — use Glob to find files, then Read to classify. No agents, no searches.
-- **Works in any repo** — only requires `docs/superpowers/` to exist (created by `/super-bootstrap`).
+- **Works in any repo** — only requires `docs/superpowers/` to exist (created by `/harness-bootstrap`).
 - **No git operations** — purely file-based scan.
