@@ -40,7 +40,7 @@ Run it:
 3. **Curate** — picks skills / MCPs / hooks for your stack. Re-run refreshes against live sources.
 4. **Handoff** — Claude routes by task size: small → implement, medium → quick brainstorm, large → full [superpowers](https://github.com/obra/superpowers) pipeline. Doc-sync runs on every commit, filling skeleton docs.
 
-**Greenfield** — `/super-bootstrap` runs ideation first (~6 questions: problem / user / stack-pick from 2-3 LLM-proposed options / external-tools / optional distribution + ICP), writes `docs/overview.md` + `docs/techstack.md` + `docs/backlog.md` (with one BIG roadmap item), then dispatches to `/harness-bootstrap`. After harness lives, `/sb-todo` shows the BIG item; running `/sp:brainstorming` populates the backlog with feature breakdown + first-feature spec + plan.
+**Greenfield** — `/super-bootstrap` runs ideation first (~6 questions: problem / user / stack-pick from 2-3 LLM-proposed options / external-tools / optional distribution + ICP), writes `docs/overview.md` + `docs/techstack.md` + `docs/backlog.md` (with one BIG roadmap item), then dispatches to `/harness-bootstrap`. After harness lives, `/sb-todo` shows the BIG item; running `superpowers:brainstorming` populates the backlog with feature breakdown + first-feature spec + plan.
 
 Commits scaffold output. Re-run any time — `/harness-bootstrap` directly skips the gate.
 
@@ -57,7 +57,7 @@ flowchart TD
     scaffold --> curate["curate skills / MCPs / hooks"]
     curate --> commit["commit + handoff"]
     commit -.->|drives with| engine["route triage<br/>+ doc-sync on commit<br/>(fills skeletons over time)"]
-    commit -.->|next move| sbtodo["/sb-todo → /sp:brainstorming<br/>(greenfield: populates backlog)"]
+    commit -.->|next move| sbtodo["/sb-todo → superpowers:brainstorming<br/>(greenfield: populates backlog)"]
 ```
 
 ## Skills shipped
