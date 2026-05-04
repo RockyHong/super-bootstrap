@@ -401,13 +401,13 @@ Auto-curate Claude Code tooling matched to detected stack AND product context. *
 
 1. **Live source query — non-skippable, runs every invocation.** Stable project ≠ stable upstream. Marketplaces add picks, deprecate picks, change licenses, between any two `/super-bootstrap` runs. The only way to detect that drift is to actually query — even when the project hasn't changed.
 
-   Issue WebFetch / Bash queries against each source. Examples:
-   - **Anthropic plugin marketplace** — `WebFetch https://github.com/anthropics/claude-plugins-official` (or `gh api repos/anthropics/claude-plugins-official/contents/plugins`) — Anthropic-vetted picks.
-   - **awesome-skills** — `WebFetch https://awesome-skills.com` (or `https://skills.sh`) — community-curated index, filter by stack signals.
+   Issue WebFetch / Bash queries against each source. **GitHub-only pool — sites without backing repos can't surface trust signals (stars / recency / license).** Examples:
+   - **Anthropic plugin marketplace** — `gh api repos/anthropics/claude-plugins-official/contents/plugins` — Anthropic-vetted picks (🛡 tier).
+   - **MCP official registry** — `gh api repos/modelcontextprotocol/registry/contents` (or query the registry API directly) — official MCP discovery service. Indexes both steering-group reference impls AND community-published servers. Primary source for MCP picks. Picks authored under `modelcontextprotocol/*` org auto-tier as 🛡 vetted.
+   - **everything-claude-code (affaan-m / ECC)** — `gh api repos/affaan-m/everything-claude-code/contents` — 172k-star MIT-licensed harness component bundle (skills + agents + rules + hooks + MCP configs). Strongest source for **language-specific rules** (TS / Python / Go / etc.) — Phase 3b rule-seed step should check ECC's `rules/` first before scaffolding from generic skeleton.
    - **awesome-claude-skills (ComposioHQ)** — `gh api repos/ComposioHQ/awesome-claude-skills/contents/README.md` (or WebFetch) — actively-curated category index (~200 entries, "production ready" bar). Strongest source for **workflow / external-tools** picks (78 Composio SaaS workflow skills covering Notion / Slack / Jira / Linear / CRM) — matches Phase 2 Q4 external-tools signal.
-   - **everything-claude-code (affaan-m / ECC)** — `gh api repos/affaan-m/everything-claude-code/contents` — 172k-star MIT-licensed harness component bundle (182 skills + 48 agents + 34 rules + 20+ hooks + 14 MCP configs, Anthropic-hackathon-winner trust). Strongest source for **language-specific rules** (TS / Python / Go / etc.) — Phase 3b rule-seed step should check ECC's `rules/` first before scaffolding from generic skeleton.
+   - **VoltAgent/awesome-agent-skills** — `gh api repos/VoltAgent/awesome-agent-skills/contents` — 1000+ skills from official dev teams (Anthropic, Vercel, Stripe, Cloudflare, Sentry, Hugging Face, Figma) + community. MIT-licensed, ~20k stars. Cross-reference for cross-team picks the Claude-only catalogs miss.
    - **jeffallan/claude-skills** — `gh api repos/Jeffallan/claude-skills/contents` — broad fullstack-skills marketplace (~65 skills covering fullstack workflows, project-mgmt integration). Direct query > aggregator listing for freshness.
-   - **mcpmarket** — `WebFetch https://mcpmarket.com` (MCP servers).
    - **Fast-path** — if `claude-code-setup` plugin is installed locally, invoke `/setup` and merge its picks.
 
    If a single source is unreachable (404 / rate limit / network), note the failure inline and continue with the others — **never skip the whole step**. Skipping = stale picks = silent failure mode of the entire phase.
@@ -436,8 +436,8 @@ Auto-curate Claude Code tooling matched to detected stack AND product context. *
    - **Pinned but source missing** — `enabledPlugins` entry exists with no resolvable source (not in `extraKnownMarketplaces`, not Anthropic-vetted). **Live-query source pool first** to find the plugin's real marketplace; if found, propose **resolve** (add marketplace to `extraKnownMarketplaces`) with trust block; if not found in any source, propose **drop** (orphan, can't reproduce on cloud / fresh machine).
 
 6. **Present batch with full trust signal per new / changed pick.** Each row leads with a **trust tier** so user judges on the right axis (sharpness vs. audit-depth, not source rank):
-   - `🛡 vetted` — `claude-plugins-official` (Anthropic-audited, license-clean, slower to land sharp picks)
-   - `★ popular` — non-Anthropic, ≥1k stars + commit ≤90d ago + license clean
+   - `🛡 vetted` — authored under `anthropics/*` or `modelcontextprotocol/*` org (Anthropic-audited or MCP steering-group authored, license-clean, slower to land sharp picks). Includes `claude-plugins-official` and any `modelcontextprotocol/*` reference impls surfaced via the registry.
+   - `★ popular` — outside the vetted orgs above, ≥1k stars + commit ≤90d ago + license clean
    - `🆕 fresh` — recent activity (≤30d) but lower stars / smaller pool
    - `⚠ unaudited` — no license, archived, last-commit >12mo, or stars <100
 
