@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "super-bootstrap",
-  "description": "Self-hosted marketplace for the super-bootstrap skill — superpowers pipeline bootstrap for any repo.",
+  "description": "Self-hosted marketplace for super-bootstrap — greenfield-aware superpowers pipeline bootstrap (super-bootstrap → harness-bootstrap, plus sb-commit + sb-todo).",
   "owner": {
     "name": "Rocky Hong",
     "email": "contact@rockyhong.com"
@@ -10,8 +10,8 @@
     {
       "name": "super-bootstrap",
       "source": "./plugins/super-bootstrap",
-      "description": "Bootstrap or sync the superpowers development pipeline in any repo. Solo-dev opinionated. Project-adaptive.",
-      "version": "1.0.0",
+      "description": "Bootstrap or sync the superpowers development pipeline in any repo. /super-bootstrap gates greenfield, /harness-bootstrap installs the harness, /sb-commit + /sb-todo bundled. Solo-dev opinionated. Project-adaptive.",
+      "version": "2.0.0",
       "category": "development",
       "tags": ["bootstrap", "scaffold", "setup", "meta", "docs"],
       "author": {
