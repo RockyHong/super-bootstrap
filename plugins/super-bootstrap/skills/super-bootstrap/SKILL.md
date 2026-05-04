@@ -414,7 +414,13 @@ Auto-curate Claude Code tooling matched to detected stack AND product context. *
 
 2. **Filter to matched picks only** — drop generic / spray suggestions. Match against stack signals AND product/workflow signals. A Notion MCP isn't "off-stack" if Q&A surfaced docs-heavy workflow.
 
-3. **Trust signal lookup per pick** — for any plugin NOT from `claude-plugins-official`, fetch (via WebFetch or `gh api`):
+3. **Dedupe by canonical name across sources.** Same skill / MCP often appears in multiple sources (e.g. `react-expert` in Anthropic + ECC + jeffallan with different versions / licenses / recency). Sources are peers, not ranked — never silently default to one. Process:
+   - Group hits by canonical plugin name (case-insensitive, ignore source suffix)
+   - Pick the **primary row** by highest composite signal: stars × recency × license-clean. Tie-break by Anthropic-vetted if present.
+   - Collapse other variants into a single `also in: <source-A> · <source-B>` line under the primary row, with provenance: stars / last-commit / license per alternate.
+   - User can expand alternates at present-batch step if the primary's trust signal looks weaker than an alternate's.
+
+4. **Trust signal lookup per pick** — for any plugin NOT from `claude-plugins-official`, fetch (via WebFetch or `gh api`):
    - Repo URL + GitHub stars
    - Last-commit recency (e.g. "3d ago", "14mo ago")
    - License (or "no license" — flag as ⚠)
@@ -422,39 +428,49 @@ Auto-curate Claude Code tooling matched to detected stack AND product context. *
 
    Hooks are elevated risk: auto-exec on every tool call (PreToolUse / PostToolUse / UserPromptSubmit). Always tag hooks: `⚠ HOOK = auto-executes. Audit source before accept.`
 
-4. **Re-run delta** — if `.claude/settings.json` already has pinned picks, diff the new curation against the pinned set. **Re-fetch trust signals on every pinned pick** (not just new ones) — license can change, last-commit can age, repo can be archived.
+5. **Re-run delta** — if `.claude/settings.json` already has pinned picks, diff the new curation against the pinned set. **Re-fetch trust signals on every pinned pick** (not just new ones) — license can change, last-commit can age, repo can be archived.
    - Pinned + still recommended + trust block unchanged → keep silently, mark `✓ pinned`
    - Pinned + still recommended + trust block moved (license / last-commit / archive status changed) → re-show that pick's trust block, ask user to re-confirm
    - New pick recommended (upstream added it; or stack signal changed) → propose as **add**
    - Pinned but no longer recommended (deprecated upstream; license changed; stack changed) → propose as **drop** with reason
    - **Pinned but source missing** — `enabledPlugins` entry exists with no resolvable source (not in `extraKnownMarketplaces`, not Anthropic-vetted). **Live-query source pool first** to find the plugin's real marketplace; if found, propose **resolve** (add marketplace to `extraKnownMarketplaces`) with trust block; if not found in any source, propose **drop** (orphan, can't reproduce on cloud / fresh machine).
 
-5. **Present batch with full trust signal per new / changed pick:**
+6. **Present batch with full trust signal per new / changed pick.** Each row leads with a **trust tier** so user judges on the right axis (sharpness vs. audit-depth, not source rank):
+   - `🛡 vetted` — `claude-plugins-official` (Anthropic-audited, license-clean, slower to land sharp picks)
+   - `★ popular` — non-Anthropic, ≥1k stars + commit ≤90d ago + license clean
+   - `🆕 fresh` — recent activity (≤30d) but lower stars / smaller pool
+   - `⚠ unaudited` — no license, archived, last-commit >12mo, or stars <100
+
    ```
    Skill / MCP / hook curation for {project} ({stack}):
 
-     [SKILL]    {name}@{source}                 [+ add | ✓ keep | − drop]
+     [SKILL]   🛡 {name}@{source}                  [+ add | ✓ keep | − drop]
+                Why: {matched signal, one-line value}
+                (vetted picks: trust block omitted)
+
+     [SKILL]   ★ {name}@{source}                   [+ add | ✓ keep | − drop]
                 ★ {stars} · last commit {recency} · {license}
                 Permissions: {read-only / shell / network / etc.}
                 Why: {matched signal, one-line value}
+                also in: {alt-source-A} (★{stars} · {recency} · {license}) · {alt-source-B} (...)
 
-     [HOOK]     {name}@{source}                 [+ add]
+     [HOOK]    ⚠ {name}@{source}                   [+ add]
                 ★ {stars} · last commit {recency} · {license}
                 Permissions: ⚠ {what triggers + what it runs}
                 Why: {matched signal}
                 ⚠ HOOK = auto-executes. Audit source before accept.
 
-     [MCP]      {name}@{source}                 [+ add]
+     [MCP]     🆕 {name}@{source}                  [+ add]
                 ★ {stars} · last commit {recency} · {license}
                 Permissions: {network / shell / file-system / etc.}
                 Why: {matched signal}
 
-   Accept all / reject specific / discuss thoughts?
+   Accept all / reject specific / discuss thoughts / expand alternates?
    ```
 
-   Picks from `claude-plugins-official` can drop the trust block (Anthropic-vetted) — keep just `Why:`.
+   `also in:` line collapses dedupe alternates from Step 3. User can ask to expand if primary's signal looks weaker than an alternate.
 
-6. **Apply approved — write `.claude/settings.json`.** Source of truth: project-scope intent, committed, travels with repo, cloud-friendly. Device install (`claude plugin install`) is optional convenience layered on top.
+7. **Apply approved — write `.claude/settings.json`.** Source of truth: project-scope intent, committed, travels with repo, cloud-friendly. Device install (`claude plugin install`) is optional convenience layered on top.
    - Add accepted picks to `enabledPlugins`. Drop rejected picks.
    - For any plugin NOT from `claude-plugins-official`, ensure its source is in `extraKnownMarketplaces` so cloud sessions / fresh machines can resolve.
    - Example shape:
