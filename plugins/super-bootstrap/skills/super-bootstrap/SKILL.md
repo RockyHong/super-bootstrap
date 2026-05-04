@@ -115,15 +115,9 @@ Detect language/runtime by manifest files at repo root (e.g. `package.json`, `ts
 - Check for: `docs/`, `README.md`, `CLAUDE.md`, `.claude/`, monorepo indicators
 - Note existing doc structure (don't read docs deeply yet)
 
-### Git State
-
-- `git log --oneline -10` — commit style, recent activity
-- `git shortlog -sn --all | head -5` — contributor count
-- Current branch
-
 ### Existing CLAUDE.md
 
-If it exists, read it. The pipeline may already be partially or fully present — note what's already there. **Also note legacy-skeleton blocks** (Coding Standards code-block walls, framework-specific patterns under pipeline-owned headings, large Project Structure trees) — these become migration candidates in Phase 3b (move to `rules/` or `docs/techstack.md` grown sections).
+If it exists, read it. The pipeline may already be partially or fully present — note what's already there. **Also note legacy-skeleton blocks** (Coding Standards code-block walls, framework-specific patterns under pipeline-owned headings, large Project Structure trees) — these become migration candidates in Phase 3b. Default route for enforcement-shaped content (imperatives, "must / never / always") is `.claude/rules/<scope>.md`; only browsable reference goes to `docs/techstack.md` grown sections. See Phase 3b migration table.
 
 ### Rule-signal detection
 
@@ -314,20 +308,27 @@ Migration patterns (illustrative — judge by content shape, not heading exact-m
 
 | Legacy CLAUDE.md content | Proposed destination | Reason |
 |---|---|---|
-| `## Coding Standards` with code-block walls (component examples, Tailwind tokens, async patterns) | `docs/techstack.md` § Coding Patterns (grown section) | Reference material — read on demand, not always-loaded |
-| Framework-specific rules under a CLAUDE.md heading (e.g. "Components", "Tailwind", "Imports") | `.claude/rules/<framework>.md` | Path-scoped — fires with full body when component file is read |
+| Enforcement rules with clear file-scope (component patterns, Tailwind tokens, async style, framework idioms) | `.claude/rules/<scope>.md` | Path-scoped — full body fires when matching file is read. **Cold-file alternative would silent-miss enforcement.** |
+| Reference material — rejected alternatives, design rationale, architecture decisions, deep examples for browsing | `docs/techstack.md` § Coding Patterns (grown section) | On-demand reading, not enforcement. Safe to be cold. |
 | MV3 / service-worker rules path-bound to `src/background/**` | `.claude/rules/mv3.md` | Path-scoped |
 | `## Project Structure` directory tree | drop | `ls` / `tree` covers it; not load-bearing for any decision |
-| Cross-cutting items inside an MV3 list (storage-key constants, theme-token rule, type-centralization) | keep in CLAUDE.md (these cut UI ↔ background, no clean glob) | Genuinely ambient |
+| Cross-cutting items inside a path-scoped list (storage-key constants, type-centralization across UI ↔ background, message-contract types) | keep in CLAUDE.md (no clean glob — every layer touches them) | Genuinely ambient |
+
+**Default-to-rules when ambiguous.** A "Coding Standards" block named like reference but written as imperatives (must / never / always) is enforcement — silent-miss in a cold file costs more than slight rule over-attach.
 
 Surface the migration plan as a single proposal:
 
 ```
 {path}: legacy content detected — propose migrations:
 
-  [Coding Standards: Components/Tailwind/Async/Imports]
+  [Coding Standards: Components/Tailwind (enforcement, frontend-scoped)]
+    → .claude/rules/components.md
+    Reason: imperatives ("use cn()", "function components only") — path-scoped fires
+    on component-file reads. Cold techstack.md = silent miss.
+
+  [Coding Standards: rejected alternatives / design rationale, if any]
     → docs/techstack.md § Coding Patterns
-    Reason: reference material, not always-loaded rule
+    Reason: browsable reference, not enforcement
 
   [MV3 Architecture Rules #1-6 (background-scoped)]
     → .claude/rules/mv3.md
@@ -481,11 +482,11 @@ Auto-curate Claude Code tooling matched to detected stack AND product context. *
 |-------------------------------------|--------------|---------------------|
 | CLAUDE.md: Workflow                 | ⚠ drifted    | updated (approved)  |
 | CLAUDE.md: Doc Sync                 | ✓ current    | —                   |
-| CLAUDE.md: Coding Standards         | ⚠ legacy     | migrated → techstack.md |
+| CLAUDE.md: Coding Standards (enforcement) | ⚠ legacy | migrated → rules/components.md |
 | CLAUDE.md: MV3 Architecture (path-scoped) | ⚠ legacy | migrated → rules/mv3.md |
 | CLAUDE.md: Rules summary            | ⚠ drifted    | regenerated from rules/ |
 | docs/techstack.md: Runtime          | ⚠ drifted    | updated (approved)  |
-| docs/techstack.md: Coding Patterns  | ⚠ grown      | absorbed migrated content |
+| docs/techstack.md: Coding Patterns  | ✓ current    | (no enforcement migration this run) |
 | docs/overview.md: Problem           | ✓ current    | —                   |
 | docs/superpowers/specs/             | ✓ exists     | —                   |
 | docs/superpowers/plans/bootstrap.md | ⚠ exists     | kept (user state)   |
