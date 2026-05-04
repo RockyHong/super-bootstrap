@@ -22,13 +22,13 @@ OK to proceed?
 ### Routes
 
 **Small** — single file, clear intent, no design decisions
-→ implement → user review → doc sync → `/commit`
+→ implement → user review → doc sync → `/sb-commit`
 
 **Medium** — multi-file, some design choices, one session
-→ Brainstorm (quick, inline) → implement → user review → doc sync → `/commit`
+→ Brainstorm (quick, inline) → implement → user review → doc sync → `/sb-commit`
 
 **Large** — multi-session, architectural, unclear scope
-→ Full pipeline: brainstorm → spec → plan → execute → user review → doc sync → `/commit`
+→ Full pipeline: brainstorm → spec → plan → execute → user review → doc sync → `/sb-commit`
 → Specs go to `docs/superpowers/specs/`, plans to `docs/superpowers/plans/`
 
 User picks the route. **User instructions override Superpowers defaults.**
