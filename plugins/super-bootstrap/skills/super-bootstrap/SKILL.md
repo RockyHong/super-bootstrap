@@ -401,8 +401,8 @@ Auto-curate Claude Code tooling matched to detected stack AND product context. *
 
    Issue WebFetch / Bash queries against each source. Examples:
    - **Anthropic plugin marketplace** — `WebFetch https://github.com/anthropics/claude-plugins-official` (or `gh api repos/anthropics/claude-plugins-official/contents/plugins`) — Anthropic-vetted picks.
-   - **awesome-skills** — `WebFetch https://awesome-skills.com` (or `https://skills.sh`) — fetch index, filter by stack signals.
-   - **tonsofskills** — `WebFetch https://tonsofskills.com`. Or `Bash: ccpi search <stack>` if the `ccpi` CLI is installed.
+   - **awesome-skills** — `WebFetch https://awesome-skills.com` (or `https://skills.sh`) — community-curated index, filter by stack signals.
+   - **jeffallan/claude-skills** — `gh api repos/Jeffallan/claude-skills/contents` — broad fullstack-skills marketplace (~65 skills covering fullstack workflows, project-mgmt integration). Direct query > aggregator listing for freshness.
    - **mcpmarket** — `WebFetch https://mcpmarket.com` (MCP servers).
    - **Fast-path** — if `claude-code-setup` plugin is installed locally, invoke `/setup` and merge its picks.
 
@@ -423,6 +423,7 @@ Auto-curate Claude Code tooling matched to detected stack AND product context. *
    - Pinned + still recommended + trust block moved (license / last-commit / archive status changed) → re-show that pick's trust block, ask user to re-confirm
    - New pick recommended (upstream added it; or stack signal changed) → propose as **add**
    - Pinned but no longer recommended (deprecated upstream; license changed; stack changed) → propose as **drop** with reason
+   - **Pinned but source missing** — `enabledPlugins` entry exists with no resolvable source (not in `extraKnownMarketplaces`, not Anthropic-vetted). **Live-query source pool first** to find the plugin's real marketplace; if found, propose **resolve** (add marketplace to `extraKnownMarketplaces`) with trust block; if not found in any source, propose **drop** (orphan, can't reproduce on cloud / fresh machine).
 
 5. **Present batch with full trust signal per new / changed pick:**
    ```
