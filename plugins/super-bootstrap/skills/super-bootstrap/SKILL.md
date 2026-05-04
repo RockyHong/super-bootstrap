@@ -402,6 +402,7 @@ Auto-curate Claude Code tooling matched to detected stack AND product context. *
    Issue WebFetch / Bash queries against each source. Examples:
    - **Anthropic plugin marketplace** — `WebFetch https://github.com/anthropics/claude-plugins-official` (or `gh api repos/anthropics/claude-plugins-official/contents/plugins`) — Anthropic-vetted picks.
    - **awesome-skills** — `WebFetch https://awesome-skills.com` (or `https://skills.sh`) — community-curated index, filter by stack signals.
+   - **awesome-claude-skills (ComposioHQ)** — `gh api repos/ComposioHQ/awesome-claude-skills/contents/README.md` (or WebFetch) — actively-curated category index (~200 entries, "production ready" bar). Strongest source for **workflow / external-tools** picks (78 Composio SaaS workflow skills covering Notion / Slack / Jira / Linear / CRM) — matches Phase 2 Q4 external-tools signal.
    - **jeffallan/claude-skills** — `gh api repos/Jeffallan/claude-skills/contents` — broad fullstack-skills marketplace (~65 skills covering fullstack workflows, project-mgmt integration). Direct query > aggregator listing for freshness.
    - **mcpmarket** — `WebFetch https://mcpmarket.com` (MCP servers).
    - **Fast-path** — if `claude-code-setup` plugin is installed locally, invoke `/setup` and merge its picks.
