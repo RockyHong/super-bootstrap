@@ -1,7 +1,7 @@
 ---
-name: super-bootstrap
-description: "Bootstrap or sync the superpowers development pipeline in any repo. Walks all phases — creates what's missing, syncs what's drifted, skips what's current. Scaffolds fixed macro docs (overview, techstack, superpowers/) and adaptive persistent docs (specs/, backlog) based on project needs. Bakes in doc-sync discipline — docs travel with code. Solo dev workflow."
-tags: [bootstrap, scaffold, setup, meta, docs]
+name: harness-bootstrap
+description: "Install or sync the superpowers harness in a repo with code already present. Scaffolds CLAUDE.md, skeleton docs (overview, techstack, superpowers/), path-scoped rules, and curated skill/MCP/hook picks; bakes in doc-sync discipline. Greenfield repos route through /super-bootstrap first to seed overview + techstack + backlog. Solo dev workflow."
+tags: [harness, scaffold, setup, meta, docs]
 ---
 
 # Super Bootstrap — Superpowers Pipeline for Any Repo
