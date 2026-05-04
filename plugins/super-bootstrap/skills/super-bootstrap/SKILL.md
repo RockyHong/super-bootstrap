@@ -316,31 +316,26 @@ Migration patterns (illustrative — judge by content shape, not heading exact-m
 
 **Default-to-rules when ambiguous.** A "Coding Standards" block named like reference but written as imperatives (must / never / always) is enforcement — silent-miss in a cold file costs more than slight rule over-attach.
 
-Surface the migration plan as a single proposal:
+Surface the migration plan as a single proposal. Format below pins shape — one row per legacy block, judged via the migration table above. Destinations: `.claude/rules/<scope>.md` | `docs/techstack.md` § Coding Patterns | keep in CLAUDE.md | drop.
 
 ```
 {path}: legacy content detected — propose migrations:
 
-  [Coding Standards: Components/Tailwind (enforcement, frontend-scoped)]
-    → .claude/rules/components.md
-    Reason: imperatives ("use cn()", "function components only") — path-scoped fires
-    on component-file reads. Cold techstack.md = silent miss.
+  [<legacy heading>: <area> (<role>, <scope>)]
+    → <destination>
+    Reason: <one line tying content shape to destination choice>
 
-  [Coding Standards: rejected alternatives / design rationale, if any]
-    → docs/techstack.md § Coding Patterns
-    Reason: browsable reference, not enforcement
-
-  [MV3 Architecture Rules #1-6 (background-scoped)]
-    → .claude/rules/mv3.md
-    Reason: path-scoped — full body fires on background file read
-
-  [MV3 Architecture Rules #7-10 (cross-cutting)]
-    → keep in CLAUDE.md (cuts UI ↔ background)
-
-  [Project Structure tree]
-    → drop (ls / tree covers it)
+  ... (one row per legacy block)
 
 Apply migrations? (y / n / select-per-section)
+```
+
+Concrete fill-in (one example, not a template — judge by analogy for the actual repo):
+
+```
+  [Coding Standards: Components/Tailwind (enforcement, frontend-scoped)]
+    → .claude/rules/components.md
+    Reason: imperatives — path-scoped fires on component reads, cold-file would silent-miss.
 ```
 
 Per-migration handling:
