@@ -36,7 +36,7 @@ flowchart TD
     scaffold --> curate["3. Curate skills / MCPs / hooks<br/>fresh each run"]
     curate --> handoff["4. Handoff to Claude"]
 
-    scaffold -.->|writes| files["CLAUDE.md<br/>docs/techstack.md (outline)<br/>docs/overview.md (outline)<br/>docs/superpowers/"]
+    scaffold -.->|writes| files["CLAUDE.md<br/>docs/techstack.md (outline)<br/>docs/overview.md (outline)<br/>docs/superpowers/<br/>.claude/rules/ (path-scoped)"]
     curate -.->|writes| pins[".claude/settings.json<br/>(enabledPlugins +<br/>extraKnownMarketplaces)"]
     handoff -.->|drives with| engine["route triage<br/>+ doc-sync on commit<br/>(fills in outline docs<br/>over time)"]
 ```
@@ -47,6 +47,7 @@ flowchart TD
 - **`docs/techstack.md`** — outline from detected runtime / framework / build. Rules + patterns fill in over commits.
 - **`docs/overview.md`** — outline from your Q&A (problem / user / current state). Module index + data flow fill in over commits.
 - **`.claude/settings.json`** — merges `enabledPlugins` + `extraKnownMarketplaces`. Other settings preserved.
+- **`.claude/rules/`** — path-scoped rules with `globs:` frontmatter. Auto-load when you read a matching file (e.g. `rules/mv3.md` fires on `src/background/**`). Skeletons seed from Phase 1 stack signals; bodies grow via doc-sync.
 - **`.claude/` plugin cache** — lands next session when Claude Code resolves the new plugins.
 - **`docs/superpowers/{specs,plans}/`** — pipeline workspace. `/todo` scans this for active work.
 - **`docs/specs/`** *(adaptive)* — persistent feature specs, opt-in during Q&A.
@@ -58,7 +59,7 @@ Bundles `/todo` (active work scanner) and `/commit` (session-isolated, doc-sync-
 
 **Needs code in the repo** — a manifest, a source file, or a README. Empty repos: come back once you've written something. For brand-new ideation, use a product-ideation skill first.
 
-Best for solo devs juggling multiple repos. Wide stack support — picks pulled from Anthropic's marketplace, awesome-skills, tonsofskills, and mcpmarket, matched to your stack and tools. Sensitive files (`.env*`, `*.key`, `*credential*`) skipped from scan.
+Best for solo devs juggling multiple repos. Wide stack support — picks pulled from Anthropic's marketplace, awesome-skills, ComposioHQ's awesome-claude-skills, affaan-m's everything-claude-code, jeffallan/claude-skills, and mcpmarket, matched to your stack and tools. Each pick gets a trust tier (vetted / popular / fresh / unaudited) and dedupe across sources with provenance. Sensitive files (`.env*`, `*.key`, `*credential*`) skipped from scan.
 
 ## References
 
@@ -67,9 +68,11 @@ Best for solo devs juggling multiple repos. Wide stack support — picks pulled 
 | [superpowers](https://github.com/obra/superpowers) | Workflow pipeline (brainstorm → spec → plan → execute) baked into the CLAUDE.md |
 | [andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | Source of the Coding Principles section in the scaffolded CLAUDE.md (Karpathy-derived guardrails) |
 | [claude-code-setup](https://claude.com/plugins/claude-code-setup) | Anthropic's plugin recommender — fast-path source if installed |
-| [Anthropic plugin marketplace](https://claude.com/plugins) | Vetted skills, MCPs, hooks, subagents |
-| [awesome-skills](https://awesome-skills.com) | Community skill catalog |
-| [tonsofskills](https://tonsofskills.com) | Community skill catalog (`ccpi` CLI) |
+| [Anthropic plugin marketplace](https://claude.com/plugins) | Vetted skills, MCPs, hooks, subagents (🛡 tier) |
+| [awesome-skills](https://awesome-skills.com) | Community skill index |
+| [awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) | Curated category index, strong on workflow / external-tools picks |
+| [everything-claude-code (ECC)](https://github.com/affaan-m/everything-claude-code) | Component bundle (skills + agents + rules + hooks). Phase 3b prefers ECC's language-specific rules over local skeletons. |
+| [Jeffallan/claude-skills](https://github.com/Jeffallan/claude-skills) | Fullstack-skills marketplace |
 | [mcpmarket](https://mcpmarket.com) | MCP server catalog |
 
 ## License
