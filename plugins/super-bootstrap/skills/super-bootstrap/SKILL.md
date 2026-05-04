@@ -128,6 +128,8 @@ Phase 1 also flags which `.claude/rules/*.md` files Phase 3b should seed. Signal
 - **Migrations dir** (`migrations/`, `db/migrate/`, `prisma/migrations/`) → flag `rules/migrations.md` for body-fill via doc-sync (machinery-only seed at scaffold).
 - **Tests dir** with non-trivial structure (`tests/`, `__tests__/`, `*.test.*` patterns) → flag `rules/tests.md` for body-fill via doc-sync.
 
+**ECC-first seed source for language-scoped rules.** Before scaffolding from local `assets/rules-*-skeleton.md`, check ECC (`gh api repos/affaan-m/everything-claude-code/contents/rules`) for a matching language/framework rule. If ECC ships one, propose seeding from ECC (with attribution comment + license note) — defer to specialists. Local skeletons are the fallback. Cross-cutting / project-specific rules (e.g. MV3, custom service-worker patterns) stay on local skeletons.
+
 Adjacent stacks (Bun + Next, Deno + Fresh, Tauri + React, etc.) infer by analogy. Unknown stacks → skip rule-seeding for that signal; user can add later.
 
 **Output of Phase 1:** A mental model of "what kind of project is this" — stack name, structure shape, maturity level, **which rule files to seed in Phase 3b**, **which legacy CLAUDE.md sections need migration**. NOT a deep analysis.
@@ -403,6 +405,7 @@ Auto-curate Claude Code tooling matched to detected stack AND product context. *
    - **Anthropic plugin marketplace** — `WebFetch https://github.com/anthropics/claude-plugins-official` (or `gh api repos/anthropics/claude-plugins-official/contents/plugins`) — Anthropic-vetted picks.
    - **awesome-skills** — `WebFetch https://awesome-skills.com` (or `https://skills.sh`) — community-curated index, filter by stack signals.
    - **awesome-claude-skills (ComposioHQ)** — `gh api repos/ComposioHQ/awesome-claude-skills/contents/README.md` (or WebFetch) — actively-curated category index (~200 entries, "production ready" bar). Strongest source for **workflow / external-tools** picks (78 Composio SaaS workflow skills covering Notion / Slack / Jira / Linear / CRM) — matches Phase 2 Q4 external-tools signal.
+   - **everything-claude-code (affaan-m / ECC)** — `gh api repos/affaan-m/everything-claude-code/contents` — 172k-star MIT-licensed harness component bundle (182 skills + 48 agents + 34 rules + 20+ hooks + 14 MCP configs, Anthropic-hackathon-winner trust). Strongest source for **language-specific rules** (TS / Python / Go / etc.) — Phase 3b rule-seed step should check ECC's `rules/` first before scaffolding from generic skeleton.
    - **jeffallan/claude-skills** — `gh api repos/Jeffallan/claude-skills/contents` — broad fullstack-skills marketplace (~65 skills covering fullstack workflows, project-mgmt integration). Direct query > aggregator listing for freshness.
    - **mcpmarket** — `WebFetch https://mcpmarket.com` (MCP servers).
    - **Fast-path** — if `claude-code-setup` plugin is installed locally, invoke `/setup` and merge its picks.
