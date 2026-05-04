@@ -1,6 +1,6 @@
 ---
-name: commit
-description: "Stage and commit the current session's changes only. Session-isolated (never -A), doc-sync-gated, conventional message, no push. Pairs with /super-bootstrap — encodes the harness commit rules."
+name: sb-commit
+description: "Stage and commit the current session's changes only. Session-isolated (never -A), doc-sync-gated, conventional message, no push. Bundled with super-bootstrap — encodes the harness commit rules."
 tags: [commit, git, session, doc-sync, superpowers]
 ---
 
@@ -8,7 +8,7 @@ tags: [commit, git, session, doc-sync, superpowers]
 
 Stage and commit the changes this Claude session produced. Leaves prior uncommitted work alone. Runs the doc-sync gate first. Writes a conventional commit message. Does not push.
 
-Pairs with `/super-bootstrap`. The bootstrap plan and CLAUDE.md route every flow through "doc sync → `/commit`" — this is that command.
+Bundled with `/super-bootstrap`. The harness CLAUDE.md and bootstrap plan route every flow through "doc sync → `/sb-commit`" — this is that command.
 
 ## Protocol
 
@@ -105,7 +105,7 @@ Run `git status` after to confirm clean state.
 
 ### 7. Do Not Push
 
-`/commit` does not push. User pushes manually or via separate skill (`/commit-push-pr` from external plugins, or plain `git push`).
+`/sb-commit` does not push. User pushes manually or via separate skill (`/commit-push-pr` from external plugins, or plain `git push`).
 
 ## Rules
 
