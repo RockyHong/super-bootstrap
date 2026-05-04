@@ -70,20 +70,20 @@ This isn't a nice-to-have. This is what makes the docs trustworthy. Without it, 
 Super-bootstrap installs **harness**, not **product**. Workflow rules, doc-sync gate, skill picks, skeleton docs — all land in one scaffold session. Doc-sync at every commit grows the skeleton docs over time as code lands. No deferred deep-scan tasks; the pipeline's own continuous mechanism IS the growth path.
 
 ```
-/super-bootstrap session:
+/harness-bootstrap session:
   Quick scan + greenfield gate → Q&A alignment → scaffold (folders, CLAUDE.md,
   skeleton techstack.md, skeleton overview.md, bootstrap-plan) →
   curate skill/MCP/hook against live sources → sync report + commit
 
   Pipeline is now LIVE. Skeleton docs carry detected facts. Picks pinned in
   .claude/settings.json. Any adaptive seeding (specs / backlog) queued in
-  bootstrap-plan for later /todo sessions.
+  bootstrap-plan for later /sb-todo sessions.
 
 Per-commit (forever after):
   Doc-sync gate fires → if diff touches behavior covered by a doc, propose
   updating that doc → user approves → doc + code commit together.
 
-/super-bootstrap re-run (any time):
+/harness-bootstrap re-run (any time):
   Drift-check pipeline-owned sections → refresh skill/MCP/hook picks against
   live sources → commit if anything changed. Adaptive seeding tasks dropped
   from regenerated bootstrap-plan if their docs already exist.
@@ -134,17 +134,17 @@ Adjacent stacks (Bun + Next, Deno + Fresh, Tauri + React, etc.) infer by analogy
 
 **Output of Phase 1:** A mental model of "what kind of project is this" — stack name, structure shape, maturity level, **which rule files to seed in Phase 3b**, **which legacy CLAUDE.md sections need migration**. NOT a deep analysis.
 
-### Greenfield Gate
+### Greenfield Redirect
 
-After Phase 1 detection: if **no manifests + no source files (any extension) + README missing or under 3 substantive lines**, abort with:
+After Phase 1 detection: if **no manifests + no source files (any extension) + README missing or under 3 substantive lines** AND `docs/overview.md` + `docs/techstack.md` are missing, abort with redirect:
 
-> Super-bootstrap installs **harness**, not **product**. Detected an empty repo: no manifests, no source files, no meaningful README.
+> `/harness-bootstrap` installs the harness for a repo with code (or at least intent encoded in seed docs). Detected: empty repo with no `docs/overview.md` and no `docs/techstack.md`.
 >
-> Add at least one of: a manifest (`package.json` / `pyproject.toml` / `Cargo.toml` / etc.), an entry-point source file, or a brief README describing the product. Then re-run.
+> Run `/super-bootstrap` first — it gates greenfield, runs ideation Q&A, and seeds those two docs (plus `docs/backlog.md` with one roadmap item). Then it dispatches back here automatically.
 >
-> For greenfield product ideation, this isn't the right tool — try a product-ideation skill or just write a short README first.
+> If you want to force the harness onto an empty repo anyway: re-invoke with `/harness-bootstrap force` (rare — most output sections will sit empty until code lands).
 
-User may explicitly override ("yes proceed anyway") → continue with stub-only scaffold (most skeleton sections will sit empty until code starts landing). Default = abort.
+If `docs/overview.md` + `docs/techstack.md` exist (seeded by `/super-bootstrap` greenfield path), proceed normally — the seed docs feed Phase 2 Q&A defaults and Phase 3b skeleton placeholders. **Never accept force without explicit token** — empty-repo harness is a useless artifact and the redirect surfaces the right tool.
 
 ---
 
@@ -391,7 +391,7 @@ If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that'
 
 ### 3c: Curate skill / MCP / hook
 
-Auto-curate Claude Code tooling matched to detected stack AND product context. **Runs every `/super-bootstrap`** — refresh on every run keeps picks fresh against upstream source updates (new skills published, deprecated removals, license changes). Harness-internal: user sees one batch, replies. No manual search, no plugin install gate.
+Auto-curate Claude Code tooling matched to detected stack AND product context. **Runs every `/harness-bootstrap`** — refresh on every run keeps picks fresh against upstream source updates (new skills published, deprecated removals, license changes). Harness-internal: user sees one batch, replies. No manual search, no plugin install gate.
 
 **Inputs (no deferred deep work needed):**
 - Phase 1 quick-scan: runtime, framework, key tools, monorepo state → drives **stack-matched picks** (e.g. `react-expert` for React, `postgres-pro` for Postgres)
@@ -399,7 +399,7 @@ Auto-curate Claude Code tooling matched to detected stack AND product context. *
 
 **Process:**
 
-1. **Live source query — non-skippable, runs every invocation.** Stable project ≠ stable upstream. Marketplaces add picks, deprecate picks, change licenses, between any two `/super-bootstrap` runs. The only way to detect that drift is to actually query — even when the project hasn't changed.
+1. **Live source query — non-skippable, runs every invocation.** Stable project ≠ stable upstream. Marketplaces add picks, deprecate picks, change licenses, between any two `/harness-bootstrap` runs. The only way to detect that drift is to actually query — even when the project hasn't changed.
 
    Issue WebFetch / Bash queries against each source. **GitHub-only pool — sites without backing repos can't surface trust signals (stars / recency / license).** Examples:
    - **Anthropic plugin marketplace** — `gh api repos/anthropics/claude-plugins-official/contents/plugins` — Anthropic-vetted picks (🛡 tier).
@@ -515,7 +515,7 @@ Auto-curate Claude Code tooling matched to detected stack AND product context. *
 
 If every row is `✓ current` and nothing changed on disk, report and skip the commit.
 
-Otherwise use `/commit` to stage:
+Otherwise use `/sb-commit` to stage:
 - `CLAUDE.md` (new, modified, or post-migration)
 - `docs/techstack.md` (new, skeleton-section drift, or post-migration absorbed content)
 - `docs/overview.md` (new or skeleton-section drift)
@@ -543,8 +543,8 @@ After committing (or reporting no changes needed), present results based on repo
 >
 > {If any rule files were seeded: "Path-scoped rules seeded in `.claude/rules/` ({list seeded rules}). They auto-load on file match — full ammo at the decision moment, summary mirrored in CLAUDE.md § Rules. Add more rule files when path-scoped patterns emerge."}
 >
-> {If bootstrap.md has Task 1 / Task 2 active: "Optional adaptive seeding queued in `docs/superpowers/plans/bootstrap.md` (specs / backlog). Next session: `/clear`, then `/todo`."}
-> {If bootstrap.md is cleanup-only: "Bootstrap essentially complete — `/todo` will show the cleanup task."}
+> {If bootstrap.md has Task 1 / Task 2 active: "Optional adaptive seeding queued in `docs/superpowers/plans/bootstrap.md` (specs / backlog). Next session: `/clear`, then `/sb-todo`."}
+> {If bootstrap.md is cleanup-only: "Bootstrap essentially complete — `/sb-todo` will show the cleanup task."}
 
 **Re-run / sync pass:**
 
@@ -554,7 +554,7 @@ After committing (or reporting no changes needed), present results based on repo
 
 - **Harness, not product** — bootstrap installs workflow + skeleton docs + curated picks. Greenfield product ideation (empty repo, no code) is out of scope. Phase 1 has a friendly gate.
 - **Skeleton at scaffold, grown via sync** — detected facts and Q&A answers seeded immediately into `techstack.md` / `overview.md`. Architecture Rules, Coding Patterns, Module Index, Data Flow, Key Boundaries start empty and fill incrementally per-commit. Doc-sync IS the growth mechanism — no deferred deep-scan tasks.
-- **Refresh on every run** — picks curated against live sources every `/super-bootstrap`. Upstream marketplace changes (new picks, deprecations, license shifts) surface as a delta against `.claude/settings.json`.
+- **Refresh on every run** — picks curated against live sources every `/harness-bootstrap`. Upstream marketplace changes (new picks, deprecations, license shifts) surface as a delta against `.claude/settings.json`.
 - **Detect, then confirm** — Phase 1 grounds seeded facts in repo evidence; Phase 2 Q&A confirms; user approves drift / picks / drafts before any write.
 - **Docs travel with code** — doc-sync gate on every commit. Implementation without doc-sync is incomplete. The pipeline's real power.
 - **Fixed macro, adaptive micro** — `overview.md` / `techstack.md` / `superpowers/` always scaffolded. `specs/` / `backlog.md` only when the project warrants them.
