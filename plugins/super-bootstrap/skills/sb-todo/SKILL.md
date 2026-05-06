@@ -12,6 +12,23 @@ Bundled with `/super-bootstrap`. The harness CLAUDE.md and bootstrap plan tell f
 
 ## Protocol
 
+### 0. Dispatch to Subagent
+
+This skill is mechanical scan + classify + render. No session context needed. Save main-session tokens by dispatching the whole protocol to a Sonnet subagent:
+
+```
+Agent(
+  subagent_type: "general-purpose",
+  model: "sonnet",
+  description: "Scan superpowers pipeline for active work",
+  prompt: <steps 1-5 below, verbatim, with repo root path>
+)
+```
+
+Relay the agent's table + "Next up" output to the user as-is. Do not re-do the work in main session.
+
+Skip dispatch only if: user explicitly asks to run inline, or repo has zero `docs/superpowers/` files (one Glob check, no point spawning).
+
 ### 1. Find Active Work
 
 Scan for files in these locations (check both, either may not exist):
@@ -96,6 +113,6 @@ If specs and plans exist for the same feature (matched by date prefix or name):
 ## Rules
 
 - **Read-only** — this skill only reports. It never modifies files.
-- **Fast** — use Glob to find files, then Read to classify. No agents, no searches.
+- **Dispatched by default** — Sonnet subagent runs scan + classify + render. Main session relays output.
 - **Works in any repo** — only requires `docs/superpowers/` to exist (created by `/harness-bootstrap`).
 - **No git operations** — purely file-based scan.
