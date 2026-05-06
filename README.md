@@ -25,8 +25,8 @@ In Claude Code:
 
 One command per repo. Auto-routes:
 
-- **Repo with code** → scans your stack, asks a few clarifying Qs, scaffolds `CLAUDE.md` + docs, picks skills / MCPs / hooks.
-- **Empty repo** → ~6 ideation Qs (problem / user / stack / tools), seeds foundation docs with first move queued, then scaffolds the harness.
+- **Pre-existing repo** → scans stack, asks a few clarifying Qs, scaffolds `CLAUDE.md` + docs, curates skills / MCPs / hooks.
+- **Greenfield** → lean ideation Q&A seeds foundation docs with first move queued, then scaffolds the harness.
 
 Picks are matched to your stack and labeled by trust signal (Anthropic-vetted / popular / fresh / unaudited).
 
