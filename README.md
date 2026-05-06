@@ -45,7 +45,7 @@ flowchart TD
 
 Re-run any time — incremental, never overwrites your edits.
 
-## What gets touched
+## How files are handled
 
 | Path | Behavior |
 |---|---|
