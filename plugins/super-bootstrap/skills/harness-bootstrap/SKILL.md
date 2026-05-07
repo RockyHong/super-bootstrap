@@ -154,6 +154,8 @@ If `docs/overview.md` + `docs/techstack.md` exist (seeded by `/super-bootstrap` 
 
 Before writing anything, confirm understanding with the user. **Each question is an LLM-prefilled MCQ:** based on Phase 1 detection (and existing docs on re-run), infer the answer, present it as the default option with 2-4 alternatives + an `(other: __)` slot for elaboration. Cite the signal so the user can sanity-check the inference at a glance.
 
+**Render surface.** MCQ-shape (≤4 options) → AskUserQuestion popup, one Q or small batch per call. Free text + synthesis confirm → chat. Tier 1 1-line+y/n stays chat (popup overkill on minimal confirm). Popup tool unavailable → fall back to chat-rendered MCQ, Tier rules unchanged.
+
 **Render-tier pattern — pick the cheapest one that fits.** Don't render full per-Q MCQ when a one-line synthesis carries the same information.
 
 - **Tier 1 — all required Q's high-confidence + unambiguous** (every signal concrete: README explicit, manifest clear, git activity unambiguous, no missing tool config) → **collapse to a single synthesis line + one y/n**. Don't render Q1-Q4 prose. Skipping the per-Q ceremony is the default for clean, well-described projects.
@@ -469,6 +471,8 @@ Auto-curate Claude Code tooling matched to detected stack AND product context. *
    ```
 
    `also in:` line collapses dedupe alternates from Step 3. User can ask to expand if primary's signal looks weaker than an alternate.
+
+   **Catalog stays chat — never popup.** Per-row trust blocks + per-pick toggles + alternate expand don't fit popup option/description shape. Final approve gesture stays chat too — splitting from catalog adds friction.
 
 7. **Apply approved — write `.claude/settings.json`.** Source of truth: project-scope intent, committed, travels with repo, cloud-friendly. Device install (`claude plugin install`) is optional convenience layered on top.
    - Add accepted picks to `enabledPlugins`. Drop rejected picks.

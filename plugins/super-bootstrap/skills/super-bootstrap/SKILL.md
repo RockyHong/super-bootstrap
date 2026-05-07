@@ -30,6 +30,10 @@ If ANY condition fails (a manifest exists, OR a source file exists, OR README ha
 
 Lean — match the harness skeleton sections only. Don't pre-fill grown sections (Architecture Rules / Coding Patterns / Module Index / Data Flow / Key Boundaries) — those grow from real code via doc-sync, not from speculation.
 
+### Render surface
+
+MCQ-shape (≤4 discrete options, no free text) → AskUserQuestion popup, one Q or small batch per call. Free text (Q1, Q6) + synthesis confirm → chat. Popup tool unavailable → fall back to chat-rendered MCQ, shape rules unchanged.
+
 ### Required questions
 
 1. **What is this project? What problem does it solve?** — One paragraph in user's words. Feeds `overview.md` § Problem.
