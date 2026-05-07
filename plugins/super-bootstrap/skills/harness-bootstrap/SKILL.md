@@ -393,105 +393,18 @@ If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that'
 
 ### 3c: Curate skill / MCP / hook
 
-Auto-curate Claude Code tooling matched to detected stack AND product context. **Runs every `/harness-bootstrap`** — refresh on every run keeps picks fresh against upstream source updates (new skills published, deprecated removals, license changes). Harness-internal: user sees one batch, replies. No manual search, no plugin install gate.
+**Delegated to `/resolve-plugins`.** Phase 3c is one Skill invocation — `Skill(resolve-plugins)`. The full curation logic (live-query source pool, dedupe, trust tiers, batch presentation, `.claude/settings.json` write) lives in `plugins/super-bootstrap/skills/resolve-plugins/SKILL.md`. Single source of truth.
 
-**Inputs (no deferred deep work needed):**
-- Phase 1 quick-scan: runtime, framework, key tools, monorepo state → drives **stack-matched picks** (e.g. `react-expert` for React, `postgres-pro` for Postgres)
-- Phase 2 Q&A: user type, current state, **external tools** (Notion / Linear / Jira / Slack / GitHub-only / etc.) → drives **product/workflow-level MCP picks** (e.g. Notion MCP for docs-heavy, Linear MCP for active dev, Slack MCP for team comm, GitHub MCP for PR-heavy workflow)
+`/resolve-plugins` is also runnable standalone — useful when upstream marketplaces drift but nothing in the repo changed (no need to walk Phase 1-3b just to refresh picks).
 
-**Process:**
+**Inputs the harness has prepared by Phase 3c:**
+- `docs/techstack.md` — written in Phase 3b. `/resolve-plugins` reads § Runtime / Framework / Key Dependencies for stack-matched picks.
+- `docs/overview.md` — written in Phase 3b. `/resolve-plugins` reads § User / Current State for additional workflow signal.
+- Phase 2 Q4 (external tools) answer — flows via `docs/overview.md` content (the harness embeds the answer when seeding the doc) or via `.claude/settings.json` pinned MCPs on re-run.
 
-1. **Live source query — non-skippable, runs every invocation.** Stable project ≠ stable upstream. Marketplaces add picks, deprecate picks, change licenses, between any two `/harness-bootstrap` runs. The only way to detect that drift is to actually query — even when the project hasn't changed.
+**Output:** `.claude/settings.json` updated with `enabledPlugins` + `extraKnownMarketplaces`. Commit handled by `/resolve-plugins` itself if delta non-empty.
 
-   Issue WebFetch / Bash queries against each source. **GitHub-only pool — sites without backing repos can't surface trust signals (stars / recency / license).** Examples:
-   - **Anthropic plugin marketplace** — `gh api repos/anthropics/claude-plugins-official/contents/plugins` — Anthropic-vetted picks (🛡 tier).
-   - **MCP official registry** — `gh api repos/modelcontextprotocol/registry/contents` (or query the registry API directly) — official MCP discovery service. Indexes both steering-group reference impls AND community-published servers. Primary source for MCP picks. Picks authored under `modelcontextprotocol/*` org auto-tier as 🛡 vetted.
-   - **everything-claude-code (affaan-m / ECC)** — `gh api repos/affaan-m/everything-claude-code/contents` — 172k-star MIT-licensed harness component bundle (skills + agents + rules + hooks + MCP configs). Strongest source for **language-specific rules** (TS / Python / Go / etc.) — Phase 3b rule-seed step should check ECC's `rules/` first before scaffolding from generic skeleton.
-   - **awesome-claude-skills (ComposioHQ)** — `gh api repos/ComposioHQ/awesome-claude-skills/contents/README.md` (or WebFetch) — actively-curated category index (~200 entries, "production ready" bar). Strongest source for **workflow / external-tools** picks (78 Composio SaaS workflow skills covering Notion / Slack / Jira / Linear / CRM) — matches Phase 2 Q4 external-tools signal.
-   - **VoltAgent/awesome-agent-skills** — `gh api repos/VoltAgent/awesome-agent-skills/contents` — 1000+ skills from official dev teams (Anthropic, Vercel, Stripe, Cloudflare, Sentry, Hugging Face, Figma) + community. MIT-licensed, ~20k stars. Cross-reference for cross-team picks the Claude-only catalogs miss.
-   - **jeffallan/claude-skills** — `gh api repos/Jeffallan/claude-skills/contents` — broad fullstack-skills marketplace (~65 skills covering fullstack workflows, project-mgmt integration). Direct query > aggregator listing for freshness.
-   - **Fast-path** — if `claude-code-setup` plugin is installed locally, invoke `/setup` and merge its picks.
-
-   If a single source is unreachable (404 / rate limit / network), note the failure inline and continue with the others — **never skip the whole step**. Skipping = stale picks = silent failure mode of the entire phase.
-
-2. **Filter to matched picks only** — drop generic / spray suggestions. Match against stack signals AND product/workflow signals. A Notion MCP isn't "off-stack" if Q&A surfaced docs-heavy workflow.
-
-3. **Dedupe by canonical name across sources.** Same skill / MCP often appears in multiple sources (e.g. `react-expert` in Anthropic + ECC + jeffallan with different versions / licenses / recency). Sources are peers, not ranked — never silently default to one. Process:
-   - Group hits by canonical plugin name (case-insensitive, ignore source suffix)
-   - Pick the **primary row** by highest composite signal: stars × recency × license-clean. Tie-break by Anthropic-vetted if present.
-   - Collapse other variants into a single `also in: <source-A> · <source-B>` line under the primary row, with provenance: stars / last-commit / license per alternate.
-   - User can expand alternates at present-batch step if the primary's trust signal looks weaker than an alternate's.
-
-4. **Trust signal lookup per pick** — for any plugin NOT from `claude-plugins-official`, fetch (via WebFetch or `gh api`):
-   - Repo URL + GitHub stars
-   - Last-commit recency (e.g. "3d ago", "14mo ago")
-   - License (or "no license" — flag as ⚠)
-   - Permissions exercised (read-only? shell? network? auto-exec hook?)
-
-   Hooks are elevated risk: auto-exec on every tool call (PreToolUse / PostToolUse / UserPromptSubmit). Always tag hooks: `⚠ HOOK = auto-executes. Audit source before accept.`
-
-5. **Re-run delta** — if `.claude/settings.json` already has pinned picks, diff the new curation against the pinned set. **Re-fetch trust signals on every pinned pick** (not just new ones) — license can change, last-commit can age, repo can be archived.
-   - Pinned + still recommended + trust block unchanged → keep silently, mark `✓ pinned`
-   - Pinned + still recommended + trust block moved (license / last-commit / archive status changed) → re-show that pick's trust block, ask user to re-confirm
-   - New pick recommended (upstream added it; or stack signal changed) → propose as **add**
-   - Pinned but no longer recommended (deprecated upstream; license changed; stack changed) → propose as **drop** with reason
-   - **Pinned but source missing** — `enabledPlugins` entry exists with no resolvable source (not in `extraKnownMarketplaces`, not Anthropic-vetted). **Live-query source pool first** to find the plugin's real marketplace; if found, propose **resolve** (add marketplace to `extraKnownMarketplaces`) with trust block; if not found in any source, propose **drop** (orphan, can't reproduce on cloud / fresh machine).
-
-6. **Present batch with full trust signal per new / changed pick.** Each row leads with a **trust tier** so user judges on the right axis (sharpness vs. audit-depth, not source rank):
-   - `🛡 vetted` — authored under `anthropics/*` or `modelcontextprotocol/*` org (Anthropic-audited or MCP steering-group authored, license-clean, slower to land sharp picks). Includes `claude-plugins-official` and any `modelcontextprotocol/*` reference impls surfaced via the registry.
-   - `★ popular` — outside the vetted orgs above, ≥1k stars + commit ≤90d ago + license clean
-   - `🆕 fresh` — recent activity (≤30d) but lower stars / smaller pool
-   - `⚠ unaudited` — no license, archived, last-commit >12mo, or stars <100
-
-   ```
-   Skill / MCP / hook curation for {project} ({stack}):
-
-     [SKILL]   🛡 {name}@{source}                  [+ add | ✓ keep | − drop]
-                Why: {matched signal, one-line value}
-                (vetted picks: trust block omitted)
-
-     [SKILL]   ★ {name}@{source}                   [+ add | ✓ keep | − drop]
-                ★ {stars} · last commit {recency} · {license}
-                Permissions: {read-only / shell / network / etc.}
-                Why: {matched signal, one-line value}
-                also in: {alt-source-A} (★{stars} · {recency} · {license}) · {alt-source-B} (...)
-
-     [HOOK]    ⚠ {name}@{source}                   [+ add]
-                ★ {stars} · last commit {recency} · {license}
-                Permissions: ⚠ {what triggers + what it runs}
-                Why: {matched signal}
-                ⚠ HOOK = auto-executes. Audit source before accept.
-
-     [MCP]     🆕 {name}@{source}                  [+ add]
-                ★ {stars} · last commit {recency} · {license}
-                Permissions: {network / shell / file-system / etc.}
-                Why: {matched signal}
-
-   Accept all / reject specific / discuss thoughts / expand alternates?
-   ```
-
-   `also in:` line collapses dedupe alternates from Step 3. User can ask to expand if primary's signal looks weaker than an alternate.
-
-   **Catalog stays chat — never popup.** Per-row trust blocks + per-pick toggles + alternate expand don't fit popup option/description shape. Final approve gesture stays chat too — splitting from catalog adds friction.
-
-7. **Apply approved — write `.claude/settings.json`.** Source of truth: project-scope intent, committed, travels with repo, cloud-friendly. Device install (`claude plugin install`) is optional convenience layered on top.
-   - Add accepted picks to `enabledPlugins`. Drop rejected picks.
-   - For any plugin NOT from `claude-plugins-official`, ensure its source is in `extraKnownMarketplaces` so cloud sessions / fresh machines can resolve.
-   - Example shape:
-     ```json
-     {
-       "enabledPlugins": {
-         "superpowers@claude-plugins-official": true,
-         "caveman@caveman": true
-       },
-       "extraKnownMarketplaces": {
-         "caveman": { "source": { "source": "github", "repo": "JuliusBrussee/caveman" } }
-       }
-     }
-     ```
-   - One-line transparency: "Pinning plugins per-project in `.claude/settings.json` so cloud Claude and fresh machines reproduce this toolset."
-
-**Why settings.json is non-negotiable:** `enabledPlugins` declares intent. Resolution happens at session start — Claude reads settings.json, finds device-installed plugins or auto-resolves via marketplaces. Without settings.json, project intent is lost (cloud and fresh machines can't reproduce). Device install alone doesn't travel.
+**Why files-as-contract handoff:** harness doesn't pass in-memory state to the delegated skill. Same pattern as `/super-bootstrap` → `/harness-bootstrap` (seed docs). Lets `/resolve-plugins` run standalone without re-implementing Phase 1 quick-scan.
 
 ### 3d: Sync report + commit
 
