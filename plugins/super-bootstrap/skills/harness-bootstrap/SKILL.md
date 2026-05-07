@@ -252,9 +252,9 @@ With alignment confirmed, walk each pipeline artifact in order: folders → pipe
 - `.claude/rules/<rule>.md` files the user authored without a matching skeleton (treat as fully project-owned)
 - Other settings in `.claude/settings.json` outside the plugin-pin keys
 
-### 3a: Folders
+### 3a: Folders & core plugin pin
 
-Folders don't drift — only two states: missing or present.
+Folders + core plugin pin don't drift — only two states: missing or present.
 
 **Always created (fixed macro):**
 ```
@@ -281,6 +281,25 @@ For each: create if missing, skip if present. Add `.gitkeep` in empty folders. I
 If `docs/backlog.md` is scaffolded, copy `assets/backlog.md` to `docs/backlog.md` (no substitutions).
 
 `.claude/rules/` machinery is **always** scaffolded (zero-cost when empty). `index.md` is seeded from `assets/rules-index-skeleton.md`. Individual rule bodies fill in Phase 3b based on Phase 1 signal detection.
+
+**Core plugin pin (pre-resolve).** The harness CLAUDE.md skeleton bakes in `superpowers` slash-command routes (`/brainstorm`, `/write-plan`, `/execute-plan`). Superpowers is therefore a **core dep, not an adaptive pick** — pin it before Phase 3c so `/resolve-plugins` curates adaptive picks on top of a guaranteed-superpowers base.
+
+Ensure `.claude/settings.json` contains:
+
+```json
+{
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true
+  }
+}
+```
+
+- File missing → create with this minimal shape.
+- File exists, key absent → merge the key in.
+- Key already present → skip (`✓ pinned`).
+- Other `.claude/settings.json` content → never touched.
+
+`superpowers@claude-plugins-official` resolves from Anthropic's official marketplace — no `extraKnownMarketplaces` entry needed. Phase 3c (`/resolve-plugins`) treats this pin as locked: never proposes drop, never re-prompts the user. Adaptive picks (stack-matched skills / MCPs / hooks) layer on top.
 
 ### 3b: Pipeline docs
 
@@ -427,6 +446,7 @@ If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that'
 | .claude/rules/index.md              | ⊕ new        | seeded              |
 | .claude/rules/mv3.md                | ⊕ new        | seeded (signal: MV3 manifest) |
 | .claude/rules/components.md         | ⊕ new        | seeded (signal: React + tsx dir) |
+| .claude/settings.json: core pin     | ⊕ new        | superpowers pinned  |
 | .claude/settings.json: picks        | ⚠ delta      | +2 add, −1 drop     |
 ```
 

@@ -106,6 +106,19 @@ Hooks are elevated risk: auto-exec on every tool call (PreToolUse / PostToolUse 
 
 ## Phase 4: Diff vs pinned, present batch
 
+### Core pins (locked when harness-active)
+
+`superpowers@claude-plugins-official` is a **core dep of the harness** — the seeded CLAUDE.md routes brainstorm / write-plan / execute-plan slash commands through it. `/harness-bootstrap` Phase 3a pins it pre-resolve.
+
+**Harness-active marker:** `docs/superpowers/` directory exists in the repo. Detect with one Glob.
+
+- **Harness-active + pinned + present** → keep silently, do not surface in batch.
+- **Harness-active + pin absent** (user manually removed; or fresh harness call hadn't reached Phase 3a yet) → **propose re-pin** as a locked core dep, short message: "core dep missing, re-pinning so CLAUDE.md routes resolve." User can decline only with explicit override; flag that declining breaks `/brainstorm`, `/write-plan`, `/execute-plan` references.
+- **Not harness-active** (no `docs/superpowers/` folder — standalone curation on a non-harness repo) → no core lock applies. Superpowers, if present, is treated as a regular adaptive pick the user may drop.
+- Locked picks: never propose drop, never re-fetch trust signals (Anthropic-vetted by definition).
+
+### Adaptive picks
+
 If `.claude/settings.json` already has pinned picks, diff the new curation against the pinned set. **Re-fetch trust signals on every pinned pick** (not just new ones) — license can change, last-commit can age, repo can be archived.
 
 - **Pinned + still recommended + trust block unchanged** → keep silently, mark `✓ pinned`
@@ -153,7 +166,7 @@ Accept all / reject specific / discuss thoughts / expand alternates?
 
 Source of truth: project-scope intent, committed, travels with repo, cloud-friendly. Device install (`claude plugin install`) is optional convenience layered on top.
 
-- Add accepted picks to `enabledPlugins`. Drop rejected picks.
+- Add accepted picks to `enabledPlugins`. Drop rejected picks. **When harness-active (`docs/superpowers/` exists), never drop core pins** (`superpowers@claude-plugins-official`) — see Phase 4 § Core pins.
 - For any plugin NOT from `claude-plugins-official`, ensure its source is in `extraKnownMarketplaces` so cloud sessions / fresh machines can resolve.
 - Example shape:
   ```json
