@@ -41,6 +41,7 @@ Don't ship a later phase while an earlier one is still fuzzy:
 - **Spec** implies brainstorm-grade thinking happened (inline OK if intent was clear). No spec while intent unclear.
 - **Plan** implies design settled. No plan while design surface still moving.
 - **Execute** implies steps known (from plan, or from atomic-edit obviousness). No execute on multi-step work without a plan.
+- **Symptom-driven work** (bug / regression / rot): no plan or execute until cause confirmed via `superpowers:systematic-debugging`. Symptom location ≠ cause location.
 
 If user pushes back on triage → re-evaluate the gate that triggered the disagreement, not the whole route.
 
