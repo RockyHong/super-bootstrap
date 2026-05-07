@@ -10,28 +10,43 @@
 
 ## Development Workflow
 
-Before any work, **assess size, propose a route, wait for the user to confirm:**
+Every session runs under the superpowers frame. Routing = **which phases this work needs**, judged on evidence — not file count, not size labels. Triage phases, propose route, wait for user confirm.
+
+### Phase Gates
+
+| Phase | Run when | Skip when |
+|---|---|---|
+| **Brainstorm** | Intent fuzzy, design space unexplored, multiple viable shapes | Intent + approach obvious from repo context or user direction |
+| **Spec** | Persistent design surface — behavior worth pinning for future sessions | One-time tactical change, no behavior to document |
+| **Plan** | Multi-step, ordering matters, want checkpoint review, half-done risk | Single atomic edit obvious from context |
+| **Execute (TDD + verify)** | Touching code | Always-on when code changes — never skip discipline |
+| **Doc sync** | Pre-commit | Always-on — never skip |
+| **Commit (`/sb-commit`)** | Work done | Always-on — terminal step |
+
+### Triage output
+
+Propose phase composition + justify each skip with repo-grounded evidence:
 
 ```
-This looks [small/medium/large] because [reason].
-Route: [steps]
-Impact: [what changes, how many files, risk level]
+Phases: brainstorm → plan → execute → doc-sync → commit
+Skipped: spec (no persistent design surface — internal helper, no behavior contract)
+Evidence: BUG-042 has clean repro in issue, fix touches one auth helper
 OK to proceed?
 ```
 
-### Routes
+### Phase entailments
 
-**Small** — single file, clear intent, no design decisions
-→ implement → user review → doc sync → `/sb-commit`
+Don't ship a later phase while an earlier one is still fuzzy:
 
-**Medium** — multi-file, some design choices, one session
-→ Brainstorm (quick, inline) → implement → user review → doc sync → `/sb-commit`
+- **Spec** implies brainstorm-grade thinking happened (inline OK if intent was clear). No spec while intent unclear.
+- **Plan** implies design settled. No plan while design surface still moving.
+- **Execute** implies steps known (from plan, or from atomic-edit obviousness). No execute on multi-step work without a plan.
 
-**Large** — multi-session, architectural, unclear scope
-→ Full pipeline: brainstorm → spec → plan → execute → user review → doc sync → `/sb-commit`
-→ Specs go to `docs/superpowers/specs/`, plans to `docs/superpowers/plans/`
+If user pushes back on triage → re-evaluate the gate that triggered the disagreement, not the whole route.
 
-User picks the route. **User instructions override Superpowers defaults.**
+**User instructions override Superpowers defaults.** User can add or drop phases.
+
+Spec/plan locations: `docs/superpowers/specs/` and `docs/superpowers/plans/` (temporal). Persistent specs (kept after merge) go to `docs/specs/`.
 
 ## Doc Sync (non-negotiable)
 

@@ -4,11 +4,13 @@ Single tracker for deferred items — things found but not fixing now. Solo-dev 
 
 **Three categories** distinguished by ID prefix:
 
-- **`BUG-###`** — broken behavior with a clear fix. Routes direct to implementation.
-- **`DEBT-###`** — working but rotting (test fixture rot, stale dep, cleanup owed). Routes direct to implementation.
-- **`GAP-###`** — design gap, never properly specced. Routes through `superpowers:brainstorming` first, then spec → plan → execute.
+- **`BUG-###`** — broken behavior. Surface symptom may hide deeper cause.
+- **`DEBT-###`** — working but rotting (test fixture rot, stale dep, cleanup owed).
+- **`GAP-###`** — design gap, never properly specced.
 
-Format per item: stable ID, short title, affected area, why it matters, proposed fix (BUG/DEBT) or what's missing (GAP). Newest at top. When resolved, **delete the item** — git history is the archive.
+No phase prescription per category — when an item rolls into a session, the harness phase-gate triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
+
+Format per item: stable ID, short title, affected area, why it matters, proposed fix or what's missing. Newest at top. When resolved, **delete the item** — git history is the archive.
 
 ---
 
