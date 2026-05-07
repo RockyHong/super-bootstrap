@@ -69,6 +69,23 @@ Issue WebFetch / Bash queries against each source. **GitHub-only pool — sites 
 
 ---
 
+## Phase 2.5: README parse → cached digest
+
+For each candidate Phase 2 emitted, fetch the upstream README once and reduce it to a structured digest. Phase 3 (gate) and Phase 5 (install plan) consume the same digest — single parse, two callers.
+
+Digest fields:
+
+- `hard_paths_shipped` — hooks declared (which event + file glob), slash commands shipped, frontmatter `agents:` / `related-skills:` delegations, MCP server config presence.
+- `manual_install_steps` — ordered imperative steps lifted from `## Installation` / `## Setup` / `## Quick Start` headings (e.g. `brew install graphify`, `pnpm add -D <pkg>`, `chmod +x .claude/hooks/<name>.sh`).
+- `user_invoke_trigger` — one-sentence "user types /name when ___" hypothesis for any slash command shipped (empty if none).
+- `multi_component` — boolean. Flags Phase 5 to plan an atomic multi-step install (e.g. binary + MCP + hook + skill in one bundle).
+
+If README absent or fetch fails for one candidate: warn inline, accept best-effort interpretation from SKILL.md only — do not auto-decide. Don't halt the whole batch on a single missing README.
+
+Cache lifetime: per `/resolve-plugins` invocation. Discarded at end. Re-runs re-fetch (README content drifts between runs).
+
+---
+
 ## Phase 3: Dedupe + trust signals + filter
 
 ### Filter to matched picks only
@@ -102,6 +119,26 @@ Hooks are elevated risk: auto-exec on every tool call (PreToolUse / PostToolUse 
 - `🆕 fresh` — recent activity (≤30d) but lower stars / smaller pool
 - `⚠ unaudited` — no license, archived, last-commit >12mo, or stars <100
 
+### Earn-right gate
+
+For each candidate that survived dedupe + trust scoring, name one hard invocation path that exists in **this project** (use Phase 2.5 digest's `hard_paths_shipped` as primary signal):
+
+- [ ] hook (which event? which file glob?)
+- [ ] slash command (concrete user-trigger context — "user types /name when ___")
+- [ ] pipeline delegation (which existing skill calls it by name?)
+- [ ] frontmatter `agents:` / `related-skills:` bundle (which orchestrator pulls it?)
+- [ ] none — only CLAUDE.md prescription / description match
+
+#### Decision rules
+
+- **≥1 of the first four boxes** → admit. Tag the path: `[hook]`, `[slash]`, `[delegation]`, `[bundle]`.
+- **Only the last box** → reject by default. Description-match autopilot orphan.
+- **User override** → admit on single-line justification; tag becomes `[override: <reason>]`. Surfaces in Phase 7 report only (no persistent tracking in v1).
+
+#### Mass-rejection collapsing
+
+If many candidates from the same source reject for the same reason, collapse to one batch line — e.g. `Rejected 66 candidates from Jeffallan/claude-skills (description-match-only)`. Default collapsed; user types `expand rejected` to expand.
+
 ---
 
 ## Phase 4: Diff vs pinned, present batch
@@ -132,23 +169,25 @@ If `.claude/settings.json` already has pinned picks, diff the new curation again
 ```
 Skill / MCP / hook curation for {project} ({stack}):
 
-  [SKILL]   🛡 {name}@{source}                  [+ add | ✓ keep | − drop]
+  Rejected (earn-right): {R} candidates collapsed — type `expand rejected` to list.
+
+  [SKILL]   🛡 {name}@{source}        [bundle]   [+ add | ✓ keep | − drop]
              Why: {matched signal, one-line value}
              (vetted picks: trust block omitted)
 
-  [SKILL]   ★ {name}@{source}                   [+ add | ✓ keep | − drop]
+  [SKILL]   ★ {name}@{source}         [slash]    [+ add | ✓ keep | − drop]
              ★ {stars} · last commit {recency} · {license}
              Permissions: {read-only / shell / network / etc.}
              Why: {matched signal, one-line value}
              also in: {alt-source-A} (★{stars} · {recency} · {license}) · {alt-source-B} (...)
 
-  [HOOK]    ⚠ {name}@{source}                   [+ add]
+  [HOOK]    ⚠ {name}@{source}         [hook]     [+ add]
              ★ {stars} · last commit {recency} · {license}
              Permissions: ⚠ {what triggers + what it runs}
              Why: {matched signal}
              ⚠ HOOK = auto-executes. Audit source before accept.
 
-  [MCP]     🆕 {name}@{source}                  [+ add]
+  [MCP]     🆕 {name}@{source}        [delegation] [+ add]
              ★ {stars} · last commit {recency} · {license}
              Permissions: {network / shell / file-system / etc.}
              Why: {matched signal}
@@ -156,15 +195,40 @@ Skill / MCP / hook curation for {project} ({stack}):
 Accept all / reject specific / discuss thoughts / expand alternates?
 ```
 
+Path tag column (`[hook]` / `[slash]` / `[delegation]` / `[bundle]` / `[override: <reason>]`) shows the hard invocation path Phase 3 admitted the pick on — surfaces "why this one earned its slot" at a glance.
+
+`Rejected (earn-right): {R} candidates collapsed` line renders only when Phase 3 produced rejections. Default collapsed; user types `expand rejected` to expand into per-source breakdown.
+
 `also in:` line collapses dedupe alternates from Phase 3. User can ask to expand if primary's signal looks weaker than an alternate.
 
 **Catalog stays chat — never popup.** Per-row trust blocks + per-pick toggles + alternate expand don't fit popup option/description shape. Final approve gesture stays chat too — splitting from catalog adds friction.
 
 ---
 
-## Phase 5: Apply approved → write `settings.json` + commit
+## Phase 5: Apply approved → atomic install + verify + commit
 
 Source of truth: project-scope intent, committed, travels with repo, cloud-friendly. Device install (`claude plugin install`) is optional convenience layered on top.
+
+Each accepted candidate executes as an **atomic unit** — settings write + per-component install + per-component verify. Atomic boundary is per-candidate: one candidate failing verify halts only its own steps; sibling candidates continue independently.
+
+### Phase 5.1: Install plan
+
+For each accepted candidate, expand the Phase 2.5 digest into ordered install steps and render the plan before execution.
+
+```text
+candidate: graphify
+  [skill]   graphify@market           -> .claude/skills/graphify/
+  [mcp]     graphify-mcp              -> .mcp.json
+  [hook]    post-commit-graphify      -> .claude/hooks/ + settings.json wiring
+  [bin]     graphify (manual: brew install graphify per README)
+
+candidate: superpowers
+  [plugin]  superpowers@claude-plugins-official  -> enabledPlugins
+```
+
+Steps execute sequentially within a candidate. Multiple candidates may install in parallel.
+
+### Phase 5.2: Settings.json write
 
 - Add accepted picks to `enabledPlugins`. Drop rejected picks. **When harness-active (`docs/superpowers/` exists), never drop core pins** (`superpowers@claude-plugins-official`) — see Phase 4 § Core pins.
 - For any plugin NOT from `claude-plugins-official`, ensure its source is in `extraKnownMarketplaces` so cloud sessions / fresh machines can resolve.
@@ -182,15 +246,63 @@ Source of truth: project-scope intent, committed, travels with repo, cloud-frien
   ```
 - One-line transparency: "Pinning plugins per-project in `.claude/settings.json` so cloud Claude and fresh machines reproduce this toolset."
 
-### Why settings.json is non-negotiable
-
 `enabledPlugins` declares intent. Resolution happens at session start — Claude reads settings.json, finds device-installed plugins or auto-resolves via marketplaces. Without settings.json, project intent is lost (cloud and fresh machines can't reproduce). Device install alone doesn't travel.
 
-### Commit handoff
+### Phase 5.3: Verify per component
 
-If delta non-empty → invoke `/sb-commit` to stage `.claude/settings.json` and commit with message `chore: refresh plugin picks` (or `chore: pin plugin picks` on first run with empty `enabledPlugins`).
+For each install step: log to user → execute → run mechanical verify command. Never claim "done ✓" without an observable check.
+
+| Component | Verify | Pass |
+|---|---|---|
+| Plugin install | `claude plugin install <pick>` exits 0 AND `jq -e '.enabledPlugins["<pick>"]' .claude/settings.json` | both 0 |
+| Binary (manual install) | `command -v <bin>` | exit 0 |
+| Hook script | `[ -x .claude/hooks/<name>.sh ]` AND `bash -n .claude/hooks/<name>.sh` AND `jq -e '.hooks.<event>[]? \| select(.command \| contains("<name>"))' .claude/settings.json` | all 0 |
+| Local file copy (rare) | `[ -f <dest> ]` | exit 0 |
+
+`bash -n` catches syntax pre-runtime. `jq -e` is structural — exits non-zero on missing keys, not substring match. `command -v` is POSIX-portable.
+
+### Phase 5.4: Halt-or-rollback on verify fail
+
+If any step fails verify:
+
+1. Halt remaining steps for **this candidate only**. Sibling candidates continue.
+2. Surface failure: which step (component type + name), the verify command + observed output, candidate's progress so far.
+3. Offer three resolutions:
+   - **Rollback** — best-effort undo of already-applied steps. Some manual installs (e.g. `brew install`) aren't rollback-able — surface that.
+   - **Pause** — leave partial state, surface summary, user fixes manually then re-runs `/resolve-plugins`.
+   - **Drop** — accept candidate didn't install, drop from accepted set, revert its settings.json edit.
+
+Never silently skip. Never claim "done" with half-installed state.
+
+### Phase 5.5: Commit only fully-installed candidates
+
+`/sb-commit` handoff. Restrict commit to candidates where every Phase 5.3 verify exited 0. Half-installed candidates excluded; user resolves before re-running.
+
+If delta non-empty → invoke `/sb-commit` to stage `.claude/settings.json` (and `.mcp.json` / `.claude/hooks/` / `.claude/skills/` if written by atomic install) with message `chore: refresh plugin picks` (or `chore: pin plugin picks` on first run with empty `enabledPlugins`).
 
 If delta empty (every row `✓ pinned` and trust blocks unchanged) → report `✓ all pinned picks current` and skip commit.
+
+---
+
+## Phase 7: Report
+
+After Phase 5 completes, render a single summary block.
+
+```text
+✓ Resolve complete.
+
+Pins applied: {N} ({list-of-names})
+Pins unchanged: {M}
+Pins dropped: {K} ({reasons})
+
+Earn-right rejections: {R}
+  {if R > 0: list collapsed sources or `expand rejected` hint}
+
+Verify failures: {V}
+  {if V > 0: list candidates that halted, with chosen resolution per candidate}
+```
+
+If `R == 0` and `V == 0`, omit those rows entirely.
 
 ---
 
