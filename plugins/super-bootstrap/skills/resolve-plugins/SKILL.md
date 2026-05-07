@@ -205,7 +205,7 @@ Path tag column (`[hook]` / `[slash]` / `[delegation]` / `[bundle]` / `[override
 
 ---
 
-## Phase 5: Apply approved → atomic install + verify + commit
+## Phase 5: Apply approved → settings.json + atomic install + verify + commit
 
 Source of truth: project-scope intent, committed, travels with repo, cloud-friendly. Device install (`claude plugin install`) is optional convenience layered on top.
 
