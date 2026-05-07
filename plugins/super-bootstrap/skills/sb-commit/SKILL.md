@@ -107,6 +107,22 @@ Run `git status` after to confirm clean state.
 
 `/sb-commit` does not push. User pushes manually or via separate skill (`/commit-push-pr` from external plugins, or plain `git push`).
 
+### 8. Cycle Handoff
+
+After commit confirms clean, signal cycle exit so user knows it's safe to reset context:
+
+> Cycle complete. Safe to `/clear`. Next session: `/sb-todo` picks up next item.
+
+If `docs/superpowers/specs/` or `docs/superpowers/plans/` still has unfinished work (one quick Glob — files exist, plans with unchecked boxes), name the top candidate inline:
+
+> Cycle complete. `plans/2026-04-12-auth.md` still has 3/7 unchecked — `/clear` then `/sb-todo` to resume.
+
+If backlog has open items and no active superpowers work:
+
+> Cycle complete. No active specs/plans; `docs/backlog.md` has open items — `/clear` then `/sb-todo` to pick next.
+
+One line. Don't expand into full status table — that's `/sb-todo`'s job.
+
 ## Rules
 
 - **Session-isolated** — only this session's changes. Prior dirty state is sacred.
@@ -114,6 +130,7 @@ Run `git status` after to confirm clean state.
 - **Conventional** — type, scope, subject. Body only when needed.
 - **No `-A`** — explicit paths always.
 - **No push** — separate concern.
+- **Cycle handoff** — post-commit one-liner signals cycle exit (`/clear` + `/sb-todo` next session). Removes ambiguity at cache-reset moment.
 - **No amend** — new commit on top, even after pre-commit hook failure. Amend only if user explicitly asks.
 - **No `--no-verify`** — pre-commit hooks fire. If a hook fails, fix the cause, don't bypass.
 - **One logical change per commit** — split if diff spans unrelated work.
