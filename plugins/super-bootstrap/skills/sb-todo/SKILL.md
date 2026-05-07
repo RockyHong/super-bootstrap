@@ -99,7 +99,11 @@ Next up:
 1. Continue executing plans/2026-03-15-auth.md (3/7 done, unblocked)
 2. Write plan for specs/2026-04-01-dashboard-design.md (spec approved, no plan yet)
 3. Clean up plans/2026-02-20-old-feature.md (all tasks done)
+
+more: /sb-help
 ```
+
+**Footer-hint convention.** Existing render surfaces append one line pointing at `/sb-help`. Zero new ambient cost — no extra prompt, no time-based reminder; user discovers the menu when they're already looking at output.
 
 If backlog.md exists and active work is empty: "No active work — pick from `docs/backlog.md` to start something."
 

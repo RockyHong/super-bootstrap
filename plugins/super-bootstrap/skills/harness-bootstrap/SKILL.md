@@ -416,6 +416,8 @@ If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that'
 
 `/resolve-plugins` is also runnable standalone — useful when upstream marketplaces drift but nothing in the repo changed (no need to walk Phase 1-3b just to refresh picks).
 
+Phase 3c invokes `/resolve-plugins`, which gates picks via earn-right (≥1 hard invocation path required) and atomic install + verify per accepted candidate. Re-running `/harness-bootstrap` safely re-evaluates all picks against current upstream state and current harness wiring.
+
 **Inputs the harness has prepared by Phase 3c:**
 - `docs/techstack.md` — written in Phase 3b. `/resolve-plugins` reads § Runtime / Framework / Key Dependencies for stack-matched picks.
 - `docs/overview.md` — written in Phase 3b. `/resolve-plugins` reads § User / Current State for additional workflow signal.
