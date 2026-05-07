@@ -425,8 +425,6 @@ Phase 3c invokes `/resolve-plugins`, which gates picks via earn-right (≥1 hard
 
 **Output:** `.claude/settings.json` updated with `enabledPlugins` + `extraKnownMarketplaces`. Commit handled by `/resolve-plugins` itself if delta non-empty.
 
-**Why files-as-contract handoff:** harness doesn't pass in-memory state to the delegated skill. Same pattern as `/super-bootstrap` → `/harness-bootstrap` (seed docs). Lets `/resolve-plugins` run standalone without re-implementing Phase 1 quick-scan.
-
 ### 3d: Sync report + commit
 
 **Sync report** — always shown before commit. Fresh repos see "all new"; re-run repos see drift fixes, picks delta, and current items.

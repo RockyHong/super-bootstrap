@@ -13,12 +13,6 @@ Curate Claude Code skill / MCP / hook picks against live upstream sources and wr
 - **Standalone refresh:** upstream marketplaces drift independent of code (new picks land, deprecations happen, licenses change). Run when nothing in your repo changed but you want fresh picks.
 - **From `/harness-bootstrap` Phase 3c:** harness delegates here so curation logic has one home.
 
-## Why a separate skill
-
-Phase 3c does work that has nothing to do with doc scaffolding — different inputs (live upstream sources), different output (`.claude/settings.json`), different cadence (refresh-on-demand). Coupling it inside `/harness-bootstrap` forces users through Phase 1 quick-scan + Phase 2 Q&A + Phase 3a-b drift just to refresh picks. Extracted here, harness becomes a thin caller; standalone refresh is one command.
-
-**Single source of truth.** Source pool list, trust tiers, dedupe rules, batch format live ONLY here. Harness 3c is one paragraph delegating to this skill.
-
 ---
 
 ## Phase 1: Read inputs (or fail loud)

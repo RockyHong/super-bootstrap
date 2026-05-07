@@ -78,13 +78,10 @@ Available slash commands ({N} total):
 
 If invoked with an argument (`/sb-help git`), render only that category. Unknown category → list available categories and exit.
 
-## Why no active reminder
+## Rules
 
-Time-based reminders ("you haven't used /X in N days") are umbrella-shouting on sunny days — empirically unreliable, costly per session, ignored under load. Footer-hint convention (existing render surfaces append `more: /sb-help`) is zero ambient cost; user pulls discovery when they actually want it.
-
-## Why gateway-side, not subagent-dispatched
-
-Token cost is minimal — read a few small JSON / SKILL.md files, render a table. Subagent dispatch would ship parent context as overhead with no meaningful gain. Gateway-side keeps the menu instant.
+- **Run inline.** Do not subagent-dispatch — token cost is small (few JSON / SKILL.md reads + table render), dispatch overhead would dwarf the work.
+- **No active reminders.** Discovery is pull-only; user invokes `/sb-help` when they want it. Footer-hint convention on other surfaces (e.g. `/sb-todo` ends with `more: /sb-help`) is the only push.
 
 ## Out of Scope
 
