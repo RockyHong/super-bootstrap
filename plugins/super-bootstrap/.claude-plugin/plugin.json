@@ -1,6 +1,6 @@
 {
   "name": "super-bootstrap",
-  "description": "Bootstrap or sync the superpowers development pipeline in any repo. /super-bootstrap is the public entry — gates greenfield (lean ideation Q&A → overview/techstack/backlog seed), then dispatches to /harness-bootstrap which scaffolds CLAUDE.md, skeleton docs, path-scoped rules, and curated skill/MCP/hook picks. Bundles /sb-commit (session-isolated, doc-sync-gated), /sb-todo (active-work scanner), /sb-help (user-invoke skill discovery surface), and /release-init (optional one-shot — detects project type, generates a tailored project-level /release skill). Solo dev workflow.",
+  "description": "Bootstrap or sync the superpowers development pipeline in any repo. /super-bootstrap is the public entry — gates greenfield (lean ideation Q&A → overview/techstack/backlog seed), then dispatches to /harness-bootstrap which scaffolds CLAUDE.md, skeleton docs, path-scoped rules, and curated skill/MCP/hook picks. Bundles /sb-commit (session-isolated, doc-sync-gated), /sb-todo (active-work scanner), /sb-help (user-invoke skill discovery surface), /sb-merge (branch absorption with per-branch rebase-vs-merge recommendation; aborts + surfaces on conflict), and /release-init (optional one-shot — detects project type, generates a tailored project-level /release skill). Solo dev workflow.",
   "version": "2.0.0",
   "author": {
     "name": "Rocky Hong",

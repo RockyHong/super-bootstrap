@@ -9,6 +9,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`. Standalone or delegated from `harness-bootstrap` Phase 3c.
 - `sb-todo` — scans active specs/plans, reports cycle stage + blockers.
 - `sb-commit` — session-isolated commit, doc-sync gated, conventional message, no push.
+- `sb-merge` — absorb feature branches into base. Per-branch rebase-vs-merge recommendation, clean execution. Hard SoC: on conflict, aborts + surfaces file list + stops. Resolution out of scope (user/gateway routes). Dispatches `agents/sb-merge.md` on Sonnet.
 - `release-init` — one-shot. Detects project type (unity / tauri / node / ios-native / android-native / generic) + multi-platform shape, generates a tailored project-level `/release` skill at `.claude/skills/release/SKILL.md`. Optional bonus — run only if the repo ships versioned releases.
 
 ## Naming convention

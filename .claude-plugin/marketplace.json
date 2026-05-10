@@ -10,7 +10,7 @@
     {
       "name": "super-bootstrap",
       "source": "./plugins/super-bootstrap",
-      "description": "Bootstrap or sync the superpowers development pipeline in any repo. /super-bootstrap gates greenfield, /harness-bootstrap installs the harness, /sb-commit + /sb-todo + /sb-help bundled. Optional /release-init scaffolds a project-tailored /release skill. Solo-dev opinionated. Project-adaptive.",
+      "description": "Bootstrap or sync the superpowers development pipeline in any repo. /super-bootstrap gates greenfield, /harness-bootstrap installs the harness, /sb-commit + /sb-todo + /sb-help + /sb-merge bundled. Optional /release-init scaffolds a project-tailored /release skill. Solo-dev opinionated. Project-adaptive.",
       "version": "2.0.0",
       "category": "development",
       "tags": ["bootstrap", "scaffold", "setup", "meta", "docs"],
