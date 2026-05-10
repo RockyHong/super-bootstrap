@@ -54,7 +54,6 @@ Issue WebFetch / Bash queries against each source. **GitHub-only pool — sites 
 - **everything-claude-code (affaan-m / ECC)** — `gh api repos/affaan-m/everything-claude-code/contents` — 172k-star MIT-licensed harness component bundle (skills + agents + rules + hooks + MCP configs). Strongest source for **language-specific rules** (TS / Python / Go / etc.).
 - **awesome-claude-skills (ComposioHQ)** — `gh api repos/ComposioHQ/awesome-claude-skills/contents/README.md` (or WebFetch) — actively-curated category index (~200 entries, "production ready" bar). Strongest source for **workflow / external-tools** picks (78 Composio SaaS workflow skills covering Notion / Slack / Jira / Linear / CRM).
 - **VoltAgent/awesome-agent-skills** — `gh api repos/VoltAgent/awesome-agent-skills/contents` — 1000+ skills from official dev teams (Anthropic, Vercel, Stripe, Cloudflare, Sentry, Hugging Face, Figma) + community. MIT-licensed, ~20k stars. Cross-reference for cross-team picks the Claude-only catalogs miss.
-- **jeffallan/claude-skills** — `gh api repos/Jeffallan/claude-skills/contents` — broad fullstack-skills marketplace (~65 skills covering fullstack workflows, project-mgmt integration). Direct query > aggregator listing for freshness.
 - **Fast-path** — if `claude-code-setup` plugin is installed locally, invoke `/setup` and merge its picks.
 
 **Partial failure handling.** Single source unreachable (404 / rate limit / network) → note inline, continue with the others. Never skip the whole step.
@@ -88,7 +87,7 @@ Drop generic / spray suggestions. Match against stack signals (Phase 1 § Requir
 
 ### Dedupe by canonical name across sources
 
-Same skill / MCP often appears in multiple sources (e.g. `react-expert` in Anthropic + ECC + jeffallan with different versions / licenses / recency). Sources are peers, not ranked — never silently default to one. Process:
+Same skill / MCP often appears in multiple sources (e.g. `react-expert` in Anthropic + ECC + VoltAgent with different versions / licenses / recency). Sources are peers, not ranked — never silently default to one. Process:
 
 - Group hits by canonical plugin name (case-insensitive, ignore source suffix)
 - Pick the **primary row** by highest composite signal: stars × recency × license-clean. Tie-break by Anthropic-vetted if present.
@@ -131,7 +130,7 @@ For each candidate that survived dedupe + trust scoring, name one hard invocatio
 
 #### Mass-rejection collapsing
 
-If many candidates from the same source reject for the same reason, collapse to one batch line — e.g. `Rejected 66 candidates from Jeffallan/claude-skills (description-match-only)`. Default collapsed; user types `expand rejected` to expand.
+If many candidates from the same source reject for the same reason, collapse to one batch line — e.g. `Rejected 42 candidates from VoltAgent/awesome-agent-skills (description-match-only)`. Default collapsed; user types `expand rejected` to expand.
 
 ---
 
