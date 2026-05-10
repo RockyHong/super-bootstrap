@@ -56,6 +56,8 @@ Re-run any time — incremental, never overwrites your edits.
 
 Also bundles `/sb-todo` (active-work scanner) and `/sb-commit` (session-isolated, doc-sync-gated, no push) — namespaced to avoid collision with other plugins.
 
+Optional bonus: `/release-init` — one-shot scaffolder. Detects project type (unity / tauri / node / ios-native / android-native / generic) and generates a tailored `/release` skill at `.claude/skills/release/SKILL.md`. Run only on repos that ship versioned releases.
+
 ## Sources
 
 | Tool | Role |
