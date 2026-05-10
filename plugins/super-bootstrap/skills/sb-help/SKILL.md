@@ -1,6 +1,6 @@
 ---
 name: sb-help
-description: "Passive on-demand index of installed user-invoke skills, grouped by category. Bundled with super-bootstrap. /sb-help renders the full menu; /sb-help <category> filters. Reads installed-plugin manifest + project skills + per-plugin bundled skills. No active reminders — discovery is gateway-side, zero ambient cost."
+description: "Passive on-demand index of installed user-invoke skills, grouped by category. Bundled with super-bootstrap. /sb-help renders the full menu; /sb-help <category> filters. Reads installed-plugin manifest + project skills + per-plugin bundled skills. No active reminders — discovery is pull-only, zero ambient cost."
 tags: [help, discovery, menu, pipeline]
 ---
 
@@ -14,77 +14,25 @@ Render an on-demand menu of slash commands the user can invoke in this project. 
 - User just installed a new plugin and wants to see what it added
 - User wants to filter by category (`/sb-help git`, `/sb-help docs`)
 
-## Protocol
+## Why dispatched (Haiku)
 
-### Step 1: Read sources
+Pure manifest lookup + filter + render. Mechanical; Haiku is the right model fit. Skills can't pin a model in frontmatter today — only agents can — so escaping Opus requires dispatch. Haiku output is ~15× cheaper than Opus per token; dispatch overhead is negligible at this volume. Bonus: keeps the gateway's working memory clean of manifest dumps.
 
-Walk these inputs in order, accumulating slash-invocable skills:
+## Execution
 
-- `~/.claude/plugins/installed_plugins.json` — global installed plugin manifest. Skip silently if absent.
-- `<project>/.claude/settings.json` `enabledPlugins` — project-pinned plugins (intent that travels with repo).
-- `<project>/.claude/skills/*/SKILL.md` — project-local skills (frontmatter `name:`, `description:`, `tags:`). Skip silently if folder absent.
-- Per-plugin bundled skills — for each enabled plugin, scan its `skills/*/SKILL.md` and `plugin.json` for declared commands.
+The full protocol lives in the `sb-help` agent (`agents/sb-help.md`, `model: haiku`, read-only tools).
 
-### Step 2: Filter to user-invoke
+When the user invokes `/sb-help [category]`:
 
-A skill counts as user-invoke if any one is true:
-
-- Frontmatter `name:` begins with `/`, OR
-- Description includes a user-trigger phrasing (e.g. "user types", "run `/...` to ...", "invoke when ..."), OR
-- Registered as a slash command in the plugin manifest (`commands:` field or equivalent).
-
-Drop delegation-only skills (called by other skills via `Skill(name=...)`) and hook-only skills (fired by Claude Code runtime, not the user).
-
-### Step 3: Group by category
-
-Parse each skill's `tags:` frontmatter and map to coarse categories:
-
-- `git` — commit, push, PR, branch, merge, rebase
-- `docs` — overview, techstack, spec, plan, sync, scaffold
-- `pipeline` — brainstorm, write-plan, execute-plan, todo, help
-- `meta` — bootstrap, harness, resolve, audit
-- `dev` — debug, test, refactor, lint
-- `utils` — format, search, lookup
-
-If a skill's tags span multiple categories, list it under the leftmost match. Ambiguous → primary group only.
-
-### Step 4: Render menu
-
-Table-style, one line per skill: command + one-line summary + when-to-use trigger.
-
-```
-Available slash commands ({N} total):
-
-[meta]
-  /super-bootstrap        Bootstrap or sync the superpowers pipeline.
-                          When: starting a fresh repo or syncing harness.
-  /harness-bootstrap      Install harness in a repo with code already present.
-                          When: existing repo, want pipeline + skeleton docs.
-  /resolve-plugins        Curate skill / MCP / hook picks against live sources.
-                          When: refresh picks; called from harness Phase 3c.
-
-[pipeline]
-  /sb-todo                Scan docs/superpowers/ for active specs and plans.
-                          When: "what was I doing?" / start of session.
-  /sb-help                This menu.
-                          When: forgot what's installed.
-
-[git]
-  /sb-commit              Session-isolated, doc-sync-gated commit.
-                          When: ready to commit work this session produced.
-```
-
-### Step 5: Filtered mode
-
-If invoked with an argument (`/sb-help git`), render only that category. Unknown category → list available categories and exit.
+1. Dispatch the `sb-help` subagent (Agent tool, `subagent_type: "sb-help"`). Forward the project root path and any category argument as the prompt body.
+2. Relay the agent's rendered menu verbatim to the user. Do not re-do the work.
 
 ## Rules
 
-- **Run inline.** Do not subagent-dispatch — token cost is small (few JSON / SKILL.md reads + table render), dispatch overhead would dwarf the work.
 - **No active reminders.** Discovery is pull-only; user invokes `/sb-help` when they want it. Footer-hint convention on other surfaces (e.g. `/sb-todo` ends with `more: /sb-help`) is the only push.
 
 ## Out of Scope
 
 - **Active context-aware suggestion** — description-match autopilot territory; same failure mode as the orphaned-plugins problem.
-- **Time-based "you haven't used X in N days" reminders** — see § Why no active reminder.
+- **Time-based "you haven't used X in N days" reminders** — see § No active reminders.
 - **Auto-execute via `!command` syntax** — not a Claude Code feature today; menu renders names, user types the command.
