@@ -54,7 +54,7 @@ Re-run any time — incremental, never overwrites your edits.
 | `docs/`, `.claude/rules/` | **Seeded** with new files from detected stack. User-grown content never touched on re-run. |
 | `.env*`, `*.key`, `*credential*` | **Skipped** from scan entirely — never read, never written. |
 
-Also bundles `/sb-todo` (intent-filtered scanner — bare call shows Discuss/Cloud/Device/Full picker, sub-verbs filter directly), `/sb-commit` (session-isolated, doc-sync-gated, no push), `/sb-merge` (absorb feature branches; per-branch rebase-vs-merge; aborts + surfaces on conflict, never resolves inline), and `/sb-help` (passive on-demand index of installed user-invoke skills) — namespaced to avoid collision with other plugins.
+Also bundles `/todo` (intent-filtered scanner — bare call shows Discuss/Cloud/Device/Full picker, sub-verbs filter directly), `/commit` (session-isolated, doc-sync-gated, no push), `/merge` (absorb feature branches; per-branch rebase-vs-merge; aborts + surfaces on conflict, never resolves inline), and `/help` (passive on-demand index of installed user-invoke skills) — namespaced under `super-bootstrap:` so plugin manager disambiguates collisions automatically.
 
 Optional bonus: `/release-init` — one-shot scaffolder. Detects project type (unity / tauri / node / ios-native / android-native / generic) and generates a tailored `/release` skill at `.claude/skills/release/SKILL.md`. Run only on repos that ship versioned releases.
 

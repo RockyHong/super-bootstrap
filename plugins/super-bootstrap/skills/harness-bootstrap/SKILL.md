@@ -77,7 +77,7 @@ Super-bootstrap installs **harness**, not **product**. Workflow rules, doc-sync 
 
   Pipeline is now LIVE. Skeleton docs carry detected facts. Picks pinned in
   .claude/settings.json. Any adaptive seeding (specs / backlog) queued in
-  bootstrap-plan for later /sb-todo sessions.
+  bootstrap-plan for later /todo sessions.
 
 Per-commit (forever after):
   Doc-sync gate fires → if diff touches behavior covered by a doc, propose
@@ -452,7 +452,7 @@ Phase 3c invokes `/resolve-plugins`, which gates picks via earn-right (≥1 hard
 
 If every row is `✓ current` and nothing changed on disk, report and skip the commit.
 
-Otherwise use `/sb-commit` to stage:
+Otherwise use `/commit` to stage:
 - `CLAUDE.md` (new, modified, or post-migration)
 - `docs/techstack.md` (new, skeleton-section drift, or post-migration absorbed content)
 - `docs/overview.md` (new or skeleton-section drift)
@@ -480,8 +480,8 @@ After committing (or reporting no changes needed), present results based on repo
 >
 > {If any rule files were seeded: "Path-scoped rules seeded in `.claude/rules/` ({list seeded rules}). They auto-load on file match — full ammo at the decision moment, summary mirrored in CLAUDE.md § Rules. Add more rule files when path-scoped patterns emerge."}
 >
-> {If bootstrap.md has Task 1 / Task 2 active: "Optional adaptive seeding queued in `docs/superpowers/plans/bootstrap.md` (specs / backlog). Next session: `/clear`, then `/sb-todo`."}
-> {If bootstrap.md is cleanup-only: "Bootstrap essentially complete — `/sb-todo` will show the cleanup task."}
+> {If bootstrap.md has Task 1 / Task 2 active: "Optional adaptive seeding queued in `docs/superpowers/plans/bootstrap.md` (specs / backlog). Next session: `/clear`, then `/todo`."}
+> {If bootstrap.md is cleanup-only: "Bootstrap essentially complete — `/todo` will show the cleanup task."}
 
 **Re-run / sync pass:**
 

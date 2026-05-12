@@ -1,16 +1,16 @@
 ---
-name: sb-merge
+name: merge
 description: 'Absorb one or more feature branches into the base branch. Recommends merge vs rebase per branch. On conflict, aborts that branch + surfaces the file list + stops. Resolution out of scope; user decides next.'
-tags: [sb, merge, git, branch]
+tags: [merge, git, branch]
 ---
 
-# sb-merge — Branch Absorption
+# merge — Branch Absorption
 
 Absorb feature branches into the base branch. Per-branch rebase-vs-merge recommendation, mechanical execution. **Conflict resolution is NOT this skill's job** — abort, surface, stop.
 
 ## Why inline (not dispatched)
 
-Same logic as `sb-commit`: branch state + conflict context belong in the gateway, not relayed through an agent. Conflict resolution (when it comes) is context-aware — needs full session memory of what was being absorbed and why. Detour through Sonnet would force re-relaying the conflict scope back to the gateway anyway. Frequency is lower than `sb-commit` so token-savings argument doesn't pay for the relay overhead either.
+Same logic as `commit`: branch state + conflict context belong in the gateway, not relayed through an agent. Conflict resolution (when it comes) is context-aware — needs full session memory of what was being absorbed and why. Detour through Sonnet would force re-relaying the conflict scope back to the gateway anyway. Frequency is lower than `commit` so token-savings argument doesn't pay for the relay overhead either.
 
 ## Conflict Doctrine (load-bearing)
 

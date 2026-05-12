@@ -7,22 +7,22 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `super-bootstrap` — public entry, greenfield gate, dispatches to `harness-bootstrap`.
 - `harness-bootstrap` — installs/syncs the harness (CLAUDE.md, skeleton docs, rules, picks).
 - `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`. Standalone or delegated from `harness-bootstrap` Phase 3c.
-- `sb-todo` — intent-filtered scanner. Bare `/sb-todo` shows mode picker (Discuss / Cloud / Device / Full); sub-verbs filter directly. Dispatches `agents/sb-todo.md` on Sonnet with scaffold injection.
-- `sb-help` — passive on-demand index of installed user-invoke skills, grouped by category. Dispatches `agents/sb-help.md` on Haiku.
-- `sb-commit` — session-isolated commit, doc-sync gated, conventional message, no push.
-- `sb-merge` — absorb feature branches into base. Per-branch rebase-vs-merge recommendation, clean execution. Hard SoC: on conflict, aborts + surfaces file list + stops. Resolution out of scope (user routes next pass). Inline; same context-awareness rationale as `sb-commit`.
+- `todo` — intent-filtered scanner. Bare `/todo` shows mode picker (Discuss / Cloud / Device / Full); sub-verbs filter directly. Dispatches `agents/todo.md` on Sonnet with scaffold injection.
+- `help` — passive on-demand index of installed user-invoke skills, grouped by category. Dispatches `agents/help.md` on Haiku.
+- `commit` — session-isolated commit, doc-sync gated, conventional message, no push.
+- `merge` — absorb feature branches into base. Per-branch rebase-vs-merge recommendation, clean execution. Hard SoC: on conflict, aborts + surfaces file list + stops. Resolution out of scope (user routes next pass). Inline; same context-awareness rationale as `commit`.
 - `release-init` — one-shot. Detects project type (unity / tauri / node / ios-native / android-native / generic) + multi-platform shape, generates a tailored project-level `/release` skill at `.claude/skills/release/SKILL.md`. Optional bonus — run only if the repo ships versioned releases.
 
 ## Naming convention
 
-| Prefix shape | Tier | Frequency | Examples |
-|---|---|---|---|
-| `sb-*` | In-flight ops | High (per-session, per-commit) | `sb-commit`, `sb-todo` |
-| Self-explanatory verb-noun | Bootstrap / system / lifecycle | Low (rare invocations) | `super-bootstrap`, `harness-bootstrap`, `resolve-plugins` |
+Bare names, no prefix. The plugin manager namespaces to `super-bootstrap:<skill>`, which handles collision resolution; an `sb-*` prefix on top is double-tagging that creators and users both have to remember (and abbreviation guesses — `sb` vs `sp` — are a real failure mode in dropdown search).
 
-**Why:** `sb-*` shorthand is amortized by repetition. Lifecycle-tier skills fire rarely — name must read clearly cold without prefix knowledge.
+| Shape | Examples |
+|---|---|
+| Short common verb-noun (high-freq in-flight ops) | `commit`, `todo`, `help`, `merge` |
+| Self-explanatory verb-noun (lifecycle / one-shot) | `super-bootstrap`, `harness-bootstrap`, `resolve-plugins`, `release-init` |
 
-**When adding a new skill:** decide tier first. High-freq in-flight (will user invoke this multiple times per session?) → `sb-*`. Lifecycle / one-shot setup → self-explanatory verb-noun. Don't `sb-*`-prefix a rarely-invoked skill — wrong frequency signal.
+**When adding a new skill:** pick the shortest name that reads cleanly cold. If a name collides with another plugin's bare skill, users invoke the namespaced form (`super-bootstrap:commit`); the dropdown shows the namespace so they pick the right one. Don't reintroduce a prefix to dodge that — the namespace is already the prefix.
 
 ## Inline vs Dispatch
 
@@ -42,13 +42,13 @@ A single matching reason on either side decides.
 | `super-bootstrap` | inline | Greenfield Q&A throughout |
 | `harness-bootstrap` | inline | Phased scaffolding with mid-flow user steering |
 | `resolve-plugins` | inline (dispatch candidate) | 6-pool live queries are context-heavy; user-interactive on diff confirm. Revisit. |
-| `sb-commit` | inline | Session-aware (transcript memory + doc-sync Q&A) |
-| `sb-merge` | inline | Same context-aware shape as `sb-commit`; lower freq doesn't pay for relay either |
+| `commit` | inline | Session-aware (transcript memory + doc-sync Q&A) |
+| `merge` | inline | Same context-aware shape as `commit`; lower freq doesn't pay for relay either |
 | `release-init` | inline | Detection + Q&A + file generation throughout |
-| `sb-todo` | dispatch (Sonnet) | Multi-file scan + bounded classification + render — Sonnet fit, isolate from gateway |
-| `sb-help` | dispatch (Haiku) | Pure manifest lookup + render — Haiku model fit, skill frontmatter can't pin a model so dispatch is the escape hatch |
+| `todo` | dispatch (Sonnet) | Multi-file scan + bounded classification + render — Sonnet fit, isolate from gateway |
+| `help` | dispatch (Haiku) | Pure manifest lookup + render — Haiku model fit, skill frontmatter can't pin a model so dispatch is the escape hatch |
 
-When adding a new skill: update this table. Add an in-`SKILL.md` rationale callout only when the choice has nuance worth surfacing near the protocol (e.g. dispatching skills carry it next to their dispatch block; `sb-merge` carries one to record why we rejected dispatch).
+When adding a new skill: update this table. Add an in-`SKILL.md` rationale callout only when the choice has nuance worth surfacing near the protocol (e.g. dispatching skills carry it next to their dispatch block; `merge` carries one to record why we rejected dispatch).
 
 ## Source of truth boundaries
 

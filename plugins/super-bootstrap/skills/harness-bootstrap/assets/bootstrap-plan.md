@@ -1,6 +1,6 @@
 # Pipeline Bootstrap Plan
 
-> **For agentic workers:** Use `/sb-todo` to see current progress. Each task is independent and session-sized.
+> **For agentic workers:** Use `/todo` to see current progress. Each task is independent and session-sized.
 
 **Goal:** Final adaptive seeding + cleanup for {project name}
 
@@ -37,7 +37,7 @@ If no obvious items exist, leave the file with just its header — that's fine. 
 ### Task 3: Cleanup
 
 - [ ] **Delete this file** (`docs/superpowers/plans/bootstrap.md`) — bootstrap is complete
-- [ ] **Verify `/sb-todo` shows no active work** (unless the user has started real project work)
+- [ ] **Verify `/todo` shows no active work** (unless the user has started real project work)
 - [ ] **Commit**: `chore: complete pipeline bootstrap`
 
 ---

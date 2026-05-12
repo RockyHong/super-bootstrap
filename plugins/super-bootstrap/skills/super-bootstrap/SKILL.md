@@ -119,7 +119,7 @@ Use the template from `assets/techstack-skeleton.md` in `/harness-bootstrap`. Fi
 
 ### `docs/backlog.md`
 
-One BIG item — the roadmap-planning task. This is what makes greenfield bootstrap actually finish the loop: harness lives, but `/sb-todo` has fuel.
+One BIG item — the roadmap-planning task. This is what makes greenfield bootstrap actually finish the loop: harness lives, but `/todo` has fuel.
 
 Write exactly this content (substitute `{Q1 summary}` from confirmed answer):
 
@@ -146,7 +146,7 @@ Format per item: stable ID, short title, affected area, why it matters, proposed
 
 **Affected area:** whole product
 
-**Why it matters:** bootstrap delivered overview + techstack but no feature breakdown / order / first-step. Without this, `/sb-todo` will report empty and the pipeline has no fuel.
+**Why it matters:** bootstrap delivered overview + techstack but no feature breakdown / order / first-step. Without this, `/todo` will report empty and the pipeline has no fuel.
 
 **What's missing:** ordered feature list with rationale, first-feature spec, and first-feature plan.
 
@@ -156,7 +156,7 @@ Format per item: stable ID, short title, affected area, why it matters, proposed
 - First-feature spec at `docs/specs/{first-feature-slug}.md` (or `docs/superpowers/specs/` if the project doesn't scaffold persistent specs — the `/harness-bootstrap` Q&A decides).
 - First-feature plan at `docs/superpowers/plans/{date}-{first-feature-slug}.md`.
 
-After deliverables exist, delete this `GAP-001` item — `/sb-todo` will pick up the actual work from the populated backlog and first-feature spec/plan.
+After deliverables exist, delete this `GAP-001` item — `/todo` will pick up the actual work from the populated backlog and first-feature spec/plan.
 ```
 
 If `docs/backlog.md` already exists with content (re-run case), do NOT overwrite. Skip writing this file and warn the user that the existing backlog stays.
@@ -194,7 +194,7 @@ If the user prefers to invoke harness manually later (e.g. wants to review seed 
 ## Principles
 
 - **Lean Q&A, not PRD-mining.** Six questions max, four required. Skeleton-section depth only. Grown sections live for doc-sync, not pre-code speculation.
-- **One BIG backlog item, not five candidates.** Bootstrap doesn't know the roadmap. Pretending it does (LLM-guessed feature list) is noise. Single deterministic next-action via `/sb-todo` → `superpowers:brainstorming` is the route.
+- **One BIG backlog item, not five candidates.** Bootstrap doesn't know the roadmap. Pretending it does (LLM-guessed feature list) is noise. Single deterministic next-action via `/todo` → `superpowers:brainstorming` is the route.
 - **Files-as-contract handoff.** Write seed docs, exit. `/harness-bootstrap` consumes them. User can pause between phases.
 - **Pre-exist repos: thin pass-through.** Non-greenfield → immediate dispatch. Don't add ceremony.
 - **Never force harness on emptiness.** If user invokes `/harness-bootstrap` directly on truly empty repo, it redirects here. The redirect is one-way: this skill seeds, then dispatches. No infinite ping-pong.
