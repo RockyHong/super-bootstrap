@@ -7,7 +7,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `super-bootstrap` — public entry, greenfield gate, dispatches to `harness-bootstrap`.
 - `harness-bootstrap` — installs/syncs the harness (CLAUDE.md, skeleton docs, rules, picks).
 - `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`. Standalone or delegated from `harness-bootstrap` Phase 3c.
-- `sb-todo` — scans active specs/plans, reports cycle stage + blockers. Dispatches `agents/sb-todo.md` on Sonnet.
+- `sb-todo` — intent-filtered scanner. Bare `/sb-todo` shows mode picker (Discuss / Cloud / Device / Full); sub-verbs filter directly. Dispatches `agents/sb-todo.md` on Sonnet with scaffold injection.
 - `sb-help` — passive on-demand index of installed user-invoke skills, grouped by category. Dispatches `agents/sb-help.md` on Haiku.
 - `sb-commit` — session-isolated commit, doc-sync gated, conventional message, no push.
 - `sb-merge` — absorb feature branches into base. Per-branch rebase-vs-merge recommendation, clean execution. Hard SoC: on conflict, aborts + surfaces file list + stops. Resolution out of scope (user routes next pass). Inline; same context-awareness rationale as `sb-commit`.
