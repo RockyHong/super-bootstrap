@@ -1,6 +1,6 @@
 # Pipeline Bootstrap Plan
 
-> **For agentic workers:** Use `/todo` to see current progress. Each task is independent and session-sized.
+> **For agentic workers:** Use `/super-bootstrap:todo` (bare `/todo` works when no plugin collision) to see current progress. Each task is independent and session-sized.
 
 **Goal:** Final adaptive seeding + cleanup for {project name}
 

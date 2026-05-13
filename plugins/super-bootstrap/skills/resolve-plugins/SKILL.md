@@ -269,9 +269,9 @@ Never silently skip. Never claim "done" with half-installed state.
 
 ### Phase 5.5: Commit only fully-installed candidates
 
-`/commit` handoff. Restrict commit to candidates where every Phase 5.3 verify exited 0. Half-installed candidates excluded; user resolves before re-running.
+`/super-bootstrap:commit` handoff. Restrict commit to candidates where every Phase 5.3 verify exited 0. Half-installed candidates excluded; user resolves before re-running.
 
-If delta non-empty → invoke `/commit` to stage `.claude/settings.json` (and `.mcp.json` / `.claude/hooks/` / `.claude/skills/` if written by atomic install) with message `chore: refresh plugin picks` (or `chore: pin plugin picks` on first run with empty `enabledPlugins`).
+If delta non-empty → invoke `/super-bootstrap:commit` to stage `.claude/settings.json` (and `.mcp.json` / `.claude/hooks/` / `.claude/skills/` if written by atomic install) with message `chore: refresh plugin picks` (or `chore: pin plugin picks` on first run with empty `enabledPlugins`).
 
 If delta empty (every row `✓ pinned` and trust blocks unchanged) → report `✓ all pinned picks current` and skip commit.
 

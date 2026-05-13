@@ -146,11 +146,33 @@ After Phase 1 detection: if **no manifests + no source files (any extension) + R
 
 If `docs/overview.md` + `docs/techstack.md` exist (seeded by `/super-bootstrap` greenfield path), proceed normally — the seed docs feed Phase 2 Q&A defaults and Phase 3b skeleton placeholders. **Never accept force without explicit token** — empty-repo harness is a useless artifact and the redirect surfaces the right tool.
 
+### Rot signals (harnessed-but-stale)
+
+Symmetric counterpart to Greenfield Redirect. Greenfield catches "no harness, can't install yet." Rot catches "harness installed but carries renamed-away literals" — re-run is the right entry, but the user deserves a heads-up before Phase 3b churns through migrations.
+
+Trigger: any pipeline-owned file (`CLAUDE.md`, `docs/overview.md`, `docs/techstack.md`, `docs/superpowers/plans/bootstrap.md`, `.claude/rules/*.md`) contains a literal listed as `old` in `assets/rename-map.md`. Whole-token match; one hit is enough.
+
+When the trigger fires, surface ONCE up front (single message, not a redirect — re-run is the correct entry point):
+
+```
+Renamed-away literals detected in pipeline-owned files.
+Phase 3b will propose migrations alongside the normal drift check.
+Affected files: {list of files where rot was observed}.
+
+Continue? (y / dry-run report only)
+```
+
+If user answers `dry-run`, walk Phases 1–3b without writing — output the sync report + rename-map migration rows + per-section diff listing, then exit. Otherwise proceed normally; Phase 3b's rot scan (see § 3b) handles the actual migrations.
+
+**Output of Phase 1 (rot lane):** record `rot_hits[]` so Phase 3b can re-use the scan instead of grepping twice.
+
 ---
 
 ## Phase 2: Q&A Alignment
 
 **Phase 2 ALWAYS runs, including on re-run.** Don't skip because "the repo is already bootstrapped" or "answers are encoded in existing docs." Required Q1-Q4 are non-skippable every invocation. Q4 (external tools) is especially load-bearing — it is the fresh product-level signal for Phase 3c MCP curation and is **not derivable from any existing doc**. On re-run, prefill defaults from existing artifacts (overview.md → Q1/Q2/Q3, settings.json picks → Q4 hint) so confirms collapse to one keystroke — but the user still confirms. Conditional Q5-Q9 fire only if signal triggers.
+
+**Hard precondition before Phase 3 dispatch.** Before any file write in Phase 3, assert each required Q1-Q4 has a recorded user response *this invocation* — chat confirm, AskUserQuestion result, or explicit Tier-1 synthesis `y`. Tier-1 collapse counts only when the synthesis line covered all four required answers verbatim and the user replied `y` (not `(y, but…)`, not silent assumption). If any Q lacks a response, halt Phase 3, surface the specific missing Q, re-prompt. "Encoded in existing docs / settings.json" is **not** a substitute — the doc is a prefill source, not a consent record. The assertion is mandatory: skipping it is the same class of silent-skip bug as #3 (per-section diff) and #6 (rot scan).
 
 Before writing anything, confirm understanding with the user. **Each question is an LLM-prefilled MCQ:** based on Phase 1 detection (and existing docs on re-run), infer the answer, present it as the default option with 2-4 alternatives + an `(other: __)` slot for elaboration. Cite the signal so the user can sanity-check the inference at a glance.
 
@@ -370,7 +392,19 @@ Per-migration handling:
 
 **Never destructive without confirmation.** Show source → dest mapping, get explicit approval, only then move content.
 
-**Per-section diff output is mandatory** — even when conclusion is `✓ current`, show the comparison so the user (and the next session's audit) can verify. Hand-wave assertions like "skeleton sections match the template" without a per-section listing are insufficient.
+**Per-section diff output is mandatory.** Required shape for every pipeline-owned section in every targeted file — `✓ current` is **not** allowed without the listing. The two-block contract:
+
+Block 1 (always, one row per pipeline-owned section in the file):
+
+```
+{file path} sync — per-section comparison:
+
+  [{Section A}] ✓ matches template     (lines N–M)
+  [{Section B}] ⚠ drifted               (see diff below)
+  [{Section C}] ✓ matches template     (lines P–Q)
+```
+
+Block 2 (only for `⚠ drifted` rows — one expansion per drifted section):
 
 ```
 {file path} sync — drift detected:
@@ -384,9 +418,33 @@ Per-migration handling:
   Update? (y / n / show full diff)
 ```
 
-Drift approval protects against (a) legit template updates the user wants to review and (b) bad-actor template injection on a future re-run — you see what's about to change before it's overwritten.
+Hand-wave assertions ("skeleton sections match the template") without Block 1's per-section listing are a hard failure — block commit, re-run the check. Drift approval (Block 2) protects against (a) legit template updates the user wants to review and (b) bad-actor template injection on a future re-run — you see what's about to change before it's overwritten.
+
+**Rot scan (mandatory pre-step on re-run).** Before Block 1 renders, read `assets/rename-map.md` and grep every pipeline-owned file in scope for each entry's `old` literal (whole-token match — avoid URL / identifier false hits). Each hit becomes a migration row in the sync report:
+
+```
+{file path}:{line} — stale literal `{old}` → propose `{new}`
+  Reason: {map entry reason}
+```
+
+Acceptance pattern matches legacy migration: `y / n / per-row`. The rot scan runs even when every per-section diff is `✓ current` — a stale slash command literal inside a current-shaped doc is invisible to per-section diff (template hasn't drifted; only the literal inside it has). Together, per-section diff + rot scan cover both axes of drift: section shape AND inline literals.
 
 **Special case — `bootstrap.md`** carries user state (checkbox progress from prior session). Don't auto-merge. Prompt: **Keep existing** (default) / **Reset from template** / **Merge** (rare, task-by-task).
+
+**Special case — `bootstrap.md` missing on mature repo.** When the file is **missing** AND the repo has ≥5 commits past the most recent bootstrap-shaped commit (`chore: scaffold superpowers pipeline` / `chore: sync superpowers pipeline` / `chore: complete pipeline bootstrap`), don't silently re-template — the file was almost certainly Task-3-cleanup-deleted by a prior session, and re-templating resurfaces completed work as fresh tasks. Surface an advisory instead:
+
+```
+docs/superpowers/plans/bootstrap.md is missing.
+Repo has {N} commits since last bootstrap-shaped commit ({sha} — {date}).
+File was likely cleanup-deleted (Task 3 of prior bootstrap).
+
+Options:
+  (a) skip re-seed (bootstrap complete)        ← default
+  (b) re-seed (Tasks 1/2 still applicable per current Q&A)
+  (c) re-seed cleanup-only (Task 3 stub for next session)
+```
+
+Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write from template, no advisory.
 
 **Placeholders:**
 - `{Project Name}` — repo name
@@ -452,7 +510,7 @@ Phase 3c invokes `/resolve-plugins`, which gates picks via earn-right (≥1 hard
 
 If every row is `✓ current` and nothing changed on disk, report and skip the commit.
 
-Otherwise use `/commit` to stage:
+Otherwise use `/super-bootstrap:commit` to stage:
 - `CLAUDE.md` (new, modified, or post-migration)
 - `docs/techstack.md` (new, skeleton-section drift, or post-migration absorbed content)
 - `docs/overview.md` (new or skeleton-section drift)
