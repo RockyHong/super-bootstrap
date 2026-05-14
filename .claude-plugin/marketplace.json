@@ -11,7 +11,7 @@
       "name": "super-bootstrap",
       "source": "./plugins/super-bootstrap",
       "description": "Bootstrap or sync the superpowers development pipeline in any repo. /super-bootstrap gates greenfield, /super-bootstrap:harness-bootstrap installs the harness, /super-bootstrap:commit + /super-bootstrap:todo + /super-bootstrap:help + /super-bootstrap:merge bundled (all namespaced under super-bootstrap: except the /super-bootstrap entry). Optional /super-bootstrap:release-init scaffolds a project-tailored /release skill. Solo-dev opinionated. Project-adaptive.",
-      "version": "2.1.1",
+      "version": "2.1.2",
       "category": "development",
       "tags": ["bootstrap", "scaffold", "setup", "meta", "docs"],
       "author": {
