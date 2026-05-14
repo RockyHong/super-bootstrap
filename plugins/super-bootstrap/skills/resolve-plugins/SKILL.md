@@ -32,8 +32,9 @@ Don't silently scan manifests — manifest detection is harness's job. Doing it 
 ### Workflow-tools signal (priority order)
 
 1. **Existing `.claude/settings.json` pinned MCPs** — Notion MCP pinned → docs-heavy workflow. Linear MCP pinned → ticket-driven. Slack MCP pinned → team comm. Etc. Strong signal — user already explicitly enabled the tool.
-2. **Keyword scan of `docs/overview.md`** — phrases like "Notion docs", "Linear tickets", "Slack standup". Weak signal but cheap.
-3. **Prompt user once** with the same MCQ as `/harness-bootstrap` Phase 2 Q4 if neither (1) nor (2) yields signal:
+2. **`<!-- harness-meta -->` block in `docs/overview.md`** — structured record of Q4 (external tools) answer from harness Q&A. Parse the YAML `external-tools:` list. Strong signal — grounded in user-confirmed Q&A, not inference. Robust to prose drift.
+3. **Keyword scan of `docs/overview.md` prose** — phrases like "Notion docs", "Linear tickets", "Slack standup". Weak signal, brittle, but cheap. Fallback only when (1) and (2) absent (e.g. legacy harness-bootstrapped repos predating the meta block).
+4. **Prompt user once** with the same MCQ as `/harness-bootstrap` Phase 2 Q4 if none of (1)–(3) yields signal:
 
    > External tools in your workflow? GitHub-only / Notion / Linear / Jira / Slack / Trello / ClickUp / other (multi-select).
 
@@ -59,6 +60,22 @@ Issue WebFetch / Bash queries against each source. **GitHub-only pool — sites 
 **Partial failure handling.** Single source unreachable (404 / rate limit / network) → note inline, continue with the others. Never skip the whole step.
 
 **Total failure handling.** All sources unreachable → fail loud, don't write a stale-pin diff. Report and let user retry.
+
+### Language-LSP pre-filter
+
+`claude-plugins-official` ships per-language LSP plugins (`python-lsp`, `rust-lsp`, `go-lsp`, `ruby-lsp`, `swift-lsp`, `php-lsp`, `kotlin-lsp`, `lua-lsp`, `java-lsp`, `csharp-lsp`, `typescript-lsp`, etc.). For a single-language project, all but one are guaranteed stack-mismatches — running Phase 2.5 README parse on each is wasted cycles (10+ fetches per run on Node/TS repos).
+
+Pre-filter rule: after Phase 2 returns the source pool, partition `*-lsp` plugins by name → language mapping. Drop any whose language ≠ techstack.md § Runtime / § Framework / § Key Dependencies match. Surface dropped count inline so user sees they exist:
+
+```
+Pre-filtered: 10 language-LSP plugins (stack-mismatch w/ {detected-language}) — type `expand prefilter` to list.
+```
+
+Default collapsed. Multi-language repos (monorepos w/ Python + TS, etc.) keep both matching LSPs.
+
+Skipped plugins do **not** enter Phase 2.5 README parse, Phase 3 dedupe/trust/gate, or Phase 4 rejection collapse — they're filtered above all of those. Distinct from Phase 3 earn-right rejections (collapsed under `Rejected (earn-right)`); the pre-filter line surfaces separately so the source-rejection accounting stays accurate.
+
+Pre-filter applies **only** to the `*-lsp` name pattern from `claude-plugins-official`. Don't generalize this to other plugin patterns without an equally precise name → stack-attribute mapping — false-positive skip is silent harm.
 
 ---
 
@@ -120,13 +137,17 @@ For each candidate that survived dedupe + trust scoring, name one hard invocatio
 - [ ] slash command (concrete user-trigger context — "user types /name when ___")
 - [ ] pipeline delegation (which existing skill calls it by name?)
 - [ ] frontmatter `agents:` / `related-skills:` bundle (which orchestrator pulls it?)
+- [ ] committed-stack — plugin name or primary keyword matches an entry committed in `docs/techstack.md` § Runtime / § Framework / § Key Dependencies. Covers passive runtime integrations (LSPs, type checkers, debuggers, formatters) that ship no hook/slash/bundle but earn their slot because Claude Code uses them when reading matched files.
 - [ ] none — only CLAUDE.md prescription / description match
 
 #### Decision rules
 
-- **≥1 of the first four boxes** → admit. Tag the path: `[hook]`, `[slash]`, `[delegation]`, `[bundle]`.
+- **≥1 of hook / slash / delegation / bundle** → admit. Tag the path: `[hook]`, `[slash]`, `[delegation]`, `[bundle]`.
+- **Only committed-stack** → admit when trust tier is `🛡 vetted` (Anthropic-vetted or MCP steering-group). Tag `[committed-stack: <matched-term>]`. For community tiers (`★ / 🆕 / ⚠`), surface for user confirm before admit — keyword-spoof risk on unvetted sources. Tag becomes `[committed-stack: <matched-term> · user-confirmed]` on accept.
 - **Only the last box** → reject by default. Description-match autopilot orphan.
 - **User override** → admit on single-line justification; tag becomes `[override: <reason>]`. Surfaces in Phase 7 report only (no persistent tracking in v1).
+
+**Why committed-stack is distinct from description match.** `techstack.md` is project-committed user intent, written via harness Q&A or super-bootstrap ideation. Treating it identically to "plugin description happens to mention React" undersells the signal — it's the strongest declaration of stack in the repo, stronger than manifest scan (a manifest may include build-only deps the user wouldn't want plugins for). Gate against keyword-match is what `[description-match-only]` rejects exist for; committed-stack is the orthogonal admit.
 
 #### Mass-rejection collapsing
 
@@ -188,7 +209,7 @@ Skill / MCP / hook curation for {project} ({stack}):
 Accept all / reject specific / discuss thoughts / expand alternates?
 ```
 
-Path tag column (`[hook]` / `[slash]` / `[delegation]` / `[bundle]` / `[override: <reason>]`) shows the hard invocation path Phase 3 admitted the pick on — surfaces "why this one earned its slot" at a glance.
+Path tag column (`[hook]` / `[slash]` / `[delegation]` / `[bundle]` / `[committed-stack: <term>]` / `[override: <reason>]`) shows the hard invocation path Phase 3 admitted the pick on — surfaces "why this one earned its slot" at a glance.
 
 `Rejected (earn-right): {R} candidates collapsed` line renders only when Phase 3 produced rejections. Default collapsed; user types `expand rejected` to expand into per-source breakdown.
 

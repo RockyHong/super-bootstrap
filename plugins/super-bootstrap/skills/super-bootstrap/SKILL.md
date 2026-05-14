@@ -100,6 +100,7 @@ Three files. Each writes to its target path with placeholders filled from Q&A.
 
 Use the template from `assets/overview-skeleton.md` in `/harness-bootstrap` (the harness skeleton is the source of truth — copy from there). Fill placeholders:
 
+- `<!-- harness-meta -->` block `external-tools:` ← Q4 multi-select answer as YAML list (e.g. `[github, notion]`; default `[github]`). Keep comment block at top; `/resolve-plugins` Phase 1 reads it as Tier-2 fallback when no pinned MCPs encode workflow signal.
 - `## Problem` body ← Q1 answer.
 - `## User` body ← Q2 answer (+ Q6 if asked).
 - `## Current State` body ← `greenfield` (literal — this is a fresh repo).

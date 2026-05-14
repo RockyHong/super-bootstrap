@@ -331,7 +331,7 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 |---|---|---|
 | `assets/claude-md-skeleton.md` | `CLAUDE.md` (project root) | Includes Rules summary section — fill bullets from seeded rule files |
 | `assets/techstack-skeleton.md` | `docs/techstack.md` | Coding Patterns grown section absorbs migrated CLAUDE.md content |
-| `assets/overview-skeleton.md` | `docs/overview.md` | |
+| `assets/overview-skeleton.md` | `docs/overview.md` | `<!-- harness-meta -->` block at top: fill `external-tools:` with Q4 multi-select answer as YAML list (default `[github]`). Read by `/resolve-plugins` as Tier-2 fallback. Treat as pipeline-owned for drift checks — re-runs propose update if Q4 answer changes. |
 | `assets/bootstrap-plan.md` | `docs/superpowers/plans/bootstrap.md` | |
 | `assets/rules-index-skeleton.md` | `.claude/rules/index.md` | Always — machinery |
 | `assets/rules-frontend-skeleton.md` | `.claude/rules/<framework>.md` | Only if frontend signal fired in Phase 1 |

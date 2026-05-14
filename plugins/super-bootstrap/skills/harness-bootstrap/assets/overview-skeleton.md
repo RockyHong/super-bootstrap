@@ -1,6 +1,12 @@
 # Overview
 
+<!-- harness-meta
+external-tools: [{Q4 multi-select: github, notion, linear, jira, slack, trello, clickup, other}]
+-->
+
 > Living doc. Skeleton sections (Problem / User / Current State) seeded at scaffold from Q&A answers. Grown sections (Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync — every commit that adds, removes, or reshapes a module triggers a sync proposal. See `CLAUDE.md` Doc Sync.
+>
+> `<!-- harness-meta -->` block at top: structured record of harness Q&A answers that aren't naturally prose. Read by `/resolve-plugins` as Tier-2 fallback when no pinned MCPs encode the signal. Hand-edit safe — keep YAML shape, list values in `[...]`.
 
 ## Problem
 
