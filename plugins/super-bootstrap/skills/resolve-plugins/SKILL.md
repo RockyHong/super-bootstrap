@@ -1,17 +1,17 @@
 ---
 name: resolve-plugins
-description: "Curate Claude Code skill / MCP / hook picks against live upstream sources and pin them in .claude/settings.json. Reads stack from docs/techstack.md, workflow signal from docs/overview.md + existing pins, then live-queries six source pools, dedupes, scores trust tier, presents diff vs pinned, writes settings.json. Standalone refresh path; also delegated from /harness-bootstrap Phase 3c. Solo dev workflow."
+description: "Curate Claude Code skill / MCP / hook picks against live upstream sources and pin them in .claude/settings.json. Reads stack from docs/techstack.md, workflow signal from docs/overview.md + existing pins, then live-queries six source pools, dedupes, scores trust tier, presents diff vs pinned, writes settings.json. Standalone refresh path; also delegated from /super-bootstrap:harness-bootstrap Phase 3c. Solo dev workflow."
 tags: [plugins, curation, mcp, skills, settings, meta]
 ---
 
 # Resolve Plugins — Curate & Pin
 
-Curate Claude Code skill / MCP / hook picks against live upstream sources and write them to `.claude/settings.json`. Designed for two callers: standalone refresh (`/resolve-plugins`) and harness delegation (`/harness-bootstrap` Phase 3c).
+Curate Claude Code skill / MCP / hook picks against live upstream sources and write them to `.claude/settings.json`. Designed for two callers: standalone refresh (`/super-bootstrap:resolve-plugins`) and harness delegation (`/super-bootstrap:harness-bootstrap` Phase 3c).
 
 ## When to Use
 
 - **Standalone refresh:** upstream marketplaces drift independent of code (new picks land, deprecations happen, licenses change). Run when nothing in your repo changed but you want fresh picks.
-- **From `/harness-bootstrap` Phase 3c:** harness delegates here so curation logic has one home.
+- **From `/super-bootstrap:harness-bootstrap` Phase 3c:** harness delegates here so curation logic has one home.
 
 ---
 
@@ -25,7 +25,7 @@ Files-as-contract — no in-memory handoff from caller.
 
 If missing → fail loud:
 
-> No `docs/techstack.md` found. `/resolve-plugins` reads stack signal from harness-seeded docs. Run `/harness-bootstrap` first to seed the harness, then re-run `/resolve-plugins` if you want a standalone refresh.
+> No `docs/techstack.md` found. `/super-bootstrap:resolve-plugins` reads stack signal from harness-seeded docs. Run `/super-bootstrap:harness-bootstrap` first to seed the harness, then re-run `/super-bootstrap:resolve-plugins` if you want a standalone refresh.
 
 Don't silently scan manifests — manifest detection is harness's job. Doing it here would duplicate logic.
 
@@ -34,7 +34,7 @@ Don't silently scan manifests — manifest detection is harness's job. Doing it 
 1. **Existing `.claude/settings.json` pinned MCPs** — Notion MCP pinned → docs-heavy workflow. Linear MCP pinned → ticket-driven. Slack MCP pinned → team comm. Etc. Strong signal — user already explicitly enabled the tool.
 2. **`<!-- harness-meta -->` block in `docs/overview.md`** — structured record of Q4 (external tools) answer from harness Q&A. Parse the YAML `external-tools:` list. Strong signal — grounded in user-confirmed Q&A, not inference. Robust to prose drift.
 3. **Keyword scan of `docs/overview.md` prose** — phrases like "Notion docs", "Linear tickets", "Slack standup". Weak signal, brittle, but cheap. Fallback only when (1) and (2) absent (e.g. legacy harness-bootstrapped repos predating the meta block).
-4. **Prompt user once** with the same MCQ as `/harness-bootstrap` Phase 2 Q4 if none of (1)–(3) yields signal:
+4. **Prompt user once** with the same MCQ as `/super-bootstrap:harness-bootstrap` Phase 2 Q4 if none of (1)–(3) yields signal:
 
    > External tools in your workflow? GitHub-only / Notion / Linear / Jira / Slack / Trello / ClickUp / other (multi-select).
 
@@ -92,7 +92,7 @@ Digest fields:
 
 If README absent or fetch fails for one candidate: warn inline, accept best-effort interpretation from SKILL.md only — do not auto-decide. Don't halt the whole batch on a single missing README.
 
-Cache lifetime: per `/resolve-plugins` invocation. Discarded at end. Re-runs re-fetch (README content drifts between runs).
+Cache lifetime: per `/super-bootstrap:resolve-plugins` invocation. Discarded at end. Re-runs re-fetch (README content drifts between runs).
 
 ---
 
@@ -159,7 +159,7 @@ If many candidates from the same source reject for the same reason, collapse to 
 
 ### Core pins (locked when harness-active)
 
-`superpowers@claude-plugins-official` is a **core dep of the harness** — the seeded CLAUDE.md routes brainstorm / write-plan / execute-plan slash commands through it. `/harness-bootstrap` Phase 3a pins it pre-resolve.
+`superpowers@claude-plugins-official` is a **core dep of the harness** — the seeded CLAUDE.md routes brainstorm / write-plan / execute-plan slash commands through it. `/super-bootstrap:harness-bootstrap` Phase 3a pins it pre-resolve.
 
 **Harness-active marker:** `docs/superpowers/` directory exists in the repo. Detect with one Glob.
 
@@ -283,7 +283,7 @@ If any step fails verify:
 2. Surface failure: which step (component type + name), the verify command + observed output, candidate's progress so far.
 3. Offer three resolutions:
    - **Rollback** — best-effort undo of already-applied steps. Some manual installs (e.g. `brew install`) aren't rollback-able — surface that.
-   - **Pause** — leave partial state, surface summary, user fixes manually then re-runs `/resolve-plugins`.
+   - **Pause** — leave partial state, surface summary, user fixes manually then re-runs `/super-bootstrap:resolve-plugins`.
    - **Drop** — accept candidate didn't install, drop from accepted set, revert its settings.json edit.
 
 Never silently skip. Never claim "done" with half-installed state.
@@ -325,6 +325,6 @@ If `R == 0` and `V == 0`, omit those rows entirely.
 - **Single source of truth.** Source pool list, trust tiers, dedupe rules, batch format live ONLY here. Harness 3c delegates — never duplicates.
 - **Live-query non-skippable.** Stable project ≠ stable upstream. Skipping = stale picks = silent failure mode.
 - **Files-as-contract input.** Reads `docs/techstack.md` + `docs/overview.md` + `.claude/settings.json`. No in-memory handoff from caller.
-- **Fail loud on missing input.** No `docs/techstack.md` → redirect to `/harness-bootstrap`. Don't silently scan manifests.
+- **Fail loud on missing input.** No `docs/techstack.md` → redirect to `/super-bootstrap:harness-bootstrap`. Don't silently scan manifests.
 - **Trust tier before source rank.** Sources are peers; tier (🛡 / ★ / 🆕 / ⚠) tells the user what to judge.
 - **Auto-exec hooks always tagged.** Hooks fire on every tool call — surface the risk every time.

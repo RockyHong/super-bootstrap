@@ -54,9 +54,9 @@ Re-run any time — incremental, never overwrites your edits.
 | `docs/`, `.claude/rules/` | **Seeded** with new files from detected stack. User-grown content never touched on re-run. |
 | `.env*`, `*.key`, `*credential*` | **Skipped** from scan entirely — never read, never written. |
 
-Also bundles `/todo` (intent-filtered scanner — bare call shows Discuss/Cloud/Device/Full picker, sub-verbs filter directly), `/commit` (session-isolated, doc-sync-gated, no push), `/merge` (absorb feature branches; per-branch rebase-vs-merge; aborts + surfaces on conflict, never resolves inline), and `/help` (passive on-demand index of installed user-invoke skills) — namespaced under `super-bootstrap:` so plugin manager disambiguates collisions automatically.
+Also bundles `/super-bootstrap:todo` (intent-filtered scanner — bare call renders the full board; sub-verbs `/super-bootstrap:todo discuss · cloud · device` opt-in slice when the board grows past 5 rows), `/super-bootstrap:commit` (session-isolated, doc-sync-gated, no push), `/super-bootstrap:merge` (absorb feature branches; per-branch rebase-vs-merge; aborts + surfaces on conflict, never resolves inline), and `/super-bootstrap:help` (passive on-demand index of installed user-invoke skills) — all namespaced under `super-bootstrap:` so plugin manager disambiguates collisions automatically. The `/super-bootstrap` entry stays bare (plugin-name == skill-name special case).
 
-Optional bonus: `/release-init` — one-shot scaffolder. Detects project type (unity / tauri / node / ios-native / android-native / generic) and generates a tailored `/release` skill at `.claude/skills/release/SKILL.md`. Run only on repos that ship versioned releases.
+Optional bonus: `/super-bootstrap:release-init` — one-shot scaffolder. Detects project type (unity / tauri / node / ios-native / android-native / generic) and generates a tailored `/release` skill at `.claude/skills/release/SKILL.md` (project-level skill, bare invocation since it lives in the user's repo, not under this plugin's namespace). Run only on repos that ship versioned releases.
 
 ## Sources
 

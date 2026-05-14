@@ -8,7 +8,7 @@ tags: [commit, git, session, doc-sync, superpowers]
 
 Stage and commit the changes this Claude session produced. Leaves prior uncommitted work alone. Runs the doc-sync gate first. Writes a conventional commit message. Does not push.
 
-Bundled with `/super-bootstrap`. The harness CLAUDE.md and bootstrap plan route every flow through "doc sync → `/commit`" — this is that command.
+Bundled with `/super-bootstrap`. The harness CLAUDE.md and bootstrap plan route every flow through "doc sync → `/super-bootstrap:commit`" — this is that command.
 
 ## Protocol
 
@@ -105,23 +105,23 @@ Run `git status` after to confirm clean state.
 
 ### 7. Do Not Push
 
-`/commit` does not push. User pushes manually or via separate skill (`/commit-push-pr` from external plugins, or plain `git push`).
+`/super-bootstrap:commit` does not push. User pushes manually or via separate skill (`/commit-push-pr` from external plugins, or plain `git push`).
 
 ### 8. Cycle Handoff
 
 After commit confirms clean, signal cycle exit so user knows it's safe to reset context:
 
-> Cycle complete. Safe to `/clear`. Next session: `/todo` picks up next item.
+> Cycle complete. Safe to `/clear`. Next session: `/super-bootstrap:todo` picks up next item.
 
 If `docs/superpowers/specs/` or `docs/superpowers/plans/` still has unfinished work (one quick Glob — files exist, plans with unchecked boxes), name the top candidate inline:
 
-> Cycle complete. `plans/2026-04-12-auth.md` still has 3/7 unchecked — `/clear` then `/todo` to resume.
+> Cycle complete. `plans/2026-04-12-auth.md` still has 3/7 unchecked — `/clear` then `/super-bootstrap:todo` to resume.
 
 If backlog has open items and no active superpowers work:
 
-> Cycle complete. No active specs/plans; `docs/backlog.md` has open items — `/clear` then `/todo` to pick next.
+> Cycle complete. No active specs/plans; `docs/backlog.md` has open items — `/clear` then `/super-bootstrap:todo` to pick next.
 
-One line. Don't expand into full status table — that's `/todo`'s job.
+One line. Don't expand into full status table — that's `/super-bootstrap:todo`'s job.
 
 ## Rules
 
@@ -130,7 +130,7 @@ One line. Don't expand into full status table — that's `/todo`'s job.
 - **Conventional** — type, scope, subject. Body only when needed.
 - **No `-A`** — explicit paths always.
 - **No push** — separate concern.
-- **Cycle handoff** — post-commit one-liner signals cycle exit (`/clear` + `/todo` next session). Removes ambiguity at cache-reset moment.
+- **Cycle handoff** — post-commit one-liner signals cycle exit (`/clear` + `/super-bootstrap:todo` next session). Removes ambiguity at cache-reset moment.
 - **No amend** — new commit on top, even after pre-commit hook failure. Amend only if user explicitly asks.
 - **No `--no-verify`** — pre-commit hooks fire. If a hook fails, fix the cause, don't bypass.
 - **One logical change per commit** — split if diff spans unrelated work.

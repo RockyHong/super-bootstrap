@@ -1,48 +1,57 @@
 ---
 name: todo
-description: "Intent-based session opener. Bare `/todo` shows mode picker (Discuss | Cloud | Device | Full). Sub-verbs filter by intent + environment: `/todo discuss` (decisions, spec approvals), `/todo cloud` (cloud-safe queue), `/todo device` (UI/e2e/manual), `/todo full` (complete board with Next-up). Scans docs/superpowers/specs|plans + docs/backlog.md. Bundled with super-bootstrap — works in any repo with the superpowers pipeline."
+description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the full board (every open spec/plan/backlog row). Sub-verbs filter by intent + environment: `/super-bootstrap:todo discuss` (decisions, spec approvals), `/super-bootstrap:todo cloud` (cloud-safe queue), `/super-bootstrap:todo device` (UI/e2e/manual). Scans docs/superpowers/specs|plans + docs/backlog.md. Bundled with super-bootstrap — works in any repo with the superpowers pipeline."
 tags: [todo, scan, status, pipeline, superpowers]
 ---
 
 # Todo — Intent-Filtered Pipeline Scanner
 
-Surfaces work matching the user's current mental mode (deciding / on cloud Claude / on device Claude / full board) instead of dumping every row every call. State reconstructed from `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, and `docs/backlog.md`.
+Default render is the full board (every open spec/plan/backlog row). Sub-verbs let the user slice by mental mode (deciding / on cloud Claude / on device Claude) when the board gets big enough to warrant it. State reconstructed from `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, and `docs/backlog.md`.
 
-Bundled with `/super-bootstrap`. The harness CLAUDE.md and bootstrap plan tell future sessions to "Run `/todo`" — this is that command.
+Bundled with `/super-bootstrap`. The harness CLAUDE.md and bootstrap plan tell future sessions to "Run `/super-bootstrap:todo`" — this is that command.
 
-## Why intent-based, not owner-based
+## Why default-full, sub-verbs opt-in
 
-Real mental model when reaching for `/todo` is **intent + environment** (am I about to decide / am I on cloud Claude with no dev server / am I on device with full stack ready). Owner-or-status axis bloats tables; intent slicing keeps each render terse.
+Newcomers don't know the intent taxonomy (Discuss / Cloud / Device). A gate that forces the choice upfront is noise — especially on greenfield repos where bootstrap leaves exactly one backlog row (GAP-001). Render the full board by default; surface a self-teaching footer once the board grows enough to make filtering useful. Power users keep direct sub-verb access.
 
 ## Arguments
 
 | Invocation        | Behavior                                                                                                                                                                                                |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/todo`        | **Gate.** Show mode picker via `AskUserQuestion` (Discuss / Cloud / Device / Full). User picks → dispatch chosen mode. Skip the gate by typing a sub-verb directly.                                     |
-| `/todo discuss`| Decision shape — specs awaiting user approval, brainstorming-style specs needing dialogue, backlog items flagged for user decision, any row whose blocker is "user". **Macro header on top.**          |
-| `/todo cloud`  | Cloud-safe filter — plan-writes for approved specs, executing plans on pure-logic surfaces, review-stage reads, doc cleanup, backlog triage. **Macro header on top.**                                  |
-| `/todo device` | Device-only filter — executing plans on UI / e2e / manual surfaces, manual verification of review-stage plans. **Macro header on top.**                                                                |
-| `/todo full`   | Full board — all rows with stage + progress + blocker columns AND the "Next up" prioritized recommendation. Escape hatch + macro view (no separate macro header — full body IS the macro).             |
+| `/super-bootstrap:todo`        | **Default.** Render the full board immediately. No gate, no picker. Footer logic adapts to total row count (see §Footer rule).                                                                            |
+| `/super-bootstrap:todo discuss`| Decision shape — specs awaiting user approval, brainstorming-style specs needing dialogue, backlog items flagged for user decision, any row whose blocker is "user". **Macro header on top.**          |
+| `/super-bootstrap:todo cloud`  | Cloud-safe filter — plan-writes for approved specs, executing plans on pure-logic surfaces, review-stage reads, doc cleanup, backlog triage. **Macro header on top.**                                  |
+| `/super-bootstrap:todo device` | Device-only filter — executing plans on UI / e2e / manual surfaces, manual verification of review-stage plans. **Macro header on top.**                                                                |
 
 **Macro header** (sub-verb modes only): single line right under title showing cross-mode counts — `Macro: Discuss {D} · Cloud {C} · Device {V} · Full {T}`. Free (agent classified all rows pre-filter), ignore-or-pickup. Counts only — no IDs, no recommendations.
 
 **Empty-state expanded priors** (sub-verb modes): when current mode has zero rows, agent surfaces top 1-3 IDs from each non-empty other mode. Closes with `Next mode: yours.` — no recommendation. Lets user navigate from empty without blind retype.
 
-## Gate behavior
+## Dispatch behavior
 
-On bare `/todo`:
+On bare `/super-bootstrap:todo`:
 
 1. Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`. If all empty/absent, print directly without dispatching:
    > "No active work. Start something with `/brainstorm` or give me a task."
-2. Else call `AskUserQuestion` with one question, four options:
-   - **Discuss** — decisions, spec approvals, open dialogue
-   - **Cloud** — cloud-safe queue (plan-writes, pure-logic execution, reviews)
-   - **Device** — UI / e2e / manual verification
-   - **Full** — complete board + Next-up (escape hatch)
-3. On user pick, dispatch the `todo` subagent with the chosen mode (`mode: discuss | cloud | device | full`).
-4. Relay the agent's rendered output verbatim. No editorial, no preface.
+2. Otherwise dispatch the `todo` subagent with `mode: full`. No picker, no questions.
+3. Relay the agent's rendered output verbatim. No editorial, no preface.
 
-If the user invokes a sub-verb directly (`/todo cloud` etc.), skip the gate and dispatch immediately with that mode.
+On sub-verb invocation (`/super-bootstrap:todo cloud` etc.): dispatch immediately with that mode.
+
+## Footer rule
+
+The agent computes total open row count `T = D + C + V` during §1 classification. Footer rendered in the Full scaffold depends on `T`:
+
+- `T ≤ 5` → footer is just `more: /super-bootstrap:help`. Board small; sub-verb learning is premature noise.
+- `T ≥ 6` → prepend a filter line above `more: /super-bootstrap:help`:
+  ```
+  filter: /super-bootstrap:todo cloud (headless) · /super-bootstrap:todo device (needs screen) · /super-bootstrap:todo discuss (decisions)
+  more: /super-bootstrap:help
+  ```
+
+Sub-verb modes (`/super-bootstrap:todo cloud|device|discuss`) always use plain `more: /super-bootstrap:help` — the user already proved they know the taxonomy by typing the sub-verb.
+
+The filter footer is self-teaching: each sub-verb is annotated with its meaning inline, so newcomers grok modes without reading SKILL.md. Progressive disclosure — surface taxonomy only when the board is big enough to benefit from slicing.
 
 ## Execution
 
@@ -154,7 +163,7 @@ Macro: Discuss {D} · Cloud {C} · Device {V} · Full {T}
 | -- | --------------------------------------------------- | ------------------------------------------------ |
 | 1  | {verb + what}                                       | {one-line — what signal was missing}             |
 
-more: /help
+more: /super-bootstrap:help
 ```
 
 Empty state:
@@ -170,9 +179,9 @@ Macro priors (no recommendation):
 - Cloud: {top 1-3 with file + one-line reason}
 - Device: {top 1-3 with file + one-line reason, or "0"}
 
-Next mode: yours. /todo cloud · /todo device · /todo full
+Next mode: yours. /super-bootstrap:todo cloud · /super-bootstrap:todo device · /super-bootstrap:todo (full board)
 
-more: /help
+more: /super-bootstrap:help
 ```
 
 ### Cloud
@@ -192,7 +201,7 @@ Macro: Discuss {D} · Cloud {C} · Device {V} · Full {T}
 | -- | --------------------------------------------------- | ------------------------------------------------ |
 | 1  | {verb + what}                                       | {one-line — what signal was missing}             |
 
-more: /help
+more: /super-bootstrap:help
 ```
 
 Empty state:
@@ -208,9 +217,9 @@ Macro priors (no recommendation):
 - Discuss: {top 1-3 with file + one-line reason}
 - Device: {top 1-3 with file + one-line reason}
 
-Next mode: yours. /todo discuss · /todo device · /todo full
+Next mode: yours. /super-bootstrap:todo discuss · /super-bootstrap:todo device · /super-bootstrap:todo (full board)
 
-more: /help
+more: /super-bootstrap:help
 ```
 
 ### Device
@@ -230,7 +239,7 @@ Macro: Discuss {D} · Cloud {C} · Device {V} · Full {T}
 | -- | --------------------------------------------------- | ------------------------------------------------ |
 | 1  | {verb + what}                                       | {one-line — what signal was missing}             |
 
-more: /help
+more: /super-bootstrap:help
 ```
 
 Empty state:
@@ -246,9 +255,9 @@ Macro priors (no recommendation):
 - Cloud: {top 1-3 with file + one-line reason}
 - Discuss: {top 1-3 with file + one-line reason}
 
-Next mode: yours. /todo cloud · /todo discuss · /todo full
+Next mode: yours. /super-bootstrap:todo cloud · /super-bootstrap:todo discuss · /super-bootstrap:todo (full board)
 
-more: /help
+more: /super-bootstrap:help
 ```
 
 ### Full
@@ -269,10 +278,14 @@ more: /help
 | -- | --------------------------------------------------- | ------------------------------------------------ |
 | 1  | {file}                                              | {one-line}                                       |
 
-more: /help
+{footer per §Footer rule}
 ```
 
 No macro header for Full — full IS the macro. No "Next up" recommendation block in any mode (solo-dev momentum-driven; user picks from list, system doesn't strategize).
+
+Footer is conditional on total open row count `T`:
+- `T ≤ 5` → `more: /super-bootstrap:help`
+- `T ≥ 6` → filter line + `more: /super-bootstrap:help` (see §Footer rule)
 
 Empty state for Full: `No active work. Start something with /brainstorm or give me a task.`
 
@@ -283,6 +296,6 @@ Multi-file scan + classification + ranking + scaffold-fill. Sonnet sweet spot �
 ## Rules
 
 - **Read-only.** Never modifies files. Never executes git operations.
-- **Works in any repo** — only requires `docs/superpowers/` to exist (created by `/harness-bootstrap`).
+- **Works in any repo** — only requires `docs/superpowers/` to exist (created by `/super-bootstrap:harness-bootstrap`).
 - **Verbatim relay rule.** Agent's output IS the value. Gateway adds nothing — no preface, no editorial.
-- **Footer-hint convention.** Always end the rendered output with `more: /help` so users discover the menu without ambient prompting.
+- **Footer-hint convention.** Sub-verb modes always end with `more: /super-bootstrap:help`. Full mode footer is conditional on total row count `T` (see §Footer rule): plain `more: /super-bootstrap:help` when `T ≤ 5`, filter line + `more: /super-bootstrap:help` when `T ≥ 6`.

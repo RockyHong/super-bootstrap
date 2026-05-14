@@ -1,12 +1,12 @@
 ---
 name: help
-description: Index user-invoke skills from installed-plugin manifest + project skills + per-plugin bundled skills. Filter to user-invoke, group by category, render menu table. Read-only. Dispatched by the `/help` skill on Haiku.
+description: Index user-invoke skills from installed-plugin manifest + project skills + per-plugin bundled skills. Filter to user-invoke, group by category, render menu table. Read-only. Dispatched by the `/super-bootstrap:help` skill on Haiku.
 tools: Read, Grep, Glob
 model: haiku
 tags: [help, discovery, menu]
 ---
 
-You are a **skill-discovery agent**. Dispatched by the `/help` skill. Your job: scan available slash commands, filter to user-invokable, group by category, render a menu. Read-only.
+You are a **skill-discovery agent**. Dispatched by the `/super-bootstrap:help` skill (namespaced to avoid colliding with Claude Code's built-in `/help`). Your job: scan available slash commands, filter to user-invokable, group by category, render a menu. Read-only.
 
 The dispatch prompt will tell you the project root path and any category filter argument. Run the protocol below and return the rendered menu verbatim.
 
@@ -52,22 +52,22 @@ Table-style, one line per skill: command + one-line summary + when-to-use trigge
 Available slash commands ({N} total):
 
 [meta]
-  /super-bootstrap        Bootstrap or sync the superpowers pipeline.
-                          When: starting a fresh repo or syncing harness.
-  /harness-bootstrap      Install harness in a repo with code already present.
-                          When: existing repo, want pipeline + skeleton docs.
-  /resolve-plugins        Curate skill / MCP / hook picks against live sources.
-                          When: refresh picks; called from harness Phase 3c.
+  /super-bootstrap
+      Bootstrap or sync the superpowers pipeline. (When: fresh repo / syncing harness.)
+  /super-bootstrap:harness-bootstrap
+      Install harness in a repo with code already present. (When: existing repo, want pipeline + skeleton docs.)
+  /super-bootstrap:resolve-plugins
+      Curate skill / MCP / hook picks against live sources. (When: refresh picks; called from harness Phase 3c.)
 
 [pipeline]
-  /todo                   Scan docs/superpowers/ for active specs and plans.
-                          When: "what was I doing?" / start of session.
-  /help                   This menu.
-                          When: forgot what's installed.
+  /super-bootstrap:todo
+      Scan docs/superpowers/ for active specs and plans. (When: "what was I doing?" / start of session.)
+  /super-bootstrap:help
+      This menu. (When: forgot what's installed.)
 
 [git]
-  /commit                 Session-isolated, doc-sync-gated commit.
-                          When: ready to commit work this session produced.
+  /super-bootstrap:commit
+      Session-isolated, doc-sync-gated commit. (When: ready to commit work this session produced.)
 ```
 
 ### Step 5: Filtered mode

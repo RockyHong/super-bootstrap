@@ -7,7 +7,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `super-bootstrap` — public entry, greenfield gate, dispatches to `harness-bootstrap`.
 - `harness-bootstrap` — installs/syncs the harness (CLAUDE.md, skeleton docs, rules, picks).
 - `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`. Standalone or delegated from `harness-bootstrap` Phase 3c.
-- `todo` — intent-filtered scanner. Bare `/todo` shows mode picker (Discuss / Cloud / Device / Full); sub-verbs filter directly. Dispatches `agents/todo.md` on Sonnet with scaffold injection.
+- `todo` — intent-filtered scanner. Bare `/super-bootstrap:todo` renders the full board; sub-verbs (`/super-bootstrap:todo discuss · cloud · device`) opt-in slice when the board grows past 5 rows. Dispatches `agents/todo.md` on Sonnet with scaffold injection.
 - `help` — passive on-demand index of installed user-invoke skills, grouped by category. Dispatches `agents/help.md` on Haiku.
 - `commit` — session-isolated commit, doc-sync gated, conventional message, no push.
 - `merge` — absorb feature branches into base. Per-branch rebase-vs-merge recommendation, clean execution. Hard SoC: on conflict, aborts + surfaces file list + stops. Resolution out of scope (user routes next pass). Inline; same context-awareness rationale as `commit`.
@@ -15,14 +15,21 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 
 ## Naming convention
 
-Bare names, no prefix. The plugin manager namespaces to `super-bootstrap:<skill>`, which handles collision resolution; an `sb-*` prefix on top is double-tagging that creators and users both have to remember (and abbreviation guesses — `sb` vs `sp` — are a real failure mode in dropdown search).
+**Skill identifiers (file frontmatter `name:`, manifest, dispatch IDs)** stay bare — no `sb-*` prefix. The plugin manager namespaces to `super-bootstrap:<skill>` already; an extra prefix is double-tagging.
 
-| Shape | Examples |
-|---|---|
-| Short common verb-noun (high-freq in-flight ops) | `commit`, `todo`, `help`, `merge` |
-| Self-explanatory verb-noun (lifecycle / one-shot) | `super-bootstrap`, `harness-bootstrap`, `resolve-plugins`, `release-init` |
+**User-facing invocation form** is always the namespaced `/super-bootstrap:<skill>` — *except* the entry skill `/super-bootstrap`, which stays bare (it's the install pitch and Claude Code special-cases the plugin-name == skill-name case). Reasons to namespace everything else:
 
-**When adding a new skill:** pick the shortest name that reads cleanly cold. If a name collides with another plugin's bare skill, users invoke the namespaced form (`super-bootstrap:commit`); the dropdown shows the namespace so they pick the right one. Don't reintroduce a prefix to dodge that — the namespace is already the prefix.
+- `/help` collides with Claude Code's built-in `/help` (bare form is shadowed, never resolves to ours)
+- `/commit`, `/todo`, `/merge` are generic enough that other plugins may ship the same bare name; dropdown autocomplete already surfaces the namespaced form, so docs matching that form avoid mental drift
+- Forward-proof against future collisions without doc-sync churn
+
+| Shape | Skill name (bare) | Invocation form |
+|---|---|---|
+| Public entry | `super-bootstrap` | `/super-bootstrap` |
+| Lifecycle / one-shot | `harness-bootstrap`, `resolve-plugins`, `release-init` | `/super-bootstrap:<name>` |
+| High-freq in-flight ops | `commit`, `todo`, `merge`, `help` | `/super-bootstrap:<name>` |
+
+**When adding a new skill:** pick the shortest bare name that reads cleanly cold. Reference it as `/super-bootstrap:<name>` everywhere a user might type it (SKILL.md prose, rendered footers, agent menus, READMEs).
 
 ## Inline vs Dispatch
 

@@ -11,7 +11,7 @@ Detect project type, version files, and platform targets. Generate a project-lev
 ## Usage
 
 ```
-/release-init
+/super-bootstrap:release-init
 ```
 
 ## Protocol

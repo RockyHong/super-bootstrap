@@ -21,7 +21,7 @@ Every session runs under the superpowers frame. Routing = **which phases this wo
 | **Plan** | Multi-step, ordering matters, want checkpoint review, half-done risk | Single atomic edit obvious from context |
 | **Execute (TDD + verify)** | Touching code | Always-on when code changes — never skip discipline |
 | **Doc sync** | Pre-commit | Always-on — never skip |
-| **Commit (`/super-bootstrap:commit`)** | Work done | Always-on — terminal step. Bare `/commit` works when no plugin collision. |
+| **Commit (`/super-bootstrap:commit`)** | Work done | Always-on — terminal step. |
 
 ### Triage output
 

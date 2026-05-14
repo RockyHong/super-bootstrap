@@ -70,20 +70,20 @@ This isn't a nice-to-have. This is what makes the docs trustworthy. Without it, 
 Super-bootstrap installs **harness**, not **product**. Workflow rules, doc-sync gate, skill picks, skeleton docs — all land in one scaffold session. Doc-sync at every commit grows the skeleton docs over time as code lands. No deferred deep-scan tasks; the pipeline's own continuous mechanism IS the growth path.
 
 ```
-/harness-bootstrap session:
+/super-bootstrap:harness-bootstrap session:
   Quick scan + greenfield gate → Q&A alignment → scaffold (folders, CLAUDE.md,
   skeleton techstack.md, skeleton overview.md, bootstrap-plan) →
   curate skill/MCP/hook against live sources → sync report + commit
 
   Pipeline is now LIVE. Skeleton docs carry detected facts. Picks pinned in
   .claude/settings.json. Any adaptive seeding (specs / backlog) queued in
-  bootstrap-plan for later /todo sessions.
+  bootstrap-plan for later /super-bootstrap:todo sessions.
 
 Per-commit (forever after):
   Doc-sync gate fires → if diff touches behavior covered by a doc, propose
   updating that doc → user approves → doc + code commit together.
 
-/harness-bootstrap re-run (any time):
+/super-bootstrap:harness-bootstrap re-run (any time):
   Drift-check pipeline-owned sections → refresh skill/MCP/hook picks against
   live sources → commit if anything changed. Adaptive seeding tasks dropped
   from regenerated bootstrap-plan if their docs already exist.
@@ -138,11 +138,11 @@ Adjacent stacks (Bun + Next, Deno + Fresh, Tauri + React, etc.) infer by analogy
 
 After Phase 1 detection: if **no manifests + no source files (any extension) + README missing or under 3 substantive lines** AND `docs/overview.md` + `docs/techstack.md` are missing, abort with redirect:
 
-> `/harness-bootstrap` installs the harness for a repo with code (or at least intent encoded in seed docs). Detected: empty repo with no `docs/overview.md` and no `docs/techstack.md`.
+> `/super-bootstrap:harness-bootstrap` installs the harness for a repo with code (or at least intent encoded in seed docs). Detected: empty repo with no `docs/overview.md` and no `docs/techstack.md`.
 >
 > Run `/super-bootstrap` first — it gates greenfield, runs ideation Q&A, and seeds those two docs (plus `docs/backlog.md` with one roadmap item). Then it dispatches back here automatically.
 >
-> If you want to force the harness onto an empty repo anyway: re-invoke with `/harness-bootstrap force` (rare — most output sections will sit empty until code lands).
+> If you want to force the harness onto an empty repo anyway: re-invoke with `/super-bootstrap:harness-bootstrap force` (rare — most output sections will sit empty until code lands).
 
 If `docs/overview.md` + `docs/techstack.md` exist (seeded by `/super-bootstrap` greenfield path), proceed normally — the seed docs feed Phase 2 Q&A defaults and Phase 3b skeleton placeholders. **Never accept force without explicit token** — empty-repo harness is a useless artifact and the redirect surfaces the right tool.
 
@@ -304,7 +304,7 @@ If `docs/backlog.md` is scaffolded, copy `assets/backlog.md` to `docs/backlog.md
 
 `.claude/rules/` machinery is **always** scaffolded (zero-cost when empty). `index.md` is seeded from `assets/rules-index-skeleton.md`. Individual rule bodies fill in Phase 3b based on Phase 1 signal detection.
 
-**Core plugin pin (pre-resolve).** The harness CLAUDE.md skeleton bakes in `superpowers` slash-command routes (`/brainstorm`, `/write-plan`, `/execute-plan`). Superpowers is therefore a **core dep, not an adaptive pick** — pin it before Phase 3c so `/resolve-plugins` curates adaptive picks on top of a guaranteed-superpowers base.
+**Core plugin pin (pre-resolve).** The harness CLAUDE.md skeleton bakes in `superpowers` slash-command routes (`/brainstorm`, `/write-plan`, `/execute-plan`). Superpowers is therefore a **core dep, not an adaptive pick** — pin it before Phase 3c so `/super-bootstrap:resolve-plugins` curates adaptive picks on top of a guaranteed-superpowers base.
 
 Ensure `.claude/settings.json` contains:
 
@@ -321,7 +321,7 @@ Ensure `.claude/settings.json` contains:
 - Key already present → skip (`✓ pinned`).
 - Other `.claude/settings.json` content → never touched.
 
-`superpowers@claude-plugins-official` resolves from Anthropic's official marketplace — no `extraKnownMarketplaces` entry needed. Phase 3c (`/resolve-plugins`) treats this pin as locked: never proposes drop, never re-prompts the user. Adaptive picks (stack-matched skills / MCPs / hooks) layer on top.
+`superpowers@claude-plugins-official` resolves from Anthropic's official marketplace — no `extraKnownMarketplaces` entry needed. Phase 3c (`/super-bootstrap:resolve-plugins`) treats this pin as locked: never proposes drop, never re-prompts the user. Adaptive picks (stack-matched skills / MCPs / hooks) layer on top.
 
 ### 3b: Pipeline docs
 
@@ -331,7 +331,7 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 |---|---|---|
 | `assets/claude-md-skeleton.md` | `CLAUDE.md` (project root) | Includes Rules summary section — fill bullets from seeded rule files |
 | `assets/techstack-skeleton.md` | `docs/techstack.md` | Coding Patterns grown section absorbs migrated CLAUDE.md content |
-| `assets/overview-skeleton.md` | `docs/overview.md` | `<!-- harness-meta -->` block at top: fill `external-tools:` with Q4 multi-select answer as YAML list (default `[github]`). Read by `/resolve-plugins` as Tier-2 fallback. Treat as pipeline-owned for drift checks — re-runs propose update if Q4 answer changes. |
+| `assets/overview-skeleton.md` | `docs/overview.md` | `<!-- harness-meta -->` block at top: fill `external-tools:` with Q4 multi-select answer as YAML list (default `[github]`). Read by `/super-bootstrap:resolve-plugins` as Tier-2 fallback. Treat as pipeline-owned for drift checks — re-runs propose update if Q4 answer changes. |
 | `assets/bootstrap-plan.md` | `docs/superpowers/plans/bootstrap.md` | |
 | `assets/rules-index-skeleton.md` | `.claude/rules/index.md` | Always — machinery |
 | `assets/rules-frontend-skeleton.md` | `.claude/rules/<framework>.md` | Only if frontend signal fired in Phase 1 |
@@ -470,18 +470,18 @@ If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that'
 
 ### 3c: Curate skill / MCP / hook
 
-**Delegated to `/resolve-plugins`.** Phase 3c is one Skill invocation — `Skill(resolve-plugins)`. The full curation logic (live-query source pool, dedupe, trust tiers, batch presentation, `.claude/settings.json` write) lives in `plugins/super-bootstrap/skills/resolve-plugins/SKILL.md`. Single source of truth.
+**Delegated to `/super-bootstrap:resolve-plugins`.** Phase 3c is one Skill invocation — `Skill(resolve-plugins)`. The full curation logic (live-query source pool, dedupe, trust tiers, batch presentation, `.claude/settings.json` write) lives in `plugins/super-bootstrap/skills/resolve-plugins/SKILL.md`. Single source of truth.
 
-`/resolve-plugins` is also runnable standalone — useful when upstream marketplaces drift but nothing in the repo changed (no need to walk Phase 1-3b just to refresh picks).
+`/super-bootstrap:resolve-plugins` is also runnable standalone — useful when upstream marketplaces drift but nothing in the repo changed (no need to walk Phase 1-3b just to refresh picks).
 
-Phase 3c invokes `/resolve-plugins`, which gates picks via earn-right (≥1 hard invocation path required) and atomic install + verify per accepted candidate. Re-running `/harness-bootstrap` safely re-evaluates all picks against current upstream state and current harness wiring.
+Phase 3c invokes `/super-bootstrap:resolve-plugins`, which gates picks via earn-right (≥1 hard invocation path required) and atomic install + verify per accepted candidate. Re-running `/super-bootstrap:harness-bootstrap` safely re-evaluates all picks against current upstream state and current harness wiring.
 
 **Inputs the harness has prepared by Phase 3c:**
-- `docs/techstack.md` — written in Phase 3b. `/resolve-plugins` reads § Runtime / Framework / Key Dependencies for stack-matched picks.
-- `docs/overview.md` — written in Phase 3b. `/resolve-plugins` reads § User / Current State for additional workflow signal.
+- `docs/techstack.md` — written in Phase 3b. `/super-bootstrap:resolve-plugins` reads § Runtime / Framework / Key Dependencies for stack-matched picks.
+- `docs/overview.md` — written in Phase 3b. `/super-bootstrap:resolve-plugins` reads § User / Current State for additional workflow signal.
 - Phase 2 Q4 (external tools) answer — flows via `docs/overview.md` content (the harness embeds the answer when seeding the doc) or via `.claude/settings.json` pinned MCPs on re-run.
 
-**Output:** `.claude/settings.json` updated with `enabledPlugins` + `extraKnownMarketplaces`. Commit handled by `/resolve-plugins` itself if delta non-empty.
+**Output:** `.claude/settings.json` updated with `enabledPlugins` + `extraKnownMarketplaces`. Commit handled by `/super-bootstrap:resolve-plugins` itself if delta non-empty.
 
 ### 3d: Sync report + commit
 
@@ -538,8 +538,8 @@ After committing (or reporting no changes needed), present results based on repo
 >
 > {If any rule files were seeded: "Path-scoped rules seeded in `.claude/rules/` ({list seeded rules}). They auto-load on file match — full ammo at the decision moment, summary mirrored in CLAUDE.md § Rules. Add more rule files when path-scoped patterns emerge."}
 >
-> {If bootstrap.md has Task 1 / Task 2 active: "Optional adaptive seeding queued in `docs/superpowers/plans/bootstrap.md` (specs / backlog). Next session: `/clear`, then `/todo`."}
-> {If bootstrap.md is cleanup-only: "Bootstrap essentially complete — `/todo` will show the cleanup task."}
+> {If bootstrap.md has Task 1 / Task 2 active: "Optional adaptive seeding queued in `docs/superpowers/plans/bootstrap.md` (specs / backlog). Next session: `/clear`, then `/super-bootstrap:todo`."}
+> {If bootstrap.md is cleanup-only: "Bootstrap essentially complete — `/super-bootstrap:todo` will show the cleanup task."}
 
 **Re-run / sync pass:**
 
@@ -549,7 +549,7 @@ After committing (or reporting no changes needed), present results based on repo
 
 - **Harness, not product** — bootstrap installs workflow + skeleton docs + curated picks. Greenfield product ideation (empty repo, no code) is out of scope. Phase 1 has a friendly gate.
 - **Skeleton at scaffold, grown via sync** — detected facts and Q&A answers seeded immediately into `techstack.md` / `overview.md`. Architecture Rules, Coding Patterns, Module Index, Data Flow, Key Boundaries start empty and fill incrementally per-commit. Doc-sync IS the growth mechanism — no deferred deep-scan tasks.
-- **Refresh on every run** — picks curated against live sources every `/harness-bootstrap`. Upstream marketplace changes (new picks, deprecations, license shifts) surface as a delta against `.claude/settings.json`.
+- **Refresh on every run** — picks curated against live sources every `/super-bootstrap:harness-bootstrap`. Upstream marketplace changes (new picks, deprecations, license shifts) surface as a delta against `.claude/settings.json`.
 - **Detect, then confirm** — Phase 1 grounds seeded facts in repo evidence; Phase 2 Q&A confirms; user approves drift / picks / drafts before any write.
 - **Docs travel with code** — doc-sync gate on every commit. Implementation without doc-sync is incomplete. The pipeline's real power.
 - **Fixed macro, adaptive micro** — `overview.md` / `techstack.md` / `superpowers/` always scaffolded. `specs/` / `backlog.md` only when the project warrants them.
