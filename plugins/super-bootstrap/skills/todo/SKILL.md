@@ -1,18 +1,18 @@
 ---
 name: todo
-description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the full board (every open spec/plan/backlog row). Sub-verbs filter by intent + environment: `/super-bootstrap:todo discuss` (decisions, spec approvals), `/super-bootstrap:todo cloud` (cloud-safe queue), `/super-bootstrap:todo device` (UI/e2e/manual). Scans docs/superpowers/specs|plans + docs/backlog.md. Bundled with super-bootstrap — works in any repo with the superpowers pipeline."
+description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the full board (every open spec/plan/backlog row + next roadmap pickup). Sub-verbs filter by intent + environment: `/super-bootstrap:todo discuss` (decisions, spec approvals), `/super-bootstrap:todo cloud` (cloud-safe queue), `/super-bootstrap:todo device` (UI/e2e/manual). Scans docs/superpowers/specs|plans + docs/backlog.md + docs/overview.md § Roadmap. Bundled with super-bootstrap — works in any repo with the superpowers pipeline."
 tags: [todo, scan, status, pipeline, superpowers]
 ---
 
 # Todo — Intent-Filtered Pipeline Scanner
 
-Default render is the full board (every open spec/plan/backlog row). Sub-verbs let the user slice by mental mode (deciding / on cloud Claude / on device Claude) when the board gets big enough to warrant it. State reconstructed from `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, and `docs/backlog.md`.
+Default render is the full board (every open spec/plan/backlog row + next roadmap pickup). Sub-verbs let the user slice by mental mode (deciding / on cloud Claude / on device Claude) when the board gets big enough to warrant it. State reconstructed from `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`, and `docs/overview.md` § Roadmap. Pipeline state = file presence (spec/plan/code presence drives "started" classification; roadmap entries without matching specs are "unstarted").
 
 Bundled with `/super-bootstrap`. The harness CLAUDE.md and bootstrap plan tell future sessions to "Run `/super-bootstrap:todo`" — this is that command.
 
 ## Why default-full, sub-verbs opt-in
 
-Newcomers don't know the intent taxonomy (Discuss / Cloud / Device). A gate that forces the choice upfront is noise — especially on greenfield repos where bootstrap leaves exactly one backlog row (GAP-001). Render the full board by default; surface a self-teaching footer once the board grows enough to make filtering useful. Power users keep direct sub-verb access.
+Newcomers don't know the intent taxonomy (Discuss / Cloud / Device). A gate that forces the choice upfront is noise — especially on greenfield repos where bootstrap leaves an empty backlog and the only signal is the next roadmap pickup (or an empty board pointing at `/brainstorm`). Render the full board by default; surface a self-teaching footer once the board grows enough to make filtering useful. Power users keep direct sub-verb access.
 
 ## Arguments
 
@@ -31,7 +31,7 @@ Newcomers don't know the intent taxonomy (Discuss / Cloud / Device). A gate that
 
 On bare `/super-bootstrap:todo`:
 
-1. Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`. If all empty/absent, print directly without dispatching:
+1. Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`. Also quick-read `docs/overview.md` for a `## Roadmap` section with at least one bullet entry. If ALL sources are empty/absent (no specs, no plans, no open backlog rows, no roadmap entries), print directly without dispatching:
    > "No active work. Start something with `/brainstorm` or give me a task."
 2. Otherwise dispatch the `todo` subagent with `mode: full`. No picker, no questions.
 3. Relay the agent's rendered output verbatim. No editorial, no preface.
@@ -85,7 +85,7 @@ Steps:
 ## Skip dispatch if
 
 - User explicitly asks to run inline.
-- Quick-gate Glob returns zero files (no point spawning).
+- Quick-gate sources all empty: zero spec/plan files AND zero open backlog rows AND zero overview § Roadmap entries (no point spawning).
 
 ## Cloud-safe criterion (single positive rule)
 
@@ -118,7 +118,7 @@ Derivation inputs (agent reads): plan file content (paths mentioned, "manual tes
 
 Single tag per row, drives within-mode ranking (impactful rows surface first).
 
-- **`impactful`** — feature-shaped: `Approve spec` / `Write plan` / `Continue brainstorm` on feature scope; `Continue execute` with ≥3 remaining checkboxes OR cross-pkg/repo blast; backlog item with severity signal (`critical` / `blocking` / production-down keywords).
+- **`impactful`** — feature-shaped: `Approve spec` / `Write plan` / `Continue brainstorm` / `Brainstorm` (overview § Roadmap pickup) on feature scope; `Continue execute` with ≥3 remaining checkboxes OR cross-pkg/repo blast; backlog item with severity signal (`critical` / `blocking` / production-down keywords).
 - **`quick-pop`** — atomic: `Cleanup` (delete merged spec+plan), `Triage` (single backlog item), `Review` of plan with ≤2 total tasks, `Doc-align` / single-file `Doc-edit`.
 
 Default if ambiguous: `quick-pop`. Better to under-rank than bloat impactful and defeat the cognitive-load reduction.
@@ -271,6 +271,7 @@ more: /super-bootstrap:help
 | plans/{date}-{slug}.md                | {stage}       | {x/y|—}  | {none|user|...}  | {tag}        | {tag}       |
 
 {Backlog: N BUG, M DEBT, K GAP open (see docs/backlog.md) — only if backlog.md exists}
+{Roadmap: U unstarted of T (see docs/overview.md § Roadmap) — only if overview.md § Roadmap has entries}
 
 ## Uncategorized
 

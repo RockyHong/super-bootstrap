@@ -140,7 +140,7 @@ After Phase 1 detection: if **no manifests + no source files (any extension) + R
 
 > `/super-bootstrap:harness-bootstrap` installs the harness for a repo with code (or at least intent encoded in seed docs). Detected: empty repo with no `docs/overview.md` and no `docs/techstack.md`.
 >
-> Run `/super-bootstrap` first — it gates greenfield, runs ideation Q&A, and seeds those two docs (plus `docs/backlog.md` with one roadmap item). Then it dispatches back here automatically.
+> Run `/super-bootstrap` first — it gates greenfield, runs ideation Q&A, and seeds those two docs (plus an empty `docs/backlog.md`; roadmap lives in `docs/overview.md` § Roadmap). Then it dispatches back here automatically.
 >
 > If you want to force the harness onto an empty repo anyway: re-invoke with `/super-bootstrap:harness-bootstrap force` (rare — most output sections will sit empty until code lands).
 
@@ -269,7 +269,7 @@ With alignment confirmed, walk each pipeline artifact in order: folders → pipe
 **Project-owned** (never touched):
 - CLAUDE.md: Tech Stack one-line, Commands, any user-added custom sections
 - `docs/techstack.md` grown sections: Architecture Rules, Coding Patterns, Rejected Alternatives
-- `docs/overview.md` grown sections: Module Index, Data Flow, Key Boundaries
+- `docs/overview.md` grown sections: Roadmap, Module Index, Data Flow, Key Boundaries
 - `.claude/rules/<rule>.md` grown sections (additions the user/doc-sync added below the skeleton scaffold)
 - `.claude/rules/<rule>.md` files the user authored without a matching skeleton (treat as fully project-owned)
 - Other settings in `.claude/settings.json` outside the plugin-pin keys
@@ -548,7 +548,7 @@ After committing (or reporting no changes needed), present results based on repo
 ## Principles
 
 - **Harness, not product** — bootstrap installs workflow + skeleton docs + curated picks. Greenfield product ideation (empty repo, no code) is out of scope. Phase 1 has a friendly gate.
-- **Skeleton at scaffold, grown via sync** — detected facts and Q&A answers seeded immediately into `techstack.md` / `overview.md`. Architecture Rules, Coding Patterns, Module Index, Data Flow, Key Boundaries start empty and fill incrementally per-commit. Doc-sync IS the growth mechanism — no deferred deep-scan tasks.
+- **Skeleton at scaffold, grown via sync** — detected facts and Q&A answers seeded immediately into `techstack.md` / `overview.md`. Architecture Rules, Coding Patterns, Roadmap, Module Index, Data Flow, Key Boundaries start empty and fill incrementally per-commit. Doc-sync IS the growth mechanism — no deferred deep-scan tasks.
 - **Refresh on every run** — picks curated against live sources every `/super-bootstrap:harness-bootstrap`. Upstream marketplace changes (new picks, deprecations, license shifts) surface as a delta against `.claude/settings.json`.
 - **Detect, then confirm** — Phase 1 grounds seeded facts in repo evidence; Phase 2 Q&A confirms; user approves drift / picks / drafts before any write.
 - **Docs travel with code** — doc-sync gate on every commit. Implementation without doc-sync is incomplete. The pipeline's real power.

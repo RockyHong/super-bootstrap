@@ -48,6 +48,7 @@ Intent is determined by action verb before path/state rules.
 | Action verb prefix                                              | Intent (locked)              | Why                                                                          |
 | --------------------------------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------- |
 | `Approve spec`, `Decide`, `Continue brainstorm`, `Confirm`      | **Discuss**                  | User-decision shape — only user can resolve.                                 |
+| `Brainstorm` (overview § Roadmap pickup)                        | **Discuss**                  | Feature-scope dialogue — only user can shape.                                |
 | `Write plan`                                                    | **Cloud**                    | Plan author write is doc artifact, headless.                                 |
 | `Refine spec`, `Doc-edit`                                       | **Cloud**                    | Doc artifact, headless.                                                      |
 | `Continue execute`, `Resume`                                    | **Cloud OR Device** (derive) | Depends on paths + content per cloud-safe criterion.                         |
@@ -86,13 +87,37 @@ For each, count checkboxes:
 
 #### c. Backlog (`docs/backlog.md`)
 
+Backlog owns BUG/DEBT/GAP only — "found-but-deferred in existing system." Forward-looking feature roadmap lives in `docs/overview.md` § Roadmap (see §d).
+
 For each open `BUG-### / DEBT-### / GAP-###` item:
 
 - **Item flagged for user decision** (line contains `needs user`, `decision required`, `route?`) → action: `"Decide: {ID} {title}"`, **intent: Discuss**.
 - **Item with no scope.md / no plan yet** (default state) → action: `"Triage: {ID} {title}"`, **intent: Cloud** (triage is investigate-only).
 - **Item with active plan reference** → don't double-emit; the plan row already covers it.
 
+For any row with a **foreign prefix** (anything outside `BUG-### / DEBT-### / GAP-###` — e.g. `F-`, `FEAT-`, `ROAD-`, bare bullet):
+
+- Emit into the Uncategorized sub-section. Reason: `"non-canonical backlog prefix; backlog owns BUG/DEBT/GAP. Features → docs/overview.md § Roadmap (canonical pillar)."`
+- Do **not** invent classification. Scanner is the taxonomy authority — foreign prefixes surface as warnings, not silent acceptance.
+
 If `docs/backlog.md` doesn't exist, skip §c entirely.
+
+#### d. Roadmap (`docs/overview.md` § Roadmap)
+
+**State signal: file presence.** A roadmap entry is "started" iff a spec/plan file with matching slug exists under `docs/superpowers/specs/`, `docs/superpowers/plans/`, or `docs/specs/`. Spec file appearance is the atomic "started" transition — no conversation state, no memory dependency. Cold-session-safe: scanner can fully reconstruct roadmap status from filesystem alone.
+
+Read `docs/overview.md`. Locate `## Roadmap` section (if absent, skip §d).
+
+Parse bullet lines under that heading. Each bullet = one feature entry (format: `- {Name}: {one-line}` or `- {Name}`). Derive slug from name (kebab-case).
+
+- For each entry, mark **started** if matching slug appears in filename under the three spec/plan dirs above, OR the entry name appears in a spec/plan frontmatter title.
+- **First unstarted entry in document order** → action: `"Brainstorm: {name}"`, **intent: Discuss**, impact: `impactful`. Next-up feature pickup.
+- **All subsequent unstarted entries** → silent. One-at-a-time momentum.
+- **All entries started** → silent (active work surfaces via §a/§b).
+
+Count totals into `T_road` (total entries) and `U_road` (unstarted) for the Full scaffold roadmap footer line.
+
+If `docs/overview.md` doesn't exist OR `## Roadmap` section absent OR section empty, skip §d entirely.
 
 ### 2. Filter by mode
 
@@ -110,7 +135,7 @@ Apply before ranking. Both tags carried on every row.
 **Impact** (single tag, drives within-mode ranking):
 
 - **`impactful`**:
-  - Action verb ∈ {Approve spec, Write plan, Continue brainstorm} where target is feature-shaped (spec body describes feature surface, not single bugfix)
+  - Action verb ∈ {Approve spec, Write plan, Continue brainstorm, Brainstorm} where target is feature-shaped (spec body describes feature surface, not single bugfix; overview § Roadmap entries are feature-shaped by definition)
   - `Continue execute` with ≥3 remaining unchecked tasks
   - Plan with paths spanning cross-pkg or repo blast
   - Backlog row whose body contains severity signal (`critical`, `blocking`, `production-down`, `data-loss`)
@@ -137,7 +162,7 @@ For all modes (sub-verb AND full — full mode has no separate "Next up" anymore
 
 1. **Impact desc** — `impactful` first, `quick-pop` second
 2. **Progress desc within Impact** — executing-rows with most-complete progress first (finish-what's-started bias)
-3. **Action-verb priority** — `Continue execute` > `Review` > `Approve spec` / `Decide` > `Write plan` > `Cleanup` > `Triage`
+3. **Action-verb priority** — `Continue execute` > `Review` > `Approve spec` / `Decide` > `Write plan` > `Brainstorm` (roadmap pickup) > `Cleanup` > `Triage`
 4. **Recency desc** — newest first (tiebreak)
 
 For `full` mode, render rows in this rank order (file column shows actual filename). No "Next up" block — user reads ranked list, picks.
