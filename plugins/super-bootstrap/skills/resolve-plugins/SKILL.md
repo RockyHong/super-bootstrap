@@ -159,14 +159,19 @@ If many candidates from the same source reject for the same reason, collapse to 
 
 ### Core pins (locked when harness-active)
 
-`superpowers@claude-plugins-official` is a **core dep of the harness** — the seeded CLAUDE.md routes brainstorm / write-plan / execute-plan slash commands through it. `/super-bootstrap:harness-bootstrap` Phase 3a pins it pre-resolve.
+Two harness core deps — seeded CLAUDE.md names both by slash-route or skill-trigger rule:
+
+- `superpowers@claude-plugins-official` — routes `/brainstorm`, `/write-plan`, `/execute-plan`.
+- `andrej-karpathy-skills@karpathy-skills` — CLAUDE.md § Coding Principles invokes `karpathy-guidelines` skill before every code edit. Requires `karpathy-skills` entry in `extraKnownMarketplaces` (source: `github` / `forrestchang/andrej-karpathy-skills`).
+
+`/super-bootstrap:harness-bootstrap` Phase 3a pins both pre-resolve.
 
 **Harness-active marker:** `docs/superpowers/` directory exists in the repo. Detect with one Glob.
 
 - **Harness-active + pinned + present** → keep silently, do not surface in batch.
-- **Harness-active + pin absent** (user manually removed; or fresh harness call hadn't reached Phase 3a yet) → **propose re-pin** as a locked core dep, short message: "core dep missing, re-pinning so CLAUDE.md routes resolve." User can decline only with explicit override; flag that declining breaks `/brainstorm`, `/write-plan`, `/execute-plan` references.
-- **Not harness-active** (no `docs/superpowers/` folder — standalone curation on a non-harness repo) → no core lock applies. Superpowers, if present, is treated as a regular adaptive pick the user may drop.
-- Locked picks: never propose drop, never re-fetch trust signals (Anthropic-vetted by definition).
+- **Harness-active + pin absent** (user manually removed; or fresh harness call hadn't reached Phase 3a yet) → **propose re-pin** as a locked core dep, short message: "core dep missing, re-pinning so CLAUDE.md routes / triggers resolve." User can decline only with explicit override; flag what breaks (superpowers → `/brainstorm` etc; karpathy-skills → § Coding Principles trigger rule misfires silently).
+- **Not harness-active** (no `docs/superpowers/` folder — standalone curation on a non-harness repo) → no core lock applies. Both core deps, if present, are treated as regular adaptive picks the user may drop.
+- Locked picks: never propose drop, never re-fetch trust signals (superpowers Anthropic-vetted; karpathy-skills locked by harness contract — `~150-line MIT skill, single-author repo, license + behavior pinned by harness contract`).
 
 ### Adaptive picks
 
@@ -244,7 +249,7 @@ Steps execute sequentially within a candidate. Multiple candidates may install i
 
 ### Phase 5.2: Settings.json write
 
-- Add accepted picks to `enabledPlugins`. Drop rejected picks. **When harness-active (`docs/superpowers/` exists), never drop core pins** (`superpowers@claude-plugins-official`) — see Phase 4 § Core pins.
+- Add accepted picks to `enabledPlugins`. Drop rejected picks. **When harness-active (`docs/superpowers/` exists), never drop core pins** (`superpowers@claude-plugins-official`, `andrej-karpathy-skills@karpathy-skills`) — see Phase 4 § Core pins.
 - For any plugin NOT from `claude-plugins-official`, ensure its source is in `extraKnownMarketplaces` so cloud sessions / fresh machines can resolve.
 - Example shape:
   ```json

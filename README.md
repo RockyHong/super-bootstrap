@@ -63,7 +63,7 @@ Optional bonus: `/super-bootstrap:release-init` — one-shot scaffolder. Detects
 | Tool | Role |
 |---|---|
 | [superpowers](https://github.com/obra/superpowers) | Workflow pipeline (brainstorm → spec → plan → execute) baked into the CLAUDE.md |
-| [andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | Source of the Coding Principles section in the scaffolded CLAUDE.md (Karpathy-derived guardrails) |
+| [andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | Core dep auto-pinned in `.claude/settings.json`. Scaffolded CLAUDE.md § Coding Principles invokes its `karpathy-guidelines` skill before every code edit (think-before-coding, simplicity, surgical changes, goal-driven execution). |
 | [claude-code-setup](https://claude.com/plugins/claude-code-setup) | Anthropic's plugin recommender — fast-path source if installed |
 | [Anthropic plugin marketplace](https://claude.com/plugins) | Anthropic-vetted skills, MCPs, hooks, subagents |
 | [modelcontextprotocol/registry](https://github.com/modelcontextprotocol/registry) | Official MCP discovery registry — indexes reference impls + community |

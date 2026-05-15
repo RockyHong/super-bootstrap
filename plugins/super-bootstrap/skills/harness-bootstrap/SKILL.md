@@ -304,14 +304,25 @@ If `docs/backlog.md` is scaffolded, copy `assets/backlog.md` to `docs/backlog.md
 
 `.claude/rules/` machinery is **always** scaffolded (zero-cost when empty). `index.md` is seeded from `assets/rules-index-skeleton.md`. Individual rule bodies fill in Phase 3b based on Phase 1 signal detection.
 
-**Core plugin pin (pre-resolve).** The harness CLAUDE.md skeleton bakes in `superpowers` slash-command routes (`/brainstorm`, `/write-plan`, `/execute-plan`). Superpowers is therefore a **core dep, not an adaptive pick** — pin it before Phase 3c so `/super-bootstrap:resolve-plugins` curates adaptive picks on top of a guaranteed-superpowers base.
+**Core plugin pins (pre-resolve).** The harness CLAUDE.md skeleton names two skills by trigger rule:
+
+- `superpowers` — slash-command routes (`/brainstorm`, `/write-plan`, `/execute-plan`).
+- `karpathy-guidelines` — invoked before every code edit (see CLAUDE.md § Coding Principles).
+
+Both are **core deps, not adaptive picks** — pinned before Phase 3c so `/super-bootstrap:resolve-plugins` curates adaptive picks on top of a guaranteed base. Dangling-rule risk: if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently. Pin first.
 
 Ensure `.claude/settings.json` contains:
 
 ```json
 {
   "enabledPlugins": {
-    "superpowers@claude-plugins-official": true
+    "superpowers@claude-plugins-official": true,
+    "andrej-karpathy-skills@karpathy-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "karpathy-skills": {
+      "source": { "source": "github", "repo": "forrestchang/andrej-karpathy-skills" }
+    }
   }
 }
 ```
@@ -321,7 +332,7 @@ Ensure `.claude/settings.json` contains:
 - Key already present → skip (`✓ pinned`).
 - Other `.claude/settings.json` content → never touched.
 
-`superpowers@claude-plugins-official` resolves from Anthropic's official marketplace — no `extraKnownMarketplaces` entry needed. Phase 3c (`/super-bootstrap:resolve-plugins`) treats this pin as locked: never proposes drop, never re-prompts the user. Adaptive picks (stack-matched skills / MCPs / hooks) layer on top.
+`superpowers@claude-plugins-official` resolves from Anthropic's official marketplace — no `extraKnownMarketplaces` entry needed. `andrej-karpathy-skills@karpathy-skills` lives outside the official marketplace, so the `karpathy-skills` marketplace entry is required for cloud / fresh-machine resolution. Phase 3c (`/super-bootstrap:resolve-plugins`) treats both pins as locked: never proposes drop, never re-prompts the user. Adaptive picks (stack-matched skills / MCPs / hooks) layer on top.
 
 ### 3b: Pipeline docs
 

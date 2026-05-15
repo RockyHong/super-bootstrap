@@ -67,9 +67,9 @@ Before every commit, scan `docs/` for files describing behavior touched by the d
 
 ## Coding Principles
 
-- **Think before coding.** State assumptions. If multiple valid interpretations exist, present them — don't pick silently. If unclear, stop and ask.
-- **Simplicity first.** Minimum code that solves it. No speculative abstraction, no flexibility nobody asked for, no error handling for impossible scenarios.
-- **Surgical changes.** Touch only what you must. Don't refactor adjacent code, don't reformat, match existing style. Remove orphans your changes create — leave pre-existing dead code alone.
+Before writing, reviewing, or refactoring code, invoke the `karpathy-guidelines` skill.
+
+It owns four principles (think-before-coding, simplicity-first, surgical-changes, goal-driven-execution). Skill body is upstream — don't paraphrase it here. Pin lives in `.claude/settings.json` (`andrej-karpathy-skills@karpathy-skills`).
 
 ## Edit Discipline — Renames & Replace-All
 
