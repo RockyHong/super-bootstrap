@@ -8,6 +8,18 @@ tags: [merge, git, branch]
 
 Absorb feature branches into the base branch. Per-branch rebase-vs-merge recommendation, mechanical execution. **Conflict resolution is NOT this skill's job** — abort, surface, stop.
 
+## Branch Absorption Lane (load-bearing)
+
+Branch integration is a topology operation on the commit graph. Route through the merge tool — `git merge`, this skill, or worker-direct-merge. File extension is not a routing signal; a docs-only branch is still branch integration.
+
+### Pre-flight when integration is in scope
+
+Triggers: branch named for absorption, current branch behind base, worker returned with branch unmerged.
+
+1. `git branch --no-merged <base>` — list unmerged tips.
+2. For any file slated for edit: `git log <base>..<branch> -- <path>`. Non-empty → merge lane.
+3. To inspect merge state, materialize it: `git merge --no-commit --no-ff <branch>`, then `git merge --abort`. Read `git diff <base>..<branch>` for review only, never as input to a hand-applied edit across base.
+
 ## Why inline (not dispatched)
 
 Same logic as `commit`: branch state + conflict context belong in the gateway, not relayed through an agent. Conflict resolution (when it comes) is context-aware — needs full session memory of what was being absorbed and why. Detour through Sonnet would force re-relaying the conflict scope back to the gateway anyway. Frequency is lower than `commit` so token-savings argument doesn't pay for the relay overhead either.
