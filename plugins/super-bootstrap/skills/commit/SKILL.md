@@ -32,7 +32,7 @@ Walk every changed file and classify:
 
 Use the conversation transcript as source of truth for "what did this session touch." If unsure, list the file to the user with: "I don't remember touching this — stage or skip?"
 
-**Never `git add -A`. Never `git add .`** Stage by explicit path only.
+**Stage by explicit path only.**
 
 ### 3. Doc-Sync Gate
 
@@ -47,7 +47,7 @@ Before staging, scan `docs/` for files that describe behavior touched by the dif
 For each doc that looks stale relative to the diff:
 1. Report path + what looks outdated + relevant diff context.
 2. Resolve with user — update doc, or confirm still accurate.
-3. Never silently fix. Never silently skip.
+3. Always surface the call to the user before staging.
 
 **Backlog cleanup:** if the diff resolves a `BUG-###` / `DEBT-###` / `GAP-###` item in `docs/backlog.md`, propose deleting the item.
 
@@ -71,7 +71,7 @@ Rules:
 - Subject ≤72 chars, imperative mood ("add", not "added").
 - One logical change per commit. If diff spans two unrelated changes → split into two commits.
 - Body only when reasoning isn't visible in the diff. Skip body for obvious fixes.
-- Never include "🤖 Generated with Claude Code" or co-author trailers unless user requests.
+- Author message directly; co-author trailers (e.g. "🤖 Generated with Claude Code") only on explicit user request.
 - Match the repo's existing commit style (scan `git log --oneline -10`).
 
 ### 5. Present + Confirm
@@ -128,7 +128,7 @@ One line. Don't expand into full status table — that's `/super-bootstrap:todo`
 - **Session-isolated** — only this session's changes. Prior dirty state is sacred.
 - **Doc-sync first** — gate runs before staging. Stale docs block commit until resolved.
 - **Conventional** — type, scope, subject. Body only when needed.
-- **No `-A`** — explicit paths always.
+- **Explicit paths always** — `git add <path>`, never `-A` / `.` (hard constraint — irreversible if it picks up secrets).
 - **No push** — separate concern.
 - **Cycle handoff** — post-commit one-liner signals cycle exit (`/clear` + `/super-bootstrap:todo` next session). Removes ambiguity at cache-reset moment.
 - **No amend** — new commit on top, even after pre-commit hook failure. Amend only if user explicitly asks.
