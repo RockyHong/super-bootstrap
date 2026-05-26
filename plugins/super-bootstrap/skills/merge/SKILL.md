@@ -108,10 +108,19 @@ Report to user:
 - Branches skipped and why
 - Final `git log --oneline --graph -10`
 
+### 8. Push (on confirmation)
+
+After absorption, offer to push the updated base — never run it unannounced. Present:
+
+- base branch → remote, commits ahead of remote
+- which branches were folded in
+
+Ask: **"Push {base} now? (y / skip)"** Push only on explicit yes. Skip by default if the user is silent. Never force push. Branches that hit conflicts are not pushed.
+
 ## Rules
 
 - Never `cd` — working directory is already correct.
-- Never push. Pushing is the user's responsibility.
+- Push the base only on explicit confirmation — present what will push, never force, never unannounced. (See §8.)
 - Never resolve conflicts inline. Surface and stop. (See Conflict Doctrine above.)
 - Never force-merge.
 - Never delete branches.

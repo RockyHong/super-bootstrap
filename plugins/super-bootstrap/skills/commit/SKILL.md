@@ -1,12 +1,12 @@
 ---
 name: commit
-description: "Stage and commit the current session's changes only. Session-isolated (never -A), doc-sync-gated, conventional message, no push. Bundled with super-bootstrap — encodes the harness commit rules."
+description: "Stage and commit the current session's changes only. Session-isolated (never -A), doc-sync-gated, conventional message, offers push on explicit confirmation. Bundled with super-bootstrap — encodes the harness commit rules."
 tags: [commit, git, session, doc-sync, superpowers]
 ---
 
 # Commit — Session-Isolated, Doc-Sync-Gated
 
-Stage and commit the changes this Claude session produced. Leaves prior uncommitted work alone. Runs the doc-sync gate first. Writes a conventional commit message. Does not push.
+Stage and commit the changes this Claude session produced. Leaves prior uncommitted work alone. Runs the doc-sync gate first. Writes a conventional commit message. Offers to push on explicit confirmation — never unannounced.
 
 Bundled with `/super-bootstrap`. The harness CLAUDE.md and bootstrap plan route every flow through "doc sync → `/super-bootstrap:commit`" — this is that command.
 
@@ -103,9 +103,20 @@ EOF
 
 Run `git status` after to confirm clean state.
 
-### 7. Do Not Push
+### 7. Push (on confirmation)
 
-`/super-bootstrap:commit` does not push. User pushes manually or via separate skill (`/commit-push-pr` from external plugins, or plain `git push`).
+After the commit confirms clean, offer to push — never run it unannounced. Present:
+
+- branch → remote (e.g. `main` → `origin`)
+- commits ahead of remote (`git log --oneline @{u}..` if upstream set, else note no upstream)
+
+Ask: **"Push these now? (y / skip)"** Push only on explicit yes:
+
+```bash
+git push <remote> <branch>
+```
+
+Skip by default if the user is silent or declines — committed work is safe locally either way. No force push without an explicit request.
 
 ### 8. Cycle Handoff
 
@@ -129,7 +140,7 @@ One line. Don't expand into full status table — that's `/super-bootstrap:todo`
 - **Doc-sync first** — gate runs before staging. Stale docs block commit until resolved.
 - **Conventional** — type, scope, subject. Body only when needed.
 - **Explicit paths always** — `git add <path>`, never `-A` / `.` (hard constraint — irreversible if it picks up secrets).
-- **No push** — separate concern.
+- **Push on confirm** — offers push after a clean commit; runs only on explicit yes, never force, never unannounced.
 - **Cycle handoff** — post-commit one-liner signals cycle exit (`/clear` + `/super-bootstrap:todo` next session). Removes ambiguity at cache-reset moment.
 - **No amend** — new commit on top, even after pre-commit hook failure. Amend only if user explicitly asks.
 - **No `--no-verify`** — pre-commit hooks fire. If a hook fails, fix the cause, don't bypass.

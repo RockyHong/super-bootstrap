@@ -9,7 +9,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`. Standalone or delegated from `harness-bootstrap` Phase 3c.
 - `todo` — intent-filtered scanner. Bare `/super-bootstrap:todo` renders the full board; sub-verbs (`/super-bootstrap:todo discuss · cloud · device`) opt-in slice when the board grows past 5 rows. Dispatches `agents/todo.md` on Sonnet with scaffold injection.
 - `help` — passive on-demand index of installed user-invoke skills, grouped by category. Dispatches `agents/help.md` on Haiku.
-- `commit` — session-isolated commit, doc-sync gated, conventional message, no push.
+- `commit` — session-isolated commit, doc-sync gated, conventional message, offers push on confirm.
 - `merge` — absorb feature branches into base. Per-branch rebase-vs-merge recommendation, clean execution. Hard SoC: on conflict, aborts + surfaces file list + stops. Resolution out of scope (user routes next pass). Inline; same context-awareness rationale as `commit`.
 - `release-init` — one-shot. Detects project type (unity / tauri / node / ios-native / android-native / generic) + multi-platform shape, generates a tailored project-level `/release` skill at `.claude/skills/release/SKILL.md`. Optional bonus — run only if the repo ships versioned releases.
 

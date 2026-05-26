@@ -255,10 +255,12 @@ git tag -a v{version} -m "<release notes>"
 
 Use annotated tag. Pass message via HEREDOC.
 
-**Step 6 — Report:**
+**Step 6 — Report + offer push:**
 
-> Release v{version} prepared.
-> To publish: `git push origin {{main_branch}} --tags`
+> Release v{version} prepared (commit + tag v{version}).
+> Push to publish? Runs `git push origin {{main_branch}} --tags`. (y / skip)
+
+Push only on explicit yes. Skip by default if the user is silent. Never force push.
 
 {{#if platforms}}
 
@@ -283,16 +285,18 @@ If multiple remaining:
 git tag -a v{version}-{platform} -m "{Platform} upload — build {build_number}"
 ```
 
-**Step 4 — Report:**
+**Step 4 — Report + offer push:**
 
 > Tagged v{version}-{platform} (build {build_number})
 > Remaining: {{remaining_platforms_or_none}}
-> To publish: `git push origin --tags`
+> Push to publish? Runs `git push origin --tags`. (y / skip)
+
+Push only on explicit yes. Skip by default if silent.
 {{/if}}
 
 ## Rules
 
-- Never push. User pushes manually.
+- Push only on explicit confirmation — offer after commit/tag, run `git push ... --tags` on yes, never force, never unannounced.
 - Never proceed if working tree is dirty.
 - Never delete or move existing tags.
 - All tags are annotated (`git tag -a`).
@@ -326,9 +330,11 @@ git commit -m "chore: add project release skill"
 > Project release skill generated at `.claude/skills/release/SKILL.md`.
 > From now on, just run `/release`.
 
+Then offer to push this commit: **"Push now? (y / skip)"** — push only on yes, skip by default if silent.
+
 ## Rules
 
-- Never push. User pushes manually.
+- Push only on explicit confirmation — offer after the commit, never force, never unannounced.
 - Always confirm detection results before generating.
 - If detection is ambiguous, ask — don't guess.
 - The generated skill must have zero placeholders — all values filled in.
