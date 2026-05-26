@@ -111,16 +111,18 @@ git tag -a v{version} -m "<release notes>"
 
 Use annotated tag. Pass message via HEREDOC.
 
-**Step 6 — Report:**
+**Step 6 — Report + offer push:**
 
-> Release v{version} prepared.
-> To publish: `git push origin main --tags`
+> Release v{version} prepared (commit + tag v{version}).
+> Push to publish? Runs `git push origin main --tags`. (y / skip)
 >
 > After push, Claude Code plugin manager will see the new version on next `/plugin update super-bootstrap` and refresh the cache.
 
+Push only on explicit yes. Skip by default if the user is silent. Never force push.
+
 ## Rules
 
-- Never push. User pushes manually.
+- Push only on explicit confirmation — offer after commit/tag, run `git push origin main --tags` on yes, never force, never unannounced.
 - Never proceed if working tree is dirty.
 - Never delete or move existing tags.
 - All tags are annotated (`git tag -a`).
