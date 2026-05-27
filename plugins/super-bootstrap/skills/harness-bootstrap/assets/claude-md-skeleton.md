@@ -112,6 +112,17 @@ Multi-needle recall degrades past ~200k input tokens. Sweet spot: ≤80k = 100% 
 
 Default order when context heavy: subagent → compact (warm) → clear (cold/topic-shifted) → park (mid-implementation at risk).
 
+## Finding Triage — Log vs Fix Now
+
+When a finding worth acting on surfaces mid-work (during/after implementation, or when a subagent reports back) but isn't the current goal, fork it — don't drift into it silently, don't drop it silently.
+
+Decide on two axes: **context budget** (is the window heavy? — see Context Hygiene) and **topic distance** (on-goal, or far blast radius?).
+
+- Context heavy **OR** off-topic / far blast → **log** it: `docs/backlog.md` (BUG/DEBT/GAP) if present, else a deferred note to the user.
+- On-topic **AND** context clean **AND** fix small + safe → **fix now**.
+
+Surface a real fork to the user as an MCQ with the recommended path badged `(recommended)`. No real fork (trivial fix or trivial tangent) → act and mention, skip the MCQ.
+
 ## Rules (auto-load on file match)
 
 `.claude/rules/*.md` files attach to file reads via glob frontmatter — full-body rule fires at the decision moment, zero ambient cost when irrelevant. Summary below so this orchestrator knows the rule exists during planning.

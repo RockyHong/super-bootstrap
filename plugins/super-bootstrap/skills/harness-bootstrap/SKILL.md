@@ -258,7 +258,7 @@ With alignment confirmed, walk each pipeline artifact in order: folders → pipe
 - Project-owned content → never touch, even on drift
 
 **Pipeline-owned** (subject to drift check):
-- CLAUDE.md sections: Development Workflow, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene, Rules, Solo Dev Assumptions, Git Notes, Planning
+- CLAUDE.md sections: Development Workflow, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene, Finding Triage, Rules, Solo Dev Assumptions, Git Notes, Planning
 - `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution
 - `docs/overview.md` skeleton sections: Problem, User, Current State
 - `docs/superpowers/specs/`, `docs/superpowers/plans/`, `docs/superpowers/plans/bootstrap.md`
