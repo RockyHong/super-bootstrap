@@ -1,12 +1,12 @@
 ---
 name: commit
-description: "Stage and commit the current session's changes only. Session-isolated (never -A), doc-sync-gated, conventional message, offers push on explicit confirmation. Bundled with super-bootstrap — encodes the harness commit rules."
+description: "Stage and commit the current session's changes only. Session-isolated (never -A), doc-sync-gated, conventional message, commits directly without a confirm gate, offers push on explicit confirmation. Bundled with super-bootstrap — encodes the harness commit rules."
 tags: [commit, git, session, doc-sync, superpowers]
 ---
 
 # Commit — Session-Isolated, Doc-Sync-Gated
 
-Stage and commit the changes this Claude session produced. Leaves prior uncommitted work alone. Runs the doc-sync gate first. Writes a conventional commit message. Offers to push on explicit confirmation — never unannounced.
+Stage and commit the changes this Claude session produced. Leaves prior uncommitted work alone. Runs the doc-sync gate first. Writes a conventional commit message and commits directly — no approval gate. Offers to push on explicit confirmation — never unannounced.
 
 Bundled with `/super-bootstrap`. The harness CLAUDE.md and bootstrap plan route every flow through "doc sync → `/super-bootstrap:commit`" — this is that command.
 
@@ -74,17 +74,9 @@ Rules:
 - Author message directly; co-author trailers (e.g. "🤖 Generated with Claude Code") only on explicit user request.
 - Match the repo's existing commit style (scan `git log --oneline -10`).
 
-### 5. Present + Confirm
+### 5. Stage + Commit
 
-Show user:
-- Files to stage (explicit list, not `-A`)
-- Files left alone (prior work)
-- Doc-sync resolutions (what got updated)
-- Drafted commit message
-
-Wait for approval. User may edit message, drop files, or split.
-
-### 6. Stage + Commit
+No approval gate — stage and commit directly. The conventional message plus the explicit file list are the record. Genuine ambiguity already pauses upstream: §2 ambiguous-file classification and §3 doc-sync both surface to the user before reaching here.
 
 Stage by explicit path:
 ```bash
@@ -101,9 +93,9 @@ EOF
 )"
 ```
 
-Run `git status` after to confirm clean state.
+Then report what landed — files staged, files left alone (prior work), doc-sync updates, and the commit message — and run `git status` to confirm clean state.
 
-### 7. Push (on confirmation)
+### 6. Push (on confirmation)
 
 After the commit confirms clean, offer to push — never run it unannounced. Present:
 
@@ -118,7 +110,7 @@ git push <remote> <branch>
 
 Skip by default if the user is silent or declines — committed work is safe locally either way. No force push without an explicit request.
 
-### 8. Cycle Handoff
+### 7. Cycle Handoff
 
 After commit confirms clean, signal cycle exit so user knows it's safe to reset context:
 
@@ -139,6 +131,7 @@ One line. Don't expand into full status table — that's `/super-bootstrap:todo`
 - **Session-isolated** — only this session's changes. Prior dirty state is sacred.
 - **Doc-sync first** — gate runs before staging. Stale docs block commit until resolved.
 - **Conventional** — type, scope, subject. Body only when needed.
+- **Commit directly** — no approval gate; the conventional message + explicit file list are the record. Conditional pauses still fire (ambiguous-file classification, doc-sync); routine approval doesn't.
 - **Explicit paths always** — `git add <path>`, never `-A` / `.` (hard constraint — irreversible if it picks up secrets).
 - **Push on confirm** — offers push after a clean commit; runs only on explicit yes, never force, never unannounced.
 - **Cycle handoff** — post-commit one-liner signals cycle exit (`/clear` + `/super-bootstrap:todo` next session). Removes ambiguity at cache-reset moment.
