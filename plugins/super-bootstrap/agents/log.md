@@ -36,17 +36,17 @@ can't name   → DROP         → re-enter as a fresh capture when the pain is f
 
 You receive 1..N entries in one dispatch. One container, one goal ("log this batch") — classify all, don't spawn per-entry work.
 
-- **Read once, dedup once.** Read the `docs/backlog.md` header + open `### (BUG|DEBT|GAP)-` rows a single time, then classify + dedup all N against them. An entry that duplicates an existing row → report it under `deduped`, do not create a second.
+- **Read once, dedup once.** Read the `docs/backlog.md` header + open `### {BUG|DEBT|GAP}-###` rows a single time, then classify + dedup all N against them. An entry that duplicates an existing row → report it under `deduped`, do not create a second.
 - **Per-entry gate.** Run classification + the admission gate on _each_ entry independently. One entry passing does not cover the batch.
 - **Never abort the batch on one ambiguity.** Classify and write every clear entry. Collect the _minimum_ discriminating question for each genuinely ambiguous one and return them — do not block the clear writes waiting on a fork.
 
 ## Procedure
 
 1. Read `docs/backlog.md` — header (row shape + ID high-water mark) and open rows. If the file is absent, write nothing and return: "no `docs/backlog.md` — scaffold it via `/super-bootstrap:harness-bootstrap` (backlog tracker), then re-run `/super-bootstrap:log`."
-2. For each entry: classify (BUG / DEBT / GAP / feature-flag), run the admission gate.
+2. For each entry: classify (BUG / DEBT / GAP / feature-shaped), run the admission gate.
 3. Dedup: entries that already have a row → `deduped`.
 4. Assign the next ID per category from the header's **ID high-water mark** line — take max+1 and **bump the line in the same write**. Never derive the next ID by scanning open rows: resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`). If the line is missing (legacy backlog), seed it from the max open-row ID per category and note the seeding in your output.
-5. Write each clear entry — `Edit` into `## Open`, newest at top, in the row shape the backlog header defines. Capture the claim faithfully: this is the richest-context moment; sessions that pick the row up read it cold.
+5. Write each clear entry — `Edit` into `## Open`, newest at top, in the row shape the backlog header defines. Stamp `**Logged:**` with the date the dispatch prompt supplies. Capture the claim faithfully: this is the richest-context moment; sessions that pick the row up read it cold.
 6. Hold ambiguous entries unwritten; build one minimal question each.
 7. Return the summary (§Output contract).
 
