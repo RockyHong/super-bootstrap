@@ -87,7 +87,9 @@ For each, count checkboxes:
 
 #### c. Backlog (`docs/backlog.md`)
 
-Backlog owns BUG/DEBT/GAP only — "found-but-deferred in existing system." Forward-looking feature roadmap lives in `docs/overview.md` § Roadmap (see §d).
+Backlog owns BUG/DEBT/GAP only — "found-but-deferred in existing system." Forward-looking feature roadmap lives in `docs/overview.md` § Roadmap (see §d). New rows are written by `/super-bootstrap:log`; this scanner reads them.
+
+Open items are `### {BUG|DEBT|GAP}-###` row headings under `## Open`. The header's **ID high-water mark** line carries the same ID literals but is a counter, not an item — exclude it from rows and counts.
 
 For each open `BUG-### / DEBT-### / GAP-###` item:
 
@@ -97,7 +99,7 @@ For each open `BUG-### / DEBT-### / GAP-###` item:
 
 For any row with a **foreign prefix** (anything outside `BUG-### / DEBT-### / GAP-###` — e.g. `F-`, `FEAT-`, `ROAD-`, bare bullet):
 
-- Emit into the Uncategorized sub-section. Reason: `"non-canonical backlog prefix; backlog owns BUG/DEBT/GAP. Features → docs/overview.md § Roadmap (canonical pillar)."`
+- Emit into the Uncategorized sub-section. Reason: `"non-canonical backlog prefix; backlog owns BUG/DEBT/GAP. Features → docs/overview.md § Roadmap (canonical pillar). New rows route through /super-bootstrap:log."`
 - Do **not** invent classification. Scanner is the taxonomy authority — foreign prefixes surface as warnings, not silent acceptance.
 
 If `docs/backlog.md` doesn't exist, skip §c entirely.
@@ -154,7 +156,7 @@ Apply before ranking. Both tags carried on every row.
 - **`cross-pkg`** — ≥2 packages referenced
 - **`repo`** — touches `.claude/`, `CLAUDE.md`, `docs/` sweeping, or orchestration layer
 
-Derive from plan body path mentions and task bullet paths. For Discuss-mode rows (pure decisions, no code), omit Blast — render N/A or skip column per scaffold (scaffold drops Blast column for Discuss).
+Derive from plan body path mentions and task bullet paths. For backlog rows, read the row's `**Area:**` field first (single file → `local`, one package → `pkg`, ≥2 packages → `cross-pkg`, `.claude/` / `CLAUDE.md` / sweeping `docs/` → `repo`); fall back to body mentions on legacy rows without it. For Discuss-mode rows (pure decisions, no code), omit Blast — render N/A or skip column per scaffold (scaffold drops Blast column for Discuss).
 
 ### 4. Rank within mode
 

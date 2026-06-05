@@ -31,7 +31,7 @@ Newcomers don't know the intent taxonomy (Discuss / Cloud / Device). A gate that
 
 On bare `/super-bootstrap:todo`:
 
-1. Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`. Also quick-read `docs/overview.md` for a `## Roadmap` section with at least one bullet entry. If ALL sources are empty/absent (no specs, no plans, no open backlog rows, no roadmap entries), print directly without dispatching:
+1. Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`. Also quick-read `docs/overview.md` for a `## Roadmap` section with at least one bullet entry. If ALL sources are empty/absent (no specs, no plans, no open backlog rows — `### {BUG|DEBT|GAP}-###` headings under `## Open`; the header's ID high-water-mark line doesn't count — no roadmap entries), print directly without dispatching:
    > "No active work. Start something with `/brainstorm` or give me a task."
 2. Otherwise dispatch the `todo` subagent with `mode: full`. No picker, no questions.
 3. Relay the agent's rendered output verbatim. No editorial, no preface.
