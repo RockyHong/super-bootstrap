@@ -118,7 +118,7 @@ When a finding worth acting on surfaces mid-work (during/after implementation, o
 
 Decide on two axes: **context budget** (is the window heavy? — see Context Hygiene) and **topic distance** (on-goal, or far blast radius?).
 
-- Context heavy **OR** off-topic / far blast → **log** it: `docs/backlog.md` (BUG/DEBT/GAP) if present, else a deferred note to the user.
+- Context heavy **OR** off-topic / far blast → **log** it via `/super-bootstrap:log` (classifies + writes `docs/backlog.md` BUG/DEBT/GAP rows; batch multiple findings into one call) if the backlog exists, else a deferred note to the user.
 - On-topic **AND** context clean **AND** fix small + safe → **fix now**.
 
 Surface a real fork to the user as an MCQ with the recommended path badged `(recommended)`. No real fork (trivial fix or trivial tangent) → act and mention, skip the MCQ.

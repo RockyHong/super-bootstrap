@@ -8,6 +8,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `harness-bootstrap` — installs/syncs the harness (CLAUDE.md, skeleton docs, rules, picks).
 - `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`. Standalone or delegated from `harness-bootstrap` Phase 3c.
 - `todo` — intent-filtered scanner. Bare `/super-bootstrap:todo` renders the full board; sub-verbs (`/super-bootstrap:todo discuss · cloud · device`) opt-in slice when the board grows past 5 rows. Dispatches `agents/todo.md` on Sonnet with scaffold injection.
+- `log` — capture front door. `/super-bootstrap:log <observation>` (or "log this / track that") classifies 1..N observations into BUG / DEBT / GAP, enforces the admission gate (actionable-now only — no standing-watch rows), dedups, and writes canonical rows to `docs/backlog.md`. Single funnel for all new backlog rows. Dispatches `agents/log.md` on Sonnet; the shell never pre-classifies.
 - `help` — passive on-demand index of installed user-invoke skills, grouped by category. Dispatches `agents/help.md` on Haiku.
 - `commit` — session-isolated commit, doc-sync gated, conventional message, offers push on confirm.
 - `merge` — absorb feature branches into base. Per-branch rebase-vs-merge recommendation, clean execution. Hard SoC: on conflict, aborts + surfaces file list + stops. Resolution out of scope (user routes next pass). Inline; same context-awareness rationale as `commit`.
@@ -27,7 +28,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 |---|---|---|
 | Public entry | `super-bootstrap` | `/super-bootstrap` |
 | Lifecycle / one-shot | `harness-bootstrap`, `resolve-plugins`, `release-init` | `/super-bootstrap:<name>` |
-| High-freq in-flight ops | `commit`, `todo`, `merge`, `help` | `/super-bootstrap:<name>` |
+| High-freq in-flight ops | `commit`, `todo`, `merge`, `help`, `log` | `/super-bootstrap:<name>` |
 
 **When adding a new skill:** pick the shortest bare name that reads cleanly cold. Reference it as `/super-bootstrap:<name>` everywhere a user might type it (SKILL.md prose, rendered footers, agent menus, READMEs).
 
@@ -53,6 +54,7 @@ A single matching reason on either side decides.
 | `merge` | inline | Same context-aware shape as `commit`; lower freq doesn't pay for relay either |
 | `release-init` | inline | Detection + Q&A + file generation throughout |
 | `todo` | dispatch (Sonnet) | Multi-file scan + bounded classification + render — Sonnet fit, isolate from gateway |
+| `log` | dispatch (Sonnet) | Bounded classify + gate + write — Sonnet fit; dispatch also enforces bias exclusion (shell never pre-classifies buckets) |
 | `help` | dispatch (Haiku) | Pure manifest lookup + render — Haiku model fit, skill frontmatter can't pin a model so dispatch is the escape hatch |
 
 When adding a new skill: update this table. Add an in-`SKILL.md` rationale callout only when the choice has nuance worth surfacing near the protocol (e.g. dispatching skills carry it next to their dispatch block; `merge` carries one to record why we rejected dispatch).
