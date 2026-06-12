@@ -82,7 +82,7 @@ Affected files: {list of files where rot was observed}.
 Continue? (y / dry-run report only)
 ```
 
-If user answers `dry-run`, walk Phases 1–3b without writing — output the sync report + rename-map migration rows + per-section diff listing, then exit. Otherwise proceed normally; Phase 3b's rot scan (see § 3b) handles the actual migrations.
+If user answers `dry-run`, walk Phases 1–3b without writing — render the sync report (per-section listing + rename-map migration rows) inline without persisting `bootstrap-sync-report.md`, then exit. Otherwise proceed normally; Phase 3b's rot scan (see § 3b) handles the actual migrations.
 
 **Output of Phase 1 (rot lane):** record `rot_hits[]` so Phase 3b can re-use the scan instead of grepping twice.
 
@@ -293,9 +293,9 @@ Per-migration handling:
 
 **Never destructive without confirmation.** Show source → dest mapping, get explicit approval, only then move content.
 
-**Per-section diff output is mandatory.** Required shape for every pipeline-owned section in every targeted file — `✓ current` is **not** allowed without the listing. The two-block contract:
+**The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `docs/superpowers/plans/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new`), and — for drifted rows — the diff. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. Overwrite any stale report from a prior run.
 
-Block 1 (always, one row per pipeline-owned section in the file):
+Block 1 (shown to the user, rendered from the report — one row per pipeline-owned section in the file):
 
 ```
 {file path} sync — per-section comparison:
@@ -319,9 +319,9 @@ Block 2 (only for `⚠ drifted` rows — one expansion per drifted section):
   Update? (y / n / show full diff)
 ```
 
-Hand-wave assertions ("skeleton sections match the template") without Block 1's per-section listing are a hard failure — block commit, re-run the check. Drift approval (Block 2) protects against (a) legit template updates the user wants to review and (b) bad-actor template injection on a future re-run — you see what's about to change before it's overwritten.
+The report is the forcing function: Phase 3d refuses to commit unless it exists and carries a row for every pipeline-owned section in scope (§ 3d gate). A collapsed "skeleton sections match" with no rows fails that gate mechanically — there is no assertion to trust, so there is nothing to collapse into one. Drift approval (Block 2) protects against (a) legit template updates the user wants to review and (b) bad-actor template injection on a future re-run — you see what's about to change before it's overwritten.
 
-**Rot scan (mandatory pre-step on re-run).** Before Block 1 renders, read `assets/rename-map.md` and grep every pipeline-owned file in scope for each entry's `old` literal (whole-token match — avoid URL / identifier false hits). Each hit becomes a migration row in the sync report:
+**Rot scan (mandatory pre-step on re-run).** Before Block 1 renders, read `assets/rename-map.md` and grep every pipeline-owned file in scope for each entry's `old` literal (whole-token match — avoid URL / identifier false hits). Each hit becomes a rot row appended to `bootstrap-sync-report.md` and surfaced to the user:
 
 ```
 {file path}:{line} — stale literal `{old}` → propose `{new}`
@@ -365,7 +365,7 @@ The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed backlog` / `Task 3
 - Re-run with `docs/specs/` already populated → drop Task 1
 - Re-run with `docs/backlog.md` already populated → drop Task 2
 - Add tasks for any project-specific needs surfaced during Q&A
-- Task 3 (Cleanup) always retained — includes deleting `docs/superpowers/plans/bootstrap.md` and `docs/superpowers/plans/bootstrap-qa.md`
+- Task 3 (Cleanup) always retained — includes deleting `docs/superpowers/plans/bootstrap.md`, `docs/superpowers/plans/bootstrap-qa.md`, and `docs/superpowers/plans/bootstrap-sync-report.md` if a prior session left it
 
 If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that's fine, signals bootstrap is essentially complete.
 
@@ -386,7 +386,9 @@ Phase 3c invokes `/super-bootstrap:resolve-plugins`, which gates picks via earn-
 
 ### 3d: Sync report + commit
 
-**Sync report** — always shown before commit. Fresh repos see "all new"; re-run repos see drift fixes, picks delta, and current items.
+**Gate — the sync report must exist and cover every pipeline-owned section before commit.** Read `docs/superpowers/plans/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row. Missing file, or any uncovered section → halt, return to 3b, produce the missing rows. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
+
+**Sync report** — rendered from the artifact (the file is canonical; this table is its commit-time view). Always shown before commit. Fresh repos see "all new"; re-run repos see drift fixes, picks delta, and current items.
 
 ```
 | Artifact                            | Status       | Action              |
@@ -414,6 +416,8 @@ Otherwise use `/super-bootstrap:commit` to stage:
 
 Commit message: `chore: scaffold superpowers pipeline` on fresh repos, `chore: sync superpowers pipeline` when only drift fixes / picks delta shipped, `refactor: migrate CLAUDE.md to rules layer + sync pipeline` when re-run performed legacy migration.
 
+**Clean the run artifact.** `bootstrap-sync-report.md` is a transient diagnostic — never staged. After the commit lands (or after reporting no-changes), delete it: its consumer is this phase, so this phase is its cleaner. (Task 3 cleanup removes it too, as a safety net if a session broke between 3b and here.)
+
 ---
 
 ## Phase 4: Handoff
@@ -439,3 +443,4 @@ After committing (or reporting no changes needed), present results based on repo
 - **Precision per always-on byte** — every CLAUDE.md line answers "what decision does this sharpen, at what moment?" Length is downstream of that. The Anthropic / community ~120-line target is a smoke alarm on bloat, not a hard cap. Sweet-spot session quality (~80k context = 100% recall) requires the orchestrator brief stays lean enough that opening file reads + workflow + actual task fit.
 - **Default-to-rules when ambiguous** — enforcement-shaped content (imperatives: must / never / always) goes to `.claude/rules/<scope>.md` even when the heading sounds like reference. Silent-miss in a cold file costs more than slight over-attach.
 - **Subagent dispatch protects orchestrator focus** — verbose work (10+ file reads, noisy test runs, parallel-safe chunks, fresh-eye review) belongs in a subagent's clean window. Orchestrator's attention budget is too valuable to spend on tool churn.
+- **Mandatory checks ride a forcing function, not prose** — a step the model is merely told to "always run" collapses into a confident assertion on re-runs where the surface looks done. Encode it produce-then-judge: enumerate to a file first, then gate the downstream phase on that file's coverage (a Read + set-difference, not a self-attestation). This skill applies it at the drift check (3b → 3d) and the Q&A precondition (2 → 3); new mandatory steps take the same shape.

@@ -34,7 +34,7 @@ If no obvious items exist, leave the file with just its header — that's fine. 
 
 ### Task 3: Cleanup
 
-- [ ] **Delete this file** (`docs/superpowers/plans/bootstrap.md`) and `docs/superpowers/plans/bootstrap-qa.md` if present — bootstrap is complete
+- [ ] **Delete this file** (`docs/superpowers/plans/bootstrap.md`), `docs/superpowers/plans/bootstrap-qa.md`, and `docs/superpowers/plans/bootstrap-sync-report.md` if present — bootstrap is complete
 - [ ] **Verify `/super-bootstrap:todo` shows no active work** (unless the user has started real project work)
 - [ ] **Commit**: `chore: complete pipeline bootstrap`
 
