@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "super-bootstrap",
-  "description": "Self-hosted marketplace for super-bootstrap — greenfield-aware superpowers pipeline bootstrap (super-bootstrap → harness-bootstrap, plus commit, todo, help, merge, and optional release-init).",
+  "description": "Self-hosted marketplace for super-bootstrap — greenfield-aware superpowers pipeline bootstrap (super-bootstrap → harness-bootstrap, plus commit, todo, log, help, merge, and optional release-init).",
   "owner": {
     "name": "Rocky Hong",
     "email": "contact@rockyhong.com"
@@ -10,7 +10,7 @@
     {
       "name": "super-bootstrap",
       "source": "./plugins/super-bootstrap",
-      "description": "Bootstrap or sync the superpowers development pipeline in any repo. /super-bootstrap gates greenfield, /super-bootstrap:harness-bootstrap installs the harness, /super-bootstrap:commit + /super-bootstrap:todo + /super-bootstrap:help + /super-bootstrap:merge bundled (all namespaced under super-bootstrap: except the /super-bootstrap entry). Optional /super-bootstrap:release-init scaffolds a project-tailored /release skill. Solo-dev opinionated. Project-adaptive.",
+      "description": "Bootstrap or sync the superpowers development pipeline in any repo. /super-bootstrap gates greenfield (lean ideation Q&A → seed docs), then installs the harness: CLAUDE.md, skeleton docs, path-scoped rules, curated skill/MCP/hook picks. Bundles commit, todo, log, help, merge, and optional release-init — all namespaced under super-bootstrap: except the entry. Per-skill contracts live in each SKILL.md frontmatter (canonical catalog); plugin README carries the index. Solo dev workflow.",
       "version": "2.6.0",
       "category": "development",
       "tags": ["bootstrap", "scaffold", "setup", "meta", "docs"],

@@ -6,14 +6,6 @@ tags: [release, init, scaffold, meta]
 
 # Release Init
 
-Detect project type, version files, and platform targets. Generate a project-level `/release` skill tailored to this repo.
-
-## Usage
-
-```
-/super-bootstrap:release-init
-```
-
 ## Protocol
 
 ### 1. Check for existing project skill
@@ -77,16 +69,7 @@ Determine if multi-platform based on project type and evidence:
 | `ios-native` | iOS only | Single platform, no platform tags |
 | `android-native` | Android only | Single platform, no platform tags |
 
-Present the recommendation WITH reasoning:
-
-> Detected: Unity project with Android + iOS build targets in `PuzzleSnake/ProjectSettings/ProjectSettings.asset`
-> - bundleVersion: 4.0.5
-> - AndroidBundleVersionCode: 40
-> - iOS buildNumber: 1
->
-> Recommending platform tags (`v4.1.0-android`, `v4.1.0-ios`) — you ship to two stores independently, so each upload gets its own tag.
->
-> Look right?
+Present the recommendation WITH reasoning.
 
 Wait for confirmation. User may correct platforms (e.g., "also shipping to Steam") or remove some.
 
@@ -130,178 +113,7 @@ Wait for user approval.
 
 ### 7. Generate the project-level skill
 
-Create `.claude/skills/release/SKILL.md` using the template below, filling in the detected values.
-
-The generated skill content follows this template — substitute all `{{placeholders}}`:
-
-````markdown
----
-name: release
-description: Prepare a version release — bump version files, commit, and tag. Just run /release with no arguments.
----
-
-# Release
-
-Prepare a version release. No arguments — reads git state and decides what to do.
-
-## Usage
-
-```
-/release
-```
-
-## Project Config
-
-- **Type:** {{project_type}}
-- **Version files:**
-{{version_files_list}}
-- **Platforms:** {{platforms_or_none}}
-- **Main branch:** {{main_branch}}
-
-## Protocol
-
-### 1. Qualify
-
-Run in parallel:
-- `git status` — working tree must be clean. If dirty, stop: "Commit or stash changes first."
-- `git branch --show-current` — must be on `{{main_branch}}`. If not, warn and ask to continue.
-
-### 2. Read state
-
-```bash
-# Latest version tag
-git tag -l "v*" --sort=-v:refname | head -1
-
-# Platform tags for that version (if multi-platform)
-git tag -l "v<latest>-*"
-
-# Commits since last version tag
-git log <latest-tag>..HEAD --oneline
-
-# Check if current commit == tagged commit
-git rev-parse HEAD
-git rev-parse <latest-tag>^{commit}  # (skip if no tags)
-```
-
-### 3. Decide
-
-Based on the state, determine which flow to run:
-
-**STATE A — No version tag exists:**
-→ Go to "Full Release Flow"
-
-**STATE B — Version tagged, same commit, not all platforms tagged:**
-→ Go to "Platform Tag Flow"
-
-**STATE C — Version tagged, different commit, not all platforms tagged:**
-→ Ask: "New release, or tagging a platform upload for v{latest}?"
-  - Platform tag → ask which commit to tag (current or the version tag's commit). Go to "Platform Tag Flow"
-  - New release → Go to "Full Release Flow"
-
-**STATE D — Version tagged, different commit, all platforms tagged (or single-platform project):**
-→ Go to "Full Release Flow"
-
-**STATE E — Version tagged, same commit, all platforms tagged:**
-→ "v{latest} fully released. Nothing to do."
-
-### Full Release Flow
-
-**Step 1 — Detect bump level** from conventional commits since last tag:
-
-| Signal | Bump |
-|---|---|
-| `BREAKING CHANGE:` in body, or `!:` suffix | major |
-| `feat:` | minor |
-| `fix:`, `refactor:`, `chore:`, `docs:`, `test:`, `perf:` | patch |
-| No conventional prefixes | patch (default) |
-
-Use the highest level found. If no previous tag exists, ask user for the version.
-
-**Step 2 — Propose:**
-
-> Current: {{current_version}} → New: {new_version} (auto: N feat, N fix since v{current})
-> OK?
-
-Wait for confirmation. User can override the version.
-
-**Step 3 — Bump version files:**
-
-{{bump_instructions}}
-
-Use the Edit tool for each file. Only change version fields.
-
-**Step 4 — Generate release notes** from commits since last tag:
-
-```
-## What's New
-- description (from feat: commits)
-
-## Fixes
-- description (from fix: commits)
-
-## Other
-- description (from everything else)
-```
-
-Omit empty sections. Show to user for approval.
-
-**Step 5 — Commit and tag:**
-
-```bash
-git add {{version_file_paths}}
-git commit -m "chore: release v{version}"
-git tag -a v{version} -m "<release notes>"
-```
-
-Use annotated tag. Pass message via HEREDOC.
-
-**Step 6 — Report + offer push:**
-
-> Release v{version} prepared (commit + tag v{version}).
-> Push to publish? Runs `git push origin {{main_branch}} --tags`. (y / skip)
-
-Push only on explicit yes. Skip by default if the user is silent. Never force push.
-
-{{#if platforms}}
-
-### Platform Tag Flow
-
-**Step 1 — Check untagged platforms** for the current version.
-
-If one remaining:
-> v{version}-{{platform}} not yet tagged. Tagging this upload on current commit?
-
-If multiple remaining:
-> Untagged: {{remaining_platforms}}
-> Which platform?
-
-**Step 2 — Read build number** from version files for that platform.
-
-{{platform_build_number_instructions}}
-
-**Step 3 — Tag:**
-
-```bash
-git tag -a v{version}-{platform} -m "{Platform} upload — build {build_number}"
-```
-
-**Step 4 — Report + offer push:**
-
-> Tagged v{version}-{platform} (build {build_number})
-> Remaining: {{remaining_platforms_or_none}}
-> Push to publish? Runs `git push origin --tags`. (y / skip)
-
-Push only on explicit yes. Skip by default if silent.
-{{/if}}
-
-## Rules
-
-- Push only on explicit confirmation — offer after commit/tag, run `git push ... --tags` on yes, never force, never unannounced.
-- Never proceed if working tree is dirty.
-- Never delete or move existing tags.
-- All tags are annotated (`git tag -a`).
-- No arguments to `/release` — always auto-detect.
-````
+Read `assets/template.md` (sibling to this SKILL.md) and fill all `{{placeholders}}` per the map in step 8 below, then write to `.claude/skills/release/SKILL.md`.
 
 ### 8. Fill the template
 
@@ -311,9 +123,16 @@ Replace all `{{placeholders}}` with detected values:
 - `{{version_files_list}}` — bullet list of file paths and field names with current values
 - `{{platforms_or_none}}` — comma-separated platform list, or `none (single-platform)`
 - `{{main_branch}}` — from `git branch --show-current` or detect default
-- `{{bump_instructions}}` — project-specific Edit instructions for each version file
+- `{{bump_instructions}}` — project-specific Edit instructions for each version file. Format: one Edit call per file showing the old version string and new version string. Example:
+  ```
+  Edit `package.json`: change `"version": "1.2.3"` → `"version": "{new_version}"`
+  Edit `src-tauri/tauri.conf.json`: change `"version": "1.2.3"` → `"version": "{new_version}"`
+  ```
 - `{{version_file_paths}}` — space-separated paths for `git add`
-- `{{platform_build_number_instructions}}` — how to read each platform's build number
+- `{{platform_build_number_instructions}}` — how to read each platform's build number. Format: one read instruction per platform file. Example:
+  ```
+  Read `ProjectSettings/ProjectSettings.asset` → `AndroidBundleVersionCode` for android; `buildNumber.iPhone` for ios.
+  ```
 - Remove the `{{#if platforms}}...{{/if}}` block entirely if single-platform
 
 The generated skill should be clean markdown with no template syntax remaining.
@@ -336,5 +155,5 @@ Then offer to push this commit: **"Push now? (y / skip)"** — push only on yes,
 
 - Push only on explicit confirmation — offer after the commit, never force, never unannounced.
 - Always confirm detection results before generating.
-- If detection is ambiguous, ask — don't guess.
-- The generated skill must have zero placeholders — all values filled in.
+- Surface ambiguous detection with the candidate interpretations before proceeding.
+- Verify all `{{placeholders}}` are replaced before writing the file.

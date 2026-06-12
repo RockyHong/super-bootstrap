@@ -10,92 +10,12 @@ Set up (or sync) the superpowers-driven development pipeline in a project. Insta
 
 Designed for a solo developer working across multiple Claude Code sessions and cloud Claude Code.
 
-<INFO-NOTE>
-This skill is tuned for **solo developer** workflows. During Phase 1, check contributor count (`git shortlog -sn --all | head -5`). If >1 active contributor, surface to user as info — don't block:
-> "FYI: detected multiple contributors. The pipeline's CLAUDE.md assumes solo dev (simple branching, no PRs for self-review). You can edit those sections after bootstrap if your team's workflow differs."
-</INFO-NOTE>
-
-## Core Technique: Docs Travel With Code
-
-The pipeline's real power isn't brainstorm→plan→execute. It's that **documentation and implementation stay in sync — always.** Two mechanisms make this work:
-
-### Fixed Macro Docs (every project gets these)
-
-```
-docs/
-  overview.md          ← product context, data flow, module index
-  techstack.md         ← tech choices, architecture rules, coding patterns
-  superpowers/
-    specs/             ← design specs from brainstorming (temporal — deleted after merge)
-    plans/             ← implementation plans (temporal — deleted after merge)
-```
-
-`overview.md` and `techstack.md` are seeded as **skeletons** at scaffold time — Runtime / Framework / Build & Dist / Problem / User / State sections carry detected facts and Q&A answers. Grown sections (Architecture Rules / Coding Patterns / Rejected Alternatives / Module Index / Data Flow / Key Boundaries) start empty and fill incrementally via the doc-sync gate as features land. No deep one-shot pump-prime.
-
-### Adaptive Persistent Docs (project-specific, discovered during Q&A)
-
-Some projects need more structure. Examples:
-
-- `docs/specs/` — persistent feature specs, one `.md` per feature. Each spec opens with `# {Feature Name}` + a one-paragraph intro, so `ls docs/specs/` and `head -n3 docs/specs/*.md` ARE the catalog (no separate index file). For multi-feature products.
-- `docs/backlog.md` — deferred items tracker (BUG / DEBT / GAP). For active or maintenance projects with shipping code.
-
-What goes here is discovered during Q&A (Phase 2). A 3-file CLI? No specs folder needed. A multi-module product? Scaffold `docs/specs/` and seed initial spec files.
-
-### The Sync Discipline (baked into CLAUDE.md, non-negotiable)
-
-**Doc sync is a named pipeline step** — every route includes it between user review and commit. Before every commit, the pipeline requires:
-1. Scan `docs/` for files that describe behavior touched by the diff
-2. If any doc is potentially stale → report to user with doc path, what looks outdated, and relevant diff context
-3. Resolve together — don't silently fix, don't silently skip
-4. Stale docs are worse than missing ones
-
-**Temporal cleanup** is part of doc sync: if the current work completes a feature branch, delete its spec and plan files. These are work orders — once merged, they're noise.
-
-This isn't a nice-to-have. This is what makes the docs trustworthy. Without it, docs rot within a week.
-
-### Two Kinds of Specs
-
-| | Temporal (superpowers) | Persistent (project) |
-|---|---|---|
-| **Location** | `docs/superpowers/specs/` | `docs/specs/` (or project-specific path) |
-| **Purpose** | Work orders — design exploration before implementation | Source of truth — what exists and why |
-| **Lifecycle** | Deleted after merge | Updated as features evolve |
-| **Created by** | Brainstorming skill | Bootstrap seeding, then maintained during development |
-| **Content** | Options, trade-offs, decisions | Product-level behavior, user flows, design decisions |
-
----
-
-## How It Works
-
-Super-bootstrap installs **harness**, not **product**. Workflow rules, doc-sync gate, skill picks, skeleton docs — all land in one scaffold session. Doc-sync at every commit grows the skeleton docs over time as code lands. No deferred deep-scan tasks; the pipeline's own continuous mechanism IS the growth path.
-
-```
-/super-bootstrap:harness-bootstrap session:
-  Quick scan + greenfield gate → Q&A alignment → scaffold (folders, CLAUDE.md,
-  skeleton techstack.md, skeleton overview.md, bootstrap-plan) →
-  curate skill/MCP/hook against live sources → sync report + commit
-
-  Pipeline is now LIVE. Skeleton docs carry detected facts. Picks pinned in
-  .claude/settings.json. Any adaptive seeding (specs / backlog) queued in
-  bootstrap-plan for later /super-bootstrap:todo sessions.
-
-Per-commit (forever after):
-  Doc-sync gate fires → if diff touches behavior covered by a doc, propose
-  updating that doc → user approves → doc + code commit together.
-
-/super-bootstrap:harness-bootstrap re-run (any time):
-  Drift-check pipeline-owned sections → refresh skill/MCP/hook picks against
-  live sources → commit if anything changed. Adaptive seeding tasks dropped
-  from regenerated bootstrap-plan if their docs already exist.
-```
-
-ICP: projects that already have code. True greenfield (empty repo, product still in ideation) is **out of scope** — Phase 1 has a friendly gate.
-
----
-
 ## Phase 1: Quick Scan (lightweight, parallel reads)
 
-Gather just enough to scaffold. Do NOT deep-analyze yet.
+Gather just enough to scaffold — skim manifests for stack/version, note structure shape, stop.
+
+Check contributor count (`git shortlog -sn --all | head -5`). If >1 active contributor, surface as info — don't block:
+> "FYI: detected multiple contributors. The pipeline's CLAUDE.md assumes solo dev (simple branching, no PRs for self-review). You can edit those sections after bootstrap if your team's workflow differs."
 
 ### Sampling Discipline (applies to all source-file reads)
 
@@ -144,7 +64,7 @@ After Phase 1 detection: if **no manifests + no source files (any extension) + R
 >
 > If you want to force the harness onto an empty repo anyway: re-invoke with `/super-bootstrap:harness-bootstrap force` (rare — most output sections will sit empty until code lands).
 
-If `docs/overview.md` + `docs/techstack.md` exist (seeded by `/super-bootstrap` greenfield path), proceed normally — the seed docs feed Phase 2 Q&A defaults and Phase 3b skeleton placeholders. **Never accept force without explicit token** — empty-repo harness is a useless artifact and the redirect surfaces the right tool.
+If `docs/overview.md` + `docs/techstack.md` exist (seeded by `/super-bootstrap` greenfield path), proceed normally — the seed docs feed Phase 2 Q&A defaults and Phase 3b skeleton placeholders. Accept re-invoke with `force` token only; absent that token, surface the redirect — empty-repo harness is a useless artifact.
 
 ### Rot signals (harnessed-but-stale)
 
@@ -172,43 +92,11 @@ If user answers `dry-run`, walk Phases 1–3b without writing — output the syn
 
 **Phase 2 ALWAYS runs, including on re-run.** Don't skip because "the repo is already bootstrapped" or "answers are encoded in existing docs." Required Q1-Q4 are non-skippable every invocation. Q4 (external tools) is especially load-bearing — it is the fresh product-level signal for Phase 3c MCP curation and is **not derivable from any existing doc**. On re-run, prefill defaults from existing artifacts (overview.md → Q1/Q2/Q3, settings.json picks → Q4 hint) so confirms collapse to one keystroke — but the user still confirms. Conditional Q5-Q9 fire only if signal triggers.
 
-**Hard precondition before Phase 3 dispatch.** Before any file write in Phase 3, assert each required Q1-Q4 has a recorded user response *this invocation* — chat confirm, AskUserQuestion result, or explicit Tier-1 synthesis `y`. Tier-1 collapse counts only when the synthesis line covered all four required answers verbatim and the user replied `y` (not `(y, but…)`, not silent assumption). If any Q lacks a response, halt Phase 3, surface the specific missing Q, re-prompt. "Encoded in existing docs / settings.json" is **not** a substitute — the doc is a prefill source, not a consent record. The assertion is mandatory: skipping it is the same class of silent-skip bug as #3 (per-section diff) and #6 (rot scan).
+**Hard precondition before Phase 3 dispatch.** Read `docs/superpowers/plans/bootstrap-qa.md`; if present and complete (all required Q1-Q4 answered), proceed. If absent or any required Q missing, halt Phase 3, surface the specific missing Q, re-prompt. Tier-1 collapse counts only when the synthesis line covered all four required answers verbatim and the user replied `y` (not `(y, but…)`, not silent assumption). Consent is a live user response this invocation (recorded in `bootstrap-qa.md`); prefilled defaults are prompts, not consent. The assertion is mandatory: skipping it produces the same silent-skip class of bug as skipping the per-section diff or the rot scan.
 
-Before writing anything, confirm understanding with the user. **Each question is an LLM-prefilled MCQ:** based on Phase 1 detection (and existing docs on re-run), infer the answer, present it as the default option with 2-4 alternatives + an `(other: __)` slot for elaboration. Cite the signal so the user can sanity-check the inference at a glance.
+Before writing anything, confirm understanding with the user. Each question is an LLM-prefilled MCQ — infer the answer from Phase 1 detection (and existing docs on re-run), present it as the default with 2-4 alternatives + an `(other: __)` slot. Cite the signal so the user can sanity-check the inference at a glance.
 
-**Render surface.** MCQ-shape (≤4 options) → AskUserQuestion popup, one Q or small batch per call. Free text + synthesis confirm → chat. Tier 1 1-line+y/n stays chat (popup overkill on minimal confirm). Popup tool unavailable → fall back to chat-rendered MCQ, Tier rules unchanged.
-
-**Render-tier pattern — pick the cheapest one that fits.** Don't render full per-Q MCQ when a one-line synthesis carries the same information.
-
-- **Tier 1 — all required Q's high-confidence + unambiguous** (every signal concrete: README explicit, manifest clear, git activity unambiguous, no missing tool config) → **collapse to a single synthesis line + one y/n**. Don't render Q1-Q4 prose. Skipping the per-Q ceremony is the default for clean, well-described projects.
-
-  Example:
-  ```
-  Detected: {one-line synthesis covering project / user / state / tools}.
-  Sound right? (y) confirm all  /  (n) show per-Q breakdown
-  ```
-
-- **Tier 2 — mixed confidence** (some Q's obvious, some ambiguous) → fold the confident Q's into the synthesis sentence; render full MCQ only for the ambiguous Q's.
-
-- **Tier 3 — low confidence on most required Q's** (sparse README, ambiguous package type, contradictory signals) → full per-Q MCQ format, presented serially so user reads each inference.
-
-If the user replies `(n)` or pushes back on Tier 1, **promote to Tier 3** for the breakdown — show full per-Q MCQ so they can correct specific items.
-
-Format pattern:
-
-```
-Q{n}. {Question}
-
-Inferred: {default answer}  ({signal — what scan found})
-
-  (a) {default answer}              ← pre-checked
-  (b) {alternative 1}
-  (c) {alternative 2}
-  ...
-  (e) other: __
-```
-
-User responds with a single key for the obvious case, or types in `e: ...` to elaborate / correct.
+Rendering protocol: read `assets/phase2-qa-protocol.md` before presenting Q&A. If unavailable, apply Tier 3 rendering.
 
 ### Required Questions (always asked, prefilled)
 
@@ -245,6 +133,8 @@ Sound right? (y / push back)
 
 Wait for confirmation before proceeding. If anything is off, correct and re-confirm.
 
+Once the synthesis `y` is received, write confirmed Q&A answers to `docs/superpowers/plans/bootstrap-qa.md` — one key-value pair per question (e.g. `Q1: {confirmed answer}`) plus the confirmed synthesis line. This makes Phase 2 → Phase 3 session-break-safe: if the session is interrupted, the next invocation reads this file instead of re-running Q&A.
+
 ---
 
 ## Phase 3: Scaffold / Sync
@@ -258,8 +148,8 @@ With alignment confirmed, walk each pipeline artifact in order: folders → pipe
 - Project-owned content → never touch, even on drift
 
 **Pipeline-owned** (subject to drift check):
-- CLAUDE.md sections: Development Workflow, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene, Finding Triage, Rules, Solo Dev Assumptions, Git Notes, Planning
-- `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution
+- CLAUDE.md sections: Development Workflow, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene, Finding Triage, Rules, Git Notes, Planning
+- `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution, Edit Discipline
 - `docs/overview.md` skeleton sections: Problem, User, Current State
 - `docs/superpowers/specs/`, `docs/superpowers/plans/`, `docs/superpowers/plans/bootstrap.md`
 - `.claude/rules/index.md` (machinery summary)
@@ -395,7 +285,7 @@ Concrete fill-in (one example, not a template — judge by analogy for the actua
 ```
 
 Per-migration handling:
-- **User approves** → write content into destination with proper format conversion (rule files get globs frontmatter; techstack grown sections get conventional headings). Remove from CLAUDE.md. Add summary bullet to CLAUDE.md § Rules for any rule-file destination.
+- **User approves** → write content into destination with proper format conversion (rule files get `paths:` frontmatter; techstack grown sections get conventional headings). Remove from CLAUDE.md. Add summary bullet to CLAUDE.md § Rules for any rule-file destination.
 - **User rejects** → leave content in CLAUDE.md, mark section project-owned for future runs (no further drift attempts on that section).
 - **User selects per-section** → walk one at a time.
 
@@ -475,7 +365,7 @@ The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed backlog` / `Task 3
 - Re-run with `docs/specs/` already populated → drop Task 1
 - Re-run with `docs/backlog.md` already populated → drop Task 2
 - Add tasks for any project-specific needs surfaced during Q&A
-- Task 3 (Cleanup) always retained
+- Task 3 (Cleanup) always retained — includes deleting `docs/superpowers/plans/bootstrap.md` and `docs/superpowers/plans/bootstrap-qa.md`
 
 If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that's fine, signals bootstrap is essentially complete.
 
@@ -501,22 +391,9 @@ Phase 3c invokes `/super-bootstrap:resolve-plugins`, which gates picks via earn-
 ```
 | Artifact                            | Status       | Action              |
 |-------------------------------------|--------------|---------------------|
-| CLAUDE.md: Workflow                 | ⚠ drifted    | updated (approved)  |
 | CLAUDE.md: Doc Sync                 | ✓ current    | —                   |
-| CLAUDE.md: Coding Standards (enforcement) | ⚠ legacy | migrated → rules/components.md |
-| CLAUDE.md: MV3 Architecture (path-scoped) | ⚠ legacy | migrated → rules/mv3.md |
-| CLAUDE.md: Rules summary            | ⚠ drifted    | regenerated from rules/ |
 | docs/techstack.md: Runtime          | ⚠ drifted    | updated (approved)  |
-| docs/techstack.md: Coding Patterns  | ✓ current    | (no enforcement migration this run) |
-| docs/overview.md: Problem           | ✓ current    | —                   |
-| docs/superpowers/specs/             | ✓ exists     | —                   |
-| docs/superpowers/plans/bootstrap.md | ⚠ exists     | kept (user state)   |
-| .claude/rules/                      | ⊕ new        | scaffolded          |
-| .claude/rules/index.md              | ⊕ new        | seeded              |
 | .claude/rules/mv3.md                | ⊕ new        | seeded (signal: MV3 manifest) |
-| .claude/rules/components.md         | ⊕ new        | seeded (signal: React + tsx dir) |
-| .claude/settings.json: core pin     | ⊕ new        | superpowers pinned  |
-| .claude/settings.json: picks        | ⚠ delta      | +2 add, −1 drop     |
 ```
 
 If every row is `✓ current` and nothing changed on disk, report and skip the commit.
@@ -558,15 +435,7 @@ After committing (or reporting no changes needed), present results based on repo
 
 ## Principles
 
-- **Harness, not product** — bootstrap installs workflow + skeleton docs + curated picks. Greenfield product ideation (empty repo, no code) is out of scope. Phase 1 has a friendly gate.
-- **Skeleton at scaffold, grown via sync** — detected facts and Q&A answers seeded immediately into `techstack.md` / `overview.md`. Architecture Rules, Coding Patterns, Roadmap, Module Index, Data Flow, Key Boundaries start empty and fill incrementally per-commit. Doc-sync IS the growth mechanism — no deferred deep-scan tasks.
-- **Refresh on every run** — picks curated against live sources every `/super-bootstrap:harness-bootstrap`. Upstream marketplace changes (new picks, deprecations, license shifts) surface as a delta against `.claude/settings.json`.
-- **Detect, then confirm** — Phase 1 grounds seeded facts in repo evidence; Phase 2 Q&A confirms; user approves drift / picks / drafts before any write.
-- **Docs travel with code** — doc-sync gate on every commit. Implementation without doc-sync is incomplete. The pipeline's real power.
-- **Fixed macro, adaptive micro** — `overview.md` / `techstack.md` / `superpowers/` always scaffolded. `specs/` / `backlog.md` only when the project warrants them.
-- **Two kinds of specs** — temporal (`docs/superpowers/specs/`) = work orders, deleted after merge. Persistent (`docs/specs/`) = source of truth, evolves with product. Never confuse.
-- **Clear doc ownership** — `techstack.md` owns tech (incl. coding patterns), `overview.md` owns product, `CLAUDE.md` owns workflow + always-on rules + rules summary, `.claude/rules/` owns path-scoped rules, `docs/specs/` owns feature behavior. No duplication.
 - **Layer by decision-moment** — every rule has a moment-of-need: ambient (CLAUDE.md, every turn) for workflow + always-true safety; path-scoped (`.claude/rules/`, fires on file match) for full-body precision when relevant; on-demand (`docs/techstack.md`, `docs/specs/`) for reference Claude reads when intent surfaces. Skills are for thinking modes / structured processes — **not** a rule-storage layer.
 - **Precision per always-on byte** — every CLAUDE.md line answers "what decision does this sharpen, at what moment?" Length is downstream of that. The Anthropic / community ~120-line target is a smoke alarm on bloat, not a hard cap. Sweet-spot session quality (~80k context = 100% recall) requires the orchestrator brief stays lean enough that opening file reads + workflow + actual task fit.
+- **Default-to-rules when ambiguous** — enforcement-shaped content (imperatives: must / never / always) goes to `.claude/rules/<scope>.md` even when the heading sounds like reference. Silent-miss in a cold file costs more than slight over-attach.
 - **Subagent dispatch protects orchestrator focus** — verbose work (10+ file reads, noisy test runs, parallel-safe chunks, fresh-eye review) belongs in a subagent's clean window. Orchestrator's attention budget is too valuable to spend on tool churn.
-- **One pipeline, adaptive** — same phases on fresh and re-run; actions differ per artifact state. Re-run on legacy CLAUDE.md proposes per-section migration to the right layer (rules / techstack patterns) before drift-checking. Solo dev first.

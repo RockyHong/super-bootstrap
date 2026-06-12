@@ -1,13 +1,10 @@
 ---
-globs:
+paths:
   - "{component path glob — e.g. src/components/**/*.tsx, src/pages/**/*.tsx}"
 description: "{Framework} component & styling conventions for this project"
 ---
 
 # {Framework} Components
-
-> Path-scoped rule. Loads with full body when a component file is read.
-> Summary mirrored in `CLAUDE.md` § Rules so the orchestrator knows this rule exists during planning.
 
 ## Component Shape
 

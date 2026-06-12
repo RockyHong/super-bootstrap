@@ -1,10 +1,8 @@
 # Rules Index
 
-> Path-scoped rules in this directory. Each `.md` carries `globs:` frontmatter — Claude Code auto-attaches the rule's body when a matching file is read. Full ammo at the decision moment, zero ambient cost otherwise.
+> **Cold-load caveat:** rule fires on file *read*, not on intent. Read the rule directly when planning: `Read .claude/rules/<name>.md`.
 >
-> **Cold-load caveat:** rule fires on file *read*, not on intent. If you're planning a change before opening files, read the relevant rule directly first: `Read .claude/rules/<name>.md`.
->
-> Mirrored in `CLAUDE.md` § Rules with one-line summary bullets so the orchestrator knows what's available during planning.
+> Use `paths:` in frontmatter — not `globs:` (Cursor key, ignored by Claude Code).
 
 ## Active rules
 
@@ -18,7 +16,7 @@
 1. New file `<topic>.md` with frontmatter:
    ```yaml
    ---
-   globs:
+   paths:
      - "src/<scope>/**/*.ts"
    description: "When this rule applies and why"
    ---

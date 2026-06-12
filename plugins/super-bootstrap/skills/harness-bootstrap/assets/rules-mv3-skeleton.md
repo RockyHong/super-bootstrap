@@ -1,5 +1,5 @@
 ---
-globs:
+paths:
   - "src/background/**/*.ts"
   - "src/background/**/*.js"
   - "src/content/**/*.ts"
@@ -8,11 +8,6 @@ description: "Chrome Manifest V3 service-worker & content-script safety. Path-sc
 ---
 
 # Chrome MV3 Architecture Rules
-
-> Path-scoped rule. Loads with full body when a background or content-script file is read.
-> Summary mirrored in `CLAUDE.md` § Rules so the orchestrator knows this rule exists during planning.
-
-These are non-negotiable — violating them silently breaks the extension.
 
 ## Service Worker Discipline
 

@@ -8,7 +8,7 @@ tags: [log, capture, backlog, pipeline, superpowers]
 
 Muscle-memory capture. Takes whatever the caller hands it — one observation or a batch — classifies each into **BUG / DEBT / GAP**, enforces the admission gate (actionable-now only), and writes canonical rows to `docs/backlog.md`. The thinking runs in the `log` subagent (`agents/log.md`, `model: sonnet`); this skill is the dispatch shell.
 
-All new backlog rows route through here — user-initiated and Claude-initiated captures alike. One funnel centralizes classification consistency, dedup, and ID assignment.
+All new backlog rows route through here — user-initiated and Claude-initiated captures alike.
 
 ## When it fires
 
@@ -30,13 +30,10 @@ The argument is the raw observation(s). Free-form. May be one item or many (a li
 
 1. Gather the entries — the user's text and/or the findings block the gateway is holding. Keep each entry's context (where it came from, any source file/line) so the subagent can dedup + write a faithful row.
 2. Dispatch: `Agent` tool, `subagent_type: "log"`, prompt = the entries (1..N) + any source context, verbatim, + today's date. Do not pre-classify, do not pre-judge buckets — that is the subagent's job, and pre-judging feeds it bias.
-3. Relay the subagent's return:
-   - **logged / deduped / flagged / deferred** lines → report to the caller plainly (what landed where, what routed elsewhere, what deferred on which trigger). Deferred entries are not stored anywhere — the user holds them; a fresh `/super-bootstrap:log` re-enters one when its trigger fires.
-   - **questions** → surface to the user as the subagent phrased them. A follow-up `/super-bootstrap:log` with the answer resolves the ambiguous entries. Do not guess the bucket on the user's behalf.
+3. Relay the subagent's return to the caller verbatim. Return shape: `agents/log.md` § Output contract.
 
 ## Rules
 
-- **Dispatch, don't classify.** The admission gate and category decisions live in the `log` subagent. This shell routes input and relays output.
+- **Route input to the subagent; the subagent classifies.** The admission gate and category decisions live in the `log` subagent. This shell routes input and relays output.
 - **Batch over loop.** Many findings → one dispatch with all entries. Per-finding dispatch is the anti-pattern this skill exists to avoid.
 - **Relay questions, never auto-answer.** Thin context is the subagent's signal to ask; the caller resolves it. Silent guessing files wrong rows the caller then trusts.
-- **Works in any repo with the superpowers pipeline.** Requires `docs/backlog.md` (scaffolded by `/super-bootstrap:harness-bootstrap`); the subagent routes the caller there when it's absent.

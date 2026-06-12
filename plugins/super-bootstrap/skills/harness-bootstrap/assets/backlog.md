@@ -1,8 +1,8 @@
 # Backlog
 
-Single tracker for deferred items — things found but not fixing now. Solo-dev queue. Scanned by doc sync at commit. When picking up new work, scan related items here to bundle.
-
 New rows route through `/super-bootstrap:log` — one funnel for classification, the admission gate, dedup, and ID assignment. Feature ideas are not backlog rows; they go to `docs/overview.md` § Roadmap.
+
+**Row deletion:** the resolving session — via `/super-bootstrap:commit` doc-sync, or manually on resolve. Direct `git commit` skips the sweep; clean up stale rows when noticed.
 
 **Three categories** distinguished by ID prefix:
 

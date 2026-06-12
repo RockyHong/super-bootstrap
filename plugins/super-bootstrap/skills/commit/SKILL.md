@@ -8,8 +8,6 @@ tags: [commit, git, session, doc-sync, superpowers]
 
 Stage and commit the changes this Claude session produced. Leaves prior uncommitted work alone. Runs the doc-sync gate first. Writes a conventional commit message and commits directly — no approval gate. Offers to push on explicit confirmation — never unannounced.
 
-Bundled with `/super-bootstrap`. The harness CLAUDE.md and bootstrap plan route every flow through "doc sync → `/super-bootstrap:commit`" — this is that command.
-
 ## Protocol
 
 ### 1. Inspect Working Tree
@@ -112,19 +110,13 @@ Skip by default if the user is silent or declines — committed work is safe loc
 
 ### 7. Cycle Handoff
 
-After commit confirms clean, signal cycle exit so user knows it's safe to reset context:
+After commit confirms clean, signal cycle exit. One line — don't expand into full status table (that's `/super-bootstrap:todo`'s job).
 
-> Cycle complete. Safe to `/clear`. Next session: `/super-bootstrap:todo` picks up next item.
-
-If `docs/superpowers/specs/` or `docs/superpowers/plans/` still has unfinished work (one quick Glob — files exist, plans with unchecked boxes), name the top candidate inline:
-
-> Cycle complete. `plans/2026-04-12-auth.md` still has 3/7 unchecked — `/clear` then `/super-bootstrap:todo` to resume.
-
-If backlog has open items and no active superpowers work:
-
-> Cycle complete. No active specs/plans; `docs/backlog.md` has open items — `/clear` then `/super-bootstrap:todo` to pick next.
-
-One line. Don't expand into full status table — that's `/super-bootstrap:todo`'s job.
+| Condition | Handoff one-liner |
+|---|---|
+| No unfinished specs/plans, no backlog items | `Cycle complete. Safe to /clear. Next session: /super-bootstrap:todo picks up next item.` |
+| Unfinished work in specs/plans (unchecked boxes) | `Cycle complete. plans/2026-04-12-auth.md still has 3/7 unchecked — /clear then /super-bootstrap:todo to resume.` |
+| Backlog has open items, no active superpowers work | `Cycle complete. No active specs/plans; docs/backlog.md has open items — /clear then /super-bootstrap:todo to pick next.` |
 
 ## Rules
 
@@ -132,9 +124,9 @@ One line. Don't expand into full status table — that's `/super-bootstrap:todo`
 - **Doc-sync first** — gate runs before staging. Stale docs block commit until resolved.
 - **Conventional** — type, scope, subject. Body only when needed.
 - **Commit directly** — no approval gate; the conventional message + explicit file list are the record. Conditional pauses still fire (ambiguous-file classification, doc-sync); routine approval doesn't.
-- **Explicit paths always** — `git add <path>`, never `-A` / `.` (hard constraint — irreversible if it picks up secrets).
+- **Explicit paths always** — `git add <path>`, never `-A` / `.`.
 - **Push on confirm** — offers push after a clean commit; runs only on explicit yes, never force, never unannounced.
 - **Cycle handoff** — post-commit one-liner signals cycle exit (`/clear` + `/super-bootstrap:todo` next session). Removes ambiguity at cache-reset moment.
-- **No amend** — new commit on top, even after pre-commit hook failure. Amend only if user explicitly asks.
-- **No `--no-verify`** — pre-commit hooks fire. If a hook fails, fix the cause, don't bypass.
+- **Always new commit** — even after pre-commit hook failure. Amend only if user explicitly asks.
+- **Hooks always fire** — pre-commit hooks run. If a hook fails, fix the cause, don't bypass.
 - **One logical change per commit** — split if diff spans unrelated work.

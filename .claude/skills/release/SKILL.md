@@ -5,14 +5,6 @@ description: Prepare a version release — bump version files, commit, and tag. 
 
 # Release
 
-Prepare a version release. No arguments — reads git state and decides what to do.
-
-## Usage
-
-```
-/release
-```
-
 ## Project Config
 
 - **Type:** generic (Claude Code plugin / marketplace)
@@ -21,8 +13,6 @@ Prepare a version release. No arguments — reads git state and decides what to 
   - `.claude-plugin/marketplace.json` → `plugins[0].version`
 - **Platforms:** none (single artifact)
 - **Main branch:** main
-
-Both version files must stay in sync — they declare the same plugin version to two different consumers (plugin manifest + marketplace registry).
 
 ## Protocol
 
@@ -79,10 +69,10 @@ Wait for confirmation. User can override.
 
 **Step 3 — Bump version files:**
 
-Use the Edit tool on both files. The two files MUST end up with the same version string.
+Edit both files to the same new version string.
 
 - `plugins/super-bootstrap/.claude-plugin/plugin.json` — change the top-level `"version"` field.
-- `.claude-plugin/marketplace.json` — change `plugins[0].version`. Leave `plugins[0].name` and other fields alone.
+- `.claude-plugin/marketplace.json` — change `plugins[0].version`. Edit only the `version` field; leave all other fields unchanged.
 
 Verify both files contain the new version after edit.
 
@@ -123,8 +113,8 @@ Push only on explicit yes. Skip by default if the user is silent. Never force pu
 ## Rules
 
 - Push only on explicit confirmation — offer after commit/tag, run `git push origin main --tags` on yes, never force, never unannounced.
-- Never proceed if working tree is dirty.
+- Working tree must be clean before proceeding — step 1 enforces this.
 - Never delete or move existing tags.
 - All tags are annotated (`git tag -a`).
-- No arguments to `/release` — always auto-detect.
+- Run `/release` with no arguments — the skill auto-detects state.
 - Both version files must stay in sync — bump both, or bump neither.

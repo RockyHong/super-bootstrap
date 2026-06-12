@@ -20,17 +20,13 @@ Triggers: branch named for absorption, current branch behind base, worker return
 2. For any file slated for edit: `git log <base>..<branch> -- <path>`. Non-empty → merge lane.
 3. To inspect merge state, materialize it: `git merge --no-commit --no-ff <branch>`, then `git merge --abort`. Read `git diff <base>..<branch>` for review only, never as input to a hand-applied edit across base.
 
-## Why inline (not dispatched)
-
-Same logic as `commit`: branch state + conflict context belong in the gateway, not relayed through an agent. Conflict resolution (when it comes) is context-aware — needs full session memory of what was being absorbed and why. Detour through Sonnet would force re-relaying the conflict scope back to the gateway anyway. Frequency is lower than `commit` so token-savings argument doesn't pay for the relay overhead either.
-
 ## Conflict Doctrine (load-bearing)
 
 When `git merge` or `git rebase` produces conflicts:
 
 1. **Abort immediately** — `git merge --abort` (for merge) or `git rebase --abort` (for rebase). Restore the working tree.
 2. **Surface, don't resolve.** Output the branch name, the conflict file list (`git diff --name-only --diff-filter=U` captured BEFORE abort), and which strategy hit the conflict.
-3. **Stop the run.** Do not attempt resolution. Do not offer "resolve now" as an option. Return control to the user. User decides next — resolve manually, route to a fitting reviewer/agent, or re-dispatch with a different strategy. Burning gateway context on three-way merge logic is the wrong shape; resolution is its own pass.
+3. **Stop the run.** Do not attempt resolution. Do not offer "resolve now" as an option. Return control to the user. User decides next — resolve manually, route to a fitting reviewer/agent, or re-dispatch with a different strategy.
 
 This rule applies to every branch in the queue. If branch A conflicts, abort A, surface, then continue with branches B, C — they're independent attempts. Don't skip them silently.
 
@@ -58,12 +54,12 @@ This rule applies to every branch in the queue. If branch A conflicts, abort A, 
 
 ### 4. Recommend strategy per branch
 
-| Condition                                | Strategy                  | Why                           |
-| ---------------------------------------- | ------------------------- | ----------------------------- |
-| 1 commit, clean apply                    | **Rebase + fast-forward** | Clean linear history          |
-| 2-3 commits, single logical change       | **Rebase + fast-forward** | Still clean enough            |
-| Multi-commit, preserving context matters | **Merge --no-ff**         | Keeps branch grouping visible |
-| Branch has been pushed/shared            | **Merge --no-ff**         | Don't rewrite shared history  |
+| Condition                                | Strategy                                                    |
+| ---------------------------------------- | ----------------------------------------------------------- |
+| 1 commit, clean apply                    | **Rebase + fast-forward**                                   |
+| 2-3 commits, single logical change       | **Rebase + fast-forward**                                   |
+| Multi-commit, preserving context matters | **Merge --no-ff**                                           |
+| Branch has been pushed/shared            | **Merge --no-ff** — don't rewrite shared history            |
 
 Conflict probability is NOT a reason to pick merge over rebase — both surface and abort identically per the conflict doctrine.
 
@@ -119,11 +115,12 @@ Ask: **"Push {base} now? (y / skip)"** Push only on explicit yes. Skip by defaul
 
 ## Rules
 
-- Never `cd` — working directory is already correct.
+- Run inline — no subagent dispatch.
+- Working directory is already correct; `cd` is unnecessary.
 - Push the base only on explicit confirmation — present what will push, never force, never unannounced. (See §8.)
 - Never resolve conflicts inline. Surface and stop. (See Conflict Doctrine above.)
 - Never force-merge.
 - Never delete branches.
-- If working tree is dirty: stop, surface to user, do not attempt to stash automatically.
+- Dirty working tree: surface to user; staging or stashing is the user's call.
 - If on a detached HEAD: stop, surface to user.
 - Process branches one at a time within a queue — independence not assumed across the queue.

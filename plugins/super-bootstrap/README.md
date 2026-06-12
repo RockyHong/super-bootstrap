@@ -4,15 +4,17 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 
 ## Skill catalog
 
+> Index only — what exists, one line each. **Canonical per-skill contract = that skill's `SKILL.md` frontmatter `description:`.** Edit behavior there; this list follows.
+
 - `super-bootstrap` — public entry, greenfield gate, dispatches to `harness-bootstrap`.
 - `harness-bootstrap` — installs/syncs the harness (CLAUDE.md, skeleton docs, rules, picks).
-- `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`. Standalone or delegated from `harness-bootstrap` Phase 3c.
-- `todo` — intent-filtered scanner. Bare `/super-bootstrap:todo` renders the full board; sub-verbs (`/super-bootstrap:todo discuss · cloud · device`) opt-in slice when the board grows past 5 rows. Dispatches `agents/todo.md` on Sonnet with scaffold injection.
-- `log` — capture front door. `/super-bootstrap:log <observation>` (or "log this / track that") classifies 1..N observations into BUG / DEBT / GAP, enforces the admission gate (actionable-now only — no standing-watch rows), dedups, and writes canonical rows to `docs/backlog.md`. Single funnel for all new backlog rows. Dispatches `agents/log.md` on Sonnet; the shell never pre-classifies.
-- `help` — passive on-demand index of installed user-invoke skills, grouped by category. Dispatches `agents/help.md` on Haiku.
-- `commit` — session-isolated commit, doc-sync gated, conventional message, offers push on confirm.
-- `merge` — absorb feature branches into base. Per-branch rebase-vs-merge recommendation, clean execution. Hard SoC: on conflict, aborts + surfaces file list + stops. Resolution out of scope (user routes next pass). Inline; same context-awareness rationale as `commit`.
-- `release-init` — one-shot. Detects project type (unity / tauri / node / ios-native / android-native / generic) + multi-platform shape, generates a tailored project-level `/release` skill at `.claude/skills/release/SKILL.md`. Optional bonus — run only if the repo ships versioned releases.
+- `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`.
+- `todo` — intent-filtered board scanner; dispatches `agents/todo.md` (Sonnet).
+- `log` — capture front door for backlog rows; dispatches `agents/log.md` (Sonnet).
+- `help` — on-demand index of installed user-invoke skills; dispatches `agents/help.md` (Haiku).
+- `commit` — session-isolated, doc-sync-gated commit.
+- `merge` — absorb feature branches; aborts + surfaces on conflict.
+- `release-init` — one-shot; generates a project-level `/release` skill.
 
 ## Naming convention
 
@@ -57,7 +59,7 @@ A single matching reason on either side decides.
 | `log` | dispatch (Sonnet) | Bounded classify + gate + write — Sonnet fit; dispatch also enforces bias exclusion (shell never pre-classifies buckets) |
 | `help` | dispatch (Haiku) | Pure manifest lookup + render — Haiku model fit, skill frontmatter can't pin a model so dispatch is the escape hatch |
 
-When adding a new skill: update this table. Add an in-`SKILL.md` rationale callout only when the choice has nuance worth surfacing near the protocol (e.g. dispatching skills carry it next to their dispatch block; `merge` carries one to record why we rejected dispatch).
+When adding a new skill: update this table. This table is the only home for inline-vs-dispatch rationale — SKILL.md bodies carry the dispatch instruction, not the reasoning (harness MDs hold rules, not why-essays).
 
 ## Source of truth boundaries
 
@@ -66,5 +68,7 @@ When skills overlap in concern, one is canonical and others delegate:
 - **Plugin curation logic** (source pool list, trust tiers, dedupe, settings.json write) — lives ONLY in `resolve-plugins/SKILL.md`. `harness-bootstrap` Phase 3c delegates.
 - **Greenfield ideation Q&A** — lives ONLY in `super-bootstrap/SKILL.md`. `harness-bootstrap` redirects empty repos here.
 - **Files-as-contract handoff** — skills communicate via committed docs (`docs/overview.md`, `docs/techstack.md`, `.claude/settings.json`), not in-memory state. Lets each skill run standalone.
+
+- **Plugin-level description** — `plugin.json` is canonical; `marketplace.json` entry copies it verbatim at release.
 
 If extracting a new shared concern: pick the canonical home, delete duplicated content elsewhere, replace with one-paragraph delegation. Verify via grep that source-of-truth strings appear in exactly one file.

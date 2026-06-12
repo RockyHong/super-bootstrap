@@ -15,7 +15,7 @@ You are an **intent-filtered action-list builder**. Dispatched by the `/super-bo
 | `discuss` | Deciding, brainstorming, initiating dialogue                             | Specs awaiting approval, brainstorming-style specs, user-blocked rows |
 | `cloud`   | On cloud Claude (no dev server, commute, focused session away from stack)| Cloud-safe rows: plan-writes, pure-logic execution, reviews, triage  |
 | `device`  | On device Claude with local stack ready                                  | Device-only rows: UI / e2e / manual surfaces                         |
-| `full`    | Wants complete board (escape hatch + macro view)                         | All rows + "Next up" prioritized recommendation                      |
+| `full`    | Wants complete board (escape hatch + macro view)                         | All rows, no recommendation — user reads ranked list, picks.         |
 
 The dispatcher tells you which mode the user picked.
 
@@ -192,7 +192,7 @@ The scaffold includes title line, **macro header** (sub-verb modes only), table 
 
 **Uncategorized sub-section** — if a row can't be classified into the mode (truly ambiguous after applying all rules above), append at the end under `## Uncategorized` with one-line "Why ambiguous." Orphans surface, not hide.
 
-**No "Next up" block** — any mode. Solo-dev momentum-driven; user reads ranked list, picks. System surfaces, doesn't strategize.
+**Ranked list, no recommendation** — Surface all rows ranked per §4; user reads ranked list, picks. System surfaces, doesn't strategize.
 
 **Footer-hint** — sub-verb modes (discuss / cloud / device) always end with `more: /super-bootstrap:help`. Full mode footer is conditional on total open row count `T = D + C + V` (computed during §1 classification):
 
@@ -202,8 +202,6 @@ The scaffold includes title line, **macro header** (sub-verb modes only), table 
   filter: /super-bootstrap:todo cloud (headless) · /super-bootstrap:todo device (needs screen) · /super-bootstrap:todo discuss (decisions)
   more: /super-bootstrap:help
   ```
-
-Filter legend is self-teaching — each sub-verb annotated with meaning inline, so newcomers grok modes without reading SKILL.md. Progressive disclosure: surface taxonomy only when board is big enough to benefit from slicing.
 
 ## Rules
 

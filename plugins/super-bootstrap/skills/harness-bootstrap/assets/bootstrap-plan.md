@@ -1,7 +1,5 @@
 # Pipeline Bootstrap Plan
 
-> **For agentic workers:** Use `/super-bootstrap:todo` to see current progress. Each task is independent and session-sized.
-
 **Goal:** Final adaptive seeding + cleanup for {project name}
 
 **Context:** Pipeline scaffolded on {date}. CLAUDE.md is live. `docs/techstack.md` and `docs/overview.md` are seeded skeletons — skeleton sections (Runtime / Framework / Build & Dist / Problem / User / State) carry detected facts; grown sections (Architecture Rules / Coding Patterns / Roadmap / Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync as code lands. Skill / MCP / hook picks already curated and pinned in `.claude/settings.json`.
@@ -36,7 +34,7 @@ If no obvious items exist, leave the file with just its header — that's fine. 
 
 ### Task 3: Cleanup
 
-- [ ] **Delete this file** (`docs/superpowers/plans/bootstrap.md`) — bootstrap is complete
+- [ ] **Delete this file** (`docs/superpowers/plans/bootstrap.md`) and `docs/superpowers/plans/bootstrap-qa.md` if present — bootstrap is complete
 - [ ] **Verify `/super-bootstrap:todo` shows no active work** (unless the user has started real project work)
 - [ ] **Commit**: `chore: complete pipeline bootstrap`
 

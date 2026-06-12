@@ -8,12 +8,6 @@ tags: [bootstrap, scaffold, ideation, greenfield, gate, meta]
 
 The single command users invoke. Inspects the repo, decides whether ideation is needed, and dispatches to `/super-bootstrap:harness-bootstrap`. Greenfield repos get lean ideation first — `overview.md` (with empty `## Roadmap` section) + `techstack.md` + empty `backlog.md` — then harness-bootstrap proceeds. Roadmap lives in overview (single pillar for "what product will become"); backlog stays scoped to BUG/DEBT/GAP and ships empty until shipped code surfaces deferrable items.
 
-## Why a separate gate
-
-`/super-bootstrap:harness-bootstrap` installs workflow + skeleton docs + curated picks. It assumes the repo already encodes intent (manifest, source files, README, OR seed docs). Greenfield repos have none of that — running harness-bootstrap on emptiness produces an empty harness. This skill seeds the missing intent (what / why / who / how at a high level) so harness-bootstrap has something to scaffold around.
-
-For repos with code, this skill is a thin pass-through to `/super-bootstrap:harness-bootstrap`. The user could invoke `/super-bootstrap:harness-bootstrap` directly; `/super-bootstrap` is the safer default because it auto-routes.
-
 ## Phase 0: Detect greenfield
 
 Mirror Phase 1 detection from `/super-bootstrap:harness-bootstrap` (manifest scan, source-file scan, README assessment) but invert the conclusion.
@@ -25,6 +19,8 @@ Mirror Phase 1 detection from `/super-bootstrap:harness-bootstrap` (manifest sca
 - No `docs/overview.md` AND no `docs/techstack.md` (if these exist from a prior `/super-bootstrap` greenfield run, treat as non-greenfield — pick up where left off, dispatch to harness).
 
 If ANY condition fails (a manifest exists, OR a source file exists, OR README has 3+ substantive lines, OR seed docs exist) → **non-greenfield**, skip to Phase 3 (dispatch).
+
+If the user invoked `/super-bootstrap:harness-bootstrap` directly on a truly empty repo, harness-bootstrap redirects here. The redirect is one-way: this skill seeds, then dispatches back. No ping-pong.
 
 ## Phase 1: Greenfield ideation Q&A
 
@@ -74,7 +70,7 @@ MCQ-shape (≤4 discrete options, no free text) → AskUserQuestion popup, one Q
 
 6. **ICP one-liner?** — Ideal customer / user one-liner if Q2 didn't capture it. Optional. Feeds `overview.md` § User as an addendum.
 
-Stop here. Do **not** ask about features, architecture, file structure, error handling, naming conventions — those grow from code, not pre-code Q&A.
+Stop at Q6. Route feature/architecture discovery to doc-sync once code lands. Greenfield product ideation is in scope; product discovery (market research, PRD generation) is not — this skill stops at "harness has fuel."
 
 ### Confirmation
 
@@ -98,7 +94,7 @@ Three files. Each writes to its target path with placeholders filled from Q&A.
 
 ### `docs/overview.md`
 
-Use the template from `assets/overview-skeleton.md` in `/super-bootstrap:harness-bootstrap` (the harness skeleton is the source of truth — copy from there). Fill placeholders:
+Load `../harness-bootstrap/assets/overview-skeleton.md` (relative to this SKILL.md); fill placeholders:
 
 - `<!-- harness-meta -->` block `external-tools:` ← Q4 multi-select answer as YAML list (e.g. `[github, notion]`; default `[github]`). Keep comment block at top; `/super-bootstrap:resolve-plugins` Phase 1 reads it as Tier-2 fallback when no pinned MCPs encode workflow signal.
 - `## Problem` body ← Q1 answer.
@@ -111,7 +107,7 @@ If `docs/` doesn't exist, create it. If `docs/overview.md` already exists (re-ru
 
 ### `docs/techstack.md`
 
-Use the template from `assets/techstack-skeleton.md` in `/super-bootstrap:harness-bootstrap`. Fill placeholders:
+Load `../harness-bootstrap/assets/techstack-skeleton.md` (relative to this SKILL.md); fill placeholders:
 
 - `## Runtime` ← stack pick's runtime line (e.g. "Node.js 20+ (ESM)").
 - `## Framework` ← stack pick's framework (e.g. "Next.js 14"). Drop the section if the user picked a no-framework option.
@@ -121,17 +117,11 @@ Use the template from `assets/techstack-skeleton.md` in `/super-bootstrap:harnes
 
 ### `docs/backlog.md`
 
-Copy `assets/backlog.md` from `/super-bootstrap:harness-bootstrap` unchanged — empty `## Open` section, no seed item.
+Load `../harness-bootstrap/assets/backlog.md` (relative to this SKILL.md); copy unchanged — empty `## Open` section, no seed item.
 
 Backlog owns BUG/DEBT/GAP only ("found-but-deferred in existing system"). Forward features → `docs/overview.md` § Roadmap (single pillar, SSoT). Greenfield ships an empty backlog because there's no shipped system yet to defer items from.
 
-If `docs/backlog.md` already exists with content (re-run case), do NOT overwrite. Skip writing this file and warn the user that the existing backlog stays.
-
-### Roadmap section in `docs/overview.md`
-
-Phase 1 Q&A does NOT ask for feature breakdown — lean Q&A rule, not PRD-mining. The `## Roadmap` section ships **empty** in the seed (skeleton blurb only). Next action after bootstrap = user runs `/brainstorm` for first feature. Brainstorm produces a spec under `docs/superpowers/specs/`; `/super-bootstrap:todo` picks it up from file presence.
-
-User can also hand-fill `## Roadmap` with feature names ahead of brainstorming — `/super-bootstrap:todo` surfaces the first unstarted entry as the next `Brainstorm:` row.
+If `docs/backlog.md` already exists with content (re-run case), skip this file; warn the user the existing backlog stays.
 
 ## Phase 3: Dispatch to `/super-bootstrap:harness-bootstrap`
 
@@ -163,11 +153,3 @@ Then invoke `/super-bootstrap:harness-bootstrap` via the Skill tool.
 
 If the user prefers to invoke harness manually later (e.g. wants to review seed files first), present the option: "Seeds written; ready when you are. Run `/super-bootstrap:harness-bootstrap` to continue, or pause and resume later." The seed files persist; nothing is lost by waiting.
 
-## Principles
-
-- **Lean Q&A, not PRD-mining.** Six questions max, four required. Skeleton-section depth only. Grown sections live for doc-sync, not pre-code speculation.
-- **Backlog ships empty; roadmap is overview § Roadmap.** Backlog owns BUG/DEBT/GAP (existing-system deferrals); empty in greenfield. Forward feature list → `docs/overview.md` § Roadmap (single pillar). Roadmap fills via `/brainstorm` — brainstorm produces the first spec, file presence drives the next pickup; bootstrap exits with the skeleton blurb only.
-- **Files-as-contract handoff.** Write seed docs, exit. `/super-bootstrap:harness-bootstrap` consumes them. User can pause between phases.
-- **Pre-exist repos: thin pass-through.** Non-greenfield → immediate dispatch. Don't add ceremony.
-- **Never force harness on emptiness.** If user invokes `/super-bootstrap:harness-bootstrap` directly on truly empty repo, it redirects here. The redirect is one-way: this skill seeds, then dispatches. No infinite ping-pong.
-- **Greenfield product ideation is in scope; greenfield product discovery is not.** Q&A produces enough seed for harness to live. Roadmap, market research, PRD generation belong elsewhere — this skill stops at "harness has fuel."

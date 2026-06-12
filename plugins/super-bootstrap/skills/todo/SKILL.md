@@ -8,12 +8,6 @@ tags: [todo, scan, status, pipeline, superpowers]
 
 Default render is the full board (every open spec/plan/backlog row + next roadmap pickup). Sub-verbs let the user slice by mental mode (deciding / on cloud Claude / on device Claude) when the board gets big enough to warrant it. State reconstructed from `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`, and `docs/overview.md` § Roadmap. Pipeline state = file presence (spec/plan/code presence drives "started" classification; roadmap entries without matching specs are "unstarted").
 
-Bundled with `/super-bootstrap`. The harness CLAUDE.md and bootstrap plan tell future sessions to "Run `/super-bootstrap:todo`" — this is that command.
-
-## Why default-full, sub-verbs opt-in
-
-Newcomers don't know the intent taxonomy (Discuss / Cloud / Device). A gate that forces the choice upfront is noise — especially on greenfield repos where bootstrap leaves an empty backlog and the only signal is the next roadmap pickup (or an empty board pointing at `/brainstorm`). Render the full board by default; surface a self-teaching footer once the board grows enough to make filtering useful. Power users keep direct sub-verb access.
-
 ## Arguments
 
 | Invocation        | Behavior                                                                                                                                                                                                |
@@ -51,13 +45,11 @@ The agent computes total open row count `T = D + C + V` during §1 classificatio
 
 Sub-verb modes (`/super-bootstrap:todo cloud|device|discuss`) always use plain `more: /super-bootstrap:help` — the user already proved they know the taxonomy by typing the sub-verb.
 
-The filter footer is self-teaching: each sub-verb is annotated with its meaning inline, so newcomers grok modes without reading SKILL.md. Progressive disclosure — surface taxonomy only when the board is big enough to benefit from slicing.
-
 ## Execution
 
 The full protocol lives in the `todo` agent (`agents/todo.md`, `model: sonnet`, read-only tools).
 
-When dispatching the agent, the prompt **must embed the literal scaffold** for the chosen mode (see §Scaffolds). Agent fills bracketed slots, cannot reach for alternative templates. Without the embedded scaffold, prior model training pulls render toward generic shapes regardless of mode. Literal injection bypasses model judgment at the render step.
+When dispatching the agent, the prompt **must embed the literal scaffold** for the chosen mode. Agent fills bracketed slots, cannot reach for alternative templates. Without the embedded scaffold, prior model training pulls render toward generic shapes regardless of mode. Literal injection bypasses model judgment at the render step.
 
 **Dispatch prompt template:**
 
@@ -68,7 +60,7 @@ Render EXACTLY this scaffold. Fill bracketed slots from your gathered + filtered
 
 ---
 
-{scaffold for chosen mode, copied verbatim from §Scaffolds below}
+{scaffold for chosen mode from assets/scaffolds.md, copied verbatim}
 
 ---
 
@@ -77,7 +69,7 @@ Render EXACTLY this scaffold. Fill bracketed slots from your gathered + filtered
 
 Steps:
 
-1. Pick scaffold for the chosen mode from §Scaffolds.
+1. **Gateway (before dispatching):** read `assets/scaffolds.md` (sibling to this SKILL.md) and embed the active mode's scaffold verbatim in the dispatch prompt — the agent never fetches files outside the repo docs.
 2. Build dispatch prompt per template above.
 3. `Agent` tool, `subagent_type: "todo"`, prompt = the built dispatch prompt.
 4. Agent returns rendered scaffold (or empty-state). **Relay verbatim.**
@@ -87,212 +79,7 @@ Steps:
 - User explicitly asks to run inline.
 - Quick-gate sources all empty: zero spec/plan files AND zero open backlog rows AND zero overview § Roadmap entries (no point spawning).
 
-## Cloud-safe criterion (single positive rule)
-
-Used by `mode: cloud` to filter rows. Documented here so callers know what gets included.
-
-> **Cloud-safe = phase produces a verifiable artifact via tooling alone. No human visual judgment, no real browser/device interaction, no "looks right" call.**
-
-Pass (cloud-runnable):
-
-- Plan write (write a plan for an approved spec)
-- Spec author / refine (doc edit)
-- Executing plan on pure-logic paths under unit coverage
-- Review-stage read (diff inspection)
-- Backlog triage (investigate-only)
-- Doc cleanup (deleting merged spec+plan files)
-- Refactor under unit coverage
-- Lint / typecheck / format fix
-
-Fail (device-only):
-
-- Executing plan touching UI surfaces (components, pages, app routes) that require visual judgment
-- E2E real run (needs browser + dev server)
-- Manual smoke test
-- Mobile install / device test
-- Review-stage verification when plan's success criteria include manual checks
-
-Derivation inputs (agent reads): plan file content (paths mentioned, "manual test" / "e2e" / "playwright" / "cypress" / "visual" keywords), spec §Success Criteria if present, file paths the plan tasks touch.
-
-## Impact tag
-
-Single tag per row, drives within-mode ranking (impactful rows surface first).
-
-- **`impactful`** — feature-shaped: `Approve spec` / `Write plan` / `Continue brainstorm` / `Brainstorm` (overview § Roadmap pickup) on feature scope; `Continue execute` with ≥3 remaining checkboxes OR cross-pkg/repo blast; backlog item with severity signal (`critical` / `blocking` / production-down keywords).
-- **`quick-pop`** — atomic: `Cleanup` (delete merged spec+plan), `Triage` (single backlog item), `Review` of plan with ≤2 total tasks, `Doc-align` / single-file `Doc-edit`.
-
-Default if ambiguous: `quick-pop`. Better to under-rank than bloat impactful and defeat the cognitive-load reduction.
-
-## Blast tag
-
-Single tag per row, scope-axis hint.
-
-- **`local`** — single file or single module.
-- **`pkg`** — within one workspace package.
-- **`cross-pkg`** — ≥2 packages.
-- **`repo`** — orchestration / `.claude/` / `CLAUDE.md` / `docs/` sweeping.
-
-Discuss-mode rows have no Blast column (decisions don't have blast radius until they become plans). N/A for pure-decision rows; agent omits Blast there.
-
-## Scaffolds
-
-Date placeholder `{date}` = today's date in YYYY-MM-DD form. Agent fills it.
-
-**Macro header** (sub-verb modes only — discuss / cloud / device): single line right under title showing cross-mode counts. Always emit even when current mode is non-empty (free — agent classified all rows pre-filter). Format:
-
-```
-Macro: Discuss {D} · Cloud {C} · Device {V} · Full {T}
-```
-
-Counts only — no IDs, no impact tags. Decision-is-yours; surface priors not calls. Full mode skips this header (full body IS the macro).
-
-### Discuss
-
-```
-# To-Do (Discuss) — {date}
-
-Macro: Discuss {D} · Cloud {C} · Device {V} · Full {T}
-
-| #  | Action                                              | Impact       | Context                                              |
-| -- | --------------------------------------------------- | ------------ | ---------------------------------------------------- |
-| 1  | {action — one sentence}                             | {tag}        | {one-line — why open, what unblocks}                 |
-
-## Uncategorized
-
-| #  | Action                                              | Why ambiguous                                    |
-| -- | --------------------------------------------------- | ------------------------------------------------ |
-| 1  | {verb + what}                                       | {one-line — what signal was missing}             |
-
-more: /super-bootstrap:help
-```
-
-Empty state:
-
-```
-# To-Do (Discuss) — {date}
-
-Macro: Discuss 0 · Cloud {C} · Device {V} · Full {T}
-
-Nothing to decide.
-
-Macro priors (no recommendation):
-- Cloud: {top 1-3 with file + one-line reason}
-- Device: {top 1-3 with file + one-line reason, or "0"}
-
-Next mode: yours. /super-bootstrap:todo cloud · /super-bootstrap:todo device · /super-bootstrap:todo (full board)
-
-more: /super-bootstrap:help
-```
-
-### Cloud
-
-```
-# To-Do (Cloud) — {date}
-
-Macro: Discuss {D} · Cloud {C} · Device {V} · Full {T}
-
-| #  | Action                                              | Progress | Impact       | Blast       |
-| -- | --------------------------------------------------- | -------- | ------------ | ----------- |
-| 1  | {verb + what + one-line reason}                     | {x/y|—}  | {tag}        | {tag}       |
-
-## Uncategorized
-
-| #  | Action                                              | Why ambiguous                                    |
-| -- | --------------------------------------------------- | ------------------------------------------------ |
-| 1  | {verb + what}                                       | {one-line — what signal was missing}             |
-
-more: /super-bootstrap:help
-```
-
-Empty state:
-
-```
-# To-Do (Cloud) — {date}
-
-Macro: Discuss {D} · Cloud 0 · Device {V} · Full {T}
-
-Nothing cloud-runnable.
-
-Macro priors (no recommendation):
-- Discuss: {top 1-3 with file + one-line reason}
-- Device: {top 1-3 with file + one-line reason}
-
-Next mode: yours. /super-bootstrap:todo discuss · /super-bootstrap:todo device · /super-bootstrap:todo (full board)
-
-more: /super-bootstrap:help
-```
-
-### Device
-
-```
-# To-Do (Device) — {date}
-
-Macro: Discuss {D} · Cloud {C} · Device {V} · Full {T}
-
-| #  | Action                                              | Progress | Impact       | Blast       |
-| -- | --------------------------------------------------- | -------- | ------------ | ----------- |
-| 1  | {verb + what + one-line reason}                     | {x/y|—}  | {tag}        | {tag}       |
-
-## Uncategorized
-
-| #  | Action                                              | Why ambiguous                                    |
-| -- | --------------------------------------------------- | ------------------------------------------------ |
-| 1  | {verb + what}                                       | {one-line — what signal was missing}             |
-
-more: /super-bootstrap:help
-```
-
-Empty state:
-
-```
-# To-Do (Device) — {date}
-
-Macro: Discuss {D} · Cloud {C} · Device 0 · Full {T}
-
-Nothing device-only.
-
-Macro priors (no recommendation):
-- Cloud: {top 1-3 with file + one-line reason}
-- Discuss: {top 1-3 with file + one-line reason}
-
-Next mode: yours. /super-bootstrap:todo cloud · /super-bootstrap:todo discuss · /super-bootstrap:todo (full board)
-
-more: /super-bootstrap:help
-```
-
-### Full
-
-```
-# To-Do — {date}
-
-| File                                  | Stage         | Progress | Blocker          | Impact       | Blast       |
-| ------------------------------------- | ------------- | -------- | ---------------- | ------------ | ----------- |
-| specs/{date}-{slug}.md                | {stage}       | {x/y|—}  | {none|user|...}  | {tag}        | {tag}       |
-| plans/{date}-{slug}.md                | {stage}       | {x/y|—}  | {none|user|...}  | {tag}        | {tag}       |
-
-{Backlog: N BUG, M DEBT, K GAP open (see docs/backlog.md) — only if backlog.md exists}
-{Roadmap: U unstarted of T (see docs/overview.md § Roadmap) — only if overview.md § Roadmap has entries}
-
-## Uncategorized
-
-| #  | File                                                | Why ambiguous                                    |
-| -- | --------------------------------------------------- | ------------------------------------------------ |
-| 1  | {file}                                              | {one-line}                                       |
-
-{footer per §Footer rule}
-```
-
-No macro header for Full — full IS the macro. No "Next up" recommendation block in any mode (solo-dev momentum-driven; user picks from list, system doesn't strategize).
-
-Footer is conditional on total open row count `T`:
-- `T ≤ 5` → `more: /super-bootstrap:help`
-- `T ≥ 6` → filter line + `more: /super-bootstrap:help` (see §Footer rule)
-
-Empty state for Full: `No active work. Start something with /brainstorm or give me a task.`
-
-## Why dispatched (Sonnet)
-
-Multi-file scan + classification + ranking + scaffold-fill. Sonnet sweet spot — Opus overkill, Haiku weaker on "which intent does this row belong to" judgment. No iterative back-and-forth: single round-trip, agent returns rendered scaffold, gateway relays verbatim.
+Classification criteria live in the `todo` agent.
 
 ## Rules
 
