@@ -102,6 +102,8 @@ For any row with a **foreign prefix** (anything outside `BUG-### / DEBT-### / GA
 - Emit into the Uncategorized sub-section. Reason: `"non-canonical backlog prefix; backlog owns BUG/DEBT/GAP. Features → docs/overview.md § Roadmap (canonical pillar). New rows route through /super-bootstrap:log."`
 - Do **not** invent classification. Scanner is the taxonomy authority — foreign prefixes surface as warnings, not silent acceptance.
 
+**Pre-ID backlog (stale scaffold).** If `## Open` carries row content but no `BUG/DEBT/GAP-###` IDs (un-IDed bullets/headings), or the header's ID high-water-mark line is absent, the backlog predates the ID scaffold (older super-bootstrap version). Emit **one** Uncategorized row for the condition (not one per un-IDed item). Reason: `"backlog missing ID scaffold / high-water line — run /super-bootstrap:harness-bootstrap to re-plant IDs (rebuilds the counter from git history)."` Read-only — never mint IDs here; the re-plant write is harness-bootstrap's.
+
 If `docs/backlog.md` doesn't exist, skip §c entirely.
 
 #### d. Roadmap (`docs/overview.md` § Roadmap)
@@ -160,7 +162,9 @@ Derive from plan body path mentions and task bullet paths. For backlog rows, rea
 
 ### 4. Rank within mode
 
-For all modes (sub-verb AND full — full mode has no separate "Next up" anymore):
+**Dependency gate (before ranking).** Trace each row's breadcrumbs — `Area:` field, `Problem:` text, linked spec/plan paths — into docs/code to judge whether it depends on another still-open row. A row whose upstream is still open is **not actionable now**: tag it `blocked by {ID}` and sink it to the tail (below all unblocked rows), regardless of Impact. This is Grounding, not ranking — a blocked row surfaced as do-now asserts a falsehood (it isn't doable yet) and risks rework / dup / debt against an upstream that may still move. Judge fresh each scan from current row content; never persist the edge onto the row. Where no breadcrumb reveals an edge, the row is treated as unblocked — a missed live-inference self-corrects next scan; a frozen stamp would not.
+
+Then rank the unblocked rows. For all modes (sub-verb AND full — full mode has no separate "Next up" anymore):
 
 1. **Impact desc** — `impactful` first, `quick-pop` second
 2. **Progress desc within Impact** — executing-rows with most-complete progress first (finish-what's-started bias)

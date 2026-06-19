@@ -330,6 +330,17 @@ The report is the forcing function: Phase 3d refuses to commit unless it exists 
 
 Acceptance pattern matches legacy migration: `y / n / per-row`. The rot scan runs even when every per-section diff is `✓ current` — a stale slash command literal inside a current-shaped doc is invisible to per-section diff (template hasn't drifted; only the literal inside it has). Together, per-section diff + rot scan cover both axes of drift: section shape AND inline literals.
 
+**Backlog ID re-plant (re-run, if `docs/backlog.md` predates the ID scaffold).** A backlog from an older super-bootstrap version may carry `## Open` rows without `BUG/DEBT/GAP-###` IDs, or be missing the header's ID high-water-mark line. harness-bootstrap is the sole write owner for retroactive ID assignment — `/super-bootstrap:todo` flags it read-only, `/super-bootstrap:log` defers here. Detect: `docs/backlog.md` exists, has row content under `## Open`, and either no high-water line or un-IDed rows. When detected, surface:
+
+```
+docs/backlog.md predates the ID scaffold — {N} un-IDed rows / missing high-water line.
+Re-plant assigns canonical BUG/DEBT/GAP IDs and rebuilds the high-water counter.
+
+Re-plant? (y / n / dry-run)
+```
+
+On `y`: rebuild the high-water mark from `git log --grep` over consumed IDs — **never from current open rows** (resolved-but-deleted IDs stay consumed; re-deriving from open rows collides). Then mint IDs onto un-IDed rows by category, per the high-water-mark rule documented in the `docs/backlog.md` header (the rule's SSoT — don't restate the algorithm), classifying each row into BUG/DEBT/GAP by its content. Preserve row claims verbatim — re-plant adds the ID heading only, never rewrites the claim. Stage `docs/backlog.md` with the 3d commit.
+
 **Special case — `bootstrap.md`** carries user state (checkbox progress from prior session). Don't auto-merge. Prompt: **Keep existing** (default) / **Reset from template** / **Merge** (rare, task-by-task).
 
 **Special case — `bootstrap.md` missing on mature repo.** When the file is **missing** AND the repo has ≥5 commits past the most recent bootstrap-shaped commit (`chore: scaffold superpowers pipeline` / `chore: sync superpowers pipeline` / `chore: complete pipeline bootstrap`), don't silently re-template — the file was almost certainly Task-3-cleanup-deleted by a prior session, and re-templating resurfaces completed work as fresh tasks. Surface an advisory instead:
@@ -411,7 +422,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/superpowers/plans/.gitkeep`
 - `docs/superpowers/plans/bootstrap.md` (if newly written or regenerated)
 - `docs/specs/.gitkeep` (if scaffolded)
-- `docs/backlog.md` (if scaffolded)
+- `docs/backlog.md` (if scaffolded or re-planted)
 - Any other adaptive files / folders created
 
 Commit message: `chore: scaffold superpowers pipeline` on fresh repos, `chore: sync superpowers pipeline` when only drift fixes / picks delta shipped, `refactor: migrate CLAUDE.md to rules layer + sync pipeline` when re-run performed legacy migration.

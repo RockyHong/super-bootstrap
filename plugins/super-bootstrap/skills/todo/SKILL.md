@@ -25,7 +25,7 @@ Default render is the full board (every open spec/plan/backlog row + next roadma
 
 On bare `/super-bootstrap:todo`:
 
-1. Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`. Also quick-read `docs/overview.md` for a `## Roadmap` section with at least one bullet entry. If ALL sources are empty/absent (no specs, no plans, no open backlog rows — `### {BUG|DEBT|GAP}-###` headings under `## Open`; the header's ID high-water-mark line doesn't count — no roadmap entries), print directly without dispatching:
+1. Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`. Also quick-read `docs/overview.md` for a `## Roadmap` section with at least one bullet entry. If ALL sources are empty/absent (no specs, no plans, no open backlog rows — any row content under `## Open`, whether canonical `### {BUG|DEBT|GAP}-###` headings, foreign-prefix rows, or un-IDed bullets; the header's ID high-water-mark line doesn't count — no roadmap entries), print directly without dispatching:
    > "No active work. Start something with `/brainstorm` or give me a task."
 2. Otherwise dispatch the `todo` subagent with `mode: full`. No picker, no questions.
 3. Relay the agent's rendered output verbatim. No editorial, no preface.
@@ -34,16 +34,7 @@ On sub-verb invocation (`/super-bootstrap:todo cloud` etc.): dispatch immediatel
 
 ## Footer rule
 
-The agent computes total open row count `T = D + C + V` during §1 classification. Footer rendered in the Full scaffold depends on `T`:
-
-- `T ≤ 5` → footer is just `more: /super-bootstrap:help`. Board small; sub-verb learning is premature noise.
-- `T ≥ 6` → prepend a filter line above `more: /super-bootstrap:help`:
-  ```
-  filter: /super-bootstrap:todo cloud (headless) · /super-bootstrap:todo device (needs screen) · /super-bootstrap:todo discuss (decisions)
-  more: /super-bootstrap:help
-  ```
-
-Sub-verb modes (`/super-bootstrap:todo cloud|device|discuss`) always use plain `more: /super-bootstrap:help` — the user already proved they know the taxonomy by typing the sub-verb.
+Footer is computed by the `todo` agent at render time — it counts total open rows `T` during classification and picks the footer shape. Canonical logic: `agents/todo.md` § Render footer-hint. The gateway relays the agent's output verbatim — it does not compute the footer.
 
 ## Execution
 
@@ -77,7 +68,7 @@ Steps:
 ## Skip dispatch if
 
 - User explicitly asks to run inline.
-- Quick-gate sources all empty: zero spec/plan files AND zero open backlog rows AND zero overview § Roadmap entries (no point spawning).
+- Quick-gate sources all empty: zero spec/plan files AND zero row content under backlog `## Open` (canonical, foreign, or un-IDed) AND zero overview § Roadmap entries (no point spawning).
 
 Classification criteria live in the `todo` agent.
 
@@ -86,4 +77,4 @@ Classification criteria live in the `todo` agent.
 - **Read-only.** Never modifies files. Never executes git operations.
 - **Works in any repo** — only requires `docs/superpowers/` to exist (created by `/super-bootstrap:harness-bootstrap`).
 - **Verbatim relay rule.** Agent's output IS the value. Gateway adds nothing — no preface, no editorial.
-- **Footer-hint convention.** Sub-verb modes always end with `more: /super-bootstrap:help`. Full mode footer is conditional on total row count `T` (see §Footer rule): plain `more: /super-bootstrap:help` when `T ≤ 5`, filter line + `more: /super-bootstrap:help` when `T ≥ 6`.
+- **Footer-hint convention.** Footer is the agent's render concern, computed per `agents/todo.md` § Render footer-hint (see §Footer rule). Gateway relays verbatim.

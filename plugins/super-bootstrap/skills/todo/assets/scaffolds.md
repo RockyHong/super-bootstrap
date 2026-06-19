@@ -143,11 +143,11 @@ more: /super-bootstrap:help
 | -- | --------------------------------------------------- | ------------------------------------------------ |
 | 1  | {file}                                              | {one-line}                                       |
 
-{footer per §Footer rule}
+{footer per § Render footer-hint}
 ```
 
 No macro header for Full — full IS the macro. No "Next up" recommendation block in any mode (solo-dev momentum-driven; user picks from list, system doesn't strategize).
 
-Footer: fill per §Footer rule in SKILL.md.
+Footer: fill per § Render footer-hint in the todo agent (`agents/todo.md`) — canonical home.
 
 Empty state for Full: `No active work. Start something with /brainstorm or give me a task.`
