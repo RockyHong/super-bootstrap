@@ -48,7 +48,6 @@ Intent is determined by action verb before path/state rules.
 | Action verb prefix                                              | Intent (locked)              | Why                                                                          |
 | --------------------------------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------- |
 | `Approve spec`, `Decide`, `Continue brainstorm`, `Confirm`      | **Discuss**                  | User-decision shape — only user can resolve.                                 |
-| `Brainstorm` (overview § Roadmap pickup)                        | **Discuss**                  | Feature-scope dialogue — only user can shape.                                |
 | `Write plan`                                                    | **Cloud**                    | Plan author write is doc artifact, headless.                                 |
 | `Refine spec`, `Doc-edit`                                       | **Cloud**                    | Doc artifact, headless.                                                      |
 | `Continue execute`, `Resume`                                    | **Cloud OR Device** (derive) | Depends on paths + content per cloud-safe criterion.                         |
@@ -87,7 +86,7 @@ For each, count checkboxes:
 
 #### c. Backlog (`docs/backlog.md`)
 
-Backlog owns BUG/DEBT/GAP only — "found-but-deferred in existing system." Forward-looking feature roadmap lives in `docs/overview.md` § Roadmap (see §d). New rows are written by `/super-bootstrap:log`; this scanner reads them.
+Backlog owns BUG/DEBT/GAP — bugs, debt, and design gaps / unverified feature ideas (GAP). New rows are written by `/super-bootstrap:log`; this scanner reads them. A GAP that is a feature idea is triaged like any other row — drop / spec — not given a separate lane.
 
 Open items are `### {BUG|DEBT|GAP}-###` row headings under `## Open`. The header's **ID high-water mark** line carries the same ID literals but is a counter, not an item — exclude it from rows and counts.
 
@@ -99,29 +98,12 @@ For each open `BUG-### / DEBT-### / GAP-###` item:
 
 For any row with a **foreign prefix** (anything outside `BUG-### / DEBT-### / GAP-###` — e.g. `F-`, `FEAT-`, `ROAD-`, bare bullet):
 
-- Emit into the Uncategorized sub-section. Reason: `"non-canonical backlog prefix; backlog owns BUG/DEBT/GAP. Features → docs/overview.md § Roadmap (canonical pillar). New rows route through /super-bootstrap:log."`
+- Emit into the Uncategorized sub-section. Reason: `"non-canonical backlog prefix; backlog owns BUG/DEBT/GAP (feature ideas log as GAP). New rows route through /super-bootstrap:log."`
 - Do **not** invent classification. Scanner is the taxonomy authority — foreign prefixes surface as warnings, not silent acceptance.
 
 **Pre-ID backlog (stale scaffold).** If `## Open` carries row content but no `BUG/DEBT/GAP-###` IDs (un-IDed bullets/headings), or the header's ID high-water-mark line is absent, the backlog predates the ID scaffold (older super-bootstrap version). Emit **one** Uncategorized row for the condition (not one per un-IDed item). Reason: `"backlog missing ID scaffold / high-water line — run /super-bootstrap:harness-bootstrap to re-plant IDs (rebuilds the counter from git history)."` Read-only — never mint IDs here; the re-plant write is harness-bootstrap's.
 
 If `docs/backlog.md` doesn't exist, skip §c entirely.
-
-#### d. Roadmap (`docs/overview.md` § Roadmap)
-
-**State signal: file presence.** A roadmap entry is "started" iff a spec/plan file with matching slug exists under `docs/superpowers/specs/`, `docs/superpowers/plans/`, or `docs/specs/`. Spec file appearance is the atomic "started" transition — no conversation state, no memory dependency. Cold-session-safe: scanner can fully reconstruct roadmap status from filesystem alone.
-
-Read `docs/overview.md`. Locate `## Roadmap` section (if absent, skip §d).
-
-Parse bullet lines under that heading. Each bullet = one feature entry (format: `- {Name}: {one-line}` or `- {Name}`). Derive slug from name (kebab-case).
-
-- For each entry, mark **started** if matching slug appears in filename under the three spec/plan dirs above, OR the entry name appears in a spec/plan frontmatter title.
-- **First unstarted entry in document order** → action: `"Brainstorm: {name}"`, **intent: Discuss**, impact: `impactful`. Next-up feature pickup.
-- **All subsequent unstarted entries** → silent. One-at-a-time momentum.
-- **All entries started** → silent (active work surfaces via §a/§b).
-
-Count totals into `T_road` (total entries) and `U_road` (unstarted) for the Full scaffold roadmap footer line.
-
-If `docs/overview.md` doesn't exist OR `## Roadmap` section absent OR section empty, skip §d entirely.
 
 ### 2. Filter by mode
 
@@ -139,7 +121,7 @@ Apply before ranking. Both tags carried on every row.
 **Impact** (single tag, drives within-mode ranking):
 
 - **`impactful`**:
-  - Action verb ∈ {Approve spec, Write plan, Continue brainstorm, Brainstorm} where target is feature-shaped (spec body describes feature surface, not single bugfix; overview § Roadmap entries are feature-shaped by definition)
+  - Action verb ∈ {Approve spec, Write plan, Continue brainstorm} where target is feature-shaped (spec body describes feature surface, not single bugfix)
   - `Continue execute` with ≥3 remaining unchecked tasks
   - Plan with paths spanning cross-pkg or repo blast
   - Backlog row whose body contains severity signal (`critical`, `blocking`, `production-down`, `data-loss`)
@@ -168,7 +150,7 @@ Then rank the unblocked rows. For all modes (sub-verb AND full — full mode has
 
 1. **Impact desc** — `impactful` first, `quick-pop` second
 2. **Progress desc within Impact** — executing-rows with most-complete progress first (finish-what's-started bias)
-3. **Action-verb priority** — `Continue execute` > `Review` > `Approve spec` / `Decide` > `Write plan` > `Brainstorm` (roadmap pickup) > `Cleanup` > `Triage`
+3. **Action-verb priority** — `Continue execute` > `Review` > `Approve spec` / `Decide` > `Write plan` > `Continue brainstorm` > `Cleanup` > `Triage`
 4. **Recency desc** — newest first (tiebreak)
 
 For `full` mode, render rows in this rank order (file column shows actual filename). No "Next up" block — user reads ranked list, picks.

@@ -2,7 +2,7 @@
 
 **Goal:** Final adaptive seeding + cleanup for {project name}
 
-**Context:** Pipeline scaffolded on {date}. CLAUDE.md is live. `docs/techstack.md` and `docs/overview.md` are seeded skeletons — skeleton sections (Runtime / Framework / Build & Dist / Problem / User / State) carry detected facts; grown sections (Architecture Rules / Coding Patterns / Roadmap / Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync as code lands. Skill / MCP / hook picks already curated and pinned in `.claude/settings.json`.
+**Context:** Pipeline scaffolded on {date}. CLAUDE.md is live. `docs/techstack.md` and `docs/overview.md` are seeded skeletons — skeleton sections (Runtime / Framework / Build & Dist / Problem / User / State) carry detected facts; grown sections (Architecture Rules / Coding Patterns / Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync as code lands. Skill / MCP / hook picks already curated and pinned in `.claude/settings.json`.
 
 These tasks complete optional adaptive seeding (only the ones whose docs were scaffolded in Phase 2 Q&A) and final bootstrap cleanup.
 

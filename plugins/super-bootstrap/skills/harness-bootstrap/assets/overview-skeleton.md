@@ -4,7 +4,7 @@
 external-tools: [{Q4 multi-select: github, notion, linear, jira, slack, trello, clickup, other}]
 -->
 
-> Living doc. Skeleton sections (Problem / User / Current State) seeded at scaffold from Q&A answers. Grown sections (Roadmap / Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync — every commit that adds, removes, or reshapes a module triggers a sync proposal. See `CLAUDE.md` Doc Sync.
+> Living doc. Skeleton sections (Problem / User / Current State) seeded at scaffold from Q&A answers. Grown sections (Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync — every commit that adds, removes, or reshapes a module triggers a sync proposal. See `CLAUDE.md` Doc Sync.
 
 ## Problem
 
@@ -17,10 +17,6 @@ external-tools: [{Q4 multi-select: github, notion, linear, jira, slack, trello, 
 ## Current State
 
 {from Q&A: greenfield / active development / maintenance / mid-rewrite — short phrase capturing where the project is today}
-
-## Roadmap
-
-> Forward feature list — ordered name + one-liner per feature. Single pillar for "what product will become." `/super-bootstrap:todo` reads this section: first unstarted entry (no matching spec slug under `docs/superpowers/specs/` or `docs/specs/`) surfaces as the next `Brainstorm:` row. Entries stay until the feature ships into the product narrative above; remove on ship via doc-sync.
 
 ## Module Index
 

@@ -1,12 +1,12 @@
 ---
 name: super-bootstrap
-description: "Public entry for the super-bootstrap pipeline. Detects greenfield repos and runs lean ideation Q&A — produces overview.md (with empty § Roadmap), techstack.md, and an empty backlog.md — then dispatches to /super-bootstrap:harness-bootstrap to install the harness. For repos with code, dispatches immediately. Solo dev workflow."
+description: "Public entry for the super-bootstrap pipeline. Detects greenfield repos and runs lean ideation Q&A — produces overview.md, techstack.md, and an empty backlog.md — then dispatches to /super-bootstrap:harness-bootstrap to install the harness. For repos with code, dispatches immediately. Solo dev workflow."
 tags: [bootstrap, scaffold, ideation, greenfield, gate, meta]
 ---
 
 # Super Bootstrap — Public Entry, Greenfield-Aware
 
-The single command users invoke. Inspects the repo, decides whether ideation is needed, and dispatches to `/super-bootstrap:harness-bootstrap`. Greenfield repos get lean ideation first — `overview.md` (with empty `## Roadmap` section) + `techstack.md` + empty `backlog.md` — then harness-bootstrap proceeds. Roadmap lives in overview (single pillar for "what product will become"); backlog stays scoped to BUG/DEBT/GAP and ships empty until shipped code surfaces deferrable items.
+The single command users invoke. Inspects the repo, decides whether ideation is needed, and dispatches to `/super-bootstrap:harness-bootstrap`. Greenfield repos get lean ideation first — `overview.md` + `techstack.md` + empty `backlog.md` — then harness-bootstrap proceeds. Backlog owns BUG/DEBT/GAP — including unverified feature ideas as GAP rows; it ships empty and fills via `/super-bootstrap:log` as work surfaces items. No forward feature list is seeded — greenfield pivots fast; ideas accrue as GAP through `/super-bootstrap:log` when they crystallize.
 
 ## Phase 0: Detect greenfield
 
@@ -100,7 +100,6 @@ Load `../harness-bootstrap/assets/overview-skeleton.md` (relative to this SKILL.
 - `## Problem` body ← Q1 answer.
 - `## User` body ← Q2 answer (+ Q6 if asked).
 - `## Current State` body ← `greenfield` (literal — this is a fresh repo).
-- `## Roadmap` → keep empty (skeleton blurb only). User fills via `/brainstorm` (spec presence drives todo pickup) or hand-edits names; `/super-bootstrap:todo` surfaces first unstarted entry as `Brainstorm:` row.
 - `## Module Index`, `## Data Flow`, `## Key Boundaries` → keep as empty grown sections per skeleton — they fill via doc-sync once code lands.
 
 If `docs/` doesn't exist, create it. If `docs/overview.md` already exists (re-run during ideation), present diff and ask before overwriting.
@@ -119,7 +118,7 @@ Load `../harness-bootstrap/assets/techstack-skeleton.md` (relative to this SKILL
 
 Load `../harness-bootstrap/assets/backlog.md` (relative to this SKILL.md); copy unchanged — empty `## Open` section, no seed item.
 
-Backlog owns BUG/DEBT/GAP only ("found-but-deferred in existing system"). Forward features → `docs/overview.md` § Roadmap (single pillar, SSoT). Greenfield ships an empty backlog because there's no shipped system yet to defer items from.
+Backlog owns BUG/DEBT/GAP — bugs, debt, design gaps, and unverified feature ideas (logged as GAP). Greenfield ships an empty backlog; items accrue via `/super-bootstrap:log` as the build surfaces them.
 
 If `docs/backlog.md` already exists with content (re-run case), skip this file; warn the user the existing backlog stays.
 

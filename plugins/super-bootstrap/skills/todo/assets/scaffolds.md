@@ -135,7 +135,6 @@ more: /super-bootstrap:help
 | plans/{date}-{slug}.md                | {stage}       | {x/y|—}  | {none|user|...}  | {tag}        | {tag}       |
 
 {Backlog: N BUG, M DEBT, K GAP open (see docs/backlog.md) — only if backlog.md exists}
-{Roadmap: U unstarted of T (see docs/overview.md § Roadmap) — only if overview.md § Roadmap has entries}
 
 ## Uncategorized
 

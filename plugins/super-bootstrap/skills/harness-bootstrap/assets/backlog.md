@@ -1,6 +1,6 @@
 # Backlog
 
-New rows route through `/super-bootstrap:log` — one funnel for classification, the admission gate, dedup, and ID assignment. Feature ideas are not backlog rows; they go to `docs/overview.md` § Roadmap.
+New rows route through `/super-bootstrap:log` — one funnel for classification, dedup, and ID assignment. Bugs, debt, design gaps, and unverified feature ideas all land here as rows; whether each is real or worth doing is decided at `/super-bootstrap:todo` triage on pickup, not at capture.
 
 **Row deletion:** the resolving session — via `/super-bootstrap:commit` doc-sync, or manually on resolve. Direct `git commit` skips the sweep; clean up stale rows when noticed.
 
@@ -8,7 +8,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 - **`BUG-###`** — broken behavior. Surface symptom may hide deeper cause.
 - **`DEBT-###`** — working but rotting (test fixture rot, stale dep, cleanup owed).
-- **`GAP-###`** — design gap, never properly specced.
+- **`GAP-###`** — design gap or unverified capability idea, never properly specced. Forward feature ideas land here; triage decides drop / spec.
 
 No phase prescription per category — when an item rolls into a session, the harness phase-gate triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 

@@ -46,9 +46,7 @@ Before every commit, scan `docs/` for files describing behavior touched by the d
 
 **Temporal cleanup:** if work completes a feature branch, delete its spec and plan files from `docs/superpowers/specs/` and `docs/superpowers/plans/`. Once merged, they're noise.
 
-**Roadmap cleanup:** if work ships a feature listed in `docs/overview.md` § Roadmap, remove that line — feature now belongs to product narrative (Problem / Current State / Module Index), not the forward list.
-
-{**Backlog cleanup:** if work resolves a `BUG-###` / `DEBT-###` / `GAP-###` from `docs/backlog.md`, delete that item. Git history is the archive.}
+{**Backlog cleanup:** if work resolves a `BUG-###` / `DEBT-###` / `GAP-###` from `docs/backlog.md`, delete that item — including a shipped feature-`GAP`, which now belongs to the product narrative (Problem / Current State / Module Index). Git history is the archive.}
 
 ## Coding Principles
 
@@ -113,10 +111,10 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 
 ## Planning
 
-- [`docs/overview.md`](docs/overview.md) — product context, data flow, module index, `## Roadmap` (forward feature list — single pillar for "what product will become"; read by `/super-bootstrap:todo`). Skeleton seeded at scaffold; grown sections fill via doc-sync.
+- [`docs/overview.md`](docs/overview.md) — product context, data flow, module index. Skeleton seeded at scaffold; grown sections fill via doc-sync.
 - [`docs/techstack.md`](docs/techstack.md) — stack, architecture rules, coding patterns. Skeleton seeded at scaffold; grown sections fill via doc-sync.
 {- [`docs/specs/`](docs/specs/) — persistent feature specs, one `.md` per feature. Filename + heading is the catalog; no index.}
-{- [`docs/backlog.md`](docs/backlog.md) — deferred items (`BUG-###` / `DEBT-###` / `GAP-###`), deleted on resolve.}
+{- [`docs/backlog.md`](docs/backlog.md) — open items (`BUG-###` / `DEBT-###` / `GAP-###`), captured via `/super-bootstrap:log`, deleted on resolve.}
 - `docs/superpowers/specs/` — design specs from brainstorming (temporal — deleted after merge)
 - `docs/superpowers/plans/` — implementation plans (temporal — deleted after merge)
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)

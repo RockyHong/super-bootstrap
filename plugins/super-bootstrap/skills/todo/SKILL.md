@@ -1,12 +1,12 @@
 ---
 name: todo
-description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the full board (every open spec/plan/backlog row + next roadmap pickup). Sub-verbs filter by intent + environment: `/super-bootstrap:todo discuss` (decisions, spec approvals), `/super-bootstrap:todo cloud` (cloud-safe queue), `/super-bootstrap:todo device` (UI/e2e/manual). Scans docs/superpowers/specs|plans + docs/backlog.md + docs/overview.md § Roadmap. Bundled with super-bootstrap — works in any repo with the superpowers pipeline."
+description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the full board (every open spec/plan/backlog row). Sub-verbs filter by intent + environment: `/super-bootstrap:todo discuss` (decisions, spec approvals), `/super-bootstrap:todo cloud` (cloud-safe queue), `/super-bootstrap:todo device` (UI/e2e/manual). Scans docs/superpowers/specs|plans + docs/backlog.md. Bundled with super-bootstrap — works in any repo with the superpowers pipeline."
 tags: [todo, scan, status, pipeline, superpowers]
 ---
 
 # Todo — Intent-Filtered Pipeline Scanner
 
-Default render is the full board (every open spec/plan/backlog row + next roadmap pickup). Sub-verbs let the user slice by mental mode (deciding / on cloud Claude / on device Claude) when the board gets big enough to warrant it. State reconstructed from `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`, and `docs/overview.md` § Roadmap. Pipeline state = file presence (spec/plan/code presence drives "started" classification; roadmap entries without matching specs are "unstarted").
+Default render is the full board (every open spec/plan/backlog row). Sub-verbs let the user slice by mental mode (deciding / on cloud Claude / on device Claude) when the board gets big enough to warrant it. State reconstructed from `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, and `docs/backlog.md`. Pipeline state = file presence (spec/plan/code presence drives stage classification).
 
 ## Arguments
 
@@ -25,7 +25,7 @@ Default render is the full board (every open spec/plan/backlog row + next roadma
 
 On bare `/super-bootstrap:todo`:
 
-1. Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`. Also quick-read `docs/overview.md` for a `## Roadmap` section with at least one bullet entry. If ALL sources are empty/absent (no specs, no plans, no open backlog rows — any row content under `## Open`, whether canonical `### {BUG|DEBT|GAP}-###` headings, foreign-prefix rows, or un-IDed bullets; the header's ID high-water-mark line doesn't count — no roadmap entries), print directly without dispatching:
+1. Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`. If ALL sources are empty/absent (no specs, no plans, no open backlog rows — any row content under `## Open`, whether canonical `### {BUG|DEBT|GAP}-###` headings, foreign-prefix rows, or un-IDed bullets; the header's ID high-water-mark line doesn't count), print directly without dispatching:
    > "No active work. Start something with `/brainstorm` or give me a task."
 2. Otherwise dispatch the `todo` subagent with `mode: full`. No picker, no questions.
 3. Relay the agent's rendered output verbatim. No editorial, no preface.
@@ -68,7 +68,7 @@ Steps:
 ## Skip dispatch if
 
 - User explicitly asks to run inline.
-- Quick-gate sources all empty: zero spec/plan files AND zero row content under backlog `## Open` (canonical, foreign, or un-IDed) AND zero overview § Roadmap entries (no point spawning).
+- Quick-gate sources all empty: zero spec/plan files AND zero row content under backlog `## Open` (canonical, foreign, or un-IDed) — no point spawning.
 
 Classification criteria live in the `todo` agent.
 

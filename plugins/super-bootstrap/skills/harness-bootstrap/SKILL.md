@@ -60,7 +60,7 @@ After Phase 1 detection: if **no manifests + no source files (any extension) + R
 
 > `/super-bootstrap:harness-bootstrap` installs the harness for a repo with code (or at least intent encoded in seed docs). Detected: empty repo with no `docs/overview.md` and no `docs/techstack.md`.
 >
-> Run `/super-bootstrap` first — it gates greenfield, runs ideation Q&A, and seeds those two docs (plus an empty `docs/backlog.md`; roadmap lives in `docs/overview.md` § Roadmap). Then it dispatches back here automatically.
+> Run `/super-bootstrap` first — it gates greenfield, runs ideation Q&A, and seeds those two docs (plus an empty `docs/backlog.md`). Then it dispatches back here automatically.
 >
 > If you want to force the harness onto an empty repo anyway: re-invoke with `/super-bootstrap:harness-bootstrap force` (rare — most output sections will sit empty until code lands).
 
@@ -159,7 +159,7 @@ With alignment confirmed, walk each pipeline artifact in order: folders → pipe
 **Project-owned** (never touched):
 - CLAUDE.md: Tech Stack one-line, Commands, any user-added custom sections
 - `docs/techstack.md` grown sections: Architecture Rules, Coding Patterns, Rejected Alternatives
-- `docs/overview.md` grown sections: Roadmap, Module Index, Data Flow, Key Boundaries
+- `docs/overview.md` grown sections: Module Index, Data Flow, Key Boundaries
 - `.claude/rules/<rule>.md` grown sections (additions the user/doc-sync added below the skeleton scaffold)
 - `.claude/rules/<rule>.md` files the user authored without a matching skeleton (treat as fully project-owned)
 - Other settings in `.claude/settings.json` outside the plugin-pin keys
@@ -183,7 +183,7 @@ docs/
 ```
 docs/
   specs/         ← persistent feature specs, one .md per feature (seeded by Task 1 of bootstrap-plan)
-  backlog.md     ← deferred items tracker (BUG / DEBT / GAP)
+  backlog.md     ← backlog tracker (BUG / DEBT / GAP — capture-first, triaged on pickup)
 ```
 
 For each: create if missing, skip if present. Add `.gitkeep` in empty folders. If `docs/` or `.claude/` already exists, nest alongside. Report status per directory.
