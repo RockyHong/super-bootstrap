@@ -112,7 +112,7 @@ Load `../harness-bootstrap/assets/techstack-skeleton.md` (relative to this SKILL
 - `## Framework` ← stack pick's framework (e.g. "Next.js 14"). Drop the section if the user picked a no-framework option.
 - `## Key Dependencies` ← top-level deps implied by the stack pick. Brief grouping (runtime / dev / test / build) with placeholder names if specifics aren't yet decided ("Tailwind for styling, TypeScript for types" rather than exhaustive list — this is a seed, not a manifest).
 - `## Build & Distribution` ← commands implied by the stack pick (e.g. "`pnpm dev` / `pnpm build` / `vercel deploy`"). Mark as "to be confirmed when scaffolded" if commands aren't standard.
-- `## Architecture Rules`, `## Coding Patterns`, `## Rejected Alternatives` → keep as empty grown sections per skeleton.
+- `## Architecture Rules`, `## Coding Patterns` → keep as empty grown sections per skeleton.
 
 ### `docs/backlog.md`
 
