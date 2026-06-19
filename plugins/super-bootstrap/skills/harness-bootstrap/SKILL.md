@@ -151,6 +151,7 @@ With alignment confirmed, walk each pipeline artifact in order: folders → pipe
 - CLAUDE.md sections: Development Workflow, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene, Finding Triage, Rules, Git Notes, Planning
 - `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution, Edit Discipline
 - `docs/overview.md` skeleton sections: Problem, User, Current State
+- `docs/decisions.md` scope header (the blockquote + `## Closed Forks` heading)
 - `docs/superpowers/specs/`, `docs/superpowers/plans/`, `docs/superpowers/plans/bootstrap.md`
 - `.claude/rules/index.md` (machinery summary)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
@@ -158,8 +159,9 @@ With alignment confirmed, walk each pipeline artifact in order: folders → pipe
 
 **Project-owned** (never touched):
 - CLAUDE.md: Tech Stack one-line, Commands, any user-added custom sections
-- `docs/techstack.md` grown sections: Architecture Rules, Coding Patterns, Rejected Alternatives
+- `docs/techstack.md` grown sections: Architecture Rules, Coding Patterns
 - `docs/overview.md` grown sections: Module Index, Data Flow, Key Boundaries
+- `docs/decisions.md` § Closed Forks table rows (consumer-filled history)
 - `.claude/rules/<rule>.md` grown sections (additions the user/doc-sync added below the skeleton scaffold)
 - `.claude/rules/<rule>.md` files the user authored without a matching skeleton (treat as fully project-owned)
 - Other settings in `.claude/settings.json` outside the plugin-pin keys
@@ -171,6 +173,7 @@ Folders + core plugin pin don't drift — only two states: missing or present.
 **Always created (fixed macro):**
 ```
 docs/
+  decisions.md   ← closed forks / rejected directions (history dimension — always scaffolded, starts empty)
   superpowers/
     specs/       ← design specs from brainstorming (temporal)
     plans/       ← implementation plans (temporal)
@@ -189,6 +192,8 @@ docs/
 For each: create if missing, skip if present. Add `.gitkeep` in empty folders. If `docs/` or `.claude/` already exists, nest alongside. Report status per directory.
 
 `docs/specs/` is scaffolded as an empty folder with `.gitkeep`. There is no index file — the folder + filename convention IS the catalog. Spec files are seeded by Task 1 of the bootstrap plan, each opening with `# {Feature Name}` and a one-paragraph intro.
+
+`docs/decisions.md` is **always** scaffolded — copy `assets/decisions-skeleton.md` to `docs/decisions.md` if missing (no substitutions). Starts empty (header + `## Closed Forks` table). Its scope header is pipeline-owned (drift-checked); the table rows are project-owned (never touched).
 
 If `docs/backlog.md` is scaffolded, copy `assets/backlog.md` to `docs/backlog.md` (no substitutions).
 
@@ -233,6 +238,7 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 | `assets/claude-md-skeleton.md` | `CLAUDE.md` (project root) | Includes Rules summary section — fill bullets from seeded rule files |
 | `assets/techstack-skeleton.md` | `docs/techstack.md` | Coding Patterns grown section absorbs migrated CLAUDE.md content |
 | `assets/overview-skeleton.md` | `docs/overview.md` | `<!-- harness-meta -->` block at top: fill `external-tools:` with Q4 multi-select answer as YAML list (default `[github]`). Read by `/super-bootstrap:resolve-plugins` as Tier-2 fallback. Treat as pipeline-owned for drift checks — re-runs propose update if Q4 answer changes. |
+| `assets/decisions-skeleton.md` | `docs/decisions.md` | Always — scope header pipeline-owned (drift-checked), `## Closed Forks` table rows project-owned |
 | `assets/bootstrap-plan.md` | `docs/superpowers/plans/bootstrap.md` | |
 | `assets/rules-index-skeleton.md` | `.claude/rules/index.md` | Always — machinery |
 | `assets/rules-frontend-skeleton.md` | `.claude/rules/<framework>.md` | Only if frontend signal fired in Phase 1 |
@@ -341,6 +347,17 @@ Re-plant? (y / n / dry-run)
 
 On `y`: rebuild the high-water mark from `git log --grep` over consumed IDs — **never from current open rows** (resolved-but-deleted IDs stay consumed; re-deriving from open rows collides). Then mint IDs onto un-IDed rows by category, per the high-water-mark rule documented in the `docs/backlog.md` header (the rule's SSoT — don't restate the algorithm), classifying each row into BUG/DEBT/GAP by its content. Preserve row claims verbatim — re-plant adds the ID heading only, never rewrites the claim. Stage `docs/backlog.md` with the 3d commit.
 
+**Special case — `docs/techstack.md` § Rejected Alternatives retirement (re-run).** Older skeletons grew a § Rejected Alternatives section inside `techstack.md` — state/history dimension pollution, and tech-scoped. It is retired in favor of `docs/decisions.md` (cross-domain history dimension). On re-run, if `techstack.md` carries a § Rejected Alternatives section with content, propose migrating it:
+
+```
+docs/techstack.md § Rejected Alternatives detected — retired section (dimension pollution).
+Propose: move its entries to docs/decisions.md § Closed Forks (domain: tech), remove the section.
+
+Migrate? (y / n / show entries)
+```
+
+On `y`: append each entry as a `tech`-domain row in `docs/decisions.md` (preserve the claim verbatim, add a commit-pointer Ref where one is obvious), then delete the section from `techstack.md`. On `n`: leave it, mark project-owned (no further drift attempts). Never destructive without confirmation.
+
 **Special case — `bootstrap.md`** carries user state (checkbox progress from prior session). Don't auto-merge. Prompt: **Keep existing** (default) / **Reset from template** / **Merge** (rare, task-by-task).
 
 **Special case — `bootstrap.md` missing on mature repo.** When the file is **missing** AND the repo has ≥5 commits past the most recent bootstrap-shaped commit (`chore: scaffold superpowers pipeline` / `chore: sync superpowers pipeline` / `chore: complete pipeline bootstrap`), don't silently re-template — the file was almost certainly Task-3-cleanup-deleted by a prior session, and re-templating resurfaces completed work as fresh tasks. Surface an advisory instead:
@@ -415,6 +432,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `CLAUDE.md` (new, modified, or post-migration)
 - `docs/techstack.md` (new, skeleton-section drift, or post-migration absorbed content)
 - `docs/overview.md` (new or skeleton-section drift)
+- `docs/decisions.md` (new, scope-header drift, or post-retirement migration from techstack)
 - `.claude/settings.json` (new or picks delta)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)

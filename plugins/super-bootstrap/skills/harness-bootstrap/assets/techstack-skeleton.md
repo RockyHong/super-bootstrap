@@ -1,6 +1,6 @@
 # Tech Stack
 
-> Living doc. Skeleton sections (Runtime / Framework / Key Dependencies / Build & Distribution) seeded at scaffold from detected facts. Grown sections (Architecture Rules / Coding Patterns / Rejected Alternatives) start empty and grow via doc-sync — every commit that touches a relevant area triggers a sync proposal. See `CLAUDE.md` Doc Sync.
+> Living doc — **state dimension only** (what the stack *is* now). Skeleton sections (Runtime / Framework / Key Dependencies / Build & Distribution) seeded at scaffold from detected facts. Grown sections (Architecture Rules / Coding Patterns) start empty and grow via doc-sync — every commit that touches a relevant area triggers a sync proposal. Rejected stack directions are history, not state → [`docs/decisions.md`](decisions.md), never a section here. See `CLAUDE.md` Doc Sync.
 
 ## Runtime
 
@@ -25,10 +25,6 @@
 ## Coding Patterns
 
 > Grows via doc-sync as patterns crystallize. Import style, error handling convention, naming, class-vs-function bias, type usage.
-
-## Rejected Alternatives
-
-> Grows via doc-sync when a decision documents what was considered and dropped, and why.
 
 ## Edit Discipline
 

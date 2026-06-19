@@ -4,6 +4,8 @@
 
 Every session runs under the superpowers frame. Routing = **which phases this work needs**, judged on evidence — not file count, not size labels. Triage phases, propose route, wait for user confirm.
 
+Before proposing the route or a design direction, check [`docs/decisions.md`](docs/decisions.md) § Closed Forks. If an entry already covers the direction, surface it and route from there rather than re-deriving. Report the result in the triage output (below).
+
 ### Phase Gates
 
 | Phase | Run when | Skip when |
@@ -23,6 +25,7 @@ Propose phase composition + justify each skip with repo-grounded evidence:
 Phases: brainstorm → plan → execute → doc-sync → commit
 Skipped: spec (no persistent design surface — internal helper, no behavior contract)
 Evidence: BUG-042 has clean repro in issue, fix touches one auth helper
+Closed forks: none match (or cite the docs/decisions.md entry + how this differs)
 OK to proceed?
 ```
 
@@ -43,6 +46,14 @@ Before every commit, scan `docs/` for files describing behavior touched by the d
 1. Report it — doc path, what looks outdated, relevant diff context
 2. Resolve together — update or acknowledge it's still accurate
 3. Never silently fix. Never silently skip.
+
+**Dimension routing (state XOR history — decide before writing any `docs/` file):**
+
+State docs (`overview.md`, `techstack.md`, specs) hold what is **true now** — never timestamp precedent into them. Route by dimension:
+
+- Decision still **binding** current work → present-tense constraint in the state doc it governs, stripped of when/why-decided. ("Refinement deferred behind the port" — not "on <date> we decided to defer refinement because…").
+- Committed change history (what changed / when / why-of-a-change) → **git log + commit messages**. Don't hand-chronicle it into a doc.
+- A direction evaluated and **closed** that left no diff (road-not-taken, wall foreseen) and would otherwise be re-proposed → [`docs/decisions.md`](docs/decisions.md).
 
 **Temporal cleanup:** if work completes a feature branch, delete its spec and plan files from `docs/superpowers/specs/` and `docs/superpowers/plans/`. Once merged, they're noise.
 
@@ -115,6 +126,7 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 - [`docs/techstack.md`](docs/techstack.md) — stack, architecture rules, coding patterns. Skeleton seeded at scaffold; grown sections fill via doc-sync.
 {- [`docs/specs/`](docs/specs/) — persistent feature specs, one `.md` per feature. Filename + heading is the catalog; no index.}
 {- [`docs/backlog.md`](docs/backlog.md) — open items (`BUG-###` / `DEBT-###` / `GAP-###`), captured via `/super-bootstrap:log`, deleted on resolve.}
+- [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
 - `docs/superpowers/specs/` — design specs from brainstorming (temporal — deleted after merge)
 - `docs/superpowers/plans/` — implementation plans (temporal — deleted after merge)
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)
