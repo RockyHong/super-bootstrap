@@ -97,7 +97,7 @@ If `docs/backlog.md` doesn't exist, skip §c.
 
 This spec stops at `{action, intent, stage}`. What each caller does next is **its own** concern, not shared here:
 
-- **`todo`** — Impact/Blast tags, dependency gate, within-mode ranking, scaffold render. Lives in `agents/todo.md`.
+- **`todo`** — Impact/Blast tags, coupling gate, within-mode ranking, scaffold render. Lives in `agents/todo.md`.
 - **`drain`** — `Cloud`-gate, relation-analysis (file-overlap parallelism), wave selection, worktree spawn, stage-keyed phase entry. Lives in `skills/drain/`.
 
 Edit the classification here; edit each caller's downstream in its own home.

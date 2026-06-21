@@ -49,6 +49,7 @@ Apply before ranking. Both tags carried on every row.
 **Impact** (single tag, drives within-mode ranking):
 
 - **`impactful`**:
+  - **Upstream of another open row** — a row another open item is hard-blocked-by, OR whose convention / decision / artifact shapes how another open row is correctly done (soft coupling per §4).
   - Action verb ∈ {Approve spec, Write plan, Continue brainstorm} where target is feature-shaped (spec body describes feature surface, not single bugfix)
   - `Continue execute` with ≥3 remaining unchecked tasks
   - Plan with paths spanning cross-pkg or repo blast
@@ -72,14 +73,21 @@ Derive from plan body path mentions and task bullet paths. For backlog rows, rea
 
 ### 4. Rank within mode
 
-**Dependency gate (before ranking).** Trace each row's breadcrumbs — `Area:` field, `Problem:` text, linked spec/plan paths — into docs/code to judge whether it depends on another still-open row. A row whose upstream is still open is **not actionable now**: tag it `blocked by {ID}` and sink it to the tail (below all unblocked rows), regardless of Impact. This is Grounding, not ranking — a blocked row surfaced as do-now asserts a falsehood (it isn't doable yet) and risks rework / dup / debt against an upstream that may still move. Judge fresh each scan from current row content; never persist the edge onto the row. Where no breadcrumb reveals an edge, the row is treated as unblocked — a missed live-inference self-corrects next scan; a frozen stamp would not.
+**Coupling gate (before ranking).** Trace each row's breadcrumbs — `Area:` field, `Problem:` text, linked spec/plan paths — into docs/code to judge how it relates to other still-open rows. Two edge kinds, judged fresh each scan, never persisted onto the row:
 
-Then rank the unblocked rows. For all modes (sub-verb AND full — full mode has no separate "Next up" anymore):
+- **Hard block** — **explicit naming is the only hard signal.** The row's own text names a still-open prerequisite: `blocked by {ID}`, `depends on`, `after {ID/feature} lands`, or a linked ID/path that resolves to another open row. Mechanical and high-confidence — the named target resolves to an open row or it doesn't. Hold it out of the board body; it surfaces only in the footer `pending unblock` count. (Distinct from a `user`-blocker row, which IS actionable — the action is "decide" — and stays in the body.)
+- **Soft coupling** — no explicit naming, but an *inferred* edge: shared artifact (same file / `Area:` / path — one row establishes it, another consumes it), or a convention / decision in one row's scope that shapes how another is correctly done. **Inference drives soft only, never hard** — a shared file is not "can't start," it means "sequence to avoid rework." Keep the row runnable in the body; lift the **upstream** row's Impact to `impactful` (§3) and seat it directly above the row it shapes — the convention comes first even though the shaped row never names it. Local pairwise only; never assemble a full chain order.
+
+Where neither signal fires, treat the row as independent — a missed inference self-corrects next scan; a frozen stamp would not.
+
+Then rank the body rows (hard-blocked held out). For all modes (sub-verb AND full — full mode has no separate "Next up" anymore):
 
 1. **Impact desc** — `impactful` first, `quick-pop` second
 2. **Progress desc within Impact** — executing-rows with most-complete progress first (finish-what's-started bias)
 3. **Action-verb priority** — `Continue execute` > `Review` > `Approve spec` / `Decide` > `Write plan` > `Continue brainstorm` > `Cleanup` > `Triage`
 4. **Recency desc** — newest first (tiebreak)
+
+**Soft-coupling adjacency** overrides these four keys locally: a soft-coupling upstream row ranks immediately above the row it shapes, even when the keys would separate them.
 
 For `full` mode, render rows in this rank order (file column shows actual filename). No "Next up" block — user reads ranked list, picks.
 
@@ -108,6 +116,8 @@ The scaffold includes title line, **macro header** (sub-verb modes only), table 
 
 **Ranked list, no recommendation** — Surface all rows ranked per §4; user reads ranked list, picks. System surfaces, doesn't strategize.
 
+**Pending-unblock line** (Full mode only) — when the §4 Coupling gate held `n ≥ 1` hard-blocked rows out of the body, emit `pending unblock: {n}` as the first footer line (above filter legend / more). Count only — the held rows stay in the docs SSOT; the count is the route to them, not a body row each. Omit the line when `n = 0`.
+
 **Footer-hint** — sub-verb modes (discuss / cloud / device) always end with `more: /super-bootstrap:help`. Full mode footer is conditional on total open row count `T = D + C + V` (computed during §1 classification):
 
 - `T ≤ 5` → footer is just `more: /super-bootstrap:help`. Board small; sub-verb hint is premature noise.
@@ -120,7 +130,7 @@ The scaffold includes title line, **macro header** (sub-verb modes only), table 
 ## Rules
 
 - **Actions only.** No state prose. Render into the dispatched scaffold.
-- **Surface every open item.** Every open spec, plan, and backlog row gets a row in the appropriate mode. Tracker is not a graveyard.
+- **Surface every open item.** Every open spec, plan, and backlog row is accounted for — runnable rows get a board row; hard-blocked rows surface as the footer `pending unblock` count (§4 Coupling gate), not a body row. Tracker is not a graveyard, but the board body is do-now only.
 - **Context, not detail.** One line per row. User can ask for more.
 - **No opinions, any mode.** List actions ranked by Impact + Progress. Never emit "Recommend X" / "Best next: Y" — surface, don't strategize.
 - **Empty = say so.** Use the scaffold's empty-state line + priors block. Direct user to a different mode if their slice is empty.

@@ -142,6 +142,7 @@ more: /super-bootstrap:help
 | -- | --------------------------------------------------- | ------------------------------------------------ |
 | 1  | {file}                                              | {one-line}                                       |
 
+{pending unblock: {n} — only if n>0}
 {footer per § Render footer-hint}
 ```
 
