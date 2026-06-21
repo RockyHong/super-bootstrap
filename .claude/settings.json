@@ -1,5 +1,15 @@
 {
   "enabledPlugins": {
-    "super-bootstrap@super-bootstrap": true
+    "super-bootstrap@super-bootstrap": true,
+    "superpowers@claude-plugins-official": true,
+    "andrej-karpathy-skills@karpathy-skills": true,
+    "plugin-dev@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "karpathy-skills": {
+      "source": { "source": "github", "repo": "forrestchang/andrej-karpathy-skills" }
+    }
   }
 }
