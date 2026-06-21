@@ -11,7 +11,7 @@
       "name": "super-bootstrap",
       "source": "./plugins/super-bootstrap",
       "description": "Bootstrap or sync the superpowers development pipeline in any repo. /super-bootstrap gates greenfield (lean ideation Q&A → seed docs), then installs the harness: CLAUDE.md, skeleton docs, path-scoped rules, curated skill/MCP/hook picks. Bundles commit, todo, log, help, merge, drain, and optional release-init — all namespaced under super-bootstrap: except the entry. Per-skill contracts live in each SKILL.md frontmatter (canonical catalog); plugin README carries the index. Solo dev workflow.",
-      "version": "2.10.0",
+      "version": "2.11.0",
       "category": "development",
       "tags": ["bootstrap", "scaffold", "setup", "meta", "docs"],
       "author": {
