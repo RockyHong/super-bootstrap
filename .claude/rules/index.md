@@ -6,7 +6,8 @@
 
 ## Active rules
 
-None seeded — no path-scoped patterns detected at bootstrap (markdown-authored plugin; no frontend/MV3/migrations/tests signal). Add one when a convention emerges (e.g. a SKILL.md authoring rule).
+- `dimension-discipline.md` — `docs/**/*.md`, `README.md` — classify state vs history before propagating (served; predicate in `work-discipline/doc-dimension-discipline.md`)
+- `ssot-doc-link.md` — `docs/**/*.md`, `README.md` — author concepts born-linked to their SSOT home (served; predicate in `work-discipline/doc-link-discipline.md`)
 
 ## Adding a new rule
 

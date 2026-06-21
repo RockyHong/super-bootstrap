@@ -5,11 +5,21 @@
     "andrej-karpathy-skills@karpathy-skills": true,
     "plugin-dev@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true
+    "claude-md-management@claude-plugins-official": true,
+    "axioms@axioms-protocol": true
   },
   "extraKnownMarketplaces": {
     "karpathy-skills": {
-      "source": { "source": "github", "repo": "forrestchang/andrej-karpathy-skills" }
+      "source": {
+        "source": "github",
+        "repo": "forrestchang/andrej-karpathy-skills"
+      }
+    },
+    "axioms-protocol": {
+      "source": {
+        "source": "github",
+        "repo": "RockyHong/axioms-protocol"
+      }
     }
   }
 }
