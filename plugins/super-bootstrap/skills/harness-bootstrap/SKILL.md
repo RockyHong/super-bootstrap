@@ -229,6 +229,17 @@ Ensure `.claude/settings.json` contains:
 
 `superpowers@claude-plugins-official` resolves from Anthropic's official marketplace — no `extraKnownMarketplaces` entry needed. `andrej-karpathy-skills@karpathy-skills` lives outside the official marketplace, so the `karpathy-skills` marketplace entry is required for cloud / fresh-machine resolution. Phase 3c (`/super-bootstrap:resolve-plugins`) treats both pins as locked: never proposes drop, never re-prompts the user. Adaptive picks (stack-matched skills / MCPs / hooks) layer on top.
 
+### 3a-drain: Drain infra (opt-in)
+
+`/super-bootstrap:drain` (parallel-worktree auto-drain) needs three committed infra pieces. Most active-dev repos use drain; skill / plugin / docs-only repos usually don't. Ask once:
+
+> Install `/super-bootstrap:drain` worktree infra? — worktree settings template + `PreToolUse(Read)` guard + `.claude/worktrees/` gitignore. Most dev repos: yes. Skill / plugin / docs repos: skip (drain self-installs on first use anyway).
+> Install now? (y / skip)
+
+On `y`: execute the procedure in [`../drain/assets/ensure-infra.md`](../drain/assets/ensure-infra.md) — the same idempotent 4-piece install drain self-runs on first invocation. One install home; harness-bootstrap delegates to it, never carries its own copy. Stage the placed files with the Phase 3d commit.
+
+On `skip`: nothing placed; drain's own §Pre-flight step 0 installs on first `/super-bootstrap:drain`.
+
 ### 3b: Pipeline docs
 
 Walk each pipeline doc and apply the per-artifact rule. Sources:

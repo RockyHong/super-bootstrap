@@ -19,91 +19,19 @@ You are an **intent-filtered action-list builder**. Dispatched by the `/super-bo
 
 The dispatcher tells you which mode the user picked.
 
-## Cloud-safe criterion
+## Classification — embedded shared spec
 
-Single positive rule applied to every row before bucketing:
-
-> **Cloud-safe = phase produces a verifiable artifact via tooling alone. No human visual judgment, no real browser/device interaction, no "looks right" call.**
-
-### Derivation inputs (read per row when classifying)
-
-1. **Plan content** — grep the plan file body for device signals:
-   - Keywords: `manual test`, `e2e`, `playwright`, `cypress`, `visual`, `device`, `mobile`, `browser`, `screenshot`
-   - Paths in task bullets: `**/components/**`, `**/app/**`, `**/pages/**`, `**/views/**`, `apps/web/**`, `apps/mobile/**` → device-suspicion
-   - If only pure-logic paths (`lib/`, `utils/`, `core/`, `packages/{logic-name}/`) and no device keywords → cloud-safe
-2. **Spec §Success Criteria** (if linked spec exists) — explicit `manual verification`, `visual check`, `e2e pass` → device-only for the executing/review row
-3. **Phase verb** in derived action:
-   - `Write plan` / `Approve spec` / `Triage` / `Extract` / `Doc-edit` / `Cleanup` → cloud-safe regardless of paths
-   - `Continue execute` / `Review` → derive per #1 + #2
-   - `Manually verify` / `E2E run` / `Smoke test` → device-only
-
-### Default
-
-If no signal is conclusive, default cloud-safe for spec/plan-write/triage/cleanup rows; default device for executing rows touching UI surfaces; default cloud for executing rows on pure-logic surfaces.
-
-## Action-verb intent map (applied FIRST in §1 classification)
-
-Intent is determined by action verb before path/state rules.
-
-| Action verb prefix                                              | Intent (locked)              | Why                                                                          |
-| --------------------------------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------- |
-| `Approve spec`, `Decide`, `Continue brainstorm`, `Confirm`      | **Discuss**                  | User-decision shape — only user can resolve.                                 |
-| `Write plan`                                                    | **Cloud**                    | Plan author write is doc artifact, headless.                                 |
-| `Refine spec`, `Doc-edit`                                       | **Cloud**                    | Doc artifact, headless.                                                      |
-| `Continue execute`, `Resume`                                    | **Cloud OR Device** (derive) | Depends on paths + content per cloud-safe criterion.                         |
-| `Review` (read diff of completed plan)                          | **Cloud**                    | Reading diff is headless.                                                    |
-| `Manually verify`, `E2E run`, `Smoke test`                      | **Device**                   | Real browser / device required.                                              |
-| `Triage` (backlog item, investigate-only)                       | **Cloud**                    | Investigate-only artifact, headless.                                         |
-| `Cleanup` (delete merged spec+plan files)                       | **Cloud**                    | File delete on completed work, no judgment.                                  |
+Deriving each open item's `{action, intent, stage}` from the three sources (specs / plans / backlog) is the **shared classification spec**, embedded verbatim in your dispatch prompt (the `todo` skill reads it from `shared/classify-actionable.md`). It owns the cloud-safe criterion, the action-verb intent map (applied FIRST), and the per-source derivation rules — this agent applies it, never restates it. `intent` (Discuss / Cloud / Device) drives bucketing; `action` is the render string; `stage` is carried but unused here (a sibling consumer needs it).
 
 ## Protocol
 
-Read all sources, derive actions, classify each (apply Action-verb intent map FIRST, then content rules), then filter to the requested mode before rendering.
+Apply the embedded spec to all sources, then filter to the requested mode before rendering.
 
 ### 1. Gather state (silent — do not output)
 
-Run all of these, hold results internally. Each row gets an **intent** tag (Discuss / Cloud / Device).
+Apply the embedded classification spec to every open item across specs / plans / backlog. Hold results internally — each row carries its **action**, **intent** tag (Discuss / Cloud / Device), and **stage**.
 
-#### a. Specs (`docs/superpowers/specs/*.md`)
-
-For each:
-
-- **Brainstorming-style** (no checkboxes, "options" / "approaches" / "trade-offs" present, open question to user not resolved) → action: `"Continue brainstorm: {filename}"`, **intent: Discuss**.
-- **Spec-ready but no matching plan file** (matched by date prefix or slug) AND content contains user-approval signal (`awaiting approval`, `needs sign-off`, `decision pending` from user) → action: `"Approve spec: {filename}"`, **intent: Discuss**.
-- **Spec-ready, approved, no matching plan** → action: `"Write plan: {filename}"`, **intent: Cloud**.
-- **Spec exists with matching plan** → spec is reference now; don't emit a spec row, emit the plan row instead (see §b).
-- **Orphaned spec** (>7 days old, no plan, no approval signal) → action: `"Decide: stale spec {filename} — approve / refine / delete"`, **intent: Discuss**.
-
-#### b. Plans (`docs/superpowers/plans/*.md`)
-
-For each, count checkboxes:
-
-- **Plan with all `- [ ]` unchecked** (planning stage) → action: `"Start execute: {filename}"`. Intent per cloud-safe derivation.
-- **Plan with mix of `- [ ]` and `- [x]`** (executing) → action: `"Continue execute: {filename} ({checked}/{total})"`. Intent per cloud-safe derivation.
-- **Plan with all `- [x]` checked AND no DONE marker** (review-ready) → action: `"Review: {filename}"`. Intent per cloud-safe derivation (manual verification → Device; diff-read → Cloud).
-- **Plan with "DONE" or "COMPLETED" marker** → action: `"Cleanup: delete {spec+plan files} for {feature}"`, **intent: Cloud**.
-- **Plan with explicit user-blocker** (`waiting on user`, `needs user decision`, unresolved `?` directed at user) → action: `"Decide: {what's open on {filename}}"`, **intent: Discuss**.
-
-#### c. Backlog (`docs/backlog.md`)
-
-Backlog owns BUG/DEBT/GAP — bugs, debt, and design gaps / unverified feature ideas (GAP). New rows are written by `/super-bootstrap:log`; this scanner reads them. A GAP that is a feature idea is triaged like any other row — drop / spec — not given a separate lane.
-
-Open items are `### {BUG|DEBT|GAP}-###` row headings under `## Open`. The header's **ID high-water mark** line carries the same ID literals but is a counter, not an item — exclude it from rows and counts.
-
-For each open `BUG-### / DEBT-### / GAP-###` item:
-
-- **Item flagged for user decision** (line contains `needs user`, `decision required`, `route?`) → action: `"Decide: {ID} {title}"`, **intent: Discuss**.
-- **Item with no scope.md / no plan yet** (default state) → action: `"Triage: {ID} {title}"`, **intent: Cloud** (triage is investigate-only).
-- **Item with active plan reference** → don't double-emit; the plan row already covers it.
-
-For any row with a **foreign prefix** (anything outside `BUG-### / DEBT-### / GAP-###` — e.g. `F-`, `FEAT-`, `ROAD-`, bare bullet):
-
-- Emit into the Uncategorized sub-section. Reason: `"non-canonical backlog prefix; backlog owns BUG/DEBT/GAP (feature ideas log as GAP). New rows route through /super-bootstrap:log."`
-- Do **not** invent classification. Scanner is the taxonomy authority — foreign prefixes surface as warnings, not silent acceptance.
-
-**Pre-ID backlog (stale scaffold).** If `## Open` carries row content but no `BUG/DEBT/GAP-###` IDs (un-IDed bullets/headings), or the header's ID high-water-mark line is absent, the backlog predates the ID scaffold (older super-bootstrap version). Emit **one** Uncategorized row for the condition (not one per un-IDed item). Reason: `"backlog missing ID scaffold / high-water line — run /super-bootstrap:harness-bootstrap to re-plant IDs (rebuilds the counter from git history)."` Read-only — never mint IDs here; the re-plant write is harness-bootstrap's.
-
-If `docs/backlog.md` doesn't exist, skip §c entirely.
+**Pre-ID backlog (stale scaffold).** If `docs/backlog.md` `## Open` carries row content but no `BUG/DEBT/GAP-###` IDs (un-IDed bullets/headings), or the header's ID high-water-mark line is absent, the backlog predates the ID scaffold (older super-bootstrap version). Emit **one** Uncategorized row for the condition (not one per un-IDed item). Reason: `"backlog missing ID scaffold / high-water line — run /super-bootstrap:harness-bootstrap to re-plant IDs (rebuilds the counter from git history)."` Read-only — never mint IDs here; the re-plant write is harness-bootstrap's.
 
 ### 2. Filter by mode
 

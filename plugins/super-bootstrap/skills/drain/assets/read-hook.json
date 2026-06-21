@@ -1,0 +1,10 @@
+{
+  "_comment": "FROZEN drain Read-reinjection guard. ensure-infra MERGES this single PreToolUse(Read) entry into the consumer's .claude/settings.json hooks.PreToolUse array — it never overwrites the file or other hooks. Blocks the gateway from Read-ing any .claude/worktrees/ path (a worktree-internal Read re-injects that worktree's nested CLAUDE.md + rules per file and blows the context budget). Tool-scoped to Read only (a permissions deny on the path would also block `cd` into the subtree and break dispatch). Guard clause: when CLAUDE_PROJECT_DIR is itself inside .claude/worktrees/, the hook passes through, so a subprocess reads its own tree freely — the block applies only to a session whose project root is the gateway tree. Parses the path off stdin JSON via jq (there is no $CLAUDE_FILE_PATH env var). exit 2 routes the agent to the read-around paths.",
+  "matcher": "Read",
+  "hooks": [
+    {
+      "type": "command",
+      "command": "fp=$(jq -r '.tool_input.file_path // empty'); if echo \"$CLAUDE_PROJECT_DIR\" | grep -qE '[/\\\\]\\.claude[/\\\\]worktrees[/\\\\]'; then exit 0; fi; if echo \"$fp\" | grep -qE '\\.claude[/\\\\]worktrees[/\\\\]'; then echo 'BLOCKED: worktree-internal Read re-injects that worktree CLAUDE.md. Read-around: git show {branch}:<path> / Grep / Glob.' >&2; exit 2; fi"
+    }
+  ]
+}

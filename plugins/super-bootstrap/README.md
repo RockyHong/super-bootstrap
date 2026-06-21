@@ -14,6 +14,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `help` — on-demand index of installed user-invoke skills; dispatches `agents/help.md` (Haiku).
 - `commit` — session-isolated, doc-sync-gated commit.
 - `merge` — absorb feature branches; aborts + surfaces on conflict.
+- `drain` — parallel-worktree auto-drain of the board; spawns one isolated `claude -p` per Cloud-safe item, each halts at its user wall.
 - `release-init` — one-shot; generates a project-level `/release` skill.
 
 ## Naming convention
@@ -30,7 +31,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 |---|---|---|
 | Public entry | `super-bootstrap` | `/super-bootstrap` |
 | Lifecycle / one-shot | `harness-bootstrap`, `resolve-plugins`, `release-init` | `/super-bootstrap:<name>` |
-| High-freq in-flight ops | `commit`, `todo`, `merge`, `help`, `log` | `/super-bootstrap:<name>` |
+| High-freq in-flight ops | `commit`, `todo`, `merge`, `drain`, `help`, `log` | `/super-bootstrap:<name>` |
 
 **When adding a new skill:** pick the shortest bare name that reads cleanly cold. Reference it as `/super-bootstrap:<name>` everywhere a user might type it (SKILL.md prose, rendered footers, agent menus, READMEs).
 
@@ -54,6 +55,7 @@ A single matching reason on either side decides.
 | `resolve-plugins` | inline (dispatch candidate) | 6-pool live queries are context-heavy; user-interactive on diff confirm. Revisit. |
 | `commit` | inline | Session-aware (transcript memory + doc-sync Q&A) |
 | `merge` | inline | Same context-aware shape as `commit`; lower freq doesn't pay for relay either |
+| `drain` | inline | Gateway orchestrator — owns the user thread, the wave loop, the halts. The per-item work IS the spawned `claude -p` subprocesses; the orchestration itself is gateway reasoning, not an Agent dispatch |
 | `release-init` | inline | Detection + Q&A + file generation throughout |
 | `todo` | dispatch (Sonnet) | Multi-file scan + bounded classification + render — Sonnet fit, isolate from gateway |
 | `log` | dispatch (Sonnet) | Bounded classify + gate + write — Sonnet fit; dispatch also enforces bias exclusion (shell never pre-classifies buckets) |
@@ -68,6 +70,8 @@ When skills overlap in concern, one is canonical and others delegate:
 - **Plugin curation logic** (source pool list, trust tiers, dedupe, settings.json write) — lives ONLY in `resolve-plugins/SKILL.md`. `harness-bootstrap` Phase 3c delegates.
 - **Greenfield ideation Q&A** — lives ONLY in `super-bootstrap/SKILL.md`. `harness-bootstrap` redirects empty repos here.
 - **Files-as-contract handoff** — skills communicate via committed docs (`docs/overview.md`, `docs/techstack.md`, `.claude/settings.json`), not in-memory state. Lets each skill run standalone.
+- **Item classification** (cloud-safe criterion, action-verb intent map, per-source `{action, intent, stage}` derivation) — lives ONLY in `shared/classify-actionable.md`. Both `todo` (ranks + renders) and `drain` (gates + spawns) embed it verbatim at dispatch; neither restates it. Downstream of classification — ranking/render (todo), wave-select/spawn (drain) — stays in each skill's own home.
+- **Worktree-drain infra** (settings template, Read-hook, `.claude/worktrees/` gitignore) — frozen assets in `skills/drain/assets/`, installed into consumer repos by `drain`'s `ensure-infra` (idempotent copy/merge); the subprocess boundary anchor rides the dispatch prompt, not the repo. `harness-bootstrap` opt-in seed delegates to that same procedure — one install home, no second copy.
 
 - **Plugin-level description** — `plugin.json` is canonical; `marketplace.json` entry copies it verbatim at release.
 

@@ -40,16 +40,20 @@ Footer is computed by the `todo` agent at render time — it counts total open r
 
 The full protocol lives in the `todo` agent (`agents/todo.md`, `model: sonnet`, read-only tools).
 
-When dispatching the agent, the prompt **must embed the literal scaffold** for the chosen mode. Agent fills bracketed slots, cannot reach for alternative templates. Without the embedded scaffold, prior model training pulls render toward generic shapes regardless of mode. Literal injection bypasses model judgment at the render step.
+When dispatching the agent, the prompt **must embed two literals**: the **classification spec** (how to derive each item's `{action, intent, stage}`) and the **scaffold** for the chosen mode. Agent fills bracketed slots, cannot reach for alternative templates or paraphrase the criteria. Without the embedded literals, prior model training pulls classification + render toward generic shapes. Literal injection bypasses model judgment at both the classify and render steps.
 
 **Dispatch prompt template:**
 
 ```
 mode: {discuss | cloud | device | full}
 
-Render EXACTLY this scaffold. Fill bracketed slots from your gathered + filtered + ranked rows per agent protocol. Do NOT change shape, do NOT swap to an alternative template, do NOT merge or split groups the scaffold separates. Omit a group's table only if its row count is zero (omit the sub-heading too).
+Classify every open item per this spec, then render EXACTLY the scaffold below. Fill bracketed slots from your gathered + filtered + ranked rows per agent protocol. Do NOT change shape, do NOT swap to an alternative template, do NOT merge or split groups the scaffold separates. Omit a group's table only if its row count is zero (omit the sub-heading too).
 
----
+--- CLASSIFICATION SPEC ---
+
+{shared/classify-actionable.md, copied verbatim}
+
+--- SCAFFOLD ---
 
 {scaffold for chosen mode from assets/scaffolds.md, copied verbatim}
 
@@ -60,7 +64,7 @@ Render EXACTLY this scaffold. Fill bracketed slots from your gathered + filtered
 
 Steps:
 
-1. **Gateway (before dispatching):** read `assets/scaffolds.md` (sibling to this SKILL.md) and embed the active mode's scaffold verbatim in the dispatch prompt — the agent never fetches files outside the repo docs.
+1. **Gateway (before dispatching):** read `shared/classify-actionable.md` (plugin-shared, `../../shared/` from this SKILL.md) and `assets/scaffolds.md` (sibling), embed both verbatim in the dispatch prompt — the agent never fetches files outside the repo docs.
 2. Build dispatch prompt per template above.
 3. `Agent` tool, `subagent_type: "todo"`, prompt = the built dispatch prompt.
 4. Agent returns rendered scaffold (or empty-state). **Relay verbatim.**
@@ -70,7 +74,7 @@ Steps:
 - User explicitly asks to run inline.
 - Quick-gate sources all empty: zero spec/plan files AND zero row content under backlog `## Open` (canonical, foreign, or un-IDed) — no point spawning.
 
-Classification criteria live in the `todo` agent.
+Classification criteria live in the shared spec `shared/classify-actionable.md` (embedded at dispatch — SSOT, also consumed by `/super-bootstrap:drain`); ranking + render live in the `todo` agent.
 
 ## Rules
 
