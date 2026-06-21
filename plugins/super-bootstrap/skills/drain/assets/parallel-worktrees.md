@@ -34,18 +34,18 @@ cp .claude/templates/worktree-settings.local.json .claude/worktrees/drain-{id}/.
 
 ```bash
 cd .claude/worktrees/drain-{id}
-claude -p \
+claude -p "<phase prompt>" \
   --setting-sources local,project \
   --permission-mode acceptEdits \
-  --allowedTools "Skill" \
-  "<phase prompt>"
+  --allowedTools "Skill"
 ```
 
+- **Prompt comes first, flags after — load-bearing order.** `--allowedTools` is variadic: when placed immediately before the positional prompt (`--allowedTools "Skill" "<prompt>"`), it greedily swallows the prompt as tool-rule values, leaving none → `Error: Input must be provided`. Verified live on CC 2.1.183. Keep the prompt as the first positional (matches the official-docs example `claude -p "<prompt>" --allowedTools ...`); never trail it after `--allowedTools`.
 - `--setting-sources local,project` — loads the worktree's own `settings.local.json` plus its committed `.claude/`; because cwd = worktree, `project` resolves to the worktree tree (registering its rules + skills). User sources stay excluded. The FS wall is cwd-default + no `--add-dir <gateway>`, independent of source selection.
 - `--permission-mode acceptEdits` — auto-accept Edit/Write within the allow set; Bash stays deny-by-default unless allowed.
 - `--allowedTools "Skill"` — **required**; without it bundled skills (`/code-review`) are permission-denied in `-p` mode and the review phase silently degrades to a no-op.
 
-_These `claude -p` flags were verified against Claude Code 2.1.179 in the source pattern this bundle was curated from. Re-confirm on first live drain if the CLI surface has moved._
+_These `claude -p` flags + the prompt-first ordering are confirmed against the official Claude Code CLI reference and a live end-to-end drain smoke (CC 2.1.183): `--setting-sources` accepts `user,project,local`; `acceptEdits` is a valid `--permission-mode` value; `--allowedTools` is valid (alias `--allowed-tools`) and variadic. Re-confirm if the CLI surface moves._
 
 Dispatch via `Bash(run_in_background: true)` so multiple subprocesses run concurrently; the gateway is notified on each completion (push, not poll).
 

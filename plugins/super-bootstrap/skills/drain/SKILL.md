@@ -71,7 +71,7 @@ Per item: enter at the item's `stage` (§Invariants stage-resume), run phase-by-
 
 ```
 cd .claude/worktrees/drain-{id}
-claude -p --setting-sources local,project --permission-mode acceptEdits --allowedTools "Skill" "<phase prompt>"
+claude -p "<phase prompt>" --setting-sources local,project --permission-mode acceptEdits --allowedTools "Skill"
 ```
 
 Dispatched `Bash(run_in_background: true)`. Phase chain, stage-entry map, status contract (`DONE` / `DONE_WITH_CONCERNS` / `BLOCKED` / `NEEDS_CONTEXT`), and the polymorphic escalate-or-build branch: `assets/phase-loop.md`.
