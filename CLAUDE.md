@@ -2,28 +2,40 @@
 
 ## Development Workflow
 
-Every session runs under the superpowers frame. Routing = **which phases this work needs**, judged on evidence — not file count, not size labels. Triage phases, propose route, wait for user confirm.
+Every session runs under the superpowers frame. **The gateway is the gate** — informal input (pasted logs, "just fix this", a one-line ask) does not lower the bar. On any non-trivial code change the gateway's first move is to formalize *before touching code*: ground the problem, then propose + confirm the route. Filing the card via `/super-bootstrap:log` satisfies step 1; steps 2-7 still apply.
 
-Before proposing the route or a design direction, check [`docs/decisions.md`](docs/decisions.md) § Closed Forks. If an entry already covers the direction, surface it and route from there rather than re-deriving. Report the result in the triage output (below).
+### Entry Gate (ordered — each step leaves an artifact)
 
-### Phase Gates
+Non-trivial = anything past a single obvious edit. Walk in order; the artifact is what proves the step happened — narration is not an artifact.
+
+| # | Step | Required artifact |
+|---|---|---|
+| 1 | **Ground** — probe the problem against the real before scoping a fix | Bug/debt → a `docs/backlog.md` card whose root cause is verified against the real artifact (logs, repro, code), not a guess. Feature/refactor → a written problem statement grounded in first principles. Grounded-*then*-written |
+| 2 | **Route** — triage phases (below), check [`docs/decisions.md`](docs/decisions.md) § Closed Forks, propose, **stop for confirm** | A posted route line the user has confirmed |
+| 3 | **Red** — for a change with a test surface, write the failing test first | A captured failing-test run (command + red output) before implementation |
+| 4 | **Implement** — write code to green | Passing run of the step-3 test |
+| 5 | **Verify** — run checks; for harness-file changes (CLAUDE.md, rules, skills, agents) the `audit-harness-edits` pass is the verify artifact | Captured pass output / audit report (`verification-before-completion`) |
+| 6 | **Doc-sync** — scan `docs/` for stale behavior | Per § Doc Sync |
+| 7 | **Commit** — `/super-bootstrap:commit` | Terminal step |
+
+### Phase triage (which optional phases the route composes)
+
+Routing = which phases this work needs, judged on evidence — not file count, not size labels. The Entry Gate is the always-on spine; brainstorm / spec / plan layer on top via step 2.
 
 | Phase | Run when | Skip when |
 |---|---|---|
 | **Brainstorm** | Intent fuzzy, design space unexplored, multiple viable shapes | Intent + approach obvious from repo context or user direction |
 | **Spec** | Persistent design surface — behavior worth pinning for future sessions | One-time tactical change, no behavior to document |
 | **Plan** | Multi-step, ordering matters, want checkpoint review, half-done risk | Single atomic edit obvious from context |
-| **Execute (TDD + verify)** | Touching code | Always-on when code changes — never skip discipline |
-| **Doc sync** | Pre-commit | Always-on — never skip |
-| **Commit (`/super-bootstrap:commit`)** | Work done | Always-on — terminal step. |
 
-### Triage output
+### Route output (step 2 artifact)
 
-Propose phase composition + justify each skip with repo-grounded evidence:
+Propose phase composition, justify each skip with repo-grounded evidence, then stop:
 
 ```
 Phases: brainstorm → plan → execute → doc-sync → commit
 Skipped: spec (no persistent design surface — internal helper, no behavior contract)
+Grounding: <root cause, verified against <artifact>>
 Evidence: BUG-042 has clean repro in issue, fix touches one auth helper
 Closed forks: none match (or cite the docs/decisions.md entry + how this differs)
 OK to proceed?

@@ -17,6 +17,7 @@
 
 | Domain | Rejected direction | Because | Ref |
 |---|---|---|---|
+| design | `PreToolUse(Edit\|Write)` hook to enforce the entry gate (block code edits until a grounded-card / route-confirmed session marker exists) | Probe ambient first — the ordered Entry Gate prose is the untried stronger ambient; the prior framing was an advisory table, not an enforced gate. Build the hook only if the gate prose demonstrably fails downstream. | `CLAUDE.md` § Development Workflow |
 | design | A user-invoked `/decision` skill (or new `/log` class) to capture history | Capture is doc-sync's job, not a human act — the AI running doc-sync knows what pivoted; the user doesn't. User self-log is dumb. | doc-sync § Dimension routing |
 | design | Per-domain history docs (techstack-history, overview-history, …) | The anti-drift push wants **one** triage target to scan. Closed forks are admission-gated → rare → one cross-domain doc stays small. | CLAUDE.md § Development Workflow |
 | design | `PreToolUse(Write)` hook to enforce the dimension routing | Probe ambient first (trust-upstream). The triage pointer + doc-sync rule *are* the ambient push; the routing also includes an omission decision a hook can't deny, only nudge. Build the hook only if ambient demonstrably fails. | `claude-shape/layer-placement.md` § action-vs-omission |
