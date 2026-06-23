@@ -2,7 +2,7 @@
 
 ## Development Workflow
 
-Every session runs under the superpowers frame. **The gateway is the gate** — informal input (pasted logs, "just fix this", a one-line ask) does not lower the bar. On any non-trivial code change the gateway's first move is to formalize *before touching code*: ground the problem, then propose + confirm the route. Filing the card via `/super-bootstrap:log` satisfies step 1; steps 2-7 still apply.
+Every session runs under the superpowers frame. **The gateway is the gate** — informal input (pasted logs, "just fix this", a one-line ask) does not lower the bar. On any non-trivial code change the gateway's first move is to formalize *before touching code*: ground the problem, then propose + confirm the route. Filing via `/super-bootstrap:log` first still runs steps 2-7.
 
 ### Entry Gate (ordered — each step leaves an artifact)
 
@@ -10,7 +10,7 @@ Non-trivial = anything past a single obvious edit. Walk in order; the artifact i
 
 | # | Step | Required artifact |
 |---|---|---|
-| 1 | **Ground** — probe the problem against the real before scoping a fix | Bug/debt → a `docs/backlog.md` card whose root cause is verified against the real artifact (logs, repro, code), not a guess. Feature/refactor → a written problem statement grounded in first principles. Grounded-*then*-written |
+| 1 | **Ground** — probe the problem against the real before scoping a fix | Bug/debt → a `docs/backlog.md` card whose root cause is verified against the real artifact (logs, repro, code), not a guess. Feature/refactor → a written problem statement grounded in first principles |
 | 2 | **Route** — triage phases (below), check [`docs/decisions.md`](docs/decisions.md) § Closed Forks, propose, **stop for confirm** | A posted route line the user has confirmed |
 | 3 | **Red** — for a change with a test surface, write the failing test first | A captured failing-test run (command + red output) before implementation |
 | 4 | **Implement** — write code to green | Passing run of the step-3 test |
@@ -20,7 +20,7 @@ Non-trivial = anything past a single obvious edit. Walk in order; the artifact i
 
 ### Phase triage (which optional phases the route composes)
 
-Routing = which phases this work needs, judged on evidence — not file count, not size labels. The Entry Gate is the always-on spine; brainstorm / spec / plan layer on top via step 2.
+Routing = which phases this work needs, judged on evidence — not file count, not size labels. Execute, verify, doc-sync and commit are the always-on spine (Entry Gate steps 3-7); brainstorm / spec / plan are the optional phases below, layered on via step 2.
 
 | Phase | Run when | Skip when |
 |---|---|---|
@@ -30,7 +30,7 @@ Routing = which phases this work needs, judged on evidence — not file count, n
 
 ### Route output (step 2 artifact)
 
-Propose phase composition, justify each skip with repo-grounded evidence, then stop:
+Propose phase composition, justify each skip with repo-grounded evidence:
 
 ```
 Phases: brainstorm → plan → execute → doc-sync → commit
