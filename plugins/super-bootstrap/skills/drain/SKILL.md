@@ -63,7 +63,7 @@ Atomic `mkdir .claude/worktrees/drain-{id}/` is the claim (first mkdir wins). `O
 
 ## Read discipline (gateway-side)
 
-Never `Read` a path under `.claude/worktrees/{id}/` — a worktree-internal Read re-injects that worktree's nested CLAUDE.md + rules per file and blows the context budget. Use the read-around paths (`git show {branch}:<path>` for committed state, `Grep`/`Glob`/`git status` for markers, background task-output for subprocess return). Mechanically backed by the `PreToolUse(Read)` hook installed at §Pre-flight step 0. Table + mechanism: `assets/parallel-worktrees.md §Read discipline`.
+Never `Read` a path under `.claude/worktrees/{id}/` — a worktree-internal Read re-injects that worktree's nested CLAUDE.md + rules per file and blows the context budget. Use the read-around paths (`git show {branch}:<path>` for committed state, `cat .claude/worktrees/drain-{id}/.drain-status` for the live status, `Grep`/`Glob`/`git status` for markers, background task-output for subprocess return). Mechanically backed by the `PreToolUse(Read)` hook installed at §Pre-flight step 0. Table + mechanism: `assets/parallel-worktrees.md §Read discipline`.
 
 ## Phase loop
 
@@ -88,7 +88,7 @@ Full halt table + the §Halt summary format: `assets/phase-loop.md §Halts`.
 
 ## Crash recovery
 
-1. Committed `tasks.md` / status is the source of truth (read via `git show {branch}:<path>`, never worktree-internal `Read`). Subprocess exit code is advisory only.
+1. The live `.drain-status` file at the worktree root is the source of truth (read via `cat .claude/worktrees/drain-{id}/.drain-status`, never worktree-internal `Read`). Written atomically + uncommitted (`phase-loop.md §Status contract`). Subprocess exit code is advisory only.
 2. **Status set ⇒ advance; status absent ⇒ halt + surface**, regardless of exit code. Diagnose a halted worktree via `git -C .claude/worktrees/{id} status|diff|log`, never the `Read` tool.
 3. No phase-level auto-retry beyond the one TDD retry inside the build phase.
 

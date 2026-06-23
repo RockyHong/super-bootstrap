@@ -1,6 +1,6 @@
 # Phase loop — stage entry, status contract, halts
 
-Per wave member: the gateway enters the item's phase chain at its `stage` (from the shared classification), runs phase-by-phase via headless subprocesses, and advances on the status the subprocess commits. Each phase:
+Per wave member: the gateway enters the item's phase chain at its `stage` (from the shared classification), runs phase-by-phase via headless subprocesses, and advances on the status the subprocess writes. Each phase:
 
 ```
 cd .claude/worktrees/drain-{id}
@@ -28,7 +28,9 @@ After triage, before building: if the subprocess finds a **real design surface**
 
 ## Status contract
 
-`tasks.md status` (committed inside the worktree, read via `git show {branch}:tasks.md`) is the source of truth; the subprocess exit code is advisory only.
+The subprocess writes its status to `.drain-status` at the worktree root — a single token (`DONE` / `DONE_WITH_CONCERNS` / `BLOCKED` / `NEEDS_CONTEXT`) written **atomically** (temp file + rename) and left **uncommitted**. `.drain-status` is gitignored (`ensure-infra.md` step 1 — keeps it off the branch).
+
+The gateway reads it live from the worktree filesystem via `cat .claude/worktrees/drain-{id}/.drain-status` (a Bash read — exempt from the worktree Read-hook; never the `Read` tool). This is the source of truth; the subprocess exit code is advisory only.
 
 | Status | Gateway action |
 | ------ | -------------- |
@@ -41,9 +43,9 @@ After triage, before building: if the subprocess finds a **real design surface**
 
 ```
 on subprocess-exit-notification(worktree):
-  status = git show {branch}:tasks.md     # read-around — never Read inside the worktree
+  status = cat .claude/worktrees/drain-{id}/.drain-status   # live read (Bash) — never the Read tool
   if status advances this phase: dispatch next phase
-  else:                          halt + surface (§Halts)
+  else:                          halt + surface (§Halts)    # absent / empty ⇒ halt
 ```
 
 ## Halts

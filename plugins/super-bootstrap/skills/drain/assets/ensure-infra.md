@@ -6,7 +6,7 @@ drain needs three pieces of infra committed in the consumer repo. (A fourth — 
 
 | # | Frozen asset | Destination | Operation |
 | - | ------------ | ----------- | --------- |
-| 1 | — | `.gitignore` | Ensure a `.claude/worktrees/` line exists (append if absent). |
+| 1 | — | `.gitignore` | Ensure both a `.claude/worktrees/` line and a `.drain-status` line exist (append if absent). The `.drain-status` line keeps the per-worktree live status off the branch under `git add -A` (`phase-loop.md §Status contract`). |
 | 2 | `worktree-settings.local.json` | `.claude/templates/worktree-settings.local.json` | Copy verbatim if absent. The warm step copies this into each worktree's `.claude/settings.local.json`. |
 | 3 | `read-hook.json` | `.claude/settings.json` → `hooks.PreToolUse[]` | **Merge** the single entry if absent — never overwrite the file or other hooks. |
 
@@ -19,6 +19,7 @@ Each step is present-checked first:
 ```
 infraPresent():
   gitignore has ".claude/worktrees/"   AND
+  gitignore has ".drain-status"   AND
   .claude/templates/worktree-settings.local.json exists   AND
   .claude/settings.json hooks.PreToolUse contains a Read-matcher entry whose command greps ".claude/worktrees/"
 ```
@@ -27,13 +28,13 @@ All present → pass silently, proceed to Pre-flight step 1. Any missing → sur
 
 ```
 /super-bootstrap:drain needs worktree infra installed (first run):
-  + .gitignore       .claude/worktrees/
+  + .gitignore       .claude/worktrees/ , .drain-status  (two ignore lines)
   + .claude/templates/worktree-settings.local.json  (worktree permission template)
   + .claude/settings.json  PreToolUse(Read) guard (merged, your other hooks untouched)
 Install? [y/N]
 ```
 
-Decline → HALT (drain can't run without isolation infra). Accept → place the four, then stage + commit them (`/super-bootstrap:commit`).
+Decline → HALT (drain can't run without isolation infra). Accept → place the three, then stage + commit them (`/super-bootstrap:commit`).
 
 ## Hook activation
 

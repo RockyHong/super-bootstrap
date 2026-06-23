@@ -17,6 +17,7 @@
 
 | Domain | Rejected direction | Because | Ref |
 |---|---|---|---|
+| design | drain strips its status file at the merge gate (`git rm` on the branch tip before handoff) — the intuitive fix, hand-done once on the leaking run | Status filename (`tasks.md`) can collide with a real product file; a blind `git rm` at merge would delete the user's file (post-action delete, ignores downstream). Root-fixed instead: status is an uncommitted, gitignored `.drain-status` — never tracked, never merges, no strip needed. Merge lane stays generic (rejected coupling it to drain's artifact name — SoC). | `skills/drain/assets/phase-loop.md` §Status contract |
 | design | `PreToolUse(Edit\|Write)` hook to enforce the entry gate (block code edits until a grounded-card / route-confirmed session marker exists) | Probe ambient first — the ordered Entry Gate prose is the untried stronger ambient; the prior framing was an advisory table, not an enforced gate. Build the hook only if the gate prose demonstrably fails downstream. | `CLAUDE.md` § Development Workflow |
 | design | A user-invoked `/decision` skill (or new `/log` class) to capture history | Capture is doc-sync's job, not a human act — the AI running doc-sync knows what pivoted; the user doesn't. User self-log is dumb. | doc-sync § Dimension routing |
 | design | Per-domain history docs (techstack-history, overview-history, …) | The anti-drift push wants **one** triage target to scan. Closed forks are admission-gated → rare → one cross-domain doc stays small. | CLAUDE.md § Development Workflow |

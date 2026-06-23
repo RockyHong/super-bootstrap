@@ -74,7 +74,8 @@ The gateway reads worktree state **without** ever `Read`-ing a path under `.clau
 
 | Target | Read-around |
 | ------ | ----------- |
-| Committed files (status, scope) | `git show {branch}:<path>` / `git log` from the gateway tree |
+| Committed files (scope) | `git show {branch}:<path>` / `git log` from the gateway tree |
+| Live status (`.drain-status`, uncommitted) | `cat .claude/worktrees/drain-{id}/.drain-status` |
 | Gitignored markers (`OWNED_BY`, presence) | `Grep` / `Glob` / `git status` / `git worktree list` |
 | Subprocess return | background task-output capture |
 | Crashed-worktree diagnosis | `git -C .claude/worktrees/{id} status / diff / log`; `git show {branch}:<path>` for committed content |
