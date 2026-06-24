@@ -17,7 +17,7 @@ Write initial persistent specs for the project's existing features.
 - [ ] **Present to user for review**
 - [ ] **Commit**: `docs: seed persistent feature specs`
 
-If `docs/overview.md` Module Index hasn't grown yet (fresh scaffold, no commits since), defer this task — pick it up after a few feature commits have given doc-sync something to grow.
+**Hard precondition — source-code features must exist.** Specs document features that are *already built*. A fresh / greenfield scaffold (no source code, Module Index empty) has nothing to spec: Task 1 does not apply and is dropped at write time. Pick it up only after feature commits have given doc-sync a grown Module Index to draw from. Forward design before code lives in `docs/overview.md` § Problem + GAP rows via `/super-bootstrap:log` — never a speculative `docs/specs/` file.
 
 ### Task 2: Seed Backlog *(only if `docs/backlog.md` was scaffolded)*
 

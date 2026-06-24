@@ -116,7 +116,7 @@ Rendering protocol: read `assets/phase2-qa-protocol.md` before presenting Q&A. I
 
 7. **Existing `docs/` — current / stale / replace?** (only if `docs/` has files) — Defaults: current and authoritative / potentially stale (flag during doc-sync) / replace during scaffold / other.
 
-8. **Persistent feature specs in `docs/specs/`?** (only if multi-feature signal — not a 3-file CLI or single-purpose lib) — Defaults: yes scaffold + seed via Task 1 of bootstrap-plan / no overkill for this project / other. Cite the signal (e.g. "8 top-level `src/` modules").
+8. **Persistent feature specs in `docs/specs/`?** (only when the repo has **multiple feature modules in source code** to document — not a 3-file CLI or single-purpose lib) — Defaults: yes scaffold + seed via Task 1 of bootstrap-plan / no overkill for this project / other. Cite the **code** signal (e.g. "8 top-level `src/` modules"). **No source files → skip Q8 entirely; `docs/specs/` is N/A** — including a greenfield dispatch-back where `overview.md`/`techstack.md` exist but no code does. Specs document built features; forward design before code accrues as GAP via `/super-bootstrap:log`, never as a speculative spec.
 
 9. **Backlog tracker (`docs/backlog.md`)?** (only if active or maintenance) — Defaults: yes (default for shipping code) / no / other.
 
@@ -192,6 +192,8 @@ docs/
 For each: create if missing, skip if present. Add `.gitkeep` in empty folders. If `docs/` or `.claude/` already exists, nest alongside. Report status per directory.
 
 `docs/specs/` is scaffolded as an empty folder with `.gitkeep`. There is no index file — the folder + filename convention IS the catalog. Spec files are seeded by Task 1 of the bootstrap plan, each opening with `# {Feature Name}` and a one-paragraph intro.
+
+**Hard gate — `docs/specs/` requires source-code features to document.** Q8 gates the question; 3a enforces the answer. Scaffold `docs/specs/` only when the repo has feature modules in source code. **No source files → skip it, even if a stale Q&A answer says yes** (e.g. a greenfield dispatch-back: `overview.md`/`techstack.md` present, no code). A `docs/specs/` file with no built feature behind it is speculative, and invisible to `/super-bootstrap:todo`.
 
 `docs/decisions.md` is **always** scaffolded — copy `assets/decisions-skeleton.md` to `docs/decisions.md` if missing (no substitutions). Starts empty (header + `## Closed Forks` table). Its scope header is pipeline-owned (drift-checked); the table rows are project-owned (never touched).
 
@@ -400,6 +402,7 @@ Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write fro
 The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed backlog` / `Task 3: Cleanup`. Adapt at write time:
 
 - `docs/specs/` NOT scaffolded → drop Task 1
+- No source-code features yet (greenfield / fresh scaffold, Module Index empty) → drop Task 1 — specs document built features; none exist to seed
 - `docs/backlog.md` NOT scaffolded → drop Task 2
 - Re-run with `docs/specs/` already populated → drop Task 1
 - Re-run with `docs/backlog.md` already populated → drop Task 2

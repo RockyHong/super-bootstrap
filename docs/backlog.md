@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-002` · `DEBT-000` · `GAP-001` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-002` · `DEBT-001` · `GAP-001` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -31,9 +31,16 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### BUG-002 — greenfield emits permanent docs/specs/ files + pre-seeds GAP rows, orphaning forward design from todo scan
+### DEBT-001 — bootstrap pipeline has bundled concerns + wrong detection key; needs tier-split + dogfood refactor
 
-**Logged:** 2026-06-24 · **Source:** user, script-captioner greenfield bootstrap (commit c83562d)
-**Problem:** `/super-bootstrap` greenfield (Phase 1-2) writes forward feature specs into `docs/specs/` and pre-seeds GAP rows, violating SKILL.md:9 ("No forward feature list is seeded"). `docs/specs/` is todo-invisible — `/super-bootstrap:todo` scans only `docs/superpowers/specs|plans` + `docs/backlog.md` (todo SKILL.md:3) — so those specs are orphaned from the open-work state a cold session reconstructs. Reproduced in script-captioner: 3 files (`p1-word-bullet-srt.md`, `sentence-segmentation.md`, `aligner-proxy-and-media.md`) have no backlog row and are unreachable by todo. Axiom I (speculative scaffolding before code) + Axiom VII (truth home outside the scanner) both violated.
-**Area:** `plugins/super-bootstrap/skills/super-bootstrap` (greenfield Phase 1-2); interaction with `plugins/super-bootstrap/skills/todo` scan set
-**Prior:** route conflated `docs/specs/` (permanent SSOT, spec-phase only, todo-invisible) with the correct greenfield home for forward design (GAP backlog rows, todo-visible). Fix direction + full repro in `docs/superpowers/scenarios/greenfield-specs-orphaned.md`.
+**Logged:** 2026-06-25 · **Source:** architectural review deferred from BUG-002 session (2026-06-25); separated per Axiom IV (one unit, one goal)
+**Problem:** `/super-bootstrap` greenfield bundles three distinct concerns in one bespoke flow: generic-harness install, tech curation, and product ideation Q&A. Detection keys on code-presence, so a mature-but-undocumented repo gets no overview/techstack seed. The design diverges from the axioms canon and accumulates drift in a 487-line skill with existing forcing-functions (drift-check, migration tables, re-run idempotency). Proposed locked design (grounded in session discussion):
+  1. **Unified detection** — key on SEED-DOC presence (overview.md + techstack.md present and substantive?), not code-presence. Absent → install + seed; present → skip to curation. Collapses the complex Phase-0 greenfield gate.
+  2. **Two-tier harness install** — TIER-1: generic (CLAUDE.md frame + todo/log pipeline + empty backlog + docs/superpowers/ skeleton; tech-agnostic, installs first on any no-seed-doc repo). TIER-2: tech curation (resolve-plugins, tech-specific rules, release skill; runs after techstack.md exists). CLAUDE.md write relocates out of harness-bootstrap scaffold into tier-1 (single write); harness-bootstrap reduces to tier-2 curation only.
+  3. **Bootstrap writes zero product content** — greenfield seeds exactly 2 GAP cards: "pin down product overview" and "decide techstack" (blocked on the overview card). Generic-titled; product idea captured at PICKUP via brainstorm, not at bootstrap. The bespoke Phase-1 ideation Q&A dissolves into "the first brainstorm reached through the normal door". Dogfood: bootstrap uses its own pipeline (log → todo → brainstorm) to establish the product.
+  4. **Method routed at PICKUP not capture** — cards carry `Prior: HINT` (not locked route); triage decides: no code → brainstorm; code present + undocumented → distill-repo-essence. Honors backlog.md's "no phase prescription" principle.
+  5. **Autonomous tier-1, no consent gate** — invoking the command IS consent. One post-hoc heads-up line in done-summary: what was written/changed (CLAUDE.md, settings.json) + "review with git diff". Disclosure + reconciliation-enabler for users with existing harness taste.
+  6. **Two silent correctness moves** (not gates): git-init if absent (so the promised git diff exists); re-run idempotency (detect existing cards, don't re-spawn them).
+  Non-goals: no roadmap tier (parallel truth home rots; cards are transient + self-consuming); no clobber gate (uncommitted hand-authored config overwritten = user's risk).
+**Area:** `plugins/super-bootstrap/skills/super-bootstrap/SKILL.md` + `plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md`
+**Prior:** design locked in session dialogue grounded in axioms canon (2026-06-25); pickup warrants grounding + spec + plan phases given scope (487-line skill restructure, migration tables, re-run idempotency, drift-check forcing-functions all in play).
