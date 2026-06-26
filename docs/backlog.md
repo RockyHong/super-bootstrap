@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-002` · `DEBT-001` · `GAP-001` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-002` · `DEBT-002` · `GAP-001` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,5 +30,12 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### DEBT-002 — doc-sync propagation-closure sweep scoped to plugins/, misses root-level pipeline-touchable files
+
+**Logged:** 2026-06-27 · **Source:** DEBT-001 bootstrap tier-split refactor session, caught at /release step (commit 1e724a2)
+**Problem:** Doc-sync / refactor propagation-closure greps cover `plugins/` but not root-level files. `marketplace.json` `plugins[0].description` staled after the DEBT-001 tier-split refactor; fixed in 1e724a2, but the sweep scope gap recurs on any future behavior refactor that changes what the plugin or marketplace descriptions narrate.
+**Area:** doc-sync procedure; `.claude-plugin/marketplace.json`, root `README.md`
+**Prior:** Sweep grep pattern hard-scoped to `plugins/` — extend coverage to root-level pipeline-touchable files.
 
 *(seeded as items are surfaced during reviews, audits, or development)*
