@@ -1,154 +1,49 @@
 ---
 name: super-bootstrap
-description: "Public entry for the super-bootstrap pipeline. Detects greenfield repos and runs lean ideation Q&A — produces overview.md, techstack.md, and an empty backlog.md — then dispatches to /super-bootstrap:harness-bootstrap to install the harness. For repos with code, dispatches immediately. Solo dev workflow."
-tags: [bootstrap, scaffold, ideation, greenfield, gate, meta]
+description: "Public entry for the super-bootstrap pipeline — thin orchestrator. Git-inits if absent, runs two-axis detection, then dispatches /super-bootstrap:harness-bootstrap to install or sync the generic runway (always). On greenfield it seeds two GAP cards via /super-bootstrap:log and stops at the resolve gate; on substantive seed docs it runs gated tier-2 tech curation (resolve-plugins + tech rules + release-init). Zero product prework. Solo dev workflow."
+tags: [bootstrap, orchestrator, detect, gate, curation, meta]
 ---
 
-# Super Bootstrap — Public Entry, Greenfield-Aware
+# Super Bootstrap — Public Entry, Thin Orchestrator
 
-The single command users invoke. Inspects the repo, decides whether ideation is needed, and dispatches to `/super-bootstrap:harness-bootstrap`. Greenfield repos get lean ideation first — `overview.md` + `techstack.md` + empty `backlog.md` — then harness-bootstrap proceeds. Backlog owns BUG/DEBT/GAP — including unverified feature ideas as GAP rows; it ships empty and fills via `/super-bootstrap:log` as work surfaces items. No forward feature list is seeded — greenfield pivots fast; ideas accrue as GAP through `/super-bootstrap:log` when they crystallize.
+The single command users invoke. Orchestrates — detect, route, dispatch, integrate — and owns no install procedure itself: scaffolding lives in the generic runway, [`/super-bootstrap:harness-bootstrap`](../harness-bootstrap/SKILL.md). The entry writes no product content and asks no product questions. `overview.md` / `techstack.md` / `backlog.md` are scaffolded by the runway; their product content fills later at GAP-card pickup.
 
-## Phase 0: Detect greenfield
+## Orchestration spine
 
-Mirror Phase 1 detection from `/super-bootstrap:harness-bootstrap` (manifest scan, source-file scan, README assessment) but invert the conclusion.
+1. **Git-init** if absent (correctness move).
+2. **Detect** — Axis A (harness present?) + Axis B (seed docs substantive?).
+3. **Dispatch the runway** — `/super-bootstrap:harness-bootstrap` (generic, always).
+4. **Greenfield branch** (Axis B not substantive) — seed 2 GAP cards via `/super-bootstrap:log`, stop at the resolve gate.
+5. **Substantive branch** (Axis B substantive) — gated tier-2 tech curation.
+6. **Disclose** — one post-hoc heads-up line.
 
-**Greenfield = ALL of:**
-- No manifest at repo root (no `package.json` / `pyproject.toml` / `requirements.txt` / `Cargo.toml` / `go.mod` / `Gemfile` / `pom.xml` / `build.gradle` / `composer.json` / `pubspec.yaml` / `CMakeLists.txt` / `Makefile` / `*.csproj` / `*.sln` — illustrative).
-- No source files of any extension (excluding `.md`, `.txt`, `.gitignore`, `LICENSE`).
-- No `README.md` OR `README.md` has fewer than 3 substantive lines (lines that aren't headings, blank, or boilerplate badges).
-- No `docs/overview.md` AND no `docs/techstack.md` (if these exist from a prior `/super-bootstrap` greenfield run, treat as non-greenfield — pick up where left off, dispatch to harness).
+## Git-init (correctness move)
 
-If ANY condition fails (a manifest exists, OR a source file exists, OR README has 3+ substantive lines, OR seed docs exist) → **non-greenfield**, skip to Phase 3 (dispatch).
+If the repo is not a git repo (`git rev-parse --git-dir` fails), run `git init` first — so the runway's writes land on a tracked tree and the promised post-hoc `git diff` exists. Silent move: one log line, no gate.
 
-If the user invoked `/super-bootstrap:harness-bootstrap` directly on a truly empty repo, harness-bootstrap redirects here. The redirect is one-way: this skill seeds, then dispatches back. No ping-pong.
+## Detect — two axes
 
-## Phase 1: Greenfield ideation Q&A
+Two independent axes answering different questions, driving different branches.
 
-Lean — match the harness skeleton sections only. Don't pre-fill grown sections (Architecture Rules / Coding Patterns / Module Index / Data Flow / Key Boundaries) — those grow from real code via doc-sync, not from speculation.
+**Axis A — harness artifacts present?** Check `CLAUDE.md` + `.claude/rules/` + `docs/superpowers/`. Absent → the runway installs fresh. Present → the runway syncs (idempotent drift). Either way **the runway always runs** — Axis A only colors install-vs-sync, it never gates the dispatch.
 
-### Render surface
+**Axis B — seed docs substantive?** Check whether `docs/overview.md` + `docs/techstack.md` carry content **filled beyond the skeleton placeholders** — substantive product content, not mere file presence. The runway writes these as empty skeletons on greenfield, so a file-exists test would misread an empty skeleton as "documented," skip GAP-card seeding, and loop. Substantive = the product sections (`overview.md` Problem / User / Current State, `techstack.md` Runtime / Framework) carry real content past the placeholder text — mirror the "≥3 substantive lines" notion (lines that aren't headings, blank, or placeholder).
 
-MCQ-shape (≤4 discrete options, no free text) → AskUserQuestion popup, one Q or small batch per call. Free text (Q1, Q6) + synthesis confirm → chat. Popup tool unavailable → fall back to chat-rendered MCQ, shape rules unchanged.
+Axis B is the **product-content** axis: it drives GAP-card seeding + the tier-2 gate, and never decides whether the harness syncs — that is Axis A. A documented-but-stale repo still gets runway sync.
 
-### Required questions
+## Dispatch the runway (always)
 
-1. **What is this project? What problem does it solve?** — One paragraph in user's words. Feeds `overview.md` § Problem.
+After git-init + detect, invoke `/super-bootstrap:harness-bootstrap` via the Skill tool. The runway installs (fresh, Axis A absent) or syncs (drift, Axis A present) the generic harness — CLAUDE.md, skeleton docs, path-scoped rules, core plugin pins — and returns "runway installed/synced + committed." Then branch on Axis B.
 
-2. **Who uses it?** — End users / developers / internal team / library consumers / other. Feeds `overview.md` § User.
+## Greenfield branch — seed GAP cards + gate (Axis B not substantive)
 
-3. **Stack framing — pick a direction.** Based on Q1 + Q2, propose 2-3 stack options with one-line trade-offs each. LLM-driven proposal — judge the project category (web app / CLI / library / mobile / data pipeline / extension / desktop / other) and propose stacks fit for that category.
+> [GAP-card seeding via `/super-bootstrap:log` — Task 5]
+> [Resolve gate + dogfood handoff — Task 4/5]
 
-   Example shape (illustrative — adapt the actual options to the project):
+## Substantive branch — gated tier-2 tech curation (Axis B substantive)
 
-   ```
-   Detected category: web app, single-user, docs-heavy.
+> [Gate + tier-2 curation (resolve-plugins + tech rules + release-init) — Task 4]
 
-   Stack options:
+## Disclosure (post-hoc)
 
-     (a) Next.js 14 + Postgres + Vercel
-         + Fast to prototype, good DX, strong ecosystem
-         − SSR complexity if pivoting to static / SPA later
-
-     (b) SvelteKit + SQLite + Cloudflare Pages
-         + Lighter runtime, edge-friendly, simpler mental model
-         − Smaller ecosystem, fewer hires-ready devs (irrelevant solo)
-
-     (c) Astro + MD content + GitHub Pages
-         + Cheapest to host, content-first, zero backend
-         − Locked out of dynamic features without rework
-
-   Pick (a/b/c), or describe alternative.
-   ```
-
-   User picks → feeds `techstack.md` § Runtime + § Framework + § Build & Distribution.
-
-4. **External tools in your workflow?** — Multi-select. GitHub-only / Notion / Linear / Jira / Slack / Trello / ClickUp / other. Default GitHub-only. (Same as `/super-bootstrap:harness-bootstrap` Phase 2 Q4 — feeds Phase 3c MCP curation when harness runs.)
-
-### Optional follow-up
-
-5. **Distribution channel?** — Where does this ship? npm / PyPI / cargo / web / app store / private / other. Feeds `techstack.md` § Build & Distribution.
-
-6. **ICP one-liner?** — Ideal customer / user one-liner if Q2 didn't capture it. Optional. Feeds `overview.md` § User as an addendum.
-
-Stop at Q6. Route feature/architecture discovery to doc-sync once code lands. Greenfield product ideation is in scope; product discovery (market research, PRD generation) is not — this skill stops at "harness has fuel."
-
-### Confirmation
-
-After Q&A, surface a one-line synthesis and one yes/no:
-
-```
-Project: {Q1 summary}
-User: {Q2 summary}
-Stack: {Q3 pick}
-Tools: {Q4 list}
-Distribution: {Q5 if asked}
-
-Sound right? (y / push back to fix specific item)
-```
-
-Wait for confirmation before writing files.
-
-## Phase 2: Write seed files
-
-Three files. Each writes to its target path with placeholders filled from Q&A.
-
-### `docs/overview.md`
-
-Load `../harness-bootstrap/assets/overview-skeleton.md` (relative to this SKILL.md); fill placeholders:
-
-- `<!-- harness-meta -->` block `external-tools:` ← Q4 multi-select answer as YAML list (e.g. `[github, notion]`; default `[github]`). Keep comment block at top; `/super-bootstrap:resolve-plugins` Phase 1 reads it as Tier-2 fallback when no pinned MCPs encode workflow signal.
-- `## Problem` body ← Q1 answer.
-- `## User` body ← Q2 answer (+ Q6 if asked).
-- `## Current State` body ← `greenfield` (literal — this is a fresh repo).
-- `## Module Index`, `## Data Flow`, `## Key Boundaries` → keep as empty grown sections per skeleton — they fill via doc-sync once code lands.
-
-If `docs/` doesn't exist, create it. If `docs/overview.md` already exists (re-run during ideation), present diff and ask before overwriting.
-
-### `docs/techstack.md`
-
-Load `../harness-bootstrap/assets/techstack-skeleton.md` (relative to this SKILL.md); fill placeholders:
-
-- `## Runtime` ← stack pick's runtime line (e.g. "Node.js 20+ (ESM)").
-- `## Framework` ← stack pick's framework (e.g. "Next.js 14"). Drop the section if the user picked a no-framework option.
-- `## Key Dependencies` ← top-level deps implied by the stack pick. Brief grouping (runtime / dev / test / build) with placeholder names if specifics aren't yet decided ("Tailwind for styling, TypeScript for types" rather than exhaustive list — this is a seed, not a manifest).
-- `## Build & Distribution` ← commands implied by the stack pick (e.g. "`pnpm dev` / `pnpm build` / `vercel deploy`"). Mark as "to be confirmed when scaffolded" if commands aren't standard.
-- `## Architecture Rules`, `## Coding Patterns` → keep as empty grown sections per skeleton.
-
-### `docs/backlog.md`
-
-Load `../harness-bootstrap/assets/backlog.md` (relative to this SKILL.md); copy unchanged — empty `## Open` section, no seed item.
-
-Backlog owns BUG/DEBT/GAP — bugs, debt, design gaps, and unverified feature ideas (logged as GAP). Greenfield ships an empty backlog; items accrue via `/super-bootstrap:log` as the build surfaces them.
-
-If `docs/backlog.md` already exists with content (re-run case), skip this file; warn the user the existing backlog stays.
-
-## Phase 3: Dispatch to `/super-bootstrap:harness-bootstrap`
-
-After seed files are written (greenfield path) or immediately after Phase 0 returns non-greenfield, present a one-line summary and invoke `/super-bootstrap:harness-bootstrap` via the Skill tool. The harness will detect the seed docs (or existing manifest/source), pre-fill its Phase 2 Q&A defaults, and proceed through scaffold → curate → sync → commit.
-
-The handoff is **file-based**: this skill writes the seed docs and exits. `/super-bootstrap:harness-bootstrap` reads them on next invocation. No in-memory state, no tight coupling. User can pause between (ideate today, harness tomorrow) — the seed files persist.
-
-**Greenfield path — after writing seeds:**
-
-```
-Seed files written:
-  - docs/overview.md
-  - docs/techstack.md
-  - docs/backlog.md
-
-Dispatching to /super-bootstrap:harness-bootstrap to install the harness.
-```
-
-Then invoke `/super-bootstrap:harness-bootstrap` via the Skill tool.
-
-**Non-greenfield path — Phase 0 returned non-greenfield:**
-
-```
-Detected non-greenfield repo (manifest + source files present).
-Dispatching to /super-bootstrap:harness-bootstrap.
-```
-
-Then invoke `/super-bootstrap:harness-bootstrap` via the Skill tool.
-
-If the user prefers to invoke harness manually later (e.g. wants to review seed files first), present the option: "Seeds written; ready when you are. Run `/super-bootstrap:harness-bootstrap` to continue, or pause and resume later." The seed files persist; nothing is lost by waiting.
-
+> [Post-hoc disclosure line — Task 6]
