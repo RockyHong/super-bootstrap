@@ -37,8 +37,30 @@ After git-init + detect, invoke `/super-bootstrap:harness-bootstrap` via the Ski
 
 ## Greenfield branch — seed GAP cards + gate (Axis B not substantive)
 
-> [GAP-card seeding via `/super-bootstrap:log` — Task 5]
-> [Resolve gate + dogfood handoff — Task 4/5]
+The runway returned with empty product skeletons. Seed two GAP cards through the capture funnel, then stop at the resolve gate — there is nothing to curate until the product is resolved.
+
+**Idempotency guard (run first).** Read `docs/backlog.md`. If GAP cards for the overview and techstack skeletons are already present (match on the card summary text — IDs are minted by `/log`), skip seeding and log "GAP cards already seeded." Re-run stays safe.
+
+**Seed via [`/super-bootstrap:log`](../log/SKILL.md)** — one invocation, both observations batched (never hand-write backlog rows):
+
+- `pin down product overview — docs/overview.md is an unfilled skeleton`
+- `decide techstack — docs/techstack.md is an unfilled skeleton; blocked on the overview card`
+
+Each classifies GAP. The funnel mints IDs, dedups, and fills Source (`/super-bootstrap bootstrap`) and Area (`docs/overview.md` / `docs/techstack.md`) from the observation text. Carry `Prior:` as a **hint, not a locked route**:
+
+```
+Prior: no source code → brainstorm; source present + undocumented → distill-repo-essence
+```
+
+This honors the backlog's no-phase-prescription rule — triage decides the method at pickup.
+
+**Resolve gate — stop here.** After seeding, surface the dogfood handoff and stop. Nothing to curate yet:
+
+```
+Generic harness installed. Two GAP cards seeded (overview, techstack).
+Resolve them via /super-bootstrap:todo → brainstorm (no code) / distill-repo-essence (code present).
+Once overview.md + techstack.md are filled, re-run /super-bootstrap for tech curation.
+```
 
 ## Substantive branch — gated tier-2 tech curation (Axis B substantive)
 
