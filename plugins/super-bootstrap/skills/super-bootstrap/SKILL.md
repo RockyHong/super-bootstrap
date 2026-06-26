@@ -15,7 +15,7 @@ The single command users invoke. Orchestrates — detect, route, dispatch, integ
 3. **Detect** — are the seed docs substantive?
 4. **Greenfield branch** (not substantive) — seed 2 GAP cards via `/super-bootstrap:log`, stop at the resolve gate.
 5. **Substantive branch** — gated tier-2 tech curation.
-6. **Disclose** — one post-hoc heads-up line.
+6. **Disclose** — one post-hoc heads-up line (substantive branch; the greenfield branch's resolve gate is its disclosure).
 
 ## Git-init (correctness move)
 
@@ -40,7 +40,7 @@ The runway returned with empty product skeletons. Seed two GAP cards through the
 **Seed via [`/super-bootstrap:log`](../log/SKILL.md)** — one invocation, both observations batched, passing Source context `/super-bootstrap bootstrap` in the dispatch:
 
 - `pin down product overview — docs/overview.md is an unfilled skeleton; resolve at pickup via brainstorm (no source code) or distill-repo-essence (code present, undocumented)`
-- `decide techstack — docs/techstack.md is an unfilled skeleton; blocked on the overview card`
+- `decide techstack — docs/techstack.md lacks product + architecture context (manifest facts auto-filled where a manifest exists); blocked on the overview card`
 
 Each classifies GAP; the funnel mints IDs, dedups, and fills Area (`docs/overview.md` / `docs/techstack.md`). The pickup-routing hint rides in the observation text, not a `Prior:` route — triage owns the method.
 

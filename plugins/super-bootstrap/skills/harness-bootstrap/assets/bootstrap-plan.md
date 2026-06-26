@@ -2,7 +2,7 @@
 
 **Goal:** Final adaptive seeding + cleanup for {project name}
 
-**Context:** Pipeline scaffolded on {date}. CLAUDE.md is live. `docs/techstack.md` and `docs/overview.md` are seeded skeletons — skeleton sections (Runtime / Framework / Build & Dist / Problem / User / State) carry detected facts; grown sections (Architecture Rules / Coding Patterns / Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync as code lands. Core plugin pins (superpowers + karpathy) sit in `.claude/settings.json`; stack-matched skill / MCP / hook curation runs as gated tier-2 via `/super-bootstrap` once the seed docs are substantive.
+**Context:** Pipeline scaffolded on {date}. CLAUDE.md is live. `docs/techstack.md` and `docs/overview.md` are seeded skeletons — `techstack.md` Runtime / Framework / Build & Dist carry detected manifest facts; `overview.md` Problem / User / Current State start empty and fill at GAP-card pickup; grown sections (Architecture Rules / Coding Patterns / Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync as code lands. Core plugin pins (superpowers + karpathy) sit in `.claude/settings.json`; stack-matched skill / MCP / hook curation runs as gated tier-2 via `/super-bootstrap` once the seed docs are substantive.
 
 These tasks complete optional adaptive seeding (only the ones whose docs the runway scaffolded) and final bootstrap cleanup.
 
@@ -19,7 +19,7 @@ Write initial persistent specs for the project's existing features.
 
 **Hard precondition — source-code features must exist.** Specs document features that are *already built*. A fresh / greenfield scaffold (no source code, Module Index empty) has nothing to spec: Task 1 does not apply and is dropped at write time. Pick it up only after feature commits have given doc-sync a grown Module Index to draw from. Forward design before code lives in `docs/overview.md` § Problem + GAP rows via `/super-bootstrap:log` — never a speculative `docs/specs/` file.
 
-### Task 2: Seed Backlog *(only if `docs/backlog.md` was scaffolded)*
+### Task 2: Seed Backlog
 
 Walk the project once and seed any obvious deferred items already visible in code or recent history.
 
