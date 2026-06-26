@@ -82,7 +82,7 @@ If user answers `dry-run`, walk Phases 1–2b without writing — render the syn
 
 ---
 
-The runway scaffolds with no product Q&A. Phase 1 manifest detection feeds the techstack skeleton with stack facts; product content (Problem / User / Current State) is filled later at GAP-card pickup, not at install. Drift on existing files is resolved inline per-section at Phase 2b.
+The runway scaffolds with no product Q&A. Drift on existing files is resolved inline per-section at Phase 2b.
 
 ---
 
@@ -146,7 +146,7 @@ For each: create if missing, skip if present. Add `.gitkeep` in empty folders. I
 
 `docs/decisions.md` is **always** scaffolded — copy `assets/decisions-skeleton.md` to `docs/decisions.md` if missing (no substitutions). Starts empty (header + `## Closed Forks` table). Its scope header is pipeline-owned (drift-checked); the table rows are project-owned (never touched).
 
-If `docs/backlog.md` is scaffolded, copy `assets/backlog.md` to `docs/backlog.md` (no substitutions).
+Copy `assets/backlog.md` to `docs/backlog.md` if missing (no substitutions).
 
 `.claude/rules/` machinery is **always** scaffolded (zero-cost when empty). `index.md` is seeded from `assets/rules-index-skeleton.md`. Individual rule bodies fill in Phase 2b based on Phase 1 signal detection.
 
@@ -199,7 +199,7 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 |---|---|---|
 | `assets/claude-md-skeleton.md` | `CLAUDE.md` (project root) | Includes Rules summary section — fill bullets from seeded rule files |
 | `assets/techstack-skeleton.md` | `docs/techstack.md` | Coding Patterns grown section absorbs migrated CLAUDE.md content |
-| `assets/overview-skeleton.md` | `docs/overview.md` | `<!-- harness-meta -->` block at top: seed `external-tools:` as a YAML list defaulting to `[github]`. Read by `/super-bootstrap:resolve-plugins` (tier-2 curation) as the external-tools source; tier-2 updates it when the user names other tools. Treat as pipeline-owned for drift checks. |
+| `assets/overview-skeleton.md` | `docs/overview.md` | `<!-- harness-meta -->` block at top: seed `external-tools:` as a YAML list defaulting to `[github]`. Read by `/super-bootstrap:resolve-plugins` (tier-2 curation) as the external-tools source. Update manually or via the entry skill when the tool list changes. Treat as pipeline-owned for drift checks. |
 | `assets/decisions-skeleton.md` | `docs/decisions.md` | Always — scope header pipeline-owned (drift-checked), `## Closed Forks` table rows project-owned |
 | `assets/bootstrap-plan.md` | `docs/superpowers/plans/bootstrap.md` | |
 | `assets/rules-index-skeleton.md` | `.claude/rules/index.md` | Always — machinery |
@@ -354,7 +354,6 @@ The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed backlog` / `Task 3
 
 - `docs/specs/` NOT scaffolded → drop Task 1
 - No source-code features yet (greenfield / fresh scaffold, Module Index empty) → drop Task 1 — specs document built features; none exist to seed
-- `docs/backlog.md` NOT scaffolded → drop Task 2
 - Re-run with `docs/specs/` already populated → drop Task 1
 - Re-run with `docs/backlog.md` already populated → drop Task 2
 - Add tasks for any project-specific needs surfaced during Phase 1 detection
