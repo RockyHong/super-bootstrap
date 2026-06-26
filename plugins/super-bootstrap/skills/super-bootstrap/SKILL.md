@@ -75,4 +75,10 @@ The gate between the runway and tier-2 is Axis B: substantive proceeds here; not
 
 ## Disclosure (post-hoc)
 
-> [Post-hoc disclosure line — Task 6]
+Invoking the command is consent — there is no upfront proceed gate. After the runway (and tier-2 if it ran), the done-summary carries one heads-up line pointing the user at the diff:
+
+```
+Wrote/changed: CLAUDE.md, .claude/settings.json, docs/ skeletons{, rules}. Review with `git diff` (or `git diff HEAD~N`).
+```
+
+Forward navigation: tells the user where to look. Covers users who carry their own harness taste — reconciliation is `git diff`, not a gate.
