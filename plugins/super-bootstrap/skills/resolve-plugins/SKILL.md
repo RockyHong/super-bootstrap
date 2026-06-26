@@ -1,16 +1,16 @@
 ---
 name: resolve-plugins
-description: "Curate Claude Code skill / MCP / hook picks against live upstream sources and pin them in .claude/settings.json. Reads stack from docs/techstack.md, workflow signal from docs/overview.md + existing pins, then live-queries six source pools, dedupes, scores trust tier, presents diff vs pinned, writes settings.json. Standalone refresh path; also delegated from /super-bootstrap:harness-bootstrap Phase 3c. Solo dev workflow. Requires `docs/techstack.md` (seeded by `/super-bootstrap:harness-bootstrap`)."
+description: "Curate Claude Code skill / MCP / hook picks against live upstream sources and pin them in .claude/settings.json. Reads stack from docs/techstack.md, workflow signal from docs/overview.md + existing pins, then live-queries six source pools, dedupes, scores trust tier, presents diff vs pinned, writes settings.json. Standalone refresh path; also run as gated tier-2 curation by /super-bootstrap. Solo dev workflow. Requires `docs/techstack.md` (seeded by `/super-bootstrap:harness-bootstrap`)."
 tags: [plugins, curation, mcp, skills, settings, meta]
 ---
 
 # Resolve Plugins — Curate & Pin
 
-Curate Claude Code skill / MCP / hook picks against live upstream sources and write them to `.claude/settings.json`. Designed for two callers: standalone refresh (`/super-bootstrap:resolve-plugins`) and harness delegation (`/super-bootstrap:harness-bootstrap` Phase 3c).
+Curate Claude Code skill / MCP / hook picks against live upstream sources and write them to `.claude/settings.json`. Designed for two callers: standalone refresh (`/super-bootstrap:resolve-plugins`) and gated tier-2 curation (run by `/super-bootstrap` once seed docs are substantive).
 
 ## When to Use
 
-Caller: standalone refresh (`/super-bootstrap:resolve-plugins`) or harness delegation (Phase 3c of `/super-bootstrap:harness-bootstrap`). Same execution path.
+Caller: standalone refresh (`/super-bootstrap:resolve-plugins`) or gated tier-2 curation (run by `/super-bootstrap` once seed docs are substantive). Same execution path.
 
 ---
 
@@ -31,9 +31,9 @@ Don't silently scan manifests — manifest detection is harness's job. Doing it 
 ### Workflow-tools signal (priority order)
 
 1. **Existing `.claude/settings.json` pinned MCPs** — Notion MCP pinned → docs-heavy workflow. Linear MCP pinned → ticket-driven. Slack MCP pinned → team comm. Etc. Strong signal — user already explicitly enabled the tool.
-2. **`<!-- harness-meta -->` block in `docs/overview.md`** — structured record of Q4 (external tools) answer from harness Q&A. Parse the YAML `external-tools:` list. Strong signal — grounded in user-confirmed Q&A, not inference. Robust to prose drift.
+2. **`<!-- harness-meta -->` block in `docs/overview.md`** — structured `external-tools:` record (seeded `[github]` by the runway, updated manually or via the entry skill). Parse the YAML `external-tools:` list. Strong signal — committed in the docs, not inferred. Robust to prose drift.
 3. **Keyword scan of `docs/overview.md` prose** — phrases like "Notion docs", "Linear tickets", "Slack standup". Weak signal, brittle, but cheap. Fallback only when (1) and (2) absent (e.g. legacy harness-bootstrapped repos predating the meta block).
-4. **Prompt user once** with the same MCQ as `/super-bootstrap:harness-bootstrap` Phase 2 Q4 if none of (1)–(3) yields signal:
+4. **Prompt user once** with the external-tools MCQ below if none of (1)–(3) yields signal:
 
    > External tools in your workflow? GitHub-only / Notion / Linear / Jira / Slack / Trello / ClickUp / other (multi-select).
 
@@ -161,12 +161,12 @@ Two harness core deps:
 - `superpowers@claude-plugins-official`
 - `andrej-karpathy-skills@karpathy-skills` — requires `karpathy-skills` entry in `extraKnownMarketplaces` (source: `github` / `forrestchang/andrej-karpathy-skills`).
 
-`/super-bootstrap:harness-bootstrap` Phase 3a pins both pre-resolve.
+`/super-bootstrap:harness-bootstrap` Phase 2a pins both pre-resolve.
 
 **Harness-active marker:** `docs/superpowers/` directory exists in the repo. Detect with one Glob.
 
 - **Harness-active + pinned + present** → keep silently, do not surface in batch.
-- **Harness-active + pin absent** (user manually removed; or fresh harness call hadn't reached Phase 3a yet) → **propose re-pin** as a locked core dep, short message: "core dep missing, re-pinning so CLAUDE.md routes / triggers resolve." User can decline only with explicit override; flag what breaks (superpowers → `/brainstorm` etc; karpathy-skills → § Coding Principles trigger rule misfires silently).
+- **Harness-active + pin absent** (user manually removed; or fresh harness call hadn't reached Phase 2a yet) → **propose re-pin** as a locked core dep, short message: "core dep missing, re-pinning so CLAUDE.md routes / triggers resolve." User can decline only with explicit override; flag what breaks (superpowers → `/brainstorm` etc; karpathy-skills → § Coding Principles trigger rule misfires silently).
 - **Not harness-active** (no `docs/superpowers/` folder — standalone curation on a non-harness repo) → no core lock applies. Both core deps, if present, are treated as regular adaptive picks the user may drop.
 - Locked picks: never propose drop, never re-fetch trust signals (superpowers Anthropic-vetted; karpathy-skills locked by harness contract — `~150-line MIT skill, single-author repo, license + behavior pinned by harness contract`).
 

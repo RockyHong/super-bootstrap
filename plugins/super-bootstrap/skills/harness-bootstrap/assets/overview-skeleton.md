@@ -1,22 +1,23 @@
 # Overview
 
-<!-- harness-meta: read by /super-bootstrap:resolve-plugins. Keep YAML shape; list values in [...].
-external-tools: [{Q4 multi-select: github, notion, linear, jira, slack, trello, clickup, other}]
+<!-- harness-meta: read by /super-bootstrap:resolve-plugins (tier-2 curation). Keep YAML shape; list values in [...].
+Default [github]; add any of: notion, linear, jira, slack, trello, clickup, other.
+external-tools: [github]
 -->
 
-> Living doc. Skeleton sections (Problem / User / Current State) seeded at scaffold from Q&A answers. Grown sections (Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync — every commit that adds, removes, or reshapes a module triggers a sync proposal. See `CLAUDE.md` Doc Sync.
+> Living doc. Skeleton sections (Problem / User / Current State) start empty at scaffold and fill at GAP-card pickup. Grown sections (Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync — every commit that adds, removes, or reshapes a module triggers a sync proposal. See `CLAUDE.md` Doc Sync.
 
 ## Problem
 
-{from Q&A: "what does this project do?" — one paragraph in the user's words, what problem it solves and why it exists}
+{what problem this project solves and why it exists — one paragraph; filled at GAP-card pickup}
 
 ## User
 
-{from Q&A: "who uses it?" — end users / developers / internal tool / library consumers / etc.}
+{who uses it — end users / developers / internal tool / library consumers / etc.; filled at GAP-card pickup}
 
 ## Current State
 
-{from Q&A: greenfield / active development / maintenance / mid-rewrite — short phrase capturing where the project is today}
+{where the project is today — greenfield / active development / maintenance / mid-rewrite; filled at GAP-card pickup}
 
 ## Module Index
 

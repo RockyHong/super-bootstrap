@@ -6,8 +6,8 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 
 > Index only — what exists, one line each. **Canonical per-skill contract = that skill's `SKILL.md` frontmatter `description:`.** Edit behavior there; this list follows.
 
-- `super-bootstrap` — public entry, greenfield gate, dispatches to `harness-bootstrap`.
-- `harness-bootstrap` — installs/syncs the harness (CLAUDE.md, skeleton docs, rules, picks).
+- `super-bootstrap` — public entry, thin orchestrator; dispatches the runway, seeds greenfield GAP cards, gates tier-2 curation.
+- `harness-bootstrap` — installs/syncs the generic runway (CLAUDE.md, skeleton docs, rules, core pins).
 - `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`.
 - `todo` — intent-filtered board scanner; dispatches `agents/todo.md` (Sonnet).
 - `log` — capture front door for backlog rows; dispatches `agents/log.md` (Sonnet).
@@ -50,7 +50,7 @@ A single matching reason on either side decides.
 
 | Skill | Mode | Rationale |
 |---|---|---|
-| `super-bootstrap` | inline | Greenfield Q&A throughout |
+| `super-bootstrap` | inline | Orchestrator — owns the user thread + dispatch sequencing across runway / log / curation |
 | `harness-bootstrap` | inline | Phased scaffolding with mid-flow user steering |
 | `resolve-plugins` | inline (dispatch candidate) | 6-pool live queries are context-heavy; user-interactive on diff confirm. Revisit. |
 | `commit` | inline | Session-aware (transcript memory + doc-sync Q&A) |
@@ -67,8 +67,8 @@ When adding a new skill: update this table. This table is the only home for inli
 
 When skills overlap in concern, one is canonical and others delegate:
 
-- **Plugin curation logic** (source pool list, trust tiers, dedupe, settings.json write) — lives ONLY in `resolve-plugins/SKILL.md`. `harness-bootstrap` Phase 3c delegates.
-- **Greenfield ideation Q&A** — lives ONLY in `super-bootstrap/SKILL.md`. `harness-bootstrap` redirects empty repos here.
+- **Plugin curation logic** (source pool list, trust tiers, dedupe, settings.json write) — lives ONLY in `resolve-plugins/SKILL.md`. `/super-bootstrap` invokes it as gated tier-2 curation.
+- **Greenfield product-seeding** (GAP-card seeding + resolve gate) — lives ONLY in `super-bootstrap/SKILL.md`. `harness-bootstrap` runs the runway on greenfield directly (no redirect); product content fills at GAP-card pickup.
 - **Files-as-contract handoff** — skills communicate via committed docs (`docs/overview.md`, `docs/techstack.md`, `.claude/settings.json`), not in-memory state. Lets each skill run standalone.
 - **Item classification** (cloud-safe criterion, action-verb intent map, per-source `{action, intent, stage}` derivation) — lives ONLY in `shared/classify-actionable.md`. Both `todo` (ranks + renders) and `drain` (gates + spawns) embed it verbatim at dispatch; neither restates it. Downstream of classification — ranking/render (todo), wave-select/spawn (drain) — stays in each skill's own home.
 - **Worktree-drain infra** (settings template, Read-hook, `.claude/worktrees/` gitignore) — frozen assets in `skills/drain/assets/`, installed into consumer repos by `drain`'s `ensure-infra` (idempotent copy/merge); the subprocess boundary anchor rides the dispatch prompt, not the repo. `harness-bootstrap` opt-in seed delegates to that same procedure — one install home, no second copy.

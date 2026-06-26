@@ -1,6 +1,6 @@
 # Skeleton Rename Map
 
-Tracks pipeline-owned literal renames so Phase 3b can spot literals that
+Tracks pipeline-owned literal renames so Phase 2b can spot literals that
 per-section diff misses. When a slash command (or other inline literal)
 renames, the surrounding template may stay shaped the same — only the
 literal inside changed — and per-section diff returns `✓ matches`. This

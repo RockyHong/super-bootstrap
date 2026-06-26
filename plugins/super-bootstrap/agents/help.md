@@ -55,9 +55,9 @@ Available slash commands ({N} total):
   /super-bootstrap
       Bootstrap or sync the superpowers pipeline. (When: fresh repo / syncing harness.)
   /super-bootstrap:harness-bootstrap
-      Install harness in a repo with code already present. (When: existing repo, want pipeline + skeleton docs.)
+      Install or sync the harness in any repo (greenfield or code present). (When: install/refresh the pipeline + skeleton docs.)
   /super-bootstrap:resolve-plugins
-      Curate skill / MCP / hook picks against live sources. (When: refresh picks; called from harness Phase 3c.)
+      Curate skill / MCP / hook picks against live sources. (When: refresh picks; gated tier-2 curation run by `/super-bootstrap`.)
 
 [pipeline]
   /super-bootstrap:todo

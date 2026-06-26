@@ -50,4 +50,4 @@ Durable harness config, not a temporal pipeline artifact — so no cleaner:
 
 ## Optional delegated seed
 
-`harness-bootstrap` may call this same procedure during install when the user opts in (most dev repos drain; skill/plugin repos decline). That path delegates here — one home for the install logic, no second copy. See `harness-bootstrap/SKILL.md §Phase 3a (drain infra opt-in)`.
+`harness-bootstrap` may call this same procedure during install when the user opts in (most dev repos drain; skill/plugin repos decline). That path delegates here — one home for the install logic, no second copy. See `harness-bootstrap/SKILL.md §Phase 2a-drain (drain infra opt-in)`.
