@@ -137,6 +137,8 @@ Replace `## Phase 0: Detect greenfield` with `## Detect — two axes`:
 
 State explicitly: Axis B is the **product-content** axis; it never decides whether the harness syncs (that is Axis A). This is the fix for the updater path — a documented-but-stale repo still gets runway sync.
 
+> **BINDING (audit seam 1, Finding 1):** Axis B MUST test *substantive content*, not file-existence. The runway writes `overview.md`/`techstack.md` as **empty skeletons** on greenfield — a mere file-exists check would misread them as "documented," skip GAP-card seeding, and dispatch to harness-bootstrap in a loop (the old Phase 0 bug). The harness-bootstrap handoff already promises "`/super-bootstrap` seeds GAP cards + surfaces the gate" — Tasks 4-5 are the contract that makes that pointer true. The old "files exist → non-greenfield" line MUST be deleted, not adapted.
+
 - [ ] **Step 3: Add git-init correctness move**
 
 At the top of the flow: if the repo is not a git repo (`git rev-parse --git-dir` fails), run `git init`. Silent correctness move — so the promised post-hoc `git diff` exists. One log line, no gate.
@@ -333,11 +335,20 @@ git commit -m "chore(harness-bootstrap): rename-map entries for tier-split rot s
 - Modify: `docs/backlog.md` (delete DEBT-001 row)
 - Audit: both `SKILL.md` files
 
-- [ ] **Step 1: Doc-sync the flow narration**
+- [ ] **Step 1: Doc-sync the full propagation closure**
 
-Grep the plugin README + `plugin.json` description for old-flow language ("greenfield ideation Q&A", "seed docs", the old dispatch story). Update to the tier-split: orchestrator → runway → gated curation; product via GAP cards + dogfood pickup.
+The phase renumber (3x→2x) + Q&A/curation removal rippled wider than the original README+plugin.json scope. Both the unit-1 implementer and the cold auditor (seam 1, Finding 2) flagged the same stale-cross-ref set. Fix every one against the *final* state of both skills:
 
-Run: `grep -rnE "ideation|greenfield Q&A|seed docs" plugins/super-bootstrap/README.md plugins/super-bootstrap/.claude-plugin/plugin.json`
+- `plugins/super-bootstrap/README.md` — "harness-bootstrap Phase 3c delegates" (→ tier-2/entry), "redirects empty repos here" (greenfield no longer redirects).
+- `plugins/super-bootstrap/.claude-plugin/plugin.json` — description narrating old flow.
+- `plugins/super-bootstrap/skills/resolve-plugins/SKILL.md` — frontmatter "delegated from harness-bootstrap Phase 3c"; Phase 1 "harness delegation (Phase 3c)"; Phase 1 "same MCQ as harness-bootstrap Phase 2 Q4" (Q&A gone — repoint to tier-2's own prompt); Phase 4 "Phase 3a pins" (→ 2a).
+- `plugins/super-bootstrap/agents/help.md` — "called from harness Phase 3c."
+- `plugins/super-bootstrap/skills/drain/assets/ensure-infra.md` — cross-ref "§Phase 3a (drain infra opt-in)" (→ 2a-drain).
+- `plugins/super-bootstrap/skills/harness-bootstrap/assets/rename-map.md` — prose "Phase 3b can spot literals" (→ 2b).
+- **Orphaned asset:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/phase2-qa-protocol.md` — its only consumer (Phase 2 Q&A rendering) is deleted. Delete it; grep first to confirm no surviving reference.
+
+Run the sweep: `grep -rnE "Phase 3[abcd]|Phase 2 Q|ideation|greenfield Q&A|phase2-qa-protocol|redirects? .*(here|empty repo)" plugins/super-bootstrap/`
+Expected after fixes: zero stale phase numbers / Q&A references outside the audited skills' own current bodies.
 
 - [ ] **Step 2: Run audit-harness-edits**
 
