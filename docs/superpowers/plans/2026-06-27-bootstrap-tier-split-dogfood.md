@@ -31,7 +31,7 @@
 
 ---
 
-### Task 1: harness-bootstrap — dissolve product Q&A, keep structural/drift
+### Task 1: harness-bootstrap — dissolve product Q&A, keep structural/drift  ✅ DONE (e395f6f) — audit seam 1 passed
 
 **Files:**
 - Modify: `plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md` (Phase 2 block, lines ~91-136; Phase 1 greenfield redirect, lines ~57-67)
@@ -77,7 +77,7 @@ git commit -m "refactor(harness-bootstrap): dissolve product Q&A; runway runs on
 
 ---
 
-### Task 2: harness-bootstrap — empty seed-doc skeletons + remove curation call
+### Task 2: harness-bootstrap — empty seed-doc skeletons + remove curation call  ✅ DONE (23c01e3, +audit fixes f4a9b2e)
 
 **Files:**
 - Modify: `plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md` (Phase 3b asset table ~249-258; Phase 3c ~414-427; Phase 3d staging list ~445-458; Phase 4 handoff ~466-481)
