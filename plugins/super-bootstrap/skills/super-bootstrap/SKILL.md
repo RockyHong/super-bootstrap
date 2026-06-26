@@ -42,7 +42,14 @@ After git-init + detect, invoke `/super-bootstrap:harness-bootstrap` via the Ski
 
 ## Substantive branch — gated tier-2 tech curation (Axis B substantive)
 
-> [Gate + tier-2 curation (resolve-plugins + tech rules + release-init) — Task 4]
+The runway returned and Axis B is substantive (a just-resolved greenfield, or an already-documented updater). Seed docs carry real stack signal, so tier-2 curation can read it. Run in order:
+
+1. **`Skill(resolve-plugins)`** — [`/super-bootstrap:resolve-plugins`](../resolve-plugins/SKILL.md) curates stack-matched skill / MCP / hook picks. It reads stack from `docs/techstack.md` and external-tools from `docs/overview.md`'s `<!-- harness-meta -->` block (the relocated external-tools signal). No Q&A — the signal is already in the docs.
+2. **`/super-bootstrap:release-init`** — offer once as an optional step to generate a project-level `/release` skill.
+
+**Rules-seeding stays runway-owned.** Path-scoped rule seeding (frontend / MV3 / migrations / tests) fires at runway-time in [`/super-bootstrap:harness-bootstrap`](../harness-bootstrap/SKILL.md) Phase 1 — every current signal is manifest- or filesystem-derivable, so one home, no double-seed. Tier-2 adds no rule seeding. A future signal derivable only from substantive `techstack.md` prose (not the manifest) would seed here instead.
+
+The gate between the runway and tier-2 is Axis B: substantive proceeds here; not-substantive stops at the greenfield branch above. Tier-2 runs only when there is a resolved stack to curate against.
 
 ## Disclosure (post-hoc)
 
