@@ -1,12 +1,12 @@
 ---
 name: harness-bootstrap
-description: "Install or sync the superpowers harness in a repo with code already present. Scaffolds CLAUDE.md, skeleton docs (overview, techstack, superpowers/), path-scoped rules, and curated skill/MCP/hook picks; bakes in doc-sync discipline. Greenfield repos route through /super-bootstrap first to seed overview + techstack + backlog. Solo dev workflow."
+description: "Install or sync the generic superpowers runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, skeleton docs (overview, techstack, superpowers/), path-scoped rules, and core plugin pins; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap. Solo dev workflow."
 tags: [harness, scaffold, setup, meta, docs]
 ---
 
 # Super Bootstrap — Superpowers Pipeline for Any Repo
 
-Set up (or sync) the superpowers-driven development pipeline in a project. Installs harness — workflow rules, doc-sync gate, skeleton docs, curated skill/MCP/hook picks — in one scaffold session. The doc-sync gate at every later commit grows the skeleton docs over time, so there's no deferred deep-scan stage.
+Set up (or sync) the superpowers-driven development pipeline in a project. Installs harness — workflow rules, doc-sync gate, skeleton docs, core plugin pins — in one scaffold session. The doc-sync gate at every later commit grows the skeleton docs over time, so there's no deferred deep-scan stage.
 
 Designed for a solo developer working across multiple Claude Code sessions and cloud Claude Code.
 
@@ -88,9 +88,9 @@ The runway scaffolds with no product Q&A. Phase 1 manifest detection feeds the t
 
 ## Phase 2: Scaffold / Sync
 
-Walk each pipeline artifact in order: folders → pipeline docs → curate picks → sync report + commit. Same flow on fresh and re-run repos — fresh just sees "all new" at every step.
+Walk each pipeline artifact in order: folders → pipeline docs → sync report + commit. Same flow on fresh and re-run repos — fresh just sees "all new" at every step.
 
-**Per-artifact rule** (applied uniformly in 2a / 2b / 2c):
+**Per-artifact rule** (applied uniformly in 2a / 2b):
 - Missing → write from template / curate fresh
 - Exists, matches template → skip (`✓ current`)
 - Exists, drifted from template → show diff, get approval per change, then write
@@ -123,6 +123,7 @@ Folders + core plugin pin don't drift — only two states: missing or present.
 ```
 docs/
   decisions.md   ← closed forks / rejected directions (history dimension — always scaffolded, starts empty)
+  backlog.md     ← backlog tracker (BUG / DEBT / GAP — capture-first, triaged on pickup)
   superpowers/
     specs/       ← design specs from brainstorming (temporal)
     plans/       ← implementation plans (temporal)
@@ -131,11 +132,10 @@ docs/
     index.md     ← orchestrator-facing summary of seeded rules
 ```
 
-**Created if confirmed during Q&A (adaptive):**
+**Created when source code is present (adaptive):**
 ```
 docs/
   specs/         ← persistent feature specs, one .md per feature (seeded by Task 1 of bootstrap-plan)
-  backlog.md     ← backlog tracker (BUG / DEBT / GAP — capture-first, triaged on pickup)
 ```
 
 For each: create if missing, skip if present. Add `.gitkeep` in empty folders. If `docs/` or `.claude/` already exists, nest alongside. Report status per directory.
@@ -155,7 +155,7 @@ If `docs/backlog.md` is scaffolded, copy `assets/backlog.md` to `docs/backlog.md
 - `superpowers` — slash-command routes (`/brainstorm`, `/write-plan`, `/execute-plan`).
 - `karpathy-guidelines` — invoked before every code edit (see CLAUDE.md § Coding Principles).
 
-Both are **core deps, not adaptive picks** — pinned before Phase 2c so `/super-bootstrap:resolve-plugins` curates adaptive picks on top of a guaranteed base. Dangling-rule risk: if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently. Pin first.
+Both are **core deps, not adaptive picks** — pinned here at 2a so tier-2 curation (`/super-bootstrap:resolve-plugins`, run later by `/super-bootstrap`) layers adaptive picks on a guaranteed base. Dangling-rule risk: if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently. Pin first.
 
 Ensure `.claude/settings.json` contains:
 
@@ -178,7 +178,7 @@ Ensure `.claude/settings.json` contains:
 - Key already present → skip (`✓ pinned`).
 - Other `.claude/settings.json` content → never touched.
 
-`superpowers@claude-plugins-official` resolves from Anthropic's official marketplace — no `extraKnownMarketplaces` entry needed. `andrej-karpathy-skills@karpathy-skills` lives outside the official marketplace, so the `karpathy-skills` marketplace entry is required for cloud / fresh-machine resolution. Phase 2c (`/super-bootstrap:resolve-plugins`) treats both pins as locked: never proposes drop, never re-prompts the user. Adaptive picks (stack-matched skills / MCPs / hooks) layer on top.
+`superpowers@claude-plugins-official` resolves from Anthropic's official marketplace — no `extraKnownMarketplaces` entry needed. `andrej-karpathy-skills@karpathy-skills` lives outside the official marketplace, so the `karpathy-skills` marketplace entry is required for cloud / fresh-machine resolution. Tier-2 curation (`/super-bootstrap:resolve-plugins`) treats both pins as locked: never proposes drop, never re-prompts the user. Adaptive picks (stack-matched skills / MCPs / hooks) layer on top when curation runs.
 
 ### 2a-drain: Drain infra (opt-in)
 
@@ -187,7 +187,7 @@ Ensure `.claude/settings.json` contains:
 > Install `/super-bootstrap:drain` worktree infra? — worktree settings template + `PreToolUse(Read)` guard + `.claude/worktrees/` gitignore. Most dev repos: yes. Skill / plugin / docs repos: skip (drain self-installs on first use anyway).
 > Install now? (y / skip)
 
-On `y`: execute the procedure in [`../drain/assets/ensure-infra.md`](../drain/assets/ensure-infra.md) — the same idempotent 4-piece install drain self-runs on first invocation. One install home; harness-bootstrap delegates to it, never carries its own copy. Stage the placed files with the Phase 2d commit.
+On `y`: execute the procedure in [`../drain/assets/ensure-infra.md`](../drain/assets/ensure-infra.md) — the same idempotent 4-piece install drain self-runs on first invocation. One install home; harness-bootstrap delegates to it, never carries its own copy. Stage the placed files with the Phase 2c commit.
 
 On `skip`: nothing placed; drain's own §Pre-flight step 0 installs on first `/super-bootstrap:drain`.
 
@@ -205,6 +205,8 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 | `assets/rules-index-skeleton.md` | `.claude/rules/index.md` | Always — machinery |
 | `assets/rules-frontend-skeleton.md` | `.claude/rules/<framework>.md` | Only if frontend signal fired in Phase 1 |
 | `assets/rules-mv3-skeleton.md` | `.claude/rules/mv3.md` | Only if MV3 signal fired in Phase 1 |
+
+On greenfield (no manifest, no source files), `overview.md` / `techstack.md` write as unfilled skeletons — manifest-derived facts fill only when code is present. The empty skeleton is intentional: it is the unsolved-product state the entry `/super-bootstrap` detects to seed GAP cards.
 
 **Per-doc handling:**
 
@@ -287,7 +289,7 @@ Block 2 (only for `⚠ drifted` rows — one expansion per drifted section):
   Update? (y / n / show full diff)
 ```
 
-The report is the forcing function: Phase 2d refuses to commit unless it exists and carries a row for every pipeline-owned section in scope (§ 2d gate). A collapsed "skeleton sections match" with no rows fails that gate mechanically — there is no assertion to trust, so there is nothing to collapse into one. Drift approval (Block 2) protects against (a) legit template updates the user wants to review and (b) bad-actor template injection on a future re-run — you see what's about to change before it's overwritten.
+The report is the forcing function: Phase 2c refuses to commit unless it exists and carries a row for every pipeline-owned section in scope (§ 2c gate). A collapsed "skeleton sections match" with no rows fails that gate mechanically — there is no assertion to trust, so there is nothing to collapse into one. Drift approval (Block 2) protects against (a) legit template updates the user wants to review and (b) bad-actor template injection on a future re-run — you see what's about to change before it's overwritten.
 
 **Rot scan (mandatory pre-step on re-run).** Before Block 1 renders, read `assets/rename-map.md` and grep every pipeline-owned file in scope for each entry's `old` literal (whole-token match — avoid URL / identifier false hits). Each hit becomes a rot row appended to `bootstrap-sync-report.md` and surfaced to the user:
 
@@ -307,7 +309,7 @@ Re-plant assigns canonical BUG/DEBT/GAP IDs and rebuilds the high-water counter.
 Re-plant? (y / n / dry-run)
 ```
 
-On `y`: rebuild the high-water mark from `git log --grep` over consumed IDs — **never from current open rows** (resolved-but-deleted IDs stay consumed; re-deriving from open rows collides). Then mint IDs onto un-IDed rows by category, per the high-water-mark rule documented in the `docs/backlog.md` header (the rule's SSoT — don't restate the algorithm), classifying each row into BUG/DEBT/GAP by its content. Preserve row claims verbatim — re-plant adds the ID heading only, never rewrites the claim. Stage `docs/backlog.md` with the 2d commit.
+On `y`: rebuild the high-water mark from `git log --grep` over consumed IDs — **never from current open rows** (resolved-but-deleted IDs stay consumed; re-deriving from open rows collides). Then mint IDs onto un-IDed rows by category, per the high-water-mark rule documented in the `docs/backlog.md` header (the rule's SSoT — don't restate the algorithm), classifying each row into BUG/DEBT/GAP by its content. Preserve row claims verbatim — re-plant adds the ID heading only, never rewrites the claim. Stage `docs/backlog.md` with the 2c commit.
 
 **Special case — `docs/techstack.md` § Rejected Alternatives retirement (re-run).** Older skeletons grew a § Rejected Alternatives section inside `techstack.md` — state/history dimension pollution, and tech-scoped. It is retired in favor of `docs/decisions.md` (cross-domain history dimension). On re-run, if `techstack.md` carries a § Rejected Alternatives section with content, propose migrating it:
 
@@ -331,7 +333,7 @@ File was likely cleanup-deleted (Task 3 of prior bootstrap).
 
 Options:
   (a) skip re-seed (bootstrap complete)        ← default
-  (b) re-seed (Tasks 1/2 still applicable per current Q&A)
+  (b) re-seed (Tasks 1/2 still applicable)
   (c) re-seed cleanup-only (Task 3 stub for next session)
 ```
 
@@ -341,7 +343,7 @@ Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write fro
 - `{Project Name}` — repo name
 - `{date}` — today's date
 - Manifest detection facts (Runtime / Framework / Key Dependencies / Build & Distribution) → fill into CLAUDE.md Tech Stack one-liner AND `techstack.md` skeleton sections
-- Q&A answers (Problem / User / Current State) → fill into `overview.md` skeleton sections
+- Problem / User / Current State (`overview.md` skeleton sections) → left empty at install; filled at GAP-card pickup, not by the runway
 - Bracketed conditional lines `{- docs/specs/ — ...}` — keep only if the corresponding adaptive doc is scaffolded for this repo (specs per the 2a code-presence gate, backlog always); drop the whole line otherwise
 - CLAUDE.md § **Rules** summary bullets — fill from seeded `.claude/rules/*.md` files (one bullet per rule with glob + 2-4 one-line key points). If no rules seeded, drop the example placeholders and keep only the explanatory paragraph.
 - Rule skeleton placeholders (`{component path glob}`, `{Framework}`, body bullets in `assets/rules-*-skeleton.md`) → fill from Phase 1 detection. Lines that don't apply get dropped during scaffold.
@@ -355,31 +357,18 @@ The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed backlog` / `Task 3
 - `docs/backlog.md` NOT scaffolded → drop Task 2
 - Re-run with `docs/specs/` already populated → drop Task 1
 - Re-run with `docs/backlog.md` already populated → drop Task 2
-- Add tasks for any project-specific needs surfaced during Q&A
+- Add tasks for any project-specific needs surfaced during Phase 1 detection
 - Task 3 (Cleanup) always retained — includes deleting `docs/superpowers/plans/bootstrap.md` and `docs/superpowers/plans/bootstrap-sync-report.md` if a prior session left it
 
 If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that's fine, signals bootstrap is essentially complete.
 
-### 2c: Curate skill / MCP / hook
+Tech curation (skill / MCP / hook picks) is gated tier-2 — orchestrated by `/super-bootstrap` after `overview.md` / `techstack.md` are substantive, not during this runway install.
 
-**Delegated to `/super-bootstrap:resolve-plugins`.** Phase 2c is one Skill invocation — `Skill(resolve-plugins)`. The full curation logic (live-query source pool, dedupe, trust tiers, batch presentation, `.claude/settings.json` write) lives in `plugins/super-bootstrap/skills/resolve-plugins/SKILL.md`. Single source of truth.
-
-`/super-bootstrap:resolve-plugins` is also runnable standalone — useful when upstream marketplaces drift but nothing in the repo changed (no need to walk Phase 1-2b just to refresh picks).
-
-Phase 2c invokes `/super-bootstrap:resolve-plugins`, which gates picks via earn-right (≥1 hard invocation path required) and atomic install + verify per accepted candidate. Re-running `/super-bootstrap:harness-bootstrap` safely re-evaluates all picks against current upstream state and current harness wiring.
-
-**Inputs the harness has prepared by Phase 2c:**
-- `docs/techstack.md` — written in Phase 2b. `/super-bootstrap:resolve-plugins` reads § Runtime / Framework / Key Dependencies for stack-matched picks.
-- `docs/overview.md` — written in Phase 2b. `/super-bootstrap:resolve-plugins` reads § User / Current State for additional workflow signal.
-- Phase 2 Q4 (external tools) answer — flows via `docs/overview.md` content (the harness embeds the answer when seeding the doc) or via `.claude/settings.json` pinned MCPs on re-run.
-
-**Output:** `.claude/settings.json` updated with `enabledPlugins` + `extraKnownMarketplaces`. Commit handled by `/super-bootstrap:resolve-plugins` itself if delta non-empty.
-
-### 2d: Sync report + commit
+### 2c: Sync report + commit
 
 **Gate — the sync report must exist and cover every pipeline-owned section before commit.** Read `docs/superpowers/plans/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row. Missing file, or any uncovered section → halt, return to 2b, produce the missing rows. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
 
-**Sync report** — rendered from the artifact (the file is canonical; this table is its commit-time view). Always shown before commit. Fresh repos see "all new"; re-run repos see drift fixes, picks delta, and current items.
+**Sync report** — rendered from the artifact (the file is canonical; this table is its commit-time view). Always shown before commit. Fresh repos see "all new"; re-run repos see drift fixes and current items.
 
 ```
 | Artifact                            | Status       | Action              |
@@ -396,7 +385,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/techstack.md` (new, skeleton-section drift, or post-migration absorbed content)
 - `docs/overview.md` (new or skeleton-section drift)
 - `docs/decisions.md` (new, scope-header drift, or post-retirement migration from techstack)
-- `.claude/settings.json` (new or picks delta)
+- `.claude/settings.json` (core plugin pins seeded at 2a)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)
 - `docs/superpowers/specs/.gitkeep`
@@ -406,7 +395,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/backlog.md` (if scaffolded or re-planted)
 - Any other adaptive files / folders created
 
-Commit message: `chore: scaffold superpowers pipeline` on fresh repos, `chore: sync superpowers pipeline` when only drift fixes / picks delta shipped, `refactor: migrate CLAUDE.md to rules layer + sync pipeline` when re-run performed legacy migration.
+Commit message: `chore: scaffold superpowers pipeline` on fresh repos, `chore: sync superpowers pipeline` when only drift fixes shipped, `refactor: migrate CLAUDE.md to rules layer + sync pipeline` when re-run performed legacy migration.
 
 **Clean the run artifact.** `bootstrap-sync-report.md` is a transient diagnostic — never staged. After the commit lands (or after reporting no-changes), delete it: its consumer is this phase, so this phase is its cleaner. (Task 3 cleanup removes it too, as a safety net if a session broke between 2b and here.)
 
@@ -418,7 +407,9 @@ After committing (or reporting no changes needed), present results based on repo
 
 **First-run (just scaffolded):**
 
-> **Pipeline is live.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts — grown sections fill via doc-sync as features land. Skill / MCP / hook picks pinned in `.claude/settings.json`.
+> **Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. Core plugin pins (superpowers + karpathy) sit in `.claude/settings.json`; stack-matched skill / MCP / hook picks come when `/super-bootstrap` runs gated tier-2 curation.
+>
+> {If product skeletons are empty (greenfield): "`docs/overview.md` / `docs/techstack.md` are empty skeletons — `/super-bootstrap` seeds GAP cards for them and surfaces the resolve gate."}
 >
 > {If any rule files were seeded: "Path-scoped rules seeded in `.claude/rules/` ({list seeded rules}). They auto-load on file match — full ammo at the decision moment, summary mirrored in CLAUDE.md § Rules. Add more rule files when path-scoped patterns emerge."}
 >
@@ -427,7 +418,7 @@ After committing (or reporting no changes needed), present results based on repo
 
 **Re-run / sync pass:**
 
-> **Pipeline synced.** {N items updated, M already current.}{If migration performed: " Migrated {sections moved} from CLAUDE.md to {destinations} — `CLAUDE.md` now {old line count} → {new line count} lines."}{If picks delta: " Picks: +K added, −L dropped against live sources."}{If rule files added: " Rules: +K seeded, summary updated in CLAUDE.md § Rules."}
+> **Pipeline synced.** {N items updated, M already current.}{If migration performed: " Migrated {sections moved} from CLAUDE.md to {destinations} — `CLAUDE.md` now {old line count} → {new line count} lines."}{If rule files added: " Rules: +K seeded, summary updated in CLAUDE.md § Rules."}
 
 ## Principles
 
@@ -435,4 +426,4 @@ After committing (or reporting no changes needed), present results based on repo
 - **Precision per always-on byte** — every CLAUDE.md line answers "what decision does this sharpen, at what moment?" Length is downstream of that. The Anthropic / community ~120-line target is a smoke alarm on bloat, not a hard cap. Sweet-spot session quality (~80k context = 100% recall) requires the orchestrator brief stays lean enough that opening file reads + workflow + actual task fit.
 - **Default-to-rules when ambiguous** — enforcement-shaped content (imperatives: must / never / always) goes to `.claude/rules/<scope>.md` even when the heading sounds like reference. Silent-miss in a cold file costs more than slight over-attach.
 - **Subagent dispatch protects orchestrator focus** — verbose work (10+ file reads, noisy test runs, parallel-safe chunks, fresh-eye review) belongs in a subagent's clean window. Orchestrator's attention budget is too valuable to spend on tool churn.
-- **Mandatory checks ride a forcing function, not prose** — a step the model is merely told to "always run" collapses into a confident assertion on re-runs where the surface looks done. Encode it produce-then-judge: enumerate to a file first, then gate the downstream phase on that file's coverage (a Read + set-difference, not a self-attestation). This skill applies it at the drift check (2b → 2d); new mandatory steps take the same shape.
+- **Mandatory checks ride a forcing function, not prose** — a step the model is merely told to "always run" collapses into a confident assertion on re-runs where the surface looks done. Encode it produce-then-judge: enumerate to a file first, then gate the downstream phase on that file's coverage (a Read + set-difference, not a self-attestation). This skill applies it at the drift check (2b → 2c); new mandatory steps take the same shape.
