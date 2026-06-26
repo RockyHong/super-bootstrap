@@ -31,16 +31,4 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### DEBT-001 — bootstrap pipeline has bundled concerns + wrong detection key; needs tier-split + dogfood refactor
-
-**Logged:** 2026-06-25 · **Source:** architectural review deferred from BUG-002 session (2026-06-25); separated per Axiom IV (one unit, one goal)
-**Problem:** `/super-bootstrap` greenfield bundles three distinct concerns in one bespoke flow: generic-harness install, tech curation, and product ideation Q&A. Detection keys on code-presence, so a mature-but-undocumented repo gets no overview/techstack seed. The design diverges from the axioms canon and accumulates drift in a 487-line skill with existing forcing-functions (drift-check, migration tables, re-run idempotency). Proposed locked design (grounded in session discussion):
-  1. **Unified detection** — key on SEED-DOC presence (overview.md + techstack.md present and substantive?), not code-presence. Absent → install + seed; present → skip to curation. Collapses the complex Phase-0 greenfield gate.
-  2. **Two-tier harness install** — TIER-1: generic (CLAUDE.md frame + todo/log pipeline + empty backlog + docs/superpowers/ skeleton; tech-agnostic, installs first on any no-seed-doc repo). TIER-2: tech curation (resolve-plugins, tech-specific rules, release skill; runs after techstack.md exists). CLAUDE.md write relocates out of harness-bootstrap scaffold into tier-1 (single write); harness-bootstrap reduces to tier-2 curation only.
-  3. **Bootstrap writes zero product content** — greenfield seeds exactly 2 GAP cards: "pin down product overview" and "decide techstack" (blocked on the overview card). Generic-titled; product idea captured at PICKUP via brainstorm, not at bootstrap. The bespoke Phase-1 ideation Q&A dissolves into "the first brainstorm reached through the normal door". Dogfood: bootstrap uses its own pipeline (log → todo → brainstorm) to establish the product.
-  4. **Method routed at PICKUP not capture** — cards carry `Prior: HINT` (not locked route); triage decides: no code → brainstorm; code present + undocumented → distill-repo-essence. Honors backlog.md's "no phase prescription" principle.
-  5. **Autonomous tier-1, no consent gate** — invoking the command IS consent. One post-hoc heads-up line in done-summary: what was written/changed (CLAUDE.md, settings.json) + "review with git diff". Disclosure + reconciliation-enabler for users with existing harness taste.
-  6. **Two silent correctness moves** (not gates): git-init if absent (so the promised git diff exists); re-run idempotency (detect existing cards, don't re-spawn them).
-  Non-goals: no roadmap tier (parallel truth home rots; cards are transient + self-consuming); no clobber gate (uncommitted hand-authored config overwritten = user's risk).
-**Area:** `plugins/super-bootstrap/skills/super-bootstrap/SKILL.md` + `plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md`
-**Prior:** design locked in session dialogue grounded in axioms canon (2026-06-25); pickup warrants grounding + spec + plan phases given scope (487-line skill restructure, migration tables, re-run idempotency, drift-check forcing-functions all in play).
+*(seeded as items are surfaced during reviews, audits, or development)*

@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **STATUS: ALL TASKS COMPLETE** — units 1-3 landed; 3 audit-harness-edits passes (seam 1, seam 2, closing) all dispositioned; DEBT-001 resolved. Pending: branch merge (this plan is temporal — delete on merge).
+
 **Goal:** Restructure the super-bootstrap pipeline so it does zero product prework — scaffold the generic dogfood runway early and always, seed two GAP cards through `/super-bootstrap:log`, gate tech curation on `overview.md`/`techstack.md` being resolved, and route product discovery through the harness's own log → todo → brainstorm/distill loop.
 
 **Architecture:** Two-axis detection replaces the single code-presence/greenfield gate. **Axis A** (harness artifacts present?) drives the generic runway — `/super-bootstrap:harness-bootstrap` installs (fresh) or syncs (idempotent drift) on every run, greenfield and updater alike. **Axis B** (seed docs substantive?) gates the GAP-card seeding and the tech-curation tier. The entry `/super-bootstrap` stays a thin orchestrator: git-init → dispatch generic runway → seed 2 GAP cards (greenfield) → gate → tech curation (resolve-plugins + tech rules + release-init) only when `overview.md`/`techstack.md` are substantive. Product Q&A in **both** skills dissolves; product content is filled at GAP-card pickup, not at install.
