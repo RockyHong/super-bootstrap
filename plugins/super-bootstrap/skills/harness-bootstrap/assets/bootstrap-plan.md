@@ -2,7 +2,7 @@
 
 **Goal:** Final adaptive seeding + cleanup for {project name}
 
-**Context:** Pipeline scaffolded on {date}. CLAUDE.md is live. `docs/techstack.md` and `docs/overview.md` are seeded skeletons — `techstack.md` Runtime / Framework / Build & Dist carry detected manifest facts; `overview.md` Problem / User / Current State start empty and fill at GAP-card pickup; grown sections (Architecture Rules / Coding Patterns / Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync as code lands. Core plugin pins (superpowers + karpathy) sit in `.claude/settings.json`; stack-matched skill / MCP / hook curation runs as gated tier-2 via `/super-bootstrap` once the seed docs are substantive.
+**Context:** Pipeline scaffolded on {date}. CLAUDE.md is live. `docs/techstack.md` and `docs/overview.md` are seeded skeletons — `techstack.md` Runtime / Framework / Key Dependencies / Build & Dist carry detected manifest facts; `overview.md` Problem / User / Current State start empty and fill at GAP-card pickup; grown sections (Architecture Rules / Coding Patterns / Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync as code lands. Core plugin pins (superpowers + karpathy) sit in `.claude/settings.json`; stack-matched skill / MCP / hook curation runs as gated tier-2 via `/super-bootstrap` once the seed docs are substantive.
 
 These tasks complete optional adaptive seeding (only the ones whose docs the runway scaffolded) and final bootstrap cleanup.
 
