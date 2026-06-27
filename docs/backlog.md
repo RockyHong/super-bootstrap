@@ -31,11 +31,4 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### GAP-002 — release-init is a one-shot generator with no update/sync channel for already-bootstrapped consumers
-
-**Logged:** 2026-06-28 · **Source:** surfaced while routing DEBT-004 (the /release version-mirror SSoT fix) 2026-06-28
-**Problem:** `release-init` generates `.claude/skills/release/SKILL.md` as a one-shot product — step 1 is detect-existing → blind overwrite, no update path. When the upstream template improves, already-bootstrapped consumer repos (any project type — web/app/anything, not necessarily Claude plugins) have no way to pull template improvements into their existing generated skill without a full overwrite that discards their customizations. Note: DEBT-004's fix is Claude-plugin/self-hosted-marketplace specific and deliberately does NOT go into the generic template — so this is a generator-hygiene gap (no update channel for template improvements), not a vehicle to ship the DEBT-004 fix. Likely earns a brainstorm on merge strategy (patch improvements in vs regenerate-with-diff) while preserving consumer customization.
-**Area:** `plugins/super-bootstrap/skills/release-init/SKILL.md`, `plugins/super-bootstrap/skills/release-init/assets/template.md`
-**Prior:** Design question is merge vs regenerate-with-diff; either path must preserve consumer-side customization.
-
 *(seeded as items are surfaced during reviews, audits, or development)*
