@@ -34,22 +34,12 @@ Use the conversation transcript as source of truth for "what did this session to
 
 ### 3. Doc-Sync Gate
 
-Before staging, scan `docs/` for files that describe behavior touched by the diff. Per the harness CLAUDE.md rules, check:
+Run the doc-sync gate per the project's **CLAUDE.md § Doc Sync** — it owns the scan surface (`docs/` plus behavior-narrating prose outside it) and the write boundary (what doc-sync may update vs flag-and-defer). This skill runs that gate; it does not re-declare its scope.
 
-- `docs/overview.md` — behavior/data-flow changes
-- `docs/techstack.md` — dep / tooling / architecture changes
-- `docs/specs/*.md` — feature behavior (if scaffolded)
-- `docs/backlog.md` — items resolved or new items surfaced (if scaffolded)
-- `docs/superpowers/specs+plans/*.md` — temporal cleanup if work completes
-
-For each doc that looks stale relative to the diff:
-1. Report path + what looks outdated + relevant diff context.
-2. Resolve with user — update doc, or confirm still accurate.
-3. Always surface the call to the user before staging.
-
-**Backlog cleanup:** if the diff resolves a `BUG-###` / `DEBT-###` / `GAP-###` item in `docs/backlog.md`, propose deleting the item.
-
-**Temporal cleanup:** if the diff completes a feature branch, propose deleting matching files from `docs/superpowers/specs/` and `docs/superpowers/plans/`.
+Execution at commit time:
+1. Report each stale surface — path + what looks outdated + relevant diff context.
+2. Resolve with user — update, or confirm still accurate. Always surface before staging.
+3. Backlog + temporal cleanup per CLAUDE.md § Doc Sync.
 
 Doc updates from this gate stage alongside the code changes.
 

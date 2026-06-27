@@ -15,7 +15,7 @@ Non-trivial = anything past a single obvious edit. Walk in order; the artifact i
 | 3 | **Red** — for a change with a test surface, write the failing test first | A captured failing-test run (command + red output) before implementation |
 | 4 | **Implement** — write code to green | Passing run of the step-3 test |
 | 5 | **Verify** — run the test suite + any broader checks | Captured pass output (`verification-before-completion`) |
-| 6 | **Doc-sync** — scan `docs/` for stale behavior | Per § Doc Sync |
+| 6 | **Doc-sync** — scan behavior-narrating prose for staleness | Per § Doc Sync |
 | 7 | **Commit** — `/super-bootstrap:commit` | Terminal step |
 
 ### Phase triage (which optional phases the route composes)
@@ -53,11 +53,13 @@ Spec/plan locations: `docs/superpowers/specs/` and `docs/superpowers/plans/` (te
 
 Named pipeline step — every route includes it between user review and commit.
 
-Before every commit, scan `docs/` for files describing behavior touched by the diff (specs, overview, techstack, backlog). If any doc looks stale:
+Before every commit, scan for prose describing behavior touched by the diff — `docs/` (specs, overview, techstack, backlog) **and behavior-narrating prose outside `docs/`: the root `README`, plus any manifest/description field the diff's behavior changes**. If any looks stale:
 
-1. Report it — doc path, what looks outdated, relevant diff context
+1. Report it — path, what looks outdated, relevant diff context
 2. Resolve together — update or acknowledge it's still accurate
 3. Never silently fix. Never silently skip.
+
+**Write boundary** — doc-sync writes `docs/`, `README`, `CLAUDE.md`, `.claude/rules/`. Skills, agents, and release-owned manifests are **read-only**: flag the drift and route the fix to its owner (a deliberate harness edit, or the project's release step), never rewrite them inside the doc-sync step.
 
 **Dimension routing (state XOR history — decide before writing any `docs/` file):**
 
