@@ -102,7 +102,7 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - `docs/overview.md` skeleton sections: Problem, User, Current State
 - `docs/decisions.md` scope header (the blockquote + `## Closed Forks` heading)
 - `docs/superpowers/specs/`, `docs/superpowers/plans/`, `docs/superpowers/plans/bootstrap.md`
-- `.claude/rules/index.md` (machinery summary)
+- `.claude/rules/index.md` (rule-authoring guide)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` plugin pins (`enabledPlugins`, `extraKnownMarketplaces`)
 
@@ -129,7 +129,7 @@ docs/
     plans/       ← implementation plans (temporal)
 .claude/
   rules/         ← path-scoped rules, full-body fires on file match
-    index.md     ← orchestrator-facing summary of seeded rules
+    index.md     ← rule-authoring guide (path-scoped — loads when editing rules)
 ```
 
 **Created when source code is present (adaptive):**

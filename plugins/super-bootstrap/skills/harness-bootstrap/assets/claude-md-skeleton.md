@@ -77,7 +77,7 @@ State docs (`overview.md`, `techstack.md`, specs) hold what is **true now** — 
 
 Before writing, reviewing, or refactoring code, invoke the `karpathy-guidelines` skill.
 
-It owns four principles (think-before-coding, simplicity-first, surgical-changes, goal-driven-execution). Skill body is upstream — don't paraphrase it here. Pin lives in `.claude/settings.json` (`andrej-karpathy-skills@karpathy-skills`).
+It owns four principles (think-before-coding, simplicity-first, surgical-changes, goal-driven-execution). Skill body is upstream — don't paraphrase it here.
 
 ## Edit Discipline — Renames & Replace-All
 
@@ -100,7 +100,7 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 
 ## Rules (auto-load on file match)
 
-`.claude/rules/*.md` files attach to file reads via `paths:` frontmatter — full-body rule fires at the decision moment, zero ambient cost when irrelevant. Summary below so this orchestrator knows the rule exists during planning.
+`.claude/rules/*.md` files attach to file reads via `paths:` frontmatter — full-body rule fires at the decision moment, zero ambient cost when irrelevant.
 
 {seeded by sp-bootstrap based on Phase 1 stack signals — examples:}
 
@@ -136,8 +136,8 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 
 ## Planning
 
-- [`docs/overview.md`](docs/overview.md) — product context, data flow, module index. Skeleton seeded at scaffold; grown sections fill via doc-sync.
-- [`docs/techstack.md`](docs/techstack.md) — stack, architecture rules, coding patterns. Skeleton seeded at scaffold; grown sections fill via doc-sync.
+- [`docs/overview.md`](docs/overview.md) — product context, data flow, module index.
+- [`docs/techstack.md`](docs/techstack.md) — stack, architecture rules, coding patterns.
 {- [`docs/specs/`](docs/specs/) — persistent feature specs, one `.md` per feature. Filename + heading is the catalog; no index.}
 {- [`docs/backlog.md`](docs/backlog.md) — open items (`BUG-###` / `DEBT-###` / `GAP-###`), captured via `/super-bootstrap:log`, deleted on resolve.}
 - [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
