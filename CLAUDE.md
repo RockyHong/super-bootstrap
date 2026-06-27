@@ -59,7 +59,7 @@ Before every commit, scan for prose describing behavior touched by the diff — 
 2. Resolve together — update or acknowledge it's still accurate
 3. Never silently fix. Never silently skip.
 
-**Write boundary** — doc-sync writes `docs/`, `README`, `CLAUDE.md`, `.claude/rules/`. Skills, agents, and plugin manifests are **read-only**: flag the drift and route the fix to its owner (a deliberate harness edit, or `/release` for manifests), never rewrite them inside the doc-sync step.
+**Write boundary** — doc-sync writes narrative docs only: `docs/` and the root `README`. All harness — `CLAUDE.md`, `.claude/rules/`, skills, agents, plugin manifests — is **read-only within this step**: flag the drift and route the fix to its owner (a deliberate harness edit carrying its own verify pass; `/release` for manifests).
 
 **Dimension routing (state XOR history — decide before writing any `docs/` file):**
 

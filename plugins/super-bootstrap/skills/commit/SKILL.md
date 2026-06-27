@@ -36,12 +36,7 @@ Use the conversation transcript as source of truth for "what did this session to
 
 Run the doc-sync gate per the project's **CLAUDE.md § Doc Sync** — it owns the scan surface (`docs/` plus behavior-narrating prose outside it) and the write boundary (what doc-sync may update vs flag-and-defer). This skill runs that gate; it does not re-declare its scope.
 
-Execution at commit time:
-1. Report each stale surface — path + what looks outdated + relevant diff context.
-2. Resolve with user — update, or confirm still accurate. Always surface before staging.
-3. Backlog + temporal cleanup per CLAUDE.md § Doc Sync.
-
-Doc updates from this gate stage alongside the code changes.
+Commit-specific: surface every call **before** staging, not after. Doc updates from this gate stage alongside the code changes.
 
 ### 4. Draft Commit Message
 
