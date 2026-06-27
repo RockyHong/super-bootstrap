@@ -8,9 +8,10 @@ description: Prepare a version release — bump version files, commit, and tag. 
 ## Project Config
 
 - **Type:** generic (Claude Code plugin / marketplace)
-- **Version files:**
-  - `plugins/super-bootstrap/.claude-plugin/plugin.json` → `version`
-  - `.claude-plugin/marketplace.json` → `plugins[0].version`
+- **Version file (single source of truth):**
+  - `plugins/super-bootstrap/.claude-plugin/plugin.json` → `version` (`marketplace.json` carries no `version`)
+- **Derived manifest mirror:**
+  - `.claude-plugin/marketplace.json` → `plugins[0].description` (synced from `plugin.json` at release; direct edits get overwritten)
 - **Platforms:** none (single artifact)
 - **Main branch:** main
 
@@ -67,14 +68,12 @@ Use the highest level found.
 
 Wait for confirmation. User can override.
 
-**Step 3 — Bump version files:**
+**Step 3 — Bump version + sync manifest mirror:**
 
-Edit both files to the same new version string.
+1. **Version** — edit `plugins/super-bootstrap/.claude-plugin/plugin.json`, change the top-level `"version"` field to the new version string. `marketplace.json` carries no `version` — do not add one.
+2. **Description mirror** — copy `plugin.json` `description` verbatim into `.claude-plugin/marketplace.json` `plugins[0].description`. No-op if already identical.
 
-- `plugins/super-bootstrap/.claude-plugin/plugin.json` — change the top-level `"version"` field.
-- `.claude-plugin/marketplace.json` — change `plugins[0].version`. Edit only the `version` field; leave all other fields unchanged.
-
-Verify both files contain the new version after edit.
+Verify `plugin.json` shows the new version and the marketplace `plugins[0].description` matches `plugin.json` `description`.
 
 **Step 4 — Generate release notes** from commits since last tag:
 
@@ -117,4 +116,5 @@ Push only on explicit yes. Skip by default if the user is silent. Never force pu
 - Never delete or move existing tags.
 - All tags are annotated (`git tag -a`).
 - Run `/release` with no arguments — the skill auto-detects state.
-- Both version files must stay in sync — bump both, or bump neither.
+- `plugin.json` is the single version source — bump it only. Do not add a `version` field to `marketplace.json`.
+- `marketplace.json` `plugins[0].description` is a derived mirror of `plugin.json` `description` — this skill syncs it at release; direct edits get overwritten.

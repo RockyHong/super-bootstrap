@@ -73,6 +73,6 @@ When skills overlap in concern, one is canonical and others delegate:
 - **Item classification** (cloud-safe criterion, action-verb intent map, per-source `{action, intent, stage}` derivation) — lives ONLY in `shared/classify-actionable.md`. Both `todo` (ranks + renders) and `drain` (gates + spawns) embed it verbatim at dispatch; neither restates it. Downstream of classification — ranking/render (todo), wave-select/spawn (drain) — stays in each skill's own home.
 - **Worktree-drain infra** (settings template, Read-hook, `.claude/worktrees/` gitignore) — frozen assets in `skills/drain/assets/`, installed into consumer repos by `drain`'s `ensure-infra` (idempotent copy/merge); the subprocess boundary anchor rides the dispatch prompt, not the repo. `harness-bootstrap` opt-in seed delegates to that same procedure — one install home, no second copy.
 
-- **Plugin-level description** — `plugin.json` is canonical; `marketplace.json` entry copies it verbatim at release.
+- **Plugin-level version + description** — `plugin.json` is canonical for both. `marketplace.json` carries no `version` (Claude Code always uses the `plugin.json` value, so a duplicate marketplace `version` would be silently ignored); its `plugins[0].description` is a verbatim copy of `plugin.json` `description`, synced by `/release` at release — direct edits there get overwritten.
 
 If extracting a new shared concern: pick the canonical home, delete duplicated content elsewhere, replace with one-paragraph delegation. Verify via grep that source-of-truth strings appear in exactly one file.

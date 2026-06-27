@@ -25,7 +25,7 @@ No build. Distribution is git + Claude Code marketplace:
 /plugin install super-bootstrap@super-bootstrap
 ```
 
-Versioned via the `/release` skill (bumps `marketplace.json` + `plugin.json` versions, commits, tags). Published by pushing to `github.com/RockyHong/super-bootstrap`; installs with `autoUpdate` pull the new version.
+Versioned via the `/release` skill. `plugin.json` is the single version source — Claude Code resolves a plugin's version from `plugin.json` first, so `marketplace.json` carries no `version`; `/release` bumps `plugin.json` and re-syncs the marketplace `plugins[0].description` mirror from `plugin.json`, then commits + tags. Published by pushing to `github.com/RockyHong/super-bootstrap`; installs with `autoUpdate` pull the new version.
 
 ## Architecture Rules
 

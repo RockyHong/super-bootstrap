@@ -119,7 +119,7 @@ Markdown-authored Claude Code plugin + self-hosted marketplace — no language r
 
 ```bash
 # No build system — skills/agents are markdown, loaded by Claude Code's plugin loader.
-# Release (bump marketplace.json + plugin.json, commit, tag):
+# Release (bump plugin.json version, sync marketplace description mirror, commit, tag):
 /release
 ```
 

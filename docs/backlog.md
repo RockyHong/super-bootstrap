@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-002` · `DEBT-004` · `GAP-001` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-002` · `DEBT-004` · `GAP-002` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -31,12 +31,12 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### DEBT-004 — `marketplace.json` and `plugin.json` description + version are byte-identical hand-maintained duplicates — `/release` should be the single writer
+### GAP-002 — release-init is a one-shot generator with no update/sync channel for already-bootstrapped consumers
 
-**Logged:** 2026-06-27 · **Source:** DEBT-002 grounding discussion 2026-06-27 — verified by reading both manifest files (descriptions confirmed byte-identical, version 2.14.0 duplicated)
-**Problem:** `marketplace.json` `plugins[0].description` and `plugin.json` `description` are byte-identical hand-maintained duplicates; `version` is also duplicated across both manifests. Any behavior refactor can stale one copy silently while the other stays — as happened with the DEBT-002 trigger. `/release` already bumps version in both but does not enforce description parity; no single writer owns both fields.
-**Area:** `.claude-plugin/marketplace.json`, `plugins/super-bootstrap/.claude-plugin/plugin.json`, `/release` skill
-**Prior:** Make `/release` the single writer that syncs both manifests' `description` + `version`; doc-sync remains a read-only drift detector (flags, does not write manifests) per the doc-sync write-boundary in `CLAUDE.md` § Doc Sync. This is the manifest-topology + `/release`-territory concern, split from the general doc-sync kernel.
+**Logged:** 2026-06-28 · **Source:** surfaced while routing DEBT-004 (the /release version-mirror SSoT fix) 2026-06-28
+**Problem:** `release-init` generates `.claude/skills/release/SKILL.md` as a one-shot product — step 1 is detect-existing → blind overwrite, no update path. When the upstream template improves, already-bootstrapped consumer repos (any project type — web/app/anything, not necessarily Claude plugins) have no way to pull template improvements into their existing generated skill without a full overwrite that discards their customizations. Note: DEBT-004's fix is Claude-plugin/self-hosted-marketplace specific and deliberately does NOT go into the generic template — so this is a generator-hygiene gap (no update channel for template improvements), not a vehicle to ship the DEBT-004 fix. Likely earns a brainstorm on merge strategy (patch improvements in vs regenerate-with-diff) while preserving consumer customization.
+**Area:** `plugins/super-bootstrap/skills/release-init/SKILL.md`, `plugins/super-bootstrap/skills/release-init/assets/template.md`
+**Prior:** Design question is merge vs regenerate-with-diff; either path must preserve consumer-side customization.
 
 ### DEBT-003 — harness-bootstrap skeleton templates ship audit-flagged prose noise and a stack-blind author-guide into every consumer
 
