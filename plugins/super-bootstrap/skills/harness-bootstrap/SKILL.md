@@ -97,7 +97,7 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - Project-owned content → never touch, even on drift
 
 **Pipeline-owned** (subject to drift check):
-- CLAUDE.md sections: Development Workflow, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene, Finding Triage, Rules, Git Notes, Planning
+- CLAUDE.md sections: Development Workflow, Dispatch, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene, Finding Triage, Rules, Git Notes, Planning
 - `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution, Edit Discipline
 - `docs/overview.md` skeleton sections: Problem, User, Current State
 - `docs/decisions.md` scope header (the blockquote + `## Closed Forks` heading)

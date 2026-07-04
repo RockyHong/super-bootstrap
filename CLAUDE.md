@@ -13,7 +13,7 @@ Non-trivial = anything past a single obvious edit. Walk in order; the artifact i
 | 1 | **Ground** — probe the problem against the real before scoping a fix | Bug/debt → a `docs/backlog.md` card whose root cause is verified against the real artifact (logs, repro, code), not a guess. Feature/refactor → a written problem statement grounded in first principles |
 | 2 | **Route** — triage phases (below), check [`docs/decisions.md`](docs/decisions.md) § Closed Forks, propose, **stop for confirm** | A posted route line the user has confirmed |
 | 3 | **Red** — for a change with a test surface, write the failing test first | A captured failing-test run (command + red output) before implementation |
-| 4 | **Implement** — write code to green | Passing run of the step-3 test |
+| 4 | **Implement** — dispatch the build to a clean subagent (§ Dispatch); gateway integrates + verifies | Passing run of the step-3 test |
 | 5 | **Verify** — run checks; for harness-file changes (CLAUDE.md, rules, skills, agents) the `audit-harness-edits` pass is the verify artifact | Captured pass output / audit report (`verification-before-completion`) |
 | 6 | **Doc-sync** — scan behavior-narrating prose for staleness | Per § Doc Sync |
 | 7 | **Commit** — `/super-bootstrap:commit` | Terminal step |
@@ -49,9 +49,17 @@ If user pushes back on triage → re-evaluate the gate that triggered the disagr
 
 Spec/plan locations: `docs/superpowers/specs/` and `docs/superpowers/plans/` (temporal). Persistent specs (kept after merge) go to `docs/specs/`.
 
+## Dispatch — who holds each phase
+
+The gateway orchestrates; it does not build. Inline lane = orchestration, reads, bounded live tweaks (aesthetic / config value, applied + checked in-app). Everything carrying a **propagation closure** — the edit plus every truth it must keep in sync — dispatches to a clean subagent. Judge by closure, not diff size: a one-line config tweak owns no closure → inline; a one-line fix that chains triage + multi-file reads + doc-sync has a closure → dispatch.
+
+- **Build** (Entry Gate step 4) → dispatch per phase, gateway integrates + verifies between. Build is never a live tweak.
+- **Doc-sync scan** (step 6) → dispatch the cold read across the § Doc Sync surface; gateway resolves findings with the user; writes land inline or dispatched by closure.
+- **Parallel within a phase, not across it** — N build sub-goals or N doc surfaces fan out together; build → doc-sync stays ordered (doc-sync needs the finished diff).
+
 ## Doc Sync (non-negotiable)
 
-Named pipeline step — every route includes it between user review and commit.
+Named pipeline step — every route includes it between user review and commit. Dispatch the staleness scan to a clean subagent (§ Dispatch).
 
 Before every commit, scan for prose describing behavior touched by the diff — `docs/` (specs, overview, techstack, backlog) **and behavior-narrating prose outside `docs/`: the root `README`, plus any manifest/description field the diff's behavior changes**. If any looks stale:
 
@@ -87,7 +95,7 @@ Banned-terms list + pre-flight checklist + recovery protocol: [`docs/techstack.m
 
 ## Context Hygiene
 
-When context heavy: subagent first (clean window), compact while warm, clear on topic shift. Park mid-implementation state to docs before `/clear`.
+Subagent-first is the default container for build and doc phases (§ Dispatch); context weight is an additional dispatch trigger, not the only one. Compact while warm, clear on topic shift. Park mid-implementation state to docs before `/clear`.
 
 ## Finding Triage — Log vs Fix Now
 
