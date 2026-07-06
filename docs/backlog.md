@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-005` · `DEBT-008` · `GAP-004` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-006` · `DEBT-008` · `GAP-004` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### BUG-006 — device harness hooks' path predicate never matches plugin-source layout, silent no-op
+
+**Logged:** 2026-07-07 · **Source:** super-bootstrap session resolving DEBT-005 / harness-collab downstream [owner: claude-config-manager — execute from that repo]
+**Problem:** `~/.claude/hooks/harness-author-pretool.sh` (grounding-checklist injection) and `~/.claude/hooks/harness-audit-pretool.sh` (pre-commit audit-freshness stamp + commit gate) share a path predicate matching only `.claude/skills|agents|rules/*` (or, under `STOREHOUSE=1`, root-level `skills|agents|rules|templates/*` — requires `serve.sh`, absent here). super-bootstrap's harness lives under `plugins/super-bootstrap/skills|agents/`, matching neither branch — both hooks silently no-op on this repo's harness edits. Confirmed 2026-07-07: `harness-audit-pretool.sh --stamp plugins/super-bootstrap/skills/todo/SKILL.md` wrote nothing (path filtered from stamp set); pre-commit gate stayed silent on commit 5a2ec8f despite a harness edit.
+**Area:** claude-config-manager repo — shared `_harness_paths`/`REL` predicate in `~/.claude/hooks/harness-author-pretool.sh` and `~/.claude/hooks/harness-audit-pretool.sh`
+**Prior:** extend the shared predicate with `*/skills/*|*/agents/*|*/rules/*`, or an explicit `plugins/*/skills|agents|rules/**` case, to cover plugin-source layouts.
 
 ### BUG-005 — `_hook_apply.sh` exits 1 on successful wire and idempotent no-op re-run
 
