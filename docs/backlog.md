@@ -31,13 +31,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### BUG-003 — unresolved plugin load error never diagnosed
-
-**Logged:** 2026-07-06 · **Source:** harness-collab-optimization session follow-up, spec `docs/superpowers/specs/harness-collab-optimization.md` item M2
-**Problem:** "1 error during load. Run /doctor for details." surfaced 2026-07-04 (transcript da309ecc:471); never diagnosed.
-**Area:** plugin load / `/doctor` diagnostics
-**Prior:** run `/doctor` once to capture the actual error, then route the fix.
-
 ### GAP-003 — harness-collab-optimization effect unmeasured against spec's acceptance targets
 
 **Logged:** 2026-07-06 · **Source:** harness-collab-optimization session, spec `docs/superpowers/specs/harness-collab-optimization.md` § 6 acceptance criteria, item C1
