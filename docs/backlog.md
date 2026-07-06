@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-002` · `DEBT-004` · `GAP-002` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-002` · `DEBT-005` · `GAP-002` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -31,4 +31,9 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-*(seeded as items are surfaced during reviews, audits, or development)*
+### DEBT-005 — todo SKILL.md has two divergent dispatch-flow descriptions
+
+**Logged:** 2026-07-06 · **Source:** Claude-initiated capture — out-of-scope finding from a build subagent's report on branch feat/harness-collab-opt
+**Problem:** `## Execution` `Steps:` list and `## Dispatch behavior` section describe the same dispatch flow with divergent content; only one carried the skip-gate before this branch's M1 fix. That divergence was the root cause of the dispatch-prep ordering bug fixed on feat/harness-collab-opt (~5-6K tokens of dispatch-prep files read before the empty-board gate ran). M1 builder surfaced it while applying the fix but left it unmerged per its surgical-edit constraint.
+**Area:** `plugins/super-bootstrap/skills/todo/SKILL.md` (`## Execution` Steps list, `## Dispatch behavior` section)
+**Prior:** merge the two into one procedure, or make one section canonical and cross-reference from the other.
