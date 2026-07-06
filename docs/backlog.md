@@ -86,10 +86,3 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Problem:** the optimization's real-world effect is unverified — no harvest window has yet checked: premature-commitment not top pain shape (first time in 4 windows), model-guard deny hits ≈0 (baseline 35/window), principles-load user re-assertions →0 (baseline ~15/session worst case), authoring inline:dispatch ratio moving from ~13:1 toward dispatch-majority, zero regressions on preserved wins (todo skip-dispatch fast path, four zero-retry dispatch lanes, audit gate).
 **Area:** `docs/superpowers/specs/harness-collab-optimization.md` § 6; next harness-pain harvest window
 **Prior:** pure measurement pass at the next harvest window, no code change.
-
-### DEBT-005 — todo SKILL.md has two divergent dispatch-flow descriptions
-
-**Logged:** 2026-07-06 · **Source:** Claude-initiated capture — out-of-scope finding from a build subagent's report on branch feat/harness-collab-opt
-**Problem:** `## Execution` `Steps:` list and `## Dispatch behavior` section describe the same dispatch flow with divergent content; only one carried the skip-gate before this branch's M1 fix. That divergence was the root cause of the dispatch-prep ordering bug fixed on feat/harness-collab-opt (~5-6K tokens of dispatch-prep files read before the empty-board gate ran). M1 builder surfaced it while applying the fix but left it unmerged per its surgical-edit constraint.
-**Area:** `plugins/super-bootstrap/skills/todo/SKILL.md` (`## Execution` Steps list, `## Dispatch behavior` section)
-**Prior:** merge the two into one procedure, or make one section canonical and cross-reference from the other.

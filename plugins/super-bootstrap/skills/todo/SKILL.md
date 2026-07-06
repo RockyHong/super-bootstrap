@@ -12,7 +12,7 @@ Default render is the full board (every open spec/plan/backlog row). Sub-verbs l
 
 | Invocation        | Behavior                                                                                                                                                                                                |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/super-bootstrap:todo`        | **Default.** Render the full board immediately. No gate, no picker. Footer logic adapts to total row count (see §Footer rule).                                                                            |
+| `/super-bootstrap:todo`        | **Default.** Render the full board immediately. No mode-picker. Footer logic adapts to total row count (see §Footer rule).                                                                            |
 | `/super-bootstrap:todo discuss`| Decision shape — specs awaiting user approval, brainstorming-style specs needing dialogue, backlog items flagged for user decision, any row whose blocker is "user". **Macro header on top.**          |
 | `/super-bootstrap:todo cloud`  | Cloud-safe filter — plan-writes for approved specs, executing plans on pure-logic surfaces, review-stage reads, doc cleanup, backlog triage. **Macro header on top.**                                  |
 | `/super-bootstrap:todo device` | Device-only filter — executing plans on UI / e2e / manual surfaces, manual verification of review-stage plans. **Macro header on top.**                                                                |
@@ -23,14 +23,19 @@ Default render is the full board (every open spec/plan/backlog row). Sub-verbs l
 
 ## Dispatch behavior
 
+**Canonical skip-gate** — applies to bare invocation and every sub-verb. Skip dispatch (no file reads beyond the glob, no agent) when either:
+
+- Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md` comes back all empty/absent (no specs, no plans, no open backlog rows — any row content under `## Open`, whether canonical `### {BUG|DEBT|GAP}-###` headings, foreign-prefix rows, or un-IDed bullets; the header's ID high-water-mark line doesn't count). Print directly:
+  > "No active work. Start something with `/brainstorm` or give me a task."
+- User explicitly asks to run inline.
+
 On bare `/super-bootstrap:todo`:
 
-1. Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`. If ALL sources are empty/absent (no specs, no plans, no open backlog rows — any row content under `## Open`, whether canonical `### {BUG|DEBT|GAP}-###` headings, foreign-prefix rows, or un-IDed bullets; the header's ID high-water-mark line doesn't count), print directly without dispatching:
-   > "No active work. Start something with `/brainstorm` or give me a task."
+1. Run the skip-gate above.
 2. Otherwise dispatch the `todo` subagent with `mode: full`. No picker, no questions.
 3. Relay the agent's rendered output verbatim. No editorial, no preface.
 
-On sub-verb invocation (`/super-bootstrap:todo cloud` etc.): dispatch immediately with that mode.
+On sub-verb invocation (`/super-bootstrap:todo cloud` etc.): run the skip-gate, then dispatch immediately with that mode.
 
 ## Footer rule
 
@@ -64,19 +69,12 @@ Classify every open item per this spec, then render EXACTLY the scaffold below. 
 
 Steps:
 
-1. **Skip-gate first (cheap):** quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md` per §Dispatch behavior step 1. All empty/absent → print the empty-state line and stop here — no file reads below.
-2. **Gateway (only once the gate confirms dispatch):** read `shared/classify-actionable.md` (plugin-shared, `../../shared/` from this SKILL.md) and `assets/scaffolds.md` (sibling), embed both verbatim in the dispatch prompt — the agent never fetches files outside the repo docs.
+1. Run the skip-gate (§Dispatch behavior). Confirmed dispatch → continue to step 2.
+2. Read `shared/classify-actionable.md` (plugin-shared, `../../shared/` from this SKILL.md — SSOT, also consumed by `/super-bootstrap:drain`) and `assets/scaffolds.md` (sibling), embed both verbatim in the dispatch prompt — the agent never fetches files outside the repo docs. Ranking + render live in the `todo` agent.
 3. Build dispatch prompt per template above.
 4. `Agent` tool, `subagent_type: "todo"`, prompt = the built dispatch prompt.
 5. Agent returns rendered scaffold (or empty-state). **Relay verbatim.**
 6. **Spot-check:** sample one classified row from the reply against the doc it cites; a confirmed miss → `/super-bootstrap:log` (tier re-pinning evidence).
-
-## Skip dispatch if
-
-- User explicitly asks to run inline.
-- Quick-gate sources all empty: zero spec/plan files AND zero row content under backlog `## Open` (canonical, foreign, or un-IDed) — no point spawning.
-
-Classification criteria live in the shared spec `shared/classify-actionable.md` (embedded at dispatch — SSOT, also consumed by `/super-bootstrap:drain`); ranking + render live in the `todo` agent.
 
 ## Rules
 
