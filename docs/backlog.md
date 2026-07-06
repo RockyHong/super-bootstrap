@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-006` · `DEBT-008` · `GAP-004` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-006` · `DEBT-008` · `GAP-007` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,27 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-007 — Greenfield seed logs only 2 GAP cards; downstream bootstrap-loop chain not captured
+
+**Logged:** 2026-07-07 · **Source:** user, gateway session on super-bootstrap repo
+**Problem:** `/super-bootstrap:super-bootstrap` greenfield path seeds exactly two GAP cards (fill overview.md, fill techstack.md) via `/super-bootstrap:log` and stops at the resolve gate — it does not log downstream bootstrap-loop steps (e.g. `resolve-plugins`, which requires techstack.md filled first; release-init; remaining loop steps). After the two seed cards resolve, the rest of the bootstrap is implicit/undiscoverable from the backlog and the loop can stall silently.
+**Area:** `super-bootstrap` skill, greenfield seed step
+**Prior:** greenfield seed should capture the full downstream chain as cards with dependency/ordering noted (e.g. resolve-plugins depends on techstack.md filled); exact enumeration of remaining steps is triage's job at pickup, not capture's.
+
+### GAP-006 — No update pipeline for an already-bootstrapped repo
+
+**Logged:** 2026-07-07 · **Source:** user, gateway session on super-bootstrap repo
+**Problem:** pipeline covers install + greenfield seed only — no explicit path to bring a repo bootstrapped at plugin version X forward to version Y (re-sync runway/pins/docs skeleton while preserving user edits to CLAUDE.md/docs).
+**Area:** `super-bootstrap` + `harness-bootstrap` skills
+**Prior:** depends on GAP-005's version stamp to detect staleness; needs brainstorm on what re-syncs vs preserves and how it slots against harness-bootstrap's existing fresh-vs-sync self-detection.
+
+### GAP-005 — Version-stamp bootstrap artifacts for staleness detection
+
+**Logged:** 2026-07-07 · **Source:** user, gateway session on super-bootstrap repo
+**Problem:** `/super-bootstrap:super-bootstrap` and `/super-bootstrap:harness-bootstrap` leave no version marker on what they install/sync into a target repo — no later run or sync check can detect the installed runway is stale relative to the current plugin version.
+**Area:** `super-bootstrap` + `harness-bootstrap` skills, target-repo CLAUDE.md / marker file
+**Prior:** stamp a version onto the installed runway (e.g. CLAUDE.md or a dedicated marker file) at bootstrap time.
 
 ### GAP-003 — harness-collab-optimization effect unmeasured against spec's acceptance targets
 
