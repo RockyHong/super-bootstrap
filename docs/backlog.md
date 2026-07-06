@@ -73,13 +73,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** claude-config-manager repo — model-guard hook config
 **Prior:** demote to declarative (frontmatter `model:` as primary, env var as ad-hoc floor); keep PreToolUse deny only where declarative can't reach (workflow name-launch).
 
-### DEBT-006 — feat/harness-collab-opt unmerged, harness-collab implementation unreleased
-
-**Logged:** 2026-07-06 · **Source:** harness-collab-optimization session, spec `docs/superpowers/specs/harness-collab-optimization.md`
-**Problem:** branch `feat/harness-collab-opt` holds the full implementation (3 commits, tree clean) — default-on hooks, `drain --model`, plugin-digest agent, todo/log updates — unmerged; consumers only receive it once `/release` bumps `plugin.json` version and syncs the marketplace description mirror (`plugin.json` description was edited on-branch).
-**Area:** repo root — branch `feat/harness-collab-opt`, `plugin.json`, marketplace mirror
-**Prior:** merge to main, then run `/release`.
-
 ### GAP-004 — no climb-SSOT nudge before AskUserQuestion
 
 **Logged:** 2026-07-06 · **Source:** harness-collab-optimization session, spec `docs/superpowers/specs/harness-collab-optimization.md` item D1 [owner: claude-config-manager — execute from that repo]
