@@ -38,13 +38,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** claude-config-manager repo — shared `_harness_paths`/`REL` predicate in `~/.claude/hooks/harness-author-pretool.sh` and `~/.claude/hooks/harness-audit-pretool.sh`
 **Prior:** extend the shared predicate with `*/skills/*|*/agents/*|*/rules/*`, or an explicit `plugins/*/skills|agents|rules/**` case, to cover plugin-source layouts.
 
-### BUG-005 — `_hook_apply.sh` exits 1 on successful wire and idempotent no-op re-run
-
-**Logged:** 2026-07-06 · **Source:** harness-collab-optimization session follow-up, spec `docs/superpowers/specs/harness-collab-optimization.md` item M4 [owner: claude-config-manager — execute from that repo]
-**Problem:** `scripts/_hook_apply.sh` returns exit code 1 on both a successful wire and an idempotent no-op re-run despite printing success output; costs 3 extra confirm calls (observed f0d27529:291).
-**Area:** claude-config-manager repo — `scripts/_hook_apply.sh`
-**Prior:** return 0 on success paths (successful wire, no-op re-run); reserve non-zero for actual failure.
-
 ### BUG-004 — session-close single-option AskUserQuestion can never render
 
 **Logged:** 2026-07-06 · **Source:** harness-collab-optimization session follow-up, spec `docs/superpowers/specs/harness-collab-optimization.md` item D2 [owner: claude-config-manager — execute from that repo]
