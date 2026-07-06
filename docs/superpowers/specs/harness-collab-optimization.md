@@ -60,9 +60,8 @@ Three independent sources, triangulated 2026-07-06:
 *Ships via:* harness-bootstrap assets + `/super-bootstrap:commit` skill update (the skill produces the artifact; the hook only checks its existence — cheap, deterministic).
 `[ccm]` companion: retime `audit-harness-edits` from Stop-context to the same pre-commit interception.
 
-**A3. Phase 3b forcing function (shipped).**
-Convert harness-bootstrap Phase 3b's per-section drift diff from prose instruction to produce-then-judge: enumerate sections to a file, gate Phase 3 handoff on that file's coverage (the pattern SKILL.md already prescribes for the sync report — extend it to 3b). Closes the user-filed bug verbatim quoted in § 1.
-*Ships via:* harness-bootstrap SKILL.md.
+**A3. Phase 3b forcing function — ALREADY SATISFIED, no work.**
+Investigation (2026-07-06) found the fix shipped in commit `7959a15` (2026-06-13, "gate drift check on sync-report artifact") and survived the phase renumbering (old 3b/3d → current 2b/2c). Current SKILL.md §2b (enumerate-first sync report) + §2c (Read + set-difference commit gate) carry the full produce-then-judge mechanism. The § 1 bug quote predates that commit. Kept as a record that the evidence-to-fix pipeline must check git log before prescribing — the exact under-read shape this spec targets.
 
 ### Axis B — tiering declarative
 

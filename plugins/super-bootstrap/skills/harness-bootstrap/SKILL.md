@@ -180,6 +180,20 @@ Ensure `.claude/settings.json` contains:
 
 `superpowers@claude-plugins-official` resolves from Anthropic's official marketplace — no `extraKnownMarketplaces` entry needed. `andrej-karpathy-skills@karpathy-skills` lives outside the official marketplace, so the `karpathy-skills` marketplace entry is required for cloud / fresh-machine resolution. Tier-2 curation (`/super-bootstrap:resolve-plugins`) treats both pins as locked: never proposes drop, never re-prompts the user. Adaptive picks (stack-matched skills / MCPs / hooks) layer on top when curation runs.
 
+### 2a-hooks: Harness hooks (default-on)
+
+Two `PreToolUse` hooks ship as frozen assets and install **unconditionally** — no
+opt-in confirm, unlike drain's worktree infra (§2a-drain below); both are
+safe-by-default (rationale + full procedure:
+[`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md)).
+
+| # | Hook | Fires on | Effect |
+| - | - | - | - |
+| 1 | `docsync-gate` | `Bash(git commit *)` | Deny the commit if `.git/docsync-token` is missing (doc-sync artifact not produced this session); consume the token on allow |
+| 2 | `harness-grounding` | `Edit\|Write` matched to a harness path (`CLAUDE.md`, `.claude/rules/**`, `.claude/skills/**`, `.claude/agents/**`) | Inject a 2-3 line grounding checklist via `additionalContext` — never denies |
+
+Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) — copies both scripts to `.claude/hooks/` and merges both settings snippets into `.claude/settings.json` `hooks.PreToolUse[]`. Idempotent (present-checked first, silent when already installed); stage the placed files with the Phase 2c commit. Same asset-copy + guarded-merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3) — one pattern, reused here rather than re-derived.
+
 ### 2a-drain: Drain infra (opt-in)
 
 `/super-bootstrap:drain` (parallel-worktree auto-drain) needs three committed infra pieces. Most active-dev repos use drain; skill / plugin / docs-only repos usually don't. Ask once:
@@ -384,7 +398,8 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/techstack.md` (new, skeleton-section drift, or post-migration absorbed content)
 - `docs/overview.md` (new or skeleton-section drift)
 - `docs/decisions.md` (new, scope-header drift, or post-retirement migration from techstack)
-- `.claude/settings.json` (core plugin pins seeded at 2a)
+- `.claude/settings.json` (core plugin pins seeded at 2a; harness hooks merged at 2a-hooks)
+- `.claude/hooks/docsync-gate.sh`, `.claude/hooks/harness-grounding.sh` (frozen hook scripts seeded at 2a-hooks — always, default-on)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)
 - `docs/superpowers/specs/.gitkeep`

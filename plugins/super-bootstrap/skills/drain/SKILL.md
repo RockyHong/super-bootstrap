@@ -71,8 +71,10 @@ Per item: enter at the item's `stage` (§Invariants stage-resume), run phase-by-
 
 ```
 cd .claude/worktrees/drain-{id}
-claude -p "<phase prompt>" --setting-sources local,project --permission-mode acceptEdits --allowedTools "Skill"
+claude -p "<phase prompt>" --model sonnet --setting-sources local,project --permission-mode acceptEdits --allowedTools "Skill"
 ```
+
+Explicit `--model sonnet` — drain is the widest fan-out surface in the system; an unspecified tier inherits the invoking (gateway) model and multiplies its cost per item. Required-flags table (flag → consequence-if-missing): `assets/parallel-worktrees.md §Required flags`.
 
 Dispatched `Bash(run_in_background: true)`. Phase chain, stage-entry map, status contract (`DONE` / `DONE_WITH_CONCERNS` / `BLOCKED` / `NEEDS_CONTEXT`), and the polymorphic escalate-or-build branch: `assets/phase-loop.md`.
 

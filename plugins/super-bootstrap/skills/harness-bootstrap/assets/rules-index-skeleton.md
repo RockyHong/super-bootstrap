@@ -24,3 +24,11 @@ description: "Rule-authoring guide — loads when editing files under .claude/ru
    ```
 2. Body uses the same imperative, full-detail style as `CLAUDE.md` § Edit Discipline — rules are loaded with full ammo.
 3. Add a one-line summary bullet to `CLAUDE.md` § Rules.
+
+## Related convention — model tiering on skills
+
+`SKILL.md` frontmatter cannot pin a model, so a skill whose protocol carries bounded
+judgment (classify / rank / scan / digest) that stays inline runs unpinned, at
+whatever tier the gateway happens to be on. Author it instead as a dispatch-shell
+`SKILL.md` + a typed `agents/<name>.md` carrying `model:` frontmatter — the only
+tiering escape hatch. See `skills/todo` + `agents/todo.md` for the pattern.

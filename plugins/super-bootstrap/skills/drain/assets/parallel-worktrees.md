@@ -35,17 +35,32 @@ cp .claude/templates/worktree-settings.local.json .claude/worktrees/drain-{id}/.
 ```bash
 cd .claude/worktrees/drain-{id}
 claude -p "<phase prompt>" \
+  --model sonnet \
   --setting-sources local,project \
   --permission-mode acceptEdits \
   --allowedTools "Skill"
 ```
 
-- **Prompt comes first, flags after — load-bearing order.** `--allowedTools` is variadic: when placed immediately before the positional prompt (`--allowedTools "Skill" "<prompt>"`), it greedily swallows the prompt as tool-rule values, leaving none → `Error: Input must be provided`. Verified live on CC 2.1.183. Keep the prompt as the first positional (matches the official-docs example `claude -p "<prompt>" --allowedTools ...`); never trail it after `--allowedTools`.
-- `--setting-sources local,project` — loads the worktree's own `settings.local.json` plus its committed `.claude/`; because cwd = worktree, `project` resolves to the worktree tree (registering its rules + skills). User sources stay excluded. The FS wall is cwd-default + no `--add-dir <gateway>`, independent of source selection.
-- `--permission-mode acceptEdits` — auto-accept Edit/Write within the allow set; Bash stays deny-by-default unless allowed.
-- `--allowedTools "Skill"` — **required**; without it bundled skills (`/code-review`) are permission-denied in `-p` mode and the review phase silently degrades to a no-op.
+### Required flags (miss one → silent degrade or hard failure, not a loud error)
 
-_These `claude -p` flags + the prompt-first ordering are confirmed against the official Claude Code CLI reference and a live end-to-end drain smoke (CC 2.1.183): `--setting-sources` accepts `user,project,local`; `acceptEdits` is a valid `--permission-mode` value; `--allowedTools` is valid (alias `--allowed-tools`) and variadic. Re-confirm if the CLI surface moves._
+Canonical spot for this table — cross-referenced, not restated, from `SKILL.md` and `phase-loop.md`.
+
+| Flag / ordering | If missing |
+| ---------------- | ---------- |
+| Prompt-first ordering | `--allowedTools` (variadic) swallows a trailing prompt as tool-rule values → `Error: Input must be provided`. |
+| `--allowedTools "Skill"` | Bundled skills (`/code-review`) are permission-denied in `-p` mode — review phase silently degrades to a no-op. |
+| `--model sonnet` | Subprocess inherits the invoking (gateway) model instead — drain is the widest fan-out surface in the system, so an unspecified tier multiplies cost per item across the whole wave. |
+| `--setting-sources local,project` | Worktree's own `settings.local.json` + committed `.claude/` (rules, skills) never register — subprocess runs against the wrong config. |
+| `--permission-mode acceptEdits` | Edit/Write inside the worktree prompt for confirmation instead of auto-applying — breaks headless (`-p`) execution. |
+
+Mechanism detail the table doesn't carry (consequences live in the table only):
+
+- Prompt-first: keep the prompt as the first positional, matching the official-docs example `claude -p "<prompt>" --allowedTools ...`; never trail it after `--allowedTools`.
+- `--model sonnet` — one subprocess-level pin shared by every phase (triage/execute/review); split per-phase only if a phase proves to need a different tier.
+- `--setting-sources local,project` — because cwd = worktree, `project` resolves to the worktree tree (registering its rules + skills); user sources stay excluded. The FS wall is cwd-default + no `--add-dir <gateway>`, independent of source selection.
+- `--permission-mode acceptEdits` — auto-accepts Edit/Write within the allow set only; Bash stays deny-by-default unless allowed.
+
+_These `claude -p` flags + the prompt-first ordering are confirmed against the official Claude Code CLI reference and a live end-to-end drain smoke (CC 2.1.183): `--setting-sources` accepts `user,project,local`; `acceptEdits` is a valid `--permission-mode` value; `--allowedTools` is valid (alias `--allowed-tools`) and variadic; `--model` accepts an alias (`sonnet`/`opus`/`haiku`) or a full model id. Re-confirm if the CLI surface moves._
 
 Dispatch via `Bash(run_in_background: true)` so multiple subprocesses run concurrently; the gateway is notified on each completion (push, not poll).
 

@@ -80,18 +80,22 @@ Apply the pre-filter only to the `*-lsp` pattern from `claude-plugins-official`;
 
 ## Phase 2.5: README parse → cached digest
 
-For each candidate Phase 2 emitted, fetch the upstream README once and reduce it to a structured digest. Phase 3 (gate) and Phase 5 (install plan) consume the same digest — single parse, two callers.
+For each candidate Phase 2 emitted, fetch the upstream README once (WebFetch / `gh api`, same mechanic as Phase 2) — the fetch stays here, on the gateway. Reducing the fetched bodies to a structured digest is mechanical extraction; dispatch it. The thinking runs in the `plugin-digest` subagent (`agents/plugin-digest.md`, `model: haiku`); this phase is the dispatch shell. Phase 3 (gate) and Phase 5 (install plan) consume the same digest — single parse, two callers.
 
-Digest fields:
+Digest fields (agent's job — see `agents/plugin-digest.md` for the full field spec):
 
 - `hard_paths_shipped` — hooks declared (which event + file glob), slash commands shipped, frontmatter `agents:` / `related-skills:` delegations, MCP server config presence.
 - `manual_install_steps` — ordered imperative steps lifted from `## Installation` / `## Setup` / `## Quick Start` headings (e.g. `brew install graphify`, `pnpm add -D <pkg>`, `chmod +x .claude/hooks/<name>.sh`).
 - `user_invoke_trigger` — one-sentence "user types /name when ___" hypothesis for any slash command shipped (empty if none).
 - `multi_component` — boolean. Flags Phase 5 to plan an atomic multi-step install (e.g. binary + MCP + hook + skill in one bundle).
 
-If README absent or fetch fails for one candidate: warn inline, accept best-effort interpretation from SKILL.md only — do not auto-decide. Don't halt the whole batch on a single missing README.
+**Dispatch:** `Agent` tool, `subagent_type: "plugin-digest"`, prompt = every fetched README/manifest body from this run, each tagged with its candidate name (batch over loop — one dispatch for the whole batch, never one per candidate). Relay the returned per-candidate digests into the Phase 2.5 cache verbatim; the gateway does not re-derive fields the agent already extracted.
 
-Cache lifetime: per `/super-bootstrap:resolve-plugins` invocation. Discarded at end. Re-runs re-fetch (README content drifts between runs).
+**Why Haiku is safe here:** the agent only extracts — it never scores trust or decides admission. Phase 3's trust-tier scoring and earn-right gate already judge the digest downstream, so a lossy extraction gets caught before it reaches `settings.json`. Never build a verification stage just for this; ride the judge stage that already exists.
+
+If README absent or fetch fails for one candidate: warn inline before dispatch, mark that candidate `unresolved` in the batch (the agent surfaces `unresolved` too if a supplied body is empty). Don't halt the whole batch on a single missing README.
+
+Cache lifetime: per `/super-bootstrap:resolve-plugins` invocation. Discarded at end. Re-runs re-fetch (README content drifts between runs) and re-dispatch.
 
 ---
 

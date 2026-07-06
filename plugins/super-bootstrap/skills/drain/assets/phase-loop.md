@@ -4,12 +4,12 @@ Per wave member: the gateway enters the item's phase chain at its `stage` (from 
 
 ```
 cd .claude/worktrees/drain-{id}
-claude -p "<phase prompt>" --setting-sources local,project --permission-mode acceptEdits --allowedTools "Skill"
+claude -p "<phase prompt>" --model sonnet --setting-sources local,project --permission-mode acceptEdits --allowedTools "Skill"
 ```
 
 The `<phase prompt>` is `assets/worktree-boundary.md` (embedded verbatim — the subprocess attention anchor) followed by the phase task. **Prompt is the first positional** — `--allowedTools` is variadic and swallows a trailing prompt (`parallel-worktrees.md §Dispatch step`). Embedding at dispatch is the delivery mechanism: a `.claude/worktrees/**` path-glob rule would never fire, since the subprocess's project root is the worktree and its own reads are root-relative.
 
-Background (`Bash(run_in_background: true)`), notification-driven (push, not poll). The subprocess dispatches the right superpowers phase inside its worktree (`/brainstorm`, `/write-plan`, `/execute-plan`, review) and writes its status. `--allowedTools "Skill"` is required — without it bundled skills (`/code-review`) are permission-denied in `-p` mode and the review phase silently degrades.
+Background (`Bash(run_in_background: true)`), notification-driven (push, not poll). The subprocess dispatches the right superpowers phase inside its worktree (`/brainstorm`, `/write-plan`, `/execute-plan`, review) and writes its status. Required-flags table (flag → consequence-if-missing, includes `--model` and `--allowedTools`): `parallel-worktrees.md §Required flags` — canonical, don't restate here.
 
 ## Stage entry → phase chain (polymorphic, lean default)
 

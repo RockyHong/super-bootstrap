@@ -38,6 +38,8 @@ Run the doc-sync gate per the project's **CLAUDE.md § Doc Sync** — it owns th
 
 Commit-specific: surface every call **before** staging, not after. Doc updates from this gate stage alongside the code changes.
 
+Once every call resolves (updated / acknowledged-accurate / explicit skip), write the doc-sync token: `touch .git/docsync-token`. This is the artifact the `docsync-gate` `PreToolUse` hook checks before allowing `git commit` (harness-bootstrap `assets/hooks-ensure-infra.md`) — one-shot, consumed by the hook on the next commit attempt.
+
 ### 4. Draft Commit Message
 
 Conventional Commits format:

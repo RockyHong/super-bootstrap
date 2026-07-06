@@ -64,10 +64,12 @@ Classify every open item per this spec, then render EXACTLY the scaffold below. 
 
 Steps:
 
-1. **Gateway (before dispatching):** read `shared/classify-actionable.md` (plugin-shared, `../../shared/` from this SKILL.md) and `assets/scaffolds.md` (sibling), embed both verbatim in the dispatch prompt — the agent never fetches files outside the repo docs.
-2. Build dispatch prompt per template above.
-3. `Agent` tool, `subagent_type: "todo"`, prompt = the built dispatch prompt.
-4. Agent returns rendered scaffold (or empty-state). **Relay verbatim.**
+1. **Skip-gate first (cheap):** quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md` per §Dispatch behavior step 1. All empty/absent → print the empty-state line and stop here — no file reads below.
+2. **Gateway (only once the gate confirms dispatch):** read `shared/classify-actionable.md` (plugin-shared, `../../shared/` from this SKILL.md) and `assets/scaffolds.md` (sibling), embed both verbatim in the dispatch prompt — the agent never fetches files outside the repo docs.
+3. Build dispatch prompt per template above.
+4. `Agent` tool, `subagent_type: "todo"`, prompt = the built dispatch prompt.
+5. Agent returns rendered scaffold (or empty-state). **Relay verbatim.**
+6. **Spot-check:** sample one classified row from the reply against the doc it cites; a confirmed miss → `/super-bootstrap:log` (tier re-pinning evidence).
 
 ## Skip dispatch if
 

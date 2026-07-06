@@ -8,7 +8,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 
 - `super-bootstrap` — public entry, thin orchestrator; dispatches the runway, seeds greenfield GAP cards, gates tier-2 curation.
 - `harness-bootstrap` — installs/syncs the generic runway (CLAUDE.md, skeleton docs, rules, core pins).
-- `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`.
+- `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`; Phase 2.5 dispatches `agents/plugin-digest.md` (Haiku) for README→digest parse.
 - `todo` — intent-filtered board scanner; dispatches `agents/todo.md` (Sonnet).
 - `log` — capture front door for backlog rows; dispatches `agents/log.md` (Sonnet).
 - `help` — on-demand index of installed user-invoke skills; dispatches `agents/help.md` (Haiku).
@@ -52,7 +52,7 @@ A single matching reason on either side decides.
 |---|---|---|
 | `super-bootstrap` | inline | Orchestrator — owns the user thread + dispatch sequencing across runway / log / curation |
 | `harness-bootstrap` | inline | Phased scaffolding with mid-flow user steering |
-| `resolve-plugins` | inline (dispatch candidate) | 6-pool live queries are context-heavy; user-interactive on diff confirm. Revisit. |
+| `resolve-plugins` | inline + dispatch (Haiku, Phase 2.5 only) | 6-pool live queries + user-interactive diff confirm stay inline (gateway owns the thread); Phase 2.5 README-parse→digest split to `agents/plugin-digest.md` — mechanical extraction, Haiku-safe because Phase 3's trust-tier scoring + earn-right gate already judge the digest downstream |
 | `commit` | inline | Session-aware (transcript memory + doc-sync Q&A) |
 | `merge` | inline | Same context-aware shape as `commit`; lower freq doesn't pay for relay either |
 | `drain` | inline | Gateway orchestrator — owns the user thread, the wave loop, the halts. The per-item work IS the spawned `claude -p` subprocesses; the orchestration itself is gateway reasoning, not an Agent dispatch |
@@ -72,6 +72,7 @@ When skills overlap in concern, one is canonical and others delegate:
 - **Files-as-contract handoff** — skills communicate via committed docs (`docs/overview.md`, `docs/techstack.md`, `.claude/settings.json`), not in-memory state. Lets each skill run standalone.
 - **Item classification** (cloud-safe criterion, action-verb intent map, per-source `{action, intent, stage}` derivation) — lives ONLY in `shared/classify-actionable.md`. Both `todo` (ranks + renders) and `drain` (gates + spawns) embed it verbatim at dispatch; neither restates it. Downstream of classification — ranking/render (todo), wave-select/spawn (drain) — stays in each skill's own home.
 - **Worktree-drain infra** (settings template, Read-hook, `.claude/worktrees/` gitignore) — frozen assets in `skills/drain/assets/`, installed into consumer repos by `drain`'s `ensure-infra` (idempotent copy/merge); the subprocess boundary anchor rides the dispatch prompt, not the repo. `harness-bootstrap` opt-in seed delegates to that same procedure — one install home, no second copy.
+- **Harness hooks** (`docsync-gate` pre-commit doc-sync gate, `harness-grounding` edit-nudge) — frozen assets in `skills/harness-bootstrap/assets/hooks/`, installed into consumer repos by `harness-bootstrap`'s `hooks-ensure-infra` (idempotent copy/merge, **default-on** — unlike drain's opt-in worktree infra, since both hooks are safe-by-default). Same copy/merge mechanism as drain's `ensure-infra`, reused rather than re-derived.
 
 - **Plugin-level version + description** — `plugin.json` is canonical for both. `marketplace.json` carries no `version` (Claude Code always uses the `plugin.json` value, so a duplicate marketplace `version` would be silently ignored); its `plugins[0].description` is a verbatim copy of `plugin.json` `description`, synced by `/release` at release — direct edits there get overwritten.
 

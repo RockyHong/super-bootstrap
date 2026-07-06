@@ -114,8 +114,10 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
   • Before editing a prose doc, classify what it owns: state (overwrite in place) vs history (append-only, git's job).
 - **`ssot-doc-link.md`** — fires on `docs/**/*.md`, `README.md`
   • Link each concept to its SSOT home as you write — born-linked, not back-filled.
+- **`repo-boundary.md`** (native) — fires on `plugins/**`, `.claude/rules/**`, `.claude/guidelines/**`
+  • State which copy is under test (published vs in-repo dev). Route findings: this repo's artifacts → `/super-bootstrap:log`; device/global config → `/contribute` (imported artifacts read-only).
 
-Both served from the personal claude-config repo (predicates in `.claude/guidelines/work-discipline/`). Add a project-specific rule file when a path-scoped pattern emerges (e.g. a SKILL.md authoring convention), then mirror a one-line summary here.
+First two served from the personal claude-config repo (predicates in `.claude/guidelines/work-discipline/`). Add a project-specific rule file when a path-scoped pattern emerges (e.g. a SKILL.md authoring convention), then mirror a one-line summary here.
 
 ## Tech Stack
 

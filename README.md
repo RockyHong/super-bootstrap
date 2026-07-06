@@ -52,6 +52,7 @@ Re-run any time — incremental, never overwrites your edits.
 | `CLAUDE.md` | **Layered** per-section — never overwritten. Diff shown before any write. |
 | `.claude/settings.json` | **Merged** — adds `enabledPlugins` + `extraKnownMarketplaces`; your other settings preserved. |
 | `docs/`, `.claude/rules/` | **Seeded** with new files from detected stack. User-grown content never touched on re-run. |
+| `.claude/hooks/` | **Installed** by default — two PreToolUse hooks: `docsync-gate` blocks `git commit` until a doc-sync artifact exists this session (escape: `touch .git/docsync-token`); `harness-grounding` injects a grounding checklist on harness-file edits, never blocks. |
 | `.env*`, `*.key`, `*credential*` | **Skipped** from scan entirely — never read, never written. |
 
 Also bundles `/super-bootstrap:todo` (intent-filtered work board), `/super-bootstrap:log` (capture observations into the backlog), `/super-bootstrap:commit` (session-isolated, doc-sync-gated), `/super-bootstrap:merge` (absorb feature branches; aborts + surfaces on conflict), and `/super-bootstrap:help` (index of installed user-invoke skills) — all namespaced under `super-bootstrap:` so plugin manager disambiguates collisions automatically. The `/super-bootstrap` entry stays bare (plugin-name == skill-name special case).

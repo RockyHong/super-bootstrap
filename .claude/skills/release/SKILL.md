@@ -23,6 +23,18 @@ Run in parallel:
 - `git status` — working tree must be clean. If dirty, stop: "Commit or stash changes first."
 - `git branch --show-current` — must be on `main`. If not, warn and ask to continue.
 
+### 1.5 Dispatch-shell pre-flight (warn, not block)
+
+Scan `plugins/*/skills/*/SKILL.md` for bounded-judgment verbs — `classify`, `rank`, `scan`, `digest` (case-insensitive) — appearing in the skill's protocol/execution body. For each hit, check whether that skill dispatches a typed agent (a sibling `agents/<name>.md`, or a `subagent_type:` / "dispatch the ... agent" reference in the same file). A skill frontmatter alone can't pin a model — bounded judgment left inline runs unpinned, at the gateway's tier.
+
+Skip skills whose row in `plugins/super-bootstrap/README.md` § "Inline vs Dispatch" documents an inline rationale — those are decided placements, not misses; warning on them every release trains the reader to ignore the check.
+
+Bounded-judgment verb(s) found, no agent dispatch, **and** no documented inline rationale → warn, one line, don't block:
+
+> ⚠ dispatch-shell check: {file} — bounded-judgment verb(s) ({verbs}) with no agent dispatch. Consider splitting into dispatch-shell + typed agent (see `skills/todo` + `agents/todo.md`).
+
+List every matching file on one line if more than one hits. Never halts the release — this is a nudge surfaced in the release report, not a qualify gate.
+
 ### 2. Read state
 
 ```bash
@@ -118,3 +130,4 @@ Push only on explicit yes. Skip by default if the user is silent. Never force pu
 - Run `/release` with no arguments — the skill auto-detects state.
 - `plugin.json` is the single version source — bump it only. Do not add a `version` field to `marketplace.json`.
 - `marketplace.json` `plugins[0].description` is a derived mirror of `plugin.json` `description` — this skill syncs it at release; direct edits get overwritten.
+- Dispatch-shell pre-flight (step 1.5) warns, never blocks — a hit is a nudge to split a skill, not a release-stopper.
