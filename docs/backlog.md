@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-008` · `DEBT-008` · `GAP-009` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-008` · `DEBT-008` · `GAP-010` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -31,12 +31,12 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### GAP-009 — version skew leaves partial-hook state undetected; no re-sync reminder
+### GAP-010 — no detection for bootstrapped-but-stale hook/runway install
 
-**Logged:** 2026-07-07 · **Source:** BUG-008 fix session; git history — `docsync-gate.sh` introduced c1e2820, `docsync-scan.sh` + `docsync-stamp.sh` added one release later in 59abb4e
-**Problem:** doc-sync hook assets did not ship atomically — a repo bootstrapped from a c1e2820-era harness-bootstrap has the gate hook installed but no scan script, and stays in that skew state until it re-runs `/super-bootstrap` (copy-on-drift only re-syncs on next invocation). Two coupled effects surface from this real partial-hook state: (1) `/super-bootstrap:commit` §3's BUG-008 fix (commit f19ada3) correctly probes gate-live and takes the "run scan" branch, but then emits a raw `bash: file-not-found` instead of a clear "doc-sync hooks are stale — run `/super-bootstrap` to sync" message; (2) nothing proactively detects a stale/partial runway+hooks install and nudges re-sync — the plugin ships zero hooks (skills only), and `/super-bootstrap:todo`'s skip-gate conflates "runway absent (never bootstrapped)" with "runway present, no open rows," both printing "empty board / cycle complete."
-**Area:** `plugins/super-bootstrap/skills/commit/SKILL.md` §3; `plugins/super-bootstrap/skills/todo/SKILL.md` skip-gate; harness-bootstrap hook-install / copy-on-drift sync
-**Prior:** candidate owner is `/super-bootstrap:todo`'s skip-gate (pull-based — a user running `/todo` has signaled intent to work the pipeline) — split "runway/hooks absent-or-stale -> suggest `/super-bootstrap`" from "runway present, empty -> cycle complete"; plan B is a `SessionStart` hook (ambient, but a new architectural surface — plugin ships none today). Whether §3 also gets an explicit third branch (gate-present/scan-absent -> stale message vs raw error) is a separate decision, deferred to triage alongside owner pick. Related to GAP-008 (gate-live path undogfooded in-repo) but distinct — that's test-coverage, this is runtime robustness for consumer repos hitting real version skew — not folded into it.
+**Logged:** 2026-07-07 · **Source:** BUG-008 → GAP-009 fix session; GAP-009's tractable slice shipped in commit 7966373, this is the deferred remainder
+**Problem:** nothing detects a repo that IS bootstrapped but whose hooks/runway are OUTDATED (all four hook assets present but lagging the plugin's current version). `/super-bootstrap:commit` §3 only catches gate-present-scan-ABSENT (version skew via missing `docsync-scan.sh`); `/super-bootstrap:todo`'s skip-gate only catches runway-ABSENT (`docs/superpowers/` entirely missing). Neither catches present-but-outdated, so a bootstrapped repo with stale hooks gets no proactive resync nudge from any trigger.
+**Area:** `/super-bootstrap:todo` skip-gate (version-marker comparison); `harness-bootstrap` copy-on-drift sync; possible new `SessionStart` hook surface (plugin ships zero hooks today)
+**Prior:** two open decisions deferred to triage — (1) where present-but-outdated detection should live: extend `/super-bootstrap:todo`'s skip-gate to compare installed hook version-markers against the plugin's assets, or surface it as `harness-bootstrap` copy-on-drift instead; (2) whether ambient detection warrants a new `SessionStart` hook (plan B, new architectural surface) vs staying pull-only via `/todo`.
 
 ### GAP-008 — commit §3 doc-sync gate's "gate-live" path never dogfooded in-repo
 
