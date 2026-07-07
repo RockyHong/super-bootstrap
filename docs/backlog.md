@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-010` · `DEBT-008` · `GAP-012` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-010` · `DEBT-008` · `GAP-013` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-013 — dispatch-tiering seam split across two repos: trigger half has doctrine but no enforcement organ
+
+**Logged:** 2026-07-08 · **Source:** BUG-010 essence analysis session
+**Problem:** the dispatch-tiering seam has two halves owned by two repos. super-bootstrap's gateway owns the TRIGGER (whether to dispatch at all — inline-vs-dispatch). CCM (device/global taste layer) owns tiering only AT/AFTER dispatch: model-reminder SessionStart hook, agent-model/workflow-model deny guards, work-discipline/model-tiering.md + axiom-principles/agent-shapes.md lore. CCM's enforcement is strictly downstream of the trigger — if the gateway never dispatches, there's no tool-call for CCM's hook/guards to intercept, so the whole tiering guard is moot. The trigger half has doctrine (agent-shapes "Dispatch test") but no enforcement organ: "failed to dispatch" is structurally un-hookable (an absent tool-call can't be intercepted). Symptom: ~13:1 inline:dispatch ratio (harness-collab-optimization baseline). Three OPEN hypotheses, none pre-judged: (a) super-bootstrap problem — CLAUDE.md § Dispatch trigger criteria don't fire hard enough and/or bundled skills aren't structured as dispatch-shells; (b) CCM problem — enforcement model has no trigger-side organ, may be inherently un-hookable or need a different mechanism (routes to `/contribute`, CCM is device/global read-only here); (c) not a real problem (Axiom II grounding) — inline for genuinely light work may be the correct Leverage call given dispatch overhead, meaning the dispatch-majority target itself is ungrounded and 13:1 could be correct.
+**Area:** super-bootstrap `CLAUDE.md` § Dispatch (trigger criteria) + its bundled skills' dispatch-shell structure; CCM enforcement model (cross-repo, hypothesis b)
+**Prior:** related to GAP-003 but distinct — do not merge. GAP-003 measures whether harness-collab-optimization moved the inline:dispatch ratio toward dispatch-majority; this card questions seam ownership itself + whether the dispatch-majority target is even the right target (hypothesis c). Triage decides among (a)/(b)/(c) — no fix pre-selected.
 
 ### BUG-010 — rules-index-skeleton.md "model tiering on skills" section: wrong paths-scope + false "only escape hatch" claim + consumer-broken todo wire
 
