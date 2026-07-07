@@ -31,27 +31,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### BUG-011 — background Agent-tool subagent reported completion twice with zero writes landing, no visible error
-
-**Logged:** 2026-07-08 · **Source:** dispatch-lane defect observation, this session
-**Problem:** a general-purpose sonnet background subagent (Agent tool) tasked with creating 4 hook files reported completion twice with zero writes landing — no error surfaced, no permission denial visible to the gateway, git status clean of its target paths both times. A same-shaped sibling dispatch (CLAUDE.md rewrite, same model/type, same session) wrote fine. Gateway fell back to inline build. Silent claimed-done-no-write shape breaks dispatch-lane trust.
-**Area:** Agent tool dispatch lane (background subagents + Write permissions), `plugins/**` new-file writes
-**Prior:** possibly background-agent permission prompt auto-deny on new-file Write to `plugins/**`; possibly agent claimed-done without doing. Root-cause at next occurrence.
-
-### GAP-016 — superpowers `writing-skills` Iron Law unevaluated against this repo's skill-authoring conventions
-
-**Logged:** 2026-07-08 · **Source:** entry-discipline spec § 7 O2 (spec deleted post-merge — this row is its new home)
-**Problem:** superpowers `writing-skills` (Iron Law: no skill without a failing test first, applies to new skills AND edits) is a candidate discipline for `plugins/super-bootstrap/skills/**` authoring, but unevaluated against existing conventions (skill-authoring lore + `/release` dispatch-shell check).
-**Area:** plugin-skill authoring workflow
-**Prior:** evaluate at next new-skill authoring session.
-
-### GAP-015 — sdd (subagent-driven-development) invoke threshold undecided vs CLAUDE.md § Dispatch
-
-**Logged:** 2026-07-08 · **Source:** entry-discipline spec § 7 O1 (spec deleted post-merge — this row is its new home)
-**Problem:** superpowers `subagent-driven-development` offers a compaction-durable progress ledger (`.superpowers/sdd/progress.md`) + per-dispatch model-tier rule that CLAUDE.md § Dispatch only form-shadows today. Open question: at what plan size does invoking sdd whole beat the current § Dispatch machinery? Undecided — no evaluation criteria set.
-**Area:** CLAUDE.md § Dispatch, cluster-3 route
-**Prior:** decide at first large multi-task plan; note the outcome in docs/techstack.md.
-
 ### GAP-003 — harness-collab-optimization effect unmeasured; criteria reshaped by entry-discipline
 
 **Logged:** 2026-07-06 (criteria reshaped 2026-07-08, entry-discipline session) · **Source:** harness-collab spec § 6 C1 (full text @ c1e2820) + entry-discipline spec W4

@@ -40,6 +40,7 @@ Spec/plan locations: `docs/superpowers/specs/` and `docs/superpowers/plans/` (te
 The gateway orchestrates; it does not build. Inline lane = orchestration, reads, bounded live tweaks (aesthetic / config value, applied + checked in-app). Everything carrying a **propagation closure** — the edit plus every truth it must keep in sync — dispatches to a clean subagent. Judge by closure, not diff size: a one-line config tweak owns no closure → inline; a one-line fix that chains triage + multi-file reads + doc-sync has a closure → dispatch.
 
 - **Build** (within Implement) → dispatch per phase, gateway integrates + verifies between. Build is never a live tweak.
+- **Build inside a superpowers chain** (a `writing-plans` artifact in hand) → the chain's own executor governs — take its documented choice-point (`subagent-driven-development` / fallback, per the [topology map](docs/specs/superpowers-topology.md)); the lanes here carry envelope work outside a chain.
 - **Doc-sync scan** (envelope step) → dispatch the cold read across the § Doc Sync surface; gateway resolves findings with the user; writes land inline or dispatched by closure.
 - **Parallel within a phase, not across it** — N build sub-goals or N doc surfaces fan out together; build → doc-sync stays ordered (doc-sync needs the finished diff).
 
@@ -103,6 +104,8 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 - **`repo-boundary.md`** (native) — fires on `plugins/**`, `.claude/rules/**`, `.claude/guidelines/**`
   • State which copy is under test (published vs in-repo dev). Route findings: this repo's artifacts → `/super-bootstrap:log`; device/global config → `/contribute` (imported artifacts read-only).
   • Taste-coupling: dogfood harness (this repo's own CLAUDE.md/rules) may wire served guidelines; shipped skeletons (`plugins/*/skills/*/assets/**`) must be self-contained — downstream ≠ author.
+- **`skill-authoring.md`** (native) — fires on `plugins/*/skills/**`
+  • Skill edits route by test surface: behavior-shaping prose → `superpowers:writing-skills` RED first (micro-test floor); mechanical → audit + release checks.
 
 First two served from the personal claude-config repo (predicates in `.claude/guidelines/work-discipline/`). Add a project-specific rule file when a path-scoped pattern emerges (e.g. a SKILL.md authoring convention), then mirror a one-line summary here.
 
