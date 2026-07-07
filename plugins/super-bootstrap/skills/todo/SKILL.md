@@ -25,8 +25,11 @@ Default render is the full board (every open spec/plan/backlog row). Sub-verbs l
 
 **Canonical skip-gate** — applies to bare invocation and every sub-verb. Skip dispatch (no file reads beyond the glob, no agent) when either:
 
-- Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md` comes back all empty/absent (no specs, no plans, no open backlog rows — any row content under `## Open`, whether canonical `### {BUG|DEBT|GAP}-###` headings, foreign-prefix rows, or un-IDed bullets; the header's ID high-water-mark line doesn't count). Print directly:
-  > "No active work. Start something with `/brainstorm` or give me a task."
+- Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md` comes back all empty/absent (no specs, no plans, no open backlog rows — any row content under `## Open`, whether canonical `### {BUG|DEBT|GAP}-###` headings, foreign-prefix rows, or un-IDed bullets; the header's ID high-water-mark line doesn't count). Branch on whether `docs/superpowers/` exists, then print the matching message:
+  - **`docs/superpowers/` absent** → repo has the super-bootstrap pipeline available but no runway installed:
+    > "No runway installed here. Run `/super-bootstrap` to set up the pipeline."
+  - **`docs/superpowers/` present, board empty** → bootstrapped, nothing open:
+    > "No active work. Start something with `/brainstorm` or give me a task."
 - User explicitly asks to run inline.
 
 On bare `/super-bootstrap:todo`:
@@ -79,6 +82,6 @@ Steps:
 ## Rules
 
 - **Read-only.** Never modifies files. Never executes git operations.
-- **Works in any repo** — only requires `docs/superpowers/` to exist (created by `/super-bootstrap:harness-bootstrap`).
+- **Works in any repo** — `docs/superpowers/` present (created by `/super-bootstrap:harness-bootstrap`) drives the board; absent → the skip-gate redirects to `/super-bootstrap`.
 - **Verbatim relay rule.** Agent's output IS the value. Gateway adds nothing — no preface, no editorial.
 - **Footer-hint convention.** Footer is the agent's render concern, computed per `agents/todo.md` § Render footer-hint (see §Footer rule). Gateway relays verbatim.
