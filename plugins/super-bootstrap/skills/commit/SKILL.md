@@ -38,7 +38,9 @@ Run the doc-sync gate per the project's **CLAUDE.md § Doc Sync** — it owns th
 
 Commit-specific: surface every call **before** staging, not after. Doc updates from this gate stage alongside the code changes.
 
-Once every call resolves (updated / acknowledged-accurate / explicit skip), write the doc-sync token: `touch .git/docsync-token`. This is the artifact the `docsync-gate` `PreToolUse` hook checks before allowing `git commit` (harness-bootstrap `assets/hooks-ensure-infra.md`) — one-shot, consumed by the hook on the next commit attempt.
+Once every call resolves (updated / acknowledged-accurate / explicit skip), run the doc-sync scan: `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-scan.sh"`. The scan prints the changed-files surface (the grounding for your staleness judgment) and — as a side-effect — the `docsync-stamp` `PostToolUse` hook writes `.git/docsync-token`. That token is the artifact the `docsync-gate` `PreToolUse` hook checks before allowing `git commit` (harness-bootstrap `assets/hooks-ensure-infra.md`) — one-shot, consumed by the gate on the next commit attempt. **Never `touch` the token by hand — the stamp is produced by running the scan, not forged.**
+
+**Run the scan and `git commit` as SEPARATE tool calls.** Never chain `docsync-scan.sh && git commit` in one Bash call: PreToolUse reads the whole command string *before* the scan runs, sees `git commit`, checks the not-yet-written token, and denies. Scan first (its own call, which writes the token), then commit in a later call.
 
 ### 4. Draft Commit Message
 
@@ -108,7 +110,8 @@ After commit confirms clean, signal cycle exit. One line — don't expand into f
 ## Rules
 
 - **Session-isolated** — only this session's changes. Prior dirty state is sacred.
-- **Doc-sync first** — gate runs before staging. Stale docs block commit until resolved.
+- **Doc-sync first** — gate runs before staging. Stale docs block commit until resolved. The scan (`docsync-scan.sh`) writes the token via the `docsync-stamp` hook.
+- **Scan and commit are separate calls** — never chain `docsync-scan.sh && git commit` in one Bash call — see §3.
 - **Conventional** — type, scope, subject. Body only when needed.
 - **Commit directly** — no approval gate; the conventional message + explicit file list are the record. Conditional pauses still fire (ambiguous-file classification, doc-sync); routine approval doesn't.
 - **Explicit paths always** — `git add <path>`, never `-A` / `.`.

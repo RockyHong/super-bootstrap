@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# FROZEN harness-grounding hook (A1 — harness-edit grounding nudge).
+# FROZEN harness-grounding v1 (A1 — harness-edit grounding nudge).
 # PreToolUse on Edit|Write (matcher, see harness-grounding.hook.json). Fires on
 # EVERY Edit/Write in the session, so the non-match path must stay cheap: one jq
 # parse + pure bash string match, no file reads. Non-blocking by design — this

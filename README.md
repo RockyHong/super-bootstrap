@@ -52,7 +52,7 @@ Re-run any time — incremental, never overwrites your edits.
 | `CLAUDE.md` | **Layered** per-section — never overwritten. Diff shown before any write. |
 | `.claude/settings.json` | **Merged** — adds `enabledPlugins` + `extraKnownMarketplaces`; your other settings preserved. |
 | `docs/`, `.claude/rules/` | **Seeded** with new files from detected stack. User-grown content never touched on re-run. |
-| `.claude/hooks/` | **Installed** by default — two PreToolUse hooks: `docsync-gate` blocks `git commit` until a doc-sync artifact exists this session (escape: `touch .git/docsync-token`); `harness-grounding` injects a grounding checklist on harness-file edits, never blocks. |
+| `.claude/hooks/` | **Installed** by default — four hook assets: `docsync-gate` (PreToolUse) blocks `git commit` until this session's doc-sync scan has run; `docsync-scan` enumerates the doc-sync surface and `docsync-stamp` (PostToolUse) writes the gate token as a side-effect of running it; `harness-grounding` injects a grounding checklist on harness-file edits, never blocks. |
 | `.claude/super-bootstrap-runway.json` | **Version-stamped** — records the plugin version that scaffolded/synced this runway. On re-run a stale or missing stamp forces a full drift re-check (no "looks current" skim). |
 | `.env*`, `*.key`, `*credential*` | **Skipped** from scan entirely — never read, never written. |
 

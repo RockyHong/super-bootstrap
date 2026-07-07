@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# FROZEN docsync-gate hook (A2 — pre-commit doc-sync gate).
+# FROZEN docsync-gate v2 (A2 — pre-commit doc-sync gate).
 # Primary filter: the `if: "Bash(git commit *)"` field on the merged settings
 # entry (docsync-gate.hook.json) — verified against the official Claude Code
 # hooks reference (PreToolUse `if` input-based filtering), 2026-07-06. Re-confirm
@@ -8,11 +8,12 @@
 # call — so the command is re-checked in-script and anything that is not a
 # `git commit` passes through untouched.
 #
-# Gate: .git/docsync-token must exist. It is written by /super-bootstrap:commit's
-# doc-sync step, once the staleness scan resolves (every call answered) — proof
-# the scan ran for this session's commit. Present -> consume it (delete, one-shot)
-# and allow. Missing -> deny with a one-line reason.
-# Manual escape hatch: `touch .git/docsync-token`.
+# Gate: .git/docsync-token must exist. The docsync-stamp PostToolUse hook writes
+# it as a side-effect when /super-bootstrap:commit's doc-sync scan (docsync-scan.sh)
+# runs — proof the scan ran for this session's commit. Present -> consume it
+# (delete, one-shot) and allow. Missing -> deny with a one-line reason routing back
+# to /super-bootstrap:commit (never a bare stamp command — that framing reads as a
+# gate bypass to the permission classifier).
 
 cmd=$(jq -r '.tool_input.command // empty')
 case "$cmd" in
@@ -28,6 +29,6 @@ if [ -f "$TOKEN" ]; then
 fi
 
 cat <<'JSON'
-{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"doc-sync artifact missing — run the doc-sync step (or /super-bootstrap:commit) first; manual escape: touch .git/docsync-token"}}
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"doc-sync artifact missing — run /super-bootstrap:commit (its doc-sync scan clears this gate)."}}
 JSON
 exit 0

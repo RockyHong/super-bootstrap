@@ -1,0 +1,11 @@
+{
+  "_comment": "FROZEN docsync-stamp PostToolUse writer (A4). hooks-ensure-infra.md MERGES this single entry into the consumer's .claude/settings.json hooks.PostToolUse array — a NEW array on repos that have no PostToolUse hooks yet; it never overwrites the file or other hooks. The `if` field is a coarse pre-filter to Bash calls that reference docsync-scan.sh (PostToolUse `if` is supported — verified against the official Claude Code hooks reference, 2026-07-07); the in-script match in docsync-stamp.sh is AUTHORITATIVE because it anchors to the actual `bash …docsync-scan.sh` invocation shape (quote-aware) that the permission glob can't express, so a bare mention of the filename cannot forge the token. Command path is $CLAUDE_PROJECT_DIR-relative so it resolves from any cwd inside the repo.",
+  "matcher": "Bash",
+  "hooks": [
+    {
+      "type": "command",
+      "if": "Bash(*docsync-scan.sh*)",
+      "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-stamp.sh\""
+    }
+  ]
+}
