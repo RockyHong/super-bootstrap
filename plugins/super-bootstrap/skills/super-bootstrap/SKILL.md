@@ -1,6 +1,6 @@
 ---
 name: super-bootstrap
-description: "Public entry for the super-bootstrap pipeline — thin orchestrator. Git-inits if absent, then dispatches /super-bootstrap:harness-bootstrap to install or sync the generic runway (always; the runway self-detects fresh-vs-sync). Checks whether seed docs are substantive: greenfield seeds two GAP cards via /super-bootstrap:log and stops at the resolve gate; substantive seed docs run gated tier-2 tech curation (resolve-plugins + release-init). Zero product prework. Solo dev workflow."
+description: "Public entry for the super-bootstrap pipeline — thin orchestrator. Git-inits if absent, then dispatches /super-bootstrap:harness-bootstrap to install or sync the generic runway (always; the runway self-detects fresh-vs-sync). Checks whether seed docs are substantive: greenfield seeds three GAP cards (overview, techstack, tech-curation) via /super-bootstrap:log and stops at the resolve gate; substantive seed docs run gated tier-2 tech curation (resolve-plugins + release-init). Zero product prework. Solo dev workflow."
 tags: [bootstrap, orchestrator, detect, gate, curation, meta]
 ---
 
@@ -13,7 +13,7 @@ The single command users invoke. Orchestrates — detect, route, dispatch, integ
 1. **Git-init** if absent (correctness move).
 2. **Dispatch the runway** — `/super-bootstrap:harness-bootstrap` (generic, always; it self-detects fresh-vs-sync).
 3. **Detect** — are the seed docs substantive?
-4. **Greenfield branch** (not substantive) — seed 2 GAP cards via `/super-bootstrap:log`, stop at the resolve gate.
+4. **Greenfield branch** (not substantive) — seed 3 GAP cards via `/super-bootstrap:log`, stop at the resolve gate.
 5. **Substantive branch** — gated tier-2 tech curation.
 6. **Disclose** — one post-hoc heads-up line (substantive branch; the greenfield branch's resolve gate is its disclosure).
 
@@ -33,23 +33,24 @@ This is the only branch the entry makes: not-substantive → greenfield (seed GA
 
 ## Greenfield branch — seed GAP cards + gate (not substantive)
 
-The runway returned with empty product skeletons. Seed two GAP cards through the capture funnel, then stop at the resolve gate — there is nothing to curate until the product is resolved.
+The runway returned with empty product skeletons. Seed three GAP cards through the capture funnel, then stop at the resolve gate — there is nothing to curate until the product is resolved.
 
-**Idempotency guard (run first).** Read `docs/backlog.md`. If GAP cards for the overview and techstack skeletons are already present (match on the card summary text — IDs are minted by `/log`), skip seeding and log "GAP cards already seeded." Re-run stays safe.
+**Idempotency guard (run first).** Read `docs/backlog.md`. If GAP cards for the overview, techstack, and tech-curation steps are already present (match on the card summary text — IDs are minted by `/log`), skip seeding and log "GAP cards already seeded." Re-run stays safe.
 
-**Seed via [`/super-bootstrap:log`](../log/SKILL.md)** — one invocation, both observations batched, passing Source context `/super-bootstrap bootstrap` in the dispatch:
+**Seed via [`/super-bootstrap:log`](../log/SKILL.md)** — one invocation, all three observations batched, passing Source context `/super-bootstrap bootstrap` in the dispatch:
 
 - `pin down product overview — docs/overview.md is an unfilled skeleton; resolve at pickup via brainstorm (no source code) or distill-repo-essence (code present, undocumented)`
 - `decide techstack — docs/techstack.md lacks product + architecture context (manifest facts auto-filled where a manifest exists); blocked on the overview card`
+- `run tech curation — re-run /super-bootstrap once docs/overview.md + docs/techstack.md are filled; blocked on the overview + techstack cards above`
 
 Each classifies GAP; the funnel mints IDs, dedups, and fills Area (`docs/overview.md` / `docs/techstack.md`). The pickup-routing hint rides in the observation text, not a `Prior:` route — triage owns the method.
 
 **Resolve gate — stop here.** After seeding, surface the dogfood handoff and stop. Nothing to curate yet:
 
 ```
-Generic harness installed. Two GAP cards seeded (overview, techstack).
-Resolve them via /super-bootstrap:todo → brainstorm (no code) / distill-repo-essence (code present).
-Once overview.md + techstack.md are filled, re-run /super-bootstrap for tech curation.
+Generic harness installed. Three GAP cards seeded (overview, techstack, tech-curation).
+Resolve overview + techstack via /super-bootstrap:todo → brainstorm (no code) / distill-repo-essence (code present).
+Once both are filled, re-run /super-bootstrap for tech curation — the tech-curation card tracks that step.
 ```
 
 ## Substantive branch — gated tier-2 tech curation (substantive)
@@ -58,6 +59,7 @@ The runway returned and the seed docs are substantive (a just-resolved greenfiel
 
 1. **`Skill(resolve-plugins)`** — [`/super-bootstrap:resolve-plugins`](../resolve-plugins/SKILL.md) curates stack-matched skill / MCP / hook picks. It reads stack from `docs/techstack.md` and external-tools from `docs/overview.md`'s `<!-- harness-meta -->` block (the relocated external-tools signal). No Q&A — the signal is already in the docs.
 2. **`/super-bootstrap:release-init`** — offer once as an optional step to generate a project-level `/release` skill.
+3. **Clear the `tech-curation` seed card** — if `docs/backlog.md` carries the greenfield `tech-curation` GAP card (match on summary text, same as the greenfield idempotency guard), delete it — this branch running *is* its resolution, so the card never lingers as a stale open row once curation has run.
 
 **Rules-seeding stays runway-owned.** Path-scoped rule seeding (frontend / MV3 / migrations / tests) fires at runway-time in [`/super-bootstrap:harness-bootstrap`](../harness-bootstrap/SKILL.md) Phase 1. Tier-2 adds no rule seeding — one home per signal, no double-seed.
 

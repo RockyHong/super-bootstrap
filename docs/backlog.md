@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-006` · `DEBT-008` · `GAP-007` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-007` · `DEBT-008` · `GAP-007` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,13 +30,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
-
-### GAP-007 — Greenfield seed logs only 2 GAP cards; downstream bootstrap-loop chain not captured
-
-**Logged:** 2026-07-07 · **Source:** user, gateway session on super-bootstrap repo
-**Problem:** `/super-bootstrap:super-bootstrap` greenfield path seeds exactly two GAP cards (fill overview.md, fill techstack.md) via `/super-bootstrap:log` and stops at the resolve gate — it does not log downstream bootstrap-loop steps (e.g. `resolve-plugins`, which requires techstack.md filled first; release-init; remaining loop steps). After the two seed cards resolve, the rest of the bootstrap is implicit/undiscoverable from the backlog and the loop can stall silently.
-**Area:** `super-bootstrap` skill, greenfield seed step
-**Prior:** greenfield seed should capture the full downstream chain as cards with dependency/ordering noted (e.g. resolve-plugins depends on techstack.md filled); exact enumeration of remaining steps is triage's job at pickup, not capture's.
 
 ### GAP-003 — harness-collab-optimization effect unmeasured against spec's acceptance targets
 
