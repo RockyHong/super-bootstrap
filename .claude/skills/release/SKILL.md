@@ -104,6 +104,8 @@ Omit empty sections. Show to user for approval.
 
 **Step 5 — Commit and tag:**
 
+Doc-sync scan first when the gate is installed: if `.claude/hooks/docsync-scan.sh` exists, run `bash .claude/hooks/docsync-scan.sh` as its own Bash call and resolve any staleness it reports — the scan self-stamps the token the gate consumes. In un-gated repos the script is absent → skip, commit directly. Keep the scan a separate call from the commit below.
+
 ```bash
 git add plugins/super-bootstrap/.claude-plugin/plugin.json .claude-plugin/marketplace.json
 git commit -m "chore: release v{version}"

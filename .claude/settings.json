@@ -43,18 +43,6 @@
           }
         ]
       }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "if": "Bash(*docsync-scan.sh*)",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-stamp.sh\""
-          }
-        ]
-      }
     ]
   }
 }
