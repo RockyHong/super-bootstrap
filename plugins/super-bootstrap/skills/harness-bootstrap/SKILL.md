@@ -198,7 +198,7 @@ Ensure `.claude/settings.json` contains:
 
 ### 2a-hooks: Harness hooks (default-on)
 
-Three hook assets ship as frozen files and install **unconditionally** — no
+Four hook assets ship as frozen files and install **unconditionally** — no
 opt-in confirm, unlike drain's worktree infra (§2a-drain below); all are
 safe-by-default (rationale + full procedure:
 [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md)).
@@ -208,8 +208,9 @@ safe-by-default (rationale + full procedure:
 | 1 | `docsync-gate` (PreToolUse) | `Bash(git commit *)` | Deny the commit unless `.git/docsync-token` exists, is fresh (<30 min TTL), and matches this session; pass through in drain-managed worktrees (`.claude/worktrees/` — drain's free-commit contract); consume the token on allow |
 | 2 | `harness-grounding` (PreToolUse) | `Edit\|Write` matched to a harness path (`CLAUDE.md`, `.claude/rules/**`, `.claude/skills/**`, `.claude/agents/**`) | Inject a 2-3 line grounding checklist via `additionalContext` — never denies |
 | 3 | `docsync-scan` (script) | invoked by `/super-bootstrap:commit`'s doc-sync step when the `docsync-gate` hook is live | Enumerate the doc-sync surface and self-stamp `.git/docsync-token` (session-scoped) — running the scan is the proof the gate consumes |
+| 4 | `entry-nudge` (UserPromptSubmit) | every prompt (no matcher) | Inject one card-grounded-entry pointer line via `additionalContext` — injector-only, never blocks, never exits non-zero |
 
-Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) — copies the three scripts to `.claude/hooks/` and merges the settings snippets into `.claude/settings.json` `hooks.PreToolUse[]` (docsync-gate, harness-grounding); `docsync-scan` is script-only, no settings entry. Content-aware (copy-on-drift — a version-marker mismatch re-copies the asset, so an upstream fix reaches existing repos), silent when already current; stage the placed files with the Phase 2c commit. Same asset-copy + guarded-merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3) — one pattern, reused here rather than re-derived.
+Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) — copies the four scripts to `.claude/hooks/` and merges the settings snippets into `.claude/settings.json` (`hooks.PreToolUse[]`: docsync-gate, harness-grounding; `hooks.UserPromptSubmit[]`: entry-nudge); `docsync-scan` is script-only, no settings entry. Content-aware (copy-on-drift — a version-marker mismatch re-copies the asset, so an upstream fix reaches existing repos), silent when already current; stage the placed files with the Phase 2c commit. Same asset-copy + guarded-merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3) — one pattern, reused here rather than re-derived.
 
 ### 2a-drain: Drain infra (opt-in)
 
@@ -420,7 +421,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/overview.md` (new or skeleton-section drift)
 - `docs/decisions.md` (new, scope-header drift, or post-retirement migration from techstack)
 - `.claude/settings.json` (core plugin pins seeded at 2a; harness hooks merged at 2a-hooks)
-- `.claude/hooks/docsync-gate.sh`, `.claude/hooks/harness-grounding.sh`, `.claude/hooks/docsync-scan.sh` (frozen hook scripts seeded at 2a-hooks — always, default-on)
+- `.claude/hooks/docsync-gate.sh`, `.claude/hooks/harness-grounding.sh`, `.claude/hooks/docsync-scan.sh`, `.claude/hooks/entry-nudge.sh` (frozen hook scripts seeded at 2a-hooks — always, default-on)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)
 - `docs/superpowers/specs/.gitkeep`

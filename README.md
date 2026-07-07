@@ -52,7 +52,7 @@ Re-run any time — incremental, never overwrites your edits.
 | `CLAUDE.md` | **Layered** per-section — never overwritten. Diff shown before any write. |
 | `.claude/settings.json` | **Merged** — adds `enabledPlugins` + `extraKnownMarketplaces`; your other settings preserved. |
 | `docs/`, `.claude/rules/` | **Seeded** with new files from detected stack. User-grown content never touched on re-run. |
-| `.claude/hooks/` | **Installed** by default — three hook assets: `docsync-gate` (PreToolUse) blocks `git commit` until this session's doc-sync scan has run (token is session-scoped + 30-min TTL; drain-managed worktrees under `.claude/worktrees/` pass through); `docsync-scan` enumerates the doc-sync surface and self-stamps the gate token by running; `harness-grounding` injects a grounding checklist on harness-file edits, never blocks. |
+| `.claude/hooks/` | **Installed** by default — four hook assets: `docsync-gate` (PreToolUse) blocks `git commit` until this session's doc-sync scan has run (token is session-scoped + 30-min TTL; drain-managed worktrees under `.claude/worktrees/` pass through); `docsync-scan` enumerates the doc-sync surface and self-stamps the gate token by running; `harness-grounding` injects a grounding checklist on harness-file edits, never blocks; `entry-nudge` (UserPromptSubmit) injects a one-line card-grounded-entry pointer on every prompt, never blocks. |
 | `.claude/super-bootstrap-runway.json` | **Version-stamped** — records the plugin version that scaffolded/synced this runway. On re-run a stale or missing stamp forces a full drift re-check (no "looks current" skim). |
 | `.env*`, `*.key`, `*credential*` | **Skipped** from scan entirely — never read, never written. |
 
@@ -64,7 +64,7 @@ Optional bonus: `/super-bootstrap:release-init` — one-shot scaffolder. Detects
 
 | Tool | Role |
 |---|---|
-| [superpowers](https://github.com/obra/superpowers) | Workflow pipeline (brainstorm → spec → plan → execute) baked into the CLAUDE.md |
+| [superpowers](https://github.com/obra/superpowers) | Workflow entries the CLAUDE.md routes into per work cluster — `systematic-debugging` for bugs, `brainstorming` for fuzzy features, `writing-plans` for design-intact multi-step |
 | [andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | Core dep auto-pinned in `.claude/settings.json`. Scaffolded CLAUDE.md § Coding Principles invokes its `karpathy-guidelines` skill before every code edit (think-before-coding, simplicity, surgical changes, goal-driven execution). |
 | [claude-code-setup](https://claude.com/plugins/claude-code-setup) | Anthropic's plugin recommender — fast-path source if installed |
 | [Anthropic plugin marketplace](https://claude.com/plugins) | Anthropic-vetted skills, MCPs, hooks, subagents |

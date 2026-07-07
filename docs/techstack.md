@@ -12,7 +12,7 @@ Claude Code plugin architecture. A root `.claude-plugin/marketplace.json` declar
 
 ## Key Dependencies
 
-- **[superpowers](https://github.com/obra/superpowers)** — the workflow pipeline (brainstorm → spec → plan → execute) baked into the scaffolded CLAUDE.md.
+- **[superpowers](https://github.com/obra/superpowers)** — workflow entries the scaffolded CLAUDE.md routes into per work cluster (`systematic-debugging` / `brainstorming` / `writing-plans`).
 - **[andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills)** — `karpathy-guidelines` skill invoked before code edits (coding principles).
 - Discovery sources for `/super-bootstrap:resolve-plugins`: Anthropic plugin marketplace, MCP registry, everything-claude-code, awesome-claude-skills, VoltAgent/awesome-agent-skills (see README § Sources).
 

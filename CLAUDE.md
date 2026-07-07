@@ -2,50 +2,36 @@
 
 ## Development Workflow
 
-Every session runs under the superpowers frame. **The gateway is the gate** — informal input (pasted logs, "just fix this", a one-line ask) does not lower the bar. On any non-trivial code change the gateway's first move is to formalize *before touching code*: ground the problem, then propose + confirm the route. Filing via `/super-bootstrap:log` first still runs steps 2-7.
+Work enters by picking up a card — a `docs/backlog.md` row (`/super-bootstrap:todo` pickup or a prose ID) — or grounding a new one via `/super-bootstrap:log`. The card is the grounding artifact (root-cause claim for a bug, problem statement for a feature) and the unit/anchor/boundary/SSOT of the change. Fresh work and resumed work use the same door.
 
-### Entry Gate (ordered — each step leaves an artifact)
+### The envelope
 
-Non-trivial = anything past a single obvious edit. Walk in order; the artifact is what proves the step happened — narration is not an artifact.
+`ground → route → implement (ambient laws: test-driven-development, verification-before-completion, receiving-code-review, dispatching-parallel-agents) → verify → doc-sync → commit`. Red/failing-test-first runs inside implement wherever a test surface exists. Red and verify are structurally empty — no ceremony — on a diff with no test/runtime surface (docs-only). Verify on a harness-file change (CLAUDE.md, rules, skills, agents) = `audit-harness-edits`. Commit = `/super-bootstrap:commit`.
 
-| # | Step | Required artifact |
+### Cluster routing
+
+Route the card off the mapped upstream topology — [`docs/specs/superpowers-topology.md`](docs/specs/superpowers-topology.md) — not from memory.
+
+| # | Cluster | Route |
 |---|---|---|
-| 1 | **Ground** — probe the problem against the real before scoping a fix | Bug/debt → a `docs/backlog.md` card whose root cause is verified against the real artifact (logs, repro, code), not a guess. Feature/refactor → a written problem statement grounded in first principles |
-| 2 | **Route** — triage phases (below), check [`docs/decisions.md`](docs/decisions.md) § Closed Forks, propose, **stop for confirm** | A posted route line the user has confirmed |
-| 3 | **Red** — for a change with a test surface, write the failing test first | A captured failing-test run (command + red output) before implementation |
-| 4 | **Implement** — dispatch the build to a clean subagent (§ Dispatch); gateway integrates + verifies | Passing run of the step-3 test |
-| 5 | **Verify** — run checks; for harness-file changes (CLAUDE.md, rules, skills, agents) the `audit-harness-edits` pass is the verify artifact | Captured pass output / audit report (`verification-before-completion`) |
-| 6 | **Doc-sync** — scan behavior-narrating prose for staleness | Per § Doc Sync |
-| 7 | **Commit** — `/super-bootstrap:commit` | Terminal step |
+| 1 | Bug / broken behavior | `systematic-debugging` whole — root cause before fix |
+| 2 | Fuzzy feature / new capability | `brainstorming` whole — approved design hands to writing-plans |
+| 3 | Design-intact multi-step | `writing-plans` direct |
+| 4 | Refactor | ground the card; multi-step → cluster 3, atomic → envelope only |
+| 5 | Config / taste / bounded tweak | inline; taste that iterates or drifts → card it |
+| 6 | Docs / prose | envelope only |
+| 7 | Harness edit | `load-harness-principles` pre, `audit-harness-edits` post |
+| 8 | Triage / investigation-only | inline reads + dispatched probes |
 
-### Phase triage (which optional phases the route composes)
+### Route line — state, don't gate
 
-Routing = which phases this work needs, judged on evidence — not file count, not size labels. Execute, verify, doc-sync and commit are the always-on spine (Entry Gate steps 3-7); brainstorm / spec / plan are the optional phases below, layered on via step 2.
+Cluster + route resolvable from the card/SSOT → post the route in one line and proceed. Stop for the user's pick only on a genuine fork: ambiguous cluster, a conflict with a closed fork in [`docs/decisions.md`](docs/decisions.md), or high blast radius.
 
-| Phase | Run when | Skip when |
-|---|---|---|
-| **Brainstorm** | Intent fuzzy, design space unexplored, multiple viable shapes | Intent + approach obvious from repo context or user direction |
-| **Spec** | Persistent design surface — behavior worth pinning for future sessions | One-time tactical change, no behavior to document |
-| **Plan** | Multi-step, ordering matters, want checkpoint review, half-done risk | Single atomic edit obvious from context |
+### Inside a route
 
-### Route output (step 2 artifact)
+Once a superpowers entry (`systematic-debugging` / `brainstorming` / `writing-plans`) is entered, run it whole — its gates, pointers, and artifacts govern until its own terminal handoff or a documented choice-point. Route at entry only, honoring every `REQUIRED SUB-SKILL` pointer between.
 
-Propose phase composition, justify each skip with repo-grounded evidence:
-
-```
-Phases: brainstorm → plan → execute → doc-sync → commit
-Skipped: spec (no persistent design surface — internal helper, no behavior contract)
-Grounding: <root cause, verified against <artifact>>
-Evidence: BUG-042 has clean repro in issue, fix touches one auth helper
-Closed forks: none match (or cite the docs/decisions.md entry + how this differs)
-OK to proceed?
-```
-
-### Phase entailments
-
-If user pushes back on triage → re-evaluate the gate that triggered the disagreement, not the whole route.
-
-**User instructions override Superpowers defaults.** User can add or drop phases.
+**User instructions override Superpowers defaults.** User can redirect any route.
 
 Spec/plan locations: `docs/superpowers/specs/` and `docs/superpowers/plans/` (temporal). Persistent specs (kept after merge) go to `docs/specs/`.
 
@@ -53,8 +39,8 @@ Spec/plan locations: `docs/superpowers/specs/` and `docs/superpowers/plans/` (te
 
 The gateway orchestrates; it does not build. Inline lane = orchestration, reads, bounded live tweaks (aesthetic / config value, applied + checked in-app). Everything carrying a **propagation closure** — the edit plus every truth it must keep in sync — dispatches to a clean subagent. Judge by closure, not diff size: a one-line config tweak owns no closure → inline; a one-line fix that chains triage + multi-file reads + doc-sync has a closure → dispatch.
 
-- **Build** (Entry Gate step 4) → dispatch per phase, gateway integrates + verifies between. Build is never a live tweak.
-- **Doc-sync scan** (step 6) → dispatch the cold read across the § Doc Sync surface; gateway resolves findings with the user; writes land inline or dispatched by closure.
+- **Build** (within Implement) → dispatch per phase, gateway integrates + verifies between. Build is never a live tweak.
+- **Doc-sync scan** (envelope step) → dispatch the cold read across the § Doc Sync surface; gateway resolves findings with the user; writes land inline or dispatched by closure.
 - **Parallel within a phase, not across it** — N build sub-goals or N doc surfaces fan out together; build → doc-sync stays ordered (doc-sync needs the finished diff).
 
 ## Doc Sync (non-negotiable)

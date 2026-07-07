@@ -1,22 +1,25 @@
 # Hooks ensure-infra — content-aware default-on hook install
 
-harness-bootstrap ships three hook assets. Unlike drain's worktree infra
+harness-bootstrap ships four hook assets. Unlike drain's worktree infra
 (`../drain/assets/ensure-infra.md`), install runs **unconditionally** — no opt-in
 confirm. All are safe-by-default: A2 (`docsync-gate`) fires at most once per commit;
 A1 (`harness-grounding`) never blocks — `additionalContext` only; A3 (`docsync-scan`)
 is a plain script the commit skill invokes when the gate is live, and self-stamps
 the doc-sync token as a side-effect of running (no separate stamp hook — the skill
-produces the artifact, the gate only checks). They ship as **frozen assets** beside
+produces the artifact, the gate only checks); A5 (`entry-nudge`) is an injector-only
+UserPromptSubmit hook — one context line per prompt, never blocks, never exits
+non-zero (either would erase the user's prompt). They ship as **frozen assets** beside
 this file; ensure-infra places them by mechanical copy / merge — never regeneration,
 so there is no drift between repos. Run as `SKILL.md §2a-hooks`, part of Phase 2a.
 
-## The three assets
+## The four assets
 
 | # | Frozen script asset | Destination | Frozen settings snippet | Merge target |
 | - | - | - | - | - |
 | A2 | `hooks/docsync-gate.sh` | `.claude/hooks/docsync-gate.sh` | `hooks/docsync-gate.hook.json` | `.claude/settings.json` → `hooks.PreToolUse[]` |
 | A1 | `hooks/harness-grounding.sh` | `.claude/hooks/harness-grounding.sh` | `hooks/harness-grounding.hook.json` | `.claude/settings.json` → `hooks.PreToolUse[]` |
 | A3 | `hooks/docsync-scan.sh` | `.claude/hooks/docsync-scan.sh` | *(none — script only)* | *(no settings entry; invoked by /super-bootstrap:commit when the gate is live)* |
+| A5 | `hooks/entry-nudge.sh` | `.claude/hooks/entry-nudge.sh` | `hooks/entry-nudge.hook.json` | `.claude/settings.json` → `hooks.UserPromptSubmit[]` |
 
 `docsync-scan.sh` (A3) is a plain script with **no settings entry** — the commit
 skill calls it as `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-scan.sh"` (its
@@ -58,8 +61,10 @@ hooksInfraPresent():
   scriptCurrent(docsync-gate)        AND
   scriptCurrent(harness-grounding)   AND
   scriptCurrent(docsync-scan)        AND
+  scriptCurrent(entry-nudge)         AND
   settings.json hooks.PreToolUse  has an entry whose command references docsync-gate.sh   AND
-  settings.json hooks.PreToolUse  has an entry whose command references harness-grounding.sh
+  settings.json hooks.PreToolUse  has an entry whose command references harness-grounding.sh   AND
+  settings.json hooks.UserPromptSubmit has an entry whose command references entry-nudge.sh
 ```
 
 All current → skip silently (`✓ current`), no message. Any drift → re-copy the drifted
@@ -87,7 +92,7 @@ Durable harness config, not a temporal pipeline artifact — so no cleaner:
 
 ## Self-containment (hard constraint)
 
-All three scripts and their settings snippets are copied verbatim — no template
+All four scripts and their settings snippets are copied verbatim — no template
 substitution, no reference to any super-bootstrap-specific state beyond what
 harness-bootstrap itself stamps (`CLAUDE.md`, `.claude/rules/`, `docs/`).
 `harness-grounding.sh`'s injected `additionalContext` text names only git log,
@@ -97,3 +102,5 @@ since those do not exist on a bare consumer repo. `docsync-scan.sh` references
 only git and `$CLAUDE_PROJECT_DIR`; `docsync-gate.sh` additionally names the
 `/super-bootstrap:commit` route in its deny message (a bundled plugin skill every
 consumer has) — no device-only skill names, no super-bootstrap state.
+`entry-nudge.sh`'s injected text names only `docs/backlog.md` and the bundled
+`/super-bootstrap:todo` + `/super-bootstrap:log` skills.
