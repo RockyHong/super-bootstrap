@@ -80,6 +80,21 @@ If user answers `dry-run`, walk Phases 1–2b without writing — render the syn
 
 **Output of Phase 1 (rot lane):** record `rot_hits[]` so Phase 2b can re-use the scan instead of grepping twice.
 
+### Version-staleness signal (harnessed-but-stale)
+
+Rot signals catch renamed literals; they miss template drift that shifted structure without renaming a token. The version stamp closes that gap.
+
+Read `.claude/super-bootstrap-runway.json` in the target repo (the runway version marker — shape `{ "version": "x.y.z" }`). Compare its `version` to the running plugin's own version — read `version` from the plugin's `.claude-plugin/plugin.json`, located at the plugin root two directory levels above this skill's base directory (`skills/harness-bootstrap/` → `skills/` → plugin root). That is the version currently installing/syncing.
+
+- **Marker matches plugin version** → normal path.
+- **Marker stale (older) or absent** → set `version_stale`, consumed by Phase 2b to enforce the full drift check (see § 2b). Surface ONCE up front:
+  - Stale: `runway stamped v{old} < plugin v{new} — full drift re-check enforced.`
+  - Absent: `runway carries no version stamp — full drift re-check enforced.`
+
+Detection only — Phase 1 reads the stamp's old value and stops; it does not act on the flag or alter its own scan. Phase 2c overwrites the stamp later, after sync completes.
+
+**Output of Phase 1 (version lane):** record `version_stale` (plus the old/new version strings) for Phase 2b to consume.
+
 ---
 
 The runway scaffolds with no product Q&A. Drift on existing files is resolved inline per-section at Phase 2b.
@@ -105,6 +120,7 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - `.claude/rules/index.md` (rule-authoring guide)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` plugin pins (`enabledPlugins`, `extraKnownMarketplaces`)
+- `.claude/super-bootstrap-runway.json` (runway version stamp — presence + value checked, not diffed section-by-section; read at Phase 1, written at 2c; durable marker, no cleaner — persists for the life of the harness)
 
 **Project-owned** (never touched):
 - CLAUDE.md: Tech Stack one-line, Commands, any user-added custom sections
@@ -279,6 +295,8 @@ Per-migration handling:
 
 **The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `docs/superpowers/plans/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new`), and — for drifted rows — the diff. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. Overwrite any stale report from a prior run.
 
+**Version-stale enforcement.** When Phase 1 set `version_stale`, this enumeration is mandatory in full this run — every pipeline-owned section gets an actual read-and-compare row; the "sections look similar → `✓ current`" skim is forbidden. No new mechanism — the 2c gate already refuses commit on any uncovered section (see § 2c). Print the Phase 1 surfaced line once at the top of Block 1 as the reminder.
+
 Block 1 (shown to the user, rendered from the report — one row per pipeline-owned section in the file):
 
 ```
@@ -391,6 +409,8 @@ Tech curation (skill / MCP / hook picks) is gated tier-2 — orchestrated by `/s
 | .claude/rules/mv3.md                | ⊕ new        | seeded (signal: MV3 manifest) |
 ```
 
+**Stamp write.** Once the sync completes, write `.claude/super-bootstrap-runway.json` = `{ "version": "{current plugin version}" }` — fresh install writes it new, re-run overwrites with the just-synced version. Present + value-checked, so a matching stamp is a no-op write. This runs even when every other row is `✓ current` — the stamp records "last synced at this version," independent of whether content changed.
+
 If every row is `✓ current` and nothing changed on disk, report and skip the commit.
 
 Otherwise use `/super-bootstrap:commit` to stage:
@@ -407,6 +427,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/superpowers/plans/bootstrap.md` (if newly written or regenerated)
 - `docs/specs/.gitkeep` (if scaffolded)
 - `docs/backlog.md` (if scaffolded or re-planted)
+- `.claude/super-bootstrap-runway.json` (runway version stamp — written/overwritten every sync)
 - Any other adaptive files / folders created
 
 Commit message: `chore: scaffold superpowers pipeline` on fresh repos, `chore: sync superpowers pipeline` when only drift fixes shipped, `refactor: migrate CLAUDE.md to rules layer + sync pipeline` when re-run performed legacy migration.

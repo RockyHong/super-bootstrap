@@ -38,20 +38,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `super-bootstrap` skill, greenfield seed step
 **Prior:** greenfield seed should capture the full downstream chain as cards with dependency/ordering noted (e.g. resolve-plugins depends on techstack.md filled); exact enumeration of remaining steps is triage's job at pickup, not capture's.
 
-### GAP-006 — No update pipeline for an already-bootstrapped repo
-
-**Logged:** 2026-07-07 · **Source:** user, gateway session on super-bootstrap repo
-**Problem:** pipeline covers install + greenfield seed only — no explicit path to bring a repo bootstrapped at plugin version X forward to version Y (re-sync runway/pins/docs skeleton while preserving user edits to CLAUDE.md/docs).
-**Area:** `super-bootstrap` + `harness-bootstrap` skills
-**Prior:** depends on GAP-005's version stamp to detect staleness; needs brainstorm on what re-syncs vs preserves and how it slots against harness-bootstrap's existing fresh-vs-sync self-detection.
-
-### GAP-005 — Version-stamp bootstrap artifacts for staleness detection
-
-**Logged:** 2026-07-07 · **Source:** user, gateway session on super-bootstrap repo
-**Problem:** `/super-bootstrap:super-bootstrap` and `/super-bootstrap:harness-bootstrap` leave no version marker on what they install/sync into a target repo — no later run or sync check can detect the installed runway is stale relative to the current plugin version.
-**Area:** `super-bootstrap` + `harness-bootstrap` skills, target-repo CLAUDE.md / marker file
-**Prior:** stamp a version onto the installed runway (e.g. CLAUDE.md or a dedicated marker file) at bootstrap time.
-
 ### GAP-003 — harness-collab-optimization effect unmeasured against spec's acceptance targets
 
 **Logged:** 2026-07-06 · **Source:** harness-collab-optimization session, spec `docs/superpowers/specs/harness-collab-optimization.md` § 6 acceptance criteria, item C1
