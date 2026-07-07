@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-007` · `DEBT-008` · `GAP-007` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-008` · `DEBT-008` · `GAP-007` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### BUG-008 — commit skill §3 hard-requires docsync-scan.sh hook, errors in repos without harness-bootstrap hook install
+
+**Logged:** 2026-07-07 · **Source:** BUG-007 fix session on super-bootstrap repo
+**Problem:** `/super-bootstrap:commit` §3 runs `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-scan.sh"` (introduced by the BUG-007 fix, commit 59abb4e). Repos with the bundled commit skill but no harness-bootstrap hook install at `.claude/hooks/` — including this plugin-source repo's own dogfooding once the new §3 ships — get file-not-found on commit, even though those repos have no docsync-gate needing the token. This repo committed fine this session only because the cached commit skill (v2.16.0) still uses the old `touch .git/docsync-token` §3; the coupling bites once the new §3 ships.
+**Area:** `plugins/super-bootstrap/skills/commit/SKILL.md` § 3, relationship to harness-bootstrap hook install
+**Prior:** §3 should degrade gracefully when the scan script is absent (skip scan/stamp — no gate to satisfy), or the source repo should install its own hooks to dogfood the flow.
 
 ### GAP-003 — harness-collab-optimization effect unmeasured against spec's acceptance targets
 
