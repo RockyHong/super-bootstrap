@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-008` · `DEBT-008` · `GAP-010` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-008` · `DEBT-008` · `GAP-011` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-011 — docsync-gate token not session-scoped, lives past abandoned sessions
+
+**Logged:** 2026-07-07 · **Source:** surfaced during the GAP-008 in-repo dogfood (commit 00a2809)
+**Problem:** `.git/docsync-token` is not session-scoped — it persists in `.git/` across Claude sessions rather than being cleared at session boundaries. Direct evidence: a stale 0-byte token stamped 08:10 by a prior session was still present at session start ~11:00, even though these hooks had never been live in-repo before. Impact: an un-consumed stamp from an abandoned session A grants session B's first git commit a free gate pass — `docsync-gate` consumes the leftover token without session B ever running its own doc-sync scan, silently violating the gate's core guarantee ("the scan ran for THIS commit"). The gate is one-shot per token but not per-session.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/docsync-stamp.sh` (writer) + `docsync-gate.sh` (consumer); token lifecycle
+**Prior:** three candidate fixes, deferred to triage — clear `.git/docsync-token` at `SessionStart`; timestamp/expire the token; or key it to a session id.
 
 ### GAP-010 — no detection for bootstrapped-but-stale hook/runway install
 
