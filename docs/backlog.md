@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-009` · `DEBT-008` · `GAP-011` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-009` · `DEBT-008` · `GAP-012` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-012 — docsync-gate v3 residue: compound Bash commands targeting a different repo are denied by this repo's gate
+
+**Logged:** 2026-07-08 · **Source:** docsync-gate B-prime redesign session (commit 7e8f7b1), live scratch-repo probe, 2026-07-07
+**Problem:** the gate's `*"git commit"*` recheck (defense-in-depth leg) denies compound commands that contain the literal "git commit" but target a different repo — e.g. `cd $TMP/scratch && git init && git commit` in a test fixture setup. PreToolUse inspects the command string pre-execution; hook-input `cwd` is the shell's invocation cwd (this repo), not wherever the command `cd`s to, so the commit's actual target repo is undecidable at the gate.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/docsync-gate.sh`
+**Prior:** accepted by design — string heuristics (detect `cd`/`-C`/`mktemp`) would re-enter the syntax-matching fragility class the v3 redesign exited. Deny message self-explains, remedy is running the scan. Re-triage only if Claude Code exposes richer semantic tool context (e.g. resolved target repo) to PreToolUse.
 
 ### GAP-003 — harness-collab-optimization effect unmeasured against spec's acceptance targets
 
