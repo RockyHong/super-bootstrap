@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-008` · `DEBT-008` · `GAP-007` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-008` · `DEBT-008` · `GAP-008` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-008 — commit §3 doc-sync gate's "gate-live" path never dogfooded in-repo
+
+**Logged:** 2026-07-07 · **Source:** BUG-008 fix session, commit f19ada3
+**Problem:** this plugin-source repo has no `.claude/hooks/` installed, so `/super-bootstrap:commit`'s §3 doc-sync gate only ever exercises the "gate absent" branch here. The "gate live" path (run `docsync-scan.sh`, write `.git/docsync-token`, gate consumes it) is never exercised on this repo's own commits — only validated for consumer repos.
+**Area:** `.claude/hooks/` (absent in this repo) vs `harness-bootstrap` hook-install procedure; `/super-bootstrap:commit` §3
+**Prior:** two options surfaced, undecided — (a) install the source repo's own harness-bootstrap hooks to dogfood gate-live on its own commits, or (b) accept gate-live coverage lives only in consumer repos. Decision deferred to triage.
 
 ### GAP-003 — harness-collab-optimization effect unmeasured against spec's acceptance targets
 
