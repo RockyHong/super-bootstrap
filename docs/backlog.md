@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-009` · `DEBT-008` · `GAP-012` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-010` · `DEBT-008` · `GAP-012` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### BUG-010 — rules-index-skeleton.md "model tiering on skills" section misfires: wrong paths-scope + false "only escape hatch" claim
+
+**Logged:** 2026-07-08 · **Source:** super-bootstrap dogfood, 2.17.0 self-sync run, audit-harness-edits verify pass (FAIL) on a runway pull-in
+**Problem:** two defects in the shipped section (lines 28-34) that seeds every consumer's `.claude/rules/index.md`: (1) LAYER-PLACEMENT — the section's real fire-moment is authoring a judgment-bearing SKILL.md (a `skills/**` path), but `index.md` is `paths:`-scoped to `.claude/rules/**` only, so a skill-author never loads it and the guidance silent-misses at its actual moment. (2) FACTUAL OVERCLAIM — the line "…the only tiering escape hatch" is false per `claude-shape/model-roster.md`: an inline `Agent`/`agent()` dispatch accepts a `model` enum without a typed `agents/<name>.md` file, so the typed-agent route is not the only tiering path.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/rules-index-skeleton.md` § "Related convention — model tiering on skills" (lines 28-34) — fix at skeleton SSOT, then re-sync consumers
+**Prior:** (1) extract to its own `skills/**`-scoped rule (e.g. `skill-model-tiering.md`) + mirror a one-line bullet in `CLAUDE.md § Rules` — OR confirm it's an intentional see-also for the rule-vs-skill+agent fork a rule-author faces and leave it (auditor read the diff cold, blind to that intent). (2) soften to e.g. "the repo's sanctioned tiering pattern".
 
 ### GAP-012 — docsync-gate v3 residue: compound Bash commands targeting a different repo are denied by this repo's gate
 
