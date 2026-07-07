@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-008` · `DEBT-008` · `GAP-011` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-009` · `DEBT-008` · `GAP-011` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### BUG-009 — docsync-gate denies `/release`'s commit — no doc-sync scan runs before its raw `git commit`
+
+**Logged:** 2026-07-07 · **Source:** surfaced attempting the v2.17.0 release during the GAP-008 dogfood session
+**Problem:** the docsync-gate PreToolUse hook denies `git commit` until `.git/docsync-token` exists, stamped only by the doc-sync scan run inside `/super-bootstrap:commit`. `/release` step 5 does a bare `git commit -m "chore: release v{version}"` — it never runs that scan, so no token is stamped, so the gate denies the release commit. Any repo carrying both the harness-bootstrap default-on gate hooks and a release-init-generated `/release` skill (or any other raw-commit maintenance flow bypassing `/super-bootstrap:commit`) has its release path blocked identically. Hard constraint on the eventual fix (user-stated): must resolve cleanly — no band-aid, hand-stamping a token to sneak the raw commit past the gate is explicitly rejected.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/docsync-gate.sh` (blocker) vs. the release-init-generated `/release` skill (`.claude/skills/release/SKILL.md`) step 5 raw commit; interaction between the default-on gate and any non-`/super-bootstrap:commit` git flow
+**Prior:** candidate directions, deferred to triage — (1) make `/release` gate-aware, running `docsync-scan.sh` before its commit like `/super-bootstrap:commit` does; (2) have the gate exempt release-shaped commits by design; (3) don't install the gate in repos that self-release; (4) reconsider whether a plugin-source repo should carry the runway gate at all (this repo's install is the GAP-008 dogfood). Clusters with GAP-011 (token lifecycle) and GAP-010 (stale-install detection) as one coherent gate/hook design rethink for a fresh session.
 
 ### GAP-011 — docsync-gate token not session-scoped, lives past abandoned sessions
 
