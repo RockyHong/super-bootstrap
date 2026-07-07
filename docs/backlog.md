@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-011` · `DEBT-008` · `GAP-016` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-011` · `DEBT-008` · `GAP-017` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-017 — harness rebase: upstream ChewLingo evolution, rebase ChewLingo onto root
+
+**Logged:** 2026-07-08 · **Source:** harness-unification evaluation session (three-probe grounding: ChewLingo spine, sb root, shared-artifact diff)
+**Problem:** ChewLingo is the mother fork of this harness; the two evolved in parallel — ChewLingo grew the judgment layer (venue eligibility, pipeline sizing, closed-fork bounce, 6-mode todo), sb grew the mechanism-hardening layer (ensure-infra, FROZEN assets, Windows FS-boundary, graceful degrade). Bidirectional drift continues until sb is the single root and ChewLingo consumes it.
+**Area:** program map + locked spine decisions + per-artifact verdicts + wave plan: [`docs/superpowers/specs/harness-rebase.md`](superpowers/specs/harness-rebase.md)
+**Prior:** unify verdict settled (never-merge off the table); five spine decisions locked 2026-07-08. Waves: (1) merge distill + check-docs-consistency promote + log distill; (2) commit/todo/triage + scale module + monorepo tier + adopt mode; (3) drain distill; then supervised `/super-bootstrap` rebase run against ChewLingo + Δ audit. Each artifact rides the normal card→route pipeline; the spec is the map, not a bypass.
 
 ### GAP-003 — harness-collab-optimization effect unmeasured; criteria reshaped by entry-discipline
 
