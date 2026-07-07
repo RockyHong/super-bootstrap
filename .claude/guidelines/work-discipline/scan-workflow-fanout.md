@@ -70,8 +70,11 @@ Binds rung 2, and the reader/judge core that rungs 3–5 extend.
    exactly. Orchestration stays soft; the report format is the binding contract.
 3. **Merge rule** — the same finding location appears once, under the
    highest-priority match.
-4. **Model tiers** — readers `haiku` (mechanical extraction), judge `sonnet`
-   (cross-reference judgment). Pin `model:` on every `agent()` call per
+4. **Model tiers** — readers `haiku` only where a judge stage cross-checks their
+   extractions (this contract's shape); a reader whose output feeds the report or
+   triage with no judge behind it floors at `sonnet` — an unchecked lossy read has
+   no recovery stage. Judge `sonnet` (cross-reference judgment). Pin `model:` on
+   every `agent()` call per
    [`model-tiering.md`](model-tiering.md). Ceiling is `sonnet`: the scan's verdicts
    feed the user-owned triage — the direction-setting step is the triage, not the
    scan. Extraction completeness is the recall floor — the invoker spot-checks

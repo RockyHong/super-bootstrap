@@ -1,4 +1,6 @@
-# Edit Discipline — Renames & Replace-All
+# Edit Discipline — Renames, Replace-All & Stale State
+
+Two edit-tool failure families: bulk replace corrupting on common identifiers (§ Preference order), and edits issued against stale file state (§ Stale-state edits).
 
 `Edit replace_all: true` is naive whole-file string replace — no AST, no scope, no token boundaries. Running on common identifiers silently corrupts unrelated code (`state` → `swipe` rewrites `SwipeState` to `SwipeSwipe`, import paths, comments, CSS selectors). Trap invisible until next type-check.
 
@@ -20,11 +22,18 @@
 
 `state`, `name`, `data`, `value`, `item`, `key`, `id`, `type`, `props`, `node`, `text`, `link`, `error`, `result`, `body`, `head`, `main`, `time`, `path`, `file`, `index`, `count`, `child`, `style`, `class`, `tag`, `event`, `target`, `source`, `from`, `to`, `next`, `prev`, `init`, `done`.
 
+## Stale-state edits — Read before first Edit, re-Read after mutation
+
+An Edit failing `"File has not been read yet"` or `"File has been modified since read"` is a state-tracking failure, not a content failure — retrying the same Edit against the same stale state cannot succeed. Read first; on those errors, re-Read:
+
+- **Read before the first Edit of a file each session** — the tool contract requires it; an Edit without a prior Read trips the guard and buys a forced round-trip.
+- **Re-Read after either error class above** before the next Edit of that file.
+- **Re-Read after any save the harness mutates behind you** — formatter hook, linter-on-commit (prettier / lint-staged repos mutate on every commit).
+- **Two consecutive same-file Edit failures = mandatory re-Read**, no exceptions — the loop is unwinnable without fresh state.
+
 ## When a `replace_all` slips through
 
 1. `git diff` first — see damage scope.
 2. If uncommitted, `git checkout` the file and redo with the right tool.
 3. If committed, fix as a NEW commit (preserves mistake in history).
 4. Run type-check / lint / test — usually points straight at corruption.
-
-Always run build/test after bulk operations.
