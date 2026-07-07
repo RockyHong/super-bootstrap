@@ -38,13 +38,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `/super-bootstrap:todo` skip-gate (version-marker comparison); `harness-bootstrap` copy-on-drift sync; possible new `SessionStart` hook surface (plugin ships zero hooks today)
 **Prior:** two open decisions deferred to triage — (1) where present-but-outdated detection should live: extend `/super-bootstrap:todo`'s skip-gate to compare installed hook version-markers against the plugin's assets, or surface it as `harness-bootstrap` copy-on-drift instead; (2) whether ambient detection warrants a new `SessionStart` hook (plan B, new architectural surface) vs staying pull-only via `/todo`.
 
-### GAP-008 — commit §3 doc-sync gate's "gate-live" path never dogfooded in-repo
-
-**Logged:** 2026-07-07 · **Source:** BUG-008 fix session, commit f19ada3
-**Problem:** this plugin-source repo has no `.claude/hooks/` installed, so `/super-bootstrap:commit`'s §3 doc-sync gate only ever exercises the "gate absent" branch here. The "gate live" path (run `docsync-scan.sh`, write `.git/docsync-token`, gate consumes it) is never exercised on this repo's own commits — only validated for consumer repos.
-**Area:** `.claude/hooks/` (absent in this repo) vs `harness-bootstrap` hook-install procedure; `/super-bootstrap:commit` §3
-**Prior:** two options surfaced, undecided — (a) install the source repo's own harness-bootstrap hooks to dogfood gate-live on its own commits, or (b) accept gate-live coverage lives only in consumer repos. Decision deferred to triage.
-
 ### GAP-003 — harness-collab-optimization effect unmeasured against spec's acceptance targets
 
 **Logged:** 2026-07-06 · **Source:** harness-collab-optimization session, spec `docs/superpowers/specs/harness-collab-optimization.md` § 6 acceptance criteria, item C1
