@@ -1,6 +1,7 @@
 # Overview
 
-<!-- harness-meta: read by /super-bootstrap:resolve-plugins. Keep YAML shape; list values in [...].
+<!-- harness-meta: read by /super-bootstrap:resolve-plugins (tier-2 curation). Keep YAML shape; list values in [...].
+Default [github]; add any of: notion, linear, jira, slack, trello, clickup, other.
 external-tools: [github]
 -->
 

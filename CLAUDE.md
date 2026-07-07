@@ -119,6 +119,8 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 
 First two served from the personal claude-config repo (predicates in `.claude/guidelines/work-discipline/`). Add a project-specific rule file when a path-scoped pattern emerges (e.g. a SKILL.md authoring convention), then mirror a one-line summary here.
 
+If rule body needs more context than its summary provides during planning, read the rule file directly before designing — `Read .claude/rules/<name>.md`.
+
 ## Tech Stack
 
 Markdown-authored Claude Code plugin + self-hosted marketplace — no language runtime or build step.
