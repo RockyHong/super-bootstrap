@@ -4,7 +4,7 @@ harness-bootstrap ships four hook assets. Unlike drain's worktree infra
 (`../drain/assets/ensure-infra.md`), install runs **unconditionally** — no opt-in
 confirm. All are safe-by-default: A2 (`docsync-gate`) fires at most once per commit;
 A1 (`harness-grounding`) never blocks — `additionalContext` only; A3 (`docsync-scan`)
-is a plain script the commit skill invokes; A4 (`docsync-stamp`) only ever writes the
+is a plain script the commit skill invokes when the gate is live; A4 (`docsync-stamp`) only ever writes the
 doc-sync token as a side-effect of the scan. They ship as **frozen assets** beside
 this file; ensure-infra places them by mechanical copy / merge — never regeneration,
 so there is no drift between repos. Run as `SKILL.md §2a-hooks`, part of Phase 2a.
@@ -15,12 +15,12 @@ so there is no drift between repos. Run as `SKILL.md §2a-hooks`, part of Phase 
 | - | - | - | - | - |
 | A2 | `hooks/docsync-gate.sh` | `.claude/hooks/docsync-gate.sh` | `hooks/docsync-gate.hook.json` | `.claude/settings.json` → `hooks.PreToolUse[]` |
 | A1 | `hooks/harness-grounding.sh` | `.claude/hooks/harness-grounding.sh` | `hooks/harness-grounding.hook.json` | `.claude/settings.json` → `hooks.PreToolUse[]` |
-| A3 | `hooks/docsync-scan.sh` | `.claude/hooks/docsync-scan.sh` | *(none — script only)* | *(no settings entry; invoked directly by /super-bootstrap:commit)* |
+| A3 | `hooks/docsync-scan.sh` | `.claude/hooks/docsync-scan.sh` | *(none — script only)* | *(no settings entry; invoked by /super-bootstrap:commit when the gate is live)* |
 | A4 | `hooks/docsync-stamp.sh` | `.claude/hooks/docsync-stamp.sh` | `hooks/docsync-stamp.hook.json` | `.claude/settings.json` → `hooks.PostToolUse[]` |
 
 `docsync-scan.sh` (A3) is a plain script with **no settings entry** — the commit
-skill calls it as `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-scan.sh"`. Running
-it is what triggers A4. `docsync-stamp.sh` (A4) merges into `hooks.PostToolUse[]` —
+skill calls it as `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-scan.sh"` when the
+`docsync-gate` hook is live. Running it is what triggers A4. `docsync-stamp.sh` (A4) merges into `hooks.PostToolUse[]` —
 a **new array** on repos that have no PostToolUse hooks yet; create it if absent, else
 append.
 

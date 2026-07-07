@@ -31,13 +31,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### BUG-008 — commit skill §3 hard-requires docsync-scan.sh hook, errors in repos without harness-bootstrap hook install
-
-**Logged:** 2026-07-07 · **Source:** BUG-007 fix session on super-bootstrap repo
-**Problem:** `/super-bootstrap:commit` §3 runs `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-scan.sh"` (introduced by the BUG-007 fix, commit 59abb4e). Repos with the bundled commit skill but no harness-bootstrap hook install at `.claude/hooks/` — including this plugin-source repo's own dogfooding once the new §3 ships — get file-not-found on commit, even though those repos have no docsync-gate needing the token. This repo committed fine this session only because the cached commit skill (v2.16.0) still uses the old `touch .git/docsync-token` §3; the coupling bites once the new §3 ships.
-**Area:** `plugins/super-bootstrap/skills/commit/SKILL.md` § 3, relationship to harness-bootstrap hook install
-**Prior:** §3 should degrade gracefully when the scan script is absent (skip scan/stamp — no gate to satisfy), or the source repo should install its own hooks to dogfood the flow.
-
 ### GAP-003 — harness-collab-optimization effect unmeasured against spec's acceptance targets
 
 **Logged:** 2026-07-06 · **Source:** harness-collab-optimization session, spec `docs/superpowers/specs/harness-collab-optimization.md` § 6 acceptance criteria, item C1

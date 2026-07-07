@@ -38,9 +38,11 @@ Run the doc-sync gate per the project's **CLAUDE.md § Doc Sync** — it owns th
 
 Commit-specific: surface every call **before** staging, not after. Doc updates from this gate stage alongside the code changes.
 
-Once every call resolves (updated / acknowledged-accurate / explicit skip), run the doc-sync scan: `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-scan.sh"`. The scan prints the changed-files surface (the grounding for your staleness judgment) and — as a side-effect — the `docsync-stamp` `PostToolUse` hook writes `.git/docsync-token`. That token is the artifact the `docsync-gate` `PreToolUse` hook checks before allowing `git commit` (harness-bootstrap `assets/hooks-ensure-infra.md`) — one-shot, consumed by the gate on the next commit attempt. **Never `touch` the token by hand — the stamp is produced by running the scan, not forged.**
+Once every call resolves (updated / acknowledged-accurate / explicit skip), branch on whether the `docsync-gate` `PreToolUse` hook — the artifact that actually blocks the commit — is installed. Gate on `test -f "$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-gate.sh"`.
 
-**Run the scan and `git commit` as SEPARATE tool calls.** Never chain `docsync-scan.sh && git commit` in one Bash call: PreToolUse reads the whole command string *before* the scan runs, sees `git commit`, checks the not-yet-written token, and denies. Scan first (its own call, which writes the token), then commit in a later call.
+**Gate live** — `git commit` is denied until `.git/docsync-token` exists, and that token is produced only by running the scan. Run the scan as its own Bash call: `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-scan.sh"` (installed alongside the gate by harness-bootstrap `assets/hooks-ensure-infra.md`). The scan prints the changed-files surface (the grounding for your staleness judgment) and — as a side-effect — the `docsync-stamp` `PostToolUse` hook writes `.git/docsync-token`, which the `docsync-gate` hook consumes on the next commit attempt — one-shot. **Never `touch` the token by hand — the stamp is produced by running the scan, not forged.** Run the scan and `git commit` as SEPARATE tool calls: never chain `docsync-scan.sh && git commit` in one Bash call — PreToolUse reads the whole command string *before* the scan runs, sees `git commit`, checks the not-yet-written token, and denies. Scan first (its own call, which writes the token), then commit in a later call.
+
+**Gate absent** — no hook blocks the commit. The doc-sync staleness judgment above (against CLAUDE.md § Doc Sync's scan surface) still runs and still gates the commit; once it resolves, commit directly.
 
 ### 4. Draft Commit Message
 
@@ -110,8 +112,8 @@ After commit confirms clean, signal cycle exit. One line — don't expand into f
 ## Rules
 
 - **Session-isolated** — only this session's changes. Prior dirty state is sacred.
-- **Doc-sync first** — gate runs before staging. Stale docs block commit until resolved. The scan (`docsync-scan.sh`) writes the token via the `docsync-stamp` hook.
-- **Scan and commit are separate calls** — never chain `docsync-scan.sh && git commit` in one Bash call — see §3.
+- **Doc-sync first** — the staleness judgment gates before staging; stale docs block commit until resolved. When the `docsync-gate` hook is live, clearing it needs the scan's token — see §3.
+- **Scan and commit are separate calls** — when the gate is live, never chain `docsync-scan.sh && git commit` in one Bash call — see §3.
 - **Conventional** — type, scope, subject. Body only when needed.
 - **Commit directly** — no approval gate; the conventional message + explicit file list are the record. Conditional pauses still fire (ambiguous-file classification, doc-sync); routine approval doesn't.
 - **Explicit paths always** — `git add <path>`, never `-A` / `.`.

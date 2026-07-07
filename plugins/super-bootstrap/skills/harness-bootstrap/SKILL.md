@@ -207,7 +207,7 @@ safe-by-default (rationale + full procedure:
 | - | - | - | - |
 | 1 | `docsync-gate` (PreToolUse) | `Bash(git commit *)` | Deny the commit if `.git/docsync-token` is missing (doc-sync scan not run this session); consume the token on allow |
 | 2 | `harness-grounding` (PreToolUse) | `Edit\|Write` matched to a harness path (`CLAUDE.md`, `.claude/rules/**`, `.claude/skills/**`, `.claude/agents/**`) | Inject a 2-3 line grounding checklist via `additionalContext` — never denies |
-| 3 | `docsync-scan` (script) | invoked by `/super-bootstrap:commit`'s doc-sync step | Enumerate the doc-sync surface; running it is what triggers the stamp |
+| 3 | `docsync-scan` (script) | invoked by `/super-bootstrap:commit`'s doc-sync step when the `docsync-gate` hook is live | Enumerate the doc-sync surface; running it is what triggers the stamp |
 | 4 | `docsync-stamp` (PostToolUse) | `Bash` invoking `docsync-scan.sh` | Write `.git/docsync-token` as a side-effect of the scan — the token the gate consumes |
 
 Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) — copies the four scripts to `.claude/hooks/` and merges the settings snippets into `.claude/settings.json` `hooks.PreToolUse[]` (docsync-gate, harness-grounding) and `hooks.PostToolUse[]` (docsync-stamp); `docsync-scan` is script-only, no settings entry. Content-aware (copy-on-drift — a version-marker mismatch re-copies the asset, so an upstream fix reaches existing repos), silent when already current; stage the placed files with the Phase 2c commit. Same asset-copy + guarded-merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3) — one pattern, reused here rather than re-derived.
