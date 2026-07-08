@@ -114,6 +114,11 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 
 → Full stack table, dependency philosophy, architecture rules, coding patterns in [`docs/techstack.md`](docs/techstack.md).
 
+{## Monorepo — Cross-Package Build Pre-flight}
+
+{Workspace repo ({workspace tool}; packages in [`docs/techstack.md`](docs/techstack.md#packages)). Before committing a change that touches a shared package, build/typecheck its dependents — a package green on its own can still break its consumers.}
+{Run the workspace-aware filtered build first, commit only on green (e.g. `{turbo run build --filter=...[HEAD]}` / `nx affected -t build` / `pnpm -r --filter '...[origin/main]' build`). Package boundaries live in `.claude/rules/` path globs (`apps/*/...`), not nested CLAUDE.md.}
+
 ## Commands
 
 ```bash

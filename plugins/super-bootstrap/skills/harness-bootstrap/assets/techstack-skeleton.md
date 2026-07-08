@@ -18,6 +18,14 @@
 
 {commands as they exist in scripts / Makefile / Cargo.toml / etc. — copy verbatim, don't invent.}
 
+{## Packages}
+
+{Monorepo tier only — drop this whole section for a single-package repo. One row per workspace package, seeded at scaffold from workspace-manifest detection; new packages land via doc-sync.}
+
+{| Package | Path | Role | Build command |}
+{|---|---|---|---|}
+{| {name} | {apps/web} | {what it is — app / shared lib / ui kit} | {per-package build, e.g. `pnpm --filter web build`} |}
+
 ## Architecture Rules
 
 > Grows via doc-sync as patterns crystallize. Module boundaries, data flow direction, dependency philosophy, layering rules.

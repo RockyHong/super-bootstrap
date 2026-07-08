@@ -1,6 +1,6 @@
 ---
 name: harness-bootstrap
-description: "Install or sync the generic superpowers runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, skeleton docs (overview, techstack, superpowers/), path-scoped rules, and core plugin pins; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap; opt-in earn-gated scale module (parked + test-queue containers, venue-map rule, backlog fact fields). Solo dev workflow."
+description: "Install or sync the generic superpowers runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, skeleton docs (overview, techstack, superpowers/), path-scoped rules, and core plugin pins; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap; opt-in earn-gated scale module (parked + test-queue containers, venue-map rule, backlog fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks on re-run. Solo dev workflow."
 tags: [harness, scaffold, setup, meta, docs]
 ---
 
@@ -35,6 +35,16 @@ Detect language/runtime by manifest files at repo root (e.g. `package.json`, `ts
 - Check for: `docs/`, `README.md`, `CLAUDE.md`, `.claude/`, monorepo indicators
 - Note existing doc structure (don't read docs deeply yet)
 
+### Monorepo detection
+
+Check the repo root for a **workspace manifest** — the marker that one root hosts multiple packages (e.g. `pnpm-workspace.yaml`, `turbo.json`, `nx.json`, `lerna.json`, a `package.json` carrying a `"workspaces"` field, `Cargo.toml` with a `[workspace]` table — illustrative, judge by analogy). Present → set **monorepo tier**.
+
+On monorepo tier, enumerate packages from the workspace globs (`apps/*`, `packages/*`, etc. — read the actual globs from the manifest, don't assume the layout). Each resolved directory with its own manifest is a package; record `{ name, path, role, build command }` per package for the Phase 2b `techstack.md` § Packages table rows (§ 2b) and the CLAUDE.md monorepo block.
+
+Rule-signal detection (below) then **fans out per package** instead of scanning root-only: the frontend-component-dir signal is checked inside each package, and a fired signal seeds its rule file with a package-scoped path glob (`apps/*/src/components/**`) rather than a root glob (`src/components/**`). One path-scoped rule carries the whole boundary — no nested CLAUDE.md needed.
+
+No workspace manifest → single-package repo; skip, everything stays root-scoped.
+
 ### Existing CLAUDE.md
 
 If it exists, read it. The pipeline may already be partially or fully present — note what's already there. **Also note legacy-skeleton blocks** (Coding Standards code-block walls, framework-specific patterns under pipeline-owned headings, large Project Structure trees) — these become migration candidates in Phase 2b. Default route for enforcement-shaped content (imperatives, "must / never / always") is `.claude/rules/<scope>.md`; only browsable reference goes to `docs/techstack.md` grown sections. See Phase 2b migration table.
@@ -47,6 +57,8 @@ Phase 1 also flags which `.claude/rules/*.md` files Phase 2b should seed. Signal
 - **Chrome MV3 manifest** (`manifest.json` with `"manifest_version": 3` + `service_worker` field) OR `src/background/` dir → seed `rules/mv3.md` from `assets/rules-mv3-skeleton.md`.
 - **Migrations dir** (`migrations/`, `db/migrate/`, `prisma/migrations/`) → flag `rules/migrations.md` for body-fill via doc-sync (machinery-only seed at scaffold).
 - **Tests dir** with non-trivial structure (`tests/`, `__tests__/`, `*.test.*` patterns) → flag `rules/tests.md` for body-fill via doc-sync.
+
+On **monorepo tier** (§ Monorepo detection), each signal is evaluated **per package**, not root-only, and a fired signal's seeded glob is package-scoped (`apps/*/src/components/**`) so one rule file spans every package that shares the pattern.
 
 **ECC-first seed source for language-scoped rules.** Before scaffolding from local `assets/rules-*-skeleton.md`, check ECC (`gh api repos/affaan-m/everything-claude-code/contents/rules`) for a matching language/framework rule. If ECC ships one, propose seeding from ECC (with attribution comment + license note) — defer to specialists. Local skeletons are the fallback. Cross-cutting / project-specific rules (e.g. MV3, custom service-worker patterns) stay on local skeletons.
 
@@ -112,8 +124,8 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - Project-owned content → never touch, even on drift
 
 **Pipeline-owned** (subject to drift check):
-- CLAUDE.md sections: Development Workflow, Dispatch, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene, Finding Triage, Rules, Git Notes, Planning
-- `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution, Edit Discipline
+- CLAUDE.md sections: Development Workflow, Dispatch, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene, Finding Triage, Rules, Git Notes, Planning, Monorepo (monorepo tier only — the conditional cross-package build block)
+- `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution, Edit Discipline, Packages (monorepo tier only — the § header + column shape; table rows are consumer-grown, project-owned)
 - `docs/overview.md` skeleton sections: Problem, User, Current State
 - `docs/decisions.md` scope header (the blockquote + `## Closed Forks` heading)
 - `docs/superpowers/specs/`, `docs/superpowers/plans/`, `docs/superpowers/plans/bootstrap.md`
@@ -408,6 +420,7 @@ Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write fro
 - Manifest detection facts (Runtime / Framework / Key Dependencies / Build & Distribution) → fill into CLAUDE.md Tech Stack one-liner AND `techstack.md` skeleton sections
 - Problem / User / Current State (`overview.md` skeleton sections) → left empty at install; filled at GAP-card pickup, not by the runway
 - Bracketed conditional lines `{- docs/specs/ — ...}` — keep only if the corresponding adaptive doc is scaffolded for this repo (specs per the 2a code-presence gate, backlog always); drop the whole line otherwise
+- **Monorepo tier** (Phase 1 § Monorepo detection) — fill CLAUDE.md's conditional monorepo block (workspace tool + the workspace-aware filtered build command) and `techstack.md` § Packages table rows (package | path | role | build command) from the Phase 1 package enumeration. Single-package repo → drop the CLAUDE.md monorepo block and the § Packages section entirely
 - CLAUDE.md § **Rules** summary bullets — fill from seeded `.claude/rules/*.md` files (one bullet per rule with glob + 2-4 one-line key points). If no rules seeded, drop the example placeholders and keep only the explanatory paragraph.
 - Rule skeleton placeholders (`{component path glob}`, `{Framework}`, body bullets in `assets/rules-*-skeleton.md`) → fill from Phase 1 detection. Lines that don't apply get dropped during scaffold.
 
@@ -425,6 +438,34 @@ The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed backlog` / `Task 3
 If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that's fine, signals bootstrap is essentially complete.
 
 Tech curation (skill / MCP / hook picks) is gated tier-2 — orchestrated by `/super-bootstrap` after `overview.md` / `techstack.md` are substantive, not during this runway install.
+
+### 2b-adopt: Superseded-fork adoption (migration, silent-skip)
+
+Migration machinery for repos that **forked the harness before this plugin existed** — they carry their own copies of skills/agents the plugin now ships as root artifacts (a local `commit` / `merge` / `log` / `todo` / `drain` skill + agent that the installed plugin supersedes). On re-run, offer to delete the superseded forks so the single root copy takes over. Repos with no such collision see nothing — silent skip, like § 2a-scale.
+
+**Superseded-artifact map — derived at runtime, never hardcoded.** Enumerate the plugin's own shipped skills and agents from the install: the plugin's `skills/<name>/` directory names + `agents/<name>.md` basenames, read at the plugin root two directory levels above this skill's base dir (same anchor as the Phase 1 version-stamp read). That listing IS the map — it tracks the plugin as its skill/agent set grows, so no static list drifts.
+
+**Collision detection.** In the consumer repo, scan `.claude/skills/<name>/` directories and `.claude/agents/<name>.md` files. A consumer artifact whose **name** matches a shipped skill/agent name is a superseded-fork candidate — the installed root copy supersedes it. Name-non-colliding consumer skills/agents are **project delta** — never touched, never listed, never surfaced.
+
+None collide → place nothing, surface nothing.
+
+When candidates exist, surface the full list with a per-deletion confirm — each row maps the consumer path to the root artifact that supersedes it:
+
+```
+Superseded harness forks detected — the installed plugin now ships these:
+
+  .claude/skills/commit/   → superseded by the plugin's `commit` skill (/super-bootstrap:commit)
+  .claude/agents/todo.md   → superseded by the plugin's `todo` agent
+  ... (one row per collision: consumer path → superseding root artifact)
+
+Delete the forked copies? (y = all / n = none / per-item)
+```
+
+`per-item` walks one candidate at a time (`y` / `n` each). **Never auto-delete** — every deletion is an explicit confirm.
+
+Per-candidate handling:
+- **Approve** → remove the consumer copy (`git rm -r` the skill dir / `git rm` the agent file; plain delete + stage where the path is untracked). Stage the deletion with the Phase 2c commit.
+- **Reject** → leave it in place; a later re-run re-offers.
 
 ### 2c: Sync report + commit
 
@@ -460,6 +501,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/backlog.md` (if scaffolded, re-planted, or fact-fields block inserted this run at 2a-scale)
 - `docs/parked.md`, `docs/test-queue.md`, `.claude/rules/venue-map.md` (scale-module targets — only if installed this run at 2a-scale)
 - `.claude/super-bootstrap-runway.json` (runway version stamp — written/overwritten every sync)
+- Superseded-fork deletions (adopt mode, § 2b-adopt) — staged removals of approved consumer `.claude/skills/<name>/` dirs / `.claude/agents/<name>.md` files that root artifacts now supersede
 - Any other adaptive files / folders created
 
 Commit message: `chore: scaffold superpowers pipeline` on fresh repos, `chore: sync superpowers pipeline` when only drift fixes shipped, `refactor: migrate CLAUDE.md to rules layer + sync pipeline` when re-run performed legacy migration.
