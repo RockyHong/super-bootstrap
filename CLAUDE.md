@@ -43,6 +43,7 @@ The gateway orchestrates; it does not build. Inline lane = orchestration, reads,
 - **Build inside a superpowers chain** (a `writing-plans` artifact in hand) → the chain's own executor governs — take its documented choice-point (`subagent-driven-development` / fallback, per the [topology map](docs/specs/superpowers-topology.md)); the lanes here carry envelope work outside a chain.
 - **Doc-sync scan** (envelope step) → dispatch the cold read across the § Doc Sync surface; gateway resolves findings with the user; writes land inline or dispatched by closure.
 - **Parallel within a phase, not across it** — N build sub-goals or N doc surfaces fan out together; build → doc-sync stays ordered (doc-sync needs the finished diff).
+- **Create-new-file subagents dispatch foreground** — a subagent tasked to CREATE a new harness/skill file runs foreground, not `run_in_background`: backgrounded, its new-file Write fails and the subagent stalls before writing. Editing an existing file and creating a non-harness file background cleanly.
 
 ## Doc Sync (non-negotiable)
 
