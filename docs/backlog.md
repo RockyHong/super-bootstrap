@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-014` · `DEBT-011` · `GAP-023` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-014` · `DEBT-014` · `GAP-023` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,27 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### DEBT-014 — docs-only diffs still pay the full docsync-gate token dance
+
+**Logged:** 2026-07-08 · **Source:** token-cost retrospective on the BUG-014 session; observed committing the DEBT-010 backlog row (pure docs, zero behavior/runtime surface)
+**Problem:** committing a pure-docs diff (e.g. a backlog row) still requires the full `docsync-scan.sh` token-mint-then-commit dance — a docs-only diff has nothing behavioral to sync, so the doc-sync-scan gate is pure ceremony there.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/docsync-gate.sh` + `docsync-scan.sh` + commit door
+**Prior:** exempt docs-only diffs (only `docs/**` / prose, no code/harness/behavior files) from the doc-sync-scan token requirement; nuance — the exemption must not let a behavior-narrating doc (README, manifest descriptions) drift silently, so scope tightly (e.g. `docs/backlog.md`/`docs/decisions.md` tracking-only prose) rather than blanket `docs/**`.
+
+### DEBT-013 — no small-change lane: dispatch-per-phase overhead disproportionate on tiny diffs
+
+**Logged:** 2026-07-08 · **Source:** token-cost retrospective on the BUG-014 session (~10-line hook-regex fix; gateway ≥200k + subagents ~460k tokens)
+**Problem:** for a ~10-line fix, the pipeline still spun up a full doc-sync-scan subagent (74k tokens) plus per-commit agent dispatches, each re-reading context and reporting back. Dispatch-per-phase (CLAUDE.md § Dispatch, § Doc Sync's "dispatch the scan to a clean subagent" default) is proportionate for large work but heavy for a bounded small change with no propagation closure of its own.
+**Area:** `CLAUDE.md` § Dispatch + § Doc Sync + the envelope
+**Prior:** a "small-change lane" — diff under N lines touching ≤1 behavior surface inlines the doc-sync staleness check as a bounded gateway grep instead of a full-agent dispatch, and commits directly, rather than dispatching build/doc-sync/commit as separate agents; triage sizes N and the surface bound.
+
+### DEBT-012 — commit batching: propagation closure split across session-isolation into N commits
+
+**Logged:** 2026-07-08 · **Source:** token-cost retrospective on the BUG-014 session (~10-line hook-regex fix; gateway ≥200k + subagents ~460k tokens)
+**Problem:** BUG-014's fix (asset matcher fix + verbatim propagation to this repo's git-tracked dogfood copy `.claude/hooks/docsync-gate.sh`) was one logical propagation-closure change, but session-isolation on the commit door forced it into 2 separate commits via 2 separate commit-agent dispatches (`b9f3e36` asset, `3a646fc` dogfood re-sync). The envelope/commit discipline has no "propagation-closure commit" concept bundling a source-harness edit with its verbatim installed/dogfood copy into one commit.
+**Area:** super-bootstrap commit door (`plugins/super-bootstrap/skills/commit`, `plugins/super-bootstrap/agents/commit.md`) + `CLAUDE.md` § Dispatch session-isolation rule
+**Prior:** when a diff includes a source harness file AND its verbatim installed/dogfood copy, consider allowing one commit instead of forcing session-isolated per-file dispatches; triage decides whether this is a defect or accepted-by-design (isolation is itself a safety property).
 
 ### GAP-023 — CLAUDE.md § Dispatch doctrine has no transcription/prose-exact exception; SDD over-dispatches implementer subagents for plan-supplied exact-content edits
 
