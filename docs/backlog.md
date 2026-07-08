@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-012` · `DEBT-008` · `GAP-021` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-013` · `DEBT-008` · `GAP-021` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### BUG-013 — harness-grounding.sh PreToolUse additionalContext lacks permissionDecision; may be dead or expose subagent Write-corruption
+
+**Logged:** 2026-07-08 · **Source:** surfaced during BUG-012 4-cell live probe investigation
+**Problem:** `harness-grounding.sh` (FROZEN v1, `.claude/hooks/harness-grounding.sh`) emits PreToolUse additionalContext with no `permissionDecision` field. Per Tier-1 lore `claude-shape/hook-feedback-channels.md`, PreToolUse additionalContext is valid only paired with `permissionDecision: "allow"` or `"defer"` — unpaired, the injection may be silently dropped (the harness-edit grounding nudge never reaches Claude at all), OR if it does inject, it exposes background-dispatched subagents that create new `.claude/{rules,skills,agents}/` or `CLAUDE.md` files to the same platform Write-corruption BUG-012 fixed for the plugins path (background subagent + PreToolUse additionalContext injection → Write returns "[Tool result missing due to internal error]"). Not directly probed: the BUG-012 4-cell live probe confirmed the device-global "New harness file" hook as injector for `plugins/*/skills/**` new-file creation (cell A failed, cell D on a plain path succeeded); this repo-owned analog (case arms at `harness-grounding.sh:20-30`, firing on `.claude/` + `CLAUDE.md` paths) is inferred exposure, not observed.
+**Area:** `.claude/hooks/harness-grounding.sh` (PreToolUse Edit|Write), FROZEN v1
+**Prior:** verify whether additionalContext-without-permissionDecision reaches Claude at all (if not, the grounding nudge is dead — a separate latent bug); if it does inject, gate on `agent_type` to skip subagent context (per `claude-shape/hook-agent-type.md`) or align with BUG-012's foreground-dispatch rule. FROZEN v1 hook — any change needs deliberate handling.
 
 ### GAP-021 — ChewLingo delta artifacts verdicted "upstream as root" never assigned a wave; remain consumer-only
 
