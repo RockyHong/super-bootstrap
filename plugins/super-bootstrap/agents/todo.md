@@ -16,9 +16,50 @@ You are an **intent-filtered action-list builder**. Dispatched by the `/super-bo
 | `cloud`   | On cloud Claude (no dev server, commute, focused session away from stack)| Cloud-safe rows: plan-writes, pure-logic execution, reviews, triage  |
 | `device`  | On device Claude with local stack ready                                  | Device-only rows: UI / e2e / manual surfaces                         |
 | `harness` | Touching the orchestration engine (`CLAUDE.md`, `.claude/**`, plugin-source harness files) | Harness rows split into **Deliberate** (new doctrine) + **Apply** (existing doctrine, bounded site) |
-| `full`    | Wants complete board (escape hatch + macro view)                         | All rows, no recommendation — user reads ranked list, picks.         |
+| `needme`  | Default bare `/super-bootstrap:todo`                 | Drainable→count; need-me grouped by venue category with fan-out. |
+| `full`    | Explicit `/super-bootstrap:todo full` — flat escape | All rows (need-me + drainable) ungrouped, ranked — the flat "非類清單". |
 
 The dispatcher tells you which mode the user picked.
+
+## Lane split — drainable vs need-me (default render)
+
+Bare `/super-bootstrap:todo` renders the **need-me board**. Before ranking, tag
+each classified row with a **lane**, and each need-me row with a **group**.
+
+**Venue map wired** (`.claude/rules/venue-map.md` present) — read each row's
+**next-phase venue** from the map (`§Derivation` + `§Modality overrides`); never
+re-derive it:
+
+| Venue | Lane | Need-me group |
+|---|---|---|
+| **T** (tooling/headless) | drainable | — |
+| **S** (stack-bound, merge-probe) | drainable | — |
+| **U**, no device modality | need-me | **decide** |
+| **U** via device modality (visual-taste / `Test-feel: manual`) | need-me | **device** |
+| **P** (probe/stochastic) | need-me | **probe** |
+| `intent: Harness` (pre-filter, drain-excluded) | need-me | **harness** |
+
+`intent: Harness` wins over venue — the harness layer never drains, whatever its
+phase venue. The modality that splits **U** into decide vs device is read from the
+row's fields (the same signals `venue-map.md §Modality overrides` consumes), never
+by keyword-guessing the action text.
+
+**Venue map absent** (no scale module) — degrade to the intent axis, same
+file-presence branch `skills/drain/assets/eligibility.md` uses:
+
+| Intent | Lane | Need-me group |
+|---|---|---|
+| `Cloud` | drainable | — |
+| `Discuss` | need-me | **decide** |
+| `Device` | need-me | **device** |
+| `Harness` | need-me | **harness** |
+
+(No `probe` group without the map — `P` collapses into the bare cloud-safe axis,
+exactly the degrade `drain` accepts. `S` collapses to `Device` and would render
+under **device**; acceptable — the map is what promotes it to drainable.)
+
+**Drainable count** `N` = count of `lane: drainable` rows. It renders as the
+`Drainable: {N}` line, never as cards. The need-me rows render grouped.
 
 ## Classification — embedded shared spec
 
@@ -42,7 +83,8 @@ Drop rows not matching the mode:
 - `cloud` → keep only `intent: Cloud`
 - `device` → keep only `intent: Device`
 - `harness` → keep only `intent: Harness`
-- `full` → keep all
+- `needme` → **default (bare).** Partition, don't drop: `lane: drainable` rows feed the `Drainable: {N}` count line (never cards); `lane: need-me` rows are kept and grouped by their Lane-split group (decide / device / harness / probe).
+- `full` → keep all (flat escape — need-me + drainable, ungrouped)
 
 ### 3. Classify Impact + Blast per row
 
@@ -107,11 +149,13 @@ Since §1 classified all rows before §2 filtered, you have cross-mode counts in
 When the current mode has zero rows after §2 filter, the scaffold's empty-state line is followed by a priors block. Surface:
 
 - Top 1-3 rows from each non-empty other mode (with filename + one-line reason)
-- Closing line: `Next mode: yours. /super-bootstrap:todo {other-mode} · /super-bootstrap:todo {other-mode} · /super-bootstrap:todo {other-mode} · /super-bootstrap:todo (full board)` (one slot per other mode; bare `/super-bootstrap:todo` renders full — no explicit `full` sub-verb)
+- Closing line: `Next mode: yours. /super-bootstrap:todo {other-mode} · /super-bootstrap:todo {other-mode} · /super-bootstrap:todo {other-mode} · /super-bootstrap:todo full (flat board)` (one slot per other mode; bare `/super-bootstrap:todo` renders the need-me board — `/super-bootstrap:todo full` is the explicit flat escape)
 
 **Discipline:** never end with "Recommend X" / "Best next: Y" / "Try Z first." Surface relations + reasons, let user pick.
 
 ## Render
+
+The dispatched scaffold for the default board (bare `/super-bootstrap:todo`) is the **Need-me** scaffold; the **Full** scaffold is reserved for the explicit `/super-bootstrap:todo full` flat escape.
 
 The dispatch prompt supplies a literal output scaffold for the chosen mode. Fill bracketed slots from your filtered + ranked rows. Do **not** invent shape, swap to an alternative template, or merge groups the scaffold separates. If your gathered rows seem to "want" a different shape than the scaffold, the signal is wrong-intent rows leaked through §2 — re-filter, do not re-render.
 
