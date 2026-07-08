@@ -7,12 +7,24 @@ Single source of truth for deriving, from the three pipeline sources, **each ope
 Three outputs per item:
 
 - **`action`** — the one-line actionable verb-phrase (`"Triage: BUG-12 …"`, `"Continue execute: plan.md (3/7)"`). The render string.
-- **`intent`** — `Discuss` | `Cloud` | `Device`. The runnability bucket.
+- **`intent`** — `Discuss` | `Cloud` | `Device` | `Harness`. The runnability bucket. `Harness` rows additionally carry **`subgroup`** — `deliberate` | `apply` (§Harness pre-filter).
 - **`stage`** — where the item sits in the pipeline, by file presence: `raw` (backlog row, no spec/plan) · `spec` (spec exists, no plan) · `plan` (plan executing) · `review` (plan all-checked, no DONE) · `done` (DONE/COMPLETED marker). The entry point for stage-resuming consumers.
 
 `intent` is the gate; `stage` is the entry point; `action` is for human render.
 
 ---
+
+## Harness pre-filter (applied before everything)
+
+Before the verb map and any per-source rule: an item whose **deliverable is the harness layer** — `CLAUDE.md`, anything under `.claude/` (rules, skills, agents, hooks, settings), or plugin-source harness files (`plugins/*/{skills,agents,shared}/**`, in repos that ship plugins) — classifies **intent: Harness**, regardless of verb or state. Judge from the row's `Area:` field, spec/plan body paths, or task bullet paths. A product change that touches a harness file incidentally is NOT harness — classify by the dominant surface; Harness = the harness file IS the deliverable.
+
+The harness layer is the orchestration engine: it never rides the autonomous queue. Consumers gating on `intent == Cloud` (drain) exclude Harness rows for free.
+
+Each Harness row carries a `subgroup` tag:
+
+- **`deliberate`** — authors new doctrine or carries propagation closure (rewrites what a rule means, chains doc-sync, touches cross-cutting contract surfaces). Action: `"Deliberate: {topic}"`.
+- **`apply`** — applies an existing codified rule to a bounded site (path fix, one clause under an existing section) with no closure. Action: `"Apply: {rule} → {site}"`.
+- Ambiguous → `deliberate` (careful-handle default).
 
 ## Cloud-safe criterion
 
@@ -36,7 +48,7 @@ Single positive rule applied to every row before bucketing:
 
 If no signal is conclusive, default cloud-safe for spec/plan-write/triage/cleanup rows; default device for executing rows touching UI surfaces; default cloud for executing rows on pure-logic surfaces.
 
-## Action-verb intent map (applied FIRST in classification)
+## Action-verb intent map (applied FIRST after the Harness pre-filter)
 
 Intent is determined by action verb before path/state rules.
 
@@ -50,10 +62,11 @@ Intent is determined by action verb before path/state rules.
 | `Manually verify`, `E2E run`, `Smoke test`                      | **Device**                   | Real browser / device required.                                             |
 | `Triage` (backlog item, investigate-only)                       | **Cloud**                    | Investigate-only artifact, headless.                                         |
 | `Cleanup` (delete merged spec+plan files)                       | **Cloud**                    | File delete on completed work, no judgment.                                  |
+| `Deliberate`, `Apply` (harness surface)                         | **Harness**                  | Pre-filter already caught it; the verb renders the subgroup.                  |
 
 ## Per-source derivation
 
-Read all three sources, derive each item's `{action, intent, stage}`. Apply the Action-verb intent map FIRST, then the content rules.
+Read all three sources, derive each item's `{action, intent, stage}`. Apply the Harness pre-filter, then the Action-verb intent map, then the content rules.
 
 ### a. Specs (`docs/superpowers/specs/*.md`)
 
@@ -97,7 +110,7 @@ If `docs/backlog.md` doesn't exist, skip §c.
 
 This spec stops at `{action, intent, stage}`. What each caller does next is **its own** concern, not shared here:
 
-- **`todo`** — Impact/Blast tags, coupling gate, within-mode ranking, scaffold render. Lives in `agents/todo.md`.
-- **`drain`** — `Cloud`-gate, relation-analysis (file-overlap parallelism), wave selection, worktree spawn, stage-keyed phase entry. Lives in `skills/drain/`.
+- **`todo`** — Impact/Blast tags, coupling gate, harness Deliberate/Apply grouping, within-mode ranking, scaffold render. Lives in `agents/todo.md`.
+- **`drain`** — `Cloud`-gate, relation-analysis (file-overlap parallelism), wave selection, worktree spawn, stage-keyed phase entry. Lives in `skills/drain/`. `Harness` rows fail the `Cloud` gate by construction — the engine never drains.
 
 Edit the classification here; edit each caller's downstream in its own home.

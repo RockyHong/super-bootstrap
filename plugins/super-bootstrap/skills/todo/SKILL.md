@@ -1,12 +1,12 @@
 ---
 name: todo
-description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the full board (every open spec/plan/backlog row). Sub-verbs filter by intent + environment: `/super-bootstrap:todo discuss` (decisions, spec approvals), `/super-bootstrap:todo cloud` (cloud-safe queue), `/super-bootstrap:todo device` (UI/e2e/manual). Scans docs/superpowers/specs|plans + docs/backlog.md. Bundled with super-bootstrap — works in any repo with the superpowers pipeline."
+description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the full board (every open spec/plan/backlog row). Sub-verbs filter by intent + environment: `/super-bootstrap:todo discuss` (decisions, spec approvals), `/super-bootstrap:todo cloud` (cloud-safe queue), `/super-bootstrap:todo device` (UI/e2e/manual), `/super-bootstrap:todo harness` (orchestration-engine rows, careful handle). Scans docs/superpowers/specs|plans + docs/backlog.md. Bundled with super-bootstrap — works in any repo with the superpowers pipeline."
 tags: [todo, scan, status, pipeline, superpowers]
 ---
 
 # Todo — Intent-Filtered Pipeline Scanner
 
-Default render is the full board (every open spec/plan/backlog row). Sub-verbs let the user slice by mental mode (deciding / on cloud Claude / on device Claude) when the board gets big enough to warrant it. State reconstructed from `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, and `docs/backlog.md`. Pipeline state = file presence (spec/plan/code presence drives stage classification).
+Default render is the full board (every open spec/plan/backlog row). Sub-verbs let the user slice by mental mode (deciding / on cloud Claude / on device Claude / touching the engine) when the board gets big enough to warrant it. State reconstructed from `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, and `docs/backlog.md`. Pipeline state = file presence (spec/plan/code presence drives stage classification).
 
 ## Arguments
 
@@ -16,8 +16,9 @@ Default render is the full board (every open spec/plan/backlog row). Sub-verbs l
 | `/super-bootstrap:todo discuss`| Decision shape — specs awaiting user approval, brainstorming-style specs needing dialogue, backlog items flagged for user decision, any row whose blocker is "user". **Macro header on top.**          |
 | `/super-bootstrap:todo cloud`  | Cloud-safe filter — plan-writes for approved specs, executing plans on pure-logic surfaces, review-stage reads, doc cleanup, backlog triage. **Macro header on top.**                                  |
 | `/super-bootstrap:todo device` | Device-only filter — executing plans on UI / e2e / manual surfaces, manual verification of review-stage plans. **Macro header on top.**                                                                |
+| `/super-bootstrap:todo harness`| Harness filter — rows whose deliverable is the orchestration engine (`CLAUDE.md`, `.claude/**`, plugin-source harness files), grouped **Deliberate** (new doctrine) / **Apply** (existing doctrine, bounded site). Never mixed into the autonomous slices. **Macro header on top.**                                          |
 
-**Macro header** (sub-verb modes only): single line right under title showing cross-mode counts — `Macro: Discuss {D} · Cloud {C} · Device {V} · Full {T}`. Free (agent classified all rows pre-filter), ignore-or-pickup. Counts only — no IDs, no recommendations.
+**Macro header** (sub-verb modes only): single line right under title showing cross-mode counts — `Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}`. Free (agent classified all rows pre-filter), ignore-or-pickup. Counts only — no IDs, no recommendations.
 
 **Empty-state expanded priors** (sub-verb modes): when current mode has zero rows, agent surfaces top 1-3 IDs from each non-empty other mode. Closes with `Next mode: yours.` — no recommendation. Lets user navigate from empty without blind retype.
 
@@ -53,7 +54,7 @@ When dispatching the agent, the prompt **must embed two literals**: the **classi
 **Dispatch prompt template:**
 
 ```
-mode: {discuss | cloud | device | full}
+mode: {discuss | cloud | device | harness | full}
 
 Classify every open item per this spec, then render EXACTLY the scaffold below. Fill bracketed slots from your gathered + filtered + ranked rows per agent protocol. Do NOT change shape, do NOT swap to an alternative template, do NOT merge or split groups the scaffold separates. Omit a group's table only if its row count is zero (omit the sub-heading too).
 

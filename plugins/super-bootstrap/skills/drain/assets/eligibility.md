@@ -6,7 +6,7 @@ The gate is `intent == Cloud` plus claim-freedom. Type (BUG/DEBT/GAP) is **not**
 
 ```
 isEligible(item):
-  if item.intent != "Cloud":              return false, "Device/Discuss — defers, not a wave member"
+  if item.intent != "Cloud":              return false, "Device/Discuss/Harness — defers, not a wave member"
   if item.stage == "done":                return false, "cleanup-only — not drain work"
   if claimed(item):                       return false, "already in flight"   # .claude/worktrees/drain-{id}/ exists
   if onUnmergedBranch(item):              return false, "work already on an unmerged branch — no double-claim"
@@ -19,7 +19,7 @@ isEligible(item):
 
 ## Mislabel is fixed upstream, not overridden here
 
-A `Device`/`Discuss` verdict you disagree with is an upstream signal problem: the item's row content (Problem/Area) or the shared `cloud-safe criterion` drove it. Fix it there — clarify the row so it re-classifies, or refine the criterion — then drain re-evaluates cold on the next invocation. drain consumes the classification; it does not carry an override path (SoC: the gate stays on one side of the pipeline boundary).
+A `Device`/`Discuss`/`Harness` verdict you disagree with is an upstream signal problem: the item's row content (Problem/Area) or the shared `cloud-safe criterion` drove it. Fix it there — clarify the row so it re-classifies, or refine the criterion — then drain re-evaluates cold on the next invocation. drain consumes the classification; it does not carry an override path (SoC: the gate stays on one side of the pipeline boundary).
 
 ## Runtime walls are the backstop
 

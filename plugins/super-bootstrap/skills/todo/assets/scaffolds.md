@@ -2,10 +2,10 @@
 
 Date placeholder `{date}` = today's date in YYYY-MM-DD form. Agent fills it.
 
-**Macro header** (sub-verb modes only — discuss / cloud / device): single line right under title showing cross-mode counts. Always emit even when current mode is non-empty (free — agent classified all rows pre-filter). Format:
+**Macro header** (sub-verb modes only — discuss / cloud / device / harness): single line right under title showing cross-mode counts. Always emit even when current mode is non-empty (free — agent classified all rows pre-filter). Format:
 
 ```
-Macro: Discuss {D} · Cloud {C} · Device {V} · Full {T}
+Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 ```
 
 Counts only — no IDs, no impact tags. Decision-is-yours; surface priors not calls. Full mode skips this header (full body IS the macro).
@@ -15,7 +15,7 @@ Counts only — no IDs, no impact tags. Decision-is-yours; surface priors not ca
 ```
 # To-Do (Discuss) — {date}
 
-Macro: Discuss {D} · Cloud {C} · Device {V} · Full {T}
+Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 
 | #  | Action                                              | Impact       | Context                                              |
 | -- | --------------------------------------------------- | ------------ | ---------------------------------------------------- |
@@ -35,15 +35,16 @@ Empty state:
 ```
 # To-Do (Discuss) — {date}
 
-Macro: Discuss 0 · Cloud {C} · Device {V} · Full {T}
+Macro: Discuss 0 · Cloud {C} · Device {V} · Harness {H} · Full {T}
 
 Nothing to decide.
 
 Macro priors (no recommendation):
 - Cloud: {top 1-3 with file + one-line reason}
 - Device: {top 1-3 with file + one-line reason, or "0"}
+- Harness: {top 1-3 with file + one-line reason, or "0"}
 
-Next mode: yours. /super-bootstrap:todo cloud · /super-bootstrap:todo device · /super-bootstrap:todo (full board)
+Next mode: yours. /super-bootstrap:todo cloud · /super-bootstrap:todo device · /super-bootstrap:todo harness · /super-bootstrap:todo (full board)
 
 more: /super-bootstrap:help
 ```
@@ -53,7 +54,7 @@ more: /super-bootstrap:help
 ```
 # To-Do (Cloud) — {date}
 
-Macro: Discuss {D} · Cloud {C} · Device {V} · Full {T}
+Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 
 | #  | Action                                              | Progress | Impact       | Blast       |
 | -- | --------------------------------------------------- | -------- | ------------ | ----------- |
@@ -73,15 +74,16 @@ Empty state:
 ```
 # To-Do (Cloud) — {date}
 
-Macro: Discuss {D} · Cloud 0 · Device {V} · Full {T}
+Macro: Discuss {D} · Cloud 0 · Device {V} · Harness {H} · Full {T}
 
 Nothing cloud-runnable.
 
 Macro priors (no recommendation):
 - Discuss: {top 1-3 with file + one-line reason}
 - Device: {top 1-3 with file + one-line reason}
+- Harness: {top 1-3 with file + one-line reason, or "0"}
 
-Next mode: yours. /super-bootstrap:todo discuss · /super-bootstrap:todo device · /super-bootstrap:todo (full board)
+Next mode: yours. /super-bootstrap:todo discuss · /super-bootstrap:todo device · /super-bootstrap:todo harness · /super-bootstrap:todo (full board)
 
 more: /super-bootstrap:help
 ```
@@ -91,7 +93,7 @@ more: /super-bootstrap:help
 ```
 # To-Do (Device) — {date}
 
-Macro: Discuss {D} · Cloud {C} · Device {V} · Full {T}
+Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 
 | #  | Action                                              | Progress | Impact       | Blast       |
 | -- | --------------------------------------------------- | -------- | ------------ | ----------- |
@@ -111,15 +113,65 @@ Empty state:
 ```
 # To-Do (Device) — {date}
 
-Macro: Discuss {D} · Cloud {C} · Device 0 · Full {T}
+Macro: Discuss {D} · Cloud {C} · Device 0 · Harness {H} · Full {T}
 
 Nothing device-only.
 
 Macro priors (no recommendation):
 - Cloud: {top 1-3 with file + one-line reason}
 - Discuss: {top 1-3 with file + one-line reason}
+- Harness: {top 1-3 with file + one-line reason, or "0"}
 
-Next mode: yours. /super-bootstrap:todo cloud · /super-bootstrap:todo discuss · /super-bootstrap:todo (full board)
+Next mode: yours. /super-bootstrap:todo cloud · /super-bootstrap:todo discuss · /super-bootstrap:todo harness · /super-bootstrap:todo (full board)
+
+more: /super-bootstrap:help
+```
+
+### Harness
+
+```
+# To-Do (Harness) — {date}
+
+Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
+
+Engine surface — careful handle. Ground in git log + the repo's rules before editing; harness edits carry a verify pass.
+
+## Deliberate
+
+| #  | Action                                              | Progress | Impact       | Blast       |
+| -- | --------------------------------------------------- | -------- | ------------ | ----------- |
+| 1  | Deliberate: {topic + one-line reason}               | {x/y|—}  | {tag}        | {tag}       |
+
+## Apply
+
+| #  | Action                                              | Progress | Impact       | Blast       |
+| -- | --------------------------------------------------- | -------- | ------------ | ----------- |
+| 1  | Apply: {rule} → {site}                              | {x/y|—}  | {tag}        | {tag}       |
+
+## Uncategorized
+
+| #  | Action                                              | Why ambiguous                                    |
+| -- | --------------------------------------------------- | ------------------------------------------------ |
+| 1  | {verb + what}                                       | {one-line — what signal was missing}             |
+
+more: /super-bootstrap:help
+```
+
+Empty state:
+
+```
+# To-Do (Harness) — {date}
+
+Macro: Discuss {D} · Cloud {C} · Device {V} · Harness 0 · Full {T}
+
+Nothing harness-pending.
+
+Macro priors (no recommendation):
+- Discuss: {top 1-3 with file + one-line reason, or "0"}
+- Cloud: {top 1-3 with file + one-line reason, or "0"}
+- Device: {top 1-3 with file + one-line reason, or "0"}
+
+Next mode: yours. /super-bootstrap:todo discuss · /super-bootstrap:todo cloud · /super-bootstrap:todo device · /super-bootstrap:todo (full board)
 
 more: /super-bootstrap:help
 ```
@@ -146,7 +198,7 @@ more: /super-bootstrap:help
 {footer per § Render footer-hint}
 ```
 
-No macro header for Full — full IS the macro. No "Next up" recommendation block in any mode (solo-dev momentum-driven; user picks from list, system doesn't strategize).
+No macro header for Full — full IS the macro. Harness-intent spec/plan files render as normal Full rows with no `Deliberate:`/`Apply:` prefix (no column carries it — the Stage/Impact/Blast cells carry the signal); harness backlog rows ride the backlog count line. No "Next up" recommendation block in any mode (solo-dev momentum-driven; user picks from list, system doesn't strategize).
 
 Footer: fill per § Render footer-hint in the todo agent (`agents/todo.md`) — canonical home.
 

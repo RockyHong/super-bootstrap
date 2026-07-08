@@ -41,7 +41,7 @@ Run in order; any HALT exits the turn with a §Halt summary.
 
 ## Eligibility
 
-`Cloud`-gate + drain-domain filter. Full predicate: `assets/eligibility.md`. Summary: item is eligible when `intent == Cloud`, it is not already claimed (no `drain-{id}` worktree) and not on an existing unmerged branch, and it carries no unresolved decision. `Device`/`Discuss` defer; foreign-prefix backlog rows route to `/super-bootstrap:log`.
+`Cloud`-gate + drain-domain filter. Full predicate: `assets/eligibility.md`. Summary: item is eligible when `intent == Cloud`, it is not already claimed (no `drain-{id}` worktree) and not on an existing unmerged branch, and it carries no unresolved decision. `Device`/`Discuss`/`Harness` defer; foreign-prefix backlog rows route to `/super-bootstrap:log`.
 
 ## Confirm gate
 

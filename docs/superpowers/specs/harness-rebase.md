@@ -33,7 +33,7 @@ ChewLingo runs `/super-bootstrap` (plugin currently present-but-disabled in its 
 | merge | **done (Wave 1)** | Landed: parameterized conflict-handoff agent name. Anti-pattern § NOT ported — closed fork (pressure-tested: sb wording already binds; see `docs/decisions.md`) |
 | commit | **done (Wave 2)** | Landed: agent-dispatch shell + commit agent (doc-sync state machine, push facts, cycle facts returned; gateway lanes for resolution/push/handoff); commit-channel upstreamed as FROZEN A6. Rename sub-check NOT ported — closed fork (pressure-tested 5/5 control; see docs/decisions.md) |
 | log | **done (Wave 1)** | Landed: row-shape gate (no standing-watch rows) + closed-fork bounce against decisions.md, both GREEN-tested 5/5. Claim-block write-once was already in the backlog header — no edit. Parked bucket stays deferred to the Wave 2 scale module |
-| todo | distill (largest) | CL 6-mode taxonomy + batch-retrieval work-table + coupling gate + macro picker; sb skip-gate + shared `classify-actionable.md` DRY; `harness` mode needs a consumer-safe fallback (`load-harness-principles` is device-only — skeleton self-containment rule binds) |
+| todo | **done (Wave 2)** | Landed: harness intent + Deliberate/Apply lane, RED-gated (control leak 5/5); pre-filter lives in shared classify-actionable.md — drain excludes Harness via its Cloud gate (harness-never-drains). Consumer-safe routing (git-log + rules grounding wording; no device-only skill names). Work-table NOT ported — closed fork (5/5 control); macro picker NOT ported — closed fork (footer legend + macro header already cover); both in docs/decisions.md |
 | drain | distill (deepest, last) | sb mechanism layer (ensure-infra, `.drain-status`, Windows FS-boundary, nested-worktree false-greens, required-flags table) + CL judgment layer (venue eligibility via scale module, wave-of-one/inline carve-out, doc/eng polymorphic lanes, pre-plan confirm gate); e2e merge-probe parameterized from consumer techstack. `.temp/drain/` portable rewrite = prior art |
 | check-docs-consistency | **done (Wave 1)** | Promoted into the plugin; the four work-discipline guideline references distilled into skill-local `assets/` (self-contained, grep-verified). Dogfood copy deleted — residual: claude-config-manager still serves its own copy; retire/redirect it upstream via `/contribute` |
 | triage + triage-report (CL-only) | upstream as root | Fix-shape/Probe-deps tag schema is portable judgment tech; probe-gating specifics (Firestore/Playwright) → consumer config |
@@ -47,7 +47,7 @@ ChewLingo runs `/super-bootstrap` (plugin currently present-but-disabled in its 
 ## Wave plan
 
 1. **Wave 1 — cheap wins**: merge distill; check-docs-consistency promote; log distill. — **COMPLETE** (per-artifact outcomes in the verdict table above). Live edge = Wave 2.
-2. **Wave 2**: ~~commit~~ (done), todo, triage(+report), scale module, monorepo tier, adopt mode.
+2. **Wave 2**: ~~commit~~ (done), ~~todo~~ (done), triage(+report), scale module, monorepo tier, adopt mode.
 3. **Wave 3**: drain distill.
 4. **Rebase run**: `/super-bootstrap` against ChewLingo (materialized mode), supervised diff+approve, adopt-mode deletions, CLAUDE.md rewritten from skeleton + delta sections.
 5. **Δ audit + verify**: `audit-harness-edits` on both repos; every remaining ChewLingo artifact must name the project knowledge that keeps it out of root; wet run one full card cycle in each repo.
