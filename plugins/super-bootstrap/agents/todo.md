@@ -57,6 +57,7 @@ Apply before ranking. Both tags carried on every row.
   - Plan with paths spanning cross-pkg or repo blast
   - Backlog row whose body contains severity signal (`critical`, `blocking`, `production-down`, `data-loss`)
   - `Deliberate:` rows (new doctrine shapes how other work is done)
+  - `Implement` rows whose triage scope.md says `Execution: full`
 - **`quick-pop`**:
   - `Cleanup` rows (delete merged spec+plan)
   - `Triage` rows (single backlog item, investigate-only)
@@ -73,7 +74,7 @@ Apply before ranking. Both tags carried on every row.
 - **`cross-pkg`** — ≥2 packages referenced
 - **`repo`** — touches `.claude/`, `CLAUDE.md`, `docs/` sweeping, or orchestration layer
 
-Derive from plan body path mentions and task bullet paths. For backlog rows, read the row's `**Area:**` field first (single file → `local`, one package → `pkg`, ≥2 packages → `cross-pkg`, `.claude/` / `CLAUDE.md` / sweeping `docs/` → `repo`); fall back to body mentions on legacy rows without it. Harness rows always take Blast `repo` — the deliverable is the orchestration layer, whatever the `Area:` file count. For Discuss-mode rows (pure decisions, no code), omit Blast — render N/A or skip column per scaffold (scaffold drops Blast column for Discuss).
+Derive from plan body path mentions and task bullet paths. For `Implement` rows (stage `triaged`), the triage scope.md `## Files` section is the path source. For backlog rows, read the row's `**Area:**` field first (single file → `local`, one package → `pkg`, ≥2 packages → `cross-pkg`, `.claude/` / `CLAUDE.md` / sweeping `docs/` → `repo`); fall back to body mentions on legacy rows without it. Harness rows always take Blast `repo` — the deliverable is the orchestration layer, whatever the `Area:` file count. For Discuss-mode rows (pure decisions, no code), omit Blast — render N/A or skip column per scaffold (scaffold drops Blast column for Discuss).
 
 **Harness grouping:** in `harness` mode, rows group by `subgroup` — **Deliberate** table first, **Apply** table second (the scaffold separates them); Impact is still computed and rendered as a column, but grouping is subgroup, not Impact.
 
@@ -90,7 +91,7 @@ Then rank the body rows (hard-blocked held out). For all modes (sub-verb AND ful
 
 1. **Impact desc** — `impactful` first, `quick-pop` second
 2. **Progress desc within Impact** — executing-rows with most-complete progress first (finish-what's-started bias)
-3. **Action-verb priority** — `Continue execute` > `Review` > `Approve spec` / `Decide` > `Write plan` > `Continue brainstorm` > `Deliberate` > `Apply` > `Cleanup` > `Triage`
+3. **Action-verb priority** — `Continue execute` > `Review` > `Approve spec` / `Decide` > `Implement` > `Write plan` > `Continue brainstorm` > `Deliberate` > `Apply` > `Cleanup` > `Triage`
 4. **Recency desc** — newest first (tiebreak)
 
 **Soft-coupling adjacency** overrides these four keys locally: a soft-coupling upstream row ranks immediately above the row it shapes, even when the keys would separate them.

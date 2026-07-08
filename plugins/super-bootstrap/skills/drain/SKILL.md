@@ -18,7 +18,7 @@ Trigger: user types `/super-bootstrap:drain`. Never auto-fires.
 - **One wave, one shot per invocation.** No internal loop across waves, no `--all`. Turn ends after the wave is dispatched. Next invocation cold-reads files and re-picks.
 - **No auto-merge — ever.** Each subprocess stops at a ready-to-merge state. The user confirms; the merge runs via `/super-bootstrap:merge` (the destructive-git lane). Subprocesses are denied push/merge/rebase/branch-delete/worktree at the permission layer.
 - **Cloud-gate, not type-gate.** Eligible = item classifies `Cloud` (cloud-safe), across BUG/DEBT/GAP and across specs/plans. `Device`/`Discuss` items defer — drain never spawns for them. A mislabel is fixed upstream (clarify the row, or the shared criterion), never overridden here.
-- **Stage-resume.** Each item enters its phase chain at its current pipeline stage (file presence): `raw`→triage, `spec`→plan, `plan`→execute, `review`→review. Committed upstream phases are inherited, not re-run.
+- **Stage-resume.** Each item enters its phase chain at its current pipeline stage (file presence): `raw`→triage, `triaged`→plan, `spec`→plan, `plan`→execute, `review`→review. Committed upstream phases are inherited, not re-run.
 - **Halts are outcomes.** A wall surfaces a finding; that finding plus any committed earlier phases are progress, not waste.
 - **Wave member = no blocker.** Orphans + chain-heads enter; chain-tails and conflicts defer to a later invocation. No forward projection — render the current wave only.
 

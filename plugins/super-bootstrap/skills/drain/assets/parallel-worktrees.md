@@ -16,7 +16,7 @@ spawn-ts: <ISO-8601>
 purpose: drain
 branch: drain/{id-lower}
 item-id: <BUG-12 | DEBT-7 | GAP-3>
-stage: <raw | spec | plan | review>
+stage: <raw | triaged | spec | plan | review>
 ```
 
 Writer = gateway, at warm step. Readers = gateway (scan/orphan tick) + the subprocess (anchor only, never writes).

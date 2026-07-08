@@ -21,7 +21,7 @@ Route the card by cluster:
 | 5 | Config / taste / bounded tweak | inline; taste that iterates or drifts → card it |
 | 6 | Docs / prose | envelope only |
 | 7 | Harness edit (CLAUDE.md, rules, skills, agents) | git log + `.claude/rules/index.md` pre-edit; verify pass post-edit |
-| 8 | Triage / investigation-only | inline reads + dispatched probes |
+| 8 | Triage / investigation-only | backlog card → `/super-bootstrap:triage {ID}` (read-only verdict phase → scope.md or notes.md); ad-hoc question → inline reads + dispatched probes |
 
 ### Route line — state, don't gate
 
@@ -65,7 +65,7 @@ State docs (`overview.md`, `techstack.md`, specs) hold what is **true now** — 
 
 **Temporal cleanup:** if work completes a feature branch, delete its spec and plan files from `docs/superpowers/specs/` and `docs/superpowers/plans/`. Once merged, they're noise.
 
-{**Backlog cleanup:** if work resolves a `BUG-###` / `DEBT-###` / `GAP-###` from `docs/backlog.md`, delete that item — including a shipped feature-`GAP`, which now belongs to the product narrative (Problem / Current State / Module Index). Git history is the archive.}
+{**Backlog cleanup:** if work resolves a `BUG-###` / `DEBT-###` / `GAP-###` from `docs/backlog.md`, delete that item and any `docs/superpowers/triage/{ID}-*` verdict file — including a shipped feature-`GAP`, which now belongs to the product narrative (Problem / Current State / Module Index). Git history is the archive.}
 
 ## Coding Principles
 

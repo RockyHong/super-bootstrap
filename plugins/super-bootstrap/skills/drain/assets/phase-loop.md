@@ -16,6 +16,7 @@ Background (`Bash(run_in_background: true)`), notification-driven (push, not pol
 | Entry `stage` | Chain |
 | ------------- | ----- |
 | `raw` (backlog row) | triage → [escalate-or-build gate] → plan → execute (TDD) → review → **merge gate (halt)** |
+| `triaged` (triage scope.md, no plan) | plan → execute (TDD) → review → **merge gate (halt)** — triage inherited from the scope.md, never re-run |
 | `spec` (spec, no plan) | plan → execute → review → **merge gate (halt)** |
 | `plan` (executing) | continue execute → review → **merge gate (halt)** |
 | `review` (all-checked) | review → **merge gate (halt)** |

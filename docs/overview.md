@@ -9,7 +9,7 @@ external-tools: [github]
 
 ## Problem
 
-Per-project Claude Code setup is a repeated grind: write `CLAUDE.md`, pick skills/MCPs/hooks, pin config, establish a workflow. super-bootstrap collapses that into one command (`/super-bootstrap`) that inspects a repo and installs the [superpowers](https://github.com/obra/superpowers) development pipeline — CLAUDE.md, skeleton docs, path-scoped rules, curated skill/MCP/hook picks — plus a **phase-gated workflow** so every session runs only the pipeline phases the work actually needs (workflow, not just a toolbelt). Greenfield repos get lean ideation Q&A first; repos with code get scanned and scaffolded. It also bundles the companion skills that run the pipeline day-to-day: commit, todo, log, help, merge, drain, check-docs-consistency, and optional release-init.
+Per-project Claude Code setup is a repeated grind: write `CLAUDE.md`, pick skills/MCPs/hooks, pin config, establish a workflow. super-bootstrap collapses that into one command (`/super-bootstrap`) that inspects a repo and installs the [superpowers](https://github.com/obra/superpowers) development pipeline — CLAUDE.md, skeleton docs, path-scoped rules, curated skill/MCP/hook picks — plus a **phase-gated workflow** so every session runs only the pipeline phases the work actually needs (workflow, not just a toolbelt). Greenfield repos get lean ideation Q&A first; repos with code get scanned and scaffolded. It also bundles the companion skills that run the pipeline day-to-day: commit, todo, log, triage, triage-report, help, merge, drain, check-docs-consistency, and optional release-init.
 
 ## User
 

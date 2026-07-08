@@ -36,7 +36,7 @@ ChewLingo runs `/super-bootstrap` (plugin currently present-but-disabled in its 
 | todo | **done (Wave 2)** | Landed: harness intent + Deliberate/Apply lane, RED-gated (control leak 5/5); pre-filter lives in shared classify-actionable.md — drain excludes Harness via its Cloud gate (harness-never-drains). Consumer-safe routing (git-log + rules grounding wording; no device-only skill names). Work-table NOT ported — closed fork (5/5 control); macro picker NOT ported — closed fork (footer legend + macro header already cover); both in docs/decisions.md |
 | drain | distill (deepest, last) | sb mechanism layer (ensure-infra, `.drain-status`, Windows FS-boundary, nested-worktree false-greens, required-flags table) + CL judgment layer (venue eligibility via scale module, wave-of-one/inline carve-out, doc/eng polymorphic lanes, pre-plan confirm gate); e2e merge-probe parameterized from consumer techstack. `.temp/drain/` portable rewrite = prior art |
 | check-docs-consistency | **done (Wave 1)** | Promoted into the plugin; the four work-discipline guideline references distilled into skill-local `assets/` (self-contained, grep-verified). Dogfood copy deleted — residual: claude-config-manager still serves its own copy; retire/redirect it upstream via `/contribute` |
-| triage + triage-report (CL-only) | upstream as root | Fix-shape/Probe-deps tag schema is portable judgment tech; probe-gating specifics (Firestore/Playwright) → consumer config |
+| triage + triage-report (CL-only) | **done (Wave 2)** | Landed: thin verdict shells + typed agents (Opus investigator / Sonnet disposition judge), verdict home `docs/superpowers/triage/{ID}-scope\|notes.md`, classify-actionable `triaged` stage + `Implement` verb, drain/todo stage closure. RED-gated: read-only floor shipped (controls 2/5 violated; precedence line added after first GREEN 2/5 fail); echo-test, fork-spotting reinforcement, dismiss burden-of-proof NOT ported — closed forks (controls clean; docs/decisions.md). Probe specifics → consumer `docs/techstack.md § Probes` (absent → static read only) |
 | spec/plan/implement/review (CL) | partial upstream | Surface-on-Gap refusal, design gate, evidence block salvage into superpowers route wrappers; bodies otherwise superseded by envelope decision — do not ship a parallel chain |
 | journey-simulation (CL) | upstream as root | Portable mechanism, near-zero contamination |
 | venue-map, capture-routing, pickup-grounding, findings-logging, triage-routing, worktree-boundary (CL rules) | upstream into scale module | Generic harness patterns coupled only to tracker schema |
@@ -47,8 +47,10 @@ ChewLingo runs `/super-bootstrap` (plugin currently present-but-disabled in its 
 ## Wave plan
 
 1. **Wave 1 — cheap wins**: merge distill; check-docs-consistency promote; log distill. — **COMPLETE** (per-artifact outcomes in the verdict table above). Live edge = Wave 2.
-2. **Wave 2**: ~~commit~~ (done), ~~todo~~ (done), triage(+report), scale module, monorepo tier, adopt mode.
+2. **Wave 2**: ~~commit~~ (done), ~~todo~~ (done), ~~triage(+report)~~ (done), scale module, monorepo tier, adopt mode.
 3. **Wave 3**: drain distill.
+
+**Distill route sizing (binds remaining waves).** The distill shape is known (5 precedents: merge, log, commit, todo, triage) — remaining artifacts route **cluster 3** (`writing-plans` direct from this spec's verdict-table recipe + locked spine decisions; no brainstorming pass). Plans reference draft bodies by section, never embed full file text when the authoring session also executes (embed propagates typos and doubles the meta:ship ratio — two observed instances). Probe budget: 5/5 on the headline discipline line, 1–2 spot checks per secondary line. Audit scope: new files + directly-edited shared surfaces.
 4. **Rebase run**: `/super-bootstrap` against ChewLingo (materialized mode), supervised diff+approve, adopt-mode deletions, CLAUDE.md rewritten from skeleton + delta sections.
 5. **Δ audit + verify**: `audit-harness-edits` on both repos; every remaining ChewLingo artifact must name the project knowledge that keeps it out of root; wet run one full card cycle in each repo.
 

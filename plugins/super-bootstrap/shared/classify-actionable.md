@@ -8,7 +8,7 @@ Three outputs per item:
 
 - **`action`** — the one-line actionable verb-phrase (`"Triage: BUG-12 …"`, `"Continue execute: plan.md (3/7)"`). The render string.
 - **`intent`** — `Discuss` | `Cloud` | `Device` | `Harness`. The runnability bucket. `Harness` rows additionally carry **`subgroup`** — `deliberate` | `apply` (§Harness pre-filter).
-- **`stage`** — where the item sits in the pipeline, by file presence: `raw` (backlog row, no spec/plan) · `spec` (spec exists, no plan) · `plan` (plan executing) · `review` (plan all-checked, no DONE) · `done` (DONE/COMPLETED marker). The entry point for stage-resuming consumers.
+- **`stage`** — where the item sits in the pipeline, by file presence: `raw` (backlog row, no verdict/spec/plan) · `triaged` (triage `{ID}-scope.md` exists, no plan) · `spec` (spec exists, no plan) · `plan` (plan executing) · `review` (plan all-checked, no DONE) · `done` (DONE/COMPLETED marker). The entry point for stage-resuming consumers.
 
 `intent` is the gate; `stage` is the entry point; `action` is for human render.
 
@@ -41,7 +41,7 @@ Single positive rule applied to every row before bucketing:
 2. **Spec §Success Criteria** (if linked spec exists) — explicit `manual verification`, `visual check`, `e2e pass` → device-only for the executing/review row
 3. **Phase verb** in derived action:
    - `Write plan` / `Approve spec` / `Triage` / `Extract` / `Doc-edit` / `Cleanup` → cloud-safe regardless of paths
-   - `Continue execute` / `Review` → derive per #1 + #2
+   - `Continue execute` / `Review` / `Implement` → derive per #1 + #2 (for `Implement` rows, skip the free-text keyword grep — read the triage scope.md as fields: `## Files` paths feed #1's path arms, and the `Test Strategy` field feeds #2 — `e2e` there → device-suspicion, `unit` → cloud-lean; the field's literal value never re-enters the keyword scan)
    - `Manually verify` / `E2E run` / `Smoke test` → device-only
 
 ### Default
@@ -61,6 +61,7 @@ Intent is determined by action verb before path/state rules.
 | `Review` (read diff of completed plan)                          | **Cloud**                    | Reading diff is headless.                                                    |
 | `Manually verify`, `E2E run`, `Smoke test`                      | **Device**                   | Real browser / device required.                                             |
 | `Triage` (backlog item, investigate-only)                       | **Cloud**                    | Investigate-only artifact, headless.                                         |
+| `Implement` (triaged card — triage scope.md verdict exists)      | **Cloud OR Device** (derive) | Depends on scope.md `## Files` paths + `Test Strategy` per cloud-safe criterion. |
 | `Cleanup` (delete merged spec+plan files)                       | **Cloud**                    | File delete on completed work, no judgment.                                  |
 | `Deliberate`, `Apply` (harness surface)                         | **Harness**                  | Pre-filter already caught it; the verb renders the subgroup.                  |
 
@@ -97,7 +98,9 @@ Open items are `### {BUG|DEBT|GAP}-###` row headings under `## Open`. The header
 For each open `BUG-### / DEBT-### / GAP-###` item:
 
 - **Item flagged for user decision** (line contains `needs user`, `decision required`, `route?`) → action: `"Decide: {ID} {title}"`, **intent: Discuss**, **stage: raw**.
-- **Item with no scope.md / no plan yet** (default state) → action: `"Triage: {ID} {title}"`, **intent: Cloud** (triage is investigate-only), **stage: raw**.
+- **`docs/superpowers/triage/{ID}-notes.md` exists** (surface verdict, pending user) → action: `"Decide: {ID} {title} — triage notes"`, **intent: Discuss**, **stage: raw**.
+- **`docs/superpowers/triage/{ID}-scope.md` exists, no matching plan** → action: `"Implement: {ID} {title}"`, intent per cloud-safe derivation over the scope.md `## Files` paths + its `Test Strategy` line, **stage: triaged**.
+- **No verdict file, no plan** (default state) → action: `"Triage: {ID} {title}"`, **intent: Cloud** (triage is investigate-only), **stage: raw**.
 - **Item with active plan reference** → don't double-emit; the plan row already covers it (see §b).
 
 For any row with a **foreign prefix** (anything outside `BUG-### / DEBT-### / GAP-###` — e.g. `F-`, `FEAT-`, `ROAD-`, bare bullet): emit as `Uncategorized` with reason `"non-canonical backlog prefix; backlog owns BUG/DEBT/GAP (feature ideas log as GAP). New rows route through /super-bootstrap:log."` — never invent classification.
