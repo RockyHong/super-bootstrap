@@ -50,7 +50,7 @@ Read each file once. While reading, extract everything into a working set:
 - Temporal-doc conventions in CLAUDE.md (which dirs are delete-after-merge / temporal — e.g. spec/plan/handoff locations)
 - Feature/module names mentioned across multiple docs
 - File paths referenced in any doc
-- Each prose doc's dimension — state-SSOT (truth-now) vs history-SSOT (dated chronicle) — per the classify predicate in `.claude/guidelines/work-discipline/doc-dimension-discipline.md`. Skip harness MDs (CLAUDE.md, skill/agent/rule files — own no-precedent discipline). Needed for Step 2's P2 dimension-pollution check.
+- Each prose doc's dimension — state-SSOT (truth-now) vs history-SSOT (dated chronicle) — per the classify predicate in `assets/dimension-predicate.md`. Skip harness MDs (CLAUDE.md, skill/agent/rule files — own no-precedent discipline). Needed for Step 2's P2 dimension-pollution check.
 
 **Project-aware extractions (discover from what exists):**
 
@@ -91,17 +91,17 @@ All validations run against the extracted set. Every finding comes from comparin
 - Ownership contradiction in CLAUDE.md (two docs claiming to own the same concern)
 - Internal terminology leaking where user-facing language is expected (or reverse)
 - Handoff/WIP folder with no matching feature branch
-- Dimension pollution — a prose doc breaks state XOR history per the audit predicate in `.claude/guidelines/work-discipline/doc-dimension-discipline.md`: (a) chronicle crawl-in (timestamps / "was X, now Y" / decision-dated prose accumulating in a persistent state-SSOT doc), (b) stale workspace doc (a vaporizable/status doc gone out-of-date against what it tracks), (c) state leak into history (a decision-timeline doc carrying persistent knowledge that belongs in a state-SSOT home). Harness MDs excluded (Step 1). Surface the doc + polluting lines; the fix (overwrite / move to git / restate as present-tense constraint) is the user's call
+- Dimension pollution — a prose doc breaks state XOR history per the audit predicate in `assets/dimension-predicate.md`: (a) chronicle crawl-in (timestamps / "was X, now Y" / decision-dated prose accumulating in a persistent state-SSOT doc), (b) stale workspace doc (a vaporizable/status doc gone out-of-date against what it tracks), (c) state leak into history (a decision-timeline doc carrying persistent knowledge that belongs in a state-SSOT home). Harness MDs excluded (Step 1). Surface the doc + polluting lines; the fix (overwrite / move to git / restate as present-tense constraint) is the user's call
 
 **P3 — Cosmetic / Completeness:**
 
 - Doc section referenced in index but empty or stub
 - Feature documented in specs but absent from overview module index
-- Missing link to a concept's home doc — a link-candidate concept in doc A (per the predicate in `.claude/guidelines/work-discipline/doc-link-discipline.md`: B defines it, A uses it substantively, A is not a catalog/index) carries no link to its SSOT home B. Surface as a suggestion; which link to add is the user's call.
+- Missing link to a concept's home doc — a link-candidate concept in doc A (per the predicate in `assets/link-predicate.md`: B defines it, A uses it substantively, A is not a catalog/index) carries no link to its SSOT home B. Surface as a suggestion; which link to add is the user's call.
 
 ### Step 2.5: Cross-Reference Findings with the Project Tracker (post-analysis only)
 
-Annotate findings against the project tracker per the contract in `.claude/guidelines/work-discipline/scan-tracker-annotation.md` (read it for the post-analysis discipline, overlap→tag table, and delete-on-close git-log verification). Runs only when the project keeps a tracker (e.g. `docs/backlog.md`); skip otherwise — run AFTER Steps 1–2 classify all findings.
+Annotate findings against the project tracker per the contract in `assets/tracker-annotation.md` (read it for the post-analysis discipline, overlap→tag table, and delete-on-close git-log verification). Runs only when the project keeps a tracker (e.g. `docs/backlog.md`); skip otherwise — run AFTER Steps 1–2 classify all findings.
 
 This scan's index targets: file+section references and named concepts (endpoints, field names, component names). Tags land in the report's Cross-Reference Annotations section; the P0–P3 finding tables are untouched.
 
@@ -123,11 +123,11 @@ Present summary to user in chat. The persisted file is the source of truth for s
 { "last_audited": "{YYYY-MM-DD}", "status": "clean|dirty", "findings": { "p0": 0, "p1": 0, "p2": 0, "p3": 0 } }
 ```
 
-`status` is `clean` when total findings == 0, else `dirty`; `findings` carries the per-priority counts so a reader sees severity without re-running. This is a **verification stamp** — current-state metadata, not a chronicle: overwrite in place every scan, never append a "was X, now Y" line. Roles: creator = this step; consumer = `/resolve-claude-config` or a human glance; no terminal cleaner — the stamp is self-superseding (each scan overwrites), and orphan risk is moot because `.review/` is gitignored local-ephemeral. Promote to a committed path only if a cross-repo fleet roll-up is built. The Step 0 block-if-pending gate means a blocked run leaves the stamp at its prior value — staleness is then self-evident from `last_audited`.
+`status` is `clean` when total findings == 0, else `dirty`; `findings` carries the per-priority counts so a reader sees severity without re-running. This is a **verification stamp** — current-state metadata, not a chronicle: overwrite in place every scan, never append a "was X, now Y" line. Roles: creator = this step; consumer = a config-refresh pass or a human glance; no terminal cleaner — the stamp is self-superseding (each scan overwrites), and orphan risk is moot because `.review/` is gitignored local-ephemeral. Promote to a committed path only if a cross-repo fleet roll-up is built. The Step 0 block-if-pending gate means a blocked run leaves the stamp at its prior value — staleness is then self-evident from `last_audited`.
 
 ## Workflow Fan-Out (opt-in)
 
-The inline single-pass above is the default (rung 1). Fan out per the contract in `.claude/guidelines/work-discipline/scan-workflow-fanout.md` — its § Sizing pre-flight + § The escalation ladder own the rung choice (attention-fit informed by cheap proxies, not surface size alone), and the § Fan-out contract covers decomposition, hard report-schema output, merge rule, and reader/judge tier split. Read it before authoring the script.
+The inline single-pass above is the default (rung 1). Fan out per the contract in `assets/workflow-fanout.md` — its § Sizing pre-flight + § The escalation ladder own the rung choice (attention-fit informed by cheap proxies, not surface size alone), and the § Fan-out contract covers decomposition, hard report-schema output, merge rule, and reader/judge tier split. Read it before authoring the script.
 
 This skill's binding output is the §Report Format schema below; the judge emits it exactly. The Step 2.5 git-log verification is the tracker-annotation step the judge runs. The Step 3 report + `doc-hygiene.json` stamp are gateway-side writes from the merged result — same in both the inline and fan-out paths.
 

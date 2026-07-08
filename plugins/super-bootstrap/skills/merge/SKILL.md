@@ -1,6 +1,6 @@
 ---
 name: merge
-description: 'Absorb one or more feature branches into the base branch. Recommends merge vs rebase per branch. On conflict, aborts that branch + surfaces the file list + stops. Resolution out of scope; user decides next.'
+description: 'Absorb one or more feature branches into the base branch. Recommends merge vs rebase per branch. On conflict, aborts that branch + surfaces the file list + stops. Resolution out of scope; routes to the harness-named conflict-resolution agent or the user.'
 tags: [merge, git, branch]
 ---
 
@@ -26,7 +26,7 @@ When `git merge` or `git rebase` produces conflicts:
 
 1. **Abort immediately** — `git merge --abort` (for merge) or `git rebase --abort` (for rebase). Restore the working tree.
 2. **Surface, don't resolve.** Output the branch name, the conflict file list (`git diff --name-only --diff-filter=U` captured BEFORE abort), and which strategy hit the conflict.
-3. **Stop the run.** Do not attempt resolution. Do not offer "resolve now" as an option. Return control to the user. User decides next — resolve manually, route to a fitting reviewer/agent, or re-dispatch with a different strategy.
+3. **Stop the run.** Do not attempt resolution — resolution never runs inside this skill. The step-2 surface is the conflict scope. Route it: if the consuming repo's harness names a conflict-resolution agent (its CLAUDE.md or agent roster — e.g. a builder/implementer agent), offer dispatching that agent with the conflict scope as the recommended next step; otherwise the user resolves manually or re-dispatches with a different strategy.
 
 This rule applies to every branch in the queue. If branch A conflicts, abort A, surface, then continue with branches B, C — they're independent attempts. Don't skip them silently.
 
@@ -100,7 +100,7 @@ For successfully absorbed branches:
 Report to user:
 
 - Branches absorbed cleanly (with strategy used per branch)
-- Branches that hit conflicts (with file lists, ready for user to route resolution)
+- Branches that hit conflicts (with file lists — the conflict scope for resolution)
 - Branches skipped and why
 - Final `git log --oneline --graph -10`
 

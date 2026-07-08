@@ -1,6 +1,6 @@
 {
   "name": "super-bootstrap",
-  "description": "Bootstrap or sync the superpowers development pipeline in any repo. /super-bootstrap is a thin orchestrator: it installs/syncs the generic harness runway (CLAUDE.md, skeleton docs, path-scoped rules, core plugin pins, default-on harness hooks incl. a pre-commit doc-sync gate), seeds product GAP cards on greenfield, and gates stack-matched skill/MCP/hook curation on substantive seed docs. Bundles commit, todo, log, help, merge, drain, and optional release-init — all namespaced under super-bootstrap: except the entry. Per-skill contracts live in each SKILL.md frontmatter (canonical catalog); plugin README carries the index. Solo dev workflow.",
+  "description": "Bootstrap or sync the superpowers development pipeline in any repo. /super-bootstrap is a thin orchestrator: it installs/syncs the generic harness runway (CLAUDE.md, skeleton docs, path-scoped rules, core plugin pins, default-on harness hooks incl. a pre-commit doc-sync gate), seeds product GAP cards on greenfield, and gates stack-matched skill/MCP/hook curation on substantive seed docs. Bundles commit, todo, log, help, merge, drain, check-docs-consistency, and optional release-init — all namespaced under super-bootstrap: except the entry. Per-skill contracts live in each SKILL.md frontmatter (canonical catalog); plugin README carries the index. Solo dev workflow.",
   "version": "2.18.0",
   "author": {
     "name": "Rocky Hong",

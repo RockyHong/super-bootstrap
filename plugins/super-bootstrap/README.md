@@ -14,6 +14,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `help` — on-demand index of installed user-invoke skills; dispatches `agents/help.md` (Haiku).
 - `commit` — session-isolated, doc-sync-gated commit.
 - `merge` — absorb feature branches; aborts + surfaces on conflict.
+- `check-docs-consistency` — cross-references project docs for drift, stale references, contradictions; timestamped report to `.review/`, report-only.
 - `drain` — parallel-worktree auto-drain of the board; spawns one isolated `claude -p` per Cloud-safe item, each halts at its user wall.
 - `release-init` — one-shot; generates a project-level `/release` skill.
 
@@ -30,7 +31,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 | Shape | Skill name (bare) | Invocation form |
 |---|---|---|
 | Public entry | `super-bootstrap` | `/super-bootstrap` |
-| Lifecycle / one-shot | `harness-bootstrap`, `resolve-plugins`, `release-init` | `/super-bootstrap:<name>` |
+| Lifecycle / one-shot | `harness-bootstrap`, `resolve-plugins`, `release-init`, `check-docs-consistency` | `/super-bootstrap:<name>` |
 | High-freq in-flight ops | `commit`, `todo`, `merge`, `drain`, `help`, `log` | `/super-bootstrap:<name>` |
 
 **When adding a new skill:** pick the shortest bare name that reads cleanly cold. Reference it as `/super-bootstrap:<name>` everywhere a user might type it (SKILL.md prose, rendered footers, agent menus, READMEs).
@@ -57,6 +58,7 @@ A single matching reason on either side decides.
 | `merge` | inline | Same context-aware shape as `commit`; lower freq doesn't pay for relay either |
 | `drain` | inline | Gateway orchestrator — owns the user thread, the wave loop, the halts. The per-item work IS the spawned `claude -p` subprocesses; the orchestration itself is gateway reasoning, not an Agent dispatch |
 | `release-init` | inline | Detection + Q&A + file generation throughout |
+| `check-docs-consistency` | inline | Single-pass scan by default (rung 1); scale rides the opt-in § Workflow Fan-Out — a Workflow launch from the invoking context, not an Agent dispatch |
 | `todo` | dispatch (Sonnet) | Multi-file scan + bounded classification + render — Sonnet fit, isolate from gateway |
 | `log` | dispatch (Sonnet) | Bounded classify + gate + write — Sonnet fit; dispatch also enforces bias exclusion (shell never pre-classifies buckets) |
 | `help` | dispatch (Haiku) | Pure manifest lookup + render — Haiku model fit, skill frontmatter can't pin a model so dispatch is the escape hatch |

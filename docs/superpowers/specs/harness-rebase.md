@@ -30,12 +30,12 @@ ChewLingo runs `/super-bootstrap` (plugin currently present-but-disabled in its 
 
 | Artifact | Verdict | Distill recipe |
 |---|---|---|
-| merge | distill (cheap, first) | sb body + ChewLingo anti-pattern § (hand-apply-from-diff ban) + parameterized conflict-handoff agent name |
+| merge | **done (Wave 1)** | Landed: parameterized conflict-handoff agent name. Anti-pattern § NOT ported — closed fork (pressure-tested: sb wording already binds; see `docs/decisions.md`) |
 | commit | distill | sb doc-sync gate state machine + push flow + cycle handoff; + CL skill-verb-rename check + commit-channel hook; doc-sync scope sourced from consumer doc taxonomy |
-| log | distill | sb GAP + graceful-degrade + capture-don't-gate; + CL no-standing-watch gate, closed-fork bounce (against decisions.md), claim-block write-once; parked bucket → scale module |
+| log | **done (Wave 1)** | Landed: row-shape gate (no standing-watch rows) + closed-fork bounce against decisions.md, both GREEN-tested 5/5. Claim-block write-once was already in the backlog header — no edit. Parked bucket stays deferred to the Wave 2 scale module |
 | todo | distill (largest) | CL 6-mode taxonomy + batch-retrieval work-table + coupling gate + macro picker; sb skip-gate + shared `classify-actionable.md` DRY; `harness` mode needs a consumer-safe fallback (`load-harness-principles` is device-only — skeleton self-containment rule binds) |
 | drain | distill (deepest, last) | sb mechanism layer (ensure-infra, `.drain-status`, Windows FS-boundary, nested-worktree false-greens, required-flags table) + CL judgment layer (venue eligibility via scale module, wave-of-one/inline carve-out, doc/eng polymorphic lanes, pre-plan confirm gate); e2e merge-probe parameterized from consumer techstack. `.temp/drain/` portable rewrite = prior art |
-| check-docs-consistency | promote dogfood → plugin | sb dogfood version is already the generalized distillation. Must self-contain or resolve its work-discipline guideline references (`scan-tracker-annotation.md`, `scan-workflow-fanout.md` are claude-config-manager lore — cross-repo boundary call at authoring) |
+| check-docs-consistency | **done (Wave 1)** | Promoted into the plugin; the four work-discipline guideline references distilled into skill-local `assets/` (self-contained, grep-verified). Dogfood copy deleted — residual: claude-config-manager still serves its own copy; retire/redirect it upstream via `/contribute` |
 | triage + triage-report (CL-only) | upstream as root | Fix-shape/Probe-deps tag schema is portable judgment tech; probe-gating specifics (Firestore/Playwright) → consumer config |
 | spec/plan/implement/review (CL) | partial upstream | Surface-on-Gap refusal, design gate, evidence block salvage into superpowers route wrappers; bodies otherwise superseded by envelope decision — do not ship a parallel chain |
 | journey-simulation (CL) | upstream as root | Portable mechanism, near-zero contamination |
@@ -46,7 +46,7 @@ ChewLingo runs `/super-bootstrap` (plugin currently present-but-disabled in its 
 
 ## Wave plan
 
-1. **Wave 1 — cheap wins**: merge distill; check-docs-consistency promote; log distill.
+1. **Wave 1 — cheap wins**: merge distill; check-docs-consistency promote; log distill. — **COMPLETE** (per-artifact outcomes in the verdict table above). Live edge = Wave 2.
 2. **Wave 2**: commit, todo, triage(+report), scale module, monorepo tier, adopt mode.
 3. **Wave 3**: drain distill.
 4. **Rebase run**: `/super-bootstrap` against ChewLingo (materialized mode), supervised diff+approve, adopt-mode deletions, CLAUDE.md rewritten from skeleton + delta sections.

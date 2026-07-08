@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-011` · `DEBT-008` · `GAP-017` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-012` · `DEBT-008` · `GAP-017` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### BUG-012 — background-dispatched opus subagents stall before first Write when creating new plugin skill files
+
+**Logged:** 2026-07-08 · **Source:** GAP-017 Wave 1 check-docs-consistency promotion, live session observation
+**Problem:** Background-dispatched authoring subagents (Agent tool, `run_in_background`, opus) tasked to CREATE new plugin skill files repeatedly stalled — 4 consecutive turns across 2 fresh agents ended with a one-line announcement ("Now writing the files") and zero Write calls, despite explicit resume messages via SendMessage. Same-session opus agents EDITING existing harness files (`agents/log.md`, `skills/merge/SKILL.md`) wrote fine. Gateway ended up writing the files inline, defeating the § Dispatch build lane whenever a card creates new harness files.
+**Area:** Agent tool / `run_in_background` dispatch lane; `harness-grounding.sh` PreToolUse(Write) hook; `skill-authoring`/`repo-boundary` rule-reminder injections on `plugins/*/skills/**` paths
+**Prior:** suspected interaction — a PreToolUse(Write) nudge or rule-reminder injection firing in the subagent context on new-file Write under `plugins/*/skills/**` stops the agent turn before its first Write call; edits to existing files unaffected, so the trigger looks path-pattern + new-file, not path alone.
 
 ### GAP-017 — harness rebase: upstream ChewLingo evolution, rebase ChewLingo onto root
 
