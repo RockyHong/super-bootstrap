@@ -1,128 +1,33 @@
 ---
 name: commit
-description: "Stage and commit the current session's changes only. Session-isolated (never -A), doc-sync-gated, conventional message, commits directly without a confirm gate, offers push on explicit confirmation. Bundled with super-bootstrap — encodes the harness commit rules."
+description: "Stage and commit the current session's changes only. Session-isolated (never -A), doc-sync-gated, conventional message, commits directly without a confirm gate, offers push on explicit confirmation. Dispatches the `commit` subagent (agents/commit.md, model: sonnet) so classification, the doc-sync gate, and message-gen run off the gateway model. Bundled with super-bootstrap — encodes the harness commit rules."
 tags: [commit, git, session, doc-sync, superpowers]
 ---
 
 # Commit — Session-Isolated, Doc-Sync-Gated
 
-Stage and commit the changes this Claude session produced. Leaves prior uncommitted work alone. Runs the doc-sync gate first. Writes a conventional commit message and commits directly — no approval gate. Offers to push on explicit confirmation — never unannounced.
+Commits the changes this Claude session produced, leaving prior uncommitted work alone. The protocol runs in the `commit` subagent (`agents/commit.md`, `model: sonnet`); this skill is the dispatch shell plus the three gateway lanes that need the user: doc-sync resolution, push confirmation, cycle handoff.
 
-## Protocol
+## Execution
 
-### 1. Inspect Working Tree
+1. **Assemble the dispatch prompt** — the session's changed-file list (from this conversation: what this session edited/wrote), any user-supplied message context (e.g. `/super-bootstrap:commit — explain the auth refactor`), today's date, and this skill's base directory (the agent derives the plugin's hook-asset root from it for the version-drift compare). The list is the agent's session-isolation ground truth — build it faithfully; a file you don't remember touching stays OFF the list (the agent returns it as a question if it matters).
+2. **Dispatch**: `Agent` tool, `subagent_type: "commit"`. Relay the agent's return verbatim — no editorializing.
+3. **Branch on the return shape** (`agents/commit.md` § Output contract):
+   - **`stale-docs`** → resolve each candidate with the user (update / acknowledge-accurate / skip — never silently fix, never silently skip). Land approved doc edits (inline for bounded prose; dispatch by closure). Re-dispatch the agent with the same prompt **plus** per-candidate resolutions (`updated: <path>` → stage it; `accurate` / `skip` → cleared).
+   - **`questions` / `blocked`** → route to the user verbatim; act on the answer (re-dispatch, or re-run `/super-bootstrap` for a stale hook set).
+   - **`committed`** → proceed to push offer.
+4. **Push (on confirmation)** — from the return's `push` facts, present: branch → upstream, commits ahead. Ask: **"Push these now? (y / skip)"**. Push only on explicit yes (`git push <remote> <branch>`); skip by default on silence or decline. Never force, never unannounced.
+5. **Cycle handoff** — one line from the return's `cycle` facts; don't expand into a status table (that's `/super-bootstrap:todo`'s job):
 
-Run in parallel:
-- `git status` — full picture of modified, staged, untracked
-- `git diff` — unstaged changes
-- `git diff --staged` — already staged
-- `git log --oneline -10` — recent commit style for message conventions
-
-### 2. Classify Changes — Session vs Prior
-
-Walk every changed file and classify:
-
-| Touched by current session? | Action |
+| `cycle` facts | Handoff one-liner |
 |---|---|
-| Yes — Claude edited / wrote it this session | **stage** |
-| No — pre-existing dirty state from prior work | **leave alone** |
-| Ambiguous (mixed file, partial overlap) | **ask user** before staging |
-
-Use the conversation transcript as source of truth for "what did this session touch." If unsure, list the file to the user with: "I don't remember touching this — stage or skip?"
-
-**Stage by explicit path only.**
-
-### 3. Doc-Sync Gate
-
-Run the doc-sync gate per the project's **CLAUDE.md § Doc Sync** — it owns the scan surface (`docs/` plus behavior-narrating prose outside it) and the write boundary (what doc-sync may update vs flag-and-defer). This skill runs that gate; it does not re-declare its scope.
-
-Commit-specific: surface every call **before** staging, not after. Doc updates from this gate stage alongside the code changes.
-
-Once every call resolves (updated / acknowledged-accurate / explicit skip), branch on the installed hook set. Two `test -f` probes under `$CLAUDE_PROJECT_DIR/.claude/hooks/` decide the branch — `docsync-gate.sh` (the `PreToolUse` artifact that actually blocks the commit) and `docsync-scan.sh` (the only legitimate producer of `.git/docsync-token`):
-
-**Gate absent** — `! -f "$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-gate.sh"`. No hook blocks the commit. The doc-sync staleness judgment above (against CLAUDE.md § Doc Sync's scan surface) still runs and still gates the commit; once it resolves, commit directly.
-
-**Gate live, scan present** — `-f docsync-gate.sh` **and** `-f docsync-scan.sh`. `git commit` is denied until `.git/docsync-token` exists, is fresh (within a 30-min TTL), and matches this session — and that token is written only by running the scan itself. Run the scan as its own Bash call: `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-scan.sh"` (installed alongside the gate by harness-bootstrap `assets/hooks-ensure-infra.md`). The scan prints the changed-files surface (the grounding for your staleness judgment) and self-stamps `.git/docsync-token` (session-scoped) as a side-effect of running — no separate stamp hook; the `docsync-gate` hook consumes it on the next commit attempt, one-shot. The token is session-scoped and TTL'd, so a fresh scan is needed each session/commit — a prior session's token or a stale one won't clear the gate. **Never `touch` the token by hand — the stamp is produced by running the scan, not forged.** Run the scan and `git commit` as SEPARATE tool calls: never chain `docsync-scan.sh && git commit` in one Bash call — PreToolUse reads the whole command string *before* the scan runs, sees `git commit`, checks the not-yet-written token, and denies. Scan first (its own call, which writes the token), then commit in a later call.
-
-**Gate live, scan absent** — `-f docsync-gate.sh` but `! -f docsync-scan.sh`. The gate will deny the commit for a missing `.git/docsync-token`, and its producer `docsync-scan.sh` isn't installed. Do **not** `bash` the missing script, do **not** forge the token. Surface the state and halt: tell the user the doc-sync gate is installed but its scan script (`docsync-scan.sh`) is missing — the hook set is stale/partial; run `/super-bootstrap` to re-sync it, then commit. The commit can't legitimately proceed until the install is repaired.
-
-**Gate live, hooks version-drifted** — run the `scriptCurrent()` marker compare owned by harness-bootstrap's [`assets/hooks-ensure-infra.md`](../harness-bootstrap/assets/hooks-ensure-infra.md) § Idempotency: each installed `.claude/hooks/<name>.sh` `# FROZEN <name> vN` line against the asset copy at `../harness-bootstrap/assets/hooks/<name>.sh` (relative to this skill's base directory). On ANY mismatch, or a retired `docsync-stamp.sh` still installed, halt — same halt-don't-forge posture as scan-absent: the hook set is out of date; re-run `/super-bootstrap:harness-bootstrap` to resync, then commit. Don't hand-patch the installed hooks.
-
-### 4. Draft Commit Message
-
-Conventional Commits format:
-
-```
-<type>(<scope>): <subject>
-
-<body — only if "why" isn't obvious from the diff>
-```
-
-**Types:** `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `style`.
-
-Rules:
-- Subject ≤72 chars, imperative mood ("add", not "added").
-- One logical change per commit. If diff spans two unrelated changes → split into two commits.
-- Body only when reasoning isn't visible in the diff. Skip body for obvious fixes.
-- Author message directly; co-author trailers (e.g. "🤖 Generated with Claude Code") only on explicit user request.
-- Match the repo's existing commit style (scan `git log --oneline -10`).
-
-### 5. Stage + Commit
-
-No approval gate — stage and commit directly. The conventional message plus the explicit file list are the record. Genuine ambiguity already pauses upstream: §2 ambiguous-file classification and §3 doc-sync both surface to the user before reaching here.
-
-Stage by explicit path:
-```bash
-git add path/to/file1 path/to/file2
-```
-
-Commit with HEREDOC for proper formatting:
-```bash
-git commit -m "$(cat <<'EOF'
-<type>(<scope>): <subject>
-
-<body if any>
-EOF
-)"
-```
-
-Then report what landed — files staged, files left alone (prior work), doc-sync updates, and the commit message — and run `git status` to confirm clean state.
-
-### 6. Push (on confirmation)
-
-After the commit confirms clean, offer to push — never run it unannounced. Present:
-
-- branch → remote (e.g. `main` → `origin`)
-- commits ahead of remote (`git log --oneline @{u}..` if upstream set, else note no upstream)
-
-Ask: **"Push these now? (y / skip)"** Push only on explicit yes:
-
-```bash
-git push <remote> <branch>
-```
-
-Skip by default if the user is silent or declines — committed work is safe locally either way. No force push without an explicit request.
-
-### 7. Cycle Handoff
-
-After commit confirms clean, signal cycle exit. One line — don't expand into full status table (that's `/super-bootstrap:todo`'s job).
-
-| Condition | Handoff one-liner |
-|---|---|
-| No unfinished specs/plans, no backlog items | `Cycle complete. Safe to /clear. Next session: /super-bootstrap:todo picks up next item.` |
-| Unfinished work in specs/plans (unchecked boxes) | `Cycle complete. plans/2026-04-12-auth.md still has 3/7 unchecked — /clear then /super-bootstrap:todo to resume.` |
-| Backlog has open items, no active superpowers work | `Cycle complete. No active specs/plans; docs/backlog.md has open items — /clear then /super-bootstrap:todo to pick next.` |
+| No open plans, no backlog items | `Cycle complete. Safe to /clear. Next session: /super-bootstrap:todo picks up next item.` |
+| Open plan with unchecked boxes | `Cycle complete. <plan file> still has <n>/<m> unchecked — /clear then /super-bootstrap:todo to resume.` |
+| Backlog open, no active plans | `Cycle complete. No active specs/plans; docs/backlog.md has open items — /clear then /super-bootstrap:todo to pick next.` |
 
 ## Rules
 
-- **Session-isolated** — only this session's changes. Prior dirty state is sacred.
-- **Doc-sync first** — the staleness judgment gates before staging; stale docs block commit until resolved. When the `docsync-gate` hook is live, clearing it needs a fresh scan's token (session-scoped, TTL'd) — and if `docsync-scan.sh` is missing or the installed hooks are version-drifted, halt and re-sync rather than forge it — see §3.
-- **Scan and commit are separate calls** — when the gate is live, never chain `docsync-scan.sh && git commit` in one Bash call — see §3.
-- **Conventional** — type, scope, subject. Body only when needed.
-- **Commit directly** — no approval gate; the conventional message + explicit file list are the record. Conditional pauses still fire (ambiguous-file classification, doc-sync); routine approval doesn't.
-- **Explicit paths always** — `git add <path>`, never `-A` / `.`.
-- **Push on confirm** — offers push after a clean commit; runs only on explicit yes, never force, never unannounced.
-- **Cycle handoff** — post-commit one-liner signals cycle exit (`/clear` + `/super-bootstrap:todo` next session). Removes ambiguity at cache-reset moment.
-- **Always new commit** — even after pre-commit hook failure. Amend only if user explicitly asks.
-- **Hooks always fire** — pre-commit hooks run. If a hook fails, fix the cause, don't bypass.
-- **One logical change per commit** — split if diff spans unrelated work.
+- **Route work to the subagent; keep user lanes here.** Classification, the doc-sync scan, the docsync-gate token dance, message, stage, commit — all agent-side. Doc-sync resolution, push, handoff — gateway-side.
+- **Session list is built here, honestly.** The gateway owns the transcript; the agent trusts the list. Uncertain files stay off it.
+- **Doc-sync round-trip, never bypass** — a `stale-docs` return always goes through the user before re-dispatch.
+- **Push on explicit yes only** — committed work is safe locally either way.

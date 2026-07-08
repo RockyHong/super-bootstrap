@@ -31,7 +31,7 @@ ChewLingo runs `/super-bootstrap` (plugin currently present-but-disabled in its 
 | Artifact | Verdict | Distill recipe |
 |---|---|---|
 | merge | **done (Wave 1)** | Landed: parameterized conflict-handoff agent name. Anti-pattern § NOT ported — closed fork (pressure-tested: sb wording already binds; see `docs/decisions.md`) |
-| commit | distill | sb doc-sync gate state machine + push flow + cycle handoff; + CL skill-verb-rename check + commit-channel hook; doc-sync scope sourced from consumer doc taxonomy |
+| commit | **done (Wave 2)** | Landed: agent-dispatch shell + commit agent (doc-sync state machine, push facts, cycle facts returned; gateway lanes for resolution/push/handoff); commit-channel upstreamed as FROZEN A6. Rename sub-check NOT ported — closed fork (pressure-tested 5/5 control; see docs/decisions.md) |
 | log | **done (Wave 1)** | Landed: row-shape gate (no standing-watch rows) + closed-fork bounce against decisions.md, both GREEN-tested 5/5. Claim-block write-once was already in the backlog header — no edit. Parked bucket stays deferred to the Wave 2 scale module |
 | todo | distill (largest) | CL 6-mode taxonomy + batch-retrieval work-table + coupling gate + macro picker; sb skip-gate + shared `classify-actionable.md` DRY; `harness` mode needs a consumer-safe fallback (`load-harness-principles` is device-only — skeleton self-containment rule binds) |
 | drain | distill (deepest, last) | sb mechanism layer (ensure-infra, `.drain-status`, Windows FS-boundary, nested-worktree false-greens, required-flags table) + CL judgment layer (venue eligibility via scale module, wave-of-one/inline carve-out, doc/eng polymorphic lanes, pre-plan confirm gate); e2e merge-probe parameterized from consumer techstack. `.temp/drain/` portable rewrite = prior art |
@@ -47,7 +47,7 @@ ChewLingo runs `/super-bootstrap` (plugin currently present-but-disabled in its 
 ## Wave plan
 
 1. **Wave 1 — cheap wins**: merge distill; check-docs-consistency promote; log distill. — **COMPLETE** (per-artifact outcomes in the verdict table above). Live edge = Wave 2.
-2. **Wave 2**: commit, todo, triage(+report), scale module, monorepo tier, adopt mode.
+2. **Wave 2**: ~~commit~~ (done), todo, triage(+report), scale module, monorepo tier, adopt mode.
 3. **Wave 3**: drain distill.
 4. **Rebase run**: `/super-bootstrap` against ChewLingo (materialized mode), supervised diff+approve, adopt-mode deletions, CLAUDE.md rewritten from skeleton + delta sections.
 5. **Δ audit + verify**: `audit-harness-edits` on both repos; every remaining ChewLingo artifact must name the project knowledge that keeps it out of root; wet run one full card cycle in each repo.

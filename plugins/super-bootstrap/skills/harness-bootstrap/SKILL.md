@@ -198,7 +198,7 @@ Ensure `.claude/settings.json` contains:
 
 ### 2a-hooks: Harness hooks (default-on)
 
-Four hook assets ship as frozen files and install **unconditionally** — no
+Five hook assets ship as frozen files and install **unconditionally** — no
 opt-in confirm, unlike drain's worktree infra (§2a-drain below); all are
 safe-by-default (rationale + full procedure:
 [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md)).
@@ -209,8 +209,9 @@ safe-by-default (rationale + full procedure:
 | 2 | `harness-grounding` (PreToolUse) | `Edit\|Write` matched to a harness path (`CLAUDE.md`, `.claude/rules/**`, `.claude/skills/**`, `.claude/agents/**`) | Inject a 2-3 line grounding checklist via `additionalContext` — never denies |
 | 3 | `docsync-scan` (script) | invoked by `/super-bootstrap:commit`'s doc-sync step when the `docsync-gate` hook is live | Enumerate the doc-sync surface and self-stamp `.git/docsync-token` (session-scoped) — running the scan is the proof the gate consumes |
 | 4 | `entry-nudge` (UserPromptSubmit) | every prompt (no matcher) | Inject one card-grounded-entry pointer line via `additionalContext` — injector-only, never blocks, never exits non-zero |
+| 5 | `commit-channel` (PreToolUse) | `Bash(git commit *)` | Deny raw `git commit` from any subagent other than the commit agent (namespaced or bare) — deny text routes the worker back to `/super-bootstrap:commit`; main session and separate-process workers pass |
 
-Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) — copies the four scripts to `.claude/hooks/` and merges the settings snippets into `.claude/settings.json` (`hooks.PreToolUse[]`: docsync-gate, harness-grounding; `hooks.UserPromptSubmit[]`: entry-nudge); `docsync-scan` is script-only, no settings entry. Content-aware (copy-on-drift — a version-marker mismatch re-copies the asset, so an upstream fix reaches existing repos), silent when already current; stage the placed files with the Phase 2c commit. Same asset-copy + guarded-merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3) — one pattern, reused here rather than re-derived.
+Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) — copies the five scripts to `.claude/hooks/` and merges the settings snippets into `.claude/settings.json` (`hooks.PreToolUse[]`: docsync-gate, harness-grounding, commit-channel; `hooks.UserPromptSubmit[]`: entry-nudge); `docsync-scan` is script-only, no settings entry. Content-aware (copy-on-drift — a version-marker mismatch re-copies the asset, so an upstream fix reaches existing repos), silent when already current; stage the placed files with the Phase 2c commit. Same asset-copy + guarded-merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3) — one pattern, reused here rather than re-derived.
 
 ### 2a-drain: Drain infra (opt-in)
 
