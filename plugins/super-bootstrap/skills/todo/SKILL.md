@@ -1,18 +1,19 @@
 ---
 name: todo
-description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the full board (every open spec/plan/backlog row). Sub-verbs filter by intent + environment: `/super-bootstrap:todo discuss` (decisions, spec approvals), `/super-bootstrap:todo cloud` (cloud-safe queue), `/super-bootstrap:todo device` (UI/e2e/manual), `/super-bootstrap:todo harness` (orchestration-engine rows, careful handle). Scans docs/superpowers/specs|plans + docs/backlog.md, plus docs/test-queue.md when present. Bundled with super-bootstrap — works in any repo with the superpowers pipeline."
+description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the need-me board — drainable work collapses to a count, need-me work groups by venue category with a downstream fan-out signal (no MCQ, dispatched immediately). Sub-verbs slice explicitly: `/super-bootstrap:todo discuss` (decisions, spec approvals), `/super-bootstrap:todo cloud` (drainable detail), `/super-bootstrap:todo device` (UI/e2e/manual), `/super-bootstrap:todo harness` (orchestration-engine rows, careful handle), `/super-bootstrap:todo full` (flat everything). Scans docs/superpowers/specs|plans + docs/backlog.md, plus docs/test-queue.md when present. Bundled with super-bootstrap — works in any repo with the superpowers pipeline."
 tags: [todo, scan, status, pipeline, superpowers]
 ---
 
 # Todo — Intent-Filtered Pipeline Scanner
 
-Default render is the full board (every open spec/plan/backlog row). Sub-verbs let the user slice by mental mode (deciding / on cloud Claude / on device Claude / touching the engine) when the board gets big enough to warrant it. State reconstructed from `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, and `docs/backlog.md` (three core sources), plus `docs/test-queue.md` when present (the scale module's test queue). Pipeline state = file presence (spec/plan/code presence drives stage classification).
+Default render is the **need-me board** — momentum-driven, not a kanban: autonomously-drainable work collapses to one count line, and work that needs the human groups by venue category (decide / device-bound / harness / probe) with a `unblocks N` fan-out signal. Bare invoke dispatches it immediately — no MCQ, no picker (a rendered surface the user navigates by typing a sub-verb, not a modal stop). Sub-verbs slice explicitly (deciding / drainable detail / on device Claude / touching the engine / flat everything). State reconstructed from `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, and `docs/backlog.md` (three core sources), plus `docs/test-queue.md` when present (the scale module's test queue). Pipeline state = file presence (spec/plan/code presence drives stage classification).
 
 ## Arguments
 
 | Invocation        | Behavior                                                                                                                                                                                                |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/super-bootstrap:todo`        | **Default.** Render the full board immediately. No mode-picker. Footer logic adapts to total row count (see §Footer rule).                                                                            |
+| `/super-bootstrap:todo`        | **Default.** Render the **need-me board** (drainable→count, need-me grouped by venue category with fan-out). No mode-picker, no MCQ — dispatch immediately.                                            |
+| `/super-bootstrap:todo full`   | Flat escape — every row (need-me + drainable), ungrouped, ranked (the flat 非類清單).                                                                                                                    |
 | `/super-bootstrap:todo discuss`| Decision shape — specs awaiting user approval, brainstorming-style specs needing dialogue, backlog items flagged for user decision, any row whose blocker is "user". **Macro header on top.**          |
 | `/super-bootstrap:todo cloud`  | Cloud-safe filter — plan-writes for approved specs, executing plans on pure-logic surfaces, review-stage reads, doc cleanup, backlog triage. **Macro header on top.**                                  |
 | `/super-bootstrap:todo device` | Device-only filter — executing plans on UI / e2e / manual surfaces, manual verification of review-stage plans. **Macro header on top.**                                                                |
@@ -24,20 +25,29 @@ Default render is the full board (every open spec/plan/backlog row). Sub-verbs l
 
 ## Dispatch behavior
 
-**Canonical skip-gate** — applies to bare invocation and every sub-verb. Skip dispatch (no file reads beyond the glob, no agent) when either:
+**Canonical skip-gate (existence-only — the gateway never content-reads `docs/**`).**
+The gateway decides dispatch from **directory presence alone** (Glob lists paths,
+loads no file content, fires no `docs/**` path-scoped rule):
 
-- Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`, `docs/test-queue.md` (conditional — scale module, skip if absent) comes back all empty/absent (no specs, no plans, no open backlog rows — any row content under `## Open`, whether canonical `### {BUG|DEBT|GAP}-###` headings, foreign-prefix rows, or un-IDed bullets; the header's ID high-water-mark line doesn't count — and no pending test-queue entries). Branch on whether `docs/superpowers/` exists, then print the matching message:
-  - **`docs/superpowers/` absent** → repo has the super-bootstrap pipeline available but no runway installed:
-    > "No runway installed here. Run `/super-bootstrap` to set up the pipeline."
-  - **`docs/superpowers/` present, board empty** → bootstrapped, nothing open:
-    > "No active work. Start something with `/brainstorm` or give me a task."
-- User explicitly asks to run inline.
+- **`docs/superpowers/` absent** (Glob returns nothing) → repo has the pipeline
+  available but no runway installed. Print, no dispatch:
+  > "No runway installed. Run `/super-bootstrap` to set up the pipeline."
+- **`docs/superpowers/` present** → **dispatch the `todo` subagent unconditionally.**
+  The empty/non-empty determination moves into the subagent: it reads the three
+  sources and renders either the empty-state (`No active work…`) or the board.
+
+The gateway performs **no content read** of `docs/backlog.md`, specs, or plans —
+that is why the doc path-rules (`dimension-discipline`, `ssot-doc-link`,
+`venue-map`) no longer load in the gateway's context on `/todo`. All `docs/**`
+reads happen inside the subagent.
 
 On bare `/super-bootstrap:todo`:
 
 1. Run the skip-gate above.
-2. Otherwise dispatch the `todo` subagent with `mode: full`. No picker, no questions.
+2. Otherwise dispatch the `todo` subagent with `mode: needme`. No picker, no questions.
 3. Relay the agent's rendered output verbatim. No editorial, no preface.
+
+`/super-bootstrap:todo full` dispatches `mode: full` — the flat-escape board (every row, need-me + drainable, ungrouped).
 
 On sub-verb invocation (`/super-bootstrap:todo cloud` etc.): run the skip-gate, then dispatch immediately with that mode.
 
