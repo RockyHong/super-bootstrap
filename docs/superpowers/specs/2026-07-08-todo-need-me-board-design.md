@@ -140,10 +140,11 @@ feeds both `todo` (render) and `drain` (execute).
 | `plugins/super-bootstrap/agents/todo.md` | render refactor: need-me default, drainable→count, fan-out compute + rank, venue-map consumption + degrade |
 | `plugins/super-bootstrap/skills/todo/assets/scaffolds.md` | new default need-me scaffold + fan-out column; `full` scaffold stays as flat escape; refine the "no Next up" note |
 | `plugins/super-bootstrap/skills/todo/SKILL.md` | new default behavior, skip-gate → glob-only, dispatch-unconditional, `/todo full` escape doc |
-| `plugins/super-bootstrap/shared/classify-actionable.md` | fan-out (reverse-edge count) derivation added to the shared classification |
 | `plugins/super-bootstrap/skills/harness-bootstrap/assets/scale/rules-venue-map-skeleton.md` | clarify the `/todo` consumer face (need-me grouping the map serves) |
 | `docs/decisions.md` | line 28 → reopen executed |
 | `CLAUDE.md` § Rules | mirror only if an active-rule summary changes (venue-map is scale-module skeleton here — likely no change) |
+
+> **Correction:** `shared/classify-actionable.md` is **not** touched — its consumer boundary stops at `{action, intent, stage}`; fan-out + venue grouping are `agents/todo.md`'s concern.
 
 ## Verification
 
