@@ -10,6 +10,75 @@ Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 
 Counts only — no IDs, no impact tags. Decision-is-yours; surface priors not calls. Full mode skips this header (full body IS the macro).
 
+### Need-me (default — bare `/super-bootstrap:todo`)
+
+Drainable rows collapse to the count line; the four need-me groups render as
+tables. Omit any group whose row count is zero (drop its heading too). Groups
+render in this fixed order.
+
+```
+# To-Do — {date}
+
+Drainable: {N}  →  /super-bootstrap:drain
+
+▸ Need me
+
+## Decide / approve
+
+| #  | Action                                  | unblocks | Impact       | Blast       |
+| -- | ---------------------------------------- | -------- | ------------ | ----------- |
+| 1  | {verb + what + one-line reason}         | {n}      | {tag}        | {tag}       |
+
+## Device-bound
+
+| #  | Action                                  | unblocks | Impact       | Blast       |
+| -- | ---------------------------------------- | -------- | ------------ | ----------- |
+| 1  | {verb + what + one-line reason}         | {n}      | {tag}        | {tag}       |
+
+## Harness
+
+| #  | Action                                  | unblocks | Impact       | Blast       |
+| -- | ---------------------------------------- | -------- | ------------ | ----------- |
+| 1  | Deliberate: {topic} / Apply: {rule}→{site} | {n}   | {tag}        | {tag}       |
+
+## Probe / grant
+
+| #  | Action                                  | unblocks | Impact       | Blast       |
+| -- | ---------------------------------------- | -------- | ------------ | ----------- |
+| 1  | {verb + what + one-line reason}         | {n}      | {tag}        | {tag}       |
+
+## Uncategorized
+
+| #  | Action                                  | Why ambiguous                          |
+| -- | ---------------------------------------- | --------------------------------------- |
+| 1  | {verb + what}                           | {one-line — what signal was missing}   |
+
+{pending unblock: {n} — only if n>0}
+flat list: /super-bootstrap:todo full · drainable detail: /super-bootstrap:todo cloud
+more: /super-bootstrap:help
+```
+
+Empty state (no need-me rows AND no drainable):
+
+```
+# To-Do — {date}
+
+No active work. Start something with /brainstorm or give me a task.
+```
+
+Empty need-me but drainable pending:
+
+```
+# To-Do — {date}
+
+Drainable: {N}  →  /super-bootstrap:drain
+
+Nothing needs you right now — the board is all auto-runnable.
+
+flat list: /super-bootstrap:todo full
+more: /super-bootstrap:help
+```
+
 ### Discuss
 
 ```
@@ -198,7 +267,7 @@ more: /super-bootstrap:help
 {footer per § Render footer-hint}
 ```
 
-No macro header for Full — full IS the macro. Harness-intent spec/plan files render as normal Full rows with no `Deliberate:`/`Apply:` prefix (no column carries it — the Stage/Impact/Blast cells carry the signal); harness backlog rows ride the backlog count line. No "Next up" recommendation block in any mode (solo-dev momentum-driven; user picks from list, system doesn't strategize).
+No macro header for Full — full IS the macro. Harness-intent spec/plan files render as normal Full rows with no `Deliberate:`/`Apply:` prefix (no column carries it — the Stage/Impact/Blast cells carry the signal); harness backlog rows ride the backlog count line. No "Next up" recommendation block in any mode. Momentum-driven surfacing is **computed foregrounding** — venue grouping + fan-out rank order the board by objective leverage, no opinion prose. The bar stands on strategizing ("Best next: Y" / "Recommend X"), never on ranked ordering: surface, don't editorialize.
 
 Footer: fill per § Render footer-hint in the todo agent (`agents/todo.md`) — canonical home.
 
