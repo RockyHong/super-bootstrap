@@ -58,7 +58,7 @@ Each upstreamed artifact goes through the normal sb pipeline (card → route →
 
 ## Facts a pickup session needs
 
-- sb plugin v2.20.0 released; todo distill is committed on main but unreleased — consumers and this repo's runtime `todo` agent see the harness mode only after the next `/release` + plugin update. sb's own dogfood runway stamp is stale (2.17.0) — its next `/super-bootstrap` run fires `version_stale`.
+- sb plugin v2.21.0 released + installed locally (todo distill live; commit dispatch flow wet-verified). triage(+report) distill is committed on main but unreleased — consumers and this repo's runtime see the new skills only after the next `/release` + plugin update; that release also folds the plugin.json `description` update (doesn't yet list triage/triage-report) and deletes the triage-distill temporal spec+plan. First real `/super-bootstrap:triage` run post-release is the wet verify. sb's own dogfood runway stamp is stale (2.17.0) — its next `/super-bootstrap` run fires `version_stale`.
 - `.served` markers = claude-config-manager work-discipline channel, orthogonal to this program — never conflate the two serve channels.
 - sb backlog GAP-003 already cites ChewLingo as measured downstream adopter.
 - Shipped skeleton self-containment rule: injected/planted text may reference only surfaces harness-bootstrap itself stamps — never device-only skills. Binds every upstreamed artifact.
