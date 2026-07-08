@@ -22,7 +22,7 @@ relationAnalysis(eligibles):
 
 ## Edge cases
 
-- **N=1 eligible** — wave of 1; the confirm gate still fires (never silently skip).
+- **N=1 eligible** — wave of 1; the confirm gate still fires (never silently skip). By default a lone dispatchable item rolls in-session (no worktree) — the wave-of-one carve-out (`eligibility.md §Inline / wave-of-one carve-out`); the user can force isolation.
 - **All in one chain** — wave = head only; tails defer to the next invocation after the head merges.
 - **All in one conflict** — empty wave; surface "no progressable items, conflicts pending user resolution" + clean exit.
 - **User declines** — clean exit; no worktrees, no claims.

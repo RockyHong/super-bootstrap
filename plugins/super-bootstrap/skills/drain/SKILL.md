@@ -1,6 +1,6 @@
 ---
 name: drain
-description: "Parallel-worktree auto-drain of the board. One `/super-bootstrap:drain` turn = scan the three core pipeline sources (specs/plans/backlog), plus the scale module's test queue when present → keep only Cloud-safe items → relation-analyze into a conflict-free wave → confirm with the user → spawn one isolated git worktree + headless `claude -p` per item, each resuming at its pipeline stage and running phase-by-phase to the next user wall (merge, surfaced concern, manual test), then halting. State lives in files; the next invocation cold-reads and picks the next wave. Merge is never automatic — it delegates to `/super-bootstrap:merge`. Sub-verbs: `status`, `release {id}`, `--dry-run`. Manual invocation only."
+description: "Parallel-worktree auto-drain of the board. One `/super-bootstrap:drain` turn = scan the pipeline sources (specs/plans/backlog, plus the scale module's test queue when present) → keep only admissible items → relation-analyze into a conflict-free wave → confirm with the user → spawn one isolated git worktree + headless `claude -p` per item, each resuming at its pipeline stage and running phase-by-phase to the next user wall, then halting. Single-item waves and inline-sized items roll in-session, no worktree. State lives in files; the next invocation cold-reads and picks the next wave. Merge is never automatic — it delegates to `/super-bootstrap:merge`. Sub-verbs: `status`, `release {id}`, `--dry-run`. Manual invocation only."
 disable-model-invocation: true
 tags: [drain, worktree, parallel, pipeline, superpowers]
 ---
@@ -17,7 +17,7 @@ Trigger: user types `/super-bootstrap:drain`. Never auto-fires.
 
 - **One wave, one shot per invocation.** No internal loop across waves, no `--all`. Turn ends after the wave is dispatched. Next invocation cold-reads files and re-picks.
 - **No auto-merge — ever.** Each subprocess stops at a ready-to-merge state. The user confirms; the merge runs via `/super-bootstrap:merge` (the destructive-git lane). Subprocesses are denied push/merge/rebase/branch-delete/worktree at the permission layer.
-- **Cloud-gate, not type-gate.** Eligible = item classifies `Cloud` (cloud-safe), across BUG/DEBT/GAP and across specs/plans. `Device`/`Discuss` items defer — drain never spawns for them. A mislabel is fixed upstream (clarify the row, or the shared criterion), never overridden here.
+- **Admission-gate, not type-gate.** Eligible = the item's next phase is drainable, across BUG/DEBT/GAP and across specs/plans. When the scale module is wired the gate is next-phase venue ∈ {T, S} (`.claude/rules/venue-map.md`); without it the gate falls back to `intent == Cloud` (cloud-safe). Either way `Device`/`Discuss` and venue U/P defer — drain never spawns for them. A mislabel is fixed upstream (clarify the row, the shared criterion, or the venue map), never overridden here.
 - **Stage-resume.** Each item enters its phase chain at its current pipeline stage (file presence): `raw`→triage, `triaged`→plan, `spec`→plan, `plan`→execute, `review`→review. Committed upstream phases are inherited, not re-run.
 - **Halts are outcomes.** A wall surfaces a finding; that finding plus any committed earlier phases are progress, not waste.
 - **Wave member = no blocker.** Orphans + chain-heads enter; chain-tails and conflicts defer to a later invocation. No forward projection — render the current wave only.
@@ -33,7 +33,7 @@ Run in order; any HALT exits the turn with a §Halt summary.
 ## Shape
 
 1. **Sync base.** Fast-forward / rebase the base branch (`git fetch` + `git rebase origin/{base}`) so worktrees branch from current head. Conflict → surface + exit.
-2. **Scan + classify.** Read `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md` (and `docs/test-queue.md` when present — scale module, skip if absent); derive each item's `{action, intent, stage}` per the **shared classification spec** (`../../shared/classify-actionable.md` — embed verbatim, do not paraphrase). Then apply `assets/eligibility.md` to keep only the drain-eligible Cloud items.
+2. **Scan + classify.** Read `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md` (and `docs/test-queue.md` when present — scale module, skip if absent); derive each item's `{action, intent, stage}` per the **shared classification spec** (`../../shared/classify-actionable.md` — embed verbatim, do not paraphrase). Then apply `assets/eligibility.md` to keep only the drain-eligible items — next-phase venue ∈ {T, S} when `.claude/rules/venue-map.md` is present, else the `intent == Cloud` fallback. Items whose next phase is a wall (venue U/P, or `Device`/`Discuss`) skip and surface.
 3. **Relation analysis + wave selection.** `assets/relations.md`. Output: current wave (disjoint orphans + chain-heads). Tails and conflicts defer.
 4. **Confirm gate.** §Confirm gate. Decline = clean exit — no worktrees, no claims.
 5. **Spawn.** One subprocess per wave member — `assets/ensure-infra.md` (warm) → §Phase loop. Background dispatch; notification-driven.
@@ -41,25 +41,32 @@ Run in order; any HALT exits the turn with a §Halt summary.
 
 ## Eligibility
 
-`Cloud`-gate + drain-domain filter. Full predicate: `assets/eligibility.md`. Summary: item is eligible when `intent == Cloud`, it is not already claimed (no `drain-{id}` worktree) and not on an existing unmerged branch, and it carries no unresolved decision. `Device`/`Discuss`/`Harness` defer; foreign-prefix backlog rows route to `/super-bootstrap:log`.
+Lane guards + admission gate. Full predicate: `assets/eligibility.md`. Summary: an item is eligible when it is not `Harness` (the orchestration engine never rides the autonomous queue), not already claimed (no `drain-{id}` worktree), not on an existing unmerged branch, not a foreign prefix (those route to `/super-bootstrap:log`) — **and** its next phase is drainable: venue ∈ {T, S} when `.claude/rules/venue-map.md` is wired, else `intent == Cloud`. `Device`/`Discuss` and venue U/P defer.
+
+**Inline / wave-of-one carve-out.** An `Execution: inline` item (triage sized it inline) or a lone dispatchable item (wave-of-one) stays eligible but skips the worktree — the gateway rolls it in-session. `assets/eligibility.md §Inline / wave-of-one carve-out`.
 
 ## Confirm gate
 
-Render the current wave only — no future-wave preview, no deferred list:
+Render the current wave only — no future-wave preview, no deferred list. Items rolling in-session (`Execution: inline`, or the wave-of-one default — `assets/eligibility.md §Inline / wave-of-one carve-out`) render on a separate "roll in-session" line, never the dispatch table (they take no worktree):
 
 ```
 /super-bootstrap:drain wave over {N} items.
-Wave:
+Wave (worktree-bound):
   {id}  {stage}  {one-line action}
   ...
+Roll in-session (no worktree):        # omit this line if none
+  {id}  {stage}  {one-line action}
+{if the dispatch wave is a single item: "Wave: {id} rolls in-session by default; say \"isolate\" for a worktree."}
 OK to dispatch? [y/N]
 ```
 
-Accept → §Worktree warm. Decline → clean exit (zero side effects).
+Accept → §Worktree warm (skipped for in-session items — see there). Decline → clean exit (zero side effects).
 
 ## Worktree warm + claim
 
 Atomic `mkdir .claude/worktrees/drain-{id}/` is the claim (first mkdir wins). `OWNED_BY` follows immediately. Branch: `drain/{id-lower}` (e.g. `drain/bug-12`). Full warm procedure (worktree add, settings copy, marker, dependency provisioning) + the hard-FS-boundary mechanism: `assets/parallel-worktrees.md`.
+
+**In-session items skip warm entirely.** An item rolling in-session (`Execution: inline`, or the wave-of-one default) gets no `mkdir` claim, no `OWNED_BY`, no `claude -p` launch — the gateway runs its phase chain (or the single edit, for `inline`) directly in the main workspace. The phase loop is the same shape with the repo root substituted for the worktree cwd.
 
 ## Read discipline (gateway-side)
 
@@ -76,13 +83,19 @@ claude -p "<phase prompt>" --model sonnet --setting-sources local,project --perm
 
 Explicit `--model sonnet` — drain is the widest fan-out surface in the system; an unspecified tier inherits the invoking (gateway) model and multiplies its cost per item. Required-flags table (flag → consequence-if-missing): `assets/parallel-worktrees.md §Required flags`.
 
-Dispatched `Bash(run_in_background: true)`. Phase chain, stage-entry map, status contract (`DONE` / `DONE_WITH_CONCERNS` / `BLOCKED` / `NEEDS_CONTEXT`), and the polymorphic escalate-or-build branch: `assets/phase-loop.md`.
+Dispatched `Bash(run_in_background: true)`. Lane select (eng vs doc), phase chain, stage-entry map, status contract (`DONE` / `DONE_WITH_CONCERNS` / `BLOCKED` / `NEEDS_CONTEXT`), the escalate-or-build branch, and the pre-plan confirm gate: `assets/phase-loop.md`.
 
-**Polymorphic depth (locked).** Lean by default — triage → implement (TDD) → review → halt at merge. If a subprocess discovers a real design surface (needs spec / a decision), it halts and the item routes out to brainstorming rather than building further.
+**Polymorphic lanes (locked).** A code-shaped item runs the eng lane — lean by default: triage → build (TDD) → review → halt at merge. A prose-shaped item (doc-hygiene — the doc edit is the deliverable) runs the doc lane: doc-edit → review → halt at merge, no TDD (`assets/phase-loop.md §Lane select`).
+
+**Pre-plan confirm gate (user wall before the build fan-out).** After triage, before the plan/build phase, the gateway reads the `scope.md` verdict tags: a deterministic fix (`Fix-shape: mechanical|systematic`, no probe deps) flows straight through; anything carrying a design/product judgment or a `Probe-deps` dependency **halts for the user** before drain spends the build (`assets/phase-loop.md §Pre-plan confirm gate`).
+
+**Escalate-or-build.** If a subprocess discovers a real design surface mid-flight (needs spec / a decision), it halts and the item routes out to brainstorming rather than building further.
 
 ## Merge gate
 
 A subprocess builds, tests, and reviews inside its worktree, then halts at ready-to-merge (the no-auto-merge invariant). The user inspects and confirms; the merge runs via **`/super-bootstrap:merge`** — the orchestrator-exclusive destructive-git lane (per-branch rebase/merge recommendation, conflict doctrine, push-on-confirm). drain does not re-implement merge; it hands off the branch.
+
+**Merge-probe (venue S only).** Stack-bound verification for venue-S items runs gateway-side at this gate — full lane (rationale, techstack-parameterized command, green/red outcomes): `assets/merge-probe.md` — canonical, don't restate here.
 
 ## Halt points
 
