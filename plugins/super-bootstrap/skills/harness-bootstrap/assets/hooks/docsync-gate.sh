@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# FROZEN docsync-gate v3 (A2 — pre-commit doc-sync gate; TTL + session-key,
+# FROZEN docsync-gate v4 (A2 — pre-commit doc-sync gate; TTL + session-key,
 # worktree-aware).
 # Primary filter: the `if: "Bash(git commit *)"` field on the merged settings
 # entry (docsync-gate.hook.json) — verified against the official Claude Code
@@ -34,10 +34,18 @@
 
 input="$(cat)"
 cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // empty')
-case "$cmd" in
-  *"git commit"*) ;;
-  *) exit 0 ;;
-esac
+# Gate a real `git commit` INVOCATION, not a mention. Match `git` at command
+# position (whole-command start, or after ; & |) with `commit` as its same-line
+# subcommand: bash `=~` anchors ^ to the whole command, and [:blank:] gaps keep
+# the match on one line, so a space-separated "git commit" inside a quoted arg or
+# heredoc passes through. (A bare ;/&/| wedged right before the phrase still
+# trips — a rare, accepted miss under the bias below.) Trailing boundary skips
+# commit-tree/-graph. Defense-in-depth: missing an exotic form (subshell /
+# newline-split) is acceptable; a false deny blocking unrelated Bash work is the
+# harm here. Sibling commit-channel.sh matches the same verb with the opposite
+# bias (safe-fail over-match) — the divergence is deliberate, don't align them.
+_re='(^|[;&|])[[:blank:]]*git[[:blank:]]+([^[:space:]]+[[:blank:]]+)*commit([[:space:]]|$|;|&|\|)'
+[[ "$cmd" =~ $_re ]] || exit 0
 
 proj="${CLAUDE_PROJECT_DIR:-}"
 if [ -z "$proj" ]; then

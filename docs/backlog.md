@@ -31,13 +31,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### BUG-014 — docsync-gate's in-script `git commit` matcher is a substring glob; false-trips on any Bash text merely containing "git commit"
-
-**Logged:** 2026-07-08 · **Source:** GitHub issue #13 (RockyHong, via /send-issue from spotify-radio), 2026-07-08
-**Problem:** `docsync-gate.sh:38` gates on `case "$cmd" in *"git commit"*)` — a substring match, not an invocation match. Any Bash command whose text merely contains the literal "git commit" (e.g. writing/echoing a config or script that embeds the string) trips the deny even though no commit is being run. Repro: spotify-radio installed the commit-channel hook via a python heredoc merging `{"if":"Bash(git commit *)", ...}` into settings.json — the if-field string itself contained "git commit", docsync-gate denied the merge, it never ran (worked around by writing the script to a file and executing the file instead). Sibling `commit-channel.sh:24` already solves this correctly with an invocation-aware word-boundary regex: `grep -Eq '(^|[^[:alnum:]_-])git[[:space:]]+([^[:space:]]+[[:space:]]+)*commit([[:space:]]|$|;|&)'`.
-**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/docsync-gate.sh` (~line 38)
-**Prior:** adopt commit-channel's regex verbatim in docsync-gate's in-script check. Secondary claim in the source report (hooks-ensure-infra not merging the `if` field onto the installed docsync-gate PreToolUse entry) checked false against this repo's source template — `docsync-gate.hook.json` already carries `if: "Bash(git commit *)"` identically to `commit-channel.hook.json`; the reporting project's installed copy was stale, not a template defect. No action needed there beyond normal re-sync.
-
 ### BUG-013 — harness-grounding.sh PreToolUse additionalContext lacks permissionDecision; may be dead or expose subagent Write-corruption
 
 **Logged:** 2026-07-08 · **Source:** surfaced during BUG-012 4-cell live probe investigation
