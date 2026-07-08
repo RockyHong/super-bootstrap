@@ -39,7 +39,7 @@ Drainable: {N}  →  /super-bootstrap:drain
 
 | #  | Action                                  | unblocks | Impact       | Blast       |
 | -- | ---------------------------------------- | -------- | ------------ | ----------- |
-| 1  | Deliberate: {topic} / Apply: {rule}→{site} | {n}   | {tag}        | {tag}       |
+| 1  | Triage: {ID} {title} / Deliberate: {topic} / Apply: {rule}→{site} | {n} | {tag}        | {tag}       |
 
 ## Probe / grant
 
