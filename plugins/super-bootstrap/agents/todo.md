@@ -22,7 +22,7 @@ The dispatcher tells you which mode the user picked.
 
 ## Classification — embedded shared spec
 
-Deriving each open item's `{action, intent, stage}` (plus `subgroup` on Harness rows) from the three sources (specs / plans / backlog) is the **shared classification spec**, embedded verbatim in your dispatch prompt (the `todo` skill reads it from `shared/classify-actionable.md`). It owns the harness pre-filter (applied before everything), the cloud-safe criterion, the action-verb intent map, and the per-source derivation rules — this agent applies it, never restates it. `intent` (Discuss / Cloud / Device / Harness) drives bucketing; `action` is the render string; `stage` is carried but unused here (a sibling consumer needs it).
+Deriving each open item's `{action, intent, stage}` (plus `subgroup` on Harness rows) from the three core sources (specs / plans / backlog), plus the scale module's test queue when present, is the **shared classification spec**, embedded verbatim in your dispatch prompt (the `todo` skill reads it from `shared/classify-actionable.md`). It owns the harness pre-filter (applied before everything), the cloud-safe criterion, the action-verb intent map, and the per-source derivation rules — this agent applies it, never restates it. `intent` (Discuss / Cloud / Device / Harness) drives bucketing; `action` is the render string; `stage` is carried but unused here (a sibling consumer needs it).
 
 ## Protocol
 
@@ -30,7 +30,7 @@ Apply the embedded spec to all sources, then filter to the requested mode before
 
 ### 1. Gather state (silent — do not output)
 
-Apply the embedded classification spec to every open item across specs / plans / backlog. Hold results internally — each row carries its **action**, **intent** tag (Discuss / Cloud / Device / Harness), **stage**, and (Harness rows) **subgroup**.
+Apply the embedded classification spec to every open item across specs / plans / backlog (plus the test queue when present). Hold results internally — each row carries its **action**, **intent** tag (Discuss / Cloud / Device / Harness), **stage**, and (Harness rows) **subgroup**.
 
 **Pre-ID backlog (stale scaffold).** If `docs/backlog.md` `## Open` carries row content but no `BUG/DEBT/GAP-###` IDs (un-IDed bullets/headings), or the header's ID high-water-mark line is absent, the backlog predates the ID scaffold (older super-bootstrap version). Emit **one** Uncategorized row for the condition (not one per un-IDed item). Reason: `"backlog missing ID scaffold / high-water line — run /super-bootstrap:harness-bootstrap to re-plant IDs (rebuilds the counter from git history)."` Read-only — never mint IDs here; the re-plant write is harness-bootstrap's.
 
@@ -74,7 +74,7 @@ Apply before ranking. Both tags carried on every row.
 - **`cross-pkg`** — ≥2 packages referenced
 - **`repo`** — touches `.claude/`, `CLAUDE.md`, `docs/` sweeping, or orchestration layer
 
-Derive from plan body path mentions and task bullet paths. For `Implement` rows (stage `triaged`), the triage scope.md `## Files` section is the path source. For backlog rows, read the row's `**Area:**` field first (single file → `local`, one package → `pkg`, ≥2 packages → `cross-pkg`, `.claude/` / `CLAUDE.md` / sweeping `docs/` → `repo`); fall back to body mentions on legacy rows without it. Harness rows always take Blast `repo` — the deliverable is the orchestration layer, whatever the `Area:` file count. For Discuss-mode rows (pure decisions, no code), omit Blast — render N/A or skip column per scaffold (scaffold drops Blast column for Discuss).
+Derive from plan body path mentions and task bullet paths. For `Implement` rows (stage `triaged`), the triage scope.md `## Files` section is the path source. For backlog rows, read the row's `**Area:**` field first (single file → `local`, one package → `pkg`, ≥2 packages → `cross-pkg`, `.claude/` / `CLAUDE.md` / sweeping `docs/` → `repo`); fall back to body mentions on legacy rows without it. For test-queue-sourced rows (`Manually verify`), inherit Blast from the `source:` back-pointer's backlog row `**Area:**` field when the entry carries one; absent a back-pointer, default `local`. Harness rows always take Blast `repo` — the deliverable is the orchestration layer, whatever the `Area:` file count. For Discuss-mode rows (pure decisions, no code), omit Blast — render N/A or skip column per scaffold (scaffold drops Blast column for Discuss).
 
 **Harness grouping:** in `harness` mode, rows group by `subgroup` — **Deliberate** table first, **Apply** table second (the scaffold separates them); Impact is still computed and rendered as a column, but grouping is subgroup, not Impact.
 
@@ -91,7 +91,7 @@ Then rank the body rows (hard-blocked held out). For all modes (sub-verb AND ful
 
 1. **Impact desc** — `impactful` first, `quick-pop` second
 2. **Progress desc within Impact** — executing-rows with most-complete progress first (finish-what's-started bias)
-3. **Action-verb priority** — `Continue execute` > `Review` > `Approve spec` / `Decide` > `Implement` > `Write plan` > `Continue brainstorm` > `Deliberate` > `Apply` > `Cleanup` > `Triage`
+3. **Action-verb priority** — `Continue execute` > `Review` > `Manually verify` > `Approve spec` / `Decide` > `Implement` > `Write plan` > `Continue brainstorm` > `Deliberate` > `Apply` > `Cleanup` > `Triage`
 4. **Recency desc** — newest first (tiebreak)
 
 **Soft-coupling adjacency** overrides these four keys locally: a soft-coupling upstream row ranks immediately above the row it shapes, even when the keys would separate them.

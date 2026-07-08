@@ -134,6 +134,8 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 - [`docs/techstack.md`](docs/techstack.md) — stack, architecture rules, coding patterns.
 {- [`docs/specs/`](docs/specs/) — persistent feature specs, one `.md` per feature. Filename + heading is the catalog; no index.}
 {- [`docs/backlog.md`](docs/backlog.md) — open items (`BUG-###` / `DEBT-###` / `GAP-###`), captured via `/super-bootstrap:log`, deleted on resolve.}
+{- [`docs/parked.md`](docs/parked.md) — deferred items with named triggers (scale module)}
+{- [`docs/test-queue.md`](docs/test-queue.md) — manual-verification queue (scale module)}
 - [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
 - `docs/superpowers/specs/` — design specs from brainstorming (temporal — deleted after merge)
 - `docs/superpowers/plans/` — implementation plans (temporal — deleted after merge)

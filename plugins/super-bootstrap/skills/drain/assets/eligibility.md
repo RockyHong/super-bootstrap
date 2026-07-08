@@ -1,6 +1,6 @@
 # Eligibility — drain wave admission
 
-Called from `SKILL.md §Shape` step 2, after the shared classification (`../../shared/classify-actionable.md`) has produced `{action, intent, stage}` for every open item across specs/plans/backlog.
+Called from `SKILL.md §Shape` step 2, after the shared classification (`../../shared/classify-actionable.md`) has produced `{action, intent, stage}` for every open item across specs/plans/backlog, plus the test queue when present.
 
 The gate is `intent == Cloud` plus claim-freedom. Type (BUG/DEBT/GAP) is **not** a gate — a clear GAP that classifies `Cloud` drains; a `Device` BUG does not.
 

@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-012` · `DEBT-008` · `GAP-019` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-012` · `DEBT-008` · `GAP-020` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-020 — SDD's mandatory fix→re-review loop runs regardless of fix grade; transcription-grade fixes earn no new findings
+
+**Logged:** 2026-07-08 · **Source:** GAP-017 scale-module session, user challenged re-review ceremony mid-wave
+**Problem:** `superpowers:subagent-driven-development`'s fix→re-review loop dispatches a full re-review after every fix, independent of fix grade. Measured across the GAP-017 todo-distill and scale-module waves: 5 re-review dispatches, 0 new findings — every one a clean confirmation. When the fix dispatch already carries exact old/new text (transcription-grade fix), a re-review by the same reviewer is near-deterministic approval; the step earns itself only for judgment-grade fixes (fix shape left to the implementer).
+**Area:** CLAUDE.md § Development Workflow / SDD consumption (upstream skill is superpowers-owned; sb-side fix is a documented carve-out in sb's own routing prose)
+**Prior:** same pattern as GAP-019's writing-plans carve-out — transcription-grade fixes (exact old/new text supplied) → dispatcher verifies by reading the diff, no re-review dispatch; judgment-grade fixes (shape left to implementer) → full re-review stays.
 
 ### GAP-019 — writing-plans no-placeholder contract duplicates full file bodies even when the authoring session also executes
 

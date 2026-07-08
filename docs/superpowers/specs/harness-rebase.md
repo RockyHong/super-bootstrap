@@ -39,7 +39,7 @@ ChewLingo runs `/super-bootstrap` (plugin currently present-but-disabled in its 
 | triage + triage-report (CL-only) | **done (Wave 2)** | Landed: thin verdict shells + typed agents (Opus investigator / Sonnet disposition judge), verdict home `docs/superpowers/triage/{ID}-scope\|notes.md`, classify-actionable `triaged` stage + `Implement` verb, drain/todo stage closure. RED-gated: read-only floor shipped (controls 2/5 violated; precedence line added after first GREEN 2/5 fail); echo-test, fork-spotting reinforcement, dismiss burden-of-proof NOT ported — closed forks (controls clean; docs/decisions.md). Probe specifics → consumer `docs/techstack.md § Probes` (absent → static read only) |
 | spec/plan/implement/review (CL) | partial upstream | Surface-on-Gap refusal, design gate, evidence block salvage into superpowers route wrappers; bodies otherwise superseded by envelope decision — do not ship a parallel chain |
 | journey-simulation (CL) | upstream as root | Portable mechanism, near-zero contamination |
-| venue-map, capture-routing, pickup-grounding, findings-logging, triage-routing, worktree-boundary (CL rules) | upstream into scale module | Generic harness patterns coupled only to tracker schema |
+| venue-map, capture-routing, pickup-grounding, findings-logging, triage-routing, worktree-boundary (CL rules) | **done (Wave 2)** | Landed as the scale module (harness-bootstrap §2a-scale, opt-in earn-gated): parked + test-queue containers, venue-map rule skeleton, backlog fact fields carrying the capture-routing pointer; log agent parked-aware; classify-actionable §d test-queue source. RED all-clean (S1 5/5, S2–S5 2/2): capture-routing + pickup-grounding NOT shipped as rule files (container header / root triage lane carry them); triage-routing, findings-logging, worktree-boundary closed as superseded — 5 closed forks in docs/decisions.md. CL's stored `State:` machine deliberately NOT ported (sb file-presence derivation won, per shipped triage doctrine) |
 | model-tiering hooks (CL agent/workflow pre/posttool) | upstream as root hook assets | Doctrine lives in served work-discipline lore; hooks are enforcement |
 | test-all, frontend-soc-scan, firestore-schema, ui-primitives, mobile/playwright-mcp, ai-layer, prompt-engineering, doc-terminology, web-expo-stub, lib-purity (CL) | consumer delta — stay | Product/stack knowledge |
 | harness-bootstrap, resolve-plugins, release-init, help, super-bootstrap, entry-nudge/docsync/harness-grounding hooks (sb) | stay root | Bootstrap machinery |
@@ -47,7 +47,7 @@ ChewLingo runs `/super-bootstrap` (plugin currently present-but-disabled in its 
 ## Wave plan
 
 1. **Wave 1 — cheap wins**: merge distill; check-docs-consistency promote; log distill. — **COMPLETE** (per-artifact outcomes in the verdict table above). Live edge = Wave 2.
-2. **Wave 2**: ~~commit~~ (done), ~~todo~~ (done), ~~triage(+report)~~ (done), scale module, monorepo tier, adopt mode.
+2. **Wave 2**: ~~commit~~ (done), ~~todo~~ (done), ~~triage(+report)~~ (done), ~~scale module~~ (done), monorepo tier, adopt mode.
 3. **Wave 3**: drain distill.
 
 **Distill route sizing (binds remaining waves).** The distill shape is known (5 precedents: merge, log, commit, todo, triage) — remaining artifacts route **cluster 3** (`writing-plans` direct from this spec's verdict-table recipe + locked spine decisions; no brainstorming pass). Plans reference draft bodies by section, never embed full file text when the authoring session also executes (embed propagates typos and doubles the meta:ship ratio — two observed instances). Probe budget: 5/5 on the headline discipline line, 1–2 spot checks per secondary line. Audit scope: new files + directly-edited shared surfaces.
@@ -58,6 +58,7 @@ Each upstreamed artifact goes through the normal sb pipeline (card → route →
 
 ## Facts a pickup session needs
 
+- ChewLingo repo lives at `V:\ChewLingo` (not under `D:\Git`). Schema-grain source (rule bodies, tracker fields, state names) is read fresh from there per wave — the verdict table carries routing, not schemas.
 - sb plugin v2.21.0 released + installed locally (todo distill live; commit dispatch flow wet-verified). triage(+report) distill is committed on main but unreleased — consumers and this repo's runtime see the new skills only after the next `/release` + plugin update; that release also folds the plugin.json `description` update (doesn't yet list triage/triage-report) and deletes the triage-distill temporal spec+plan. First real `/super-bootstrap:triage` run post-release is the wet verify. sb's own dogfood runway stamp is stale (2.17.0) — its next `/super-bootstrap` run fires `version_stale`.
 - `.served` markers = claude-config-manager work-discipline channel, orthogonal to this program — never conflate the two serve channels.
 - sb backlog GAP-003 already cites ChewLingo as measured downstream adopter.

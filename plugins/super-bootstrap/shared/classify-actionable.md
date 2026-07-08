@@ -1,6 +1,6 @@
 # Classify Actionable — shared spec
 
-Single source of truth for deriving, from the three pipeline sources, **each open item's `{action, intent, stage}`**. Embedded verbatim into a dispatch prompt by every caller that needs the classification — `todo` (then ranks + renders a board) and `drain` (then gates on `Cloud` + spawns per stage). One criterion, many callers: neither caller re-derives it.
+Single source of truth for deriving, from the pipeline sources (three core + the scale module's test queue when present), **each open item's `{action, intent, stage}`**. Embedded verbatim into a dispatch prompt by every caller that needs the classification — `todo` (then ranks + renders a board) and `drain` (then gates on `Cloud` + spawns per stage). One criterion, many callers: neither caller re-derives it.
 
 > **Callers embed, never paraphrase.** Read this file and inject it verbatim into the dispatch prompt (same move `todo` uses for `assets/scaffolds.md`). Paraphrasing forks the taxonomy — the drift this shared home exists to prevent.
 
@@ -67,7 +67,7 @@ Intent is determined by action verb before path/state rules.
 
 ## Per-source derivation
 
-Read all three sources, derive each item's `{action, intent, stage}`. Apply the Harness pre-filter, then the Action-verb intent map, then the content rules.
+Read all sources (three core + the scale module's test queue when present), derive each item's `{action, intent, stage}`. Apply the Harness pre-filter, then the Action-verb intent map, then the content rules.
 
 ### a. Specs (`docs/superpowers/specs/*.md`)
 
@@ -106,6 +106,16 @@ For each open `BUG-### / DEBT-### / GAP-###` item:
 For any row with a **foreign prefix** (anything outside `BUG-### / DEBT-### / GAP-###` — e.g. `F-`, `FEAT-`, `ROAD-`, bare bullet): emit as `Uncategorized` with reason `"non-canonical backlog prefix; backlog owns BUG/DEBT/GAP (feature ideas log as GAP). New rows route through /super-bootstrap:log."` — never invent classification.
 
 If `docs/backlog.md` doesn't exist, skip §c.
+
+### d. Test queue (`docs/test-queue.md` — scale module, skip if absent)
+
+Entries are `### {plain descriptive title}` headings under `## Pending` (no ID in the heading).
+
+- **`## Pending` entry with `result: pending`** → action: `"Manually verify: {entry title}"`, **intent: Device** (verb-map row already locks it), **stage: review**.
+- **`## Failed` entries** → emit nothing; their re-queue + bug row already cover them.
+- **Entry carries a `source: {BUG|DEBT|GAP}-###` back-pointer** → don't double-emit against that ID's own §c row; the queue entry's row covers the verify obligation.
+
+If `docs/test-queue.md` doesn't exist, skip §d.
 
 ---
 

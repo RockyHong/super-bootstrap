@@ -7,7 +7,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 > Index only — what exists, one line each. **Canonical per-skill contract = that skill's `SKILL.md` frontmatter `description:`.** Edit behavior there; this list follows.
 
 - `super-bootstrap` — public entry, thin orchestrator; dispatches the runway, seeds greenfield GAP cards, gates tier-2 curation.
-- `harness-bootstrap` — installs/syncs the generic runway (CLAUDE.md, skeleton docs, rules, core pins).
+- `harness-bootstrap` — installs/syncs the generic runway (CLAUDE.md, skeleton docs, rules, core pins); opt-in, earn-gated scale module adds `docs/parked.md` + `docs/test-queue.md` containers, a venue-map rule, and backlog fact fields for repos whose backlog has outgrown one flat list.
 - `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`; Phase 2.5 dispatches `agents/plugin-digest.md` (Haiku) for README→digest parse.
 - `todo` — intent-filtered board scanner; dispatches `agents/todo.md` (Sonnet).
 - `log` — capture front door for backlog rows; dispatches `agents/log.md` (Sonnet).

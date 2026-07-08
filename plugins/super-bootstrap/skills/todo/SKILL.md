@@ -1,12 +1,12 @@
 ---
 name: todo
-description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the full board (every open spec/plan/backlog row). Sub-verbs filter by intent + environment: `/super-bootstrap:todo discuss` (decisions, spec approvals), `/super-bootstrap:todo cloud` (cloud-safe queue), `/super-bootstrap:todo device` (UI/e2e/manual), `/super-bootstrap:todo harness` (orchestration-engine rows, careful handle). Scans docs/superpowers/specs|plans + docs/backlog.md. Bundled with super-bootstrap — works in any repo with the superpowers pipeline."
+description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the full board (every open spec/plan/backlog row). Sub-verbs filter by intent + environment: `/super-bootstrap:todo discuss` (decisions, spec approvals), `/super-bootstrap:todo cloud` (cloud-safe queue), `/super-bootstrap:todo device` (UI/e2e/manual), `/super-bootstrap:todo harness` (orchestration-engine rows, careful handle). Scans docs/superpowers/specs|plans + docs/backlog.md, plus docs/test-queue.md when present. Bundled with super-bootstrap — works in any repo with the superpowers pipeline."
 tags: [todo, scan, status, pipeline, superpowers]
 ---
 
 # Todo — Intent-Filtered Pipeline Scanner
 
-Default render is the full board (every open spec/plan/backlog row). Sub-verbs let the user slice by mental mode (deciding / on cloud Claude / on device Claude / touching the engine) when the board gets big enough to warrant it. State reconstructed from `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, and `docs/backlog.md`. Pipeline state = file presence (spec/plan/code presence drives stage classification).
+Default render is the full board (every open spec/plan/backlog row). Sub-verbs let the user slice by mental mode (deciding / on cloud Claude / on device Claude / touching the engine) when the board gets big enough to warrant it. State reconstructed from `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, and `docs/backlog.md` (three core sources), plus `docs/test-queue.md` when present (the scale module's test queue). Pipeline state = file presence (spec/plan/code presence drives stage classification).
 
 ## Arguments
 
@@ -26,7 +26,7 @@ Default render is the full board (every open spec/plan/backlog row). Sub-verbs l
 
 **Canonical skip-gate** — applies to bare invocation and every sub-verb. Skip dispatch (no file reads beyond the glob, no agent) when either:
 
-- Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md` comes back all empty/absent (no specs, no plans, no open backlog rows — any row content under `## Open`, whether canonical `### {BUG|DEBT|GAP}-###` headings, foreign-prefix rows, or un-IDed bullets; the header's ID high-water-mark line doesn't count). Branch on whether `docs/superpowers/` exists, then print the matching message:
+- Quick-glob `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`, `docs/test-queue.md` (conditional — scale module, skip if absent) comes back all empty/absent (no specs, no plans, no open backlog rows — any row content under `## Open`, whether canonical `### {BUG|DEBT|GAP}-###` headings, foreign-prefix rows, or un-IDed bullets; the header's ID high-water-mark line doesn't count — and no pending test-queue entries). Branch on whether `docs/superpowers/` exists, then print the matching message:
   - **`docs/superpowers/` absent** → repo has the super-bootstrap pipeline available but no runway installed:
     > "No runway installed here. Run `/super-bootstrap` to set up the pipeline."
   - **`docs/superpowers/` present, board empty** → bootstrapped, nothing open:

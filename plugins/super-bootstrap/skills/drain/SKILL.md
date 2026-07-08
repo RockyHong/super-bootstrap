@@ -1,6 +1,6 @@
 ---
 name: drain
-description: "Parallel-worktree auto-drain of the board. One `/super-bootstrap:drain` turn = scan the three pipeline sources (specs/plans/backlog) → keep only Cloud-safe items → relation-analyze into a conflict-free wave → confirm with the user → spawn one isolated git worktree + headless `claude -p` per item, each resuming at its pipeline stage and running phase-by-phase to the next user wall (merge, surfaced concern, manual test), then halting. State lives in files; the next invocation cold-reads and picks the next wave. Merge is never automatic — it delegates to `/super-bootstrap:merge`. Sub-verbs: `status`, `release {id}`, `--dry-run`. Manual invocation only."
+description: "Parallel-worktree auto-drain of the board. One `/super-bootstrap:drain` turn = scan the three core pipeline sources (specs/plans/backlog), plus the scale module's test queue when present → keep only Cloud-safe items → relation-analyze into a conflict-free wave → confirm with the user → spawn one isolated git worktree + headless `claude -p` per item, each resuming at its pipeline stage and running phase-by-phase to the next user wall (merge, surfaced concern, manual test), then halting. State lives in files; the next invocation cold-reads and picks the next wave. Merge is never automatic — it delegates to `/super-bootstrap:merge`. Sub-verbs: `status`, `release {id}`, `--dry-run`. Manual invocation only."
 disable-model-invocation: true
 tags: [drain, worktree, parallel, pipeline, superpowers]
 ---
@@ -33,7 +33,7 @@ Run in order; any HALT exits the turn with a §Halt summary.
 ## Shape
 
 1. **Sync base.** Fast-forward / rebase the base branch (`git fetch` + `git rebase origin/{base}`) so worktrees branch from current head. Conflict → surface + exit.
-2. **Scan + classify.** Read `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md`; derive each item's `{action, intent, stage}` per the **shared classification spec** (`../../shared/classify-actionable.md` — embed verbatim, do not paraphrase). Then apply `assets/eligibility.md` to keep only the drain-eligible Cloud items.
+2. **Scan + classify.** Read `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md` (and `docs/test-queue.md` when present — scale module, skip if absent); derive each item's `{action, intent, stage}` per the **shared classification spec** (`../../shared/classify-actionable.md` — embed verbatim, do not paraphrase). Then apply `assets/eligibility.md` to keep only the drain-eligible Cloud items.
 3. **Relation analysis + wave selection.** `assets/relations.md`. Output: current wave (disjoint orphans + chain-heads). Tails and conflicts defer.
 4. **Confirm gate.** §Confirm gate. Decline = clean exit — no worktrees, no claims.
 5. **Spawn.** One subprocess per wave member — `assets/ensure-infra.md` (warm) → §Phase loop. Background dispatch; notification-driven.
