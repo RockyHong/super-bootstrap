@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-012` · `DEBT-008` · `GAP-020` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-012` · `DEBT-008` · `GAP-021` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-021 — ChewLingo delta artifacts verdicted "upstream as root" never assigned a wave; remain consumer-only
+
+**Logged:** 2026-07-08 · **Source:** GAP-017 program close-out — verdict rows with no wave assignment, carried here before the program map's deletion
+**Problem:** Three GAP-017 verdicts marked ChewLingo artifacts as portable root capability but no wave shipped them: `journey-simulation` (portable mechanism, near-zero contamination — upstream whole); spec/plan/implement/review partial salvage (Surface-on-Gap refusal, design gate, evidence block → fold into superpowers route wrappers, not a parallel chain); model-tiering pre/posttool hooks (doctrine lives in served work-discipline lore; hooks are enforcement — upstream as root hook assets). They are not dups (root has no counterpart), so adopt mode correctly left them as ChewLingo delta — but the portable value stays single-consumer until upstreamed.
+**Area:** `plugins/super-bootstrap/skills/` (+ `harness-bootstrap` hook assets for model-tiering); source bodies live in `V:\ChewLingo` `.claude/skills/{journey-simulation,spec,plan,implement,review}` + its `.claude/hooks`
+**Prior:** same distill recipe as GAP-017 waves (direct port of production-proven text, consumer-safe rewrite, one cold audit per batch); triage decides ship-order or drop per artifact.
 
 ### GAP-020 — SDD's mandatory fix→re-review loop runs regardless of fix grade; transcription-grade fixes earn no new findings
 
@@ -58,13 +65,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Problem:** Background-dispatched authoring subagents (Agent tool, `run_in_background`, opus) tasked to CREATE new plugin skill files repeatedly stalled — 4 consecutive turns across 2 fresh agents ended with a one-line announcement ("Now writing the files") and zero Write calls, despite explicit resume messages via SendMessage. Same-session opus agents EDITING existing harness files (`agents/log.md`, `skills/merge/SKILL.md`) wrote fine. Gateway ended up writing the files inline, defeating the § Dispatch build lane whenever a card creates new harness files.
 **Area:** Agent tool / `run_in_background` dispatch lane; `harness-grounding.sh` PreToolUse(Write) hook; `skill-authoring`/`repo-boundary` rule-reminder injections on `plugins/*/skills/**` paths
 **Prior:** suspected interaction — a PreToolUse(Write) nudge or rule-reminder injection firing in the subagent context on new-file Write under `plugins/*/skills/**` stops the agent turn before its first Write call; edits to existing files unaffected, so the trigger looks path-pattern + new-file, not path alone.
-
-### GAP-017 — harness rebase: upstream ChewLingo evolution, rebase ChewLingo onto root
-
-**Logged:** 2026-07-08 · **Source:** harness-unification evaluation session (three-probe grounding: ChewLingo spine, sb root, shared-artifact diff)
-**Problem:** ChewLingo is the mother fork of this harness; the two evolved in parallel — ChewLingo grew the judgment layer (venue eligibility, pipeline sizing, closed-fork bounce, 6-mode todo), sb grew the mechanism-hardening layer (ensure-infra, FROZEN assets, Windows FS-boundary, graceful degrade). Bidirectional drift continues until sb is the single root and ChewLingo consumes it.
-**Area:** program map + locked spine decisions + per-artifact verdicts + wave plan: [`docs/superpowers/specs/harness-rebase.md`](superpowers/specs/harness-rebase.md)
-**Prior:** unify verdict settled (never-merge off the table); five spine decisions locked 2026-07-08. Waves: (1) merge distill + check-docs-consistency promote + log distill; (2) commit/todo/triage + scale module + monorepo tier + adopt mode; (3) drain distill; then supervised `/super-bootstrap` rebase run against ChewLingo + Δ audit. Each artifact rides the normal card→route pipeline; the spec is the map, not a bypass.
 
 ### GAP-003 — harness-collab-optimization effect unmeasured; criteria reshaped by entry-discipline
 
