@@ -127,16 +127,30 @@ Derive from plan body path mentions and task bullet paths. For `Implement` rows 
 - **Hard block** — **explicit naming is the only hard signal.** The row's own text names a still-open prerequisite: `blocked by {ID}`, `depends on`, `after {ID/feature} lands`, or a linked ID/path that resolves to another open row. Mechanical and high-confidence — the named target resolves to an open row or it doesn't. Hold it out of the board body; it surfaces only in the footer `pending unblock` count. (Distinct from a `user`-blocker row, which IS actionable — the action is "decide" — and stays in the body.)
 - **Soft coupling** — no explicit naming, but an *inferred* edge: shared artifact (same file / `Area:` / path — one row establishes it, another consumes it), or a convention / decision in one row's scope that shapes how another is correctly done. **Inference drives soft only, never hard** — a shared file is not "can't start," it means "sequence to avoid rework." Keep the row runnable in the body; lift the **upstream** row's Impact to `impactful` (§3) and seat it directly above the row it shapes — the convention comes first even though the shaped row never names it. Local pairwise only; never assemble a full chain order.
 
+**Fan-out (leverage signal — reverse of the coupling edges above).** For each
+need-me row X, `fanout(X)` = the count of other open rows that X unblocks:
+
+- **+1 per hard-blocked row that names X** — a row held out of the body by the
+  Coupling gate whose named prerequisite resolves to X. (These are the rows
+  behind the `pending unblock` footer count; fan-out is the reason to do X.)
+- **+1 per soft-coupled row X shapes** — a body row whose correct execution
+  depends on X's artifact / convention (X is the upstream of the soft edge).
+
+`fanout` is rendered as the `unblocks` column. `0` is valid and shown — not every
+need-me card unblocks downstream, but it still needs attention. Fan-out is a
+**computed** count, never an opinion.
+
 Where neither signal fires, treat the row as independent — a missed inference self-corrects next scan; a frozen stamp would not.
 
-Then rank the body rows (hard-blocked held out). For all modes (sub-verb AND full — full mode has no separate "Next up" anymore):
+Then rank the body rows (hard-blocked held out). Within each need-me group (and for the `full` flat list), rank by these keys in order:
 
+0. **Fan-out desc** — higher `unblocks` first (do the card that releases the most downstream). Ties fall through to the keys below.
 1. **Impact desc** — `impactful` first, `quick-pop` second
 2. **Progress desc within Impact** — executing-rows with most-complete progress first (finish-what's-started bias)
 3. **Action-verb priority** — `Continue execute` > `Review` > `Manually verify` > `Approve spec` / `Decide` > `Implement` > `Write plan` > `Continue brainstorm` > `Deliberate` > `Apply` > `Cleanup` > `Triage`
 4. **Recency desc** — newest first (tiebreak)
 
-**Soft-coupling adjacency** overrides these four keys locally: a soft-coupling upstream row ranks immediately above the row it shapes, even when the keys would separate them.
+**Soft-coupling adjacency** overrides these keys locally: a soft-coupling upstream row ranks immediately above the row it shapes, even when the keys would separate them.
 
 For `full` mode, render rows in this rank order (file column shows actual filename). No "Next up" block — user reads ranked list, picks.
 
