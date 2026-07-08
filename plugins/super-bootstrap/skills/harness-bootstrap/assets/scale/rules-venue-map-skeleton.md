@@ -47,9 +47,5 @@ This rule never overrides `{action, intent, stage}` from the shared classificati
 
 One map, two filters — never re-derived by hand:
 
-- **`/super-bootstrap:todo`** reads it **drainable vs need-me**: venues **T/S** →
-  the drainable count; **U** → *decide* (or *device* when a device modality gates
-  the phase); **P** → *probe*; `intent: Harness` → *harness*. The four need-me
-  groups are the board body; drainable is one count line.
-- **`/super-bootstrap:drain`** reads it **dispatch vs wall**: next-phase venue
-  ∈ {T, S} admits; {U, P} → skip & surface.
+- **`/super-bootstrap:todo`** reads it **drainable vs need-me** — its Lane split owns the venue→group mapping.
+- **`/super-bootstrap:drain`** reads it **dispatch vs wall** — its admission gate owns the venue→admit mapping.

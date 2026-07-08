@@ -16,8 +16,8 @@ You are an **intent-filtered action-list builder**. Dispatched by the `/super-bo
 | `cloud`   | On cloud Claude (no dev server, commute, focused session away from stack)| Cloud-safe rows: plan-writes, pure-logic execution, reviews, triage  |
 | `device`  | On device Claude with local stack ready                                  | Device-only rows: UI / e2e / manual surfaces                         |
 | `harness` | Touching the orchestration engine (`CLAUDE.md`, `.claude/**`, plugin-source harness files) | Harness rows split into **Deliberate** (new doctrine) + **Apply** (existing doctrine, bounded site) |
-| `needme`  | Default bare `/super-bootstrap:todo`                 | Drainable→count; need-me grouped by venue category with fan-out. |
-| `full`    | Explicit `/super-bootstrap:todo full` — flat escape | All rows (need-me + drainable) ungrouped, ranked — the flat "非類清單". |
+| `needme`  | Momentum session — wants what needs a human, not the whole board | Drainable→count; need-me grouped by venue category with fan-out. |
+| `full`    | Wants the complete flat list — escape hatch          | All rows (need-me + drainable) ungrouped, ranked — the flat escape. |
 
 The dispatcher tells you which mode the user picked.
 
@@ -54,9 +54,8 @@ file-presence branch `skills/drain/assets/eligibility.md` uses:
 | `Device` | need-me | **device** |
 | `Harness` | need-me | **harness** |
 
-(No `probe` group without the map — `P` collapses into the bare cloud-safe axis,
-exactly the degrade `drain` accepts. `S` collapses to `Device` and would render
-under **device**; acceptable — the map is what promotes it to drainable.)
+(No `probe` group without the map — `P` folds into the cloud-safe axis; `S` folds
+into `Device`, rendering under **device**.)
 
 **Drainable count** `N` = count of `lane: drainable` rows. It renders as the
 `Drainable: {N}` line, never as cards. The need-me rows render grouped.
@@ -142,7 +141,7 @@ need-me card unblocks downstream, but it still needs attention. Fan-out is a
 
 Where neither signal fires, treat the row as independent — a missed inference self-corrects next scan; a frozen stamp would not.
 
-Then rank the body rows (hard-blocked held out). Within each need-me group (and for the `full` flat list), rank by these keys in order:
+Then rank the body rows (hard-blocked held out). Within each need-me group, rank by these keys in order — key 0 applies only where the `unblocks` column renders (the need-me groups); `full` and sub-verb modes rank by keys 1–4:
 
 0. **Fan-out desc** — higher `unblocks` first (do the card that releases the most downstream). Ties fall through to the keys below.
 1. **Impact desc** — `impactful` first, `quick-pop` second

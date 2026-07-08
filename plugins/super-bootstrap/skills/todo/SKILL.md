@@ -13,7 +13,7 @@ Default render is the **need-me board** — momentum-driven, not a kanban: auton
 | Invocation        | Behavior                                                                                                                                                                                                |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/super-bootstrap:todo`        | **Default.** Render the **need-me board** (drainable→count, need-me grouped by venue category with fan-out). No mode-picker, no MCQ — dispatch immediately.                                            |
-| `/super-bootstrap:todo full`   | Flat escape — every row (need-me + drainable), ungrouped, ranked (the flat 非類清單).                                                                                                                    |
+| `/super-bootstrap:todo full`   | Flat escape — every row (need-me + drainable), ungrouped, ranked.                                                                                                                    |
 | `/super-bootstrap:todo discuss`| Decision shape — specs awaiting user approval, brainstorming-style specs needing dialogue, backlog items flagged for user decision, any row whose blocker is "user". **Macro header on top.**          |
 | `/super-bootstrap:todo cloud`  | Cloud-safe filter — plan-writes for approved specs, executing plans on pure-logic surfaces, review-stage reads, doc cleanup, backlog triage. **Macro header on top.**                                  |
 | `/super-bootstrap:todo device` | Device-only filter — executing plans on UI / e2e / manual surfaces, manual verification of review-stage plans. **Macro header on top.**                                                                |
@@ -37,9 +37,8 @@ loads no file content, fires no `docs/**` path-scoped rule):
   sources and renders either the empty-state (`No active work…`) or the board.
 
 The gateway performs **no content read** of `docs/backlog.md`, specs, or plans —
-that is why the doc path-rules (`dimension-discipline`, `ssot-doc-link`,
-`venue-map`) no longer load in the gateway's context on `/todo`. All `docs/**`
-reads happen inside the subagent.
+all `docs/**` reads happen inside the subagent (no `docs/**` path-rule loads in
+the gateway's context).
 
 On bare `/super-bootstrap:todo`:
 
