@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-014` · `DEBT-009` · `GAP-021` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-014` · `DEBT-010` · `GAP-021` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### DEBT-010 — commit-channel.sh's word-boundary `git commit` re-check shares BUG-014's over-match class; may be acceptable-by-design (opposite safe-fail bias)
+
+**Logged:** 2026-07-08 · **Source:** surfaced by the audit-harness-edits probe during the BUG-014 fix, flagged out-of-diff-scope
+**Problem:** `commit-channel.sh:24` (`plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/commit-channel.sh`) uses a word-boundary per-line grep matcher for its in-script `git commit` re-check: `grep -Eq '(^|[^[:alnum:]_-])git[[:space:]]+([^[:space:]]+[[:space:]]+)*commit([[:space:]]|$|;|&)'` — the same over-match class BUG-014 just fixed in sibling `docsync-gate.sh` (resolved to a command-position-anchored bash `[[ =~ ]]` matcher with `[:blank:]` gaps, marker v4, commit `b9f3e36`). commit-channel over-matches: a Bash command whose text merely contains a `git commit`-shaped substring (e.g. a heredoc/quoted line writing a script that embeds "git commit") trips its single-channel deny, blocking a legitimate non-commit worker call. Triage nuance: commit-channel has the OPPOSITE risk profile from docsync-gate — its stated safe-fail design deliberately accepts over-match ("a rare over-match denies a non-commit worker call, never lets a commit through"), so this MAY be acceptable-by-design rather than a defect. docsync-gate v4's own comment documents the divergence as deliberate ("Sibling commit-channel.sh matches the same verb with the opposite bias — the divergence is deliberate, don't align them") — any fix must reconcile with that, not blindly port v4's matcher over.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/commit-channel.sh:24`
+**Prior:** open triage question is whether the safe-fail bias truly makes the false-deny acceptable as-is, or whether commit-channel should adopt docsync-gate v4's command-position anchor despite the documented-deliberate divergence — triage decides, don't assume alignment is the fix.
 
 ### DEBT-009 — classify-actionable's Action-verb intent map has no entry for "Start execute"; verb-map lookup falls through where §b's per-source rule wouldn't
 
