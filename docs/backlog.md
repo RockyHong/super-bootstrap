@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-014` · `DEBT-008` · `GAP-021` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-014` · `DEBT-009` · `GAP-021` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### DEBT-009 — classify-actionable's Action-verb intent map has no entry for "Start execute"; verb-map lookup falls through where §b's per-source rule wouldn't
+
+**Logged:** 2026-07-08 · **Source:** surfaced by a GREEN-dry-run verification agent during todo need-me board work; off-topic to that scope, logged for separate handling
+**Problem:** `shared/classify-actionable.md` §b emits the action string `"Start execute: {filename}"` for a plan with all `- [ ]` unchecked (planning stage), but the "Action-verb intent map" table lists only `Continue execute` / `Resume` for the Cloud-OR-Device derive row — no `Start execute` entry. §b's own "Intent per cloud-safe derivation" text covers intent for this case, so nothing breaks today; but a consumer doing a literal verb-map lookup (not reading §b's per-source rule) finds no match and falls through to default.
+**Area:** `plugins/super-bootstrap/shared/classify-actionable.md` — Action-verb intent map table vs §b "Plan with all `- [ ]` unchecked" rule
+**Prior:** add a `Start execute` row to the intent map (or otherwise fold §b's derivation into the table) so a table-only lookup and §b's prose agree.
 
 ### BUG-013 — harness-grounding.sh PreToolUse additionalContext lacks permissionDecision; may be dead or expose subagent Write-corruption
 
