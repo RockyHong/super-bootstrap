@@ -16,26 +16,23 @@ the plugin so it keeps only project delta. Program map + locked decisions + per-
 
 ## Where it stands (verified, not aspirational)
 
-- **Done, committed, RELEASED (plugin v2.21.0, installed):** merge, log, check-docs-consistency
-  (Wave 1); commit, todo (Wave 2).
-- **Done, committed, UNRELEASED:** triage(+report) distill (`ef62c87`) and the scale module
-  (`e9fecd9`, today — opt-in earn-gated module in harness-bootstrap §2a-scale: `docs/parked.md` +
-  `docs/test-queue.md` container skeletons, `venue-map` rule (T/S/U/P phase→venue map — Wave 3
-  drain's interface), backlog fact-fields insert; classify-actionable §d; log agent parked-aware).
-  `main` is **3 commits ahead of origin, unpushed** — convention: push rides the next `/release`.
-- **Done, committed, UNRELEASED (2026-07-08 pickup session):** monorepo tier + adopt mode +
-  drain distill — Waves 2 and 3 COMPLETE. Trimmed process used (direct port, one cold audit per
-  batch, no synthetic RED / per-task review / plan docs): ~0.35M subagent tokens for all three.
-- **Remaining:** `/release` v2.22.0 (clears release debt below, pushes). Wave 4 — supervised
-  `/super-bootstrap` run against ChewLingo (materialized mode, diff+approve, adopt-mode deletions).
-  Wave 5 — `audit-harness-edits` on both repos + one wet card cycle each.
-- **Release debt (next `/release`, v2.22.0):** plugin.json `description` must be hand-updated to
-  mention triage/triage-report AND the scale module (release skill only syncs the marketplace
-  mirror); delete the two landed temporal plans (`2026-07-08-gap-017-triage-distill.md`,
-  `2026-07-08-gap-017-scale-module.md`) + their spec (`2026-07-08-gap-017-triage-distill-design.md`)
-  — deletion condition is "landed AND released", which the release satisfies; push. First real
-  `/super-bootstrap:triage {ID}` and first module-installed `/super-bootstrap:log` (parked lane)
-  post-release are wet verifies — anomaly → BUG card.
+- **Waves 1–3 COMPLETE, RELEASED (plugin v2.22.0, pushed, device cache updated):** merge, log,
+  check-docs-consistency (W1); commit, todo, triage(+report), scale module, monorepo tier, adopt
+  mode (W2); drain distill (W3). Final three shipped under the trimmed process (direct port, one
+  cold audit per batch, no synthetic RED / per-task review / plan docs): ~0.35M subagent tokens
+  total — vs 2.3M for the scale module alone under the old stack. Release debt cleared: plugin.json
+  description updated, temporal plans+spec deleted, all pushed.
+- **Wave-4 prerequisites DONE:** ChewLingo `.claude/settings.json` now has `superpowers` +
+  `super-bootstrap` flipped ON (uncommitted — the migration run's scaffold commit absorbs it).
+- **Remaining:** Wave 4 — supervised `/super-bootstrap` run **in a V:\ChewLingo session** (plugin
+  loads there on session start; materialized mode, diff+approve section-by-section, adopt-mode
+  deletions per-confirm). Wave 5 — `audit-harness-edits` on both repos + one wet card cycle each;
+  the first real `/super-bootstrap:triage {ID}` and first scale-module `/super-bootstrap:log`
+  (parked lane) double as wet verifies — anomaly → BUG card.
+- **Deferred (log as a GAP card if not absorbed by Wave 4/5):** journey-simulation upstream,
+  spec/plan/implement/review salvage (Surface-on-Gap refusal, design gate, evidence block),
+  model-tiering hooks — verdict rows exist in `harness-rebase.md`, no wave assigned; they are
+  NOT dups (root has no counterpart), so adopt mode leaves them as ChewLingo delta untouched.
 
 ## The cost pathology you are being asked to fix (measured, this repo's own sessions)
 
