@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-014` · `DEBT-010` · `GAP-021` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-014` · `DEBT-011` · `GAP-023` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,27 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-023 — CLAUDE.md § Dispatch doctrine has no transcription/prose-exact exception; SDD over-dispatches implementer subagents for plan-supplied exact-content edits
+
+**Logged:** 2026-07-08 · **Source:** token-cost retrospective after executing the todo need-me board via subagent-driven-development this session
+**Problem:** when a plan pre-specifies the exact edit text and the target is markdown / no-runtime, § Dispatch's "dispatch build per phase" composed with `subagent-driven-development` still routes the edit through a full implementer-subagent round trip — the dispatch prompt re-states the content, the subagent transcribes it, and returns a report, all resident in gateway context. Measured this session: the plan wrote every edit's exact text; 6 implementer subagents acted as pure transcribers. Cost exceeds an inline edit for ~zero added safety, since the plan already carries the content verbatim.
+**Area:** `CLAUDE.md` § Dispatch / § Development Workflow, composing with `superpowers:subagent-driven-development`
+**Prior:** add a transcription-grade carve-out parallel to GAP-019/GAP-020's — exact old/new text pre-specified + no-runtime target → inline edit, skip subagent dispatch; judgment-grade edits (shape left to implementer) keep full dispatch.
+
+### GAP-022 — commit-channel.sh's single-channel gate blocks SDD implementer subagents from committing; gateway must re-commit every dispatch, erasing the delegation benefit
+
+**Logged:** 2026-07-08 · **Source:** token-cost retrospective after executing the todo need-me board via subagent-driven-development this session
+**Problem:** `commit-channel.sh` (`plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/commit-channel.sh`) confines raw `git commit` to the commit agent + the main session/orchestrator — every other `agent_type` is denied with "Finish your task, report the work as built with the file list, and let the orchestrator fire /super-bootstrap:commit." This conflicts with `superpowers:subagent-driven-development`'s implementer-commits-its-own-work contract: this session, all 6 SDD implementer subagents were blocked at their commit step, and the gateway re-committed each one — so the token cost of dispatching them (edit + round-trip + report) was pure overhead over an inline edit, since the commit-delegation half of the benefit never lands. For exact-content/prose tasks this makes dispatch strictly more expensive than inline.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/commit-channel.sh` (single-channel commit gate) vs superpowers `subagent-driven-development`'s implementer-commits model — two harness layers never reconciled
+**Prior:** either extend commit-channel's allowed-agent list to admit SDD implementers, or design a batch/hand-back commit path so dispatch keeps its delegation benefit; triage decides which composition is correct.
+
+### DEBT-011 — docsync-gate.sh forces the doc-sync scan and git commit into two separate mandatory Bash calls; adds a per-commit round-trip tax plus chain-retry cost
+
+**Logged:** 2026-07-08 · **Source:** token-cost retrospective after executing the todo need-me board via subagent-driven-development this session
+**Problem:** `docsync-gate.sh`'s deny `$REMEDY` requires `docsync-scan.sh` to run "as its own Bash call, separate from the commit" — chaining scan `&&` commit in one call fails the gate. This session: ~10 commits × 2 calls, plus several retries where scan+commit were chained wrongly and got bounced.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/docsync-gate.sh` / `docsync-scan.sh` handshake
+**Prior:** the split may be a hard PreToolUse constraint (the hook fires pre-execution, so a chained `scan && commit` in one Bash call has no token written yet when the gate checks) rather than an arbitrary tax — triage to confirm whether it's addressable or accepted-by-design before proposing an atomic scan+commit path.
 
 ### DEBT-010 — commit-channel.sh's word-boundary `git commit` re-check shares BUG-014's over-match class; may be acceptable-by-design (opposite safe-fail bias)
 
