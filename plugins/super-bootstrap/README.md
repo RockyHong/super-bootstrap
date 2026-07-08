@@ -54,8 +54,8 @@ A single matching reason on either side decides.
 | `super-bootstrap` | inline | Orchestrator — owns the user thread + dispatch sequencing across runway / log / curation |
 | `harness-bootstrap` | inline | Phased scaffolding with mid-flow user steering |
 | `resolve-plugins` | inline + dispatch (Haiku, Phase 2.5 only) | 6-pool live queries + user-interactive diff confirm stay inline (gateway owns the thread); Phase 2.5 README-parse→digest split to `agents/plugin-digest.md` — mechanical extraction, Haiku-safe because Phase 3's trust-tier scoring + earn-right gate already judge the digest downstream |
-| `commit` | inline | Session-aware (transcript memory + doc-sync Q&A) |
-| `merge` | inline | Same context-aware shape as `commit`; lower freq doesn't pay for relay either |
+| `commit` | dispatch (Sonnet) + gateway lanes | Classification + doc-sync gate + message-gen off-gateway (semantic-drift detection sets the Sonnet floor); doc-sync resolution, push confirm, cycle handoff stay gateway-side (user-interactive, transcript-aware — the shell builds the session file list) |
+| `merge` | inline | Context-aware shape (session transcript decides absorption targets); lower freq doesn't pay for relay either |
 | `drain` | inline | Gateway orchestrator — owns the user thread, the wave loop, the halts. The per-item work IS the spawned `claude -p` subprocesses; the orchestration itself is gateway reasoning, not an Agent dispatch |
 | `release-init` | inline | Detection + Q&A + file generation throughout |
 | `check-docs-consistency` | inline | Single-pass scan by default (rung 1); scale rides the opt-in § Workflow Fan-Out — a Workflow launch from the invoking context, not an Agent dispatch |
