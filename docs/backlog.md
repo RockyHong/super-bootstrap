@@ -80,13 +80,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/commit-channel.sh:24`
 **Prior:** open triage question is whether the safe-fail bias truly makes the false-deny acceptable as-is, or whether commit-channel should adopt docsync-gate v4's command-position anchor despite the documented-deliberate divergence — triage decides, don't assume alignment is the fix.
 
-### DEBT-009 — classify-actionable's Action-verb intent map has no entry for "Start execute"; verb-map lookup falls through where §b's per-source rule wouldn't
-
-**Logged:** 2026-07-08 · **Source:** surfaced by a GREEN-dry-run verification agent during todo need-me board work; off-topic to that scope, logged for separate handling
-**Problem:** `shared/classify-actionable.md` §b emits the action string `"Start execute: {filename}"` for a plan with all `- [ ]` unchecked (planning stage), but the "Action-verb intent map" table lists only `Continue execute` / `Resume` for the Cloud-OR-Device derive row — no `Start execute` entry. §b's own "Intent per cloud-safe derivation" text covers intent for this case, so nothing breaks today; but a consumer doing a literal verb-map lookup (not reading §b's per-source rule) finds no match and falls through to default.
-**Area:** `plugins/super-bootstrap/shared/classify-actionable.md` — Action-verb intent map table vs §b "Plan with all `- [ ]` unchecked" rule
-**Prior:** add a `Start execute` row to the intent map (or otherwise fold §b's derivation into the table) so a table-only lookup and §b's prose agree.
-
 ### BUG-013 — harness-grounding.sh PreToolUse additionalContext lacks permissionDecision; may be dead or expose subagent Write-corruption
 
 **Logged:** 2026-07-08 · **Source:** surfaced during BUG-012 4-cell live probe investigation

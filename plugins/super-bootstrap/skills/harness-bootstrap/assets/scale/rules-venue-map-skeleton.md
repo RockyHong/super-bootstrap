@@ -27,7 +27,7 @@ Venue is derived fresh per read — never stored. Chain: the shared classificati
 | `raw` | Triage | **T** |
 | `triaged` | Implement | derive — § Modality overrides over `docs/superpowers/triage/{ID}-scope.md` |
 | `spec` | Write plan | **T** |
-| `plan` | Continue execute | derive — § Modality overrides |
+| `plan` | Execute | derive — § Modality overrides |
 | `review` | Review | **T** — manual-verification arm → **U** / **S** per Test-feel |
 
 ## Modality overrides

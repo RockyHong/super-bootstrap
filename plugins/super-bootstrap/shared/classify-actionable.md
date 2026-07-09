@@ -41,7 +41,7 @@ Single positive rule applied to every row before bucketing:
 2. **Spec §Success Criteria** (if linked spec exists) — explicit `manual verification`, `visual check`, `e2e pass` → device-only for the executing/review row
 3. **Phase verb** in derived action:
    - `Write plan` / `Approve spec` / `Triage` / `Extract` / `Doc-edit` / `Cleanup` → cloud-safe regardless of paths
-   - `Continue execute` / `Review` / `Implement` → derive per #1 + #2 (for `Implement` rows, skip the free-text keyword grep — read the triage scope.md as fields: `## Files` paths feed #1's path arms, and the `Test Strategy` field feeds #2 — `e2e` there → device-suspicion, `unit` → cloud-lean; the field's literal value never re-enters the keyword scan)
+   - `Start execute` / `Continue execute` / `Review` / `Implement` → derive per #1 + #2 (for `Implement` rows, skip the free-text keyword grep — read the triage scope.md as fields: `## Files` paths feed #1's path arms, and the `Test Strategy` field feeds #2 — `e2e` there → device-suspicion, `unit` → cloud-lean; the field's literal value never re-enters the keyword scan)
    - `Manually verify` / `E2E run` / `Smoke test` → device-only
 
 ### Default
@@ -57,7 +57,7 @@ Intent is determined by action verb before path/state rules.
 | `Approve spec`, `Decide`, `Continue brainstorm`, `Confirm`      | **Discuss**                  | User-decision shape — only user can resolve.                                 |
 | `Write plan`                                                    | **Cloud**                    | Plan author write is doc artifact, headless.                                 |
 | `Refine spec`, `Doc-edit`                                       | **Cloud**                    | Doc artifact, headless.                                                      |
-| `Continue execute`, `Resume`                                    | **Cloud OR Device** (derive) | Depends on paths + content per cloud-safe criterion.                         |
+| `Start execute`, `Continue execute`, `Resume`                   | **Cloud OR Device** (derive) | Depends on paths + content per cloud-safe criterion.                         |
 | `Review` (read diff of completed plan)                          | **Cloud**                    | Reading diff is headless.                                                    |
 | `Manually verify`, `E2E run`, `Smoke test`                      | **Device**                   | Real browser / device required.                                             |
 | `Triage` (backlog item, investigate-only)                       | **Cloud**                    | Investigate-only artifact, headless.                                         |
