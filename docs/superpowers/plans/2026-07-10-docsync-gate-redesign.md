@@ -50,11 +50,11 @@ Resolves the over-match class (a `git commit`-shaped substring inside a quoted a
 **Interfaces:**
 - Produces: a repo with no `docsync-gate`/`docsync-scan` hook files and no settings referencing them. The commit path now relies on the commit agent's gate-absent branch (already live).
 
-- [ ] **Step 1: Enumerate settings references** — grep `.claude/settings*.json` + the assets `*.hook.json` for `docsync-gate` / `docsync-scan`; list every registration.
-- [ ] **Step 2: Delete the four hook files** (2 source assets + 2 dogfood copies) and their settings/`.hook.json` entries.
-- [ ] **Step 3: Verify no dangling reference** — `grep -rn "docsync-gate\|docsync-scan\|docsync-token" .claude plugins` returns only intentional narration slated for later tasks (commit.md, SKILL.md, hooks-ensure-infra, README, tests) — no live settings/hook wiring.
-- [ ] **Step 4: Behavioral check** — dispatch a trivial commit through `/super-bootstrap:commit`; confirm it lands with no token file created (`test ! -f .git/docsync-token`) and no deny.
-- [ ] **Step 5: audit + ship** — `/audit-harness-edits`; ship-confirm; commit (`refactor(hooks): delete docsync-token gate — SSOT commit path (GAP-024)`).
+- [x] **Step 1: Enumerate settings references** — grep `.claude/settings*.json` + the assets `*.hook.json` for `docsync-gate` / `docsync-scan`; list every registration.
+- [x] **Step 2: Delete the four hook files** (2 source assets + 2 dogfood copies) and their settings/`.hook.json` entries. (Also deleted the obsolete `tests/docsync-hooks-e2e.sh` + renamed the L1 unit test to `commit-channel.test.sh` — deletion closure.)
+- [x] **Step 3: Verify no dangling reference** — `grep -rn "docsync-gate\|docsync-scan\|docsync-token" .claude plugins` returns only intentional narration slated for later tasks (commit.md, SKILL.md, hooks-ensure-infra, README, tests) — no live settings/hook wiring.
+- [x] **Step 4: Behavioral check** — dispatch a trivial commit through `/super-bootstrap:commit`; confirm it lands with no token file created (`test ! -f .git/docsync-token`) and no deny.
+- [x] **Step 5: audit + ship** — `/audit-harness-edits`; ship-confirm; commit (`refactor(hooks): delete docsync-token gate — SSOT commit path (GAP-024)`).
 
 ---
 

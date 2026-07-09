@@ -30,16 +30,6 @@
           {
             "type": "command",
             "if": "Bash(git commit *)",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-gate.sh\""
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "if": "Bash(git commit *)",
             "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/commit-channel.sh\""
           }
         ]
