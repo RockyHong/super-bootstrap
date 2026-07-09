@@ -40,14 +40,14 @@ Spec/plan locations: `docs/superpowers/specs/` and `docs/superpowers/plans/` (te
 The gateway orchestrates; it does not build. Inline lane = orchestration, reads, bounded live tweaks (aesthetic / config value, applied + checked in-app). Everything carrying a **propagation closure** — the edit plus every truth it must keep in sync — dispatches to a clean subagent. Judge by closure, not diff size: a one-line config tweak owns no closure → inline; a one-line fix that chains triage + multi-file reads + doc-sync has a closure → dispatch.
 
 - **Build** (within Implement) → dispatch per phase, gateway integrates + verifies between. Build is never a live tweak.
-- **Build inside a superpowers chain** (a `writing-plans` artifact in hand) → the chain's own executor governs — take its documented choice-point (`subagent-driven-development` / fallback, per the [topology map](docs/specs/superpowers-topology.md)); the lanes here carry envelope work outside a chain.
-- **Doc-sync scan** (envelope step) → dispatch the cold read across the § Doc Sync surface; gateway resolves findings with the user; writes land inline or dispatched by closure.
+- **Build inside a superpowers chain** (a `writing-plans` artifact in hand) → the chain's own executor governs — take its documented choice-point (`subagent-driven-development` / fallback, per the [topology map](docs/specs/superpowers-topology.md)); the lanes here carry envelope work outside a chain. **SDD carve-out:** subagent commits route through the commit door, so an SDD implementer implements + tests + reports (built + file list) and the gateway commits via `/super-bootstrap:commit` (doc-sync in-process). For free per-implementer commits, use the drain-worktree path — isolated commits, doc-sync deferred to the merge boundary.
+- **Doc-sync scan** (envelope step) → the commit door runs it in-process; the gateway resolves findings with the user; resolving writes land inline or dispatched by closure.
 - **Parallel within a phase, not across it** — N build sub-goals or N doc surfaces fan out together; build → doc-sync stays ordered (doc-sync needs the finished diff).
 - **Create-new-file subagents dispatch foreground** — a subagent tasked to CREATE a new harness/skill file runs foreground, not `run_in_background`: backgrounded, its new-file Write fails and the subagent stalls before writing. Editing an existing file and creating a non-harness file background cleanly.
 
 ## Doc Sync (non-negotiable)
 
-Named pipeline step — every route includes it between user review and commit. Dispatch the staleness scan to a clean subagent (§ Dispatch).
+Named pipeline step — every route includes it between user review and commit. The commit door (`/super-bootstrap:commit`) runs it in-process: the commit agent's semantic staleness scan returns `stale-docs` to the gateway, which resolves with the user before the commit lands. Coverage backstop: `/check-docs-consistency` (async, whole-repo).
 
 Before every commit, scan for prose describing behavior touched by the diff — `docs/` (specs, overview, techstack, backlog) **and behavior-narrating prose outside `docs/`: the root `README`, plus any manifest/description field the diff's behavior changes**. If any looks stale:
 
