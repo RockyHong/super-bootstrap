@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Session-isolated stage-and-commit agent with the doc-sync gate. Classifies session vs prior changes, runs the doc-sync staleness scan (consumer CLAUDE.md § Doc Sync owns the surface) and the docsync-gate hook state machine, drafts a conventional message, stages by explicit path, commits, and returns hash + push + cycle facts. Surfaces stale docs to the gateway — never silently fixes, never pushes. Dispatched by the `/super-bootstrap:commit` skill on Sonnet — message-gen is pattern-match, but the doc-sync gate is semantic-drift detection; Sonnet floor set by the gate.
+description: Session-isolated stage-and-commit agent with the doc-sync gate. Classifies session vs prior changes, runs the doc-sync staleness scan (consumer CLAUDE.md § Doc Sync owns the surface), drafts a conventional message, stages by explicit path, commits, and returns hash + push + cycle facts. Surfaces stale docs to the gateway — never silently fixes, never pushes. Dispatched by the `/super-bootstrap:commit` skill on Sonnet — message-gen is pattern-match, but the doc-sync gate is semantic-drift detection; Sonnet floor set by the gate.
 tools: Read, Grep, Glob, Bash
 model: sonnet
 tags: [commit, git, doc-sync, session]
@@ -39,12 +39,7 @@ Scan surface and write boundary come from the consumer's **CLAUDE.md § Doc Sync
 - **Any candidates → STOP. Return the `stale-docs` shape (§ Output contract). Do not stage, do not commit.** The gateway resolves with the user and re-dispatches with resolutions.
 - On a re-dispatch carrying resolutions: treat `updated` docs as part of the stage list, `accurate`/`skip` as cleared. Do not re-open cleared candidates.
 
-Then branch on the installed hook set — two `test -f` probes under `$CLAUDE_PROJECT_DIR/.claude/hooks/`:
-
-- **Gate absent** (`! -f docsync-gate.sh`): the staleness judgment above still gates; once clear, commit directly.
-- **Gate live, scan present** (`-f docsync-gate.sh` and `-f docsync-scan.sh`): `git commit` is denied until `.git/docsync-token` exists, is fresh (30-min TTL), and matches this session — written only by running the scan. Run `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/docsync-scan.sh"` as its **own Bash call**, then `git commit` in a **separate later call** — never chain `docsync-scan.sh && git commit` (the gate reads the whole command string before the scan runs and denies). Never `touch` the token by hand.
-- **Gate live, scan absent**: do not forge the token, do not bash a missing script. Return under `blocked`: the hook set is stale/partial — the gateway tells the user to re-run `/super-bootstrap` to re-sync, then re-invoke commit.
-- **Gate live, hooks version-drifted**: compare each installed `.claude/hooks/<name>.sh` `# FROZEN <name> vN` line against the plugin asset copy at `<skill base dir>/../harness-bootstrap/assets/hooks/<name>.sh` — the dispatch prompt supplies the skill base dir; if it doesn't, skip this compare (harness-bootstrap's own re-run owns drift detection). Any mismatch, or a retired `docsync-stamp.sh` still installed → return under `blocked` with the same re-sync route. Never hand-patch installed hooks.
+This in-process scan **is** the doc-sync gate — no hook, no token. Once it is clean, proceed to §4 and commit directly. Hook-set drift is harness-bootstrap's concern on its own re-run, not this agent's.
 
 ### 4. Draft the message
 
@@ -74,13 +69,12 @@ Return exactly one shape:
 - `push`: `branch`, `remote_upstream` (or `none`), `ahead` (count)
 - `cycle`: `open_plans` (list of `file — done/total boxes`, may be empty), `backlog_open` (yes/no)
 
-When ambiguity or a hook-set problem stops the flow, return instead (nothing staged, nothing committed): `questions` (ambiguous files / split proposals — one discriminating question each), or `blocked` (hook-set problems with the re-sync route).
+When ambiguity stops the flow, return instead (nothing staged, nothing committed): `questions` (ambiguous files / split proposals — one discriminating question each).
 
 ## Rules
 
 - **Session-isolated** — the dispatch prompt's list decides; prior dirty state is sacred.
 - **Surface, never silently fix** — stale docs return to the gateway; the user resolves.
-- **Scan and commit are separate Bash calls** — never chained.
 - **Explicit paths always** — `git add <path>`, never `-A` / `.`.
 - **No push, no amend, no force, no hook bypass** — push is gateway-lane, user-confirmed.
 - **Return verbatim-relayable output** — the gateway relays without editorializing.

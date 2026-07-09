@@ -10,11 +10,11 @@ Commits the changes this Claude session produced, leaving prior uncommitted work
 
 ## Execution
 
-1. **Assemble the dispatch prompt** — the session's changed-file list (from this conversation: what this session edited/wrote), any user-supplied message context (e.g. `/super-bootstrap:commit — explain the auth refactor`), today's date, and this skill's base directory (the agent derives the plugin's hook-asset root from it for the version-drift compare). The list is the agent's session-isolation ground truth — build it faithfully; a file you don't remember touching stays OFF the list (the agent returns it as a question if it matters).
+1. **Assemble the dispatch prompt** — the session's changed-file list (from this conversation: what this session edited/wrote), any user-supplied message context (e.g. `/super-bootstrap:commit — explain the auth refactor`), and today's date. The list is the agent's session-isolation ground truth — build it faithfully; a file you don't remember touching stays OFF the list (the agent returns it as a question if it matters).
 2. **Dispatch**: `Agent` tool, `subagent_type: "commit"`. Relay the agent's return verbatim — no editorializing.
 3. **Branch on the return shape** (`agents/commit.md` § Output contract):
    - **`stale-docs`** → resolve each candidate with the user (update / acknowledge-accurate / skip — never silently fix, never silently skip). Land approved doc edits (inline for bounded prose; dispatch by closure). Re-dispatch the agent with the same prompt **plus** per-candidate resolutions (`updated: <path>` → stage it; `accurate` / `skip` → cleared).
-   - **`questions` / `blocked`** → route to the user verbatim; act on the answer (re-dispatch, or re-run `/super-bootstrap` for a stale hook set).
+   - **`questions`** → route to the user verbatim; act on the answer, then re-dispatch with the clarification.
    - **`committed`** → proceed to push offer.
 4. **Push (on confirmation)** — from the return's `push` facts, present: branch → upstream, commits ahead. Ask: **"Push these now? (y / skip)"**. Push only on explicit yes (`git push <remote> <branch>`); skip by default on silence or decline. Never force, never unannounced.
 5. **Cycle handoff** — one line from the return's `cycle` facts; don't expand into a status table (that's `/super-bootstrap:todo`'s job):
@@ -27,7 +27,7 @@ Commits the changes this Claude session produced, leaving prior uncommitted work
 
 ## Rules
 
-- **Route work to the subagent; keep user lanes here.** Classification, the doc-sync scan, the docsync-gate token dance, message, stage, commit — all agent-side. Doc-sync resolution, push, handoff — gateway-side.
+- **Route work to the subagent; keep user lanes here.** Classification, the doc-sync scan, message, stage, commit — all agent-side. Doc-sync resolution, push, handoff — gateway-side.
 - **Session list is built here, honestly.** The gateway owns the transcript; the agent trusts the list. Uncertain files stay off it.
 - **Doc-sync round-trip, never bypass** — a `stale-docs` return always goes through the user before re-dispatch.
 - **Push on explicit yes only** — committed work is safe locally either way.

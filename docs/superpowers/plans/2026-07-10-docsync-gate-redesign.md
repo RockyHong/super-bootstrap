@@ -67,10 +67,10 @@ Resolves the over-match class (a `git commit`-shaped substring inside a quoted a
 - Consumes: nothing new.
 - Produces: a commit agent whose only doc-sync is the §3 semantic staleness scan → `stale-docs` return; commits directly once clean. No hook probes, no scan invocation, no token.
 
-- [ ] **Step 1: Rewrite §3** — keep the staleness-scan paragraph (34–40); replace the four hook-branch bullets (42–47) with a one-line close: once the scan is clean, stage and commit directly (no token, no scan script). Judgment-grade edit — draft against the spec's § Data flow, don't transcribe blindly.
-- [ ] **Step 2: Fix frontmatter + rules** — description: "…runs the doc-sync staleness scan (consumer CLAUDE.md § Doc Sync owns the surface), drafts a conventional message…" (drop the hook-state-machine clause). Remove the "Scan and commit are separate Bash calls" rule bullet.
-- [ ] **Step 3: Consistency check** — grep `commit.md` for `docsync-gate`/`docsync-scan`/`docsync-token`/`gate-absent` → zero hits.
-- [ ] **Step 4: audit + ship** — `/audit-harness-edits`; ship-confirm; commit (`refactor(commit): fold doc-sync into in-process scan, drop token dance (GAP-024)`).
+- [x] **Step 1: Rewrite §3** — keep the staleness-scan paragraph (34–40); replace the four hook-branch bullets (42–47) with a one-line close: once the scan is clean, stage and commit directly (no token, no scan script). Judgment-grade edit — draft against the spec's § Data flow, don't transcribe blindly.
+- [x] **Step 2: Fix frontmatter + rules** — description: "…runs the doc-sync staleness scan (consumer CLAUDE.md § Doc Sync owns the surface), drafts a conventional message…" (drop the hook-state-machine clause). Remove the "Scan and commit are separate Bash calls" rule bullet. (Closure also removed the now-orphaned `blocked` output shape, the version-drift compare, and the base-dir dispatch input — all fed by the deleted machinery — and synced the commit SKILL.md narration: "docsync-gate token dance" clause + the `blocked` branch + the base-dir assembly line.)
+- [x] **Step 3: Consistency check** — grep `commit.md` for `docsync-gate`/`docsync-scan`/`docsync-token`/`gate-absent` → zero hits.
+- [x] **Step 4: audit + ship** — `/audit-harness-edits`; ship-confirm; commit (`refactor(commit): fold doc-sync into in-process scan, drop token dance (GAP-024)`).
 
 ---
 
