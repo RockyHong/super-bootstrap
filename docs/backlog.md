@@ -38,26 +38,12 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `CLAUDE.md` § Development Workflow / writing-plans consumption + § Dispatch; upstream `superpowers:writing-plans` task-shape doctrine
 **Prior:** (a) scale each task's verification depth to its blast radius — centrality-scoped audit per `audit-harness-edits`' own doctrine rather than a uniform full-probe per task; (b) batch same-logical-change surfaces (narration across files) into one task/commit. Same carve-out pattern as GAP-019/GAP-020/GAP-023 — sb-side documented exception in routing prose, not an upstream change.
 
-### GAP-024 — doc-sync gate conflates scan-ran proof with docs-resolved judgment; shared token safe only because commit channel serializes (root of GAP-022 / DEBT-010 / DEBT-011 / DEBT-014)
-
-**Logged:** 2026-07-10 · **Source:** user re-anchor — elected to attack the design root directly rather than iterate on facet cards
-**Problem:** Two structural smells in the current `.git/docsync-token` mechanism. (1) SEMANTIC GAP — the token proves only "a scan ran in this session within 30 min"; it does NOT verify that docs were actually resolved/synced. The staleness judgment is externalized to the scanning agent's self-discipline and is unenforced, contradicting CLAUDE.md doc-sync doctrine ("gateway + user resolve, never silently fix/skip"). (2) SHARED MUTABLE STATE (Axiom VII) — the single mutable token is collision-safe only because `commit-channel.sh` serializes all commits to one channel. Multiple non-worktree dispatched agents in the same workspace would all write/consume the same token → overwrite + one-shot-consume race. This co-dependence is WHY widening the commit channel (GAP-022) is invariant-breaking: removing the serialization exposes the token collision `commit-channel.sh` currently prevents. Drain worktrees escape only because the gate exempts them entirely (doc-sync deferred to merge).
-**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/{docsync-gate.sh,docsync-scan.sh,commit-channel.sh}` (all FROZEN) + CLAUDE.md doc-sync doctrine + drain worktree free-commit contract. Root upstream of GAP-022, DEBT-010, DEBT-011, DEBT-014 — those are facets; resolution of this row may subsume them.
-**Prior:** separate concerns per the SoC the doctrine already implies — detection (mechanical, per-change, auto) split from judgment (explicit, gateway-owned review of scan results). Dissolves the shared-token serialization dependence and lets the commit-channel question (GAP-022) be answered without invariant risk. Route: brainstorming.
-
-### DEBT-014 — docs-only diffs still pay the full docsync-gate token dance
-
-**Logged:** 2026-07-08 · **Source:** token-cost retrospective on the BUG-014 session; observed committing the DEBT-010 backlog row (pure docs, zero behavior/runtime surface)
-**Problem:** committing a pure-docs diff (e.g. a backlog row) still requires the full `docsync-scan.sh` token-mint-then-commit dance — a docs-only diff has nothing behavioral to sync, so the doc-sync-scan gate is pure ceremony there.
-**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/docsync-gate.sh` + `docsync-scan.sh` + commit door
-**Prior:** exempt docs-only diffs (only `docs/**` / prose, no code/harness/behavior files) from the doc-sync-scan token requirement; nuance — the exemption must not let a behavior-narrating doc (README, manifest descriptions) drift silently, so scope tightly (e.g. `docs/backlog.md`/`docs/decisions.md` tracking-only prose) rather than blanket `docs/**`.
-
 ### DEBT-013 — no small-change lane: dispatch-per-phase overhead disproportionate on tiny diffs
 
 **Logged:** 2026-07-08 · **Source:** token-cost retrospective on the BUG-014 session (~10-line hook-regex fix; gateway ≥200k + subagents ~460k tokens)
-**Problem:** for a ~10-line fix, the pipeline still spun up a full doc-sync-scan subagent (74k tokens) plus per-commit agent dispatches, each re-reading context and reporting back. Dispatch-per-phase (CLAUDE.md § Dispatch, § Doc Sync's "dispatch the scan to a clean subagent" default) is proportionate for large work but heavy for a bounded small change with no propagation closure of its own.
-**Area:** `CLAUDE.md` § Dispatch + § Doc Sync + the envelope
-**Prior:** a "small-change lane" — diff under N lines touching ≤1 behavior surface inlines the doc-sync staleness check as a bounded gateway grep instead of a full-agent dispatch, and commits directly, rather than dispatching build/doc-sync/commit as separate agents; triage sizes N and the surface bound.
+**Problem:** for a ~10-line fix, the pipeline still dispatches build and commit per phase — each a subagent re-reading context and reporting back — proportionate for large work, heavy for a bounded small change with no propagation closure of its own. Doc-sync is no longer a separate dispatched subagent (it runs in-process in the commit door), so the residual is purely the dispatch-per-phase routing overhead on tiny diffs.
+**Area:** `CLAUDE.md` § Dispatch + the envelope
+**Prior:** a "small-change lane" — a diff under N lines touching ≤1 behavior surface commits directly via one gateway pass rather than dispatching build/commit as separate agents; triage sizes N and the surface bound.
 
 ### DEBT-012 — commit batching: propagation closure split across session-isolation into N commits
 
@@ -72,27 +58,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Problem:** when a plan pre-specifies the exact edit text and the target is markdown / no-runtime, § Dispatch's "dispatch build per phase" composed with `subagent-driven-development` still routes the edit through a full implementer-subagent round trip — the dispatch prompt re-states the content, the subagent transcribes it, and returns a report, all resident in gateway context. Measured this session: the plan wrote every edit's exact text; 6 implementer subagents acted as pure transcribers. Cost exceeds an inline edit for ~zero added safety, since the plan already carries the content verbatim.
 **Area:** `CLAUDE.md` § Dispatch / § Development Workflow, composing with `superpowers:subagent-driven-development`
 **Prior:** add a transcription-grade carve-out parallel to GAP-019/GAP-020's — exact old/new text pre-specified + no-runtime target → inline edit, skip subagent dispatch; judgment-grade edits (shape left to implementer) keep full dispatch.
-
-### GAP-022 — commit-channel.sh's single-channel gate blocks SDD implementer subagents from committing; gateway must re-commit every dispatch, erasing the delegation benefit
-
-**Logged:** 2026-07-08 · **Source:** token-cost retrospective after executing the todo need-me board via subagent-driven-development this session
-**Problem:** `commit-channel.sh` (`plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/commit-channel.sh`) confines raw `git commit` to the commit agent + the main session/orchestrator — every other `agent_type` is denied with "Finish your task, report the work as built with the file list, and let the orchestrator fire /super-bootstrap:commit." This conflicts with `superpowers:subagent-driven-development`'s implementer-commits-its-own-work contract: this session, all 6 SDD implementer subagents were blocked at their commit step, and the gateway re-committed each one — so the token cost of dispatching them (edit + round-trip + report) was pure overhead over an inline edit, since the commit-delegation half of the benefit never lands. For exact-content/prose tasks this makes dispatch strictly more expensive than inline.
-**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/commit-channel.sh` (single-channel commit gate) vs superpowers `subagent-driven-development`'s implementer-commits model — two harness layers never reconciled
-**Prior:** either extend commit-channel's allowed-agent list to admit SDD implementers, or design a batch/hand-back commit path so dispatch keeps its delegation benefit; triage decides which composition is correct.
-
-### DEBT-011 — docsync-gate.sh forces the doc-sync scan and git commit into two separate mandatory Bash calls; adds a per-commit round-trip tax plus chain-retry cost
-
-**Logged:** 2026-07-08 · **Source:** token-cost retrospective after executing the todo need-me board via subagent-driven-development this session
-**Problem:** `docsync-gate.sh`'s deny `$REMEDY` requires `docsync-scan.sh` to run "as its own Bash call, separate from the commit" — chaining scan `&&` commit in one call fails the gate. This session: ~10 commits × 2 calls, plus several retries where scan+commit were chained wrongly and got bounced.
-**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/docsync-gate.sh` / `docsync-scan.sh` handshake
-**Prior:** the split may be a hard PreToolUse constraint (the hook fires pre-execution, so a chained `scan && commit` in one Bash call has no token written yet when the gate checks) rather than an arbitrary tax — triage to confirm whether it's addressable or accepted-by-design before proposing an atomic scan+commit path.
-
-### DEBT-010 — commit-channel.sh's word-boundary `git commit` re-check shares BUG-014's over-match class; may be acceptable-by-design (opposite safe-fail bias)
-
-**Logged:** 2026-07-08 · **Source:** surfaced by the audit-harness-edits probe during the BUG-014 fix, flagged out-of-diff-scope
-**Problem:** `commit-channel.sh:24` (`plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/commit-channel.sh`) uses a word-boundary per-line grep matcher for its in-script `git commit` re-check: `grep -Eq '(^|[^[:alnum:]_-])git[[:space:]]+([^[:space:]]+[[:space:]]+)*commit([[:space:]]|$|;|&)'` — the same over-match class BUG-014 just fixed in sibling `docsync-gate.sh` (resolved to a command-position-anchored bash `[[ =~ ]]` matcher with `[:blank:]` gaps, marker v4, commit `b9f3e36`). commit-channel over-matches: a Bash command whose text merely contains a `git commit`-shaped substring (e.g. a heredoc/quoted line writing a script that embeds "git commit") trips its single-channel deny, blocking a legitimate non-commit worker call. Triage nuance: commit-channel has the OPPOSITE risk profile from docsync-gate — its stated safe-fail design deliberately accepts over-match ("a rare over-match denies a non-commit worker call, never lets a commit through"), so this MAY be acceptable-by-design rather than a defect. docsync-gate v4's own comment documents the divergence as deliberate ("Sibling commit-channel.sh matches the same verb with the opposite bias — the divergence is deliberate, don't align them") — any fix must reconcile with that, not blindly port v4's matcher over.
-**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/commit-channel.sh:24`
-**Prior:** open triage question is whether the safe-fail bias truly makes the false-deny acceptable as-is, or whether commit-channel should adopt docsync-gate v4's command-position anchor despite the documented-deliberate divergence — triage decides, don't assume alignment is the fix.
 
 ### BUG-013 — harness-grounding.sh PreToolUse additionalContext lacks permissionDecision; may be dead or expose subagent Write-corruption
 
