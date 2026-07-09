@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-014` · `DEBT-014` · `GAP-023` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-014` · `DEBT-014` · `GAP-024` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-024 — doc-sync gate conflates scan-ran proof with docs-resolved judgment; shared token safe only because commit channel serializes (root of GAP-022 / DEBT-010 / DEBT-011 / DEBT-014)
+
+**Logged:** 2026-07-10 · **Source:** user re-anchor — elected to attack the design root directly rather than iterate on facet cards
+**Problem:** Two structural smells in the current `.git/docsync-token` mechanism. (1) SEMANTIC GAP — the token proves only "a scan ran in this session within 30 min"; it does NOT verify that docs were actually resolved/synced. The staleness judgment is externalized to the scanning agent's self-discipline and is unenforced, contradicting CLAUDE.md doc-sync doctrine ("gateway + user resolve, never silently fix/skip"). (2) SHARED MUTABLE STATE (Axiom VII) — the single mutable token is collision-safe only because `commit-channel.sh` serializes all commits to one channel. Multiple non-worktree dispatched agents in the same workspace would all write/consume the same token → overwrite + one-shot-consume race. This co-dependence is WHY widening the commit channel (GAP-022) is invariant-breaking: removing the serialization exposes the token collision `commit-channel.sh` currently prevents. Drain worktrees escape only because the gate exempts them entirely (doc-sync deferred to merge).
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/{docsync-gate.sh,docsync-scan.sh,commit-channel.sh}` (all FROZEN) + CLAUDE.md doc-sync doctrine + drain worktree free-commit contract. Root upstream of GAP-022, DEBT-010, DEBT-011, DEBT-014 — those are facets; resolution of this row may subsume them.
+**Prior:** separate concerns per the SoC the doctrine already implies — detection (mechanical, per-change, auto) split from judgment (explicit, gateway-owned review of scan results). Dissolves the shared-token serialization dependence and lets the commit-channel question (GAP-022) be answered without invariant risk. Route: brainstorming.
 
 ### DEBT-014 — docs-only diffs still pay the full docsync-gate token dance
 
