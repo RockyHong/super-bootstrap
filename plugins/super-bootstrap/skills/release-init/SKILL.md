@@ -139,8 +139,6 @@ The generated skill should be clean markdown with no template syntax remaining.
 
 ### 9. Commit
 
-Doc-sync scan first when the gate is installed: if `.claude/hooks/docsync-scan.sh` exists, run `bash .claude/hooks/docsync-scan.sh` as its own Bash call and resolve any staleness it surfaces — the scan self-stamps the token the gate consumes. Where the gate isn't installed the script is absent → skip the scan, commit directly. Scan and commit are separate calls.
-
 ```bash
 git add .claude/skills/release/SKILL.md
 git commit -m "chore: add project release skill"
