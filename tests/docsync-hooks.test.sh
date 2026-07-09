@@ -11,6 +11,7 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 ASSETS="$REPO/plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks"
 GATE="$ASSETS/docsync-gate.sh"
 SCAN="$ASSETS/docsync-scan.sh"
+CHANNEL="$ASSETS/commit-channel.sh"
 
 pass=0; fail=0
 ok()   { pass=$((pass+1)); echo "  ok: $1"; }
@@ -101,6 +102,28 @@ rm -f "$TOKEN"
 out=$(run_gate "git commit -m x" "sess-A")
 check "deny msg has no touch/token escape hatch" bash -c "! echo \"\$0\" | grep -qi 'touch'" "$out"
 check "deny msg legitimizes scan-first flows" bash -c "echo \"\$0\" | grep -q 'docsync-scan.sh'" "$out"
+
+run_channel() { # <cmd-string> <agent_type> ; echoes channel stdout
+  local cmd="$1" agent="$2"
+  jq -cn --arg c "$cmd" --arg a "$agent" '{tool_input:{command:$c}, agent_type:$a}' \
+    | bash "$CHANNEL"
+}
+
+echo "== commit-channel: DEBT-010 — quoted substring must pass through =="
+out=$(run_channel 'echo "run git commit -m x inside this script"' "some-worker")
+check "DEBT-010: quoted git-commit substring -> allowed (not a real invocation)" allowed "$out"
+
+echo "== commit-channel: real invocation from worker is denied =="
+out=$(run_channel "git commit -m x" "some-worker")
+check "real git commit from worker -> denied" denied "$out"
+
+echo "== commit-channel: real invocation from commit agent passes =="
+out=$(run_channel "git commit -m x" "super-bootstrap:commit")
+check "real git commit from commit agent -> allowed" allowed "$out"
+
+echo "== commit-channel: real invocation from main passes =="
+out=$(run_channel "git commit -m x" "main")
+check "real git commit from main -> allowed" allowed "$out"
 
 echo
 echo "RESULT: $pass passed, $fail failed"

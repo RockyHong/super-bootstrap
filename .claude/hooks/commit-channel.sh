@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# FROZEN commit-channel v1 (A6 — single-channel commit guard).
+# FROZEN commit-channel v2 (A6 — single-channel commit guard; v2 command-position matcher, DEBT-010).
 # Primary filter: the `if: "Bash(git commit *)"` field on the merged settings
 # entry (commit-channel.hook.json). Defense-in-depth: the command is re-checked
 # in-script; anything that is not a `git commit` passes through untouched.
@@ -17,11 +17,15 @@ input="$(cat)"
 cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // empty')
 [ -z "$cmd" ] && exit 0
 
-# Match a `git commit` porcelain invocation (allows intervening global opts /
-# compound `&&` segments); `commit-graph` / `commit-tree` excluded via the
-# trailing boundary. Safe-fail: a rare over-match denies a non-commit worker
-# call, never lets a commit through.
-printf '%s' "$cmd" | grep -Eq '(^|[^[:alnum:]_-])git[[:space:]]+([^[:space:]]+[[:space:]]+)*commit([[:space:]]|$|;|&)' || exit 0
+# Match a `git commit` porcelain INVOCATION at command position (whole-command
+# start, or after ; & |), not a mention: bash `=~` anchors ^ to the whole command
+# and [:blank:] gaps keep the match on one line, so a `git commit` substring inside
+# a quoted arg / heredoc passes through untouched. Trailing boundary skips
+# commit-tree / commit-graph. The safety property is preserved: a real commit
+# invocation is always at command position, so it is still caught and routed to the
+# door; only non-commit mentions that used to false-deny now pass.
+_re='(^|[;&|])[[:blank:]]*git[[:blank:]]+([^[:space:]]+[[:blank:]]+)*commit([[:space:]]|$|;|&|\|)'
+[[ "$cmd" =~ $_re ]] || exit 0
 
 agent=$(printf '%s' "$input" | jq -r '.agent_type // "main"')
 case "$agent" in

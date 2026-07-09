@@ -31,11 +31,11 @@ Resolves the over-match class (a `git commit`-shaped substring inside a quoted a
 **Interfaces:**
 - Produces: `commit-channel.sh` v2 with a bash `[[ =~ ]]` command-position matcher mirroring `docsync-gate.sh` v4's `_re` (command-start or after `;`/`&`/`|`, `[:blank:]` gaps, trailing boundary skipping `commit-tree`/`-graph`). Note: `commit-channel`'s existing safe-fail bias (over-match denies a non-commit worker, never lets a commit through) is preserved — the anchor tightens the match, it does not flip the bias.
 
-- [ ] **Step 1: Write the failing test** — add to `tests/docsync-hooks.test.sh`: a case feeding `commit-channel.sh` stdin whose command contains a quoted `"git commit"` substring (not a real invocation) under a non-commit `agent_type`; assert it PASSES through (exit 0, no deny). Under current v1 grep matcher this fails (denies).
-- [ ] **Step 2: Run to verify it fails** — `bash tests/docsync-hooks.test.sh`; expect the new assertion RED.
-- [ ] **Step 3: Port the v4 anchor** — replace `commit-channel.sh`'s `grep -Eq '...'` matcher with the bash `[[ "$cmd" =~ $_re ]]` form from `docsync-gate.sh:47` (read it as the reference), keeping commit-channel's `command -v jq` guard and `agent_type` case. Apply to both source + dogfood copy. Bump `# FROZEN commit-channel v1` → `v2`.
-- [ ] **Step 4: Run to verify pass** — `bash tests/docsync-hooks.test.sh`; all assertions GREEN.
-- [ ] **Step 5: audit + ship** — `/audit-harness-edits` on the diff; ship-confirm; commit (`fix(hooks): commit-channel v2 — command-position matcher (DEBT-010)`).
+- [x] **Step 1: Write the failing test** — add to `tests/docsync-hooks.test.sh`: a case feeding `commit-channel.sh` stdin whose command contains a quoted `"git commit"` substring (not a real invocation) under a non-commit `agent_type`; assert it PASSES through (exit 0, no deny). Under current v1 grep matcher this fails (denies).
+- [x] **Step 2: Run to verify it fails** — `bash tests/docsync-hooks.test.sh`; expect the new assertion RED.
+- [x] **Step 3: Port the v4 anchor** — replace `commit-channel.sh`'s `grep -Eq '...'` matcher with the bash `[[ "$cmd" =~ $_re ]]` form from `docsync-gate.sh:47` (read it as the reference), keeping commit-channel's `command -v jq` guard and `agent_type` case. Apply to both source + dogfood copy. Bump `# FROZEN commit-channel v1` → `v2`.
+- [x] **Step 4: Run to verify pass** — `bash tests/docsync-hooks.test.sh`; all assertions GREEN.
+- [x] **Step 5: audit + ship** — `/audit-harness-edits` on the diff; ship-confirm; commit (`fix(hooks): commit-channel v2 — command-position matcher (DEBT-010)`).
 
 ---
 

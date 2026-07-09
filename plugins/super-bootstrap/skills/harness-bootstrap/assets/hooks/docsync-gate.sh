@@ -42,8 +42,7 @@ cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // empty')
 # trips — a rare, accepted miss under the bias below.) Trailing boundary skips
 # commit-tree/-graph. Defense-in-depth: missing an exotic form (subshell /
 # newline-split) is acceptable; a false deny blocking unrelated Bash work is the
-# harm here. Sibling commit-channel.sh matches the same verb with the opposite
-# bias (safe-fail over-match) — the divergence is deliberate, don't align them.
+# harm here.
 _re='(^|[;&|])[[:blank:]]*git[[:blank:]]+([^[:space:]]+[[:blank:]]+)*commit([[:space:]]|$|;|&|\|)'
 [[ "$cmd" =~ $_re ]] || exit 0
 
