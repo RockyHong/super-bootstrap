@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-014` · `DEBT-014` · `GAP-024` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-014` · `DEBT-014` · `GAP-025` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-025 — writing-plans hard-codes uniform max-ceremony per task and sizes tasks by surface-group rather than logical-change-unit
+
+**Logged:** 2026-07-10 · **Source:** executing GAP-024 8-task doc-sync-gate-redesign plan via subagent-driven-development this session
+**Problem:** Two distinct axes. (1) Per-task verification depth not scaled to blast radius — `audit-harness-edits` already supports a centrality-scoped light-pass (used correctly on T2), but the plan hard-coded a uniform full `/audit-harness-edits` into every task's Step 5. Behavior-critical tasks T1 (commit-channel matcher) and T3 (commit-agent doctrine) each had their cold audit catch a real closure miss; narration/cleanup tasks T4/T5/T7 (hook-count prose across README ×2, plugin.json, marketplace mirror, release) and T8 (backlog + temporal-artifact cleanup) carried the same max-ceremony at near-zero blast radius. (2) Tasks sized by surface-group (one task per file cluster) rather than logical-change-unit — "reconcile prose to the 2-hook reality" spanning 3 file clusters became 3 task-cycles + 3 commits + 3 ship-confirms instead of 1. Opposite direction from DEBT-013 (small change over-dispatched into a full pipeline — this is a large change over-decomposed into uniform-ceremony sub-tasks); distinct facets from GAP-018 (route-line sizing by work type), GAP-020 (SDD re-review regardless of fix grade), GAP-023 (dispatch transcription carve-out).
+**Area:** `CLAUDE.md` § Development Workflow / writing-plans consumption + § Dispatch; upstream `superpowers:writing-plans` task-shape doctrine
+**Prior:** (a) scale each task's verification depth to its blast radius — centrality-scoped audit per `audit-harness-edits`' own doctrine rather than a uniform full-probe per task; (b) batch same-logical-change surfaces (narration across files) into one task/commit. Same carve-out pattern as GAP-019/GAP-020/GAP-023 — sb-side documented exception in routing prose, not an upstream change.
 
 ### GAP-024 — doc-sync gate conflates scan-ran proof with docs-resolved judgment; shared token safe only because commit channel serializes (root of GAP-022 / DEBT-010 / DEBT-011 / DEBT-014)
 
