@@ -36,9 +36,9 @@ echo "== commit-channel: real invocation from worker is denied =="
 out=$(run_channel "git commit -m x" "some-worker")
 check "real git commit from worker -> denied" denied "$out"
 
-echo "== commit-channel: real invocation from commit agent passes =="
+echo "== commit-channel: no commit-agent carve-out — a *:commit subagent is denied =="
 out=$(run_channel "git commit -m x" "super-bootstrap:commit")
-check "real git commit from commit agent -> allowed" allowed "$out"
+check "*:commit subagent -> denied (gateway-inline model, no commit agent)" denied "$out"
 
 echo "== commit-channel: real invocation from main passes =="
 out=$(run_channel "git commit -m x" "main")

@@ -31,13 +31,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### DEBT-019 — commit-channel: dead commit-agent allow branch + stale reason string (post-GAP-028 cleanup)
-
-**Logged:** 2026-07-11 · **Source:** GAP-028 residual, deferred by user lean 2026-07-11
-**Problem:** commit-channel hook (skeleton + dogfood copies) still carries a `commit|*:commit` allow branch and a reason string naming "commit agent" — both dead after GAP-028 restructured the commit door to gateway-inline. Hook passes correctly (gateway commits as main session), so this is cleanup debt: drop the dead allow branch, fix the reason string, bump FROZEN version v2→v3. Pulls `tests/commit-channel.test.sh` (currently asserts commit-agent→allowed) and dogfood/skeleton drift-sync.
-**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/commit-channel.sh`, `.claude/hooks/commit-channel.sh`, `tests/commit-channel.test.sh`
-**Prior:** drop the `commit|*:commit` allow branch + stale reason string, bump FROZEN v2→v3, update test assertions, sync dogfood and skeleton copies in the same closure.
-
 ### GAP-027 — drain confirm-gate runs at full ceremony for single-item waves; no proportionality short-circuit
 
 **Logged:** 2026-07-10 · **Source:** GitHub issue #15, super-bootstrap 2.22.0, filed 2026-07-10

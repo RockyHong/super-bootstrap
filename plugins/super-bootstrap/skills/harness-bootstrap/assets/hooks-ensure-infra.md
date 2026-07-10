@@ -46,7 +46,7 @@ already clean, nothing to do.
 
 Existence alone is not enough: an upstream fix to a frozen script must reach repos
 that already have an older copy. Each frozen script carries a version marker on its
-second line — `# FROZEN <name> vN` (e.g. `# FROZEN commit-channel v2`). The
+second line — `# FROZEN <name> vN` (e.g. `# FROZEN commit-channel v3`). The
 present-check compares the **installed** copy's marker against the **asset's** marker
 and re-copies on any mismatch (missing, older, or byte-differing):
 

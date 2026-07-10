@@ -1,5 +1,5 @@
 {
-  "_comment": "FROZEN commit-channel PreToolUse guard (A6). hooks-ensure-infra.md MERGES this single entry into the consumer's .claude/settings.json hooks.PreToolUse array — never overwrites the file or other hooks. The `if` field filters to Bash calls whose command matches `git commit *`; the script re-checks and gates by agent_type (commit agent + main pass, other subagents are routed to /super-bootstrap:commit). Command path is $CLAUDE_PROJECT_DIR-relative so it resolves from any cwd inside the repo.",
+  "_comment": "FROZEN commit-channel PreToolUse guard (A6). hooks-ensure-infra.md MERGES this single entry into the consumer's .claude/settings.json hooks.PreToolUse array — never overwrites the file or other hooks. The `if` field filters to Bash calls whose command matches `git commit *`; the script re-checks and gates by agent_type (main session passes; every subagent is routed to /super-bootstrap:commit). Command path is $CLAUDE_PROJECT_DIR-relative so it resolves from any cwd inside the repo.",
   "matcher": "Bash",
   "hooks": [
     {
