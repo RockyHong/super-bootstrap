@@ -31,13 +31,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### GAP-027 — drain confirm-gate runs at full ceremony for single-item waves; no proportionality short-circuit
-
-**Logged:** 2026-07-10 · **Source:** GitHub issue #15, super-bootstrap 2.22.0, filed 2026-07-10
-**Problem:** `/super-bootstrap:drain` runs its full ceremony (base sync → scan → classify → relation analysis → confirm-gate [y/N] round-trip) even when relation analysis resolves the eligible set to exactly one in-session item. The wave-of-one carve-out (`eligibility.md` §Inline / wave-of-one) already skips mkdir/worktree/claude -p for the lone item; the surrounding ceremony and confirm round-trip still run at full weight with no parallel-isolation payoff. Full ceremony with no parallelism benefit reads as bureaucratic and trains users to hand-work single items instead of routing through `/drain`, defeating the pickup lane. Design nuance: the confirm gate is also a consent point for autonomous phase-chain work, so skip-entirely vs collapse-to-one-line-consent is a real design choice — not purely mechanical overhead removal.
-**Area:** `plugins/super-bootstrap/skills/drain/SKILL.md` (§Shape steps 1-4, §Confirm gate); `plugins/super-bootstrap/skills/drain/assets/eligibility.md`
-**Prior:** when eligible set post-relation-analysis is a single in-session item, short-circuit to a collapsed "doing X in-session, ok?" rather than the full scan→confirm→spawn ceremony; triage decides skip-entirely vs one-line-consent and whether the consent-point role of the gate changes the answer.
-
 ### DEBT-017 — cloud-reachability of plugin-dir paths from dispatched subagents unvalidated (classify-actionable.md self-read)
 
 **Logged:** 2026-07-10 · **Source:** DEBT-016 self-read fix (commit 2afaac0) residual — flagged during harness audit + verification this session

@@ -43,7 +43,7 @@ The plugin's baseline gate is `intent == Cloud` (cloud-safe: phase produces a ve
 
 ## Inline / wave-of-one carve-out (skip the worktree)
 
-An eligible item can still skip the worktree claim — worktree isolation earns its cost only when the wave carries parallelism.
+Worktree isolation earns its cost only when the wave carries parallelism. Two ways a wave sheds it — one per-item (inline riders), one whole-wave (a wave of one):
 
 ```
 isInlineExecution(item):
@@ -51,17 +51,15 @@ isInlineExecution(item):
 ```
 
 ```
-rollInSession(wave):
-  inline       = [i for i in wave if isInlineExecution(i)]                  # triage sized it `inline`
-  dispatchable = [i for i in wave if not isInlineExecution(i)]              # remainder — worktree-bound by default
-  return inline
-       + (dispatchable if len(dispatchable) == 1                            # wave-of-one default
-                       and not user_asked_isolation
-          else [])
+rollInSession(wave):                                                       # per-item worktree-skip (multi-item wave)
+  return [i for i in wave if isInlineExecution(i)]                         # inline riders roll in-session; siblings take worktrees
+
+isSingleItemWave(wave):                                                    # whole-wave short-circuit
+  return len(wave) == 1
 ```
 
-- **`Execution: inline`** — the triage verdict already sized the item inline (deterministic fix-shape **and** self-contained closure; `triage` agent `§scope.md` tag schema). It stays in the eligible set (still surfaced), but skips the `mkdir` claim + `claude -p` phase dispatch — the gateway rolls it in-session in the main workspace. `SKILL.md §Confirm gate` renders it on the "roll in-session" line, not the dispatch table; `SKILL.md §Worktree warm` skips it entirely.
-- **Wave-of-one default** — after the `inline` items split out, if the remaining dispatchable wave resolves to exactly one item, that item defaults to in-session roll too — one item pays no worktree-isolation tax. Same admission-time branch as the `inline` split, not a new lane. The user can override with an explicit "isolate" to force a worktree. (`Execution: phased` items still dispatch — the pre-plan gate skips their named stages; only `inline` and the wave-of-one default skip the worktree.)
+- **`Execution: inline` (per-item, inside a multi-item wave)** — the triage verdict already sized the item inline (deterministic fix-shape **and** self-contained closure; `triage` agent `§scope.md` tag schema). It stays in the eligible set (still surfaced), but skips the `mkdir` claim + `claude -p` phase dispatch — the gateway rolls it in-session in the main workspace, alongside its worktree-bound siblings. `SKILL.md §Confirm gate` renders it on the "roll in-session" line, not the dispatch table; `SKILL.md §Worktree warm` skips it entirely. (`Execution: phased` items still dispatch — the pre-plan gate skips their named stages; only `inline` skips the worktree.)
+- **Wave-of-one (whole-wave short-circuit)** — when admission + relation analysis leave exactly one item, drain has no parallelism to offer, so it does not run drain at all: it short-circuits **before** the confirm gate, surfaces the one item, and hands it to the normal in-session pipeline (the standard single-card envelope — route by cluster, no drain machinery), then exits. No confirm-gate wave table, no worktree, no phase loop. The gateway offers "isolate" to force a drain worktree for the lone item. Fires at `SKILL.md §Shape` step 4 / `§Confirm gate`.
 
 ## Mislabel is fixed upstream, not overridden here
 

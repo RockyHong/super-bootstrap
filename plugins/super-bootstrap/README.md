@@ -17,7 +17,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `commit` — session-isolated, doc-sync-gated commit.
 - `merge` — absorb feature branches; aborts + surfaces on conflict.
 - `check-docs-consistency` — cross-references project docs for drift, stale references, contradictions; timestamped report to `.review/`, report-only.
-- `drain` — parallel-worktree auto-drain of the board; spawns one isolated `claude -p` per admissible item (venue-keyed when the scale module is wired, Cloud-safe fallback otherwise; single-item/inline waves roll in-session), each halts at its user wall.
+- `drain` — parallel-worktree auto-drain of the board; spawns one isolated `claude -p` per admissible item (venue-keyed when the scale module is wired, Cloud-safe fallback otherwise; a single-item wave hands off to the normal in-session pipeline, inline items roll in-session), each halts at its user wall.
 - `release-init` — one-shot; generates a project-level `/release` skill.
 
 ## Naming convention

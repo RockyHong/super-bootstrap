@@ -1,6 +1,6 @@
 ---
 name: drain
-description: "Parallel-worktree auto-drain of the board. One `/super-bootstrap:drain` turn = scan the pipeline sources (specs/plans/backlog, plus the scale module's test queue when present) → keep only admissible items → relation-analyze into a conflict-free wave → confirm with the user → spawn one isolated git worktree + headless `claude -p` per item, each resuming at its pipeline stage and running phase-by-phase to the next user wall, then halting. Single-item waves and inline-sized items roll in-session, no worktree. State lives in files; the next invocation cold-reads and picks the next wave. Merge is never automatic — it delegates to `/super-bootstrap:merge`. Sub-verbs: `status`, `release {id}`, `--dry-run`. Manual invocation only."
+description: "Parallel-worktree auto-drain of the board. One `/super-bootstrap:drain` turn = scan the pipeline sources (specs/plans/backlog, plus the scale module's test queue when present) → keep only admissible items → relation-analyze into a conflict-free wave → confirm with the user → spawn one isolated git worktree + headless `claude -p` per item, each resuming at its pipeline stage and running phase-by-phase to the next user wall, then halting. A single-item wave hands off to the normal in-session pipeline (drain offers no parallelism for one item); inline-sized items in a larger wave roll in-session, no worktree. State lives in files; the next invocation cold-reads and picks the next wave. Merge is never automatic — it delegates to `/super-bootstrap:merge`. Sub-verbs: `status`, `release {id}`, `--dry-run`. Manual invocation only."
 disable-model-invocation: true
 tags: [drain, worktree, parallel, pipeline, superpowers]
 ---
@@ -35,7 +35,7 @@ Run in order; any HALT exits the turn with a §Halt summary.
 1. **Sync base.** Fast-forward / rebase the base branch (`git fetch` + `git rebase origin/{base}`) so worktrees branch from current head. Conflict → surface + exit.
 2. **Scan + classify.** Read `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md` (and `docs/test-queue.md` when present — scale module, skip if absent); derive each item's `{action, intent, stage}` per the **shared classification spec**: resolve the absolute path to `../../shared/classify-actionable.md` from the skill base directory (surfaced in the skill invocation as `Base directory for this skill: <abs path>`), then use the Read tool on that resolved absolute path (SSOT, also consumed by `/super-bootstrap:todo`). Classify EXACTLY per it. Then apply `assets/eligibility.md` to keep only the drain-eligible items — next-phase venue ∈ {T, S} when `.claude/rules/venue-map.md` is present, else the `intent == Cloud` fallback. Items whose next phase is a wall (venue U/P, or `Device`/`Discuss`) skip and surface.
 3. **Relation analysis + wave selection.** `assets/relations.md`. Output: current wave (disjoint orphans + chain-heads). Tails and conflicts defer.
-4. **Confirm gate.** §Confirm gate. Decline = clean exit — no worktrees, no claims.
+4. **Confirm gate.** §Confirm gate. Single-item wave → short-circuit to the normal pipeline (no gate rendered). Multi-item → render + confirm; decline = clean exit — no worktrees, no claims.
 5. **Spawn.** One subprocess per wave member — `assets/ensure-infra.md` (warm) → §Phase loop. Background dispatch; notification-driven.
 6. **Turn ends** after the wave is dispatched. User resolves walls; next invocation cold-reads and picks the next wave.
 
@@ -43,11 +43,13 @@ Run in order; any HALT exits the turn with a §Halt summary.
 
 Lane guards + admission gate. Full predicate: `assets/eligibility.md`. Summary: an item is eligible when it is not `Harness` (the orchestration engine never rides the autonomous queue), not already claimed (no `drain-{id}` worktree), not on an existing unmerged branch, not a foreign prefix (those route to `/super-bootstrap:log`) — **and** its next phase is drainable: venue ∈ {T, S} when `.claude/rules/venue-map.md` is wired, else `intent == Cloud`. `Device`/`Discuss` and venue U/P defer.
 
-**Inline / wave-of-one carve-out.** An `Execution: inline` item (triage sized it inline) or a lone dispatchable item (wave-of-one) stays eligible but skips the worktree — the gateway rolls it in-session. `assets/eligibility.md §Inline / wave-of-one carve-out`.
+**Inline / wave-of-one carve-out.** An `Execution: inline` item in a multi-item wave stays eligible but skips the worktree — rolled in-session alongside its worktree-bound siblings. A wave-of-one (the whole wave resolves to a single item) short-circuits drain entirely → the normal in-session pipeline (no worktree, no phase loop). `assets/eligibility.md §Inline / wave-of-one carve-out`.
 
 ## Confirm gate
 
-Render the current wave only — no future-wave preview, no deferred list. Items rolling in-session (`Execution: inline`, or the wave-of-one default — `assets/eligibility.md §Inline / wave-of-one carve-out`) render on a separate "roll in-session" line, never the dispatch table (they take no worktree):
+**Wave-of-one → no gate.** A wave that resolves to a single item never reaches this render: drain surfaces the one item and hands it to the normal in-session pipeline (the standard single-card envelope — route by cluster), then exits. The gateway offers "isolate" to force a drain worktree for the lone item. `assets/eligibility.md §Inline / wave-of-one carve-out`.
+
+For a multi-item wave, render the current wave only — no future-wave preview, no deferred list. `Execution: inline` items render on a separate "roll in-session" line, never the dispatch table (they take no worktree):
 
 ```
 /super-bootstrap:drain wave over {N} items.
@@ -56,7 +58,6 @@ Wave (worktree-bound):
   ...
 Roll in-session (no worktree):        # omit this line if none
   {id}  {stage}  {one-line action}
-{if the dispatch wave is a single item: "Wave: {id} rolls in-session by default; say \"isolate\" for a worktree."}
 OK to dispatch? [y/N]
 ```
 
@@ -66,7 +67,7 @@ Accept → §Worktree warm (skipped for in-session items — see there). Decline
 
 Atomic `mkdir .claude/worktrees/drain-{id}/` is the claim (first mkdir wins). `OWNED_BY` follows immediately. Branch: `drain/{id-lower}` (e.g. `drain/bug-12`). Full warm procedure (worktree add, settings copy, marker, dependency provisioning) + the hard-FS-boundary mechanism: `assets/parallel-worktrees.md`.
 
-**In-session items skip warm entirely.** An item rolling in-session (`Execution: inline`, or the wave-of-one default) gets no `mkdir` claim, no `OWNED_BY`, no `claude -p` launch — the gateway runs its phase chain (or the single edit, for `inline`) directly in the main workspace. The phase loop is the same shape with the repo root substituted for the worktree cwd.
+**In-session items skip warm entirely.** An `Execution: inline` item in a multi-item wave gets no `mkdir` claim, no `OWNED_BY`, no `claude -p` launch — the gateway runs the single edit directly in the main workspace, alongside its worktree-bound siblings. (A wave-of-one never reaches warm — it short-circuited to the normal pipeline at §Confirm gate.)
 
 ## Read discipline (gateway-side)
 
