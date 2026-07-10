@@ -60,17 +60,17 @@ into `Device`, rendering under **device**.)
 **Drainable count** `N` = count of `lane: drainable` rows. It renders as the
 `Drainable: {N}` line, never as cards. The need-me rows render grouped.
 
-## Classification — embedded shared spec
+## Classification — self-read shared spec
 
-Deriving each open item's `{action, intent, stage}` (plus `subgroup` on Harness rows) from the three core sources (specs / plans / backlog), plus the scale module's test queue when present, is the **shared classification spec**, embedded verbatim in your dispatch prompt (the `todo` skill reads it from `shared/classify-actionable.md`). It owns the harness pre-filter (applied before everything), the cloud-safe criterion, the action-verb intent map, and the per-source derivation rules — this agent applies it, never restates it. `intent` (Discuss / Cloud / Device / Harness) drives bucketing; `action` is the render string; `stage` is carried but unused here (a sibling consumer needs it).
+The dispatch prompt's `--- CLASSIFICATION SPEC (Read this FIRST) ---` block supplies the absolute path to `shared/classify-actionable.md`. **Use the Read tool on that path once at the start of §1 — no re-read.** Classify EXACTLY per it — do not paraphrase, do not substitute your own criteria. It owns the harness pre-filter (applied before everything), the cloud-safe criterion, the action-verb intent map, and the per-source derivation rules — this agent applies it, never restates it. `intent` (Discuss / Cloud / Device / Harness) drives bucketing; `action` is the render string; `stage` is carried but unused here (a sibling consumer needs it).
 
 ## Protocol
 
-Apply the embedded spec to all sources, then filter to the requested mode before rendering.
+Read the classification spec (supplied path), apply it to all sources, then filter to the requested mode before rendering.
 
 ### 1. Gather state (silent — do not output)
 
-Apply the embedded classification spec to every open item across specs / plans / backlog (plus the test queue when present). Hold results internally — each row carries its **action**, **intent** tag (Discuss / Cloud / Device / Harness), **stage**, and (Harness rows) **subgroup**.
+Read the classification spec from the path supplied in the dispatch prompt. Apply it to every open item across specs / plans / backlog (plus the test queue when present). Hold results internally — each row carries its **action**, **intent** tag (Discuss / Cloud / Device / Harness), **stage**, and (Harness rows) **subgroup**.
 
 **Pre-ID backlog (stale scaffold).** If `docs/backlog.md` `## Open` carries row content but no `BUG/DEBT/GAP-###` IDs (un-IDed bullets/headings), or the header's ID high-water-mark line is absent, the backlog predates the ID scaffold (older super-bootstrap version). Emit **one** Uncategorized row for the condition (not one per un-IDed item). Reason: `"backlog missing ID scaffold / high-water line — run /super-bootstrap:harness-bootstrap to re-plant IDs (rebuilds the counter from git history)."` Read-only — never mint IDs here; the re-plant write is harness-bootstrap's.
 

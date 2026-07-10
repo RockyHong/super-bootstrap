@@ -1,8 +1,8 @@
 # Classify Actionable — shared spec
 
-Single source of truth for deriving, from the pipeline sources (three core + the scale module's test queue when present), **each open item's `{action, intent, stage}`**. Embedded verbatim into a dispatch prompt by every caller that needs the classification — `todo` (then ranks + renders a board) and `drain` (then gates on `Cloud` + spawns per stage). One criterion, many callers: neither caller re-derives it.
+Single source of truth for deriving, from the pipeline sources (three core + the scale module's test queue when present), **each open item's `{action, intent, stage}`**. Self-read by every caller that needs the classification — `todo` (subagent Reads it at classify time, then ranks + renders a board) and `drain` (gateway Reads it inline, then gates on `Cloud` + spawns per stage). One criterion, many callers: neither caller re-derives it.
 
-> **Callers embed, never paraphrase.** Read this file and inject it verbatim into the dispatch prompt (same move `todo` uses for `assets/scaffolds.md`). Paraphrasing forks the taxonomy — the drift this shared home exists to prevent.
+> **Callers self-read, never paraphrase.** Read this file at classify time and apply it exactly — `todo`'s skill passes the resolved absolute path into the dispatch prompt for the subagent to Read; `drain`'s gateway Reads it inline. Paraphrasing forks the taxonomy — the drift this shared home exists to prevent.
 
 Three outputs per item:
 

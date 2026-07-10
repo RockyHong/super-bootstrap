@@ -58,7 +58,7 @@ Footer is computed by the `todo` agent at render time — it counts total open r
 
 The full protocol lives in the `todo` agent (`agents/todo.md`, `model: sonnet`, read-only tools).
 
-When dispatching the agent, the prompt **must embed two literals**: the **classification spec** (how to derive each item's `{action, intent, stage}`) and the **scaffold** for the chosen mode. Agent fills bracketed slots, cannot reach for alternative templates or paraphrase the criteria. Without the embedded literals, prior model training pulls classification + render toward generic shapes. Literal injection bypasses model judgment at both the classify and render steps.
+When dispatching the agent, the prompt **must embed the scaffold** literal for the chosen mode, and supply the **classification spec path** for the agent to self-read. Agent fills bracketed slots per spec; cannot reach for alternative templates or paraphrase the criteria. Without the scaffold literal, prior training pulls render toward generic shapes. Without the explicit path + "classify EXACTLY" instruction, training pulls classification toward generic criteria.
 
 **Dispatch prompt template:**
 
@@ -67,9 +67,9 @@ mode: {discuss | cloud | device | harness | full}
 
 Classify every open item per this spec, then render EXACTLY the scaffold below. Fill bracketed slots from your gathered + filtered + ranked rows per agent protocol. Do NOT change shape, do NOT swap to an alternative template, do NOT merge or split groups the scaffold separates. Omit a group's table only if its row count is zero (omit the sub-heading too).
 
---- CLASSIFICATION SPEC ---
+--- CLASSIFICATION SPEC (Read this FIRST) ---
 
-{shared/classify-actionable.md, copied verbatim}
+Before classifying, use the Read tool on this exact path: {classify_spec_path}. It is the classification SSOT. Classify EXACTLY per it — do not paraphrase, do not substitute your own criteria.
 
 --- SCAFFOLD ---
 
@@ -83,7 +83,7 @@ Classify every open item per this spec, then render EXACTLY the scaffold below. 
 Steps:
 
 1. Run the skip-gate (§Dispatch behavior). Confirmed dispatch → continue to step 2.
-2. Read `shared/classify-actionable.md` (plugin-shared, `../../shared/` from this SKILL.md — SSOT, also consumed by `/super-bootstrap:drain`) and `assets/scaffolds.md` (sibling), embed both verbatim in the dispatch prompt — the agent never fetches files outside the repo docs. Ranking + render live in the `todo` agent.
+2. Resolve the classification spec path: take the skill base directory (surfaced in the skill invocation as `Base directory for this skill: <abs path>`), append `../../shared/classify-actionable.md`. Read `assets/scaffolds.md` (sibling) and embed the chosen-mode section verbatim in the dispatch prompt. Pass the resolved absolute path as `{classify_spec_path}` — never the file contents. Ranking + render live in the `todo` agent.
 3. Build dispatch prompt per template above.
 4. `Agent` tool, `subagent_type: "todo"`, prompt = the built dispatch prompt.
 5. Agent returns rendered scaffold (or empty-state). **Relay verbatim.**

@@ -31,13 +31,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### DEBT-016 — /todo + /commit dispatch prompts embed large asset file bodies verbatim; gateway tokens per dispatch
-
-**Logged:** 2026-07-10 · **Source:** GitHub issue #14 (filed via /send-issue, spotify-radio session 2026-07-08)
-**Problem:** /super-bootstrap:todo and /super-bootstrap:commit read and embed full asset file bodies verbatim into their dispatch prompts (classify-actionable.md ~130 lines, scaffolds.md ~200 lines). Drift-safety is real but the cost is gateway tokens on every dispatch. Distinct from GAP-023 (SDD implementer subagents re-transcribing plan-supplied exact content) — this is the prompt-assembly step, not the subagent-dispatch decision.
-**Area:** `plugins/super-bootstrap/skills/todo/**`; `plugins/super-bootstrap/skills/commit/**`; dispatch prompt assembly
-**Prior:** path-reference the largest assets rather than embedding verbatim, trading per-dispatch token cost for a loader read — triage decides which assets are candidates and whether drift-safety survives the change.
-
 ### GAP-026 — /todo skip-gate covers only empty board; no skip when gateway already holds backlog context
 
 **Logged:** 2026-07-10 · **Source:** GitHub issue #14 (filed via /send-issue, spotify-radio session 2026-07-08)
