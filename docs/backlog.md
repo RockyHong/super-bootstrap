@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-015` · `DEBT-016` · `GAP-026` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-015` · `DEBT-017` · `GAP-026` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### DEBT-017 — cloud-reachability of plugin-dir paths from dispatched subagents unvalidated (classify-actionable.md self-read)
+
+**Logged:** 2026-07-10 · **Source:** DEBT-016 self-read fix (commit 2afaac0) residual — flagged during harness audit + verification this session
+**Problem:** DEBT-016's fix routes todo/drain subagents to Read `classify-actionable.md` at an absolute plugin-cache path outside the repo. Confirmed reachable locally; in cloud the plugin is runtime-installed at a different path and whether a dispatched subagent's Read tool can reach the runtime-installed plugin dir is untested. If it fails, `/super-bootstrap:todo` (session-opener) + `/super-bootstrap:drain` classification both break in cloud. Validation path: run `/super-bootstrap:todo` or `/drain` in a cloud/Routine session and confirm the todo agent's spec Read succeeds.
+**Area:** `plugins/super-bootstrap/skills/todo/SKILL.md`, `plugins/super-bootstrap/skills/drain/SKILL.md`, `plugins/super-bootstrap/agents/todo.md`, `plugins/super-bootstrap/shared/classify-actionable.md`
+**Prior:** per `claude-shape/cloud-run-surface.md`, committed project skills run in cloud and plugins are runtime-installed — plugin dir should be present, but Read-tool reachability from a dispatched subagent is the specific unvalidated point; if broken, fallback is embedding spec content inline in the skill/agent rather than a runtime Read.
 
 ### GAP-026 — /todo skip-gate covers only empty board; no skip when gateway already holds backlog context
 
