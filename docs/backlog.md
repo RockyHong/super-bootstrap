@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-015` · `DEBT-019` · `GAP-029` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-015` · `DEBT-019` · `GAP-030` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-030 — missing alignment-brief checkpoint at route→implement handoff; gateway enters build with wrong framing
+
+**Logged:** 2026-07-11 · **Source:** recurring sessions incl. GAP-027 this session (triage subagent emitted misframed A/B/C options; gateway also misframed before user corrected twice)
+**Problem:** No mechanism requires the gateway to state and get agreement on premise / problem context / proposed solution before building. Recurring pattern: gateway misreads the card or absorbs a misframed triage verdict and enters implementation, forcing the user to manually re-triage and redirect after build spend. Two candidate root causes: (a) missing gateway checkpoint at route→implement handoff; (b) triage agent's own framing discipline producing misframed verdict options upstream of the gateway. Fix likely belongs in both places. Ceremony concern: a confirm round-trip on every pickup risks replacing one cost with another — must scale to shape-familiarity (known-shape repeat → one-line brief; fuzzy/high-blast card → full premise/scenario/solution/concerns + explicit OK), consistent with the existing route-line "state, don't gate" rule.
+**Area:** `CLAUDE.md` § Development Workflow (route→implement transition); `plugins/super-bootstrap/skills/triage/SKILL.md`; `plugins/super-bootstrap/agents/triage.md`
+**Prior:** (a) add a scaled alignment-brief gate at route→implement: one-line for known-shape repeats, full premise/scenario/solution/concerns + explicit OK for fuzzy/high-blast; (b) tighten triage agent's framing discipline so verdict options are correctly framed before the gateway absorbs them — triage decides which lever (or both) carries the fix.
 
 ### DEBT-017 — cloud-reachability of plugin-dir paths from dispatched subagents unvalidated (classify-actionable.md self-read)
 
