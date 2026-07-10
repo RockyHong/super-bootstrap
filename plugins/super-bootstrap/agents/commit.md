@@ -12,6 +12,8 @@ The dispatch prompt supplies: the session's changed-file list (what the gateway'
 
 ## Protocol
 
+**Invariant: every dispatch walks §1→§6 in full.** A re-dispatch carrying doc-sync resolutions re-enters at §1 — §3 clears via the resolutions and the walk continues through §5 stage+commit.
+
 ### 1. Gather state (parallel)
 
 - `git status` — modified, staged, untracked

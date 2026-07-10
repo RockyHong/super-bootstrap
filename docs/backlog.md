@@ -31,12 +31,12 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### GAP-028 — commit-channel path-class: no lane for harness-only / non-narrated-path diffs; second-commit-lane admissibility gated on BUG-015
+### GAP-028 — commit-channel path-class: no lane for harness-only / non-narrated-path diffs; second-commit-lane design unblocked (BUG-015 resolved)
 
 **Logged:** 2026-07-10 · **Source:** DEBT-013 split (probe+design session) — axis-2 extracted so the transcription axis could close; cold-re-triaged with GAP-023
-**Problem:** the commit door dispatches unconditionally. On a diff whose staged paths the repo's doc-sync surface doesn't narrate (harness-only / non-narrated), the commit agent's §3 doc-sync scan catches nothing, so the whole commit dispatch is overhead. But any gateway-inline commit forks the SSOT commit path (GAP-024) that **open BUG-015** flags as load-bearing (commit-agent continuation reliability) — so whether a second commit lane is admissible at all cannot be settled while BUG-015 is open.
+**Problem:** the commit door dispatches unconditionally. On a diff whose staged paths the repo's doc-sync surface doesn't narrate (harness-only / non-narrated), the commit agent's §3 doc-sync scan catches nothing, so the whole commit dispatch is overhead. Any gateway-inline commit forks the SSOT commit path (GAP-024); commit-agent continuation reliability — the load-bearing prerequisite — is now hardened (BUG-015 resolved: continuation = fresh-dispatch invariant), so the second-commit-lane admissibility question can be settled.
 **Area:** `plugins/super-bootstrap/skills/commit/SKILL.md`, `plugins/super-bootstrap/agents/commit.md`; `CLAUDE.md` § Dispatch / § Doc Sync
-**Prior:** **ALREADY TRIAGED this session — verdict at `docs/superpowers/triage/GAP-028-notes.md`; do not re-triage.** Design pass coupled with BUG-015: resolve commit-channel reliability first, then decide skip-entirely vs a narrow non-narrated-path lane. The transcription axis (former DEBT-013 axis-1) is closed separately — do not reopen it here.
+**Prior:** **ALREADY TRIAGED this session — verdict at `docs/superpowers/triage/GAP-028-notes.md`; do not re-triage.** Prerequisite met: decide skip-entirely vs a narrow non-narrated-path lane. The transcription axis (former DEBT-013 axis-1) is closed separately — do not reopen it here.
 
 ### GAP-027 — drain confirm-gate runs at full ceremony for single-item waves; no proportionality short-circuit
 
@@ -58,13 +58,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Problem:** /super-bootstrap:todo's skip-gate fires only when the board is empty — no guard for the case where the gateway already holds the backlog in context and the ask is directly answerable from it. When that condition holds, the full board render is redundant ceremony. GAP-003 lists the empty-board fast path as a preserved win (already shipped); this is the sibling design gap for the held-context case.
 **Area:** `plugins/super-bootstrap/skills/todo/**`; `plugins/super-bootstrap/agents/todo.md`
 **Prior:** extend the skip-gate condition to also fire when the gateway already holds the backlog in context and the ask is directly answerable from it — triage decides the gate predicate and session-state signal.
-
-### BUG-015 — commit agent staged files but skipped git commit on SendMessage-resume continuation
-
-**Logged:** 2026-07-10 · **Source:** GAP-024 sweep, "commit A" — commit agent resumed via SendMessage by agentId after stale-docs skip resolution; staged 9 session files, returned without running git commit; HEAD unchanged; gateway recovered by committing staged files directly from the main session
-**Problem:** commit agent continued via SendMessage (same agentId) rather than a fresh Agent call ran ~2 tool-uses in 18s, git-added all staged files, then exited without executing `git commit`. The same SendMessage-resume mechanism worked correctly for an earlier commit this session (T6 — 605fbee landed). The skill's documented continuation protocol (SKILL.md step 3) is "re-dispatch the agent with the same prompt plus resolutions" — a fresh Agent call — not SendMessage-resume of the same agent instance. Resume was observed flaky (worked once, failed once). Since GAP-024 established the commit agent as the SSOT commit path for subagents, continuation reliability is load-bearing.
-**Area:** `plugins/super-bootstrap/skills/commit/SKILL.md` step 3; `plugins/super-bootstrap/agents/commit.md` continuation/re-dispatch path
-**Prior:** SendMessage-resume is off-protocol per SKILL.md step 3; triage decides — harden skill to support SendMessage-resume, explicitly document re-dispatch-fresh as the sole supported continuation (bounce SendMessage-resume at the call site), or treat as gateway usage error
 
 ### GAP-025 — writing-plans hard-codes uniform max-ceremony per task and sizes tasks by surface-group rather than logical-change-unit
 
