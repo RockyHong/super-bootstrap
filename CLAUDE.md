@@ -33,6 +33,15 @@ Once a superpowers entry (`systematic-debugging` / `brainstorming` / `writing-pl
 
 **User instructions override Superpowers defaults.** User can redirect any route.
 
+### Sizing — scale ceremony to the work's shape
+
+Route and writing-plans defaults assume worst-case — fuzzy-new work, a cold executor, every task equally central. Scale each down to the shape in hand; § Dispatch's closure valves scale dispatch grade the same way.
+
+- **Route depth keys on shape-familiarity, not cluster alone** — a known-shape repeat (the Nth same-shape artifact) routes lighter than its nominal cluster, skipping the discovery phases (brainstorming, full plan) a first-of-shape needs.
+- **Task boundary = logical-change-unit, not surface-group** — one change narrated across N file clusters is one task + one commit, not N. Batch same-logical-change surfaces.
+- **Per-task verify depth scales to surface centrality** — an ambient-loaded harness surface (CLAUDE.md, a rule, an agent) earns a full cold audit whatever the change size; an isolated low-centrality surface (a README line, a manifest field, a docs paragraph) earns a light pass.
+- **Same-session author == executor → reference, don't embed** — writing-plans embeds full file bodies for a cold executor; when the authoring session also executes, reference draft bodies by section instead of re-embedding full file text.
+
 Spec/plan locations: `docs/superpowers/specs/` and `docs/superpowers/plans/` (temporal). Persistent specs (kept after merge) go to `docs/specs/`.
 
 ## Dispatch — who holds each phase

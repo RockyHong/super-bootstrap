@@ -52,13 +52,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `plugins/super-bootstrap/skills/todo/**`; `plugins/super-bootstrap/agents/todo.md`
 **Prior:** extend the skip-gate condition to also fire when the gateway already holds the backlog in context and the ask is directly answerable from it — triage decides the gate predicate and session-state signal.
 
-### GAP-025 — writing-plans hard-codes uniform max-ceremony per task and sizes tasks by surface-group rather than logical-change-unit
-
-**Logged:** 2026-07-10 · **Source:** executing GAP-024 8-task doc-sync-gate-redesign plan via subagent-driven-development this session
-**Problem:** Two distinct axes. (1) Per-task verification depth not scaled to blast radius — `audit-harness-edits` already supports a centrality-scoped light-pass (used correctly on T2), but the plan hard-coded a uniform full `/audit-harness-edits` into every task's Step 5. Behavior-critical tasks T1 (commit-channel matcher) and T3 (commit-agent doctrine) each had their cold audit catch a real closure miss; narration/cleanup tasks T4/T5/T7 (hook-count prose across README ×2, plugin.json, marketplace mirror, release) and T8 (backlog + temporal-artifact cleanup) carried the same max-ceremony at near-zero blast radius. (2) Tasks sized by surface-group (one task per file cluster) rather than logical-change-unit — "reconcile prose to the 3-hook reality" spanning 3 file clusters became 3 task-cycles + 3 commits + 3 ship-confirms instead of 1. Opposite direction from DEBT-013 (small change over-dispatched into a full pipeline — this is a large change over-decomposed into uniform-ceremony sub-tasks); distinct facets from GAP-018 (route-line sizing by work type), GAP-020 (SDD re-review regardless of fix grade), GAP-023 (dispatch transcription carve-out).
-**Area:** `CLAUDE.md` § Development Workflow / writing-plans consumption + § Dispatch; upstream `superpowers:writing-plans` task-shape doctrine
-**Prior:** (a) scale each task's verification depth to its blast radius — centrality-scoped audit per `audit-harness-edits`' own doctrine rather than a uniform full-probe per task; (b) batch same-logical-change surfaces (narration across files) into one task/commit. Same carve-out pattern as GAP-019/GAP-020/GAP-023 — sb-side documented exception in routing prose, not an upstream change.
-
 ### BUG-013 — harness-grounding.sh PreToolUse additionalContext lacks permissionDecision; may be dead or expose subagent Write-corruption
 
 **Logged:** 2026-07-08 · **Source:** surfaced during BUG-012 4-cell live probe investigation
@@ -72,20 +65,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Problem:** Three GAP-017 verdicts marked ChewLingo artifacts as portable root capability but no wave shipped them: `journey-simulation` (portable mechanism, near-zero contamination — upstream whole); spec/plan/implement/review partial salvage (Surface-on-Gap refusal, design gate, evidence block → fold into superpowers route wrappers, not a parallel chain); model-tiering pre/posttool hooks (doctrine lives in served work-discipline lore; hooks are enforcement — upstream as root hook assets). They are not dups (root has no counterpart), so adopt mode correctly left them as ChewLingo delta — but the portable value stays single-consumer until upstreamed.
 **Area:** `plugins/super-bootstrap/skills/` (+ `harness-bootstrap` hook assets for model-tiering); source bodies live in `V:\ChewLingo` `.claude/skills/{journey-simulation,spec,plan,implement,review}` + its `.claude/hooks`
 **Prior:** same distill recipe as GAP-017 waves (direct port of production-proven text, consumer-safe rewrite, one cold audit per batch); triage decides ship-order or drop per artifact.
-
-### GAP-019 — writing-plans no-placeholder contract duplicates full file bodies even when the authoring session also executes
-
-**Logged:** 2026-07-08 · **Source:** GAP-017 triage-distill session, meta-harness pain surfaced mid-session
-**Problem:** writing-plans' no-placeholder contract (full file bodies embedded in the plan) assumes a cold executor. When the authoring session also executes, the embed is pure duplication and propagates typos — two observed instances (todo distill: 4 typos propagated; triage distill: ~350 lines duplicated).
-**Area:** CLAUDE.md § Development Workflow / writing-plans consumption (upstream skill is superpowers-owned; sb-side fix is a documented carve-out in sb's own routing prose)
-**Prior:** same-session carve-out — plans reference draft bodies by section instead of embedding full text when the authoring session also executes; already applied ad hoc in `docs/superpowers/specs/harness-rebase.md` § Distill route sizing for GAP-017's remaining waves (temporal, deleted on merge) — this generalizes the fix into the permanent routing prose.
-
-### GAP-018 — cluster routing sizes by work type only; no shape-knowledge valve for spec-driven repeat work
-
-**Logged:** 2026-07-08 · **Source:** GAP-017 triage-distill session, meta-harness pain surfaced mid-session
-**Problem:** Envelope's cluster routing (CLAUDE.md § Cluster routing) sizes depth by work TYPE only — new capability → cluster 2 whole (full brainstorming + full plan), regardless of how many same-shape artifacts already preceded it. The 5th same-shape distill artifact in GAP-017 was still forced through full ceremony; meta:ship ratio ran ~2:1 by lines. Shipped Execution tag (`inline|phased|full`) sizes backlog-card pickups but nothing sizes spec-driven repeat work at the route line.
-**Area:** CLAUDE.md § Cluster routing / envelope
-**Prior:** generalize pipeline sizing to the route line itself (a known-shape route may skip discovery phases) — beyond the per-program patch already in `docs/superpowers/specs/harness-rebase.md` § Distill route sizing (temporal, GAP-017-scoped, deleted on merge).
 
 ### GAP-003 — harness-collab-optimization effect unmeasured; criteria reshaped by entry-discipline
 
