@@ -48,7 +48,7 @@ The gateway orchestrates; it does not build. Inline lane = orchestration, reads,
 
 ## Doc Sync (non-negotiable)
 
-Named pipeline step — every route includes it between user review and commit. The commit door (`/super-bootstrap:commit`) runs it in-process: the commit agent's semantic staleness scan returns `stale-docs` to the gateway, which resolves with the user before the commit lands. Coverage backstop: `/check-docs-consistency` (async, whole-repo).
+Named pipeline step — every route includes it between user review and commit. The commit door (`/super-bootstrap:commit`) runs it in-process: the commit agent's semantic staleness scan returns `stale-docs` to the gateway, which resolves with the user before the commit lands. Coverage backstop: `/check-docs-consistency` (on-demand, whole-repo).
 
 Before every commit, scan for prose describing behavior touched by the diff — `docs/` (specs, overview, techstack, backlog) **and behavior-narrating prose outside `docs/`: the root `README`, plus any manifest/description field the diff's behavior changes**. If any looks stale:
 

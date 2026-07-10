@@ -38,13 +38,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `plugins/super-bootstrap/skills/commit/SKILL.md`, `plugins/super-bootstrap/agents/commit.md`; `CLAUDE.md` § Dispatch / § Doc Sync
 **Prior:** **ALREADY TRIAGED this session — verdict at `docs/superpowers/triage/GAP-028-notes.md`; do not re-triage.** Design pass coupled with BUG-015: resolve commit-channel reliability first, then decide skip-entirely vs a narrow non-narrated-path lane. The transcription axis (former DEBT-013 axis-1) is closed separately — do not reopen it here.
 
-### DEBT-018 — shipped claude-md-skeleton.md § Dispatch / § Doc Sync lag the dogfood root
-
-**Logged:** 2026-07-10 · **Source:** surfaced during the DEBT-013 fix — RED-probe found the shipped skeleton missing the transcription carve-out; broader lag noted while there
-**Problem:** the shipped skeleton (`harness-bootstrap/assets/claude-md-skeleton.md`) § Dispatch + § Doc Sync have drifted behind the dogfood root `CLAUDE.md`: the skeleton still narrates doc-sync as a separately-dispatched cold read (pre-in-process model), and lacks the SDD carve-out and the create-new-file-foreground rule. Downstream repos scaffolded from the skeleton get stale dispatch / doc-sync doctrine. (The transcription carve-out itself was synced this session; this is the residual lag.)
-**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` (§ Dispatch, § Doc Sync)
-**Prior:** **ALREADY TRIAGED this session — verdict at `docs/superpowers/triage/DEBT-018-scope.md`; do not re-triage.** Reconcile the skeleton to the dogfood root as the ahead-SSOT: per-delta, verify each dogfood evolution is shipped-behavior (propagate) vs dogfood-specific (skip). Auto-fix once scoped; no user fork expected.
-
 ### GAP-027 — drain confirm-gate runs at full ceremony for single-item waves; no proportionality short-circuit
 
 **Logged:** 2026-07-10 · **Source:** GitHub issue #15, super-bootstrap 2.22.0, filed 2026-07-10
