@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-015` · `DEBT-017` · `GAP-027` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-015` · `DEBT-018` · `GAP-028` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,20 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-028 — commit-channel path-class: no lane for harness-only / non-narrated-path diffs; second-commit-lane admissibility gated on BUG-015
+
+**Logged:** 2026-07-10 · **Source:** DEBT-013 split (probe+design session) — axis-2 extracted so the transcription axis could close; cold-re-triaged with GAP-023
+**Problem:** the commit door dispatches unconditionally. On a diff whose staged paths the repo's doc-sync surface doesn't narrate (harness-only / non-narrated), the commit agent's §3 doc-sync scan catches nothing, so the whole commit dispatch is overhead. But any gateway-inline commit forks the SSOT commit path (GAP-024) that **open BUG-015** flags as load-bearing (commit-agent continuation reliability) — so whether a second commit lane is admissible at all cannot be settled while BUG-015 is open.
+**Area:** `plugins/super-bootstrap/skills/commit/SKILL.md`, `plugins/super-bootstrap/agents/commit.md`; `CLAUDE.md` § Dispatch / § Doc Sync
+**Prior:** **ALREADY TRIAGED this session — verdict at `docs/superpowers/triage/GAP-028-notes.md`; do not re-triage.** Design pass coupled with BUG-015: resolve commit-channel reliability first, then decide skip-entirely vs a narrow non-narrated-path lane. The transcription axis (former DEBT-013 axis-1) is closed separately — do not reopen it here.
+
+### DEBT-018 — shipped claude-md-skeleton.md § Dispatch / § Doc Sync lag the dogfood root
+
+**Logged:** 2026-07-10 · **Source:** surfaced during the DEBT-013 fix — RED-probe found the shipped skeleton missing the transcription carve-out; broader lag noted while there
+**Problem:** the shipped skeleton (`harness-bootstrap/assets/claude-md-skeleton.md`) § Dispatch + § Doc Sync have drifted behind the dogfood root `CLAUDE.md`: the skeleton still narrates doc-sync as a separately-dispatched cold read (pre-in-process model), and lacks the SDD carve-out and the create-new-file-foreground rule. Downstream repos scaffolded from the skeleton get stale dispatch / doc-sync doctrine. (The transcription carve-out itself was synced this session; this is the residual lag.)
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` (§ Dispatch, § Doc Sync)
+**Prior:** **ALREADY TRIAGED this session — verdict at `docs/superpowers/triage/DEBT-018-scope.md`; do not re-triage.** Reconcile the skeleton to the dogfood root as the ahead-SSOT: per-delta, verify each dogfood evolution is shipped-behavior (propagate) vs dogfood-specific (skip). Auto-fix once scoped; no user fork expected.
 
 ### GAP-027 — drain confirm-gate runs at full ceremony for single-item waves; no proportionality short-circuit
 
@@ -66,26 +80,12 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `CLAUDE.md` § Development Workflow / writing-plans consumption + § Dispatch; upstream `superpowers:writing-plans` task-shape doctrine
 **Prior:** (a) scale each task's verification depth to its blast radius — centrality-scoped audit per `audit-harness-edits`' own doctrine rather than a uniform full-probe per task; (b) batch same-logical-change surfaces (narration across files) into one task/commit. Same carve-out pattern as GAP-019/GAP-020/GAP-023 — sb-side documented exception in routing prose, not an upstream change.
 
-### DEBT-013 — no small-change lane: commit-agent dispatch disproportionate on tiny / harness-only diffs
-
-**Logged:** 2026-07-08 · **Source:** token-cost retrospective on the BUG-014 session (~10-line hook-regex fix; gateway ≥200k + subagents ~460k tokens) · path-class axis folded from DEBT-015 (GitHub issue #14, spotify-radio session) 2026-07-10
-**Problem:** for a ~10-line fix, the pipeline still dispatches build and commit per phase — each a subagent re-reading context and reporting back — proportionate for large work, heavy for a bounded small change with no propagation closure of its own. Doc-sync is no longer a separate dispatched subagent (it runs in-process in the commit door), so the residual is purely the dispatch-per-phase routing overhead on tiny diffs. **Second axis (folded DEBT-015): path-class, not just size.** The commit agent's doc-sync scan is §3 of six steps in one dispatch (session-isolation, message, split-detect, commit ride along); on a diff whose staged paths the repo's doc-sync surface doesn't narrate, that scan can't catch — the whole dispatch is overhead regardless of line count. Highest-frequency commit class in an actively-tuned harness.
-**Area:** `CLAUDE.md` § Dispatch + the envelope; `plugins/super-bootstrap/skills/commit/SKILL.md`; `plugins/super-bootstrap/agents/commit.md`
-**Prior:** a "small-change lane" — a diff under N lines touching ≤1 behavior surface commits directly via one gateway pass rather than dispatching build/commit as separate agents; triage sizes N and the surface bound. **Path-class axis (folded DEBT-015):** a harness-only diff may commit inline regardless of size — but the safe predicate is "staged paths the repo's doc-sync surface doesn't narrate," a **per-repo fact**, NOT a static `.claude/**` glob: in the dogfood repo `techstack.md § Edit Discipline` + `CLAUDE.md § Rules` index do narrate `.claude/rules/` behavior, so a blind path-glob would occasionally skip a real catch. **Guard:** any gateway-inline branch forks the commit channel → reopens the GAP-024 "SSOT commit path" boundary that BUG-015 calls load-bearing → route through design/brainstorming, not auto-fix.
-
 ### DEBT-012 — commit batching: propagation closure split across session-isolation into N commits
 
 **Logged:** 2026-07-08 · **Source:** token-cost retrospective on the BUG-014 session (~10-line hook-regex fix; gateway ≥200k + subagents ~460k tokens)
 **Problem:** BUG-014's fix (asset matcher fix + verbatim propagation to this repo's git-tracked dogfood copy `.claude/hooks/docsync-gate.sh`) was one logical propagation-closure change, but session-isolation on the commit door forced it into 2 separate commits via 2 separate commit-agent dispatches (`b9f3e36` asset, `3a646fc` dogfood re-sync). The envelope/commit discipline has no "propagation-closure commit" concept bundling a source-harness edit with its verbatim installed/dogfood copy into one commit.
 **Area:** super-bootstrap commit door (`plugins/super-bootstrap/skills/commit`, `plugins/super-bootstrap/agents/commit.md`) + `CLAUDE.md` § Dispatch session-isolation rule
 **Prior:** when a diff includes a source harness file AND its verbatim installed/dogfood copy, consider allowing one commit instead of forcing session-isolated per-file dispatches; triage decides whether this is a defect or accepted-by-design (isolation is itself a safety property).
-
-### GAP-023 — CLAUDE.md § Dispatch doctrine has no transcription/prose-exact exception; SDD over-dispatches implementer subagents for plan-supplied exact-content edits
-
-**Logged:** 2026-07-08 · **Source:** token-cost retrospective after executing the todo need-me board via subagent-driven-development this session
-**Problem:** when a plan pre-specifies the exact edit text and the target is markdown / no-runtime, § Dispatch's "dispatch build per phase" composed with `subagent-driven-development` still routes the edit through a full implementer-subagent round trip — the dispatch prompt re-states the content, the subagent transcribes it, and returns a report, all resident in gateway context. Measured this session: the plan wrote every edit's exact text; 6 implementer subagents acted as pure transcribers. Cost exceeds an inline edit for ~zero added safety, since the plan already carries the content verbatim.
-**Area:** `CLAUDE.md` § Dispatch / § Development Workflow, composing with `superpowers:subagent-driven-development`
-**Prior:** add a transcription-grade carve-out parallel to GAP-019/GAP-020's — exact old/new text pre-specified + no-runtime target → inline edit, skip subagent dispatch; judgment-grade edits (shape left to implementer) keep full dispatch.
 
 ### BUG-013 — harness-grounding.sh PreToolUse additionalContext lacks permissionDecision; may be dead or expose subagent Write-corruption
 
