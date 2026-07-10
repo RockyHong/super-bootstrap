@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-015` · `DEBT-018` · `GAP-029` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-015` · `DEBT-019` · `GAP-029` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -31,12 +31,12 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### GAP-028 — commit-channel path-class: no lane for harness-only / non-narrated-path diffs; second-commit-lane design unblocked (BUG-015 resolved)
+### DEBT-019 — commit-channel: dead commit-agent allow branch + stale reason string (post-GAP-028 cleanup)
 
-**Logged:** 2026-07-10 · **Source:** DEBT-013 split (probe+design session) — axis-2 extracted so the transcription axis could close; cold-re-triaged with GAP-023
-**Problem:** the commit door dispatches unconditionally. On a diff whose staged paths the repo's doc-sync surface doesn't narrate (harness-only / non-narrated), the commit agent's §3 doc-sync scan catches nothing, so the whole commit dispatch is overhead. Any gateway-inline commit forks the SSOT commit path (GAP-024); commit-agent continuation reliability — the load-bearing prerequisite — is now hardened (BUG-015 resolved: continuation = fresh-dispatch invariant), so the second-commit-lane admissibility question can be settled.
-**Area:** `plugins/super-bootstrap/skills/commit/SKILL.md`, `plugins/super-bootstrap/agents/commit.md`; `CLAUDE.md` § Dispatch / § Doc Sync
-**Prior:** **ALREADY TRIAGED this session — verdict at `docs/superpowers/triage/GAP-028-notes.md`; do not re-triage.** Prerequisite met: decide skip-entirely vs a narrow non-narrated-path lane. The transcription axis (former DEBT-013 axis-1) is closed separately — do not reopen it here.
+**Logged:** 2026-07-11 · **Source:** GAP-028 residual, deferred by user lean 2026-07-11
+**Problem:** commit-channel hook (skeleton + dogfood copies) still carries a `commit|*:commit` allow branch and a reason string naming "commit agent" — both dead after GAP-028 restructured the commit door to gateway-inline. Hook passes correctly (gateway commits as main session), so this is cleanup debt: drop the dead allow branch, fix the reason string, bump FROZEN version v2→v3. Pulls `tests/commit-channel.test.sh` (currently asserts commit-agent→allowed) and dogfood/skeleton drift-sync.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/commit-channel.sh`, `.claude/hooks/commit-channel.sh`, `tests/commit-channel.test.sh`
+**Prior:** drop the `commit|*:commit` allow branch + stale reason string, bump FROZEN v2→v3, update test assertions, sync dogfood and skeleton copies in the same closure.
 
 ### GAP-027 — drain confirm-gate runs at full ceremony for single-item waves; no proportionality short-circuit
 
@@ -70,7 +70,7 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 **Logged:** 2026-07-08 · **Source:** token-cost retrospective on the BUG-014 session (~10-line hook-regex fix; gateway ≥200k + subagents ~460k tokens)
 **Problem:** BUG-014's fix (asset matcher fix + verbatim propagation to this repo's git-tracked dogfood copy `.claude/hooks/docsync-gate.sh`) was one logical propagation-closure change, but session-isolation on the commit door forced it into 2 separate commits via 2 separate commit-agent dispatches (`b9f3e36` asset, `3a646fc` dogfood re-sync). The envelope/commit discipline has no "propagation-closure commit" concept bundling a source-harness edit with its verbatim installed/dogfood copy into one commit.
-**Area:** super-bootstrap commit door (`plugins/super-bootstrap/skills/commit`, `plugins/super-bootstrap/agents/commit.md`) + `CLAUDE.md` § Dispatch session-isolation rule
+**Area:** super-bootstrap commit door (`plugins/super-bootstrap/skills/commit/SKILL.md`, gateway-inline) + `CLAUDE.md` § Dispatch session-isolation rule
 **Prior:** when a diff includes a source harness file AND its verbatim installed/dogfood copy, consider allowing one commit instead of forcing session-isolated per-file dispatches; triage decides whether this is a defect or accepted-by-design (isolation is itself a safety property).
 
 ### BUG-013 — harness-grounding.sh PreToolUse additionalContext lacks permissionDecision; may be dead or expose subagent Write-corruption

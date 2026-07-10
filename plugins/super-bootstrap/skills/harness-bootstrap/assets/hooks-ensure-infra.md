@@ -5,8 +5,8 @@ harness-bootstrap ships three hook assets. Unlike drain's worktree infra
 confirm. All are safe-by-default: `harness-grounding` never blocks —
 `additionalContext` only; `entry-nudge` is an injector-only UserPromptSubmit hook —
 one context line per prompt, never blocks, never exits non-zero (either would erase
-the user's prompt); `commit-channel` fires only on git commit and denies only
-non-commit-agent subagent calls — the main session is never blocked. They ship as
+the user's prompt); `commit-channel` fires only on git commit and denies raw commits
+from worker subagents — the main session is never blocked. They ship as
 **frozen assets** beside this file; ensure-infra places them by mechanical copy /
 merge — never regeneration, so there is no drift between repos. Run as
 `SKILL.md §2a-hooks`, part of Phase 2a.
@@ -26,7 +26,7 @@ Copy each script with Bash `cp` (plain file copy — invoked via `bash "$CLAUDE_
 Three hooks are retired — delete them from any already-bootstrapped repo on re-sync:
 
 - `docsync-gate` (formerly a PreToolUse commit gate) and `docsync-scan` (its
-  self-stamping scan script) — doc-sync now runs in-process in the commit door
+  self-stamping scan script) — doc-sync now runs gateway-inline in the commit door
   (`/super-bootstrap:commit`), so the token gate and its scan are gone.
 - `docsync-stamp` (formerly a PostToolUse hook) — retired earlier when its
   token-write folded into `docsync-scan`.
