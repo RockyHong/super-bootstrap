@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-015` · `DEBT-014` · `GAP-025` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-015` · `DEBT-016` · `GAP-026` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -31,6 +31,20 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
+### DEBT-016 — /todo + /commit dispatch prompts embed large asset file bodies verbatim; gateway tokens per dispatch
+
+**Logged:** 2026-07-10 · **Source:** GitHub issue #14 (filed via /send-issue, spotify-radio session 2026-07-08)
+**Problem:** /super-bootstrap:todo and /super-bootstrap:commit read and embed full asset file bodies verbatim into their dispatch prompts (classify-actionable.md ~130 lines, scaffolds.md ~200 lines). Drift-safety is real but the cost is gateway tokens on every dispatch. Distinct from GAP-023 (SDD implementer subagents re-transcribing plan-supplied exact content) — this is the prompt-assembly step, not the subagent-dispatch decision.
+**Area:** `plugins/super-bootstrap/skills/todo/**`; `plugins/super-bootstrap/skills/commit/**`; dispatch prompt assembly
+**Prior:** path-reference the largest assets rather than embedding verbatim, trading per-dispatch token cost for a loader read — triage decides which assets are candidates and whether drift-safety survives the change.
+
+### GAP-026 — /todo skip-gate covers only empty board; no skip when gateway already holds backlog context
+
+**Logged:** 2026-07-10 · **Source:** GitHub issue #14 (filed via /send-issue, spotify-radio session 2026-07-08)
+**Problem:** /super-bootstrap:todo's skip-gate fires only when the board is empty — no guard for the case where the gateway already holds the backlog in context and the ask is directly answerable from it. When that condition holds, the full board render is redundant ceremony. GAP-003 lists the empty-board fast path as a preserved win (already shipped); this is the sibling design gap for the held-context case.
+**Area:** `plugins/super-bootstrap/skills/todo/**`; `plugins/super-bootstrap/agents/todo.md`
+**Prior:** extend the skip-gate condition to also fire when the gateway already holds the backlog in context and the ask is directly answerable from it — triage decides the gate predicate and session-state signal.
+
 ### BUG-015 — commit agent staged files but skipped git commit on SendMessage-resume continuation
 
 **Logged:** 2026-07-10 · **Source:** GAP-024 sweep, "commit A" — commit agent resumed via SendMessage by agentId after stale-docs skip resolution; staged 9 session files, returned without running git commit; HEAD unchanged; gateway recovered by committing staged files directly from the main session
@@ -45,12 +59,12 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `CLAUDE.md` § Development Workflow / writing-plans consumption + § Dispatch; upstream `superpowers:writing-plans` task-shape doctrine
 **Prior:** (a) scale each task's verification depth to its blast radius — centrality-scoped audit per `audit-harness-edits`' own doctrine rather than a uniform full-probe per task; (b) batch same-logical-change surfaces (narration across files) into one task/commit. Same carve-out pattern as GAP-019/GAP-020/GAP-023 — sb-side documented exception in routing prose, not an upstream change.
 
-### DEBT-013 — no small-change lane: dispatch-per-phase overhead disproportionate on tiny diffs
+### DEBT-013 — no small-change lane: commit-agent dispatch disproportionate on tiny / harness-only diffs
 
-**Logged:** 2026-07-08 · **Source:** token-cost retrospective on the BUG-014 session (~10-line hook-regex fix; gateway ≥200k + subagents ~460k tokens)
-**Problem:** for a ~10-line fix, the pipeline still dispatches build and commit per phase — each a subagent re-reading context and reporting back — proportionate for large work, heavy for a bounded small change with no propagation closure of its own. Doc-sync is no longer a separate dispatched subagent (it runs in-process in the commit door), so the residual is purely the dispatch-per-phase routing overhead on tiny diffs.
-**Area:** `CLAUDE.md` § Dispatch + the envelope
-**Prior:** a "small-change lane" — a diff under N lines touching ≤1 behavior surface commits directly via one gateway pass rather than dispatching build/commit as separate agents; triage sizes N and the surface bound.
+**Logged:** 2026-07-08 · **Source:** token-cost retrospective on the BUG-014 session (~10-line hook-regex fix; gateway ≥200k + subagents ~460k tokens) · path-class axis folded from DEBT-015 (GitHub issue #14, spotify-radio session) 2026-07-10
+**Problem:** for a ~10-line fix, the pipeline still dispatches build and commit per phase — each a subagent re-reading context and reporting back — proportionate for large work, heavy for a bounded small change with no propagation closure of its own. Doc-sync is no longer a separate dispatched subagent (it runs in-process in the commit door), so the residual is purely the dispatch-per-phase routing overhead on tiny diffs. **Second axis (folded DEBT-015): path-class, not just size.** The commit agent's doc-sync scan is §3 of six steps in one dispatch (session-isolation, message, split-detect, commit ride along); on a diff whose staged paths the repo's doc-sync surface doesn't narrate, that scan can't catch — the whole dispatch is overhead regardless of line count. Highest-frequency commit class in an actively-tuned harness.
+**Area:** `CLAUDE.md` § Dispatch + the envelope; `plugins/super-bootstrap/skills/commit/SKILL.md`; `plugins/super-bootstrap/agents/commit.md`
+**Prior:** a "small-change lane" — a diff under N lines touching ≤1 behavior surface commits directly via one gateway pass rather than dispatching build/commit as separate agents; triage sizes N and the surface bound. **Path-class axis (folded DEBT-015):** a harness-only diff may commit inline regardless of size — but the safe predicate is "staged paths the repo's doc-sync surface doesn't narrate," a **per-repo fact**, NOT a static `.claude/**` glob: in the dogfood repo `techstack.md § Edit Discipline` + `CLAUDE.md § Rules` index do narrate `.claude/rules/` behavior, so a blind path-glob would occasionally skip a real catch. **Guard:** any gateway-inline branch forks the commit channel → reopens the GAP-024 "SSOT commit path" boundary that BUG-015 calls load-bearing → route through design/brainstorming, not auto-fix.
 
 ### DEBT-012 — commit batching: propagation closure split across session-isolation into N commits
 
