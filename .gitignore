@@ -10,6 +10,7 @@ Thumbs.db
 .audit/
 .tldr/
 .temp/
+.superpowers/
 
 # claude-config-manager — served-artifact markers (content committed; only local markers ignored)
 .claude/skills/*/.served
