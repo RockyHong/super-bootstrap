@@ -103,9 +103,10 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
   • Before editing a prose doc, classify what it owns: state (overwrite in place) vs history (append-only, git's job).
 - **`ssot-doc-link.md`** — fires on `docs/**/*.md`, `README.md`
   • Link each concept to its SSOT home as you write — born-linked, not back-filled.
-- **`repo-boundary.md`** (native) — fires on `plugins/**`, `.claude/rules/**`, `.claude/guidelines/**`
+- **`repo-boundary.md`** (native) — fires on `CLAUDE.md`, `plugins/**`, `.claude/rules/**`, `.claude/guidelines/**`
   • State which copy is under test (published vs in-repo dev). Route findings: this repo's artifacts → `/super-bootstrap:log`; device/global config → `/contribute` (imported artifacts read-only).
   • Taste-coupling: dogfood harness (this repo's own CLAUDE.md/rules) may wire served guidelines; shipped skeletons (`plugins/*/skills/*/assets/**`) must be self-contained — downstream ≠ author.
+  • Sync direction: editing a dogfood-harness section pulls any shipped-skeleton counterpart into the edit's closure; propagate stripped of dogfood-only refs, or state it's dogfood-specific.
 - **`skill-authoring.md`** (native) — fires on `plugins/*/skills/**`
   • Skill edits route by test surface: behavior-shaping prose → `superpowers:writing-skills` RED first (micro-test floor); mechanical → audit + release checks.
 
