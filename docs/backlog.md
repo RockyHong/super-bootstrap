@@ -38,13 +38,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `plugins/super-bootstrap/agents/todo.md`, `plugins/super-bootstrap/shared/classify-actionable.md`
 **Prior:** Add explicit "absent optional dir = cheap empty result, skip" guard at the classify step so a dir-absent result can't feed an extended-thinking spike.
 
-### BUG-016 — drain autonomous worktree runs denied on compound bash and bare `git -C` read commands
-
-**Logged:** 2026-07-11 · **Source:** GitHub issue #18 (https://github.com/RockyHong/super-bootstrap/issues/18)
-**Problem:** Drain worktree runs hit "requires approval / multiple operations require approval" denials on compound bash (`cd && …`, `git show | grep`) and bare `git -C` read commands that interactive sessions permit-then-remember. Permission engine splits compound bash on shell operators and checks each sub-command independently; autonomous/headless runs auto-deny any sub-command lacking a narrow allow rule. Representative denial: `git -C "<worktree-path>" branch --show-current`. worktree-settings.local.json currently covers `git status/log/diff/add/commit/checkout` but has no `git -C *` read forms and no `git branch --show-current` / `rev-parse` / `show`.
-**Area:** `plugins/super-bootstrap/skills/drain/assets/worktree-settings.local.json`
-**Prior:** Pre-authorize recurring read-only sub-command shapes with narrow per-sub-command allow rules: `Bash(git -C * branch --show-current)`, recurring `git -C * <read>` forms (status, log, show, rev-parse), and component sub-commands of recurring compound read patterns. One rule per uncovered sub-command; compound strings never get their own rule. Fix-shape reference: device-planted lore `claude-shape/compound-command-permissions.md`.
-
 ### GAP-033 — harness-bootstrap Phase 2a-hooks offers no opt-out; unconditional install collides with existing hook layers
 
 **Logged:** 2026-07-11 · **Source:** GitHub issue #19 (https://github.com/RockyHong/super-bootstrap/issues/19)
