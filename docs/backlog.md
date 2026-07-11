@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-017` · `DEBT-020` · `GAP-033` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-017` · `DEBT-020` · `GAP-034` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -31,31 +31,4 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### GAP-031 — techstack lacks explicit verify/compare conventions: jq-for-JSON + exit-status gating
-
-**Logged:** 2026-07-11 · **Source:** GitHub issue #20 (https://github.com/RockyHong/super-bootstrap/issues/20), routed from ccm inbox triage
-**Problem:** Two convention gaps surfaced by one manifest-parity failure (a `python json.load(open(...))` compare crashed on cp950/em-dash content → empty output → false "identical" pass). (1) Techstack names jq as a zero-dep convention but never states "JSON comparisons use jq, not ad-hoc python," leaving it implicit and prone to off-idiom substitution. (2) No convention states a verify/compare step must gate on the producer's exit status before interpreting output — a crashed producer's zero output read as an empty match.
-**Area:** `docs/techstack.md` § zero-dep idioms
-**Prior:** Add two explicit lines: "JSON comparisons: jq, not python"; "a verify/compare gates on the producer's exit status — zero output from a crashed producer is not an empty match." (GAP-032 folded in here.)
-
-### DEBT-017 — cloud-reachability of plugin-dir paths from dispatched subagents unvalidated (classify-actionable.md self-read)
-
-**Logged:** 2026-07-10 · **Source:** DEBT-016 self-read fix (commit 2afaac0) residual — flagged during harness audit + verification this session
-**Problem:** DEBT-016's fix routes todo/drain subagents to Read `classify-actionable.md` at an absolute plugin-cache path outside the repo. Confirmed reachable locally; in cloud the plugin is runtime-installed at a different path and whether a dispatched subagent's Read tool can reach the runtime-installed plugin dir is untested. If it fails, `/super-bootstrap:todo` (session-opener) + `/super-bootstrap:drain` classification both break in cloud. Validation path: run `/super-bootstrap:todo` or `/drain` in a cloud/Routine session and confirm the todo agent's spec Read succeeds.
-**Area:** `plugins/super-bootstrap/skills/todo/SKILL.md`, `plugins/super-bootstrap/skills/drain/SKILL.md`, `plugins/super-bootstrap/agents/todo.md`, `plugins/super-bootstrap/shared/classify-actionable.md`
-**Prior:** per `claude-shape/cloud-run-surface.md`, committed project skills run in cloud and plugins are runtime-installed — plugin dir should be present, but Read-tool reachability from a dispatched subagent is the specific unvalidated point; if broken, fallback is embedding spec content inline in the skill/agent rather than a runtime Read.
-
-### GAP-021 — ChewLingo delta artifacts verdicted "upstream as root" never assigned a wave; remain consumer-only
-
-**Logged:** 2026-07-08 · **Source:** GAP-017 program close-out — verdict rows with no wave assignment, carried here before the program map's deletion
-**Problem:** Three GAP-017 verdicts marked ChewLingo artifacts as portable root capability but no wave shipped them: `journey-simulation` (portable mechanism, near-zero contamination — upstream whole); spec/plan/implement/review partial salvage (Surface-on-Gap refusal, design gate, evidence block → fold into superpowers route wrappers, not a parallel chain); model-tiering pre/posttool hooks (doctrine lives in served work-discipline lore; hooks are enforcement — upstream as root hook assets). They are not dups (root has no counterpart), so adopt mode correctly left them as ChewLingo delta — but the portable value stays single-consumer until upstreamed.
-**Area:** `plugins/super-bootstrap/skills/` (+ `harness-bootstrap` hook assets for model-tiering); source bodies live in `V:\ChewLingo` `.claude/skills/{journey-simulation,spec,plan,implement,review}` + its `.claude/hooks`
-**Prior:** same distill recipe as GAP-017 waves (direct port of production-proven text, consumer-safe rewrite, one cold audit per batch); triage decides ship-order or drop per artifact.
-
-### GAP-003 — harness-collab-optimization effect unmeasured; criteria reshaped by entry-discipline
-
-**Logged:** 2026-07-06 (criteria reshaped 2026-07-08, entry-discipline session) · **Source:** harness-collab spec § 6 C1 (full text @ c1e2820) + entry-discipline spec W4
-**Problem:** next harvest window measures: (a) off-card / off-lane leakage — change-work entered without a backlog card (entry-discipline E1/E2 regression); (b) cluster-1/3 omission shapes — bug fixed without root-cause entry, multi-step work without plan artifact — unharvestable under current ccm harvest taxonomy, companion `[ccm]` taxonomy item routes via `/contribute`; (c) route-line theater — E3 regression: confirm-stops firing where SSOT already resolved (07-04 baseline: "MCQ 給自由假象，實質只是確認"); (d) zero regressions on preserved wins (todo skip-dispatch fast path, four zero-retry dispatch lanes, audit gate); (e) principles-load user re-assertions →0 (baseline ~15/session worst case); (f) premature-commitment top-pain exit (still top pain 3 consecutive windows as of 07-08 — unmeasured post-entry-discipline). RETIRED: dispatch-majority ratio target — dispatch value is two-sided (context-hygiene + model-strength routing); a ratio target manufactures reflexive routing. Raw inline:dispatch ratio stays descriptive-only (mining baseline ~13:1, 35 sessions — not a harvested figure).
-**Area:** next harness-pain harvest window
-**Prior:** pure measurement pass, no code change. (The docsync-gate value facet that rode this window is closed — the token gate was dissolved entirely (see git log); its measured near-zero value fed that call.)
-**Measured (2026-07-08, ccm three-probe downstream timing audit — evidence: claude-config-manager `docs/harness-pain/reports/2026-07-08.md` + GAP-063 closing commits `d05742e`/`067fac4`):** (1) model-guard deny hits: only 2 real runtime pin-denials corpus-wide post-enforcement, both complied+succeeded next call — EXCLUDE the 4 spotify-radio denies on `super-bootstrap:todo` dispatches (`0696f836`/`15a02eb4`/`df6637d0`/`58108cd9`): stale-copy artifacts of a 06-26 agent-model hook predating ccm's BUG-007 namespaced-pin fix (07-01; copy refreshed 07-07 23:47), NOT guard noise and NOT a todo-template defect (todo's `model: sonnet` pin correct in every released version). (2) docsync-gate value: **facet closed** — measured zero organic catches AND zero firings across all 4 adopters (still on byte-identical v1 hooks); this near-zero evidence fed the decision to dissolve the token gate entirely rather than keep measuring. Adopters shed the retired hooks on their next harness-bootstrap re-sync. (3) unmeasured by this audit: premature-commitment top-pain, principles-load re-assertions, inline:dispatch ratio — DEBT-028 family did recur in-window (ChewLingo ×2 facets).
+_No open items._
