@@ -1,9 +1,0 @@
-{
-  "_comment": "FROZEN entry-nudge UserPromptSubmit injector (A5). hooks-ensure-infra.md MERGES this single entry into the consumer's .claude/settings.json hooks.UserPromptSubmit array — it never overwrites the file or other hooks. No matcher: fires on every prompt by design (card-grounded entry is a false-confidence failure, so the pointer is pushed unconditionally rather than pulled). Injector-only: the script (hooks/entry-nudge.sh) emits one additionalContext line on exit 0 and must never emit decision:block or a non-zero exit — either erases the user's prompt.",
-  "hooks": [
-    {
-      "type": "command",
-      "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/entry-nudge.sh\""
-    }
-  ]
-}

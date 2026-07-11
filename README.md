@@ -52,7 +52,7 @@ Re-run any time — incremental, never overwrites your edits.
 | `CLAUDE.md` | **Layered** per-section — never overwritten. Diff shown before any write. |
 | `.claude/settings.json` | **Merged** — adds `enabledPlugins` + `extraKnownMarketplaces`; your other settings preserved. |
 | `docs/`, `.claude/rules/` | **Seeded** with new files from detected stack. User-grown content never touched on re-run. |
-| `.claude/hooks/` | **Installed** by default — two hook assets: `entry-nudge` (UserPromptSubmit) injects a one-line card-grounded-entry pointer on every prompt, never blocks; `commit-channel` (PreToolUse) confines raw `git commit` to the main-session commit door — worker subagents are routed back to `/super-bootstrap:commit`, which runs commit mechanics gateway-inline and dispatches a cold doc-sync scan only when a grep-gate shows the diff touches the doc surface. |
+| `.claude/hooks/` | **Installed** by default — one hook asset: `commit-channel` (PreToolUse) confines raw `git commit` to the main-session commit door — worker subagents are routed back to `/super-bootstrap:commit`, which runs commit mechanics gateway-inline and dispatches a cold doc-sync scan only when a grep-gate shows the diff touches the doc surface. |
 | `.claude/super-bootstrap-runway.json` | **Version-stamped** — records the plugin version that scaffolded/synced this runway. On re-run a stale or missing stamp forces a full drift re-check (no "looks current" skim). |
 | `.env*`, `*.key`, `*credential*` | **Skipped** from scan entirely — never read, never written. |
 

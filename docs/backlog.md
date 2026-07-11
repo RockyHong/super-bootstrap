@@ -31,13 +31,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### GAP-033 — harness-bootstrap Phase 2a-hooks offers no opt-out; unconditional install collides with existing hook layers
-
-**Logged:** 2026-07-11 · **Source:** GitHub issue #19 (https://github.com/RockyHong/super-bootstrap/issues/19)
-**Problem:** Phase 2a-hooks installs hooks (entry-nudge, commit-channel) unconditionally with no opt-out. A consumer already owning prompt-entry injection via another layer can't adopt harness-bootstrap's other value (decisions.md scaffold, etc.) without also taking the colliding entry-nudge hook — a second injection on a channel already under cost surveillance. Phase 2a-drain and 2a-scale already offer per-phase skip prompts; 2a-hooks does not. (The harness-grounding double-inject case from the original issue is dissolved — commit 1feca8f retired that hook; the residual is the remaining unconditional hooks with no opt-out.)
-**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks-ensure-infra.md`, Phase 2a-hooks install sequence
-**Prior:** Add a per-hook skip prompt (matching 2a-drain / 2a-scale pattern) or detection of an existing superseding mechanism at the same hook moment.
-
 ### GAP-031 — techstack lacks explicit verify/compare conventions: jq-for-JSON + exit-status gating
 
 **Logged:** 2026-07-11 · **Source:** GitHub issue #20 (https://github.com/RockyHong/super-bootstrap/issues/20), routed from ccm inbox triage
