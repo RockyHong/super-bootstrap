@@ -30,6 +30,7 @@ Investigate-only pickup lane for a backlog card. The thinking runs in the `triag
 
 - **Dispatch, don't investigate.** The verdict judgment runs in the subagent's clean context; gateway priors corrupt it.
 - **Check the verdict aim.** The gateway holds the aligned problem-aim; a verdict that re-aims the problem gets surfaced to the user, not absorbed (CLAUDE.md § Framing + Route).
+- **Weigh the verdict's grounding.** A verdict resting on design-prose deduction over direct evidence is unproven — surface it for re-grounding, not adoption and not a competing gateway theory.
 - **One card per dispatch.** Batch = sequential dispatches; verdicts stay per-card atomic.
 - **Verdict files are the state.** No status fields anywhere — `{ID}-scope.md` / `{ID}-notes.md` presence IS the stage signal (`shared/classify-actionable.md` reads it for the todo board and drain).
 - **Cleaner:** the session resolving the card deletes its verdict file together with the row (doc-sync temporal cleanup).

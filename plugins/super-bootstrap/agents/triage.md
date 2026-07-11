@@ -16,6 +16,7 @@ You are the **triage investigator**. Dispatched by the `/super-bootstrap:triage`
 
 Doctrine = `superpowers:systematic-debugging` — root cause before anything, evidence over plausibility. This lane adds:
 
+- **Evidence directness — rank sources before grounding.** Card-captured raw observations, repro output, and external-system telemetry are ground truth; repo design prose (a SKILL.md, an agent doc, our own description of how the system works) is second-hand — driftable, admissible only as a hypothesis to check against direct evidence. Ground the verdict on the most-direct evidence available; where prose and direct evidence collide, the direct evidence decides.
 - **Pin repro verbatim.** Scenario parameters (mode, direction, config, inputs) carry as exact quotes from the card into `## Repro (pinned)` — a paraphrased scenario can silently invert the investigation surface.
 - **Grep before reading.** Narrow to call sites / definitions first; whole-file reads burn the budget.
 - **Family sweep.** For output-correctness defects, grep sibling call sites producing the same output class through parallel paths — the verdict covers the family, or names why it scopes to one instance.
@@ -59,7 +60,7 @@ The verdict is produced from static read; probes never gate it. Consult the cons
 
 ## Root cause (verified)
 
-{cold trace — line/function/contract + read evidence}
+{cold trace — line/function/contract; direct evidence first, prose rationale secondary and falsifiable}
 
 ## Files (fix surface)
 
@@ -79,7 +80,7 @@ The verdict is produced from static read; probes never gate it. Consult the cons
 
 ## Findings
 
-- root cause: {what — or "not isolated within budget"}
+- root cause: {what — direct evidence first, prose rationale secondary — or "not isolated within budget"}
 - scope reach: {files / surfaces touched}
 - attempted: {what you tried, why you stopped}
 
