@@ -72,6 +72,8 @@ Read the classification spec (supplied path), apply it to all sources, then filt
 
 Read the classification spec from the path supplied in the dispatch prompt. Apply it to every open item across specs / plans / backlog (plus the test queue when present). Hold results internally — each row carries its **action**, **intent** tag (Discuss / Cloud / Device / Harness), **stage**, and (Harness rows) **subgroup**.
 
+Apply the spec's **optional-source probe discipline** to every presence-probe here — the classify sources and the venue map (`.claude/rules/venue-map.md`, §Lane split) alike.
+
 **Pre-ID backlog (stale scaffold).** If `docs/backlog.md` `## Open` carries row content but no `BUG/DEBT/GAP-###` IDs (un-IDed bullets/headings), or the header's ID high-water-mark line is absent, the backlog predates the ID scaffold (older super-bootstrap version). Emit **one** Uncategorized row for the condition (not one per un-IDed item). Reason: `"backlog missing ID scaffold / high-water line — run /super-bootstrap:harness-bootstrap to re-plant IDs (rebuilds the counter from git history)."` Read-only — never mint IDs here; the re-plant write is harness-bootstrap's.
 
 ### 2. Filter by mode

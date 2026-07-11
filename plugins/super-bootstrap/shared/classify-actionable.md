@@ -69,6 +69,8 @@ Intent is determined by action verb before path/state rules.
 
 Read all sources (three core + the scale module's test queue when present), derive each item's `{action, intent, stage}`. Apply the Harness pre-filter, then the Action-verb intent map, then the content rules.
 
+**Optional-source probe discipline.** The test queue, the triage `{ID}-*` verdict files, and the specs/plans directories are optional — absent until a repo reaches that stage. Probe presence by listing the concrete path (a concrete project-relative target lists reliably), not by content-reading a maybe-absent file. An absent optional source — an empty listing *or* a "does not exist" error — is an expected branch of this spec, not an anomaly to diagnose: record it empty, take its skip (§a–d), and move on immediately.
+
 ### a. Specs (`docs/superpowers/specs/*.md`)
 
 For each:

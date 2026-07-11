@@ -38,13 +38,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `plugins/super-bootstrap/skills/triage/SKILL.md`, `plugins/super-bootstrap/agents/triage.md` (grounding step + verdict contract)
 **Prior:** Add a source-provenance / directness-ordering section to the grounding step: direct evidence first, design prose second-hand to-be-falsified only; verdict must present the most-direct available evidence before any design-prose rationale.
 
-### BUG-017 — todo subagent burns extended-thinking spirals probing absent optional dirs/files
-
-**Logged:** 2026-07-11 · **Source:** GitHub issue #17 (https://github.com/RockyHong/super-bootstrap/issues/17), duplicate #16 dismissed
-**Problem:** The todo subagent (agents/todo.md) burns large output-token turns (extended-thinking spirals) when probing an absent optional dir/file instead of cheaply treating "not present" as a normal empty result. Evidence: a read-only TODO-board render burned 14.4k + 11.7k output-tok across two runs; single extended-thinking spikes of 13,090 and 9,399 tok on individual Glob calls, both triggered after probing absent optional paths `docs/superpowers/triage/` and `docs/test-queue.md` ("Directory does not exist" error → spike on next Glob). classify-actionable.md carries skip-if-absent semantics for backlog and test-queue but no explicit anti-spiral "absent optional dir = cheap empty" guard for the subagent. Not fixed by commit 742c188 (that fixed the gateway skip-gate, a different layer).
-**Area:** `plugins/super-bootstrap/agents/todo.md`, `plugins/super-bootstrap/shared/classify-actionable.md`
-**Prior:** Add explicit "absent optional dir = cheap empty result, skip" guard at the classify step so a dir-absent result can't feed an extended-thinking spike.
-
 ### GAP-033 — harness-bootstrap Phase 2a-hooks offers no opt-out; unconditional install collides with existing hook layers
 
 **Logged:** 2026-07-11 · **Source:** GitHub issue #19 (https://github.com/RockyHong/super-bootstrap/issues/19)
