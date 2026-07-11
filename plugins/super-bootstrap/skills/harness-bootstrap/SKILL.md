@@ -212,18 +212,17 @@ Ensure `.claude/settings.json` contains:
 
 ### 2a-hooks: Harness hooks (default-on)
 
-Three hook assets ship as frozen files and install **unconditionally** — no
-opt-in confirm, unlike drain's worktree infra (§2a-drain below); all are
+Two hook assets ship as frozen files and install **unconditionally** — no
+opt-in confirm, unlike drain's worktree infra (§2a-drain below); both are
 safe-by-default (rationale + full procedure:
 [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md)).
 
 | # | Asset | Fires on | Effect |
 | - | - | - | - |
-| 1 | `harness-grounding` (PreToolUse) | `Edit\|Write` matched to a harness path (`CLAUDE.md`, `.claude/rules/**`, `.claude/skills/**`, `.claude/agents/**`) | Inject a 2-3 line grounding checklist via `additionalContext` — never denies |
-| 2 | `entry-nudge` (UserPromptSubmit) | every prompt (no matcher) | Inject one card-grounded-entry pointer line via `additionalContext` — injector-only, never blocks, never exits non-zero |
-| 3 | `commit-channel` (PreToolUse) | `Bash(git commit *)` | Deny raw `git commit` from worker subagents — deny text routes the worker back to `/super-bootstrap:commit`; main session and separate-process workers pass. The commit door runs mechanics gateway-inline and dispatches a cold `doc-sync-scan` only on a grep-gate hit — no separate gate hook |
+| 1 | `entry-nudge` (UserPromptSubmit) | every prompt (no matcher) | Inject one card-grounded-entry pointer line via `additionalContext` — injector-only, never blocks, never exits non-zero |
+| 2 | `commit-channel` (PreToolUse) | `Bash(git commit *)` | Deny raw `git commit` from worker subagents — deny text routes the worker back to `/super-bootstrap:commit`; main session and separate-process workers pass. The commit door runs mechanics gateway-inline and dispatches a cold `doc-sync-scan` only on a grep-gate hit — no separate gate hook |
 
-Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) — copies the three scripts to `.claude/hooks/` and merges the settings snippets into `.claude/settings.json` (`hooks.PreToolUse[]`: harness-grounding, commit-channel; `hooks.UserPromptSubmit[]`: entry-nudge). Content-aware (copy-on-drift — a version-marker mismatch re-copies the asset, so an upstream fix reaches existing repos), silent when already current; stage the placed files with the Phase 2c commit. Same asset-copy + guarded-merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3) — one pattern, reused here rather than re-derived.
+Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) — copies the two scripts to `.claude/hooks/` and merges the settings snippets into `.claude/settings.json` (`hooks.PreToolUse[]`: commit-channel; `hooks.UserPromptSubmit[]`: entry-nudge). Content-aware (copy-on-drift — a version-marker mismatch re-copies the asset, so an upstream fix reaches existing repos), silent when already current; stage the placed files with the Phase 2c commit. Same asset-copy + guarded-merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3) — one pattern, reused here rather than re-derived.
 
 ### 2a-drain: Drain infra (opt-in)
 
@@ -489,7 +488,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/overview.md` (new or skeleton-section drift)
 - `docs/decisions.md` (new, scope-header drift, or post-retirement migration from techstack)
 - `.claude/settings.json` (core plugin pins seeded at 2a; harness hooks merged at 2a-hooks)
-- `.claude/hooks/harness-grounding.sh`, `.claude/hooks/entry-nudge.sh`, `.claude/hooks/commit-channel.sh` (frozen hook scripts seeded at 2a-hooks — always, default-on)
+- `.claude/hooks/entry-nudge.sh`, `.claude/hooks/commit-channel.sh` (frozen hook scripts seeded at 2a-hooks — always, default-on)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)
 - `docs/superpowers/specs/.gitkeep`

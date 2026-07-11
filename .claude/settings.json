@@ -33,15 +33,6 @@
             "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/commit-channel.sh\""
           }
         ]
-      },
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/harness-grounding.sh\""
-          }
-        ]
       }
     ],
     "UserPromptSubmit": [
