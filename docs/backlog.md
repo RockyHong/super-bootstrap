@@ -38,13 +38,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `plugins/super-bootstrap/skills/todo/SKILL.md`, `plugins/super-bootstrap/skills/drain/SKILL.md`, `plugins/super-bootstrap/agents/todo.md`, `plugins/super-bootstrap/shared/classify-actionable.md`
 **Prior:** per `claude-shape/cloud-run-surface.md`, committed project skills run in cloud and plugins are runtime-installed — plugin dir should be present, but Read-tool reachability from a dispatched subagent is the specific unvalidated point; if broken, fallback is embedding spec content inline in the skill/agent rather than a runtime Read.
 
-### GAP-026 — /todo skip-gate covers only empty board; no skip when gateway already holds backlog context
-
-**Logged:** 2026-07-10 · **Source:** GitHub issue #14 (filed via /send-issue, spotify-radio session 2026-07-08)
-**Problem:** /super-bootstrap:todo's skip-gate fires only when the board is empty — no guard for the case where the gateway already holds the backlog in context and the ask is directly answerable from it. When that condition holds, the full board render is redundant ceremony. GAP-003 lists the empty-board fast path as a preserved win (already shipped); this is the sibling design gap for the held-context case.
-**Area:** `plugins/super-bootstrap/skills/todo/**`; `plugins/super-bootstrap/agents/todo.md`
-**Prior:** extend the skip-gate condition to also fire when the gateway already holds the backlog in context and the ask is directly answerable from it — triage decides the gate predicate and session-state signal.
-
 ### BUG-013 — harness-grounding.sh PreToolUse additionalContext lacks permissionDecision; may be dead or expose subagent Write-corruption
 
 **Logged:** 2026-07-08 · **Source:** surfaced during BUG-012 4-cell live probe investigation
