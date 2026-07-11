@@ -31,13 +31,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### GAP-030 — missing alignment-brief checkpoint at route→implement handoff; gateway enters build with wrong framing
-
-**Logged:** 2026-07-11 · **Source:** recurring sessions incl. GAP-027 this session (triage subagent emitted misframed A/B/C options; gateway also misframed before user corrected twice)
-**Problem:** No mechanism requires the gateway to state and get agreement on premise / problem context / proposed solution before building. Recurring pattern: gateway misreads the card or absorbs a misframed triage verdict and enters implementation, forcing the user to manually re-triage and redirect after build spend. Two candidate root causes: (a) missing gateway checkpoint at route→implement handoff; (b) triage agent's own framing discipline producing misframed verdict options upstream of the gateway. Fix likely belongs in both places. Ceremony concern: a confirm round-trip on every pickup risks replacing one cost with another — must scale to shape-familiarity (known-shape repeat → one-line brief; fuzzy/high-blast card → full premise/scenario/solution/concerns + explicit OK), consistent with the existing route-line "state, don't gate" rule.
-**Area:** `CLAUDE.md` § Development Workflow (route→implement transition); `plugins/super-bootstrap/skills/triage/SKILL.md`; `plugins/super-bootstrap/agents/triage.md`
-**Prior:** (a) add a scaled alignment-brief gate at route→implement: one-line for known-shape repeats, full premise/scenario/solution/concerns + explicit OK for fuzzy/high-blast; (b) tighten triage agent's framing discipline so verdict options are correctly framed before the gateway absorbs them — triage decides which lever (or both) carries the fix.
-
 ### DEBT-017 — cloud-reachability of plugin-dir paths from dispatched subagents unvalidated (classify-actionable.md self-read)
 
 **Logged:** 2026-07-10 · **Source:** DEBT-016 self-read fix (commit 2afaac0) residual — flagged during harness audit + verification this session

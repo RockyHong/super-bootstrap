@@ -23,9 +23,9 @@ Route the card by cluster:
 | 7 | Harness edit (CLAUDE.md, rules, skills, agents) | git log + `.claude/rules/index.md` pre-edit; verify pass post-edit |
 | 8 | Triage / investigation-only | backlog card → `/super-bootstrap:triage {ID}` (read-only verdict phase → scope.md or notes.md); ad-hoc question → inline reads + dispatched probes |
 
-### Route line — state, don't gate
+### Framing + Route — state, don't gate
 
-Cluster + route resolvable from the card/SSOT → post the route in one line and proceed. Stop for the user's pick only on a genuine fork: ambiguous cluster, a conflict with a closed fork in [`docs/decisions.md`](docs/decisions.md), or high blast radius.
+State the card's **problem-aim** before routing — premise / problem / scenario only, synthesized self-coherent (hold back the card's Prior; restate rather than paste index-quotes) — then state cluster + route. Both scale together: resolvable from the card/SSOT → post in one line and proceed (framing line + route line); stop for the user's explicit OK only on a genuine fork — ambiguous cluster, a conflict with a closed fork in [`docs/decisions.md`](docs/decisions.md), high blast radius, or card-claim ambiguity / suspected mis-aim. Hold the aligned aim as the check on everything machinery returns: a verdict or solution that re-aims the problem is surfaced, not absorbed (`aligned ≠ correct` — the user confirms the target, not the answer).
 
 ### Inside a route
 

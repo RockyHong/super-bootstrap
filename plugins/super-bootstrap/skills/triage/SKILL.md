@@ -18,7 +18,7 @@ Investigate-only pickup lane for a backlog card. The thinking runs in the `triag
 ## Execution
 
 1. Resolve the card: the ID's `### {ID}` heading exists under `docs/backlog.md` § Open. Missing → report "no open row {ID}", stop. A verdict file for this ID already in `docs/superpowers/triage/` → surface its path instead of re-dispatching (re-triage only on explicit user ask; delete the stale verdict file first).
-2. Dispatch: `Agent` tool, `subagent_type: "triage"`, prompt = the card ID + today's date. Nothing else — no gateway theories about the cause, no fix preferences (bias-input exclusion; the card row carries the claim).
+2. Dispatch: `Agent` tool, `subagent_type: "triage"`, prompt = the card ID + today's date + the gateway-aligned problem-aim when framing sharpened or corrected the card claim (premise / problem / scenario only). Exclude cause theories and fix preferences (bias-input exclusion) — the aligned aim is the user-validated target, not a prior; the card row carries the frozen claim.
 3. Absorb the agent's report (`agents/triage.md` § Reporting):
    - **DONE / DONE_WITH_CONCERNS** — relay verdict + path. scope.md → post the route line off its `Execution:` tag (inline / phased → implement within the envelope, skipping what the tag skips; full → cluster route per CLAUDE.md). notes.md → surface its `## Decision needed` to the user.
    - **NEEDS_CONTEXT** — relay the named gaps; the user (or a follow-up `/super-bootstrap:log` amendment) supplies them.
@@ -29,6 +29,7 @@ Investigate-only pickup lane for a backlog card. The thinking runs in the `triag
 ## Rules
 
 - **Dispatch, don't investigate.** The verdict judgment runs in the subagent's clean context; gateway priors corrupt it.
+- **Check the verdict aim.** The gateway holds the aligned problem-aim; a verdict that re-aims the problem gets surfaced to the user, not absorbed (CLAUDE.md § Framing + Route).
 - **One card per dispatch.** Batch = sequential dispatches; verdicts stay per-card atomic.
 - **Verdict files are the state.** No status fields anywhere — `{ID}-scope.md` / `{ID}-notes.md` presence IS the stage signal (`shared/classify-actionable.md` reads it for the todo board and drain).
 - **Cleaner:** the session resolving the card deletes its verdict file together with the row (doc-sync temporal cleanup).
