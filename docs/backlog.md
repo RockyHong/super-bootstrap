@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-015` · `DEBT-019` · `GAP-030` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-017` · `DEBT-019` · `GAP-033` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,34 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### BUG-017 — todo subagent burns extended-thinking spirals probing absent optional dirs/files
+
+**Logged:** 2026-07-11 · **Source:** GitHub issue #17 (https://github.com/RockyHong/super-bootstrap/issues/17), duplicate #16 dismissed
+**Problem:** The todo subagent (agents/todo.md) burns large output-token turns (extended-thinking spirals) when probing an absent optional dir/file instead of cheaply treating "not present" as a normal empty result. Evidence: a read-only TODO-board render burned 14.4k + 11.7k output-tok across two runs; single extended-thinking spikes of 13,090 and 9,399 tok on individual Glob calls, both triggered after probing absent optional paths `docs/superpowers/triage/` and `docs/test-queue.md` ("Directory does not exist" error → spike on next Glob). classify-actionable.md carries skip-if-absent semantics for backlog and test-queue but no explicit anti-spiral "absent optional dir = cheap empty" guard for the subagent. Not fixed by commit 742c188 (that fixed the gateway skip-gate, a different layer).
+**Area:** `plugins/super-bootstrap/agents/todo.md`, `plugins/super-bootstrap/shared/classify-actionable.md`
+**Prior:** Add explicit "absent optional dir = cheap empty result, skip" guard at the classify step so a dir-absent result can't feed an extended-thinking spike.
+
+### BUG-016 — drain autonomous worktree runs denied on compound bash and bare `git -C` read commands
+
+**Logged:** 2026-07-11 · **Source:** GitHub issue #18 (https://github.com/RockyHong/super-bootstrap/issues/18)
+**Problem:** Drain worktree runs hit "requires approval / multiple operations require approval" denials on compound bash (`cd && …`, `git show | grep`) and bare `git -C` read commands that interactive sessions permit-then-remember. Permission engine splits compound bash on shell operators and checks each sub-command independently; autonomous/headless runs auto-deny any sub-command lacking a narrow allow rule. Representative denial: `git -C "<worktree-path>" branch --show-current`. worktree-settings.local.json currently covers `git status/log/diff/add/commit/checkout` but has no `git -C *` read forms and no `git branch --show-current` / `rev-parse` / `show`.
+**Area:** `plugins/super-bootstrap/skills/drain/assets/worktree-settings.local.json`
+**Prior:** Pre-authorize recurring read-only sub-command shapes with narrow per-sub-command allow rules: `Bash(git -C * branch --show-current)`, recurring `git -C * <read>` forms (status, log, show, rev-parse), and component sub-commands of recurring compound read patterns. One rule per uncovered sub-command; compound strings never get their own rule. Fix-shape reference: device-planted lore `claude-shape/compound-command-permissions.md`.
+
+### GAP-033 — harness-bootstrap Phase 2a-hooks offers no opt-out; unconditional install collides with existing hook layers
+
+**Logged:** 2026-07-11 · **Source:** GitHub issue #19 (https://github.com/RockyHong/super-bootstrap/issues/19)
+**Problem:** Phase 2a-hooks installs hooks (entry-nudge, commit-channel) unconditionally with no opt-out. A consumer already owning prompt-entry injection via another layer can't adopt harness-bootstrap's other value (decisions.md scaffold, etc.) without also taking the colliding entry-nudge hook — a second injection on a channel already under cost surveillance. Phase 2a-drain and 2a-scale already offer per-phase skip prompts; 2a-hooks does not. (The harness-grounding double-inject case from the original issue is dissolved — commit 1feca8f retired that hook; the residual is the remaining unconditional hooks with no opt-out.)
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks-ensure-infra.md`, Phase 2a-hooks install sequence
+**Prior:** Add a per-hook skip prompt (matching 2a-drain / 2a-scale pattern) or detection of an existing superseding mechanism at the same hook moment.
+
+### GAP-031 — techstack lacks explicit verify/compare conventions: jq-for-JSON + exit-status gating
+
+**Logged:** 2026-07-11 · **Source:** GitHub issue #20 (https://github.com/RockyHong/super-bootstrap/issues/20), routed from ccm inbox triage
+**Problem:** Two convention gaps surfaced by one manifest-parity failure (a `python json.load(open(...))` compare crashed on cp950/em-dash content → empty output → false "identical" pass). (1) Techstack names jq as a zero-dep convention but never states "JSON comparisons use jq, not ad-hoc python," leaving it implicit and prone to off-idiom substitution. (2) No convention states a verify/compare step must gate on the producer's exit status before interpreting output — a crashed producer's zero output read as an empty match.
+**Area:** `docs/techstack.md` § zero-dep idioms
+**Prior:** Add two explicit lines: "JSON comparisons: jq, not python"; "a verify/compare gates on the producer's exit status — zero output from a crashed producer is not an empty match." (GAP-032 folded in here.)
 
 ### DEBT-017 — cloud-reachability of plugin-dir paths from dispatched subagents unvalidated (classify-actionable.md self-read)
 
