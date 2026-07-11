@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-017` · `DEBT-019` · `GAP-033` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-017` · `DEBT-020` · `GAP-033` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -30,6 +30,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### DEBT-020 — triage grounding lacks evidence-directness ordering; design prose treated as ground truth
+
+**Logged:** 2026-07-11 · **Source:** BUG-016 triage session (mid-execution finding)
+**Problem:** When grounding a behavioral claim, triage reaches for second-hand design prose (SKILL.md, parallel-worktrees.md) as ground truth, bypassing direct evidence already on the card (card-captured raw observations, telemetry, per-worktree denial counts from issue #18). BUG-016 triage produced a correct verdict but with no objective proof — unable to shut down the gateway's competing (incorrect) theory — causing a multi-turn spiral. Fix must land in the shipped triage skill so consumers inherit it on install. Directness ordering: card-captured raw observations / repro output / external system telemetry → ground truth; repo design prose / our own descriptions of the system → second-hand, driftable, falsifiable only. Verdict contract should require citing the most-direct evidence available and explicitly mark repo prose as secondary. Axiom II ("deduction substituted for contact with the real") already bans the inverse pattern; this makes it explicit inside the triage grounding step.
+**Area:** `plugins/super-bootstrap/skills/triage/SKILL.md`, `plugins/super-bootstrap/agents/triage.md` (grounding step + verdict contract)
+**Prior:** Add a source-provenance / directness-ordering section to the grounding step: direct evidence first, design prose second-hand to-be-falsified only; verdict must present the most-direct available evidence before any design-prose rationale.
 
 ### BUG-017 — todo subagent burns extended-thinking spirals probing absent optional dirs/files
 
