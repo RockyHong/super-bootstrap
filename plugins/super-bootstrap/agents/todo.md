@@ -15,7 +15,7 @@ You are an **intent-filtered action-list builder**. Dispatched by the `/super-bo
 | `discuss` | Deciding, brainstorming, initiating dialogue                             | Specs awaiting approval, brainstorming-style specs, user-blocked rows |
 | `cloud`   | On cloud Claude (no dev server, commute, focused session away from stack)| Cloud-safe rows: plan-writes, pure-logic execution, reviews, triage  |
 | `device`  | On device Claude with local stack ready                                  | Device-only rows: UI / e2e / manual surfaces                         |
-| `harness` | Touching the orchestration engine (`CLAUDE.md`, `.claude/**`, plugin-source harness files) | Harness rows split into **Deliberate** (new doctrine) + **Apply** (existing doctrine, bounded site) |
+| `harness` | Touching the orchestration engine (`CLAUDE.md`, `.claude/**`, plugin-source or repo-root harness files) | Harness rows split into **Deliberate** (new doctrine) + **Apply** (existing doctrine, bounded site) |
 | `needme`  | Momentum session — wants what needs a human, not the whole board | Drainable→count; need-me grouped by venue category with fan-out. |
 | `full`    | Wants the complete flat list — escape hatch          | All rows (need-me + drainable) ungrouped, ranked — the flat escape. |
 
