@@ -2,6 +2,8 @@
 
 New rows route through `/super-bootstrap:log` — one funnel for classification, dedup, and ID assignment. Bugs, debt, design gaps, and unverified feature ideas all land here as rows; whether each is real or worth doing is decided at `/super-bootstrap:todo` triage on pickup, not at capture.
 
+**When a card is owed:** only for work that exits the current flow **incomplete** — deferred or dropped. Work completed in-flow, whoever directed it, carries no card debt. The trigger is completion-state (observable), not worth (triage's call).
+
 **Row deletion:** the resolving session — via `/super-bootstrap:commit` doc-sync, or manually on resolve. Direct `git commit` skips the sweep; clean up stale rows when noticed.
 
 **Three categories** distinguished by ID prefix:

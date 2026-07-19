@@ -15,6 +15,8 @@ All new backlog rows route through here — user-initiated and Claude-initiated 
 - **User** — explicit `/super-bootstrap:log <observation>`, or natural-language "log this / track that / note this down".
 - **Claude** — its own captures: a bug spotted mid-task, the out-of-scope findings a review or returned subagent surfaced. Batch them into one invocation — never one dispatch per finding.
 
+**A card is owed only for deferred or dropped work** — work that exits the current flow incomplete. Work completed in-flow, whoever directed it, carries no card debt. The trigger is completion-state (observable), not worth.
+
 Out of lane: **triage** (root-cause investigation → the `/super-bootstrap:todo` triage lane). Feature ideas and unverified hunches are in lane — they log as GAP. This skill creates new backlog rows only.
 
 ## Arguments
