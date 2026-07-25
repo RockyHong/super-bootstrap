@@ -80,7 +80,7 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
 **Problem:** Venue categories exist to route rows to pipeline entries; with routing gone the backlog's job narrows to `/log` landing home plus declared tracker. The classification phase is the primary cost driver behind DEBT-022 (~34.3k tokens / ~226 s for 4 rows). Removing classification may reshape or subsume DEBT-022 (right-size the classify pass) and BUG-019 (full-mode scaffold shape changes when venue grouping disappears) — verify against both before closing.
 **Area:** `plugins/super-bootstrap/shared/classify-actionable.md`; `agents/todo.md`; `plugins/super-bootstrap/skills/todo/**`
-**Prior:** spec §2 + §6; elimination of the classify pass makes DEBT-022's right-sizing moot; board shape change may subsume BUG-019.
+**Prior:** spec §2 + §6; elimination of the classify pass makes DEBT-022's right-sizing moot; board shape change may subsume BUG-019. Free side effect: the venue-mode tables in `agents/todo.md` and `skills/todo/SKILL.md` are the only reason spec §4's `rg 'superpowers|systematic-debugging|brainstorming|writing-plans'` "should return zero" check is unreachable — they use "brainstorming" as an ordinary English word, not a skill reference. Deleting those rows makes the check achievable, so don't patch §4 separately.
 
 ### DEBT-026 — Retire or rename `docs/superpowers/specs|plans/` path shape and update all consumers
 

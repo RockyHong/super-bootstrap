@@ -19,8 +19,8 @@ mattpocock) still open.
 
 ## State
 
-Wave 1 shipped and pushed. **DEBT-031 landed** — `2a96af5`, committed **local,
-not pushed**. The triage skill + agent no longer name
+Wave 1 shipped and pushed. **DEBT-031 landed and pushed** — `2a96af5`. The
+triage skill + agent no longer name
 `superpowers:systematic-debugging`; the discipline clause stands on its own and
 the skill description's scope-summary tail is gone. Cold `audit-harness-edits`
 ran (1 finding dispositioned), harness state stamped. Spec §3 row flipped to
@@ -34,9 +34,7 @@ consumer, all owned by DEBT-026 (spec §4 table).
 
 - **Wave 2 — DEBT-027** (strip venue intent classification). Unblocks drain's
   eligibility rewrite. Check whether it subsumes DEBT-022 and BUG-019 first.
-  Side effect: its venue-mode table is what makes spec §4's `rg … should return
-  zero` unreachable (the plain English word "brainstorming" sits in those rows) —
-  deleting them self-resolves it, so don't patch §4 separately.
+  Its card's Prior now also carries the spec §4 grep side effect.
 - **Wave 3 — DEBT-026** (retire `docs/superpowers/specs|plans/`). Widest consumer
   set, and it owns the deferred naming work: `harness-bootstrap/SKILL.md`
   `description:`, the "superpowers runway" prose, the
@@ -50,7 +48,6 @@ consumer, all owned by DEBT-026 (spec §4 table).
 
 ## Watch-outs
 
-- **`2a96af5` is unpushed.** Push was deliberately withheld, not forgotten.
 - **`.claude/settings.json` still pins superpowers locally.** That mask hid
   DEBT-031 through a whole authoring round. Any "is the repo still coupled?" check
   must reason about a repo *without* the pin, not this one.
