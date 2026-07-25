@@ -14,7 +14,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-019` · `DEBT-029` · `GAP-040` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-019` · `DEBT-029` · `GAP-041` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -32,6 +32,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-041 — Read mattpocock/skills for its real dispatch posture before trusting our tier-pinned-agent pattern
+
+**Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md` §7 q3)
+**Problem:** Our pattern pins a model tier on every agent and dispatches for attention offload. mattpocock's set reads differently — `code-review` runs two axes as parallel `general-purpose` sub-agents with no tier pinned, and the stated reason is isolation ("reports remain separate to prevent one axis masking the other"), not offload. Whether that generalizes to a "session as atomic runner" stance, or is one isolation-specific exception inside an otherwise orchestrating session, is unknown — every claim about his dispatch posture so far is grade B, derived from summaries rather than his source. The answer bears on whether our own tier-pinning is sound or cargo.
+**Area:** `plugins/super-bootstrap/agents/*.md` (tier pins); read surface = `mattpocock/skills` repo, esp. `skills/engineering/{code-review,implement,research,wayfinder}/` + `skills/productivity/writing-great-skills/`
+**Prior:** Read his repo properly — grade-A text, not fetch summaries. `writing-great-skills` is the likeliest home for a stated dispatch doctrine.
 
 ### GAP-039 — Add a path-scoped rule for verification-before-completion to the shipped skeleton's rules layer
 
