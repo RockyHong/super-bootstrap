@@ -57,3 +57,18 @@ consumers, not by card number.
   and wants brainstorming adjudication with the overhaul, not a unilateral edit.
 - **Change B is not approved.** De-routing does not commit to adopting
   mattpocock/skills. superpowers may stay installed — it just stops being routed.
+- **GAP-038 is not executable as written — think the whole shape before touching it.**
+  Do not card the sub-problems yet; a premature row would freeze a framing that is not
+  settled. Three things are tangled and want one deliberation, not three tickets:
+  1. *Delivery has no mechanism.* His setup reads seed templates from his own skill
+     folder and has no lookup path to a seed we ship, so "ship a seed" connects to
+     nothing. The shape that could work is bootstrap pre-writing
+     `docs/agents/issue-tracker.md` so his setup finds it already present — whether his
+     setup skips an existing file is unread. This is spec §4's prose-not-schema weakness,
+     worse than recorded there.
+  2. *Provisioning default is a product call.* Auto-installing a third-party plugin into
+     every bootstrapped repo versus `resolve-plugins` recommending it behind a confirm.
+  3. *It presupposes change B.* Wiring anything mattpocock-shaped into bootstrap commits
+     to an adoption that §6 leaves open.
+  Nothing in `plugins/super-bootstrap/` references mattpocock today — verified, zero
+  hits outside this session's three docs. Bootstrap behavior is unchanged.
