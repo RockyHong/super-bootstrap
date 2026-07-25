@@ -11,7 +11,8 @@ process harness. Decision made, cut sites carded, nothing executed yet.
    as titled · §5 fence migration + which cards are short · §6 decided-vs-open · §7
    evidence grades · §8 what adopt mode can and cannot retire.
 2. `docs/backlog.md` — DEBT-024..030, GAP-038/039/041.
-3. Commits `fe40fdd` · `6f0324b` · `b68336f` · `114b1ce` · `e53663e`.
+3. `git log --oneline 7f52881..HEAD` — this session's commits, reasoning in the
+   bodies. (Never enumerate hashes here; git owns history, the ledger owns the delta.)
 
 ## State
 
