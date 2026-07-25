@@ -181,7 +181,32 @@ mattpocock-skills@mattpocock` (managed bundle). Both require
 
 1. mattpocock seed-template bodies (`issue-tracker-*.md`) unread — shape of the file we
    would author for the "Other" branch is inferred.
-2. Downstream migration path for repos already carrying the routing skeleton.
-   `harness-bootstrap` documents an adopt mode that "retires superseded harness forks on
-   re-run" — sufficiency unverified.
-3. drain's wall-vs-progress ratio — unmeasured (§6).
+2. drain's wall-vs-progress ratio — unmeasured (§6).
+3. Whether mattpocock's dispatch posture is "session as atomic runner" or something
+   narrower. His `code-review` does run two axes as parallel `general-purpose`
+   sub-agents, with no model tier pinned — so the rationale reads as **dispatch for
+   isolation** (keeping one review axis from masking the other) rather than dispatch for
+   attention offload. Grade B; the distinction matters for whether our own
+   tier-pinned-agent pattern is sound, and warrants reading his repo properly rather than
+   inferring from skill summaries.
+
+## 8. Downstream migration — what adopt mode does and does not retire
+
+`harness-bootstrap` § Phase 2 applies a per-artifact rule: missing → write; matches
+template → skip; **drifted → show diff, approve per change, write**; project-owned →
+never touch. Its CLAUDE.md coverage is **keyed to a named section list** (Development
+Workflow, Dispatch, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene,
+Finding Triage, Rules, Git Notes, Planning).
+
+| Retirement shape | Covered? | Why |
+| --- | --- | --- |
+| Content removed **within** a retained section | **Yes** | Section stays on the owned list; drift check fires and diffs it |
+| A whole section **dropped** from the skeleton | **No** | The walk is skeleton-driven — a section no longer on the owned list is never visited, so it orphans in consumer repos |
+| A scaffolded **folder** retired | **No** | Phase 2a states folders have only two states, missing or present ("create if missing, skip if present") — there is no removal path |
+
+**Consequence for the cut sites:** DEBT-024 (routing table lives under § Development
+Workflow), DEBT-029 (§ Coding Principles is retained, its body replaced), GAP-038 and
+GAP-039 (both add files) all land inside covered shapes — adopt mode migrates them.
+**DEBT-026 is the exception:** retiring `docs/superpowers/specs|plans/` hits the folder
+hole, so downstream repos keep orphaned directories that `/super-bootstrap:todo` and
+`drain` still scan. That card carries its own migration mechanism or accepts the orphan.

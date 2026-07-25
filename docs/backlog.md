@@ -33,13 +33,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
-### GAP-040 — Verify harness-bootstrap adopt mode retires a routing section the new skeleton no longer contains
-
-**Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
-**Problem:** `harness-bootstrap` documents an adopt mode that "retires superseded harness forks on re-run" — whether it actually retires a routing section removed from the skeleton (vs. only renaming/moving sections it can diff against) is unverified. Downstream migration for repos already carrying the routing table is part of the de-routing change's closure; an unverified migration path is a blocking unknown.
-**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md` (adopt mode docs)
-**Prior:** spec §4 (migration named as part of the change's closure) + §7 open question 2; investigate-before-cut.
-
 ### GAP-039 — Add a path-scoped rule for verification-before-completion to the shipped skeleton's rules layer
 
 **Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
@@ -80,7 +73,7 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
 **Problem:** The `docs/superpowers/` directory layout is superpowers' artifact shape (temporal specs/plans from brainstorming and writing-plans); it carries a foreign namespace once routing is cut. Decision needed: drop the slot entirely (per-feature work orders delegate to whatever process harness the repo installs) or rename to a harness-neutral path. Consumers: `agents/todo.md`, `agents/triage.md`, `skills/drain/SKILL.md`, `shared/classify-actionable.md`, `skills/harness-bootstrap` (creates the dirs), root `CLAUDE.md` § Planning.
 **Area:** `docs/superpowers/` dir; `agents/todo.md`; `agents/triage.md`; `plugins/super-bootstrap/skills/drain/SKILL.md`; `plugins/super-bootstrap/shared/classify-actionable.md`; `plugins/super-bootstrap/skills/harness-bootstrap/`; root `CLAUDE.md` § Planning
-**Prior:** spec §2; mattpocock's `to-tickets` occupies the per-feature work order slot at `.scratch/<feature>/issues/NN-slug.md`.
+**Prior:** spec §2; mattpocock's `to-tickets` occupies the per-feature work order slot at `.scratch/<feature>/issues/NN-slug.md`. Carries its own downstream migration: adopt mode has no folder-removal path (spec §8), so retiring these dirs orphans them in every bootstrapped repo — unlike the other cut sites, which adopt mode migrates.
 
 ### DEBT-025 — Delete `docs/specs/superpowers-topology.md` and all references to it
 
