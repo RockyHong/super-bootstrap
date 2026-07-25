@@ -52,21 +52,21 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
 **Problem:** Verification-before-completion (evidence before claiming done, across all surfaces — not only tests) is a discipline superpowers holds with no independent equivalent in mattpocock's set. It is a behavioral rule, not a pipeline stage — it belongs in the path-scoped rules layer, where it fires at the decision moment with zero ambient cost when irrelevant. No shipped-skeleton rule currently covers it.
 **Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/` (skeleton rules section)
-**Prior:** spec §5 identifies this gap and argues behavioral rule → rules layer over pipeline stage.
+**Prior:** spec §5 identifies this gap and argues behavioral rule → rules layer over pipeline stage. **Scope is one of three fences, not one — §5 "Fences migrate here"; settle with DEBT-024 and DEBT-029 rather than alone.**
 
 ### GAP-038 — Ship an "Other" issue-tracker seed for mattpocock/skills' `/setup-matt-pocock-skills`, declaring docs/backlog.md + /super-bootstrap:log as the tracker
 
 **Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
 **Problem:** `/setup-matt-pocock-skills` ships seed templates for GitHub / GitLab / Local but none for "Other" — that branch is authored fresh, yielding free-form prose his skills interpret ad hoc. Without a seed, his `to-spec` and `triage` have no declared path to write into our backlog. Accepted known weakness: the socket is prose, not schema; documented seams drift.
 **Area:** `plugins/super-bootstrap/skills/harness-bootstrap/` (seed asset location); new seed file for mattpocock "Other" branch
-**Prior:** spec §4; mattpocock "Other" option + absence of seed template confirmed grade A (2026-07-25).
+**Prior:** spec §4; mattpocock "Other" option + absence of seed template confirmed grade A (2026-07-25). **Not executable as titled — shipping a seed connects to nothing on its own, and two further questions ride the same decision. Read §4 before acting.**
 
 ### DEBT-029 — Replace mandatory karpathy-guidelines skill invocation in CLAUDE.md with CODING_STANDARDS.md in the shipped skeleton
 
 **Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
 **Problem:** Root `CLAUDE.md` § Coding Principles hardcodes a mandatory `karpathy-guidelines` invocation, binding coding standards to one skill and making them invisible to reviewers not running that skill. mattpocock's `code-review` reads `CODING_STANDARDS.md` / `CONTRIBUTING.md` and a documented repo standard overrides its built-in Fowler baseline — the standard should live in the skeleton where any reviewer can read it.
 **Area:** Root `CLAUDE.md` § Coding Principles; `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md`; new `CODING_STANDARDS.md` in skeleton
-**Prior:** spec §4 second socket; grade B — `code-review` reads `CODING_STANDARDS.md`, documented standard overrides Fowler baseline.
+**Prior:** spec §4 second socket; grade B — `code-review` reads `CODING_STANDARDS.md`, documented standard overrides Fowler baseline. **Not an equivalent move as titled: the target file has no guaranteed reader, so this weakens the fence unless a rule points at it — §5 "Fences migrate here".**
 
 ### DEBT-028 — Convert drain's stage machine from hardcoded superpowers phases to interface-driven dispatch
 
@@ -101,7 +101,7 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
 **Problem:** Both surfaces hardcode superpowers entry points that lose their referent once de-routing lands. Root `CLAUDE.md` contains the 7-cluster routing table (6 entries naming superpowers skills), the "Inside a route — run it whole" rule, and the Dispatch § SDD carve-out. The shipped skeleton mirrors these into every repo bootstrapped by this plugin (skeleton holds 15 of 85 foreign-name occurrences across 19 files).
 **Area:** Root `CLAUDE.md` § Cluster routing, § Inside a route, § Dispatch (SDD carve-out); `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md`
-**Prior:** spec §3 dissolve test; `.claude/rules/repo-boundary.md` pulls the skeleton mirror into the dogfood edit's closure.
+**Prior:** spec §3 dissolve test; `.claude/rules/repo-boundary.md` pulls the skeleton mirror into the dogfood edit's closure. **Scope is short by one line — § The envelope's ambient-laws list names superpowers skills and is not covered here; §5 "Fences migrate here".**
 
 ### BUG-019 — `todo full` scaffold renders empty table in spec-free repos, contradicting "every row, flat" contract
 

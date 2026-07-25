@@ -98,9 +98,19 @@ branch is authored fresh. So super-bootstrap can ship its own seed for that slot
 declaring `docs/backlog.md` + `/super-bootstrap:log` as the repo's tracker. His
 `to-spec` and `triage` then write into our home.
 
-**Known weakness of this seam:** the socket is prose, not schema — "ask the user to
-describe the workflow" produces free-form text his skills interpret. Documented seams
-drift. This is the accepted cost of orthogonality over driving.
+**Known weakness of this seam — worse than "prose, not schema".** His setup reads its
+seed templates from his own skill folder and has no lookup path to a seed another plugin
+ships, so shipping a seed connects to nothing on its own. The shape that could work is
+bootstrap pre-writing `docs/agents/issue-tracker.md` so his setup finds it already
+present — **whether his setup skips an existing file is unread.**
+
+Two further questions ride the same decision and want one deliberation, not three
+tickets: whether provisioning is automatic at bootstrap or a `resolve-plugins`
+recommendation behind a confirm (a product default, not an implementation detail), and
+whether wiring anything mattpocock-shaped into bootstrap presupposes change B, which §6
+leaves open. **`GAP-038` is therefore not executable as its title reads.** Nothing in
+`plugins/super-bootstrap/` references mattpocock today (verified 2026-07-25, zero hits);
+bootstrap behavior is unchanged.
 
 **A second socket exists for coding standards:** his `code-review` reads
 `CODING_STANDARDS.md` / `CONTRIBUTING.md`, and a documented repo standard overrides its
@@ -120,16 +130,44 @@ Docs existing ≠ the agent attending to them. The three systems solve this diff
 Path-scoped rules bind to **file paths, not skill names**, so this slot is orthogonal by
 construction — it needs no change when the process harness is swapped or removed.
 
-The one discipline superpowers holds that mattpocock has no independent equivalent for
-is **verification-before-completion** (evidence before claiming done, across all
-surfaces — not just tests). It is a behavioral rule, not a pipeline stage, so it belongs
-in this layer.
+### Fences migrate here — they are not deleted with the routing
+
+De-routing removes routing, not discipline. Three fences currently live as ambient prose
+or a mandatory invocation, and each wants the same treatment: a path-scoped rule that
+fires at the decision moment and names **the discipline the repo declares**, never a
+specific harness.
+
+| Fence | Where it lives now | Risk if the cut lands as carded |
+| --- | --- | --- |
+| verification-before-completion | superpowers skill, reached via the envelope's ambient-laws line | Covered by `GAP-039` |
+| test-driven-development | same ambient-laws line — which names superpowers skills and which `DEBT-024` does not mention | **Uncovered.** The line is either dropped silently or left dangling; both are wrong |
+| coding principles | mandatory `karpathy-guidelines` invocation in CLAUDE.md § Coding Principles | `DEBT-029` moves it to `CODING_STANDARDS.md`, which only a reviewer that looks for it reads — **a net weakening, not an equivalent move**, unless a rule points at it |
+
+So `DEBT-024`'s scope is short by one line, `DEBT-029` is not the equivalence its title
+claims, and `GAP-039` covers one of three fences. The three interlock; settling them
+together is the work, and carding the pieces now would freeze a framing that is not yet
+settled.
+
+Dispatch doctrine is not at risk by comparison: of CLAUDE.md § Dispatch's six bullets,
+only "build inside a superpowers chain → that chain's executor governs" is coupled. The
+other five — closure-judged inline-vs-dispatch, per-phase build dispatch, transcription
+is not a build, parallel within a phase not across, create-new-file dispatches
+foreground — are harness-agnostic and survive untouched.
 
 ## 6. Decided vs open
 
 **Decided — de-routing (change A).** super-bootstrap stops routing any external process
 harness. This does not depend on which harness wins; it follows from §3's dissolve test.
 superpowers may stay installed — it simply stops being routed.
+
+*De-routing rests on the dissolve test alone, not on a measurement.* The de-routed state
+is not a bare run — CLAUDE.md minus its routing sections, ~1.6k tokens of skill
+descriptions, the path-scoped rules, and the log / backlog / doc-sync / commit doors all
+remain. Removing the routing layer gives a clean reading of **that layer's** cost and
+nothing wider; it does not test whether the harness as a whole helps or hurts. Most of
+what such a test would report is static arithmetic anyway (ambient token count, per-board
+cost); the part that is not — omission rate — needs controlled runs this repo has no
+apparatus for.
 
 **Open — harness swap (change B).** Whether to move from superpowers to
 mattpocock/skills. Depends on evidence graded second-hand in §7.
