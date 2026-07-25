@@ -12,9 +12,9 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 - **`DEBT-###`** — working but rotting (test fixture rot, stale dep, cleanup owed).
 - **`GAP-###`** — design gap or unverified capability idea, never properly specced. Forward feature ideas land here; triage decides drop / spec.
 
-No phase prescription per category — when an item rolls into a session, the harness phase triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
+No phase prescription per category — when an item rolls into a session, triage decides how much ceremony the work earns. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-019` · `DEBT-030` · `GAP-041` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-019` · `DEBT-032` · `GAP-042` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -33,6 +33,20 @@ The claim is write-once — captured at the richest-context moment, read cold by
 
 ## Open
 
+### DEBT-032 — De-routed ambient laws are one-liners where the cut removed a full-body fire-moment surface
+
+**Logged:** 2026-07-26 · **Source:** cold `audit-harness-edits` probe on the Wave 1 diff (finding 9)
+**Problem:** § The envelope's ambient laws previously named superpowers skills, each of which loaded a full body at its fire moment. The de-routed replacement keeps a one-line recognition signal ambient and gives the body no home — the probe cites the harness-authoring rule that compressing what should fire every turn "trades ammo for noise reduction — wrong trade." `Verify before claiming` arguably compresses losslessly; `Review received, not absorbed` does not — the discipline it replaces carries named anti-patterns that one line cannot hold. The `.claude/rules/` layer is not the answer (a `paths:` rule fires on file read, not on intent — `docs/specs/harness-architecture.md` §5, and the direction is closed in `docs/decisions.md`), so the open question is whether the repo authors its own discipline bodies and what points at them.
+**Area:** Root `CLAUDE.md` § The envelope; `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` § The envelope
+**Prior:** Judge per law, not as a block — a one-liner that is the whole rule needs no body. Where a body is owed, the socket pattern § Coding Principles now uses (ambient line names the standard, a repo-declared file holds it) is the shape already in the harness; the fire-moment reader is the ambient line, not a rule glob.
+
+### DEBT-031 — `/super-bootstrap:triage` skill + agent still name `superpowers:systematic-debugging` as their doctrine
+
+**Logged:** 2026-07-26 · **Source:** cold `audit-harness-edits` probe on the Wave 1 diff (finding 1, empirically confirmed)
+**Problem:** Cluster row 8 routes triage work to `/super-bootstrap:triage`, and that shipped skill's `description` frontmatter ("Investigation doctrine is superpowers:systematic-debugging") plus `agents/triage.md:17` (`Doctrine = superpowers:systematic-debugging`) name the foreign skill as doctrine. So a repo bootstrapped after the skeleton cut carries a route to a lane whose doctrine reference dangles unless superpowers happens to be installed — the exact "dangling-rule risk" `harness-bootstrap` § Core plugin pins names, now unmasked by unpinning. It never surfaced during authoring because this repo's own `.claude/settings.json` still pins superpowers. `docs/specs/harness-architecture.md` §3 previously listed triage as unaffected; that row is corrected.
+**Area:** `plugins/super-bootstrap/skills/triage/SKILL.md` (description + `tags`); `plugins/super-bootstrap/agents/triage.md` (description + § Doctrine line)
+**Prior:** Same move the cluster rows took — restate as the declared discipline (root cause before anything, evidence over plausibility), which the agent body already spells out in the lines following the doctrine reference. **Behavior-shaping prose in a shipped skill/agent** — routes through `.claude/rules/skill-authoring.md`, i.e. `superpowers:writing-skills` RED first, not a mid-commit edit.
+
 ### DEBT-030 — /log dispatch costs ~30k tokens per row, and the "all rows route through log" contract has no transcription exception
 
 **Logged:** 2026-07-25 · **Source:** live session — three `/log` dispatches measured while carding the de-routing work
@@ -47,26 +61,19 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `plugins/super-bootstrap/agents/*.md` (tier pins); read surface = `mattpocock/skills` repo, esp. `skills/engineering/{code-review,implement,research,wayfinder}/` + `skills/productivity/writing-great-skills/`
 **Prior:** Read his repo properly — grade-A text, not fetch summaries. `writing-great-skills` is the likeliest home for a stated dispatch doctrine.
 
-### GAP-039 — Add a path-scoped rule for verification-before-completion to the shipped skeleton's rules layer
-
-**Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
-**Problem:** Verification-before-completion (evidence before claiming done, across all surfaces — not only tests) is a discipline superpowers holds with no independent equivalent in mattpocock's set. It is a behavioral rule, not a pipeline stage — it belongs in the path-scoped rules layer, where it fires at the decision moment with zero ambient cost when irrelevant. No shipped-skeleton rule currently covers it.
-**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/` (skeleton rules section)
-**Prior:** spec §5 identifies this gap and argues behavioral rule → rules layer over pipeline stage. **Scope is one of three fences, not one — §5 "Fences migrate here"; settle with DEBT-024 and DEBT-029 rather than alone.**
-
 ### GAP-038 — Ship an "Other" issue-tracker seed for mattpocock/skills' `/setup-matt-pocock-skills`, declaring docs/backlog.md + /super-bootstrap:log as the tracker
 
 **Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
 **Problem:** `/setup-matt-pocock-skills` ships seed templates for GitHub / GitLab / Local but none for "Other" — that branch is authored fresh, yielding free-form prose his skills interpret ad hoc. Without a seed, his `to-spec` and `triage` have no declared path to write into our backlog. Accepted known weakness: the socket is prose, not schema; documented seams drift.
 **Area:** `plugins/super-bootstrap/skills/harness-bootstrap/` (seed asset location); new seed file for mattpocock "Other" branch
-**Prior:** spec §4; mattpocock "Other" option + absence of seed template confirmed grade A (2026-07-25). **Not executable as titled — shipping a seed connects to nothing on its own, and two further questions ride the same decision. Read §4 before acting.**
+**Prior:** spec §4; mattpocock "Other" option + absence of seed template confirmed grade A (2026-07-25). **Not executable as titled — shipping a seed connects to nothing on its own, and two further questions ride the same decision. Read §4 before acting.** **Blocked on change B** (spec §6, open): wiring anything mattpocock-shaped into bootstrap presupposes adopting his set. Held out of the skeleton cut — do not pick this up until change B is decided.
 
-### DEBT-029 — Replace mandatory karpathy-guidelines skill invocation in CLAUDE.md with CODING_STANDARDS.md in the shipped skeleton
+### GAP-042 — § Coding Principles declares a `CODING_STANDARDS.md` socket that no bootstrapped repo ever has
 
-**Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
-**Problem:** Root `CLAUDE.md` § Coding Principles hardcodes a mandatory `karpathy-guidelines` invocation, binding coding standards to one skill and making them invisible to reviewers not running that skill. mattpocock's `code-review` reads `CODING_STANDARDS.md` / `CONTRIBUTING.md` and a documented repo standard overrides its built-in Fowler baseline — the standard should live in the skeleton where any reviewer can read it.
-**Area:** Root `CLAUDE.md` § Coding Principles; `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md`; new `CODING_STANDARDS.md` in skeleton
-**Prior:** spec §4 second socket; grade B — `code-review` reads `CODING_STANDARDS.md`, documented standard overrides Fowler baseline. **Not an equivalent move as titled: the target file has no guaranteed reader, so this weakens the fence unless a rule points at it — §5 "Fences migrate here".**
+**Logged:** 2026-07-26 · **Source:** landing DEBT-029's settled shape — the gap the fix created
+**Problem:** § Coding Principles (root `CLAUDE.md` + shipped skeleton) now reads "read the repo's declared coding standard — `CODING_STANDARDS.md` where that file is present", falling back to the pinned `karpathy-guidelines` skill when absent. `harness-bootstrap` never writes that file, so in every freshly bootstrapped repo the first clause is dead on arrival and the fallback is the only live branch — an indirection with no landing site. Either the skeleton seeds a headings-only file for the consumer to fill, or the socket clause should not promise a file the pipeline never creates.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md` (Phase 2a/2b artifact list + § Pipeline-owned); `plugins/super-bootstrap/skills/harness-bootstrap/assets/` (new skeleton asset); root `CLAUDE.md` + `assets/claude-md-skeleton.md` § Coding Principles
+**Prior:** Seed a headings-only `CODING_STANDARDS.md` (empty sections the consumer grows via doc-sync, like `overview.md` / `techstack.md`) rather than any prose — the four principles' body lives upstream in the skill and copying it is a parallel truth (VII). Decide whether the file is always-scaffolded (like `decisions.md`) or gated on a source-code surface (like `docs/specs/`).
 
 ### DEBT-028 — Convert drain's stage machine from hardcoded superpowers phases to interface-driven dispatch
 
@@ -88,20 +95,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Problem:** The `docs/superpowers/` directory layout is superpowers' artifact shape (temporal specs/plans from brainstorming and writing-plans); it carries a foreign namespace once routing is cut. Decision needed: drop the slot entirely (per-feature work orders delegate to whatever process harness the repo installs) or rename to a harness-neutral path. Consumers: `agents/todo.md`, `agents/triage.md`, `skills/drain/SKILL.md`, `shared/classify-actionable.md`, `skills/harness-bootstrap` (creates the dirs), root `CLAUDE.md` § Planning.
 **Area:** `docs/superpowers/` dir; `agents/todo.md`; `agents/triage.md`; `plugins/super-bootstrap/skills/drain/SKILL.md`; `plugins/super-bootstrap/shared/classify-actionable.md`; `plugins/super-bootstrap/skills/harness-bootstrap/`; root `CLAUDE.md` § Planning
 **Prior:** spec §2; mattpocock's `to-tickets` occupies the per-feature work order slot at `.scratch/<feature>/issues/NN-slug.md`. Carries its own downstream migration: adopt mode has no folder-removal path (spec §8), so retiring these dirs orphans them in every bootstrapped repo — unlike the other cut sites, which adopt mode migrates.
-
-### DEBT-025 — Delete `docs/specs/superpowers-topology.md` and all references to it
-
-**Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
-**Problem:** The topology doc maps superpowers entry points for routing purposes; with routing gone it has no consumer. References live in root `CLAUDE.md` § Cluster routing and possibly the shipped skeleton.
-**Area:** `docs/specs/superpowers-topology.md`; root `CLAUDE.md` § Cluster routing; `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md`
-**Prior:** spec §3 dissolve test.
-
-### DEBT-024 — Remove cluster routing table, "inside a route" rule, and SDD carve-out from root CLAUDE.md and shipped skeleton
-
-**Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
-**Problem:** Both surfaces hardcode superpowers entry points that lose their referent once de-routing lands. Root `CLAUDE.md` contains the 7-cluster routing table (6 entries naming superpowers skills), the "Inside a route — run it whole" rule, and the Dispatch § SDD carve-out. The shipped skeleton mirrors these into every repo bootstrapped by this plugin (skeleton holds 15 of 85 foreign-name occurrences across 19 files).
-**Area:** Root `CLAUDE.md` § Cluster routing, § Inside a route, § Dispatch (SDD carve-out); `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md`
-**Prior:** spec §3 dissolve test; `.claude/rules/repo-boundary.md` pulls the skeleton mirror into the dogfood edit's closure. **Scope is short by one line — § The envelope's ambient-laws list names superpowers skills and is not covered here; §5 "Fences migrate here".**
 
 ### BUG-019 — `todo full` scaffold renders empty table in spec-free repos, contradicting "every row, flat" contract
 

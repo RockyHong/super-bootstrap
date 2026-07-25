@@ -6,17 +6,23 @@ Work enters by picking up a card — a `docs/backlog.md` row (`/super-bootstrap:
 
 ### The envelope
 
-`ground → route → implement (ambient laws: test-driven-development, verification-before-completion, receiving-code-review, dispatching-parallel-agents) → verify → doc-sync → commit`. Red/failing-test-first runs inside implement wherever a test surface exists. Red and verify are structurally empty — no ceremony — on a diff with no test/runtime surface (docs-only). Commit = `/super-bootstrap:commit`.
+`ground → route → implement → verify → doc-sync → commit`. Red and verify are structurally empty — no ceremony — on a diff with no test/runtime surface (docs-only). Commit = `/super-bootstrap:commit`.
+
+**Ambient laws inside implement:**
+
+- **Test-first** — where a test surface exists, a failing test precedes the implementation.
+- **Verify before claiming** — evidence before "done / fixed / passing": run the check, read the output, then claim.
+- **Review received, not absorbed** — check a review claim against the code before implementing it; disagree with grounds rather than complying performatively.
 
 ### Cluster routing
 
-Route the card by cluster:
+Recognize the card's shape, then take that row's discipline; a repo that installs a process harness maps its entries onto these shapes.
 
 | # | Cluster | Route |
 |---|---|---|
-| 1 | Bug / broken behavior | `systematic-debugging` whole — root cause before fix |
-| 2 | Fuzzy feature / new capability | `brainstorming` whole — approved design hands to writing-plans |
-| 3 | Design-intact multi-step | `writing-plans` direct |
+| 1 | Bug / broken behavior | root cause before fix — reproduce, trace to the mechanism, then change |
+| 2 | Fuzzy feature / new capability | settle the design with the user before building |
+| 3 | Design-intact multi-step | write the step sequence down before touching code |
 | 4 | Refactor | ground the card; multi-step → cluster 3, atomic → envelope only |
 | 5 | Config / taste / bounded tweak | inline; taste that iterates or drifts → card it |
 | 6 | Docs / prose | envelope only |
@@ -27,20 +33,14 @@ Route the card by cluster:
 
 State the card's **problem-aim** before routing — premise / problem / scenario only, synthesized self-coherent (hold back the card's Prior; restate rather than paste index-quotes) — then state cluster + route. Both scale together: resolvable from the card/SSOT → post in one line and proceed (framing line + route line); stop for the user's explicit OK only on a genuine fork — ambiguous cluster, a conflict with a closed fork in [`docs/decisions.md`](docs/decisions.md), high blast radius, or card-claim ambiguity / suspected mis-aim. Hold the aligned aim as the check on everything machinery returns: a verdict or solution that re-aims the problem is surfaced, not absorbed (`aligned ≠ correct` — the user confirms the target, not the answer).
 
-### Inside a route
-
-Once a superpowers entry (`systematic-debugging` / `brainstorming` / `writing-plans`) is entered, run it whole — its gates, pointers, and artifacts govern until its own terminal handoff or a documented choice-point. Route at entry only, honoring every `REQUIRED SUB-SKILL` pointer between.
-
-**User instructions override Superpowers defaults.** User can redirect any route.
-
 ### Sizing — scale ceremony to the work's shape
 
-Route and writing-plans defaults assume worst-case — fuzzy-new work, a cold executor, every task equally central. Scale each down to the shape in hand; § Dispatch's closure valves scale dispatch grade the same way.
+Route defaults assume worst-case — fuzzy-new work, a cold executor, every task equally central. Scale each down to the shape in hand; § Dispatch's closure valves scale dispatch grade the same way.
 
-- **Route depth keys on shape-familiarity, not cluster alone** — a known-shape repeat (the Nth same-shape artifact) routes lighter than its nominal cluster, skipping the discovery phases (brainstorming, full plan) a first-of-shape needs.
+- **Route depth keys on shape-familiarity, not cluster alone** — a known-shape repeat (the Nth same-shape artifact) routes lighter than its nominal cluster, skipping the discovery ceremony (design settling, a full written plan) a first-of-shape needs.
 - **Task boundary = logical-change-unit, not surface-group** — one change narrated across N file clusters is one task + one commit, not N. Batch same-logical-change surfaces.
 - **Per-task verify depth scales to surface centrality** — an ambient-loaded harness surface (CLAUDE.md, a rule, an agent) earns a full cold verify pass whatever the change size; an isolated low-centrality surface (a README line, a manifest field, a docs paragraph) earns a light pass.
-- **Same-session author == executor → reference, don't embed** — writing-plans embeds full file bodies for a cold executor; when the authoring session also executes, reference draft bodies by section instead of re-embedding full file text.
+- **Same-session author == executor → reference, don't embed** — a plan written for a cold executor embeds full file bodies; when the authoring session also executes, reference draft bodies by section instead of re-embedding full file text.
 
 Spec/plan locations: `docs/superpowers/specs/` and `docs/superpowers/plans/` (temporal). Persistent specs (kept after merge) go to `docs/specs/`.
 
@@ -50,7 +50,7 @@ The gateway orchestrates; it does not build. Inline lane = orchestration, reads,
 
 - **Build** (within Implement) → dispatch per phase, gateway integrates + verifies between. Build is never a live tweak. **Every build-dispatch prompt carries the commit convention up front** — finish, report the work as built with the file list, do not `git commit`; the gateway fires `/super-bootstrap:commit`.
 - **Transcription is not a build** — when the exact content is already in hand (a plan supplies verbatim old/new text, or the gateway already holds the final text) with no runtime to derive against, applying it carries zero closure: inline it, even mid-dispatch-regime. Reserve dispatch for content a container must derive: reads, integration, judgment.
-- **Build inside a superpowers chain** (a `writing-plans` artifact in hand) → the chain's own executor governs — take its documented choice-point (`subagent-driven-development` / fallback); the lanes here carry envelope work outside a chain. **SDD carve-out:** subagent commits route through the commit door, so an SDD implementer implements + tests + reports (built + file list) and the gateway commits via `/super-bootstrap:commit` (gateway-inline mechanics; the cold doc-sync scan dispatches only when its grep-gate hits). SDD's fix→re-review loop scales to fix grade — a transcription-grade fix (shape fully supplied) → dispatcher verifies against the diff, no re-review dispatch; a judgment-grade fix (shape left to the implementer) → re-review dispatches. For free per-implementer commits, use the drain-worktree path — isolated commits, doc-sync deferred to the merge boundary.
+- **Subagent commits route through the commit door** — a dispatched implementer implements + tests + reports (built + file list); the gateway commits via `/super-bootstrap:commit` (gateway-inline mechanics; the cold doc-sync scan dispatches only when its grep-gate hits). A fix→re-review loop scales to fix grade — a transcription-grade fix (shape fully supplied) → dispatcher verifies against the diff, no re-review dispatch; a judgment-grade fix (shape left to the implementer) → re-review dispatches. For free per-implementer commits, use the drain-worktree path — isolated commits, doc-sync deferred to the merge boundary.
 - **Doc-sync scan** (envelope step) → gateway-inline; a grep-gate dispatches the cold `doc-sync-scan` agent only on a doc-surface hit (mechanism: § Doc Sync); resolving writes land inline or dispatched by closure.
 - **Parallel within a phase, not across it** — N build sub-goals or N doc surfaces fan out together; build → doc-sync stays ordered (doc-sync needs the finished diff).
 - **Create-new-file subagents dispatch foreground** — a subagent tasked to CREATE a new harness/skill file runs foreground, not `run_in_background`: backgrounded, its new-file Write fails and the subagent stalls before writing. Editing an existing file and creating a non-harness file background cleanly.
@@ -81,9 +81,9 @@ State docs (`overview.md`, `techstack.md`, specs) hold what is **true now** — 
 
 ## Coding Principles
 
-Before writing, reviewing, or refactoring code, invoke the `karpathy-guidelines` skill.
+Before writing, reviewing, or refactoring code, read the coding standard: the pinned `karpathy-guidelines` skill — four principles (think-before-coding, simplicity-first, surgical-changes, goal-driven-execution). Skill body is upstream — don't paraphrase it.
 
-It owns four principles (think-before-coding, simplicity-first, surgical-changes, goal-driven-execution). Skill body is upstream — don't paraphrase it here.
+A repo that declares its own `CODING_STANDARDS.md` overrides that default; the file is the standard where it exists.
 
 ## Edit Discipline — Renames & Replace-All
 
@@ -154,7 +154,7 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 {- [`docs/parked.md`](docs/parked.md) — deferred items with named triggers (scale module)}
 {- [`docs/test-queue.md`](docs/test-queue.md) — manual-verification queue (scale module)}
 - [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
-- `docs/superpowers/specs/` — design specs from brainstorming (temporal — deleted after merge)
+- `docs/superpowers/specs/` — design specs from up-front design work (temporal — deleted after merge)
 - `docs/superpowers/plans/` — implementation plans (temporal — deleted after merge)
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)
 

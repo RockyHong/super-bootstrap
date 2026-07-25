@@ -155,7 +155,7 @@ docs/
   decisions.md   ← closed forks / rejected directions (history dimension — always scaffolded, starts empty)
   backlog.md     ← backlog tracker (BUG / DEBT / GAP — capture-first, triaged on pickup)
   superpowers/
-    specs/       ← design specs from brainstorming (temporal)
+    specs/       ← design specs from up-front design work (temporal)
     plans/       ← implementation plans (temporal)
 .claude/
   rules/         ← path-scoped rules, full-body fires on file match
@@ -180,19 +180,19 @@ Copy `assets/backlog.md` to `docs/backlog.md` if missing (no substitutions).
 
 `.claude/rules/` machinery is **always** scaffolded (zero-cost when empty). `index.md` is seeded from `assets/rules-index-skeleton.md`. Individual rule bodies fill in Phase 2b based on Phase 1 signal detection.
 
-**Core plugin pins (pre-resolve).** The harness CLAUDE.md skeleton names two skills by trigger rule:
+**Core plugin pin (pre-resolve).** The harness CLAUDE.md skeleton names one skill by trigger rule:
 
-- `superpowers` — slash-command routes (`/brainstorm`, `/write-plan`, `/execute-plan`).
-- `karpathy-guidelines` — invoked before every code edit (see CLAUDE.md § Coding Principles).
+- `karpathy-guidelines` — the coding standard where the repo declares no `CODING_STANDARDS.md` (see CLAUDE.md § Coding Principles).
 
-Both are **core deps, not adaptive picks** — pinned here at 2a so tier-2 curation (`/super-bootstrap:resolve-plugins`, run later by `/super-bootstrap`) layers adaptive picks on a guaranteed base. Dangling-rule risk: if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently. Pin first.
+It is a **core dep, not an adaptive pick** — pinned here at 2a so tier-2 curation (`/super-bootstrap:resolve-plugins`, run later by `/super-bootstrap`) layers adaptive picks on a guaranteed base. Dangling-rule risk: if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently. Pin first.
+
+No process harness is provisioned — the skeleton's route rows name disciplines, not skill entries.
 
 Ensure `.claude/settings.json` contains:
 
 ```json
 {
   "enabledPlugins": {
-    "superpowers@claude-plugins-official": true,
     "andrej-karpathy-skills@karpathy-skills": true
   },
   "extraKnownMarketplaces": {
@@ -208,7 +208,7 @@ Ensure `.claude/settings.json` contains:
 - Key already present → skip (`✓ pinned`).
 - Other `.claude/settings.json` content → never touched.
 
-`superpowers@claude-plugins-official` resolves from Anthropic's official marketplace — no `extraKnownMarketplaces` entry needed. `andrej-karpathy-skills@karpathy-skills` lives outside the official marketplace, so the `karpathy-skills` marketplace entry is required for cloud / fresh-machine resolution. Tier-2 curation (`/super-bootstrap:resolve-plugins`) treats both pins as locked: never proposes drop, never re-prompts the user. Adaptive picks (stack-matched skills / MCPs / hooks) layer on top when curation runs.
+`andrej-karpathy-skills@karpathy-skills` lives outside the official marketplace, so the `karpathy-skills` marketplace entry is required for cloud / fresh-machine resolution. Tier-2 curation (`/super-bootstrap:resolve-plugins`) treats this pin as locked: never proposes drop, never re-prompts the user. Adaptive picks (stack-matched skills / MCPs / hooks) layer on top when curation runs.
 
 ### 2a-hooks: Harness hooks (default-on)
 
@@ -512,7 +512,7 @@ After committing (or reporting no changes needed), present results based on repo
 
 **First-run (just scaffolded):**
 
-> **Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. Core plugin pins (superpowers + karpathy) sit in `.claude/settings.json`; stack-matched skill / MCP / hook picks come when `/super-bootstrap` runs gated tier-2 curation.
+> **Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. The core plugin pin (karpathy) sits in `.claude/settings.json`; no process harness is pinned — stack-matched skill / MCP / hook picks, a process harness among them, come when `/super-bootstrap` runs gated tier-2 curation.
 >
 > {If product skeletons are empty (greenfield): "`docs/overview.md` / `docs/techstack.md` are empty skeletons — `/super-bootstrap` seeds GAP cards for them and surfaces the resolve gate."}
 >

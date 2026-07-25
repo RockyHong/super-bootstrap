@@ -37,7 +37,7 @@ substrate-permanent. Harness engineering's durable work domain is the permanent 
 | Procedure / discipline | owns | owns (model-invoked) | — |
 | Alignment / elicitation | `brainstorming` | `grill-me` / `grill-with-docs` | — |
 | Shared language | — | `CONTEXT.md` + ADR | — |
-| Entry selection (routing) | **absent** | `ask-matt` (owns its own) | Cluster table (built to fill superpowers' gap) |
+| Entry selection (routing) | **absent** | `ask-matt` (owns its own) | Cluster table — **shape recognition, not entry routing**; rows name disciplines a harness would otherwise supply |
 | Fast capture | — | — | **`/log`** |
 | Standing work state | — | defers to a real tracker | **`docs/backlog.md`** |
 | Per-feature work order | temporal specs/plans | `to-tickets` → `.scratch/<feature>/issues/NN-slug.md` | `docs/superpowers/plans/` |
@@ -57,15 +57,28 @@ inseparable from it.
 
 **Dissolve test — remove superpowers, and these lose their referent:**
 
-| Component | Outcome |
-| --- | --- |
-| Cluster routing table (7 clusters, 6 naming superpowers entries) | dead |
-| "Inside a route — run it whole" | dead |
-| `docs/superpowers/specs\|plans/` | dead (that is superpowers' artifact shape) |
-| `docs/specs/superpowers-topology.md` | dead |
-| Dispatch § SDD carve-out | dead |
-| drain's stage machine (`raw→triage→plan→execute→review`) | half-dead (stage names are superpowers' phases) |
-| **log / backlog / triage / commit / doc-sync / rules** | **unaffected** |
+| Component | Outcome | Cut |
+| --- | --- | --- |
+| Cluster routing table — rows 1 / 2 / 3 (`systematic-debugging` / `brainstorming` / `writing-plans`) | referent dead, **discipline live** | **landed** — rows restated as disciplines (root cause before fix · settle the design · write the sequence), naming no harness |
+| Cluster routing table — rows 5 / 6 / 7 / 8 (inline tweak · docs · harness edit · triage lane) | **live** — harness-neutral already; row 8 routes to our own `/super-bootstrap:triage` | untouched |
+| Cluster routing table — row 4 (refactor) | live — its "multi-step → cluster 3" pointer now targets a discipline, not a skill | untouched |
+| "Inside a route — run it whole" | dead | **landed** — section removed |
+| Dispatch § SDD carve-out — the "chain's executor governs" clause | dead | **landed** — clause removed; the bullet's commit-door mechanics are harness-agnostic and stayed |
+| § The envelope ambient-laws line (4 skill names) | referent dead, **discipline live** | **landed** — three declared laws inline; `dispatching-parallel-agents` cut as a duplicate of § Dispatch |
+| `docs/specs/superpowers-topology.md` | dead | **landed** — deleted |
+| `harness-bootstrap` § Core plugin pins — `superpowers` as a **locked** core dep | dead *as core*: the pin's own stated justification is name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names go | **landed** — unpinned in `harness-bootstrap` 2a and delocked in `resolve-plugins` Phase 4; a process harness is now an ordinary adaptive pick |
+| `docs/superpowers/specs\|plans/` | dead (that is superpowers' artifact shape) | open — `DEBT-026` |
+| drain's stage machine (`raw→triage→plan→execute→review`) | half-dead (stage names are superpowers' phases) | open — `DEBT-028` |
+| **log / backlog / commit / doc-sync / rules** | **unaffected** | — |
+| `skills/triage/SKILL.md` + `agents/triage.md` — `Doctrine = superpowers:systematic-debugging` | **coupled, not unaffected** (cold audit 2026-07-26 corrected an earlier "triage unaffected" reading): cluster row 8 routes to `/super-bootstrap:triage`, and the shipped skill's description plus the agent body name the foreign skill as their investigation doctrine — so a de-routed repo without superpowers installed hits a dangling doctrine reference | open — `DEBT-031` |
+
+**The table was 8 rows and all 8 survive** — three of them restated. Its real function is
+sizing ceremony to shape, and that is harness-independent: clusters 5 and 6 say "no
+ceremony", 7 routes harness edits, 8 routes triage to our own door, and 1–3 name the
+disciplines a process harness would otherwise supply. Deleting rows rather than restating
+them would have dropped verified-load-bearing prose — [`docs/decisions.md`](../decisions.md)
+records a pressure test where the route line alone sent a runtime-symptom bug to the triage
+lane in 2/2 control runs.
 
 mattpocock ships `ask-matt` — a router over his own user-invoked skills — so the gap
 that forced our routing layer does not exist for him. Building one anyway would create
@@ -77,12 +90,26 @@ invoke model-invoked skills but never another user-invoked one, and `implement` 
 
 ## 4. The seam: runtime-orthogonal, setup-time-composed
 
-**Runtime.** super-bootstrap names zero foreign skills. This is grep-verifiable, not a
-policy: `rg 'superpowers|systematic-debugging|brainstorming|writing-plans'` over
-`plugins/super-bootstrap/` returns zero. Current count: **85 occurrences across 19
-files** (verified 2026-07-25), of which `harness-bootstrap/assets/claude-md-skeleton.md`
-holds 15 — meaning every downstream repo bootstrapped by this plugin carries the routing
-table in its own CLAUDE.md. **Downstream migration is part of the change's closure.**
+**Runtime.** The target state is that super-bootstrap names zero foreign skills. This is
+grep-verifiable, not a policy: `rg 'superpowers|systematic-debugging|brainstorming|writing-plans'`
+over `plugins/super-bootstrap/` should return zero.
+
+**Where it stands (2026-07-26, after the skeleton cut).** The shipped CLAUDE.md skeleton
+names **no skill** — its remaining 8 hits (down from 15 on this pattern) are all
+`docs/superpowers/**` path strings, owned by `DEBT-026`. Every surviving hit repo-wide is
+now a path string, a naming string, or a consumer of the folder shape:
+
+| Remaining site | Kind | Owner |
+| --- | --- | --- |
+| `docs/superpowers/**` path strings (widest set, incl. 11 in `harness-bootstrap/SKILL.md`) | folder shape | `DEBT-026` |
+| `harness-bootstrap/SKILL.md` `description:` + intro ("generic superpowers runway") | naming | `DEBT-026` |
+| `harness-bootstrap/SKILL.md` `chore: scaffold\|sync superpowers pipeline` commit strings | naming **+ detector** | `DEBT-026` |
+| `agents/todo.md`, `agents/triage.md`, `shared/classify-actionable.md`, `skills/drain/**`, `skills/todo/SKILL.md` | folder-shape consumers | `DEBT-026` / `DEBT-027` / `DEBT-028` |
+| `skills/resolve-plugins/**` (harness-active marker + one example pick) | folder shape / illustrative | `DEBT-026` |
+
+The commit strings are deliberately **not** renamed here: they double as the mature-repo
+bootstrap detector (§ Special case), so renaming them separately from the folder would force
+two detection-list migrations instead of one.
 
 **Setup-time.** Composition happens through mattpocock's own declared socket. His
 `/setup-matt-pocock-skills` presents these issue-tracker options verbatim:
@@ -130,29 +157,75 @@ Docs existing ≠ the agent attending to them. The three systems solve this diff
 Path-scoped rules bind to **file paths, not skill names**, so this slot is orthogonal by
 construction — it needs no change when the process harness is swapped or removed.
 
-### Fences migrate here — they are not deleted with the routing
+### The fences stay ambient — the cut is a rename, not a relocation
 
-De-routing removes routing, not discipline. Three fences currently live as ambient prose
-or a mandatory invocation, and each wants the same treatment: a path-scoped rule that
-fires at the decision moment and names **the discipline the repo declares**, never a
-specific harness.
+De-routing removes routing, not discipline. Four laws named in `CLAUDE.md` § The envelope
+(`test-driven-development`, `verification-before-completion`, `receiving-code-review`,
+`dispatching-parallel-agents`) are superpowers skill names, and § Coding Principles mandates
+a `karpathy-guidelines` invocation. Where they land is settled by the rules layer's own
+firing mechanism, not by preference.
 
-| Fence | Where it lives now | Risk if the cut lands as carded |
+**A path-scoped rule fires on file *read*, not on intent** — stated in the shipped
+rule-authoring guide (`rules-index-skeleton.md`: "a rule fires on file *read*, not on
+intent") and in § Rules above. Hold each fence against that:
+
+| Fence | Fire moment | File-read surface? |
 | --- | --- | --- |
-| verification-before-completion | superpowers skill, reached via the envelope's ambient-laws line | Covered by `GAP-039` |
-| test-driven-development | same ambient-laws line — which names superpowers skills and which `DEBT-024` does not mention | **Uncovered.** The line is either dropped silently or left dangling; both are wrong |
-| coding principles | mandatory `karpathy-guidelines` invocation in CLAUDE.md § Coding Principles | `DEBT-029` moves it to `CODING_STANDARDS.md`, which only a reviewer that looks for it reads — **a net weakening, not an equivalent move**, unless a rule points at it |
+| verification-before-completion | about to claim done / fixed / passing | **No** — a claim is not a file read |
+| receiving-code-review | review feedback arrives | **No** |
+| dispatching-parallel-agents | choosing a container | **No** — and § Dispatch already owns it |
+| test-driven-development | about to write implementation | Source globs — but unknowable in the skeleton (stack detected at Phase 1) |
+| coding principles | about to write code | same as above |
 
-So `DEBT-024`'s scope is short by one line, `DEBT-029` is not the equivalence its title
-claims, and `GAP-039` covers one of three fences. The three interlock; settling them
-together is the work, and carding the pieces now would freeze a framing that is not yet
-settled.
+So **`GAP-039`'s premise is mechanically unavailable**: no `paths:` glob can fire at "about
+to claim done". Same failure class as the closed worktree-glob fork in
+[`docs/decisions.md`](../decisions.md) — a path rule matches paths *under* a root, never a
+moment.
 
-Dispatch doctrine is not at risk by comparison: of CLAUDE.md § Dispatch's six bullets,
-only "build inside a superpowers chain → that chain's executor governs" is coupled. The
-other five — closure-judged inline-vs-dispatch, per-phase build dispatch, transcription
-is not a build, parallel within a phase not across, create-new-file dispatches
-foreground — are harness-agnostic and survive untouched.
+**Ambient prose is this repo's proven carrier.** The retired-hook closure records it: the
+entry-discipline's home is `CLAUDE.md`, "present every turn incl. answer-from-memory + every
+dispatched subagent", and 10 control agents were shaped by it with no hook. A run of closed
+forks additionally rejects new rule files that duplicate ambient prose absent a failing
+pressure-test, and [`.claude/rules/skill-authoring.md`](../../.claude/rules/skill-authoring.md)
+requires RED-first for behavior-shaping prose. Shipping a rule here would be that rejected
+shape with no failing test behind it.
+
+**Shipped shape.** The ambient-laws line carries three disciplines **the repo declares**, one
+line each, no external referent — test-first, verify-before-claiming,
+review-received-not-absorbed. The fourth (`dispatching-parallel-agents`) is cut outright,
+because § Dispatch is its single home (VII). The rejected rules-layer direction is recorded
+in [`docs/decisions.md`](../decisions.md) so it is not re-proposed.
+
+**What the compression costs is open.** Each named skill carried a full body that loaded at
+its fire moment; a one-liner does not. `Verify before claiming` plausibly compresses without
+loss, `Review received, not absorbed` does not. `DEBT-032` holds that question — the answer is
+not a rule glob (closed above) but whether the repo authors its own discipline bodies.
+
+### § Coding Principles is a different concern, riding Wave 1 by name-adjacency
+
+§3's dissolve test does not list it. `karpathy-guidelines` is a **standards** skill, not a
+process harness, so de-routing does not touch it and `DEBT-029` is not a de-routing card.
+Its real problem stands on its own: a standard bound to one invocation, invisible to any
+reviewer not running that skill.
+
+Its carded fix has an SSOT constraint. Copying the skill's four principles into
+`CODING_STANDARDS.md` duplicates a body that lives upstream — a parallel truth (VII), and
+`CLAUDE.md` already says "Skill body is upstream — don't paraphrase it here."
+
+**Shipped:** the ambient slot keeps its fire moment ("before writing, reviewing, or
+refactoring code"), the *mandatory* invocation is gone, the pinned skill is the default
+standard, and `CODING_STANDARDS.md` overrides it where a repo declares one. The ambient line
+is the guaranteed reader the card's title assumed a file could be. The default leads and the
+socket follows deliberately: `harness-bootstrap` writes no such file, so leading with the
+socket would lead with the branch that fires in no repo the runway produces. That residual is
+`GAP-042`.
+
+Dispatch doctrine came through intact: of CLAUDE.md § Dispatch's six bullets, only the
+"build inside a superpowers chain → that chain's executor governs" clause was coupled, and
+it is cut. The other five — closure-judged inline-vs-dispatch, per-phase build dispatch,
+transcription is not a build, parallel within a phase not across, create-new-file dispatches
+foreground — are harness-agnostic and untouched, and the cut bullet's own commit-door
+mechanics survive under a harness-neutral heading.
 
 ## 6. Decided vs open
 
@@ -242,9 +315,17 @@ Finding Triage, Rules, Git Notes, Planning).
 | A whole section **dropped** from the skeleton | **No** | The walk is skeleton-driven — a section no longer on the owned list is never visited, so it orphans in consumer repos |
 | A scaffolded **folder** retired | **No** | Phase 2a states folders have only two states, missing or present ("create if missing, skip if present") — there is no removal path |
 
-**Consequence for the cut sites:** DEBT-024 (routing table lives under § Development
-Workflow), DEBT-029 (§ Coding Principles is retained, its body replaced), GAP-038 and
-GAP-039 (both add files) all land inside covered shapes — adopt mode migrates them.
+**The skeleton cut landed inside covered shapes.** No section was dropped, so nothing
+orphans — `§ Inside a route` was a `###` subsection under § Development Workflow, which stays
+on the owned list.
+
+| Cut site (landed) | Shape | Covered? |
+| --- | --- | --- |
+| Routing rows restated, "inside a route" removed, SDD clause cut, ambient-laws line rewritten | content changed within § Development Workflow / § Dispatch (both on the owned list) | Yes |
+| Topology doc deleted | repo-local; the shipped skeleton never referenced it (verified 2026-07-26, zero hits) | N/A downstream |
+| § Coding Principles body replaced | section retained on the owned list | Yes |
+| `superpowers` core pin removed from § Core plugin pins | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** Already-bootstrapped repos keep the pin — superpowers stays installed where it is, which §6 permits |
+
 **DEBT-026 is the exception:** retiring `docs/superpowers/specs|plans/` hits the folder
 hole, so downstream repos keep orphaned directories that `/super-bootstrap:todo` and
 `drain` still scan. That card carries its own migration mechanism or accepts the orphan.

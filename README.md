@@ -2,7 +2,7 @@
 
 <img src=".github/assets/hero.webp" alt="super-bootstrap: one command writes CLAUDE.md, curates MCPs + skills, seeds tasks/backlog" width="720">
 
-Skip the per-project Claude setup grind. One command picks your skills, writes `CLAUDE.md`, pins your config, **and gives Claude a phase-gated workflow** — every session runs the [superpowers](https://github.com/obra/superpowers) pipeline, but only the phases the work actually needs. Workflow, not just a toolbelt.
+Skip the per-project Claude setup grind. One command picks your skills, writes `CLAUDE.md`, pins your config, **and gives Claude a phase-gated workflow** — every session runs the pipeline, but only the phases the work actually needs. Workflow, not just a toolbelt. The harness names disciplines, not skills, so it does not marry you to any one process-harness plugin.
 
 ## Best for
 
@@ -64,8 +64,8 @@ Optional bonus: `/super-bootstrap:release-init` — one-shot scaffolder. Detects
 
 | Tool | Role |
 |---|---|
-| [superpowers](https://github.com/obra/superpowers) | Workflow entries the CLAUDE.md routes into per work cluster — `systematic-debugging` for bugs, `brainstorming` for fuzzy features, `writing-plans` for design-intact multi-step |
-| [andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | Core dep auto-pinned in `.claude/settings.json`. Scaffolded CLAUDE.md § Coding Principles invokes its `karpathy-guidelines` skill before every code edit (think-before-coding, simplicity, surgical changes, goal-driven execution). |
+| [superpowers](https://github.com/obra/superpowers) | Optional process harness — an ordinary curation candidate, not pinned. The scaffolded CLAUDE.md names disciplines (root cause before fix, settle the design, write the sequence), so a harness like this one slots in without the harness knowing its name. |
+| [andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | Core dep auto-pinned in `.claude/settings.json`. Scaffolded CLAUDE.md § Coding Principles takes its `karpathy-guidelines` skill as the coding standard wherever the repo declares no `CODING_STANDARDS.md` (think-before-coding, simplicity, surgical changes, goal-driven execution). |
 | [claude-code-setup](https://claude.com/plugins/claude-code-setup) | Anthropic's plugin recommender — fast-path source if installed |
 | [Anthropic plugin marketplace](https://claude.com/plugins) | Anthropic-vetted skills, MCPs, hooks, subagents |
 | [modelcontextprotocol/registry](https://github.com/modelcontextprotocol/registry) | Official MCP discovery registry — indexes reference impls + community |
