@@ -40,13 +40,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** Root `CLAUDE.md` § The envelope; `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` § The envelope
 **Prior:** Judge per law, not as a block — a one-liner that is the whole rule needs no body. Where a body is owed, the socket pattern § Coding Principles now uses (ambient line names the standard, a repo-declared file holds it) is the shape already in the harness; the fire-moment reader is the ambient line, not a rule glob.
 
-### DEBT-031 — `/super-bootstrap:triage` skill + agent still name `superpowers:systematic-debugging` as their doctrine
-
-**Logged:** 2026-07-26 · **Source:** cold `audit-harness-edits` probe on the Wave 1 diff (finding 1, empirically confirmed)
-**Problem:** Cluster row 8 routes triage work to `/super-bootstrap:triage`, and that shipped skill's `description` frontmatter ("Investigation doctrine is superpowers:systematic-debugging") plus `agents/triage.md:17` (`Doctrine = superpowers:systematic-debugging`) name the foreign skill as doctrine. So a repo bootstrapped after the skeleton cut carries a route to a lane whose doctrine reference dangles unless superpowers happens to be installed — the exact "dangling-rule risk" `harness-bootstrap` § Core plugin pins names, now unmasked by unpinning. It never surfaced during authoring because this repo's own `.claude/settings.json` still pins superpowers. `docs/specs/harness-architecture.md` §3 previously listed triage as unaffected; that row is corrected.
-**Area:** `plugins/super-bootstrap/skills/triage/SKILL.md` (description + `tags`); `plugins/super-bootstrap/agents/triage.md` (description + § Doctrine line)
-**Prior:** Same move the cluster rows took — restate as the declared discipline (root cause before anything, evidence over plausibility), which the agent body already spells out in the lines following the doctrine reference. **Behavior-shaping prose in a shipped skill/agent** — routes through `.claude/rules/skill-authoring.md`, i.e. `superpowers:writing-skills` RED first, not a mid-commit edit.
-
 ### DEBT-030 — /log dispatch costs ~30k tokens per row, and the "all rows route through log" contract has no transcription exception
 
 **Logged:** 2026-07-25 · **Source:** live session — three `/log` dispatches measured while carding the de-routing work

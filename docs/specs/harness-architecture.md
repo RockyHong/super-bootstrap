@@ -70,7 +70,7 @@ inseparable from it.
 | `docs/superpowers/specs\|plans/` | dead (that is superpowers' artifact shape) | open — `DEBT-026` |
 | drain's stage machine (`raw→triage→plan→execute→review`) | half-dead (stage names are superpowers' phases) | open — `DEBT-028` |
 | **log / backlog / commit / doc-sync / rules** | **unaffected** | — |
-| `skills/triage/SKILL.md` + `agents/triage.md` — `Doctrine = superpowers:systematic-debugging` | **coupled, not unaffected** (cold audit 2026-07-26 corrected an earlier "triage unaffected" reading): cluster row 8 routes to `/super-bootstrap:triage`, and the shipped skill's description plus the agent body name the foreign skill as their investigation doctrine — so a de-routed repo without superpowers installed hits a dangling doctrine reference | open — `DEBT-031` |
+| `skills/triage/SKILL.md` + `agents/triage.md` — investigation doctrine | referent dead, **discipline live** — the agent's tool list carries no `Skill`, so the pointer never resolved even where superpowers is installed | **landed** — doctrine clause restated inline, naming no harness; the skill description's scope-summary tail dropped |
 
 **The table was 8 rows and all 8 survive** — three of them restated. Its real function is
 sizing ceremony to shape, and that is harness-independent: clusters 5 and 6 say "no
@@ -324,6 +324,7 @@ on the owned list.
 | Routing rows restated, "inside a route" removed, SDD clause cut, ambient-laws line rewritten | content changed within § Development Workflow / § Dispatch (both on the owned list) | Yes |
 | Topology doc deleted | repo-local; the shipped skeleton never referenced it (verified 2026-07-26, zero hits) | N/A downstream |
 | § Coding Principles body replaced | section retained on the owned list | Yes |
+| triage lane's doctrine clause restated inline | `plugins/super-bootstrap/**` ships with the plugin, never scaffolded into a consumer repo | N/A downstream |
 | `superpowers` core pin removed from § Core plugin pins | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** Already-bootstrapped repos keep the pin — superpowers stays installed where it is, which §6 permits |
 
 **DEBT-026 is the exception:** retiring `docs/superpowers/specs|plans/` hits the folder

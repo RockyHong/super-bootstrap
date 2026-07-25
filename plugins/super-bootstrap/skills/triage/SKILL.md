@@ -1,6 +1,6 @@
 ---
 name: triage
-description: 'Read-only verdict phase for a backlog card. `/super-bootstrap:triage {ID}` dispatches the `triage` subagent (Opus) to trace the card''s root cause cold and emit a verdict artifact — auto-fix → docs/superpowers/triage/{ID}-scope.md (Fix-shape / Probe-deps / Execution tags) or surface → {ID}-notes.md (decision for the user). No code changes — the fix is a separate phase. Use at raw-card pickup (todo board `Triage:` rows) or when the user asks to triage/investigate a BUG/DEBT/GAP item. Investigation doctrine is superpowers:systematic-debugging; this lane adds the read-only container, the verdict contract, and pipeline sizing.'
+description: 'Read-only verdict phase for a backlog card. `/super-bootstrap:triage {ID}` dispatches the `triage` subagent (Opus) to trace the card''s root cause cold and emit a verdict artifact — auto-fix → docs/superpowers/triage/{ID}-scope.md (Fix-shape / Probe-deps / Execution tags) or surface → {ID}-notes.md (decision for the user). No code changes — the fix is a separate phase. Use at raw-card pickup (todo board `Triage:` rows) or when the user asks to triage/investigate a BUG/DEBT/GAP item.'
 tags: [triage, verdict, backlog, pipeline, superpowers]
 ---
 
