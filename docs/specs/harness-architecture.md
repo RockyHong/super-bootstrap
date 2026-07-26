@@ -57,20 +57,20 @@ inseparable from it.
 
 **Dissolve test — remove superpowers, and these lose their referent:**
 
-| Component | Outcome | Cut |
-| --- | --- | --- |
-| Cluster routing table — rows 1 / 2 / 3 (`systematic-debugging` / `brainstorming` / `writing-plans`) | referent dead, **discipline live** | **landed** — rows restated as disciplines (root cause before fix · settle the design · write the sequence), naming no harness |
-| Cluster routing table — rows 5 / 6 / 7 / 8 (inline tweak · docs · harness edit · triage lane) | **live** — harness-neutral already; row 8 routes to our own `/super-bootstrap:triage` | untouched |
-| Cluster routing table — row 4 (refactor) | live — its "multi-step → cluster 3" pointer now targets a discipline, not a skill | untouched |
-| "Inside a route — run it whole" | dead | **landed** — section removed |
-| Dispatch § SDD carve-out — the "chain's executor governs" clause | dead | **landed** — clause removed; the bullet's commit-door mechanics are harness-agnostic and stayed |
-| § The envelope ambient-laws line (4 skill names) | referent dead, **discipline live** | **landed** — three declared laws inline; `dispatching-parallel-agents` cut as a duplicate of § Dispatch |
-| `docs/specs/superpowers-topology.md` | dead | **landed** — deleted |
-| `harness-bootstrap` § Core plugin pins — `superpowers` as a **locked** core dep | dead *as core*: the pin's own stated justification is name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names go | **landed** — unpinned in `harness-bootstrap` 2a and delocked in `resolve-plugins` Phase 4; a process harness is now an ordinary adaptive pick |
-| `docs/superpowers/specs\|plans/` | dead (that is superpowers' artifact shape) | **landed** — renamed to `docs/work/`; the slot stays ours because his artifact skills own no path, they publish to the configured tracker (§4) |
-| drain's stage machine (`raw→triage→plan→execute→review`) | **live** — the stage set reads this repo's own artifact slots by file presence, so only the per-phase command dispatch was foreign | **landed** — each phase now names the artifact it lands (`phase-loop.md §Phase → artifact`), dispatching a repo door where one exists; the `/brainstorm` · `/write-plan` · `/execute-plan` referents are cut |
-| **log / backlog / commit / doc-sync / rules** | **unaffected** | — |
-| `skills/triage/SKILL.md` + `agents/triage.md` — investigation doctrine | referent dead, **discipline live** — the agent's tool list carries no `Skill`, so the pointer never resolved even where superpowers is installed | **landed** — doctrine clause restated inline, naming no harness; the skill description's scope-summary tail dropped |
+| Component | Verdict — and what stands now |
+| --- | --- |
+| Cluster routing table — rows 1 / 2 / 3 (`systematic-debugging` / `brainstorming` / `writing-plans`) | Referent dead, **discipline live**: the rows state the disciplines themselves — root cause before fix · settle the design · write the sequence — and name no harness. |
+| Cluster routing table — rows 5 / 6 / 7 / 8 (inline tweak · docs · harness edit · triage lane) | **Live**, harness-neutral already; row 8 routes to our own `/super-bootstrap:triage`. |
+| Cluster routing table — row 4 (refactor) | **Live** — its "multi-step → cluster 3" pointer targets a discipline, not a skill. |
+| "Inside a route — run it whole" | Dead. The section is gone. |
+| Dispatch § SDD carve-out — the "chain's executor governs" clause | Dead. The clause is gone; the bullet's commit-door mechanics are harness-agnostic and stand. |
+| § The envelope ambient-laws line (4 skill names) | Referent dead, **discipline live**: three laws stated inline. `dispatching-parallel-agents` carried nothing § Dispatch does not already own. |
+| `docs/specs/superpowers-topology.md` | Dead. The file is gone. |
+| `harness-bootstrap` § Core plugin pins — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. A process harness is an ordinary adaptive pick in `resolve-plugins`, pinned by nothing. |
+| The temporal work folder | **Ours**, at `docs/work/`. His artifact skills own no path — they publish to whatever tracker is configured (§4) — so there was no slot to defer to. |
+| drain's stage machine (`raw→triage→plan→execute→review`) | **Live** — the stage set reads this repo's own artifact slots by file presence, so only the per-phase command dispatch was foreign. Each phase names the artifact it lands (`phase-loop.md §Phase → artifact`) and dispatches a repo door where one exists. |
+| **log / backlog / commit / doc-sync / rules** | **Unaffected.** |
+| `skills/triage/SKILL.md` + `agents/triage.md` — investigation doctrine | Referent dead, **discipline live**: the clause is stated inline, naming no harness. The pointer never resolved even where superpowers is installed — the agent's tool list carries no `Skill`. |
 
 **The table was 8 rows and all 8 survive** — three of them restated. Its real function is
 sizing ceremony to shape, and that is harness-independent: clusters 5 and 6 say "no
@@ -153,13 +153,12 @@ ships, so shipping a seed connects to nothing on its own. The shape that could w
 bootstrap pre-writing `docs/agents/issue-tracker.md` so his setup finds it already
 present — **whether his setup skips an existing file is unread.**
 
-Two further questions ride the same decision and want one deliberation, not three
-tickets: whether provisioning is automatic at bootstrap or a `resolve-plugins`
-recommendation behind a confirm (a product default, not an implementation detail), and
-whether wiring anything mattpocock-shaped into bootstrap presupposes change B, which §6
-leaves open. **`GAP-038` is therefore not executable as its title reads.** Nothing in
-`plugins/super-bootstrap/` references mattpocock today (verified 2026-07-25, zero hits);
-bootstrap behavior is unchanged.
+One further question rides the same decision: whether wiring anything mattpocock-shaped
+into bootstrap presupposes change B, which §6 leaves open. The provisioning half is
+settled — §6 decides the runway ships bare, so bootstrap recommends nothing and the only
+live route is `resolve-plugins`' ordinary adaptive pick. **`GAP-038` is therefore not
+executable as its title reads.** `plugins/super-bootstrap/` references mattpocock nowhere,
+so bootstrap behavior is unchanged.
 
 **A second socket exists for coding standards:** his `code-review` reads
 `CODING_STANDARDS.md` / `CONTRIBUTING.md`, and a documented repo standard overrides its
@@ -278,24 +277,22 @@ many halts the user can resolve, not machine throughput." Whether parallel spawn
 produce net progress or net walls is unmeasured. This determines whether drain survives
 at 53 KB, shrinks, or goes.
 
-### Wave-close conditions — what holds when the last wave reports done
+### Change A is complete; change B is open
 
-- The §4 `rg` returns zero over `plugins/super-bootstrap/` — **and** a shape check passes
-  beside it. Zero name-hits is necessary, not sufficient: a stage chain renamed to
-  harness-neutral words still carries the foreign decomposition.
-- `DEBT-027`, `DEBT-022` and `BUG-019` aim at `docs/work/`. Each reads or restricts
-  against the temporal work folder. `BUG-019` narrows: the Full scaffold's row-source
-  restriction is a restriction on `docs/work/`, not evidence about the folder's name.
-- drain's admission predicate (`eligibility.md` Cloud-gate fallback) verified across that
-  same set — the replace-in-the-same-change constraint rides `DEBT-027`, the one card that
-  can retire the derivation the predicate falls back on.
-- Folder rename and the `chore: scaffold|sync superpowers pipeline` detector strings
-  shipped as **one** change — split, the two-step migration opens a window where neither
-  string matches repos committed between the steps (§4).
-- §3's `Cut` column and §4's dated "where it stands" snapshot overwritten to truth-now.
-  Both are history sitting in a state doc; `.claude/rules/dimension-discipline.md` fires on
-  this path and names that shape a trap for the next editor.
-- Close-out states **change A complete, change B open** — `GAP-038` remains.
+super-bootstrap routes no external process harness. The §4 grep returns only the two
+sanctioned classes, and the shape check holds beside it — zero name-hits was never
+sufficient on its own, since a stage chain renamed to harness-neutral words would still
+carry the foreign decomposition; drain's stage set is derived from this repo's own
+artifact slots, not renamed foreign phases. The runway declares its bare posture (§6
+above). `GAP-038` stays parked behind change B.
+
+Two constraints outlive the change:
+
+- Retiring the cloud-safe derivation must replace drain's admission predicate
+  (`eligibility.md` Cloud-gate fallback) in the same change — `DEBT-027` is the one card
+  that can, and without the venue map `intent == Cloud` is drain's whole gate.
+- A hit outside §4's two sanctioned classes is a regression, whether it dispatches or only
+  reads as prose.
 
 **Vacating means naming the discipline and shipping nothing.** A card whose fix reads
 "point at X instead" is mis-shaped whatever X is — re-pointing a routing line from one
