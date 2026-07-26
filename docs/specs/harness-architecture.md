@@ -90,9 +90,9 @@ invoke model-invoked skills but never another user-invoked one, and `implement` 
 
 ## 4. The seam: runtime-orthogonal, setup-time-composed
 
-**Runtime.** The target state is that super-bootstrap names zero foreign skills. This is
-grep-verifiable, not a policy: `rg 'superpowers|systematic-debugging|brainstorm|writing-plans|write-plan|execute-plan'`
-over `plugins/super-bootstrap/` should return only the sanctioned exceptions below. The
+**Runtime.** super-bootstrap names zero foreign skills. This is grep-verifiable, not a
+policy: `rg 'superpowers|systematic-debugging|brainstorm|writing-plans|write-plan|execute-plan'`
+over `plugins/super-bootstrap/` returns only the sanctioned exceptions below. The
 pattern carries `brainstorm` **unstemmed** and both hyphenated command spellings
 deliberately: a `brainstorming|writing-plans` pattern is blind to `/brainstorm`,
 `/write-plan`, and `/execute-plan` — the form a live dispatch actually takes, and the form
@@ -108,11 +108,10 @@ that survived the skeleton cut unseen.
   history. Dropping them would make every already-bootstrapped repo read as
   never-bootstrapped.
 
-Every other hit is a live coupling with a named owner:
-
-| Remaining site | Kind | Owner |
-| --- | --- | --- |
-| `agents/help.md` § Step 3 `pipeline` exemplars, `skills/super-bootstrap/SKILL.md` overview-card routing hint + resolve-gate render | **live command referent** — prose route, no dispatch; the card hint seeds into consumer backlogs | `DEBT-033` |
+No live couplings remain. A hit outside those two classes is a regression — the pattern
+catches a live command referent whether it dispatches (a subprocess phase prompt) or only
+reads as prose, and prose that seeds through the capture funnel carries the referent into
+every consumer repo's own backlog, where it outlives the cut.
 
 The folder shape is gone: `docs/superpowers/` is now `docs/work/`. Phase 2a scaffolds
 `specs/` and `plans/`; `triage/` appears on demand when a verdict is first written. The

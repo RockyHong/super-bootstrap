@@ -75,13 +75,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `docs/backlog.md` header (§ Row shape / write-once paragraph); `plugins/super-bootstrap/skills/harness-bootstrap/assets/backlog.md` (the shipped skeleton carrying the same rule)
 **Prior:** Name the falsification case in the header and pick one disposal. Likely shape: the claim stays write-once against *paraphrase*, and a falsified premise is superseded in place with a mandatory pointer to where the closed direction is archived (`docs/decisions.md`) — which is what the re-aim did ad hoc. Deleting and re-logging is the alternative but breaks stable-ID references, which the header itself calls the point of an ID. Skeleton mirror rides the same edit (`repo-boundary.md` sync direction).
 
-### DEBT-033 — The help and bootstrap lanes still route to foreign pipeline commands that resolve to nothing
-
-**Logged:** 2026-07-26 · **Source:** widened spec §4 grep sweep during the DEBT-027 re-aim — the old `brainstorming|writing-plans` pattern was blind to the slash-command spellings
-**Problem:** Two sites outside the todo lane still name foreign pipeline entries. `agents/help.md:40` maps the `pipeline` category from the keyword exemplars `brainstorm, write-plan, execute-plan` — in a de-routed repo no shipped skill carries those tags, so the row matches nothing. `skills/super-bootstrap/SKILL.md:42` and `:52` route overview resolution "via brainstorm": `:42` is the observation text seeded through the capture funnel into the **consumer repo's own backlog**, so the foreign routing hint propagates into every bootstrapped repo's card text and outlives the cut there. Neither site is owned by an existing card — `DEBT-028` owns drain's phase-loop dispatch, and the folder shape landed separately as the `docs/work/` rename.
-**Area:** `plugins/super-bootstrap/agents/help.md` § Step 3; `plugins/super-bootstrap/skills/super-bootstrap/SKILL.md` § greenfield seeding + § Resolve gate
-**Prior:** Same vocabulary-residue class as the todo-lane rename shipped alongside this card — Wave 1 restated cluster 2 as "settle the design with the user before building", and the lane's replacements should name a discipline or the repo's own door (`/super-bootstrap:log`), never a foreign command. The `:42` seeded-card-text site is the sharper half: it writes into repos this repo does not control.
-
 ### DEBT-032 — De-routed ambient laws are one-liners where the cut removed a full-body fire-moment surface
 
 **Logged:** 2026-07-26 · **Source:** cold `audit-harness-edits` probe on the Wave 1 diff (finding 9)

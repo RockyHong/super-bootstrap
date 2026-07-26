@@ -39,7 +39,7 @@ The runway returned with empty product skeletons. Seed three GAP cards through t
 
 **Seed via [`/super-bootstrap:log`](../log/SKILL.md)** — one invocation, all three observations batched, passing Source context `/super-bootstrap bootstrap` in the dispatch:
 
-- `pin down product overview — docs/overview.md is an unfilled skeleton; resolve at pickup via brainstorm (no source code) or distill-repo-essence (code present, undocumented)`
+- `pin down product overview — docs/overview.md is an unfilled skeleton; resolve at pickup by settling the framing with the user (no source code) or by reverse-engineering it from the code (code present, undocumented)`
 - `decide techstack — docs/techstack.md lacks product + architecture context (manifest facts auto-filled where a manifest exists); blocked on the overview card`
 - `run tech curation — re-run /super-bootstrap once docs/overview.md + docs/techstack.md are filled; blocked on the overview + techstack cards above`
 
@@ -49,7 +49,7 @@ Each classifies GAP; the funnel mints IDs, dedups, and fills Area (`docs/overvie
 
 ```
 Generic harness installed. Three GAP cards seeded (overview, techstack, tech-curation).
-Resolve overview + techstack via /super-bootstrap:todo → brainstorm (no code) / distill-repo-essence (code present).
+Resolve overview + techstack via /super-bootstrap:todo — settle the framing with the user (no code), or reverse-engineer it from the code (code present).
 Once both are filled, re-run /super-bootstrap for tech curation — the tech-curation card tracks that step.
 ```
 
