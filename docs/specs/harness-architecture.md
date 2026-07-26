@@ -264,6 +264,12 @@ what such a test would report is static arithmetic anyway (ambient token count, 
 cost); the part that is not — omission rate — needs controlled runs this repo has no
 apparatus for.
 
+**Decided — the runway is bare by design.** No process harness stands behind the seeded
+disciplines, and the seeded `CLAUDE.md` says so under § The envelope. Installing one is an
+operator choice `resolve-plugins` already handles as an ordinary adaptive pick; bootstrap
+recommends nothing. Independent of change B — adopting a harness there does not make the
+bare runway retroactively a gap.
+
 **Open — harness swap (change B).** Whether to move from superpowers to
 mattpocock/skills. Depends on evidence graded second-hand in §7.
 
@@ -289,10 +295,6 @@ at 53 KB, shrinks, or goes.
 - Folder rename and the `chore: scaffold|sync superpowers pipeline` detector strings
   shipped as **one** change — split, the two-step migration opens a window where neither
   string matches repos committed between the steps (§4).
-- The bare-runway posture decided and written here or in [`docs/decisions.md`](../decisions.md):
-  de-routing unpinned the process harness and named no replacement, so a bootstrapped repo
-  runs bare with no signal that it is bare. Either `resolve-plugins` recommends one at
-  setup time, or the runway declares bare-by-design.
 - §3's `Cut` column and §4's dated "where it stands" snapshot overwritten to truth-now.
   Both are history sitting in a state doc; `.claude/rules/dimension-discipline.md` fires on
   this path and names that shape a trap for the next editor.

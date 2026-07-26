@@ -14,6 +14,8 @@ Work enters by picking up a card — a `docs/backlog.md` row (`/super-bootstrap:
 - **Verify before claiming** — evidence before "done / fixed / passing": run the check, read the output, then claim.
 - **Review received, not absorbed** — check a review claim against the code before implementing it; disagree with grounds rather than complying performatively.
 
+**The runway ships bare by design** — no process-harness plugin stands behind these laws; installing one is an operator choice `/super-bootstrap:resolve-plugins` treats as an ordinary adaptive pick.
+
 ### Cluster routing
 
 Recognize the card's shape, then take that row's discipline; a repo that installs a process harness maps its entries onto these shapes.
