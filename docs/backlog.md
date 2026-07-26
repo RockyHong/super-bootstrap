@@ -14,7 +14,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, triage decides how much ceremony the work earns. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-019` · `DEBT-036` · `GAP-043` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-019` · `DEBT-037` · `GAP-044` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -32,6 +32,20 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### DEBT-037 — drain's parallel-worktrees dispatch uses prompt-first ordering instead of `--` terminator and omits `Agent` from allowedTools
+
+**Logged:** 2026-07-26 · **Source:** DEBT-028 verify pass — device claude-shape snapshot `~/.claude/guidelines/claude-shape/subprocess-tool-gates.md`
+**Problem:** `parallel-worktrees.md` § Required flags prescribes prompt-first ordering to stop the variadic `--allowedTools` swallowing the prompt. The device claude-shape snapshot supersedes this with a bare `--` terminator (`claude -p … --allowedTools "Skill,Agent" -- "<prompt>"`), which neutralizes every trailing variadic at once. The snapshot also recommends granting `Agent` defensively alongside `Skill` — drain's triage phase dispatches `/super-bootstrap:triage`, which spawns a subagent; that dispatch is ungated today but the auto-trust is version-fragile. Both are robustness issues on the same dispatch line.
+**Area:** `plugins/super-bootstrap/skills/drain/assets/parallel-worktrees.md` § Required flags
+**Prior:** Replace prompt-first ordering with `-- "<prompt>"` terminator; add `Agent` to the allowedTools grant alongside `Skill`.
+
+### GAP-044 — drain doc-lane skip-review condition names no evaluator — gateway pre-spawn vs subprocess self-skip both read consistently
+
+**Logged:** 2026-07-26 · **Source:** DEBT-028 verify pass — cold dry-run agent authoring phase prompts from `phase-loop.md` alone
+**Problem:** `phase-loop.md` § Lane select states the doc lane may "skip review for a ≤1-file, grep-verifiable invariant" but never names who evaluates that condition. Two readings are both consistent with the text: (a) the gateway evaluates it before deciding whether to spawn a review phase, or (b) the review subprocess is always spawned and self-skips by writing a done status immediately. A cold agent authoring dispatch from this section picked (b) — which changes how many subprocesses drain spends per doc-lane item.
+**Area:** `plugins/super-bootstrap/skills/drain/assets/phase-loop.md` § Lane select
+**Prior:** Decide the evaluator and name it — the subprocess-count difference is the observable cost of leaving it ambiguous.
 
 ### DEBT-036 — triage-report dup branch routes new facts to a destination that cannot accept them
 
