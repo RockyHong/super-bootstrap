@@ -137,6 +137,20 @@ branch is authored fresh. So super-bootstrap can ship its own seed for that slot
 declaring `docs/backlog.md` + `/super-bootstrap:log` as the repo's tracker. His
 `to-spec` and `triage` then write into our home.
 
+**His artifact skills own no paths — they ask the repo.** Read at grade A (2026-07-26):
+`to-tickets` §5 publishes "depending on the tracker `/setup-matt-pocock-skills`
+configured", and `.scratch/<feature-slug>/issues/` is only its *local-files fallback*;
+`wayfinder` says outright that where its map and tickets "physically live is
+tracker-specific", defaulting to local markdown **only when no tracker was provided**.
+
+This matters for `DEBT-026`. The case for *retiring* `docs/superpowers/specs|plans/`
+rather than renaming it rested on his set owning that slot at a fixed path — it does not.
+Declaring our own path through the tracker socket composes with his skills exactly as
+well as deleting the slot would, and renaming is the reversible branch (§8: adopt mode
+has no folder-removal path). It also raises `GAP-038` from nice-to-have to the actual
+composition mechanism. His taxonomy is spec → tickets → implement, with no "plans"
+artifact at all, so our `plans/` slot has no counterpart to defer to.
+
 **Known weakness of this seam — worse than "prose, not schema".** His setup reads its
 seed templates from his own skill folder and has no lookup path to a seed another plugin
 ships, so shipping a seed connects to nothing on its own. The shape that could work is
@@ -289,7 +303,7 @@ at 53 KB, shrinks, or goes.
 - §3's `Cut` column and §4's dated "where it stands" snapshot overwritten to truth-now.
   Both are history sitting in a state doc; `.claude/rules/dimension-discipline.md` fires on
   this path and names that shape a trap for the next editor.
-- Close-out states **change A complete, change B open** — `GAP-038` and `GAP-041` remain.
+- Close-out states **change A complete, change B open** — `GAP-038` remains.
 
 **Vacating means naming the discipline and shipping nothing.** A card whose fix reads
 "point at X instead" is mis-shaped whatever X is — re-pointing a routing line from one
@@ -307,12 +321,15 @@ usable but not quotable; **C** = inferred, unverified.
 | mattpocock/skills README | `https://raw.githubusercontent.com/mattpocock/skills/main/README.md` | A | Full text retrieved; philosophy + skill index + the user-invoked/model-invoked composition rule |
 | `setup-matt-pocock-skills` issue-tracker options | `.../skills/engineering/setup-matt-pocock-skills/SKILL.md` | **A** | Option list + CLAUDE.md block quoted verbatim (2026-07-25). Seed-template filenames confirmed; **template bodies not read** |
 | `tdd` | `.../skills/engineering/tdd/SKILL.md` | B | Seam-confirmation gate, three forbidden anti-patterns, vertical-slice rule |
-| `code-review` | `.../skills/engineering/code-review/SKILL.md` | B | Two-axis parallel subagents, Fowler ch.3 baseline, `CODING_STANDARDS.md` lookup |
-| `to-tickets` | `.../skills/engineering/to-tickets/SKILL.md` | B | `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, `Blocked by:` field |
+| `code-review` | `.../skills/engineering/code-review/SKILL.md` | **A** | Literal text (2026-07-26). Step 4 pins no tier: "Use the `general-purpose` subagent for both." Parallel is for isolation — "so they don't pollute each other's context"; step 5 forbids reranking across axes. Sub-agent prompts paste the smell baseline in full because "the sub-agent has no other access to it" |
+| `implement` | `.../skills/engineering/implement/SKILL.md` | **A** | Literal text (2026-07-26). Nine lines, `disable-model-invocation: true`, dispatches nothing — a session-level orchestration note pointing at `/tdd` and `/code-review` |
+| `research` | `.../skills/engineering/research/SKILL.md` | **A** | Literal text (2026-07-26). "Spin up a **background agent** to do the research, so you keep working while it reads" — offload stated outright, no tier pinned. Primary sources only; findings to one Markdown file matching the repo's existing convention |
+| `to-tickets` | `.../skills/engineering/to-tickets/SKILL.md` | **A** | Literal text (2026-07-26). **Owns no path**: §5 publishes to whatever `/setup-matt-pocock-skills` configured — `.scratch/<feature-slug>/issues/<NN>-<slug>.md` is the *local-files fallback branch*, a real tracker takes native issues. Tracer-bullet vertical slices, `Blocked by:` edges, expand–contract for wide refactors |
+| `wayfinder` | `.../skills/engineering/wayfinder/SKILL.md` | **A** | Literal text (2026-07-26). "**Never resolve more than one ticket per session** — with the exception of research tickets." Research tickets are AFK, "Resolved by a `/research` **subagent**"; prototype / grilling / task are HITL and stay in-session. Physical location "is tracker-specific", defaulting to local-markdown only when none is provided |
 | `to-spec` | `.../skills/engineering/to-spec/SKILL.md` | B | Publishes to tracker; no interview; publication format unconfirmed |
+| `diagnosing-bugs` | `.../skills/engineering/diagnosing-bugs/SKILL.md` | **A** | Literal text (2026-07-26). Six phases; "**This is the skill**" is phase 1, a tight red-capable feedback loop, with "no red-capable command, no Phase 2" as a hard gate. Then 3–5 ranked falsifiable hypotheses shown to the user before testing, one-variable instrumentation with tagged debug logs, regression test at a correct seam (absence of one is itself the finding). Assumes a runtime to go red against — read-only verdict work has none |
 | `triage` | `.../skills/engineering/triage/SKILL.md` | B | Label state machine: `needs-triage → needs-info → ready-for-agent \| ready-for-human \| wontfix` |
-| `wayfinder` | `.../skills/engineering/wayfinder/SKILL.md` | B | Map issue + child decision tickets; one ticket per session |
-| `writing-great-skills` | `.../skills/productivity/writing-great-skills/SKILL.md` | B | Predictability as root virtue; split-only-when-the-cut-earns-it |
+| `writing-great-skills` | `.../skills/productivity/writing-great-skills/SKILL.md` | **A** | Literal text (2026-07-26). Predictability as root virtue; invocation / information hierarchy / granularity / pruning / leading words / failure modes. **States no dispatch doctrine** — subagents, tiers, and offload appear nowhere in his authoring reference |
 | mattpocock `docs/` tree | `https://github.com/mattpocock/skills/tree/main/docs` | C | Only `engineering/` + `productivity/` subdirs visible; contents unread |
 | ADR on shipping as a plugin | `.agents/adr/0002-ship-as-a-claude-code-plugin.md` (in his repo) | C | Referenced by README, unread |
 
@@ -338,13 +355,35 @@ mattpocock-skills@mattpocock` (managed bundle). Both require
 1. mattpocock seed-template bodies (`issue-tracker-*.md`) unread — shape of the file we
    would author for the "Other" branch is inferred.
 2. drain's wall-vs-progress ratio — unmeasured (§6).
-3. Whether mattpocock's dispatch posture is "session as atomic runner" or something
-   narrower. His `code-review` does run two axes as parallel `general-purpose`
-   sub-agents, with no model tier pinned — so the rationale reads as **dispatch for
-   isolation** (keeping one review axis from masking the other) rather than dispatch for
-   attention offload. Grade B; the distinction matters for whether our own
-   tier-pinned-agent pattern is sound, and warrants reading his repo properly rather than
-   inferring from skill summaries.
+### His dispatch posture — settled at grade A
+
+Dispatch is not his default; it fires at two triggers and nowhere else.
+
+- **Isolation** — `code-review` runs its two axes as parallel sub-agents "so they don't
+  pollute each other's context", and forbids reranking across them at aggregation.
+- **Offload** — `research` spins up a background agent "so you keep working while it
+  reads". The description sells it as "reading legwork delegated to a background agent".
+
+Everything else stays in-session. `wayfinder` states the rule outright — **"never resolve
+more than one ticket per session — with the exception of research tickets"** — and its
+ticket taxonomy carries the same seam: `research` is AFK and subagent-resolved, while
+`prototype` / `grilling` / `task` are human-in-the-loop and never dispatched. `implement`
+is nine lines and dispatches nothing.
+
+So the posture *is* session-as-atomic-runner, with bounded reading as the sole sanctioned
+exit. It is not an isolation-specific exception.
+
+**No model tier appears anywhere in his set** — `code-review` actively specifies
+`general-purpose` for both axes, and `writing-great-skills`, his authoring reference,
+states no dispatch doctrine at all: its levers are invocation, information hierarchy,
+granularity, pruning, and leading words.
+
+That absence does not convict our tier pins. His skills delegate the model choice to the
+session because cost is not a concern his set addresses; ours pin because dispatch grade
+and cost are the same decision here. The two answer different questions, so neither is
+copied from the other — but our pins carry no written justification, which is the gap
+`DEBT-035`'s sibling reasoning applies to: a pattern nobody wrote a reason for is
+indistinguishable from one nobody chose.
 
 ## 8. Downstream migration — what adopt mode does and does not retire
 
