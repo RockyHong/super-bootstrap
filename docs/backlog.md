@@ -96,13 +96,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md` (Phase 2a/2b artifact list + § Pipeline-owned); `plugins/super-bootstrap/skills/harness-bootstrap/assets/` (new skeleton asset); root `CLAUDE.md` + `assets/claude-md-skeleton.md` § Coding Principles
 **Prior:** Seed a headings-only `CODING_STANDARDS.md` (empty sections the consumer grows via doc-sync, like `overview.md` / `techstack.md`) rather than any prose — the four principles' body lives upstream in the skill and copying it is a parallel truth (VII). Decide whether the file is always-scaffolded (like `decisions.md`) or gated on a source-code surface (like `docs/specs/`).
 
-### DEBT-028 — Convert drain's stage machine from hardcoded superpowers phases to interface-driven dispatch
-
-**Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
-**Problem:** `skills/drain/SKILL.md` § Invariants hardcodes the stage-resume chain `raw→triage, triaged→plan, spec→plan, plan→execute, review→review`; `assets/phase-loop.md` hardcodes phase prompts naming superpowers skills. Stage names are superpowers' phases — half-dead once de-routing lands. drain should dispatch whatever discipline entry the repo declares, without naming specific skills.
-**Area:** `plugins/super-bootstrap/skills/drain/SKILL.md` § Invariants; `plugins/super-bootstrap/skills/drain/assets/phase-loop.md`
-**Prior:** spec §3 (drain listed half-dead) + §4 (seam mechanism — dispatch to declared entry, not named skills).
-
 ### DEBT-027 — The cloud-safe derivation content-reads every row's plan body and linked spec on every board render
 
 **Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`); **re-aimed 2026-07-26** — the original de-routing framing was falsified against the code and is closed in `docs/decisions.md`

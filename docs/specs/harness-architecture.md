@@ -68,7 +68,7 @@ inseparable from it.
 | `docs/specs/superpowers-topology.md` | dead | **landed** — deleted |
 | `harness-bootstrap` § Core plugin pins — `superpowers` as a **locked** core dep | dead *as core*: the pin's own stated justification is name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names go | **landed** — unpinned in `harness-bootstrap` 2a and delocked in `resolve-plugins` Phase 4; a process harness is now an ordinary adaptive pick |
 | `docs/superpowers/specs\|plans/` | dead (that is superpowers' artifact shape) | **landed** — renamed to `docs/work/`; the slot stays ours because his artifact skills own no path, they publish to the configured tracker (§4) |
-| drain's stage machine (`raw→triage→plan→execute→review`) | half-dead (stage names are superpowers' phases) | open — `DEBT-028` |
+| drain's stage machine (`raw→triage→plan→execute→review`) | **live** — the stage set reads this repo's own artifact slots by file presence, so only the per-phase command dispatch was foreign | **landed** — each phase now names the artifact it lands (`phase-loop.md §Phase → artifact`), dispatching a repo door where one exists; the `/brainstorm` · `/write-plan` · `/execute-plan` referents are cut |
 | **log / backlog / commit / doc-sync / rules** | **unaffected** | — |
 | `skills/triage/SKILL.md` + `agents/triage.md` — investigation doctrine | referent dead, **discipline live** — the agent's tool list carries no `Skill`, so the pointer never resolved even where superpowers is installed | **landed** — doctrine clause restated inline, naming no harness; the skill description's scope-summary tail dropped |
 
@@ -112,7 +112,6 @@ Every other hit is a live coupling with a named owner:
 
 | Remaining site | Kind | Owner |
 | --- | --- | --- |
-| `drain/assets/phase-loop.md` eng-lane phase dispatch + escalation route (`/brainstorm`, `/write-plan`, `/execute-plan`), `drain/SKILL.md` § Escalate-or-build | **live command referent** — a subprocess actually invokes these | `DEBT-028` |
 | `agents/help.md` § Step 3 `pipeline` exemplars, `skills/super-bootstrap/SKILL.md` overview-card routing hint + resolve-gate render | **live command referent** — prose route, no dispatch; the card hint seeds into consumer backlogs | `DEBT-033` |
 
 The folder shape is gone: `docs/superpowers/` is now `docs/work/`. Phase 2a scaffolds
@@ -283,8 +282,8 @@ at 53 KB, shrinks, or goes.
   against the temporal work folder. `BUG-019` narrows: the Full scaffold's row-source
   restriction is a restriction on `docs/work/`, not evidence about the folder's name.
 - drain's admission predicate (`eligibility.md` Cloud-gate fallback) verified across that
-  same set — the replace-in-the-same-change constraint spans `DEBT-027` and `DEBT-028`.
-- `DEBT-028`'s stage set derived from a declared interface, not renamed superpowers phases.
+  same set — the replace-in-the-same-change constraint rides `DEBT-027`, the one card that
+  can retire the derivation the predicate falls back on.
 - `DEBT-032` narrowed and answered. `test-first` and `verify before claiming` plausibly
   compress or vacate; `review received, not absorbed` is the law with no external
   counterpart, so it is the residue the card is really about.

@@ -9,7 +9,7 @@ claude -p "<phase prompt>" --model sonnet --setting-sources local,project --perm
 
 The `<phase prompt>` is `assets/worktree-boundary.md` (embedded verbatim — the subprocess attention anchor) followed by the phase task. **Prompt is the first positional** — `--allowedTools` is variadic and swallows a trailing prompt (`parallel-worktrees.md §Dispatch step`). Embedding at dispatch is the delivery mechanism: a `.claude/worktrees/**` path-glob rule would never fire, since the subprocess's project root is the worktree and its own reads are root-relative.
 
-Background (`Bash(run_in_background: true)`), notification-driven (push, not poll). The subprocess dispatches the right phase inside its worktree — eng lane: `/brainstorm`, `/write-plan`, `/execute-plan`, review; doc lane: the doc-edit then review (§Lane select) — and writes its status. Required-flags table (flag → consequence-if-missing, includes `--model` and `--allowedTools`): `parallel-worktrees.md §Required flags` — canonical, don't restate here.
+Background (`Bash(run_in_background: true)`), notification-driven (push, not poll). The phase task names its **artifact transition** — what the phase produces and where it lands (§Phase → artifact) — and the discipline it runs under comes from the repo's own `CLAUDE.md`, which the worktree carries. The subprocess then writes its status. Required-flags table (flag → consequence-if-missing, includes `--model` and `--allowedTools`): `parallel-worktrees.md §Required flags` — canonical, don't restate here.
 
 ## Lane select (polymorphic — eng default, doc for prose-shaped items)
 
@@ -34,9 +34,21 @@ Two lane shapes; pick per item before entering the stage chain:
 
 Committed upstream phases are inherited from base (branched fresh) — drain never re-runs a phase already landed.
 
+### Phase → artifact (the declared interface)
+
+Each phase is named by what it lands, in this repo's own slots — the same slots the stage column above reads by file presence (`../../shared/classify-actionable.md`). A phase with a repo door dispatches it; the rest run the discipline the worktree's `CLAUDE.md` declares.
+
+| Phase | Lands | Door |
+| ----- | ----- | ---- |
+| triage | `docs/work/triage/{ID}-scope.md` | `/super-bootstrap:triage` |
+| plan | `docs/work/plans/` — checkbox step sequence | — |
+| execute | code + tests; the plan's checkboxes ticked | — |
+| review | findings against the branch diff | `/code-review` |
+| doc-edit (doc lane) | the doc change itself | — |
+
 ### Escalate-or-build gate (raw + spec entries)
 
-After triage, before building: if the subprocess finds a **real design surface** — needs a spec, an unresolved decision, or a fork the user owns — it writes `DONE_WITH_CONCERNS` and **halts**. The gateway routes the item out (`/brainstorm` / `/super-bootstrap:todo discuss`), it does not build further. Lean fix-loop is the default; escalation is the exception that keeps drain from building past a design wall.
+After triage, before building: if the subprocess finds a **real design surface** — needs a spec, an unresolved decision, or a fork the user owns — it writes `DONE_WITH_CONCERNS` and **halts**. The gateway surfaces it and the item leaves the drain lane — design-settling is a user wall; the item re-enters the board via `/super-bootstrap:todo discuss`. drain does not build further. Lean fix-loop is the default; escalation is the exception that keeps drain from building past a design wall.
 
 ### Pre-plan confirm gate (raw + triaged entries)
 
@@ -113,7 +125,7 @@ Item:    {id}
 Phase:   {phase name}
 Branch:  {drain/{id-lower} or "not created"}
 Claim:   {.claude/worktrees/drain-{id}/ or "released"}
-Next:    {the one action the user takes — confirm merge / read concerns / fix blocker / route to /brainstorm}
+Next:    {the one action the user takes — confirm merge / read concerns / fix blocker / settle the design}
 ```
 
 The merge gate's `Next` is always: inspect the branch, then run `/super-bootstrap:merge drain/{id-lower}` to absorb it.

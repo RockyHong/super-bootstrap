@@ -18,7 +18,7 @@ Trigger: user types `/super-bootstrap:drain`. Never auto-fires.
 - **One wave, one shot per invocation.** No internal loop across waves, no `--all`. Turn ends after the wave is dispatched. Next invocation cold-reads files and re-picks.
 - **No auto-merge — ever.** Each subprocess stops at a ready-to-merge state. The user confirms; the merge runs via `/super-bootstrap:merge` (the destructive-git lane). Subprocesses are denied push/merge/rebase/branch-delete/worktree at the permission layer.
 - **Admission-gate, not type-gate.** Eligible = the item's next phase is drainable, across BUG/DEBT/GAP and across specs/plans. When the scale module is wired the gate is next-phase venue ∈ {T, S} (`.claude/rules/venue-map.md`); without it the gate falls back to `intent == Cloud` (cloud-safe). Either way `Device`/`Discuss` and venue U/P defer — drain never spawns for them. A mislabel is fixed upstream (clarify the row, the shared criterion, or the venue map), never overridden here.
-- **Stage-resume.** Each item enters its phase chain at its current pipeline stage (file presence): `raw`→triage, `triaged`→plan, `spec`→plan, `plan`→execute, `review`→review. Committed upstream phases are inherited, not re-run.
+- **Stage-resume.** Each item enters its phase chain at its current pipeline stage (file presence): `raw`→triage, `triaged`→plan, `spec`→plan, `plan`→execute, `review`→review. Each phase is named by the artifact it lands (`assets/phase-loop.md §Phase → artifact`). Committed upstream phases are inherited, not re-run.
 - **Halts are outcomes.** A wall surfaces a finding; that finding plus any committed earlier phases are progress, not waste.
 - **Wave member = no blocker.** Orphans + chain-heads enter; chain-tails and conflicts defer to a later invocation. No forward projection — render the current wave only.
 
@@ -84,13 +84,13 @@ claude -p "<phase prompt>" --model sonnet --setting-sources local,project --perm
 
 Explicit `--model sonnet` — drain is the widest fan-out surface in the system; an unspecified tier inherits the invoking (gateway) model and multiplies its cost per item. Required-flags table (flag → consequence-if-missing): `assets/parallel-worktrees.md §Required flags`.
 
-Dispatched `Bash(run_in_background: true)`. Lane select (eng vs doc), phase chain, stage-entry map, status contract (`DONE` / `DONE_WITH_CONCERNS` / `BLOCKED` / `NEEDS_CONTEXT`), the escalate-or-build branch, and the pre-plan confirm gate: `assets/phase-loop.md`.
+Dispatched `Bash(run_in_background: true)`. Lane select (eng vs doc), phase chain, stage-entry + phase→artifact map, status contract (`DONE` / `DONE_WITH_CONCERNS` / `BLOCKED` / `NEEDS_CONTEXT`), the escalate-or-build branch, and the pre-plan confirm gate: `assets/phase-loop.md`.
 
 **Polymorphic lanes (locked).** A code-shaped item runs the eng lane — lean by default: triage → build (TDD) → review → halt at merge. A prose-shaped item (doc-hygiene — the doc edit is the deliverable) runs the doc lane: doc-edit → review → halt at merge, no TDD (`assets/phase-loop.md §Lane select`).
 
 **Pre-plan confirm gate (user wall before the build fan-out).** After triage, before the plan/build phase, the gateway reads the `scope.md` verdict tags: a deterministic fix (`Fix-shape: mechanical|systematic`, no probe deps) flows straight through; anything carrying a design/product judgment or a `Probe-deps` dependency **halts for the user** before drain spends the build (`assets/phase-loop.md §Pre-plan confirm gate`).
 
-**Escalate-or-build.** If a subprocess discovers a real design surface mid-flight (needs spec / a decision), it halts and the item routes out to brainstorming rather than building further.
+**Escalate-or-build.** If a subprocess discovers a real design surface mid-flight (needs spec / a decision), it halts and the item routes back to the user for design-settling rather than building further.
 
 ## Merge gate
 
