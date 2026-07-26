@@ -68,13 +68,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `docs/backlog.md` header (§ Row shape / write-once paragraph); `plugins/super-bootstrap/skills/harness-bootstrap/assets/backlog.md` (the shipped skeleton carrying the same rule)
 **Prior:** Name the falsification case in the header and pick one disposal. Likely shape: the claim stays write-once against *paraphrase*, and a falsified premise is superseded in place with a mandatory pointer to where the closed direction is archived (`docs/decisions.md`) — which is what the re-aim did ad hoc. Deleting and re-logging is the alternative but breaks stable-ID references, which the header itself calls the point of an ID. Skeleton mirror rides the same edit (`repo-boundary.md` sync direction).
 
-### DEBT-032 — De-routed ambient laws are one-liners where the cut removed a full-body fire-moment surface
-
-**Logged:** 2026-07-26 · **Source:** cold `audit-harness-edits` probe on the Wave 1 diff (finding 9)
-**Problem:** § The envelope's ambient laws previously named superpowers skills, each of which loaded a full body at its fire moment. The de-routed replacement keeps a one-line recognition signal ambient and gives the body no home — the probe cites the harness-authoring rule that compressing what should fire every turn "trades ammo for noise reduction — wrong trade." `Verify before claiming` arguably compresses losslessly; `Review received, not absorbed` does not — the discipline it replaces carries named anti-patterns that one line cannot hold. The `.claude/rules/` layer is not the answer (a `paths:` rule fires on file read, not on intent — `docs/specs/harness-architecture.md` §5, and the direction is closed in `docs/decisions.md`), so the open question is whether the repo authors its own discipline bodies and what points at them.
-**Area:** Root `CLAUDE.md` § The envelope; `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` § The envelope
-**Prior:** Judge per law, not as a block — a one-liner that is the whole rule needs no body. Where a body is owed, the socket pattern § Coding Principles now uses (ambient line names the standard, a repo-declared file holds it) is the shape already in the harness; the fire-moment reader is the ambient line, not a rule glob.
-
 ### DEBT-030 — /log dispatch costs ~30k tokens per row, and the "all rows route through log" contract has no transcription exception
 
 **Logged:** 2026-07-25 · **Source:** live session — three `/log` dispatches measured while carding the de-routing work

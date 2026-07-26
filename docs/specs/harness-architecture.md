@@ -289,9 +289,6 @@ at 53 KB, shrinks, or goes.
 - drain's admission predicate (`eligibility.md` Cloud-gate fallback) verified across that
   same set — the replace-in-the-same-change constraint rides `DEBT-027`, the one card that
   can retire the derivation the predicate falls back on.
-- `DEBT-032` narrowed and answered. `test-first` and `verify before claiming` plausibly
-  compress or vacate; `review received, not absorbed` is the law with no external
-  counterpart, so it is the residue the card is really about.
 - Folder rename and the `chore: scaffold|sync superpowers pipeline` detector strings
   shipped as **one** change — split, the two-step migration opens a window where neither
   string matches repos committed between the steps (§4).
