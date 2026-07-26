@@ -1,12 +1,12 @@
 ---
 name: harness-bootstrap
-description: "Install or sync the generic superpowers runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, skeleton docs (overview, techstack, superpowers/), path-scoped rules, and core plugin pins; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap; opt-in earn-gated scale module (parked + test-queue containers, venue-map rule, backlog fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks on re-run. Solo dev workflow."
+description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, skeleton docs (overview, techstack, work/), path-scoped rules, and core plugin pins; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap; opt-in earn-gated scale module (parked + test-queue containers, venue-map rule, backlog fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks on re-run. Solo dev workflow."
 tags: [harness, scaffold, setup, meta, docs]
 ---
 
-# Super Bootstrap — Superpowers Pipeline for Any Repo
+# Super Bootstrap — Development Pipeline for Any Repo
 
-Set up (or sync) the superpowers-driven development pipeline in a project. Installs harness — workflow rules, doc-sync gate, skeleton docs, core plugin pins — in one scaffold session. The doc-sync gate at every later commit grows the skeleton docs over time, so there's no deferred deep-scan stage.
+Set up (or sync) the development pipeline in a project. Installs harness — workflow rules, doc-sync gate, skeleton docs, core plugin pins — in one scaffold session. The doc-sync gate at every later commit grows the skeleton docs over time, so there's no deferred deep-scan stage.
 
 Designed for a solo developer working across multiple Claude Code sessions and cloud Claude Code.
 
@@ -76,7 +76,7 @@ When `docs/overview.md` + `docs/techstack.md` already carry substantive content,
 
 Catches "harness installed but carries renamed-away literals" — re-run is the right entry, flag before Phase 2b churns through migrations.
 
-Trigger: any pipeline-owned file (`CLAUDE.md`, `docs/overview.md`, `docs/techstack.md`, `docs/superpowers/plans/bootstrap.md`, `.claude/rules/*.md`) contains a literal listed as `old` in `assets/rename-map.md`. Whole-token match; one hit is enough.
+Trigger: any pipeline-owned file (`CLAUDE.md`, `docs/overview.md`, `docs/techstack.md`, `docs/work/plans/bootstrap.md`, `.claude/rules/*.md`) contains a literal listed as `old` in `assets/rename-map.md`. Whole-token match; one hit is enough.
 
 When the trigger fires, surface ONCE up front (single message, not a redirect — re-run is the correct entry point):
 
@@ -128,7 +128,7 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution, Edit Discipline, Packages (monorepo tier only — the § header + column shape; table rows are consumer-grown, project-owned)
 - `docs/overview.md` skeleton sections: Problem, User, Current State
 - `docs/decisions.md` scope header (the blockquote + `## Closed Forks` heading)
-- `docs/superpowers/specs/`, `docs/superpowers/plans/`, `docs/superpowers/plans/bootstrap.md`
+- `docs/work/specs/`, `docs/work/plans/`, `docs/work/plans/bootstrap.md`
 - `.claude/rules/index.md` (rule-authoring guide)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` plugin pins (`enabledPlugins`, `extraKnownMarketplaces`)
@@ -149,12 +149,21 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 
 Folders + core plugin pin don't drift — only two states: missing or present.
 
+**Migrate before creating — `docs/superpowers/` → `docs/work/`.** Repos bootstrapped
+before the rename hold their temporal specs and plans under `docs/superpowers/`. Creating
+`docs/work/` beside it would strand that work: every scan below — `/super-bootstrap:todo`,
+`drain`, the classify pass — reads the new path only, so the old tree goes invisible
+while still sitting in the repo. When `docs/superpowers/` exists, `git mv` it to
+`docs/work/` first, then continue. If both exist, move the old tree's contents in
+directory by directory and leave anything that would overwrite a file already at the
+destination — report those paths rather than resolving them.
+
 **Always created (fixed macro):**
 ```
 docs/
   decisions.md   ← closed forks / rejected directions (history dimension — always scaffolded, starts empty)
   backlog.md     ← backlog tracker (BUG / DEBT / GAP — capture-first, triaged on pickup)
-  superpowers/
+  work/
     specs/       ← design specs from up-front design work (temporal)
     plans/       ← implementation plans (temporal)
 .claude/
@@ -270,7 +279,7 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 | `assets/techstack-skeleton.md` | `docs/techstack.md` | Coding Patterns grown section absorbs migrated CLAUDE.md content |
 | `assets/overview-skeleton.md` | `docs/overview.md` | `<!-- harness-meta -->` block at top: seed `external-tools:` as a YAML list defaulting to `[github]`. Read by `/super-bootstrap:resolve-plugins` (tier-2 curation) as the external-tools source. Update manually or via the entry skill when the tool list changes. Treat as pipeline-owned for drift checks. |
 | `assets/decisions-skeleton.md` | `docs/decisions.md` | Always — scope header pipeline-owned (drift-checked), `## Closed Forks` table rows project-owned |
-| `assets/bootstrap-plan.md` | `docs/superpowers/plans/bootstrap.md` | |
+| `assets/bootstrap-plan.md` | `docs/work/plans/bootstrap.md` | |
 | `assets/rules-index-skeleton.md` | `.claude/rules/index.md` | Always — machinery |
 | `assets/rules-frontend-skeleton.md` | `.claude/rules/<framework>.md` | Only if frontend signal fired in Phase 1 |
 | `assets/rules-mv3-skeleton.md` | `.claude/rules/mv3.md` | Only if MV3 signal fired in Phase 1 |
@@ -332,7 +341,7 @@ Per-migration handling:
 
 **Never destructive without confirmation.** Show source → dest mapping, get explicit approval, only then move content.
 
-**The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `docs/superpowers/plans/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new`), and — for drifted rows — the diff. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. Overwrite any stale report from a prior run.
+**The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `docs/work/plans/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new`), and — for drifted rows — the diff. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. Overwrite any stale report from a prior run.
 
 **Version-stale enforcement.** When Phase 1 set `version_stale`, this enumeration is mandatory in full this run — every pipeline-owned section gets an actual read-and-compare row; the "sections look similar → `✓ current`" skim is forbidden. No new mechanism — the 2c gate already refuses commit on any uncovered section (see § 2c). Print the Phase 1 surfaced line once at the top of Block 1 as the reminder.
 
@@ -395,10 +404,12 @@ On `y`: append each entry as a `tech`-domain row in `docs/decisions.md` (preserv
 
 **Special case — `bootstrap.md`** carries user state (checkbox progress from prior session). Don't auto-merge. Prompt: **Keep existing** (default) / **Reset from template** / **Merge** (rare, task-by-task).
 
-**Special case — `bootstrap.md` missing on mature repo.** When the file is **missing** AND the repo has ≥5 commits past the most recent bootstrap-shaped commit (`chore: scaffold superpowers pipeline` / `chore: sync superpowers pipeline` / `chore: complete pipeline bootstrap`), don't silently re-template — the file was almost certainly Task-3-cleanup-deleted by a prior session, and re-templating resurfaces completed work as fresh tasks. Surface an advisory instead:
+**Special case — `bootstrap.md` missing on mature repo.** When the file is **missing** AND the repo has ≥5 commits past the most recent bootstrap-shaped commit, don't silently re-template — the file was almost certainly Task-3-cleanup-deleted by a prior session, and re-templating resurfaces completed work as fresh tasks. Surface an advisory instead:
+
+**Bootstrap-shaped commit — match every spelling.** The emitted strings are §2c's; repos bootstrapped before the rename carry `chore: scaffold superpowers pipeline` / `chore: sync superpowers pipeline`, and `chore: complete pipeline bootstrap` counts too. Detection reads history, so the pre-rename spellings stay matchable permanently.
 
 ```
-docs/superpowers/plans/bootstrap.md is missing.
+docs/work/plans/bootstrap.md is missing.
 Repo has {N} commits since last bootstrap-shaped commit ({sha} — {date}).
 File was likely cleanup-deleted (Task 3 of prior bootstrap).
 
@@ -429,7 +440,7 @@ The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed backlog` / `Task 3
 - Re-run with `docs/specs/` already populated → drop Task 1
 - Re-run with `docs/backlog.md` already populated → drop Task 2
 - Add tasks for any project-specific needs surfaced during Phase 1 detection
-- Task 3 (Cleanup) always retained — includes deleting `docs/superpowers/plans/bootstrap.md` and `docs/superpowers/plans/bootstrap-sync-report.md` if a prior session left it
+- Task 3 (Cleanup) always retained — includes deleting `docs/work/plans/bootstrap.md` and `docs/work/plans/bootstrap-sync-report.md` if a prior session left it
 
 If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that's fine, signals bootstrap is essentially complete.
 
@@ -465,7 +476,7 @@ Per-candidate handling:
 
 ### 2c: Sync report + commit
 
-**Gate — the sync report must exist and cover every pipeline-owned section before commit.** Read `docs/superpowers/plans/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row. Missing file, or any uncovered section → halt, return to 2b, produce the missing rows. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
+**Gate — the sync report must exist and cover every pipeline-owned section before commit.** Read `docs/work/plans/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row. Missing file, or any uncovered section → halt, return to 2b, produce the missing rows. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
 
 **Sync report** — rendered from the artifact (the file is canonical; this table is its commit-time view). Always shown before commit. Fresh repos see "all new"; re-run repos see drift fixes and current items.
 
@@ -490,9 +501,9 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `.claude/hooks/commit-channel.sh` (frozen hook script seeded at 2a-hooks — always, default-on)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)
-- `docs/superpowers/specs/.gitkeep`
-- `docs/superpowers/plans/.gitkeep`
-- `docs/superpowers/plans/bootstrap.md` (if newly written or regenerated)
+- `docs/work/specs/.gitkeep`
+- `docs/work/plans/.gitkeep`
+- `docs/work/plans/bootstrap.md` (if newly written or regenerated)
 - `docs/specs/.gitkeep` (if scaffolded)
 - `docs/backlog.md` (if scaffolded, re-planted, or fact-fields block inserted this run at 2a-scale)
 - `docs/parked.md`, `docs/test-queue.md`, `.claude/rules/venue-map.md` (scale-module targets — only if installed this run at 2a-scale)
@@ -500,7 +511,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - Superseded-fork deletions (adopt mode, § 2b-adopt) — staged removals of approved consumer `.claude/skills/<name>/` dirs / `.claude/agents/<name>.md` files that root artifacts now supersede
 - Any other adaptive files / folders created
 
-Commit message: `chore: scaffold superpowers pipeline` on fresh repos, `chore: sync superpowers pipeline` when only drift fixes shipped, `refactor: migrate CLAUDE.md to rules layer + sync pipeline` when re-run performed legacy migration.
+Commit message: `chore: scaffold harness pipeline` on fresh repos, `chore: sync harness pipeline` when only drift fixes shipped, `refactor: migrate CLAUDE.md to rules layer + sync pipeline` when re-run performed legacy migration. These strings double as the mature-repo detector above — keep them in step with its match list.
 
 **Clean the run artifact.** `bootstrap-sync-report.md` is a transient diagnostic — never staged. After the commit lands (or after reporting no-changes), delete it: its consumer is this phase, so this phase is its cleaner. (Task 3 cleanup removes it too, as a safety net if a session broke between 2b and here.)
 
@@ -518,7 +529,7 @@ After committing (or reporting no changes needed), present results based on repo
 >
 > {If any rule files were seeded: "Path-scoped rules seeded in `.claude/rules/` ({list seeded rules}). They auto-load on file match — full ammo at the decision moment, summary mirrored in CLAUDE.md § Rules. Add more rule files when path-scoped patterns emerge."}
 >
-> {If bootstrap.md has Task 1 / Task 2 active: "Optional adaptive seeding queued in `docs/superpowers/plans/bootstrap.md` (specs / backlog). Next session: `/clear`, then `/super-bootstrap:todo`."}
+> {If bootstrap.md has Task 1 / Task 2 active: "Optional adaptive seeding queued in `docs/work/plans/bootstrap.md` (specs / backlog). Next session: `/clear`, then `/super-bootstrap:todo`."}
 > {If bootstrap.md is cleanup-only: "Bootstrap essentially complete — `/super-bootstrap:todo` will show the cleanup task."}
 
 **Re-run / sync pass:**

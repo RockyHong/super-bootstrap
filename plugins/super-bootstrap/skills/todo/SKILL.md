@@ -1,12 +1,12 @@
 ---
 name: todo
-description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the need-me board — drainable work collapses to a count, need-me work groups by venue category with a downstream fan-out signal (no MCQ, dispatched immediately). Sub-verbs slice explicitly: `/super-bootstrap:todo discuss` (decisions, spec approvals), `/super-bootstrap:todo cloud` (drainable detail), `/super-bootstrap:todo device` (UI/e2e/manual), `/super-bootstrap:todo harness` (orchestration-engine rows, careful handle), `/super-bootstrap:todo full` (flat everything). Scans docs/superpowers/specs|plans + docs/backlog.md, plus docs/test-queue.md when present. Bundled with super-bootstrap — works in any repo with the superpowers pipeline."
-tags: [todo, scan, status, pipeline, superpowers]
+description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the need-me board — drainable work collapses to a count, need-me work groups by venue category with a downstream fan-out signal (no MCQ, dispatched immediately). Sub-verbs slice explicitly: `/super-bootstrap:todo discuss` (decisions, spec approvals), `/super-bootstrap:todo cloud` (drainable detail), `/super-bootstrap:todo device` (UI/e2e/manual), `/super-bootstrap:todo harness` (orchestration-engine rows, careful handle), `/super-bootstrap:todo full` (flat everything). Scans docs/work/specs|plans + docs/backlog.md, plus docs/test-queue.md when present. Bundled with super-bootstrap — works in any repo with the development pipeline."
+tags: [todo, scan, status, pipeline]
 ---
 
 # Todo — Intent-Filtered Pipeline Scanner
 
-Default render is the **need-me board** — momentum-driven, not a kanban: autonomously-drainable work collapses to one count line, and work that needs the human groups by venue category (decide / device-bound / harness / probe) with a `unblocks N` fan-out signal. Bare invoke dispatches it immediately — no MCQ, no picker (a rendered surface the user navigates by typing a sub-verb, not a modal stop). Sub-verbs slice explicitly (deciding / drainable detail / on device Claude / touching the engine / flat everything). State reconstructed from `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, and `docs/backlog.md` (three core sources), plus `docs/test-queue.md` when present (the scale module's test queue). Pipeline state = file presence (spec/plan/code presence drives stage classification).
+Default render is the **need-me board** — momentum-driven, not a kanban: autonomously-drainable work collapses to one count line, and work that needs the human groups by venue category (decide / device-bound / harness / probe) with a `unblocks N` fan-out signal. Bare invoke dispatches it immediately — no MCQ, no picker (a rendered surface the user navigates by typing a sub-verb, not a modal stop). Sub-verbs slice explicitly (deciding / drainable detail / on device Claude / touching the engine / flat everything). State reconstructed from `docs/work/specs/*.md`, `docs/work/plans/*.md`, and `docs/backlog.md` (three core sources), plus `docs/test-queue.md` when present (the scale module's test queue). Pipeline state = file presence (spec/plan/code presence drives stage classification).
 
 ## Arguments
 
@@ -29,10 +29,10 @@ Default render is the **need-me board** — momentum-driven, not a kanban: auton
 The gateway decides dispatch from **directory presence alone** (Glob lists paths,
 loads no file content, fires no `docs/**` path-scoped rule):
 
-- **`docs/superpowers/` absent** (Glob returns nothing) → repo has the pipeline
+- **`docs/work/` absent** (Glob returns nothing) → repo has the pipeline
   available but no runway installed. Print, no dispatch:
   > "No runway installed. Run `/super-bootstrap` to set up the pipeline."
-- **`docs/superpowers/` present** → **dispatch the `todo` subagent unconditionally.**
+- **`docs/work/` present** → **dispatch the `todo` subagent unconditionally.**
   The empty/non-empty determination moves into the subagent: it reads the three
   sources and renders either the empty-state (`No active work…`) or the board.
 
@@ -92,6 +92,6 @@ Steps:
 ## Rules
 
 - **Read-only.** Never modifies files. Never executes git operations.
-- **Works in any repo** — `docs/superpowers/` present (created by `/super-bootstrap:harness-bootstrap`) drives the board; absent → the skip-gate redirects to `/super-bootstrap`.
+- **Works in any repo** — `docs/work/` present (created by `/super-bootstrap:harness-bootstrap`) drives the board; absent → the skip-gate redirects to `/super-bootstrap`.
 - **Verbatim relay rule.** Agent's output IS the value. Gateway adds nothing — no preface, no editorial.
 - **Footer-hint convention.** Footer is the agent's render concern, computed per `agents/todo.md` § Render footer-hint (see §Footer rule). Gateway relays verbatim.

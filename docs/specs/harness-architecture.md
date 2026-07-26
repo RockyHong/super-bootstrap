@@ -40,7 +40,7 @@ substrate-permanent. Harness engineering's durable work domain is the permanent 
 | Entry selection (routing) | **absent** | `ask-matt` (owns its own) | Cluster table — **shape recognition, not entry routing**; rows name disciplines a harness would otherwise supply |
 | Fast capture | — | — | **`/log`** |
 | Standing work state | — | defers to a real tracker | **`docs/backlog.md`** |
-| Per-feature work order | temporal specs/plans | `to-tickets` → `.scratch/<feature>/issues/NN-slug.md` | `docs/superpowers/plans/` |
+| Per-feature work order | temporal specs/plans | `to-tickets` → whatever tracker setup configured | `docs/work/plans/` |
 | Propagation gate | — | — | **doc-sync** |
 | Cold-start data map | — | `CONTEXT.md` + `docs/adr/` | `overview` + `techstack` + `decisions` |
 | Awareness wiring | full-body ambient injection | static `## Agent skills` pointers in CLAUDE.md | **path-scoped rules (`paths:` frontmatter)** |
@@ -67,7 +67,7 @@ inseparable from it.
 | § The envelope ambient-laws line (4 skill names) | referent dead, **discipline live** | **landed** — three declared laws inline; `dispatching-parallel-agents` cut as a duplicate of § Dispatch |
 | `docs/specs/superpowers-topology.md` | dead | **landed** — deleted |
 | `harness-bootstrap` § Core plugin pins — `superpowers` as a **locked** core dep | dead *as core*: the pin's own stated justification is name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names go | **landed** — unpinned in `harness-bootstrap` 2a and delocked in `resolve-plugins` Phase 4; a process harness is now an ordinary adaptive pick |
-| `docs/superpowers/specs\|plans/` | dead (that is superpowers' artifact shape) | open — `DEBT-026` |
+| `docs/superpowers/specs\|plans/` | dead (that is superpowers' artifact shape) | **landed** — renamed to `docs/work/`; the slot stays ours because his artifact skills own no path, they publish to the configured tracker (§4) |
 | drain's stage machine (`raw→triage→plan→execute→review`) | half-dead (stage names are superpowers' phases) | open — `DEBT-028` |
 | **log / backlog / commit / doc-sync / rules** | **unaffected** | — |
 | `skills/triage/SKILL.md` + `agents/triage.md` — investigation doctrine | referent dead, **discipline live** — the agent's tool list carries no `Skill`, so the pointer never resolved even where superpowers is installed | **landed** — doctrine clause restated inline, naming no harness; the skill description's scope-summary tail dropped |
@@ -92,36 +92,34 @@ invoke model-invoked skills but never another user-invoked one, and `implement` 
 
 **Runtime.** The target state is that super-bootstrap names zero foreign skills. This is
 grep-verifiable, not a policy: `rg 'superpowers|systematic-debugging|brainstorm|writing-plans|write-plan|execute-plan'`
-over `plugins/super-bootstrap/` should return zero. The pattern carries `brainstorm`
-**unstemmed** and both hyphenated command spellings deliberately: a `brainstorming|writing-plans`
-pattern is blind to `/brainstorm`, `/write-plan`, and `/execute-plan` — the form a live dispatch
-actually takes, and the form that survived the skeleton cut unseen.
+over `plugins/super-bootstrap/` should return only the sanctioned exceptions below. The
+pattern carries `brainstorm` **unstemmed** and both hyphenated command spellings
+deliberately: a `brainstorming|writing-plans` pattern is blind to `/brainstorm`,
+`/write-plan`, and `/execute-plan` — the form a live dispatch actually takes, and the form
+that survived the skeleton cut unseen.
 
-**Where it stands (2026-07-26, after the skeleton cut).** The shipped CLAUDE.md skeleton
-names **no skill** — its remaining 8 hits are all `docs/superpowers/**` path strings, owned by
-`DEBT-026`. Repo-wide the surviving hits fall in four kinds; the first three are inert, and
-**live command referent** is the one that is still a real runtime coupling:
+**Two hit classes are sanctioned and stay.** Neither routes anything:
+
+- **Illustrative** — `resolve-plugins` naming a process harness as an example adaptive
+  pick ("superpowers or any other") and the sample output that goes with it. It names a
+  candidate the user may take or drop, which is the opposite of routing to it.
+- **Historical** — `harness-bootstrap`'s mature-repo detector must keep matching the
+  pre-rename `chore: scaffold|sync superpowers pipeline` strings, because it reads commit
+  history. Dropping them would make every already-bootstrapped repo read as
+  never-bootstrapped.
+
+Every other hit is a live coupling with a named owner:
 
 | Remaining site | Kind | Owner |
 | --- | --- | --- |
-| `docs/superpowers/**` path strings (widest set, incl. 11 in `harness-bootstrap/SKILL.md`) | folder shape | `DEBT-026` |
-| `harness-bootstrap/SKILL.md` `description:` + intro ("generic superpowers runway") | naming | `DEBT-026` |
-| `harness-bootstrap/SKILL.md` `chore: scaffold\|sync superpowers pipeline` commit strings | naming **+ detector** | `DEBT-026` |
-| `agents/todo.md`, `agents/triage.md`, `shared/classify-actionable.md`, `skills/drain/**`, `skills/todo/SKILL.md` | folder-shape consumers | `DEBT-026` / `DEBT-027` / `DEBT-028` |
-| `skills/resolve-plugins/**` (harness-active marker + one example pick) | folder shape / illustrative | `DEBT-026` |
 | `drain/assets/phase-loop.md` eng-lane phase dispatch + escalation route (`/brainstorm`, `/write-plan`, `/execute-plan`), `drain/SKILL.md` § Escalate-or-build | **live command referent** — a subprocess actually invokes these | `DEBT-028` |
 | `agents/help.md` § Step 3 `pipeline` exemplars, `skills/super-bootstrap/SKILL.md` overview-card routing hint + resolve-gate render | **live command referent** — prose route, no dispatch; the card hint seeds into consumer backlogs | `DEBT-033` |
 
-The todo lane is clear of both live-command-referent rows above — subprocess dispatch and prose
-route alike. Its `brainstorming` / `Continue brainstorm` vocabulary was
-the cluster-2 wording Wave 1 already restated ("settle the design with the user before building")
-left un-propagated, and its empty-state pointed at `/brainstorm`; both are renamed —
-`Settle design` as the action verb, `Design-open` as the spec-shape label, `/super-bootstrap:log`
-as the empty-state door.
-
-The commit strings are deliberately **not** renamed here: they double as the mature-repo
-bootstrap detector (§ Special case), so renaming them separately from the folder would force
-two detection-list migrations instead of one.
+The folder shape is gone: `docs/superpowers/` is now `docs/work/`. Phase 2a scaffolds
+`specs/` and `plans/`; `triage/` appears on demand when a verdict is first written. The
+naming rides the same path — skill `description:`, the runway intro, the emitted commit
+strings, and the pipeline-family `tags:` keyword are all harness-neutral, so a consumer
+re-bootstrapping migrates in one run.
 
 **Setup-time.** Composition happens through mattpocock's own declared socket. His
 `/setup-matt-pocock-skills` presents these issue-tracker options verbatim:
@@ -143,13 +141,13 @@ configured", and `.scratch/<feature-slug>/issues/` is only its *local-files fall
 `wayfinder` says outright that where its map and tickets "physically live is
 tracker-specific", defaulting to local markdown **only when no tracker was provided**.
 
-This matters for `DEBT-026`. The case for *retiring* `docs/superpowers/specs|plans/`
-rather than renaming it rested on his set owning that slot at a fixed path — it does not.
-Declaring our own path through the tracker socket composes with his skills exactly as
-well as deleting the slot would, and renaming is the reversible branch (§8: adopt mode
-has no folder-removal path). It also raises `GAP-038` from nice-to-have to the actual
-composition mechanism. His taxonomy is spec → tickets → implement, with no "plans"
-artifact at all, so our `plans/` slot has no counterpart to defer to.
+**The temporal work folder therefore stays ours**, as `docs/work/`. Retiring it outright
+would only have made sense if his set owned that slot at a fixed path; it does not, so
+declaring our own path through the tracker socket composes with his skills exactly as
+well as deleting the slot would. That raises `GAP-038` from nice-to-have to the actual
+composition mechanism — the seed is what tells his skills where to publish. His taxonomy
+is spec → tickets → implement, with no "plans" artifact at all, so our `plans/` slot has
+no counterpart to defer to.
 
 **Known weakness of this seam — worse than "prose, not schema".** His setup reads its
 seed templates from his own skill folder and has no lookup path to a seed another plugin
@@ -281,14 +279,11 @@ at 53 KB, shrinks, or goes.
 - The §4 `rg` returns zero over `plugins/super-bootstrap/` — **and** a shape check passes
   beside it. Zero name-hits is necessary, not sufficient: a stage chain renamed to
   harness-neutral words still carries the foreign decomposition.
-- `DEBT-026` landed with a stated downstream position — migration mechanism or an
-  explicit accept-orphan note. It is the one cut adopt mode cannot migrate (§8).
-- `DEBT-026` executed before `DEBT-027` and before `DEBT-022` / `BUG-019`. Those three
-  read or restrict against `docs/superpowers/**`; run ahead of the folder decision, each
-  builds against a surface the folder decision removes. Re-aim all three after it lands.
+- `DEBT-027`, `DEBT-022` and `BUG-019` aim at `docs/work/`. Each reads or restricts
+  against the temporal work folder. `BUG-019` narrows: the Full scaffold's row-source
+  restriction is a restriction on `docs/work/`, not evidence about the folder's name.
 - drain's admission predicate (`eligibility.md` Cloud-gate fallback) verified across that
-  same set — the replace-in-the-same-change constraint spans `DEBT-026` / `027` / `028`,
-  not `DEBT-027` alone.
+  same set — the replace-in-the-same-change constraint spans `DEBT-027` and `DEBT-028`.
 - `DEBT-028`'s stage set derived from a declared interface, not renamed superpowers phases.
 - `DEBT-032` narrowed and answered. `test-first` and `verify before claiming` plausibly
   compress or vacate; `review received, not absorbed` is the law with no external
@@ -412,6 +407,10 @@ on the owned list.
 | todo lane's `brainstorm` vocabulary renamed + `/brainstorm` empty-state door repointed | same — `shared/`, `agents/`, `skills/todo/` all ship with the plugin | N/A downstream |
 | `superpowers` core pin removed from § Core plugin pins | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** Already-bootstrapped repos keep the pin — superpowers stays installed where it is, which §6 permits |
 
-**DEBT-026 is the exception:** retiring `docs/superpowers/specs|plans/` hits the folder
-hole, so downstream repos keep orphaned directories that `/super-bootstrap:todo` and
-`drain` still scan. That card carries its own migration mechanism or accepts the orphan.
+**DEBT-026 closed the folder hole rather than accepting it.** The rename to `docs/work/`
+would otherwise strand every already-bootstrapped repo's specs and plans: the scans read
+the new path only, so the old tree stays on disk and goes invisible. Phase 2a therefore
+migrates before it creates — `git mv docs/superpowers docs/work` when the old tree is
+present, contents moved directory by directory when both exist, collisions reported
+rather than resolved. This is the one cut where adopt mode gained a removal path instead
+of documenting an orphan.

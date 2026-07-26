@@ -25,7 +25,7 @@ Venue is derived fresh per read — never stored. Chain: the shared classificati
 | Stage | Next phase | Venue |
 |---|---|---|
 | `raw` | Triage | **T** |
-| `triaged` | Implement | derive — § Modality overrides over `docs/superpowers/triage/{ID}-scope.md` |
+| `triaged` | Implement | derive — § Modality overrides over `docs/work/triage/{ID}-scope.md` |
 | `spec` | Write plan | **T** |
 | `plan` | Execute | derive — § Modality overrides |
 | `review` | Review | **T** — manual-verification arm → **U** / **S** per Test-feel |

@@ -1,7 +1,7 @@
 ---
 name: triage-report
 description: 'Drain the `.review/` report queue. Resolves un-triaged scan/audit reports (producer-agnostic — check-docs-consistency and any other scanner), dispatches the `triage-report` subagent (Sonnet) one report at a time for per-finding dispositions (promote / patch / dup / needs-investigation / dismiss), then the gateway absorbs: promotes batch through /super-bootstrap:log, doc-mechanical patches land per CLAUDE.md § Dispatch, investigations route to /super-bootstrap:triage, report deleted at close-out once every finding holds a terminal verdict. Use when a report lands in `.review/` or the user asks to process review findings. Does NOT fix findings.'
-tags: [triage, review, report, pipeline, superpowers]
+tags: [triage, review, report, pipeline]
 ---
 
 # Triage Report — Review-Queue Drain

@@ -1,7 +1,7 @@
 ---
 name: commit
 description: "Commit the current session's changes only, gateway-inline. Session-isolated (never -A), doc-sync-gated. The gateway runs the commit inline — it already holds the diff, session file list, and change intent; only the doc-sync scan dispatches, and only when a mechanical grep-gate shows the diff touches the doc surface. Conventional message, commits directly, offers push on explicit confirmation. Bundled with super-bootstrap — encodes the harness commit rules."
-tags: [commit, git, session, doc-sync, superpowers]
+tags: [commit, git, session, doc-sync]
 ---
 
 # Commit — Session-Isolated, Doc-Sync-Gated (gateway-inline)
@@ -29,7 +29,7 @@ Commits the changes this Claude session produced, leaving prior uncommitted work
 
 6. **Push (on confirmation)** — present branch → upstream, commits ahead. Ask **"Push these now? (y / skip)"**. Push on explicit yes only (`git push <remote> <branch>`); skip on silence or decline. Never force, never unannounced.
 
-7. **Cycle handoff** — one line from cycle facts (any `docs/superpowers/plans/*.md` with unchecked `- [ ]` boxes; whether `docs/backlog.md` has open rows). Don't expand into a status table — that's `/super-bootstrap:todo`'s job:
+7. **Cycle handoff** — one line from cycle facts (any `docs/work/plans/*.md` with unchecked `- [ ]` boxes; whether `docs/backlog.md` has open rows). Don't expand into a status table — that's `/super-bootstrap:todo`'s job:
 
 | Cycle facts | Handoff one-liner |
 |---|---|

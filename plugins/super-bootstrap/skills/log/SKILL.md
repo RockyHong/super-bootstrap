@@ -1,7 +1,7 @@
 ---
 name: log
 description: 'Capture front door. Logs 1..N observations into docs/backlog.md (BUG / DEBT / GAP), classified + deduped on Sonnet. Use when the user says "log this", "track that", "note this down", or types `/super-bootstrap:log <observation>` — and when Claude needs to file its own findings (out-of-scope findings from a review, audit, or returned subagent report). Dispatches the `log` subagent so classify + write run off the gateway model. Captures raw — the real/worth/now call is triage''s at `/super-bootstrap:todo` pickup. Does NOT triage (that is the `/super-bootstrap:todo` triage lane). Feature ideas log as GAP.'
-tags: [log, capture, backlog, pipeline, superpowers]
+tags: [log, capture, backlog, pipeline]
 ---
 
 # Log — Capture Front Door

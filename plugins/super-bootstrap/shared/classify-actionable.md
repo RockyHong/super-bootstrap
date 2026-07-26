@@ -71,7 +71,7 @@ Read all sources (three core + the scale module's test queue when present), deri
 
 **Optional-source probe discipline.** The test queue, the triage `{ID}-*` verdict files, and the specs/plans directories are optional — absent until a repo reaches that stage. Probe presence by listing the concrete path (a concrete project-relative target lists reliably), not by content-reading a maybe-absent file. An absent optional source — an empty listing *or* a "does not exist" error — is an expected branch of this spec, not an anomaly to diagnose: record it empty, take its skip (§a–d), and move on immediately.
 
-### a. Specs (`docs/superpowers/specs/*.md`)
+### a. Specs (`docs/work/specs/*.md`)
 
 For each:
 
@@ -81,7 +81,7 @@ For each:
 - **Spec exists with matching plan** → spec is reference now; don't emit a spec row, emit the plan row instead (see §b).
 - **Orphaned spec** (>7 days old, no plan, no approval signal) → action: `"Decide: stale spec {filename} — approve / refine / delete"`, **intent: Discuss**, **stage: spec**.
 
-### b. Plans (`docs/superpowers/plans/*.md`)
+### b. Plans (`docs/work/plans/*.md`)
 
 For each, count checkboxes:
 
@@ -100,8 +100,8 @@ Open items are `### {BUG|DEBT|GAP}-###` row headings under `## Open`. The header
 For each open `BUG-### / DEBT-### / GAP-###` item:
 
 - **Item flagged for user decision** (line contains `needs user`, `decision required`, `route?`) → action: `"Decide: {ID} {title}"`, **intent: Discuss**, **stage: raw**.
-- **`docs/superpowers/triage/{ID}-notes.md` exists** (surface verdict, pending user) → action: `"Decide: {ID} {title} — triage notes"`, **intent: Discuss**, **stage: raw**.
-- **`docs/superpowers/triage/{ID}-scope.md` exists, no matching plan** → action: `"Implement: {ID} {title}"`, intent per cloud-safe derivation over the scope.md `## Files` paths + its `Test Strategy` line, **stage: triaged**.
+- **`docs/work/triage/{ID}-notes.md` exists** (surface verdict, pending user) → action: `"Decide: {ID} {title} — triage notes"`, **intent: Discuss**, **stage: raw**.
+- **`docs/work/triage/{ID}-scope.md` exists, no matching plan** → action: `"Implement: {ID} {title}"`, intent per cloud-safe derivation over the scope.md `## Files` paths + its `Test Strategy` line, **stage: triaged**.
 - **No verdict file, no plan** (default state) → action: `"Triage: {ID} {title}"`, **intent: Cloud** (triage is investigate-only), **stage: raw**.
 - **Item with active plan reference** → don't double-emit; the plan row already covers it (see §b).
 

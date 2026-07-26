@@ -2,14 +2,14 @@
 name: drain
 description: "Parallel-worktree auto-drain of the board. One `/super-bootstrap:drain` turn = scan the pipeline sources (specs/plans/backlog, plus the scale module's test queue when present) → keep only admissible items → relation-analyze into a conflict-free wave → confirm with the user → spawn one isolated git worktree + headless `claude -p` per item, each resuming at its pipeline stage and running phase-by-phase to the next user wall, then halting. A single-item wave hands off to the normal in-session pipeline (drain offers no parallelism for one item); inline-sized items in a larger wave roll in-session, no worktree. State lives in files; the next invocation cold-reads and picks the next wave. Merge is never automatic — it delegates to `/super-bootstrap:merge`. Sub-verbs: `status`, `release {id}`, `--dry-run`. Manual invocation only."
 disable-model-invocation: true
-tags: [drain, worktree, parallel, pipeline, superpowers]
+tags: [drain, worktree, parallel, pipeline]
 ---
 
 # drain — Parallel-Worktree Auto-Drain
 
 One wave per invocation over the board. Scan → Cloud-gate → wave-select → confirm → spawn one isolated subprocess per item → each halts at a user wall. The orchestrator (gateway) holds no in-head state; every tick re-reads from files. Capacity ceiling = how many halts the user can resolve, not machine throughput.
 
-**Consumer contract:** assumes the super-bootstrap harness shape — `docs/backlog.md`, `docs/superpowers/specs|plans/`, `/super-bootstrap:merge`, `/super-bootstrap:commit`. Not portable below that line. First run self-installs the worktree infra (§Pre-flight step 0).
+**Consumer contract:** assumes the super-bootstrap harness shape — `docs/backlog.md`, `docs/work/specs|plans/`, `/super-bootstrap:merge`, `/super-bootstrap:commit`. Not portable below that line. First run self-installs the worktree infra (§Pre-flight step 0).
 
 Trigger: user types `/super-bootstrap:drain`. Never auto-fires.
 
@@ -33,7 +33,7 @@ Run in order; any HALT exits the turn with a §Halt summary.
 ## Shape
 
 1. **Sync base.** Fast-forward / rebase the base branch (`git fetch` + `git rebase origin/{base}`) so worktrees branch from current head. Conflict → surface + exit.
-2. **Scan + classify.** Read `docs/superpowers/specs/*.md`, `docs/superpowers/plans/*.md`, `docs/backlog.md` (and `docs/test-queue.md` when present — scale module, skip if absent); derive each item's `{action, intent, stage}` per the **shared classification spec**: resolve the absolute path to `../../shared/classify-actionable.md` from the skill base directory (surfaced in the skill invocation as `Base directory for this skill: <abs path>`), then use the Read tool on that resolved absolute path (SSOT, also consumed by `/super-bootstrap:todo`). Classify EXACTLY per it. Then apply `assets/eligibility.md` to keep only the drain-eligible items — next-phase venue ∈ {T, S} when `.claude/rules/venue-map.md` is present, else the `intent == Cloud` fallback. Items whose next phase is a wall (venue U/P, or `Device`/`Discuss`) skip and surface.
+2. **Scan + classify.** Read `docs/work/specs/*.md`, `docs/work/plans/*.md`, `docs/backlog.md` (and `docs/test-queue.md` when present — scale module, skip if absent); derive each item's `{action, intent, stage}` per the **shared classification spec**: resolve the absolute path to `../../shared/classify-actionable.md` from the skill base directory (surfaced in the skill invocation as `Base directory for this skill: <abs path>`), then use the Read tool on that resolved absolute path (SSOT, also consumed by `/super-bootstrap:todo`). Classify EXACTLY per it. Then apply `assets/eligibility.md` to keep only the drain-eligible items — next-phase venue ∈ {T, S} when `.claude/rules/venue-map.md` is present, else the `intent == Cloud` fallback. Items whose next phase is a wall (venue U/P, or `Device`/`Discuss`) skip and surface.
 3. **Relation analysis + wave selection.** `assets/relations.md`. Output: current wave (disjoint orphans + chain-heads). Tails and conflicts defer.
 4. **Confirm gate.** §Confirm gate. Single-item wave → short-circuit to the normal pipeline (no gate rendered). Multi-item → render + confirm; decline = clean exit — no worktrees, no claims.
 5. **Spawn.** One subprocess per wave member — `assets/ensure-infra.md` (warm) → §Phase loop. Background dispatch; notification-driven.

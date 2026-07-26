@@ -53,7 +53,7 @@ Available slash commands ({N} total):
 
 [meta]
   /super-bootstrap
-      Bootstrap or sync the superpowers pipeline. (When: fresh repo / syncing harness.)
+      Bootstrap or sync the development pipeline. (When: fresh repo / syncing harness.)
   /super-bootstrap:harness-bootstrap
       Install or sync the harness in any repo (greenfield or code present). (When: install/refresh the pipeline + skeleton docs.)
   /super-bootstrap:resolve-plugins
@@ -61,7 +61,7 @@ Available slash commands ({N} total):
 
 [pipeline]
   /super-bootstrap:todo
-      Scan docs/superpowers/ for active specs and plans. (When: "what was I doing?" / start of session.)
+      Scan docs/work/ for active specs and plans. (When: "what was I doing?" / start of session.)
   /super-bootstrap:help
       This menu. (When: forgot what's installed.)
 

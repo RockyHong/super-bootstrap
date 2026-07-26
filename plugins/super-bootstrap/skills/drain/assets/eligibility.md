@@ -47,7 +47,7 @@ Worktree isolation earns its cost only when the wave carries parallelism. Two wa
 
 ```
 isInlineExecution(item):
-  return scope_header(item, "Execution") starts with "inline"   # docs/superpowers/triage/{ID}-scope.md
+  return scope_header(item, "Execution") starts with "inline"   # docs/work/triage/{ID}-scope.md
 ```
 
 ```

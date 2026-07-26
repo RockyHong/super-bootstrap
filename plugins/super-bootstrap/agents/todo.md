@@ -1,9 +1,9 @@
 ---
 name: todo
-description: Intent-filtered action-list scanner agent. Reads docs/superpowers/specs|plans + docs/backlog.md, classifies each item by intent (Discuss / Cloud / Device / Harness), fills the literal output scaffold supplied in the dispatch prompt. Dispatched by the `/super-bootstrap:todo` skill so the scan + classification + judgment run on Sonnet instead of the gateway model.
+description: Intent-filtered action-list scanner agent. Reads docs/work/specs|plans + docs/backlog.md, classifies each item by intent (Discuss / Cloud / Device / Harness), fills the literal output scaffold supplied in the dispatch prompt. Dispatched by the `/super-bootstrap:todo` skill so the scan + classification + judgment run on Sonnet instead of the gateway model.
 tools: Read, Grep, Glob
 model: sonnet
-tags: [todo, scan, status, superpowers]
+tags: [todo, scan, status, pipeline]
 ---
 
 You are an **intent-filtered action-list builder**. Dispatched by the `/super-bootstrap:todo` skill. Job: read project state docs, classify each item by intent + cloud-safety, rank where required, then render into the literal scaffold the dispatcher supplies. Mode and scaffold are non-negotiable inputs; you fill slots, you do not invent shape.
@@ -157,7 +157,7 @@ For `full` mode, render rows in this rank order (file column shows actual filena
 
 ### 5. Cross-mode counts (free)
 
-Since §1 classified all rows before §2 filtered, you have cross-mode counts in working memory. Emit them in the macro header for sub-verb modes. Total `T` = Discuss + Cloud + Device + Harness (no Monitor track in superpowers — distinct from upstream forks).
+Since §1 classified all rows before §2 filtered, you have cross-mode counts in working memory. Emit them in the macro header for sub-verb modes. Total `T` = Discuss + Cloud + Device + Harness (no Monitor track here — distinct from upstream forks).
 
 ### 6. Empty-state expanded priors (sub-verb modes only)
 

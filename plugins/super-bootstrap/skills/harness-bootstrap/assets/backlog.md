@@ -12,7 +12,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 - **`DEBT-###`** — working but rotting (test fixture rot, stale dep, cleanup owed).
 - **`GAP-###`** — design gap or unverified capability idea, never properly specced. Forward feature ideas land here; triage decides drop / spec.
 
-No phase prescription per category — when an item rolls into a session, the harness phase-gate triage decides which superpowers phases run. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
+No phase prescription per category — when an item rolls into a session, triage decides how much ceremony the work earns. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
 **ID high-water mark:** `BUG-000` · `DEBT-000` · `GAP-000` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 

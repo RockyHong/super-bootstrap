@@ -42,7 +42,7 @@ Route defaults assume worst-case — fuzzy-new work, a cold executor, every task
 - **Per-task verify depth scales to surface centrality** — an ambient-loaded harness surface (CLAUDE.md, a rule, an agent) earns a full cold audit whatever the change size; an isolated low-centrality surface (a README line, a manifest field, a docs paragraph) earns a light pass.
 - **Same-session author == executor → reference, don't embed** — a plan written for a cold executor embeds full file bodies; when the authoring session also executes, reference draft bodies by section instead of re-embedding full file text.
 
-Spec/plan locations: `docs/superpowers/specs/` and `docs/superpowers/plans/` (temporal). Persistent specs (kept after merge) go to `docs/specs/`.
+Spec/plan locations: `docs/work/specs/` and `docs/work/plans/` (temporal). Persistent specs (kept after merge) go to `docs/specs/`.
 
 ## Dispatch — who holds each phase
 
@@ -75,9 +75,9 @@ State docs (`overview.md`, `techstack.md`, specs) hold what is **true now** — 
 - Committed change history (what changed / when / why-of-a-change) → **git log + commit messages**. Don't hand-chronicle it into a doc.
 - A direction evaluated and **closed** that left no diff (road-not-taken, wall foreseen) and would otherwise be re-proposed → [`docs/decisions.md`](docs/decisions.md).
 
-**Temporal cleanup:** if work completes a feature branch, delete its spec and plan files from `docs/superpowers/specs/` and `docs/superpowers/plans/`. Once merged, they're noise.
+**Temporal cleanup:** if work completes a feature branch, delete its spec and plan files from `docs/work/specs/` and `docs/work/plans/`. Once merged, they're noise.
 
-**Backlog cleanup:** if work resolves a `BUG-###` / `DEBT-###` / `GAP-###` from `docs/backlog.md`, delete that item and any `docs/superpowers/triage/{ID}-*` verdict file — including a shipped feature-`GAP`, which now belongs to the product narrative (Problem / Current State / Module Index). Git history is the archive.
+**Backlog cleanup:** if work resolves a `BUG-###` / `DEBT-###` / `GAP-###` from `docs/backlog.md`, delete that item and any `docs/work/triage/{ID}-*` verdict file — including a shipped feature-`GAP`, which now belongs to the product narrative (Problem / Current State / Module Index). Git history is the archive.
 
 ## Coding Principles
 
@@ -151,8 +151,8 @@ Markdown-authored Claude Code plugin + self-hosted marketplace — no language r
 - [`docs/techstack.md`](docs/techstack.md) — stack, architecture rules, coding patterns.
 - [`docs/backlog.md`](docs/backlog.md) — open items (`BUG-###` / `DEBT-###` / `GAP-###`), captured via `/super-bootstrap:log`, deleted on resolve.
 - [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
-- `docs/superpowers/specs/` — design specs from up-front design work (temporal — deleted after merge)
-- `docs/superpowers/plans/` — implementation plans (temporal — deleted after merge)
+- `docs/work/specs/` — design specs from up-front design work (temporal — deleted after merge)
+- `docs/work/plans/` — implementation plans (temporal — deleted after merge)
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)
 
-> **Two kinds of specs:** `docs/specs/` = permanent source of truth. `docs/superpowers/specs/` = temporal work orders.
+> **Two kinds of specs:** `docs/specs/` = permanent source of truth. `docs/work/specs/` = temporal work orders.

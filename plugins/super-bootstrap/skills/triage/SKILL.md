@@ -1,7 +1,7 @@
 ---
 name: triage
-description: 'Read-only verdict phase for a backlog card. `/super-bootstrap:triage {ID}` dispatches the `triage` subagent (Opus) to trace the card''s root cause cold and emit a verdict artifact — auto-fix → docs/superpowers/triage/{ID}-scope.md (Fix-shape / Probe-deps / Execution tags) or surface → {ID}-notes.md (decision for the user). No code changes — the fix is a separate phase. Use at raw-card pickup (todo board `Triage:` rows) or when the user asks to triage/investigate a BUG/DEBT/GAP item.'
-tags: [triage, verdict, backlog, pipeline, superpowers]
+description: 'Read-only verdict phase for a backlog card. `/super-bootstrap:triage {ID}` dispatches the `triage` subagent (Opus) to trace the card''s root cause cold and emit a verdict artifact — auto-fix → docs/work/triage/{ID}-scope.md (Fix-shape / Probe-deps / Execution tags) or surface → {ID}-notes.md (decision for the user). No code changes — the fix is a separate phase. Use at raw-card pickup (todo board `Triage:` rows) or when the user asks to triage/investigate a BUG/DEBT/GAP item.'
+tags: [triage, verdict, backlog, pipeline]
 ---
 
 # Triage — Read-Only Verdict Phase
@@ -17,7 +17,7 @@ Investigate-only pickup lane for a backlog card. The thinking runs in the `triag
 
 ## Execution
 
-1. Resolve the card: the ID's `### {ID}` heading exists under `docs/backlog.md` § Open. Missing → report "no open row {ID}", stop. A verdict file for this ID already in `docs/superpowers/triage/` → surface its path instead of re-dispatching (re-triage only on explicit user ask; delete the stale verdict file first).
+1. Resolve the card: the ID's `### {ID}` heading exists under `docs/backlog.md` § Open. Missing → report "no open row {ID}", stop. A verdict file for this ID already in `docs/work/triage/` → surface its path instead of re-dispatching (re-triage only on explicit user ask; delete the stale verdict file first).
 2. Dispatch: `Agent` tool, `subagent_type: "triage"`, prompt = the card ID + today's date + the gateway-aligned problem-aim when framing sharpened or corrected the card claim (premise / problem / scenario only). Exclude cause theories and fix preferences (bias-input exclusion) — the aligned aim is the user-validated target, not a prior; the card row carries the frozen claim.
 3. Absorb the agent's report (`agents/triage.md` § Reporting):
    - **DONE / DONE_WITH_CONCERNS** — relay verdict + path. scope.md → post the route line off its `Execution:` tag (inline / phased → implement within the envelope, skipping what the tag skips; full → cluster route per CLAUDE.md). notes.md → surface its `## Decision needed` to the user.
