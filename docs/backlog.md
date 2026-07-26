@@ -14,7 +14,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, triage decides how much ceremony the work earns. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-019` · `DEBT-037` · `GAP-045` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-020` · `DEBT-038` · `GAP-045` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -32,6 +32,20 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### BUG-020 — commit-channel hook covers Bash path only; commits via other tools bypass the commit door and doc-sync
+
+**Logged:** 2026-07-26 · **Source:** head/tail interface contract design work for super-bootstrap bracket (finding stands independent of that design)
+**Problem:** The commit-channel `PreToolUse` matcher is `Bash(git commit *)` in both the shipped hook asset and the dogfood `.claude/settings.json`. Any commit that lands via another path — a bespoke commit skill, `gh`, an MCP git tool — bypasses the hook entirely, so doc-sync never sees the finished diff. The README presents the hook as the mechanism that confines raw `git commit` to the main-session commit door and routes worker subagents back to `/super-bootstrap:commit`, but only one path class is actually enforced.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/commit-channel.hook.json`; `.claude/settings.json` (dogfood hook wiring); root `README` (hook guarantee claim)
+**Prior:** Widen the matcher to cover all commit-landing tool paths, or document the enforcement gap and narrow the README guarantee to match what is actually enforced.
+
+### DEBT-038 — resolve-plugins hardcodes `superpowers` as example name at three shipped sites, creating sampling bias against the bare-posture intent
+
+**Logged:** 2026-07-26 · **Source:** observation against repo owner's stated posture — "recommend whatever the live query surfaces, pin nothing, bake in no recommendation"
+**Problem:** `resolve-plugins` uses `superpowers` as its illustrative adaptive-pick name at SKILL.md:169 (prose), SKILL.md:222 (sample settings.json output), and `assets/formats.md:53-54` (sample candidate output). The mechanism already matches the bare posture (routing removed, no core pin); only the example names do not. A hardcoded name is simultaneously a prior for the curation pass and a user expectation, even where surrounding prose says take-or-drop. `docs/specs/harness-architecture.md` §4 sanctions these as "illustrative" for coupling reasons — correctly, they route nothing — but sampling bias is orthogonal to coupling and unaddressed. Fix shape: replace with a placeholder (e.g. `<process-harness>`) or drop the example; §4's illustrative-class prose rides the same change as a propagation closure item.
+**Area:** `plugins/super-bootstrap/skills/resolve-plugins/SKILL.md` lines 169, 222; `plugins/super-bootstrap/skills/resolve-plugins/assets/formats.md` lines 53–54; `docs/specs/harness-architecture.md` §4 (propagation closure)
+**Prior:** Replace hardcoded name with `<process-harness>` placeholder or remove the example; update §4 in the same change.
 
 ### GAP-045 — No fire-moment gate when a review claim enters a container — false claims pass all existing harness checks
 
