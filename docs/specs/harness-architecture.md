@@ -262,6 +262,39 @@ many halts the user can resolve, not machine throughput." Whether parallel spawn
 produce net progress or net walls is unmeasured. This determines whether drain survives
 at 53 KB, shrinks, or goes.
 
+### Wave-close conditions — what holds when the last wave reports done
+
+- The §4 `rg` returns zero over `plugins/super-bootstrap/` — **and** a shape check passes
+  beside it. Zero name-hits is necessary, not sufficient: a stage chain renamed to
+  harness-neutral words still carries the foreign decomposition.
+- `DEBT-026` landed with a stated downstream position — migration mechanism or an
+  explicit accept-orphan note. It is the one cut adopt mode cannot migrate (§8).
+- `DEBT-026` executed before `DEBT-027` and before `DEBT-022` / `BUG-019`. Those three
+  read or restrict against `docs/superpowers/**`; run ahead of the folder decision, each
+  builds against a surface the folder decision removes. Re-aim all three after it lands.
+- drain's admission predicate (`eligibility.md` Cloud-gate fallback) verified across that
+  same set — the replace-in-the-same-change constraint spans `DEBT-026` / `027` / `028`,
+  not `DEBT-027` alone.
+- `DEBT-028`'s stage set derived from a declared interface, not renamed superpowers phases.
+- `DEBT-032` narrowed and answered. `test-first` and `verify before claiming` plausibly
+  compress or vacate; `review received, not absorbed` is the law with no external
+  counterpart, so it is the residue the card is really about.
+- Folder rename and the `chore: scaffold|sync superpowers pipeline` detector strings
+  shipped as **one** change — split, the two-step migration opens a window where neither
+  string matches repos committed between the steps (§4).
+- The bare-runway posture decided and written here or in [`docs/decisions.md`](../decisions.md):
+  de-routing unpinned the process harness and named no replacement, so a bootstrapped repo
+  runs bare with no signal that it is bare. Either `resolve-plugins` recommends one at
+  setup time, or the runway declares bare-by-design.
+- §3's `Cut` column and §4's dated "where it stands" snapshot overwritten to truth-now.
+  Both are history sitting in a state doc; `.claude/rules/dimension-discipline.md` fires on
+  this path and names that shape a trap for the next editor.
+- Close-out states **change A complete, change B open** — `GAP-038` and `GAP-041` remain.
+
+**Vacating means naming the discipline and shipping nothing.** A card whose fix reads
+"point at X instead" is mis-shaped whatever X is — re-pointing a routing line from one
+foreign harness to another rebuilds the coupling change A paid to remove.
+
 ## 7. Evidence index
 
 Verification grades: **A** = literal text read; **B** = model-summarized fetch, claims

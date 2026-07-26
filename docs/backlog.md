@@ -14,7 +14,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, triage decides how much ceremony the work earns. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-019` · `DEBT-034` · `GAP-042` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-019` · `DEBT-035` · `GAP-043` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -32,6 +32,20 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-043 — The runway declares no process-harness posture, so a bootstrapped repo runs bare without saying so
+
+**Logged:** 2026-07-26 · **Source:** `.review/mattpocock-adapt-report.md` triage (2026-07-26)
+**Problem:** De-routing unpinned `superpowers` from `harness-bootstrap` and delocked it in `resolve-plugins`. The slot is not unnamed — `resolve-plugins` Phase 4 declares a process harness "an ordinary adaptive pick here — proposable, droppable" (`SKILL.md:169`), and `docs/techstack.md` states no process harness is a dependency. What is missing is a *posture*: nothing surfaces the slot proactively, and `docs/specs/harness-architecture.md` §6 marks the harness swap (change B) open without stating what holds in the interim. So a repo bootstrapped today runs with no process harness behind its one-line disciplines, and nothing tells the operator whether that is a default or a decision.
+**Area:** `plugins/super-bootstrap/skills/resolve-plugins/SKILL.md`; `docs/specs/harness-architecture.md` §6
+**Prior:** Two shapes — (a) `resolve-plugins` recommends a process harness at setup time per the §4 setup-time-composition seam, needing change B resolved or a non-committal "if you use a process harness, install it here"; or (b) the runway ships intentionally bare and says so, positioning a process harness as an operator choice. Decision lands in spec §6 or `docs/decisions.md`; `resolve-plugins` changes only under shape (a). GAP-042's `CODING_STANDARDS.md` closure depends on this posture — a seeded standards file has no live reader in a bare runway.
+
+### DEBT-035 — triage.md § Investigation ships doctrine bullets not yet tested for vacate under the external-coverage claim
+
+**Logged:** 2026-07-26 · **Source:** `.review/mattpocock-adapt-report.md` triage (2026-07-26)
+**Problem:** `plugins/super-bootstrap/agents/triage.md` § Investigation ships evidence-discipline bullets. The dissolve table (`docs/specs/harness-architecture.md` §3 triage lane row) recorded this row as "landed — doctrine clause restated inline, naming no harness", but that landing restated prose rather than testing whether the bullets are ours to carry. If an external set's investigation skill covers the discipline, the bullets vacate and what remains is the container: card → read-only verdict artifact → `{ID}-scope.md` / `{ID}-notes.md`. Coverage claim is grade B, gated on GAP-041.
+**Area:** `plugins/super-bootstrap/agents/triage.md` § Investigation; `docs/specs/harness-architecture.md` §3 dissolve table (triage lane row)
+**Prior:** Judge per bullet, not as a block. After GAP-041 raises the coverage claim to grade A: bullets it covers → vacate; bullets with no counterpart → keep. Container prose stays ours regardless. Sibling of DEBT-032 (scopes to CLAUDE.md § The envelope). Blocked on GAP-041.
 
 ### DEBT-034 — The backlog's write-once claim rule has no stated path for a card whose premise is falsified
 
