@@ -14,7 +14,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, triage decides how much ceremony the work earns. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-019` · `DEBT-037` · `GAP-044` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-019` · `DEBT-037` · `GAP-045` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -32,6 +32,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-045 — No fire-moment gate when a review claim enters a container — false claims pass all existing harness checks
+
+**Logged:** 2026-07-26 · **Source:** DEBT-032 controlled probe runs (3/3 false-review-finding implemented and shipped); closed fork in `docs/decisions.md` explicitly reopens on this shape
+**Problem:** Every gate the harness owns (`audit-harness-edits`, `doc-sync`, `/super-bootstrap:commit`) fires on the **diff**, not on the **claim**. A cold subagent handed a plausible-but-false review finding against a harness file implements it cleanly — one run reached the line that falsifies the claim (`worktree-boundary.md` grants in-worktree `git add` + `git commit`) and rewrote that line to match; another ran `audit-harness-edits`, cleared doc-sync, and committed the falsehood to main. The ambient law `Review received, not absorbed` was verifiably in context (run 2 quoted all three ambient laws verbatim on request) and did not activate. The same failure class reaches drain's review phase, which feeds findings back into an execute phase with no premise gate between them. Candidate surfaces not yet evaluated: hook on the dispatch boundary, skill invoked at the receive-review moment, or a required verdict field in the review-return contract.
+**Area:** `CLAUDE.md` § The envelope (`Review received, not absorbed`); `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` § The envelope; `plugins/super-bootstrap/skills/drain/assets/phase-loop.md` (review→execute phase boundary)
+**Prior:** Root cause confirmed in the DEBT-032 closed fork: the failure is activation, not compression — the law was in context and still did not fire. Fix must place a gate at the fire-moment a review claim enters a container; evaluate the three candidate surfaces (dispatch-boundary hook, receive-review skill, verdict-field contract in the review-return shape).
 
 ### DEBT-037 — drain's parallel-worktrees dispatch uses prompt-first ordering instead of `--` terminator and omits `Agent` from allowedTools
 
