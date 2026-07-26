@@ -54,7 +54,7 @@ Intent is determined by action verb before path/state rules.
 
 | Action verb prefix                                              | Intent (locked)              | Why                                                                          |
 | --------------------------------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------- |
-| `Approve spec`, `Decide`, `Continue brainstorm`, `Confirm`      | **Discuss**                  | User-decision shape — only user can resolve.                                 |
+| `Approve spec`, `Decide`, `Settle design`, `Confirm`            | **Discuss**                  | User-decision shape — only user can resolve.                                 |
 | `Write plan`                                                    | **Cloud**                    | Plan author write is doc artifact, headless.                                 |
 | `Refine spec`, `Doc-edit`                                       | **Cloud**                    | Doc artifact, headless.                                                      |
 | `Start execute`, `Continue execute`, `Resume`                   | **Cloud OR Device** (derive) | Depends on paths + content per cloud-safe criterion.                         |
@@ -75,7 +75,7 @@ Read all sources (three core + the scale module's test queue when present), deri
 
 For each:
 
-- **Brainstorming-style** (no checkboxes, "options" / "approaches" / "trade-offs" present, open question to user not resolved) → action: `"Continue brainstorm: {filename}"`, **intent: Discuss**, **stage: spec**.
+- **Design-open** (no checkboxes, "options" / "approaches" / "trade-offs" present, open question to user not resolved) → action: `"Settle design: {filename}"`, **intent: Discuss**, **stage: spec**.
 - **Spec-ready but no matching plan file** (matched by date prefix or slug) AND content contains user-approval signal (`awaiting approval`, `needs sign-off`, `decision pending` from user) → action: `"Approve spec: {filename}"`, **intent: Discuss**, **stage: spec**.
 - **Spec-ready, approved, no matching plan** → action: `"Write plan: {filename}"`, **intent: Cloud**, **stage: spec**.
 - **Spec exists with matching plan** → spec is reference now; don't emit a spec row, emit the plan row instead (see §b).

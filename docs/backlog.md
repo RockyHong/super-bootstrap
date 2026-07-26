@@ -14,7 +14,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, triage decides how much ceremony the work earns. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-019` · `DEBT-032` · `GAP-042` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-019` · `DEBT-034` · `GAP-042` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -32,6 +32,20 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### DEBT-034 — The backlog's write-once claim rule has no stated path for a card whose premise is falsified
+
+**Logged:** 2026-07-26 · **Source:** cold `audit-harness-edits` probe on the DEBT-027 re-aim diff (finding 1)
+**Problem:** The header states "The claim is write-once — captured at the richest-context moment, read cold by later sessions", with no exception. Two disposals exist in practice and neither is written down: overwrite the fields in place (what the DEBT-027 re-aim did — violates the letter of the rule) or delete the row and re-log under a fresh ID (honors it, but burns the ID that specs, sibling cards, and session carries already reference). The rule's stated purpose is protecting the original grounding from lossy later paraphrase; a claim disproven by evidence is a different case it does not contemplate, and leaving the falsified text leading is the failure the pickup-grounding fork in `docs/decisions.md` describes.
+**Area:** `docs/backlog.md` header (§ Row shape / write-once paragraph); `plugins/super-bootstrap/skills/harness-bootstrap/assets/backlog.md` (the shipped skeleton carrying the same rule)
+**Prior:** Name the falsification case in the header and pick one disposal. Likely shape: the claim stays write-once against *paraphrase*, and a falsified premise is superseded in place with a mandatory pointer to where the closed direction is archived (`docs/decisions.md`) — which is what the re-aim did ad hoc. Deleting and re-logging is the alternative but breaks stable-ID references, which the header itself calls the point of an ID. Skeleton mirror rides the same edit (`repo-boundary.md` sync direction).
+
+### DEBT-033 — The help and bootstrap lanes still route to foreign pipeline commands that resolve to nothing
+
+**Logged:** 2026-07-26 · **Source:** widened spec §4 grep sweep during the DEBT-027 re-aim — the old `brainstorming|writing-plans` pattern was blind to the slash-command spellings
+**Problem:** Two sites outside the todo lane still name foreign pipeline entries. `agents/help.md:40` maps the `pipeline` category from the keyword exemplars `brainstorm, write-plan, execute-plan` — in a de-routed repo no shipped skill carries those tags, so the row matches nothing. `skills/super-bootstrap/SKILL.md:42` and `:52` route overview resolution "via brainstorm": `:42` is the observation text seeded through the capture funnel into the **consumer repo's own backlog**, so the foreign routing hint propagates into every bootstrapped repo's card text and outlives the cut there. Neither site is owned by an existing card — `DEBT-028` owns drain's phase-loop dispatch, `DEBT-026` owns the folder shape.
+**Area:** `plugins/super-bootstrap/agents/help.md` § Step 3; `plugins/super-bootstrap/skills/super-bootstrap/SKILL.md` § greenfield seeding + § Resolve gate
+**Prior:** Same vocabulary-residue class as the todo-lane rename shipped alongside this card — Wave 1 restated cluster 2 as "settle the design with the user before building", and the lane's replacements should name a discipline or the repo's own door (`/super-bootstrap:log`), never a foreign command. The `:42` seeded-card-text site is the sharper half: it writes into repos this repo does not control.
 
 ### DEBT-032 — De-routed ambient laws are one-liners where the cut removed a full-body fire-moment surface
 
@@ -75,12 +89,12 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `plugins/super-bootstrap/skills/drain/SKILL.md` § Invariants; `plugins/super-bootstrap/skills/drain/assets/phase-loop.md`
 **Prior:** spec §3 (drain listed half-dead) + §4 (seam mechanism — dispatch to declared entry, not named skills).
 
-### DEBT-027 — Remove venue intent classification (Discuss / Cloud / Device / Harness) from classify-actionable and todo render path
+### DEBT-027 — The cloud-safe derivation content-reads every row's plan body and linked spec on every board render
 
-**Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
-**Problem:** Venue categories exist to route rows to pipeline entries; with routing gone the backlog's job narrows to `/log` landing home plus declared tracker. The classification phase is the primary cost driver behind DEBT-022 (~34.3k tokens / ~226 s for 4 rows). Removing classification may reshape or subsume DEBT-022 (right-size the classify pass) and BUG-019 (full-mode scaffold shape changes when venue grouping disappears) — verify against both before closing.
-**Area:** `plugins/super-bootstrap/shared/classify-actionable.md`; `agents/todo.md`; `plugins/super-bootstrap/skills/todo/**`
-**Prior:** spec §2 + §6; elimination of the classify pass makes DEBT-022's right-sizing moot; board shape change may subsume BUG-019. Free side effect: the venue-mode tables in `agents/todo.md` and `skills/todo/SKILL.md` are the only reason spec §4's `rg 'superpowers|systematic-debugging|brainstorming|writing-plans'` "should return zero" check is unreachable — they use "brainstorming" as an ordinary English word, not a skill reference. Deleting those rows makes the check achievable, so don't patch §4 separately.
+**Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`); **re-aimed 2026-07-26** — the original de-routing framing was falsified against the code and is closed in `docs/decisions.md`
+**Problem:** `shared/classify-actionable.md` § Cloud-safe criterion derives each row's `intent` by grepping the plan file body for device keywords, matching path arms, and reading the linked spec's § Success Criteria — a per-row content read that runs on every `/super-bootstrap:todo` invocation and every `drain` scan, whatever the working-set size. It is the phase DEBT-022 names as the cost driver (~34.3k tokens / ~226 s for 4 rows). Open question: does the derivation earn that cost? `drain` is its only hard consumer (`eligibility.md` Cloud-gate fallback), `todo`'s sub-verb modes are the soft one, and a repo with the scale module wired bypasses it entirely via the venue map.
+**Area:** `plugins/super-bootstrap/shared/classify-actionable.md` § Cloud-safe criterion; `agents/todo.md` §1; `plugins/super-bootstrap/skills/drain/assets/eligibility.md`
+**Prior:** Sibling of DEBT-022 — that one asks whether the pass scales to row count, this one whether one phase of it earns its keep at all; triage may collapse them. Cheapest shape to test: a verb-map-only intent (drop the per-row body reads, keep the verb→intent table's locked rows, default the derived ones) and check whether any real board verdict changes. **Any retirement must replace drain's admission predicate in the same change** — without the venue map, `intent == Cloud` is drain's whole gate. Not a de-routing card: the axis names no foreign harness (`docs/decisions.md`).
 
 ### DEBT-026 — Retire or rename `docs/superpowers/specs|plans/` path shape and update all consumers
 

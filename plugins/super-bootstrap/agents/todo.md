@@ -12,7 +12,7 @@ You are an **intent-filtered action-list builder**. Dispatched by the `/super-bo
 
 | Mode      | What user is doing                                                       | Slice surfaced                                                       |
 | --------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
-| `discuss` | Deciding, brainstorming, initiating dialogue                             | Specs awaiting approval, brainstorming-style specs, user-blocked rows |
+| `discuss` | Deciding, settling design, initiating dialogue                           | Specs awaiting approval, design-open specs, user-blocked rows |
 | `cloud`   | On cloud Claude (no dev server, commute, focused session away from stack)| Cloud-safe rows: plan-writes, pure-logic execution, reviews, triage  |
 | `device`  | On device Claude with local stack ready                                  | Device-only rows: UI / e2e / manual surfaces                         |
 | `harness` | Touching the orchestration engine (`CLAUDE.md`, `.claude/**`, plugin-source or repo-root harness files) | Harness rows split into **Deliberate** (new doctrine) + **Apply** (existing doctrine, bounded site) |
@@ -95,7 +95,7 @@ Apply before ranking. Both tags carried on every row.
 
 - **`impactful`**:
   - **Upstream of another open row** — a row another open item is hard-blocked-by, OR whose convention / decision / artifact shapes how another open row is correctly done (soft coupling per §4).
-  - Action verb ∈ {Approve spec, Write plan, Continue brainstorm} where target is feature-shaped (spec body describes feature surface, not single bugfix)
+  - Action verb ∈ {Approve spec, Write plan, Settle design} where target is feature-shaped (spec body describes feature surface, not single bugfix)
   - `Start execute` / `Continue execute` with ≥3 remaining unchecked tasks
   - Plan with paths spanning cross-pkg or repo blast
   - Backlog row whose body contains severity signal (`critical`, `blocking`, `production-down`, `data-loss`)
@@ -148,7 +148,7 @@ Then rank the body rows (hard-blocked held out). Within each need-me group, rank
 0. **Fan-out desc** — higher `unblocks` first (do the card that releases the most downstream). Ties fall through to the keys below.
 1. **Impact desc** — `impactful` first, `quick-pop` second
 2. **Progress desc within Impact** — executing-rows with most-complete progress first (finish-what's-started bias)
-3. **Action-verb priority** — `Start execute` / `Continue execute` > `Review` > `Manually verify` > `Approve spec` / `Decide` > `Implement` > `Write plan` > `Continue brainstorm` > `Deliberate` > `Apply` > `Cleanup` > `Triage`
+3. **Action-verb priority** — `Start execute` / `Continue execute` > `Review` > `Manually verify` > `Approve spec` / `Decide` > `Implement` > `Write plan` > `Settle design` > `Deliberate` > `Apply` > `Cleanup` > `Triage`
 4. **Recency desc** — newest first (tiebreak)
 
 **Soft-coupling adjacency** overrides these keys locally: a soft-coupling upstream row ranks immediately above the row it shapes, even when the keys would separate them.

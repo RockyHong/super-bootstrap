@@ -63,7 +63,7 @@ Empty state (no need-me rows AND no drainable):
 ```
 # To-Do — {date}
 
-No active work. Start something with /brainstorm or give me a task.
+No active work. Ground something with /super-bootstrap:log or give me a task.
 ```
 
 Empty need-me but drainable pending:
@@ -271,4 +271,4 @@ No macro header for Full — full IS the macro. Harness-intent spec/plan files r
 
 Footer: fill per § Render footer-hint in the todo agent (`agents/todo.md`) — canonical home.
 
-Empty state for Full: `No active work. Start something with /brainstorm or give me a task.`
+Empty state for Full: `No active work. Ground something with /super-bootstrap:log or give me a task.`

@@ -91,13 +91,16 @@ invoke model-invoked skills but never another user-invoked one, and `implement` 
 ## 4. The seam: runtime-orthogonal, setup-time-composed
 
 **Runtime.** The target state is that super-bootstrap names zero foreign skills. This is
-grep-verifiable, not a policy: `rg 'superpowers|systematic-debugging|brainstorming|writing-plans'`
-over `plugins/super-bootstrap/` should return zero.
+grep-verifiable, not a policy: `rg 'superpowers|systematic-debugging|brainstorm|writing-plans|write-plan|execute-plan'`
+over `plugins/super-bootstrap/` should return zero. The pattern carries `brainstorm`
+**unstemmed** and both hyphenated command spellings deliberately: a `brainstorming|writing-plans`
+pattern is blind to `/brainstorm`, `/write-plan`, and `/execute-plan` — the form a live dispatch
+actually takes, and the form that survived the skeleton cut unseen.
 
 **Where it stands (2026-07-26, after the skeleton cut).** The shipped CLAUDE.md skeleton
-names **no skill** — its remaining 8 hits (down from 15 on this pattern) are all
-`docs/superpowers/**` path strings, owned by `DEBT-026`. Every surviving hit repo-wide is
-now a path string, a naming string, or a consumer of the folder shape:
+names **no skill** — its remaining 8 hits are all `docs/superpowers/**` path strings, owned by
+`DEBT-026`. Repo-wide the surviving hits fall in four kinds; the first three are inert, and
+**live command referent** is the one that is still a real runtime coupling:
 
 | Remaining site | Kind | Owner |
 | --- | --- | --- |
@@ -106,6 +109,15 @@ now a path string, a naming string, or a consumer of the folder shape:
 | `harness-bootstrap/SKILL.md` `chore: scaffold\|sync superpowers pipeline` commit strings | naming **+ detector** | `DEBT-026` |
 | `agents/todo.md`, `agents/triage.md`, `shared/classify-actionable.md`, `skills/drain/**`, `skills/todo/SKILL.md` | folder-shape consumers | `DEBT-026` / `DEBT-027` / `DEBT-028` |
 | `skills/resolve-plugins/**` (harness-active marker + one example pick) | folder shape / illustrative | `DEBT-026` |
+| `drain/assets/phase-loop.md` eng-lane phase dispatch + escalation route (`/brainstorm`, `/write-plan`, `/execute-plan`), `drain/SKILL.md` § Escalate-or-build | **live command referent** — a subprocess actually invokes these | `DEBT-028` |
+| `agents/help.md` § Step 3 `pipeline` exemplars, `skills/super-bootstrap/SKILL.md` overview-card routing hint + resolve-gate render | **live command referent** — prose route, no dispatch; the card hint seeds into consumer backlogs | `DEBT-033` |
+
+The todo lane is clear of both live-command-referent rows above — subprocess dispatch and prose
+route alike. Its `brainstorming` / `Continue brainstorm` vocabulary was
+the cluster-2 wording Wave 1 already restated ("settle the design with the user before building")
+left un-propagated, and its empty-state pointed at `/brainstorm`; both are renamed —
+`Settle design` as the action verb, `Design-open` as the spec-shape label, `/super-bootstrap:log`
+as the empty-state door.
 
 The commit strings are deliberately **not** renamed here: they double as the mature-repo
 bootstrap detector (§ Special case), so renaming them separately from the folder would force
@@ -325,6 +337,7 @@ on the owned list.
 | Topology doc deleted | repo-local; the shipped skeleton never referenced it (verified 2026-07-26, zero hits) | N/A downstream |
 | § Coding Principles body replaced | section retained on the owned list | Yes |
 | triage lane's doctrine clause restated inline | `plugins/super-bootstrap/**` ships with the plugin, never scaffolded into a consumer repo | N/A downstream |
+| todo lane's `brainstorm` vocabulary renamed + `/brainstorm` empty-state door repointed | same — `shared/`, `agents/`, `skills/todo/` all ship with the plugin | N/A downstream |
 | `superpowers` core pin removed from § Core plugin pins | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** Already-bootstrapped repos keep the pin — superpowers stays installed where it is, which §6 permits |
 
 **DEBT-026 is the exception:** retiring `docs/superpowers/specs|plans/` hits the folder
