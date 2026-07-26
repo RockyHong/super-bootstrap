@@ -14,7 +14,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, triage decides how much ceremony the work earns. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-019` · `DEBT-035` · `GAP-043` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-019` · `DEBT-036` · `GAP-043` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -32,6 +32,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### DEBT-036 — triage-report dup branch routes new facts to a destination that cannot accept them
+
+**Logged:** 2026-07-26 · **Source:** live session running `/super-bootstrap:triage-report` on `.review/mattpocock-adapt-report.md` (2026-07-26)
+**Problem:** `triage-report` § Execution step 3 routes a `dup` finding's new fact by folding it "into the `/log` batch as annotations" on the existing row. That door is closed: `agents/log.md` scopes itself to new rows only ("Edits or deletes on existing rows — the session that resolves an item owns its row. You create new rows only"), and `docs/backlog.md` header states "The claim is write-once". A triage-report run that produces dup findings with genuinely new facts has no legal landing site — the skill names a destination, the agent refuses the write, and the backlog rule forbids the edit. Observed live 2026-07-26: six dup findings with new facts (execution-order constraints, an evidence-grade dependency, a detector-migration hazard) were routed instead into `docs/specs/harness-architecture.md` §6 as wave-close conditions — a workaround that depended on a grounding spec existing for the subject.
+**Area:** `plugins/super-bootstrap/skills/triage-report/SKILL.md` § Execution step 3 (dup branch); `plugins/super-bootstrap/agents/log.md` § Scope; `docs/backlog.md` header write-once paragraph
+**Prior:** Adjacent to DEBT-034 (falsified-premise disposal) but distinct — that card asks how a card whose premise is disproven gets superseded; this asks where a new fact about a still-correct card lands. Both press on write-once and may want one answer. Candidate shapes: (a) give the dup branch a real destination (a per-card annotations block the header sanctions); (b) route dup facts to the owning card's triage verdict artifact under `docs/work/triage/`; (c) drop the annotation instruction and state that dup findings with new facts surface to the gateway without persistence. Skeleton `skills/harness-bootstrap/assets/backlog.md` carries the same write-once rule and rides whatever lands (`repo-boundary.md` sync direction).
 
 ### GAP-043 — The runway declares no process-harness posture, so a bootstrapped repo runs bare without saying so
 
