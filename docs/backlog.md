@@ -14,7 +14,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, triage decides how much ceremony the work earns. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-020` · `DEBT-038` · `GAP-045` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-020` · `DEBT-038` · `GAP-046` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -32,6 +32,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### GAP-046 — doc-sync has no premise-closure predicate for a product-anchor revision
+
+**Logged:** 2026-07-27 · **Source:** session reading commit door's grep-gate (`plugins/super-bootstrap/skills/commit/SKILL.md` §3) against `CLAUDE.md` § Doc Sync, during product-anchor positioning work (2026-07-27); related open row: GAP-045
+**Problem:** doc-sync's scan predicate is behavior-shaped ("prose describing behavior touched by the diff", "behavior-narrating prose outside `docs/`", "any manifest/description field the diff's behavior changes" — three occurrences; `agents/doc-sync-scan.md` inherits it). A revision to the product anchor (`overview.md` § Problem / § User — problem, ICP, G2M) changes premise, not behavior. The grep-gate fires (basename `overview` not in the dropped-generics list), dispatching a scan — but the cold scanner has no predicate for the actual closure that needs walking: every open GAP row's framing (a GAP is "capability we lack", meaningful only relative to problem + ICP) and each spec's premise. The reverse direction is covered: `CLAUDE.md` § Doc Sync backlog-cleanup states a shipped feature-GAP "now belongs to the product narrative (Problem / Current State / Module Index)". The asymmetry is one-directional — work→anchor has a named rule, anchor→work has no predicate. Scope: external market drift (world→doc) is explicitly out of scope — unsyncable by nature; internal authored anchor only.
+**Area:** `plugins/super-bootstrap/agents/doc-sync-scan.md` (scan predicate); `plugins/super-bootstrap/skills/commit/SKILL.md` §3 (grep-gate); `docs/overview.md` § Problem / § User (product anchor)
+**Prior:** Same failure class as GAP-045 (behavior-shaped harness has no fire moment for the premise dimension); may share solution shape. A dedicated `docs/product.md` would make path-level detection mechanical rather than semantic, enabling a cheap premise-closure gate on product-anchor diffs without semantic inference.
 
 ### BUG-020 — commit-channel hook covers Bash path only; commits via other tools bypass the commit door and doc-sync
 
