@@ -6,7 +6,9 @@ Skip the per-project Claude setup grind. One command picks your skills, writes `
 
 ## Best for
 
-Solo devs juggling multiple repos.
+Solo devs juggling multiple repos — agentic builders, not just coders. The harness carries
+product context (problem, user, gap backlog) alongside the engineering pipeline, because a
+codebase answers *solution* only.
 
 ## Install
 

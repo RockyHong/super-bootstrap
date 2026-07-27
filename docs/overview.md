@@ -13,7 +13,19 @@ Per-project Claude Code setup is a repeated grind: write `CLAUDE.md`, pick skill
 
 ## User
 
-Solo devs juggling multiple repos.
+Solo devs juggling multiple repos — **agentic builders, not pure engineers**. They hold
+product intent (what problem, for whom) alongside the code, so the harness covers the
+product dimension and not only the engineering pipeline: `/super-bootstrap:log` admits
+feature `GAP`s beside defects, this doc carries Problem / User, and
+[`docs/decisions.md`](decisions.md) admits product and business forks beside technical
+ones.
+
+A codebase answers *solution* only. An agent asked whether something should be built has
+no premise to judge against unless the product anchor is written down somewhere it reads
+([`docs/specs/harness-architecture.md`](specs/harness-architecture.md) §2).
+
+The runway is deliberately light enough for a consumer to modify — it seeds disciplines
+and doors, not a framework to conform to.
 
 ## Current State
 
