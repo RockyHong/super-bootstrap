@@ -34,10 +34,10 @@ If no obvious items exist, leave the file with just its header — that's fine. 
 
 ### Task 3: Cleanup
 
-- [ ] **Delete this file** (`docs/work/plans/bootstrap.md`) and `docs/work/plans/bootstrap-sync-report.md` if present — bootstrap is complete
+- [ ] **Delete this file** (`docs/work/bootstrap.md`) and `docs/work/bootstrap-sync-report.md` if present — bootstrap is complete
 - [ ] **Verify `/super-bootstrap:todo` shows no active work** (unless the user has started real project work)
 - [ ] **Commit**: `chore: complete pipeline bootstrap`
 
 ---
 
-**Note on re-runs:** if `/super-bootstrap:harness-bootstrap` is run again later, this file gets regenerated. If `docs/specs/` and `docs/backlog.md` already exist with content, Tasks 1 and 2 are dropped — only Task 3 (cleanup) remains. Most refresh value on re-runs comes from gated tier-2 curation (skill/MCP picks against live sources, run by `/super-bootstrap` once seed docs are substantive), not from this plan. (Re-runs come via `/super-bootstrap`, which always dispatches the runway, or via `/super-bootstrap:harness-bootstrap` directly for a runway-only sync.)
+**Note on re-runs:** if `/super-bootstrap:harness-bootstrap` is run again later, this file gets regenerated. If `docs/specs/` is already populated (Task 1) or card files are already present in `docs/work/` (Task 2), those tasks are dropped — only Task 3 (cleanup) remains. Most refresh value on re-runs comes from gated tier-2 curation (skill/MCP picks against live sources, run by `/super-bootstrap` once seed docs are substantive), not from this plan. (Re-runs come via `/super-bootstrap`, which always dispatches the runway, or via `/super-bootstrap:harness-bootstrap` directly for a runway-only sync.)

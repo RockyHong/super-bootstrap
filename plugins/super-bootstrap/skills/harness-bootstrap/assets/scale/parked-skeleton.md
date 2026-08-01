@@ -1,10 +1,10 @@
 # Parked
 
-Items not in the active pipeline — actionable, but waiting on a named trigger. Delete an entry when it resolves (promoted to a `docs/backlog.md` row, or killed). Git holds the history.
+Items not in the active pipeline — actionable, but waiting on a named trigger. Delete an entry when it resolves (promoted to a card in `docs/work/`, or killed). Git holds the history.
 
 **Admission:** Parked = actionable-but-waits-on-a-named-trigger; every entry MUST carry that trigger (observer + fire-moment), else it drops. This header owns the admission bar — an item that can't name what it watches for and what fires it is not parked, it's dropped.
 
-**ID convention:** Every entry carries a stable `PARK-###` ID. IDs are monotonic and **never reused** — a resolved or promoted entry's ID stays consumed (history = `git log --grep="<id>"`). On promotion the `PARK-###` retires; the new `docs/backlog.md` row is the live handle. IDs index and cross-reference only — no ordering, no priority.
+**ID convention:** Every entry carries a stable `PARK-###` ID. IDs are monotonic and **never reused** — a resolved or promoted entry's ID stays consumed (history = `git log --grep="<id>"`). On promotion the `PARK-###` retires; the new card file in `docs/work/` is the live handle. IDs index and cross-reference only — no ordering, no priority.
 
 **ID high-water mark:** `PARK-000` — last consumed parked ID. `/super-bootstrap:log` assigns max+1 from this line and bumps it in the same write.
 

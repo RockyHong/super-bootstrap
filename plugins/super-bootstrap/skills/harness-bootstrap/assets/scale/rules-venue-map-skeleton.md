@@ -1,8 +1,8 @@
 ---
 paths:
-  - "docs/backlog.md"
+  - "docs/work/README.md"
   - "docs/test-queue.md"
-description: "Phase → run-location map. One map, two filters: /super-bootstrap:todo reads it cloud-vs-device, /super-bootstrap:drain reads it dispatch-vs-wall. Fires on backlog / test-queue reads."
+description: "Phase → run-location map. One map, two filters: /super-bootstrap:todo reads it cloud-vs-device, /super-bootstrap:drain reads it dispatch-vs-wall. Fires on work-space / test-queue reads."
 ---
 
 # Venue Map — Phase → Run-Location
@@ -20,12 +20,12 @@ Single source for *where* a pipeline phase runs. One map, two filters — never 
 
 ## Derivation
 
-Venue is derived fresh per read — never stored. Chain: the shared classification's **stage** (by file-presence) → the item's **next phase** → that phase's venue. Classify by the item's **next** phase, never its terminal phase; modality fields govern only the phase they gate.
+Venue is derived fresh per read — never stored. Chain: the shared classification's **stage** (by thread-state) → the item's **next phase** → that phase's venue. Classify by the item's **next** phase, never its terminal phase; modality fields govern only the phase they gate.
 
 | Stage | Next phase | Venue |
 |---|---|---|
 | `raw` | Triage | **T** |
-| `triaged` | Implement | derive — § Modality overrides over `docs/work/triage/{ID}-scope.md` |
+| `triaged` | Implement | derive — § Modality overrides over the card's Verdict block |
 | `spec` | Write plan | **T** |
 | `plan` | Execute | derive — § Modality overrides |
 | `review` | Review | **T** — manual-verification arm → **U** / **S** per Test-feel |

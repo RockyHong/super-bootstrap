@@ -247,14 +247,14 @@ more: /super-bootstrap:help
 
 ### Full
 
-One ranked table, one row per open item, every source (specs, plans, backlog, test queue) in the same table. No grouping, no aggregate lines — a source that collapses to a count is not flat.
+One ranked table, one row per open item, every source (cards, test queue) in the same table. No grouping, no aggregate lines — a source that collapses to a count is not flat.
 
 Column conventions — every row fills every column; a column inapplicable to a row renders `—`:
 
 - **#** — rank position from agent §4, `1` = top. Sequential over the whole table, never restarted.
-- **Action** — the classification spec's `action` string verbatim (`Triage: {ID} {title}`, `Continue execute: {file} ({x}/{y})`, `Settle design: {file}`, `Deliberate: {topic}`, `Apply: {rule} → {site}`). It already names the file or ID, so Full carries no separate File column.
+- **Action** — the classification spec's `action` string verbatim (`Triage: {ID} {title}`, `Continue execute: {ID} {title} ({done}/{total})`, `Approve design: {ID} {title}`, `Deliberate: {topic}`, `Apply: {rule} → {site}`). It already names the ID, so Full carries no separate File column.
 - **Stage** — the spec's `stage`: `raw` | `triaged` | `spec` | `plan` | `review` | `done`.
-- **Progress** — `{x}/{y}` where a plan's checkboxes supply it; `—` on spec, backlog, and test-queue rows.
+- **Progress** — `{x}/{y}` where the card's latest Progress block reports steps done; `—` on cards without a Plan/Progress block and test-queue rows.
 - **Blocker** — `user` where the row awaits a user decision, else `none`.
 - **Impact** / **Blast** — per agent §3, computed on every row including backlog rows.
 

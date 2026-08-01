@@ -76,7 +76,7 @@ When `docs/overview.md` + `docs/techstack.md` already carry substantive content,
 
 Catches "harness installed but carries renamed-away literals" — re-run is the right entry, flag before Phase 2b churns through migrations.
 
-Trigger: any pipeline-owned file (`CLAUDE.md`, `docs/overview.md`, `docs/techstack.md`, `docs/work/plans/bootstrap.md`, `.claude/rules/*.md`) contains a literal listed as `old` in `assets/rename-map.md`. Whole-token match; one hit is enough.
+Trigger: any pipeline-owned file (`CLAUDE.md`, `docs/overview.md`, `docs/techstack.md`, `docs/work/bootstrap.md`, `.claude/rules/*.md`) contains a literal listed as `old` in `assets/rename-map.md`. Whole-token match; one hit is enough.
 
 When the trigger fires, surface ONCE up front (single message, not a redirect — re-run is the correct entry point):
 
@@ -128,12 +128,12 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution, Edit Discipline, Packages (monorepo tier only — the § header + column shape; table rows are consumer-grown, project-owned)
 - `docs/overview.md` skeleton sections: Problem, User, Current State
 - `docs/decisions.md` scope header (the blockquote + `## Closed Forks` heading)
-- `docs/work/specs/`, `docs/work/plans/`, `docs/work/plans/bootstrap.md`
+- `docs/work/README.md`, `docs/work/TEMPLATE.md`, `docs/work/bootstrap.md`
 - `.claude/rules/index.md` (rule-authoring guide)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` plugin pins (`enabledPlugins`, `extraKnownMarketplaces`)
 - `.claude/super-bootstrap-runway.json` (runway version stamp — presence + value checked, not diffed section-by-section; read at Phase 1, written at 2c; durable marker, no cleaner — persists for the life of the harness)
-- Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md`), the `docs/backlog.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`)
+- Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md`), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`)
 
 **Project-owned** (never touched):
 - CLAUDE.md: Tech Stack one-line, Commands, any user-added custom sections
@@ -162,10 +162,9 @@ destination — report those paths rather than resolving them.
 ```
 docs/
   decisions.md   ← closed forks / rejected directions (history dimension — always scaffolded, starts empty)
-  backlog.md     ← backlog tracker (BUG / DEBT / GAP — capture-first, triaged on pickup)
   work/
-    specs/       ← design specs from up-front design work (temporal)
-    plans/       ← implementation plans (temporal)
+    README.md    ← work-unit workspace header: contract, categories, ID high-water line
+    TEMPLATE.md  ← copy-to-create card template
 .claude/
   rules/         ← path-scoped rules, full-body fires on file match
     index.md     ← rule-authoring guide (path-scoped — loads when editing rules)
@@ -185,7 +184,7 @@ For each: create if missing, skip if present. Add `.gitkeep` in empty folders. I
 
 `docs/decisions.md` is **always** scaffolded — copy `assets/decisions-skeleton.md` to `docs/decisions.md` if missing (no substitutions). Starts empty (header + `## Closed Forks` table). Its scope header is pipeline-owned (drift-checked); the table rows are project-owned (never touched).
 
-Copy `assets/backlog.md` to `docs/backlog.md` if missing (no substitutions).
+Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no substitutions). Copy `assets/work-template-skeleton.md` to `docs/work/TEMPLATE.md` if missing (no substitutions).
 
 `.claude/rules/` machinery is **always** scaffolded (zero-cost when empty). `index.md` is seeded from `assets/rules-index-skeleton.md`. Individual rule bodies fill in Phase 2b based on Phase 1 signal detection.
 
@@ -248,7 +247,7 @@ On `skip`: nothing placed; drain's own §Pre-flight step 0 installs on first `/s
 The scale module adds backlog-adjacent runway — a parked-items artifact, a manual-verification queue, and a phase→venue map — for repos whose backlog has outgrown one flat list. Earn-gated: offer only when a signal shows the repo has grown into it, silent skip otherwise (no prompt spam on small repos).
 
 Signals — any one arms the offer:
-- Open `docs/backlog.md` rows ≥ 10.
+- Card files (`{BUG|DEBT|GAP}-###.md`) in `docs/work/` ≥ 10.
 - Drain worktree infra installed (`.claude/worktrees/` gitignore present — the module's venue map feeds drain's dispatch-vs-wall filter).
 - User asked for it.
 
@@ -263,7 +262,7 @@ On `y`, place the four `assets/scale/` skeletons per Phase 2's per-artifact rule
 - `parked-skeleton.md` → `docs/parked.md`
 - `test-queue-skeleton.md` → `docs/test-queue.md`
 - `rules-venue-map-skeleton.md` → `.claude/rules/venue-map.md`
-- `backlog-fact-fields.md` → insert its marker-delimited block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`) into the `docs/backlog.md` header, immediately after the `---` divider that follows the Row-shape fenced block, before `## Open`; skip if the markers are already present.
+- `backlog-fact-fields.md` → insert its marker-delimited block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`) into the `docs/work/README.md` header, immediately after the `## Categories` section; skip if the markers are already present.
 
 Add one summary bullet to CLAUDE.md § Rules for the seeded `venue-map.md` (existing mechanism — glob + 2–4 one-line key points). Stage the placed files with the Phase 2c commit.
 
@@ -279,7 +278,9 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 | `assets/techstack-skeleton.md` | `docs/techstack.md` | Coding Patterns grown section absorbs migrated CLAUDE.md content |
 | `assets/overview-skeleton.md` | `docs/overview.md` | `<!-- harness-meta -->` block at top: seed `external-tools:` as a YAML list defaulting to `[github]`. Read by `/super-bootstrap:resolve-plugins` (tier-2 curation) as the external-tools source. Update manually or via the entry skill when the tool list changes. Treat as pipeline-owned for drift checks. |
 | `assets/decisions-skeleton.md` | `docs/decisions.md` | Always — scope header pipeline-owned (drift-checked), `## Closed Forks` table rows project-owned |
-| `assets/bootstrap-plan.md` | `docs/work/plans/bootstrap.md` | |
+| `assets/work-readme-skeleton.md` | `docs/work/README.md` | Always — categories, thread contract, ID high-water line |
+| `assets/work-template-skeleton.md` | `docs/work/TEMPLATE.md` | Always — copy-to-create card template |
+| `assets/bootstrap-plan.md` | `docs/work/bootstrap.md` | |
 | `assets/rules-index-skeleton.md` | `.claude/rules/index.md` | Always — machinery |
 | `assets/rules-frontend-skeleton.md` | `.claude/rules/<framework>.md` | Only if frontend signal fired in Phase 1 |
 | `assets/rules-mv3-skeleton.md` | `.claude/rules/mv3.md` | Only if MV3 signal fired in Phase 1 |
@@ -341,7 +342,7 @@ Per-migration handling:
 
 **Never destructive without confirmation.** Show source → dest mapping, get explicit approval, only then move content.
 
-**The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `docs/work/plans/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new`), and — for drifted rows — the diff. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. Overwrite any stale report from a prior run.
+**The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `docs/work/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new`), and — for drifted rows — the diff. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. Overwrite any stale report from a prior run.
 
 **Version-stale enforcement.** When Phase 1 set `version_stale`, this enumeration is mandatory in full this run — every pipeline-owned section gets an actual read-and-compare row; the "sections look similar → `✓ current`" skim is forbidden. No new mechanism — the 2c gate already refuses commit on any uncovered section (see § 2c). Print the Phase 1 surfaced line once at the top of Block 1 as the reminder.
 
@@ -380,16 +381,16 @@ The report is the forcing function: Phase 2c refuses to commit unless it exists 
 
 Acceptance pattern matches legacy migration: `y / n / per-row`. The rot scan runs even when every per-section diff is `✓ current` — a stale slash command literal inside a current-shaped doc is invisible to per-section diff (template hasn't drifted; only the literal inside it has). Together, per-section diff + rot scan cover both axes of drift: section shape AND inline literals.
 
-**Backlog ID re-plant (re-run, if `docs/backlog.md` predates the ID scaffold).** A backlog from an older super-bootstrap version may carry `## Open` rows without `BUG/DEBT/GAP-###` IDs, or be missing the header's ID high-water-mark line. harness-bootstrap is the sole write owner for retroactive ID assignment — `/super-bootstrap:todo` flags it read-only, `/super-bootstrap:log` defers here. Detect: `docs/backlog.md` exists, has row content under `## Open`, and either no high-water line or un-IDed rows. When detected, surface:
+**README ID re-plant (re-run, if `docs/work/README.md` predates the ID high-water line).** A README from an older substrate version may be missing the ID high-water-mark line. harness-bootstrap is the sole write owner for retroactive ID assignment — `/super-bootstrap:todo` flags it read-only, `/super-bootstrap:log` defers here. Detect: `docs/work/README.md` exists and lacks the `**ID high-water mark:**` line. When detected, surface:
 
 ```
-docs/backlog.md predates the ID scaffold — {N} un-IDed rows / missing high-water line.
-Re-plant assigns canonical BUG/DEBT/GAP IDs and rebuilds the high-water counter.
+docs/work/README.md predates the ID high-water line — missing high-water mark.
+Re-plant rebuilds the counter from git history.
 
 Re-plant? (y / n / dry-run)
 ```
 
-On `y`: rebuild the high-water mark from `git log --grep` over consumed IDs — **never from current open rows** (resolved-but-deleted IDs stay consumed; re-deriving from open rows collides). Then mint IDs onto un-IDed rows by category, per the high-water-mark rule documented in the `docs/backlog.md` header (the rule's SSoT — don't restate the algorithm), classifying each row into BUG/DEBT/GAP by its content. Preserve row claims verbatim — re-plant adds the ID heading only, never rewrites the claim. Stage `docs/backlog.md` with the 2c commit.
+On `y`: rebuild the high-water mark from `git log --grep` over consumed IDs — **never from current card files** (resolved-but-deleted IDs stay consumed; re-deriving from live files collides). Then write the high-water line per the rule documented in `docs/work/README.md` § ID high-water mark (the rule's SSoT — don't restate the algorithm). Stage `docs/work/README.md` with the 2c commit.
 
 **Special case — `docs/techstack.md` § Rejected Alternatives retirement (re-run).** Older skeletons grew a § Rejected Alternatives section inside `techstack.md` — state/history dimension pollution, and tech-scoped. It is retired in favor of `docs/decisions.md` (cross-domain history dimension). On re-run, if `techstack.md` carries a § Rejected Alternatives section with content, propose migrating it:
 
@@ -409,7 +410,7 @@ On `y`: append each entry as a `tech`-domain row in `docs/decisions.md` (preserv
 **Bootstrap-shaped commit — match every spelling.** The emitted strings are §2c's; repos bootstrapped before the rename carry `chore: scaffold superpowers pipeline` / `chore: sync superpowers pipeline`, and `chore: complete pipeline bootstrap` counts too. Detection reads history, so the pre-rename spellings stay matchable permanently.
 
 ```
-docs/work/plans/bootstrap.md is missing.
+docs/work/bootstrap.md is missing.
 Repo has {N} commits since last bootstrap-shaped commit ({sha} — {date}).
 File was likely cleanup-deleted (Task 3 of prior bootstrap).
 
@@ -426,7 +427,7 @@ Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write fro
 - `{date}` — today's date
 - Manifest detection facts (Runtime / Framework / Key Dependencies / Build & Distribution) → fill into CLAUDE.md Tech Stack one-liner AND `techstack.md` skeleton sections
 - Problem / User / Current State (`overview.md` skeleton sections) → left empty at install; filled at GAP-card pickup, not by the runway
-- Bracketed conditional lines `{- docs/specs/ — ...}` — keep only if the corresponding adaptive doc is scaffolded for this repo (specs per the 2a code-presence gate, backlog always); drop the whole line otherwise
+- Bracketed conditional lines `{- docs/specs/ — ...}` — keep only if the corresponding adaptive doc is scaffolded for this repo (specs per the 2a code-presence gate); drop the whole line otherwise
 - **Monorepo tier** (Phase 1 § Monorepo detection) — fill CLAUDE.md's conditional monorepo block (workspace tool + the workspace-aware filtered build command) and `techstack.md` § Packages table rows (package | path | role | build command) from the Phase 1 package enumeration. Single-package repo → drop the CLAUDE.md monorepo block and the § Packages section entirely
 - CLAUDE.md § **Rules** summary bullets — fill from seeded `.claude/rules/*.md` files (one bullet per rule with glob + 2-4 one-line key points). If no rules seeded, drop the example placeholders and keep only the explanatory paragraph.
 - Rule skeleton placeholders (`{component path glob}`, `{Framework}`, body bullets in `assets/rules-*-skeleton.md`) → fill from Phase 1 detection. Lines that don't apply get dropped during scaffold.
@@ -438,9 +439,9 @@ The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed backlog` / `Task 3
 - `docs/specs/` NOT scaffolded → drop Task 1
 - No source-code features yet (greenfield / fresh scaffold, Module Index empty) → drop Task 1 — specs document built features; none exist to seed
 - Re-run with `docs/specs/` already populated → drop Task 1
-- Re-run with `docs/backlog.md` already populated → drop Task 2
+- Re-run with card files already present in `docs/work/` → drop Task 2
 - Add tasks for any project-specific needs surfaced during Phase 1 detection
-- Task 3 (Cleanup) always retained — includes deleting `docs/work/plans/bootstrap.md` and `docs/work/plans/bootstrap-sync-report.md` if a prior session left it
+- Task 3 (Cleanup) always retained — includes deleting `docs/work/bootstrap.md` and `docs/work/bootstrap-sync-report.md` if a prior session left it
 
 If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that's fine, signals bootstrap is essentially complete.
 
@@ -476,7 +477,7 @@ Per-candidate handling:
 
 ### 2c: Sync report + commit
 
-**Gate — the sync report must exist and cover every pipeline-owned section before commit.** Read `docs/work/plans/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row. Missing file, or any uncovered section → halt, return to 2b, produce the missing rows. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
+**Gate — the sync report must exist and cover every pipeline-owned section before commit.** Read `docs/work/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row. Missing file, or any uncovered section → halt, return to 2b, produce the missing rows. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
 
 **Sync report** — rendered from the artifact (the file is canonical; this table is its commit-time view). Always shown before commit. Fresh repos see "all new"; re-run repos see drift fixes and current items.
 
@@ -501,11 +502,10 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `.claude/hooks/commit-channel.sh` (frozen hook script seeded at 2a-hooks — always, default-on)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)
-- `docs/work/specs/.gitkeep`
-- `docs/work/plans/.gitkeep`
-- `docs/work/plans/bootstrap.md` (if newly written or regenerated)
+- `docs/work/README.md` (if newly written, re-planted, or fact-fields block inserted this run at 2a-scale)
+- `docs/work/TEMPLATE.md` (if newly written)
+- `docs/work/bootstrap.md` (if newly written or regenerated)
 - `docs/specs/.gitkeep` (if scaffolded)
-- `docs/backlog.md` (if scaffolded, re-planted, or fact-fields block inserted this run at 2a-scale)
 - `docs/parked.md`, `docs/test-queue.md`, `.claude/rules/venue-map.md` (scale-module targets — only if installed this run at 2a-scale)
 - `.claude/super-bootstrap-runway.json` (runway version stamp — written/overwritten every sync)
 - Superseded-fork deletions (adopt mode, § 2b-adopt) — staged removals of approved consumer `.claude/skills/<name>/` dirs / `.claude/agents/<name>.md` files that root artifacts now supersede
@@ -529,7 +529,7 @@ After committing (or reporting no changes needed), present results based on repo
 >
 > {If any rule files were seeded: "Path-scoped rules seeded in `.claude/rules/` ({list seeded rules}). They auto-load on file match — full ammo at the decision moment, summary mirrored in CLAUDE.md § Rules. Add more rule files when path-scoped patterns emerge."}
 >
-> {If bootstrap.md has Task 1 / Task 2 active: "Optional adaptive seeding queued in `docs/work/plans/bootstrap.md` (specs / backlog). Next session: `/clear`, then `/super-bootstrap:todo`."}
+> {If bootstrap.md has Task 1 / Task 2 active: "Optional adaptive seeding queued in `docs/work/bootstrap.md` (specs / cards). Next session: `/clear`, then `/super-bootstrap:todo`."}
 > {If bootstrap.md is cleanup-only: "Bootstrap essentially complete — `/super-bootstrap:todo` will show the cleanup task."}
 
 **Re-run / sync pass:**

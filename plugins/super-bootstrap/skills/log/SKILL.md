@@ -1,14 +1,14 @@
 ---
 name: log
-description: 'Capture front door. Logs 1..N observations into docs/backlog.md (BUG / DEBT / GAP), classified + deduped on Sonnet. Use when the user says "log this", "track that", "note this down", or types `/super-bootstrap:log <observation>` — and when Claude needs to file its own findings (out-of-scope findings from a review, audit, or returned subagent report). Dispatches the `log` subagent so classify + write run off the gateway model. Captures raw — the real/worth/now call is triage''s at `/super-bootstrap:todo` pickup. Does NOT triage (that is the `/super-bootstrap:todo` triage lane). Feature ideas log as GAP.'
-tags: [log, capture, backlog, pipeline]
+description: 'Capture front door. Logs 1..N observations as card files at docs/work/{ID}.md (BUG / DEBT / GAP), classified + deduped on Sonnet. A duplicate carrying a new fact lands as an Amendment block on the owning card (amended branch). Use when the user says "log this", "track that", "note this down", or types `/super-bootstrap:log <observation>` — and when Claude needs to file its own findings (out-of-scope findings from a review, audit, or returned subagent report). Dispatches the `log` subagent so classify + write run off the gateway model. Captures raw — the real/worth/now call is triage''s at `/super-bootstrap:todo` pickup. Does NOT triage (that is the `/super-bootstrap:todo` triage lane). Feature ideas log as GAP.'
+tags: [log, capture, cards, pipeline]
 ---
 
 # Log — Capture Front Door
 
-Muscle-memory capture. Takes whatever the caller hands it — one observation or a batch — classifies each into **BUG / DEBT / GAP**, dedups against open rows, and writes canonical rows to `docs/backlog.md`. Capture is unconditional (bugs, debt, design gaps, unverified ideas all land); the real/worth/now call runs at `/super-bootstrap:todo` triage on pickup. The thinking runs in the `log` subagent (`agents/log.md`, `model: sonnet`); this skill is the dispatch shell.
+Muscle-memory capture. Takes whatever the caller hands it — one observation or a batch — classifies each into **BUG / DEBT / GAP**, dedups against open cards, and writes each as a card file at `docs/work/{ID}.md`. A duplicate carrying a genuinely new fact lands as an Amendment block appended to the owning card (`amended` output branch). Capture is unconditional (bugs, debt, design gaps, unverified ideas all land); the real/worth/now call runs at `/super-bootstrap:todo` triage on pickup. The thinking runs in the `log` subagent (`agents/log.md`, `model: sonnet`); this skill is the dispatch shell.
 
-All new backlog rows route through here — user-initiated and Claude-initiated captures alike.
+All new cards route through here — user-initiated and Claude-initiated captures alike. Sanctioned alternative: hand-copy `docs/work/TEMPLATE.md` and bump the ID high-water line in `docs/work/README.md` in the same write.
 
 ## When it fires
 
@@ -17,7 +17,7 @@ All new backlog rows route through here — user-initiated and Claude-initiated 
 
 **A card is owed only for deferred or dropped work** — work that exits the current flow incomplete. Work completed in-flow, whoever directed it, carries no card debt. The trigger is completion-state (observable), not worth.
 
-Out of lane: **triage** (root-cause investigation → the `/super-bootstrap:todo` triage lane). Feature ideas and unverified hunches are in lane — they log as GAP. This skill creates new backlog rows only.
+Out of lane: **triage** (root-cause investigation → the `/super-bootstrap:todo` triage lane). Feature ideas and unverified hunches are in lane — they log as GAP. This skill creates new cards and new-fact Amendments only.
 
 ## Arguments
 

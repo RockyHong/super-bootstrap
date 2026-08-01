@@ -20,17 +20,17 @@ Two lane shapes; pick per item before entering the stage chain:
 | **eng** (default) | code-shaped — a fix/feature with a build + test surface | triage → [escalate-or-build gate] → plan → execute (TDD) → review → **merge gate (halt)** |
 | **doc** (doc-hygiene) | prose-shaped — the doc edit **is** the deliverable, no build/test surface | doc-edit → review (skip review for a ≤1-file, grep-verifiable invariant) → **merge gate (halt)** |
 
-**Lane derivation (file-presence + classification, no hand-maintained field):** doc lane when the item is prose-shaped — signalled by any of: the shared-classification `action` verb is `Doc-edit` / `Refine spec`; the triage `scope.md` names only prose/doc surfaces (`## Files` all under `docs/**`, `*.md`, no code paths); or (scale module) the backlog row carries `Test-feel: doc-only`. Everything else is the eng lane. In the doc lane the edit itself is the change — there is no separate build phase and no TDD; review runs only when the edit isn't a trivial grep-checkable invariant.
+**Lane derivation (file-presence + classification, no hand-maintained field):** doc lane when the item is prose-shaped — signalled by any of: the shared-classification `action` verb is `Doc-edit` / `Refine spec`; the triage Verdict block names only prose/doc surfaces (`## Files` all under `docs/**`, `*.md`, no code paths); or (scale module) the card carries `Test-feel: doc-only`. Everything else is the eng lane. In the doc lane the edit itself is the change — there is no separate build phase and no TDD; review runs only when the edit isn't a trivial grep-checkable invariant.
 
 ## Stage entry → phase chain (eng lane, lean default)
 
 | Entry `stage` | Chain |
 | ------------- | ----- |
-| `raw` (backlog row) | triage → [escalate-or-build gate] → [pre-plan confirm gate] → plan → execute (TDD) → review → **merge gate (halt)** |
-| `triaged` (triage scope.md, no plan) | [pre-plan confirm gate] → plan → execute (TDD) → review → **merge gate (halt)** — triage inherited from the scope.md, never re-run |
-| `spec` (spec, no plan) | plan → execute → review → **merge gate (halt)** |
+| `raw` (card, no Verdict) | triage → [escalate-or-build gate] → [pre-plan confirm gate] → plan → execute (TDD) → review → **merge gate (halt)** |
+| `triaged` (auto-fix Verdict, no Plan block) | [pre-plan confirm gate] → plan → execute (TDD) → review → **merge gate (halt)** — triage inherited from the Verdict block, never re-run |
+| `spec` (Design block, no plan) | plan → execute → review → **merge gate (halt)** |
 | `plan` (executing) | continue execute → review → **merge gate (halt)** |
-| `review` (all-checked) | review → **merge gate (halt)** |
+| `review` (all plan steps reported done) | review → **merge gate (halt)** |
 
 Committed upstream phases are inherited from base (branched fresh) — drain never re-runs a phase already landed.
 
@@ -40,9 +40,9 @@ Each phase is named by what it lands, in this repo's own slots — the same slot
 
 | Phase | Lands | Door |
 | ----- | ----- | ---- |
-| triage | `docs/work/triage/{ID}-scope.md` | `/super-bootstrap:triage` |
-| plan | `docs/work/plans/` — checkbox step sequence | — |
-| execute | code + tests; the plan's checkboxes ticked | — |
+| triage | `## Verdict` block appended to `docs/work/{ID}.md` | `/super-bootstrap:triage` |
+| plan | `## Plan` block appended to `docs/work/{ID}.md` — step sequence, no checkboxes | — |
+| execute | code + tests; the plan's steps executed | — |
 | review | findings against the branch diff | `/code-review` |
 | doc-edit (doc lane) | the doc change itself | — |
 
@@ -52,7 +52,7 @@ After triage, before building: if the subprocess finds a **real design surface**
 
 ### Pre-plan confirm gate (raw + triaged entries)
 
-A gateway-side gate on the triage verdict, before the plan/build fan-out — the runtime backstop for the venue-**P** wall (admission scored the *next* phase, so a build phase that resolves to a probe/stochastic venue is caught here) plus fix-shape branching. Read the `scope.md` header tags (`triage` agent `§scope.md` schema — drain reads, never redefines):
+A gateway-side gate on the triage verdict, before the plan/build fan-out — the runtime backstop for the venue-**P** wall (admission scored the *next* phase, so a build phase that resolves to a probe/stochastic venue is caught here) plus fix-shape branching. Read the Verdict block header tags from `docs/work/{ID}.md` (`triage` agent §Verdict block schema — drain reads, never redefines):
 
 ```
 on triage-phase complete (auto-fix verdict), or on entry with stage=triaged before plan:
@@ -67,7 +67,7 @@ on triage-phase complete (auto-fix verdict), or on entry with stage=triaged befo
     halt + surface   "fix-shape {fix_shape} needs user confirm before build"
 ```
 
-- `Execution: phased(skip: …)` on the scope header — advance skipping exactly the named stages (the triage verdict already sized them out); `Execution: inline` never reaches here (it rolled in-session at `eligibility.md §Inline / wave-of-one carve-out`).
+- `Execution: phased(skip: …)` in the Verdict block — advance skipping exactly the named stages (the triage verdict already sized them out); `Execution: inline` never reaches here (it rolled in-session at `eligibility.md §Inline / wave-of-one carve-out`).
 - The gate is the pre-fan-out user wall: deterministic, self-contained fixes flow straight through; anything carrying a design/product judgment or a probe dependency halts for the user before drain spends the build.
 
 ## Status contract

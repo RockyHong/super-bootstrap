@@ -1,6 +1,6 @@
 # Eligibility — drain wave admission
 
-Called from `SKILL.md §Shape` step 2, after the shared classification (`../../shared/classify-actionable.md`) has produced `{action, intent, stage}` for every open item across specs/plans/backlog, plus the test queue when present.
+Called from `SKILL.md §Shape` step 2, after the shared classification (`../../shared/classify-actionable.md`) has produced `{action, intent, stage}` for every open item across the `docs/work/` card set, plus the test queue when present.
 
 Admission has two layers: **lane guards** (venue-independent — claim-freedom, harness exclusion) always apply, then an **admission gate** that is venue-keyed when the scale module is wired and Cloud-keyed otherwise. Type (BUG/DEBT/GAP) is **never** a gate — a clear GAP that admits drains; a device-bound BUG does not.
 
@@ -10,7 +10,6 @@ Admission has two layers: **lane guards** (venue-independent — claim-freedom, 
 isEligible(item):
   # --- Lane guards (always apply, independent of the admission gate) ---
   if item.intent == "Harness":  return false, "Harness — orchestration engine, never drains"
-  if item.stage == "done":      return false, "cleanup-only — not drain work"
   if claimed(item):             return false, "already in flight"                 # .claude/worktrees/drain-{id}/ exists
   if onUnmergedBranch(item):    return false, "work already on an unmerged branch — no double-claim"
   if item.uncategorized:        return false, "foreign prefix — route to /super-bootstrap:log"
@@ -47,7 +46,7 @@ Worktree isolation earns its cost only when the wave carries parallelism. Two wa
 
 ```
 isInlineExecution(item):
-  return scope_header(item, "Execution") starts with "inline"   # docs/work/triage/{ID}-scope.md
+  return scope_header(item, "Execution") starts with "inline"   # card's Verdict block (## Verdict — auto-fix)
 ```
 
 ```
@@ -58,7 +57,7 @@ isSingleItemWave(wave):                                                    # who
   return len(wave) == 1
 ```
 
-- **`Execution: inline` (per-item, inside a multi-item wave)** — the triage verdict already sized the item inline (deterministic fix-shape **and** self-contained closure; `triage` agent `§scope.md` tag schema). It stays in the eligible set (still surfaced), but skips the `mkdir` claim + `claude -p` phase dispatch — the gateway rolls it in-session in the main workspace, alongside its worktree-bound siblings. `SKILL.md §Confirm gate` renders it on the "roll in-session" line, not the dispatch table; `SKILL.md §Worktree warm` skips it entirely. (`Execution: phased` items still dispatch — the pre-plan gate skips their named stages; only `inline` skips the worktree.)
+- **`Execution: inline` (per-item, inside a multi-item wave)** — the triage verdict already sized the item inline (deterministic fix-shape **and** self-contained closure; `triage` agent §Verdict block tag schema). It stays in the eligible set (still surfaced), but skips the `mkdir` claim + `claude -p` phase dispatch — the gateway rolls it in-session in the main workspace, alongside its worktree-bound siblings. `SKILL.md §Confirm gate` renders it on the "roll in-session" line, not the dispatch table; `SKILL.md §Worktree warm` skips it entirely. (`Execution: phased` items still dispatch — the pre-plan gate skips their named stages; only `inline` skips the worktree.)
 - **Wave-of-one (whole-wave short-circuit)** — when admission + relation analysis leave exactly one item, drain has no parallelism to offer, so it does not run drain at all: it short-circuits **before** the confirm gate, surfaces the one item, and hands it to the normal in-session pipeline (the standard single-card envelope — route by cluster, no drain machinery), then exits. No confirm-gate wave table, no worktree, no phase loop. The gateway offers "isolate" to force a drain worktree for the lone item. Fires at `SKILL.md §Shape` step 4 / `§Confirm gate`.
 
 ## Mislabel is fixed upstream, not overridden here

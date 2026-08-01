@@ -18,7 +18,7 @@ relationAnalysis(eligibles):
   return wave   # flat list, no future-wave structure
 ```
 
-`scopeFiles(item)` — best-available file estimate: the backlog row's `**Area:**` field, the plan's task-bullet paths, or the spec's named surfaces. Imperfect overlap estimates are fine — a missed overlap surfaces as a merge conflict at the gate (handled by `/super-bootstrap:merge`'s conflict doctrine), not as silent corruption.
+`scopeFiles(item)` — best-available file estimate: the card's `**Area:**` field, the Plan block's step paths, or the Verdict block's named surfaces. Imperfect overlap estimates are fine — a missed overlap surfaces as a merge conflict at the gate (handled by `/super-bootstrap:merge`'s conflict doctrine), not as silent corruption.
 
 ## Edge cases
 

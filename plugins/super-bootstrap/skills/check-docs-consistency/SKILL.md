@@ -101,7 +101,7 @@ All validations run against the extracted set. Every finding comes from comparin
 
 ### Step 2.5: Cross-Reference Findings with the Project Tracker (post-analysis only)
 
-Annotate findings against the project tracker per the contract in `assets/tracker-annotation.md` (read it for the post-analysis discipline, overlap→tag table, and delete-on-close git-log verification). Runs only when the project keeps a tracker (e.g. `docs/backlog.md`); skip otherwise — run AFTER Steps 1–2 classify all findings.
+Annotate findings against the project tracker per the contract in `assets/tracker-annotation.md` (read it for the post-analysis discipline, overlap→tag table, and delete-on-close git-log verification). Runs only when the project keeps a tracker (e.g. `docs/work/` card set — `{BUG,DEBT,GAP}-###.md` files + `README.md` high-water header); skip otherwise — run AFTER Steps 1–2 classify all findings.
 
 This scan's index targets: file+section references and named concepts (endpoints, field names, component names). Tags land in the report's Cross-Reference Annotations section; the P0–P3 finding tables are untouched.
 

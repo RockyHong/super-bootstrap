@@ -16,7 +16,7 @@ Argument is an optional report path. Without one, resolve from the queue — the
 |---|---|
 | 0 reports | Report "review queue clean", exit. |
 | 1 report | Dispatch it. |
-| N reports | Sequential, oldest-first — one dispatch per report. Later runs dedup against the backlog rows earlier runs just promoted; never merge reports into one dispatch. |
+| N reports | Sequential, oldest-first — one dispatch per report. Later runs dedup against the cards earlier runs just promoted; never merge reports into one dispatch. |
 
 ## Execution — per report
 
@@ -25,8 +25,8 @@ Argument is an optional report path. Without one, resolve from the queue — the
 3. **Absorb:**
    - **promote** → one batched `/super-bootstrap:log` dispatch carrying the agent's draft claim blocks. Rows land raw; the pipeline rolls at normal pickup.
    - **patch** → doc-mechanical edits only, landed per CLAUDE.md § Dispatch (gateway inline, or dispatched by closure). Anything wider re-verdicts as promote.
-   - **dup** → fold any new fact into the `/log` batch as annotations.
-   - **needs-investigation** → the single question rides `/super-bootstrap:triage` when it names a backlog card; otherwise an investigate-only probe dispatch. Verdicts return to step 2.
+   - **dup** → fold any new-fact into the `/super-bootstrap:log` batch — rides the log agent's `amended` branch (Amendment append on the owning card).
+   - **needs-investigation** → the single question rides `/super-bootstrap:triage` when it names a card; otherwise an investigate-only probe dispatch. Verdicts return to step 2.
 4. **Close out** — only after every finding holds a terminal verdict and every patch has landed: delete the report; the deletion + a dispositions summary ride the session's envelope commit (dismissal rationales survive in git log).
 
 A session ending mid-triage needs no recovery state: report still present = still un-triaged; re-run is idempotent (dedup absorbs already-promoted rows).
