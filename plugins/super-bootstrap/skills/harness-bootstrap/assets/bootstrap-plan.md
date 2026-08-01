@@ -17,27 +17,27 @@ Write initial persistent specs for the project's existing features.
 - [ ] **Present to user for review**
 - [ ] **Commit**: `docs: seed persistent feature specs`
 
-**Hard precondition — source-code features must exist.** Specs document features that are *already built*. A fresh / greenfield scaffold (no source code, Module Index empty) has nothing to spec: Task 1 does not apply and is dropped at write time. Pick it up only after feature commits have given doc-sync a grown Module Index to draw from. Forward design before code lives in `docs/overview.md` § Problem + GAP rows via `/super-bootstrap:log` — never a speculative `docs/specs/` file.
+**Hard precondition — source-code features must exist.** Specs document features that are *already built*. A fresh / greenfield scaffold (no source code, Module Index empty) has nothing to spec: Task 1 does not apply and is dropped at write time. Pick it up only after feature commits have given doc-sync a grown Module Index to draw from. Forward design before code lives in `docs/overview.md` § Problem + GAP cards via `/super-bootstrap:log` — never a speculative `docs/specs/` file.
 
-### Task 2: Seed Backlog
+### Task 2: Seed Cards
 
 Walk the project once and seed any obvious deferred items already visible in code or recent history.
 
 - [ ] **Scan for `TODO` / `FIXME` / `XXX` / `HACK` markers** in source — each is a candidate `DEBT-###` or `BUG-###`
 - [ ] **Review test output** — failing or skipped tests with no recent fix attempt → `BUG-###` or `DEBT-###`
 - [ ] **Note design gaps surfaced during the scan** — areas where behavior is hand-waved or unbuilt → `GAP-###`
-- [ ] **Cap at ~5 items** — backlog is a queue, not a dump. If more candidates exist, list them but seed only the highest-signal ones
+- [ ] **Cap at ~5 items** — the work substrate is a queue, not a dump. If more candidates exist, list them but seed only the highest-signal ones
 - [ ] **Present to user for review** — user prunes/approves
-- [ ] **Commit**: `docs: seed backlog`
+- [ ] **Commit**: `docs: seed initial cards`
 
-If no obvious items exist, leave the file with just its header — that's fine. The tracker grows organically as reviews surface things.
+If no obvious items exist, nothing to commit — the substrate is ready when the first `/super-bootstrap:log` capture lands. The card set grows organically as reviews surface things.
 
 ### Task 3: Cleanup
 
-- [ ] **Delete this file** (`docs/work/plans/bootstrap.md`) and `docs/work/plans/bootstrap-sync-report.md` if present — bootstrap is complete
+- [ ] **Delete this file** (`docs/work/bootstrap.md`) and `docs/work/bootstrap-sync-report.md` if present — bootstrap is complete
 - [ ] **Verify `/super-bootstrap:todo` shows no active work** (unless the user has started real project work)
 - [ ] **Commit**: `chore: complete pipeline bootstrap`
 
 ---
 
-**Note on re-runs:** if `/super-bootstrap:harness-bootstrap` is run again later, this file gets regenerated. If `docs/specs/` and `docs/backlog.md` already exist with content, Tasks 1 and 2 are dropped — only Task 3 (cleanup) remains. Most refresh value on re-runs comes from gated tier-2 curation (skill/MCP picks against live sources, run by `/super-bootstrap` once seed docs are substantive), not from this plan. (Re-runs come via `/super-bootstrap`, which always dispatches the runway, or via `/super-bootstrap:harness-bootstrap` directly for a runway-only sync.)
+**Note on re-runs:** if `/super-bootstrap:harness-bootstrap` is run again later, this file gets regenerated. If `docs/specs/` is already populated (Task 1) or card files are already present in `docs/work/` (Task 2), those tasks are dropped — only Task 3 (cleanup) remains. Most refresh value on re-runs comes from gated tier-2 curation (skill/MCP picks against live sources, run by `/super-bootstrap` once seed docs are substantive), not from this plan. (Re-runs come via `/super-bootstrap`, which always dispatches the runway, or via `/super-bootstrap:harness-bootstrap` directly for a runway-only sync.)

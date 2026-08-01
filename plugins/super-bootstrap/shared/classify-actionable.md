@@ -1,14 +1,14 @@
 # Classify Actionable — shared spec
 
-Single source of truth for deriving, from the pipeline sources (three core + the scale module's test queue when present), **each open item's `{action, intent, stage}`**. Self-read by every caller that needs the classification — `todo` (subagent Reads it at classify time, then ranks + renders a board) and `drain` (gateway Reads it inline, then gates on `Cloud` + spawns per stage). One criterion, many callers: neither caller re-derives it.
+Single source of truth for deriving, from the open work cards (plus the scale module's test queue when present), **each open item's `{action, intent, stage}`**. Self-read by every caller that needs the classification — `todo` (subagent Reads it at classify time, then ranks + renders a board) and `drain` (gateway Reads it inline, then gates on `Cloud` + spawns per stage). One criterion, many callers: neither caller re-derives it.
 
 > **Callers self-read, never paraphrase.** Read this file at classify time and apply it exactly — `todo`'s skill passes the resolved absolute path into the dispatch prompt for the subagent to Read; `drain`'s gateway Reads it inline. Paraphrasing forks the taxonomy — the drift this shared home exists to prevent.
 
 Three outputs per item:
 
-- **`action`** — the one-line actionable verb-phrase (`"Triage: BUG-12 …"`, `"Continue execute: plan.md (3/7)"`). The render string.
+- **`action`** — the one-line actionable verb-phrase (`"Triage: BUG-12 …"`, `"Continue execute: GAP-31 … (3/7)"`). The render string.
 - **`intent`** — `Discuss` | `Cloud` | `Device` | `Harness`. The runnability bucket. `Harness` rows additionally carry **`subgroup`** — `deliberate` | `apply` (§Harness pre-filter).
-- **`stage`** — where the item sits in the pipeline, by file presence: `raw` (backlog row, no verdict/spec/plan) · `triaged` (triage `{ID}-scope.md` exists, no plan) · `spec` (spec exists, no plan) · `plan` (plan executing) · `review` (plan all-checked, no DONE) · `done` (DONE/COMPLETED marker). The entry point for stage-resuming consumers.
+- **`stage`** — where the item sits in the pipeline, read from the card's thread state: `raw` (no verdict, or a `surface` verdict awaiting the user) · `triaged` (`auto-fix` Verdict block, no plan) · `spec` (Design block, no plan) · `plan` (Plan block executing) · `review` (latest Progress reports every plan step done). The entry point for stage-resuming consumers.
 
 `intent` is the gate; `stage` is the entry point; `action` is for human render.
 
@@ -16,7 +16,7 @@ Three outputs per item:
 
 ## Harness pre-filter (applied before everything)
 
-Before the verb map and any per-source rule: an item whose **deliverable is the harness layer** — `CLAUDE.md`, anything under `.claude/` (rules, skills, agents, hooks, settings), plugin-source harness files (`plugins/*/{skills,agents,shared}/**`, in repos that ship plugins), or a harness-source top-level layout (`skills/*/SKILL.md`, `agents/**`, `rules/**` at the repo root — the shape a repo uses when Claude configuration *is* its product, shipping harness at the tree root rather than under `.claude/` or `plugins/`) — classifies **intent: Harness**, regardless of verb or state. Judge from the row's `Area:` field, spec/plan body paths, or task bullet paths: the discriminator is the harness-file marker, not its directory prefix — a `SKILL.md`, agent, or rule target is a harness deliverable wherever it sits. A product change that touches a harness file incidentally is NOT harness — classify by the dominant surface; Harness = the harness file IS the deliverable.
+Before the verb map and any per-source rule: an item whose **deliverable is the harness layer** — `CLAUDE.md`, anything under `.claude/` (rules, skills, agents, hooks, settings), plugin-source harness files (`plugins/*/{skills,agents,shared}/**`, in repos that ship plugins), or a harness-source top-level layout (`skills/*/SKILL.md`, `agents/**`, `rules/**` at the repo root — the shape a repo uses when Claude configuration *is* its product, shipping harness at the tree root rather than under `.claude/` or `plugins/`) — classifies **intent: Harness**, regardless of verb or state. Judge from the card's `Area:` field, its Verdict-block `Files` paths, or its Plan-block step paths: the discriminator is the harness-file marker, not its directory prefix — a `SKILL.md`, agent, or rule target is a harness deliverable wherever it sits. A product change that touches a harness file incidentally is NOT harness — classify by the dominant surface; Harness = the harness file IS the deliverable.
 
 The harness layer is the orchestration engine: it never rides the autonomous queue. Consumers gating on `intent == Cloud` (drain) exclude Harness rows for free.
 
@@ -34,19 +34,19 @@ Single positive rule applied to every row before bucketing:
 
 ### Derivation inputs (read per row when classifying)
 
-1. **Plan content** — grep the plan file body for device signals:
+1. **Plan-block content** — grep the card's latest `## Plan` block for device signals:
    - Keywords: `manual test`, `e2e`, `playwright`, `cypress`, `visual`, `device`, `mobile`, `browser`, `screenshot`
-   - Paths in task bullets: `**/components/**`, `**/app/**`, `**/pages/**`, `**/views/**`, `apps/web/**`, `apps/mobile/**` → device-suspicion
+   - Paths in step lines: `**/components/**`, `**/app/**`, `**/pages/**`, `**/views/**`, `apps/web/**`, `apps/mobile/**` → device-suspicion
    - If only pure-logic paths (`lib/`, `utils/`, `core/`, `packages/{logic-name}/`) and no device keywords → cloud-safe
-2. **Spec §Success Criteria** (if linked spec exists) — explicit `manual verification`, `visual check`, `e2e pass` → device-only for the executing/review row
+2. **Design-block success criteria** (when the card carries a `## Design` block) — explicit `manual verification`, `visual check`, `e2e pass` → device-only for the executing/review row
 3. **Phase verb** in derived action:
-   - `Write plan` / `Approve spec` / `Triage` / `Extract` / `Doc-edit` / `Cleanup` → cloud-safe regardless of paths
-   - `Start execute` / `Continue execute` / `Review` / `Implement` → derive per #1 + #2 (for `Implement` rows, skip the free-text keyword grep — read the triage scope.md as fields: `## Files` paths feed #1's path arms, and the `Test Strategy` field feeds #2 — `e2e` there → device-suspicion, `unit` → cloud-lean; the field's literal value never re-enters the keyword scan)
+   - `Write plan` / `Approve design` / `Triage` / `Extract` / `Doc-edit` → cloud-safe regardless of paths
+   - `Start execute` / `Continue execute` / `Review` / `Implement` → derive per #1 + #2 (for `Implement` rows, skip the free-text keyword grep — read the `auto-fix` Verdict block as fields: its `Files` paths feed #1's path arms, and its `Test Strategy` field feeds #2 — `e2e` there → device-suspicion, `unit` → cloud-lean; the field's literal value never re-enters the keyword scan)
    - `Manually verify` / `E2E run` / `Smoke test` → device-only
 
 ### Default
 
-If no signal is conclusive, default cloud-safe for spec/plan-write/triage/cleanup rows; default device for executing rows touching UI surfaces; default cloud for executing rows on pure-logic surfaces.
+If no signal is conclusive, default cloud-safe for design / plan-write / triage rows; default device for executing rows touching UI surfaces; default cloud for executing rows on pure-logic surfaces.
 
 ## Action-verb intent map (applied FIRST after the Harness pre-filter)
 
@@ -54,70 +54,56 @@ Intent is determined by action verb before path/state rules.
 
 | Action verb prefix                                              | Intent (locked)              | Why                                                                          |
 | --------------------------------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------- |
-| `Approve spec`, `Decide`, `Settle design`, `Confirm`            | **Discuss**                  | User-decision shape — only user can resolve.                                 |
+| `Approve design`, `Decide`, `Settle design`, `Confirm`          | **Discuss**                  | User-decision shape — only user can resolve.                                 |
 | `Write plan`                                                    | **Cloud**                    | Plan author write is doc artifact, headless.                                 |
 | `Refine spec`, `Doc-edit`                                       | **Cloud**                    | Doc artifact, headless.                                                      |
 | `Start execute`, `Continue execute`, `Resume`                   | **Cloud OR Device** (derive) | Depends on paths + content per cloud-safe criterion.                         |
 | `Review` (read diff of completed plan)                          | **Cloud**                    | Reading diff is headless.                                                    |
 | `Manually verify`, `E2E run`, `Smoke test`                      | **Device**                   | Real browser / device required.                                             |
-| `Triage` (backlog item, investigate-only)                       | **Cloud**                    | Investigate-only artifact, headless.                                         |
-| `Implement` (triaged card — triage scope.md verdict exists)      | **Cloud OR Device** (derive) | Depends on scope.md `## Files` paths + `Test Strategy` per cloud-safe criterion. |
-| `Cleanup` (delete merged spec+plan files)                       | **Cloud**                    | File delete on completed work, no judgment.                                  |
+| `Triage` (raw card, investigate-only)                           | **Cloud**                    | Investigate-only artifact, headless.                                         |
+| `Implement` (card carrying an `auto-fix` Verdict block)          | **Cloud OR Device** (derive) | Depends on the Verdict block's `Files` paths + `Test Strategy` per cloud-safe criterion. |
 | `Deliberate`, `Apply` (harness surface)                         | **Harness**                  | Pre-filter already caught it; the verb renders the subgroup.                  |
 
-## Per-source derivation
+## Thread-state derivation
 
-Read all sources (three core + the scale module's test queue when present), derive each item's `{action, intent, stage}`. Apply the Harness pre-filter, then the Action-verb intent map, then the content rules.
+One source: the open cards at `docs/work/{BUG,DEBT,GAP}-###.md` (plus the scale module's test queue when present). Read each card, derive its `{action, intent, stage}` from where its thread stands. Apply the Harness pre-filter, then the Action-verb intent map, then the content rules.
 
-**Optional-source probe discipline.** The test queue, the triage `{ID}-*` verdict files, and the specs/plans directories are optional — absent until a repo reaches that stage. Probe presence by listing the concrete path (a concrete project-relative target lists reliably), not by content-reading a maybe-absent file. An absent optional source — an empty listing *or* a "does not exist" error — is an expected branch of this spec, not an anomaly to diagnose: record it empty, take its skip (§a–d), and move on immediately.
+**Latest-block-leads.** Derive from the **latest** block of each type: a newer `## Plan` supersedes the older one it replaced, the latest `## Progress` reports current execution state. Earlier blocks are grounding for the read, never the lead.
 
-### a. Specs (`docs/work/specs/*.md`)
+**Optional-source probe discipline.** `docs/work/` and the test queue are optional — absent until a repo reaches that stage. Probe presence by listing the concrete path (a concrete project-relative target lists reliably), not by content-reading a maybe-absent file. An absent optional source — an empty listing *or* a "does not exist" error — is an expected branch of this spec, not an anomaly to diagnose: record it empty, take its skip (§a–b), and move on immediately.
 
-For each:
+### a. Cards (`docs/work/{BUG|DEBT|GAP}-###.md`)
 
-- **Design-open** (no checkboxes, "options" / "approaches" / "trade-offs" present, open question to user not resolved) → action: `"Settle design: {filename}"`, **intent: Discuss**, **stage: spec**.
-- **Spec-ready but no matching plan file** (matched by date prefix or slug) AND content contains user-approval signal (`awaiting approval`, `needs sign-off`, `decision pending` from user) → action: `"Approve spec: {filename}"`, **intent: Discuss**, **stage: spec**.
-- **Spec-ready, approved, no matching plan** → action: `"Write plan: {filename}"`, **intent: Cloud**, **stage: spec**.
-- **Spec exists with matching plan** → spec is reference now; don't emit a spec row, emit the plan row instead (see §b).
-- **Orphaned spec** (>7 days old, no plan, no approval signal) → action: `"Decide: stale spec {filename} — approve / refine / delete"`, **intent: Discuss**, **stage: spec**.
+Cards own BUG/DEBT/GAP — bugs, debt, and design gaps / unverified feature ideas (GAP). A GAP that is a feature idea derives like any other card — no separate lane.
 
-### b. Plans (`docs/work/plans/*.md`)
+Each card is one append-only thread: a frozen origin block, then dated `## Amendment` / `## Verdict` / `## Design` / `## Plan` / `## Progress` blocks (contract: `docs/work/README.md`). Take the first rule that matches:
 
-For each, count checkboxes:
+- **No blocks** (origin only) → action: `"Triage: {ID} {title}"`, **intent: Cloud** (triage is investigate-only), **stage: raw**.
+- **Latest Verdict is `## Verdict — surface`** (fork waiting on the user) → action: `"Decide: {ID} {title} — triage verdict"`, **intent: Discuss**, **stage: raw**.
+- **Latest Verdict is `## Verdict — auto-fix`, no Design or Plan block after it** → action: `"Implement: {ID} {title}"`, intent per cloud-safe derivation over that block's `Files` paths + its `Test Strategy` line, **stage: triaged**.
+- **`## Design` block with no approval line appended after it** → action: `"Approve design: {ID} {title}"`, **intent: Discuss**, **stage: spec**.
+- **Approved Design, no `## Plan` block after it** → action: `"Write plan: {ID} {title}"`, **intent: Cloud**, **stage: spec**.
+- **Latest `## Plan`, no `## Progress` after it** → action: `"Start execute: {ID} {title}"`, **stage: plan**. Intent per cloud-safe derivation.
+- **Latest `## Plan` + a later `## Progress` reporting some of its steps done** → action: `"Continue execute: {ID} {title} ({done}/{total})"`, **stage: plan**. Intent per cloud-safe derivation.
+- **Latest `## Plan` + a later `## Progress` reporting all of its steps done** → action: `"Review: {ID} {title}"`, **stage: review**. Intent per cloud-safe derivation (manual verification → Device; diff-read → Cloud). Resolution rides the review — the reviewing session deletes the card file; no separate row for it.
 
-- **Plan with all `- [ ]` unchecked** (planning stage) → action: `"Start execute: {filename}"`, **stage: plan**. Intent per cloud-safe derivation.
-- **Plan with mix of `- [ ]` and `- [x]`** (executing) → action: `"Continue execute: {filename} ({checked}/{total})"`, **stage: plan**. Intent per cloud-safe derivation.
-- **Plan with all `- [x]` checked AND no DONE marker** (review-ready) → action: `"Review: {filename}"`, **stage: review**. Intent per cloud-safe derivation (manual verification → Device; diff-read → Cloud).
-- **Plan with "DONE" or "COMPLETED" marker** → action: `"Cleanup: delete {spec+plan files} for {feature}"`, **intent: Cloud**, **stage: done**.
-- **Plan with explicit user-blocker** (`waiting on user`, `needs user decision`, unresolved `?` directed at user) → action: `"Decide: {what's open on {filename}}"`, **intent: Discuss**, **stage: plan**.
+**Step counting.** Plan blocks carry steps only, no checkboxes or status marks: `{total}` = steps the latest Plan lists, `{done}` = those the latest Progress reports done, remaining = the difference. Read the Progress prose for which steps it names; a Progress that names none reports zero.
 
-### c. Backlog (`docs/backlog.md`)
+**User-blocker override.** A card whose origin block or latest appended block explicitly waits on the user (`needs user`, `decision required`, `route?`, `waiting on user`, an unresolved `?` directed at the user) → action: `"Decide: {ID} {title} — {what's open}"`, **intent: Discuss**, keeping the **stage** its thread state gives. Overrides the derived action above; a `surface` Verdict is its most common form.
 
-Backlog owns BUG/DEBT/GAP — bugs, debt, and design gaps / unverified feature ideas (GAP). A GAP that is a feature idea is classified like any other row — no separate lane.
+Any other file at `docs/work/` root — neither a card (`{BUG|DEBT|GAP}-###.md`) nor `README.md` / `TEMPLATE.md`: emit as `Uncategorized` with reason `"non-canonical work file; docs/work/ holds BUG/DEBT/GAP cards (feature ideas log as GAP). New cards route through /super-bootstrap:log."` — never invent classification.
 
-Open items are `### {BUG|DEBT|GAP}-###` row headings under `## Open`. The header's **ID high-water mark** line carries the same ID literals but is a counter, not an item — exclude it from rows and counts.
+If `docs/work/` holds no cards, skip §a.
 
-For each open `BUG-### / DEBT-### / GAP-###` item:
-
-- **Item flagged for user decision** (line contains `needs user`, `decision required`, `route?`) → action: `"Decide: {ID} {title}"`, **intent: Discuss**, **stage: raw**.
-- **`docs/work/triage/{ID}-notes.md` exists** (surface verdict, pending user) → action: `"Decide: {ID} {title} — triage notes"`, **intent: Discuss**, **stage: raw**.
-- **`docs/work/triage/{ID}-scope.md` exists, no matching plan** → action: `"Implement: {ID} {title}"`, intent per cloud-safe derivation over the scope.md `## Files` paths + its `Test Strategy` line, **stage: triaged**.
-- **No verdict file, no plan** (default state) → action: `"Triage: {ID} {title}"`, **intent: Cloud** (triage is investigate-only), **stage: raw**.
-- **Item with active plan reference** → don't double-emit; the plan row already covers it (see §b).
-
-For any row with a **foreign prefix** (anything outside `BUG-### / DEBT-### / GAP-###` — e.g. `F-`, `FEAT-`, `ROAD-`, bare bullet): emit as `Uncategorized` with reason `"non-canonical backlog prefix; backlog owns BUG/DEBT/GAP (feature ideas log as GAP). New rows route through /super-bootstrap:log."` — never invent classification.
-
-If `docs/backlog.md` doesn't exist, skip §c.
-
-### d. Test queue (`docs/test-queue.md` — scale module, skip if absent)
+### b. Test queue (`docs/test-queue.md` — scale module, skip if absent)
 
 Entries are `### {plain descriptive title}` headings under `## Pending` (no ID in the heading).
 
 - **`## Pending` entry with `result: pending`** → action: `"Manually verify: {entry title}"`, **intent: Device** (verb-map row already locks it), **stage: review**.
 - **`## Failed` entries** → emit nothing; their re-queue + bug row already cover them.
-- **Entry carries a `source: {BUG|DEBT|GAP}-###` back-pointer** → don't double-emit against that ID's own §c row; the queue entry's row covers the verify obligation.
+- **Entry carries a `source: {BUG|DEBT|GAP}-###` back-pointer** → don't double-emit against that card's own §a row; the queue entry's row covers the verify obligation.
 
-If `docs/test-queue.md` doesn't exist, skip §d.
+If `docs/test-queue.md` doesn't exist, skip §b.
 
 ---
 

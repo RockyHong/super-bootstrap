@@ -15,7 +15,7 @@ Commits the changes this Claude session produced, leaving prior uncommitted work
 2. **Gather state** — `git status`, `git diff`, `git diff --staged`, `git log --oneline -10` (recent style).
 
 3. **Doc-sync grep-gate** — mechanical, no judgment:
-   - Extract terms from the changed files: `*/skills/<X>/SKILL.md`, `*/agents/<X>.md`, `*/rules/<X>.md` → `<X>`; else basename sans extension. Drop generics (`SKILL`, `CLAUDE`, `README`, `backlog`, `marketplace`, `plugin`, `gitignore`).
+   - Extract terms from the changed files: `*/skills/<X>/SKILL.md`, `*/agents/<X>.md`, `*/rules/<X>.md` → `<X>`; else basename sans extension. Drop generics (`SKILL`, `CLAUDE`, `README`, `TEMPLATE`, `backlog`, `marketplace`, `plugin`, `gitignore`).
    - Grep the doc surface (CLAUDE.md § Doc Sync owns it — `docs/**` + root `README` + manifest description fields) for any term, excluding the changed files themselves. This is a cheap **pre-filter** on dispatch, not the scan — the agent re-scans cold.
    - **Any hit → dispatch the doc-sync scan (§4).**
    - **No hit → the diff narrates nothing; go to §5.**
@@ -29,13 +29,13 @@ Commits the changes this Claude session produced, leaving prior uncommitted work
 
 6. **Push (on confirmation)** — present branch → upstream, commits ahead. Ask **"Push these now? (y / skip)"**. Push on explicit yes only (`git push <remote> <branch>`); skip on silence or decline. Never force, never unannounced.
 
-7. **Cycle handoff** — one line from cycle facts (any `docs/work/plans/*.md` with unchecked `- [ ]` boxes; whether `docs/backlog.md` has open rows). Don't expand into a status table — that's `/super-bootstrap:todo`'s job:
+7. **Cycle handoff** — one line from cycle facts (any `docs/work/{BUG,DEBT,GAP}-###.md` present; a card whose latest Plan block has steps the latest Progress doesn't report done = in-flight). Don't expand into a status table — that's `/super-bootstrap:todo`'s job:
 
 | Cycle facts | Handoff one-liner |
 |---|---|
-| No open plans, no backlog items | `Cycle complete. Safe to /clear. Next session: /super-bootstrap:todo picks up next item.` |
-| Open plan with unchecked boxes | `Cycle complete. <plan file> still has <n>/<m> unchecked — /clear then /super-bootstrap:todo to resume.` |
-| Backlog open, no active plans | `Cycle complete. No active specs/plans; docs/backlog.md has open items — /clear then /super-bootstrap:todo to pick next.` |
+| No open cards | `Cycle complete. Safe to /clear. Next session: /super-bootstrap:todo picks up next item.` |
+| In-flight card (Plan steps not all reported done in latest Progress) | `Cycle complete. {ID} still in-flight — /clear then /super-bootstrap:todo to resume.` |
+| Open cards, none in-flight | `Cycle complete. Open cards, none in-flight — /clear then /super-bootstrap:todo to pick next.` |
 
 ## Rules
 

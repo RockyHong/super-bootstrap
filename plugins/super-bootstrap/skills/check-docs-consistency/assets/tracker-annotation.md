@@ -9,14 +9,14 @@ real regression.
 
 ## When it runs
 
-Only when the project keeps an open-item tracker (e.g. `docs/backlog.md`); skip
+Only when the project keeps an open-item tracker (e.g. `docs/work/` card set — `{BUG,DEBT,GAP}-###.md` files + `README.md` high-water header); skip
 otherwise. Run AFTER all findings are identified and classified — the annotation
 is a layer over a finished finding set, never a gate on it. Every finding stays
 in the report regardless of tag.
 
 ## The contract
 
-Read the tracker (and any parked/deferred list the project keeps). Build a
+Read open cards at `docs/work/{BUG,DEBT,GAP}-###.md` and the high-water header in `docs/work/README.md`. Build a
 lightweight index of the location references (file + line/section) and named
 identifiers (endpoints, field names, component names, concepts) the scan's domain
 produces.

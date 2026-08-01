@@ -2,7 +2,7 @@
 
 ## Development Workflow
 
-Work enters by picking up a card — a `docs/backlog.md` row (`/super-bootstrap:todo` pickup or a prose ID) — or grounding a new one via `/super-bootstrap:log`. The card is the grounding artifact (root-cause claim for a bug, problem statement for a feature) and the unit/anchor/boundary/SSOT of the change. Fresh work and resumed work use the same door.
+Work enters by picking up a card — a `docs/work/` card file (`/super-bootstrap:todo` pickup or a prose ID) — or grounding a new one via `/super-bootstrap:log`. The card is the grounding artifact (root-cause claim for a bug, problem statement for a feature) and the unit/anchor/boundary/SSOT of the change. Fresh work and resumed work use the same door.
 
 ### The envelope
 
@@ -29,7 +29,7 @@ Recognize the card's shape, then take that row's discipline; a repo that install
 | 5 | Config / taste / bounded tweak | inline; taste that iterates or drifts → card it |
 | 6 | Docs / prose | envelope only |
 | 7 | Harness edit | `load-harness-principles` pre, `audit-harness-edits` post |
-| 8 | Triage / investigation-only | backlog card → `/super-bootstrap:triage {ID}` (read-only verdict phase → scope.md or notes.md); ad-hoc question → inline reads + dispatched probes |
+| 8 | Triage / investigation-only | card → `/super-bootstrap:triage {ID}` (verdict phase appending a Verdict block to the card); ad-hoc question → inline reads + dispatched probes |
 
 ### Framing + Route — state, don't gate
 
@@ -44,7 +44,7 @@ Route defaults assume worst-case — fuzzy-new work, a cold executor, every task
 - **Per-task verify depth scales to surface centrality** — an ambient-loaded harness surface (CLAUDE.md, a rule, an agent) earns a full cold audit whatever the change size; an isolated low-centrality surface (a README line, a manifest field, a docs paragraph) earns a light pass.
 - **Same-session author == executor → reference, don't embed** — a plan written for a cold executor embeds full file bodies; when the authoring session also executes, reference draft bodies by section instead of re-embedding full file text.
 
-Spec/plan locations: `docs/work/specs/` and `docs/work/plans/` (temporal). Persistent specs (kept after merge) go to `docs/specs/`.
+Settled design and step sequence land as `## Design` / `## Plan` blocks on the card's own thread ([`docs/work/`](docs/work/README.md)). Persistent specs (kept after merge) go to `docs/specs/`.
 
 ## Dispatch — who holds each phase
 
@@ -61,7 +61,7 @@ The gateway orchestrates; it does not build. Inline lane = orchestration, reads,
 
 Named pipeline step — every route includes it between user review and commit. The commit door (`/super-bootstrap:commit`) runs gateway-inline; a mechanical grep-gate dispatches the cold `doc-sync-scan` agent when the diff touches the doc surface, and its `stale-docs` return goes to the gateway, which resolves with the user before the commit lands. Coverage backstop: `/check-docs-consistency` (on-demand, whole-repo).
 
-Before every commit, scan for prose describing behavior touched by the diff — `docs/` (specs, overview, techstack, backlog) **and behavior-narrating prose outside `docs/`: the root `README`, plus any manifest/description field the diff's behavior changes**. If any looks stale:
+Before every commit, scan for prose describing behavior touched by the diff — `docs/` (specs, overview, techstack, the [`docs/work/`](docs/work/README.md) card set) **and behavior-narrating prose outside `docs/`: the root `README`, plus any manifest/description field the diff's behavior changes**. If any looks stale:
 
 1. Report it — path, what looks outdated, relevant diff context
 2. Resolve together — update or acknowledge it's still accurate
@@ -77,9 +77,7 @@ State docs (`overview.md`, `techstack.md`, specs) hold what is **true now** — 
 - Committed change history (what changed / when / why-of-a-change) → **git log + commit messages**. Don't hand-chronicle it into a doc.
 - A direction evaluated and **closed** that left no diff (road-not-taken, wall foreseen) and would otherwise be re-proposed → [`docs/decisions.md`](docs/decisions.md).
 
-**Temporal cleanup:** if work completes a feature branch, delete its spec and plan files from `docs/work/specs/` and `docs/work/plans/`. Once merged, they're noise.
-
-**Backlog cleanup:** if work resolves a `BUG-###` / `DEBT-###` / `GAP-###` from `docs/backlog.md`, delete that item and any `docs/work/triage/{ID}-*` verdict file — including a shipped feature-`GAP`, which now belongs to the product narrative (Problem / Current State / Module Index). Git history is the archive.
+**Card resolution:** if work resolves a `BUG-###` / `DEBT-###` / `GAP-###`, delete `docs/work/{ID}.md` — including a shipped feature-`GAP`, which now belongs to the product narrative (Problem / Current State / Module Index). Git history is the archive.
 
 ## Coding Principles
 
@@ -95,7 +93,7 @@ Banned-terms list + pre-flight checklist + recovery protocol: [`docs/techstack.m
 
 ## Context Hygiene
 
-Subagent-first is the default container for build and doc phases (§ Dispatch); context weight is an additional dispatch trigger, not the only one. Compact while warm, clear on topic shift. Park mid-implementation state to docs before `/clear`.
+Subagent-first is the default container for build and doc phases (§ Dispatch); context weight is an additional dispatch trigger, not the only one. Compact while warm, clear on topic shift. Park mid-implementation state to the card's `## Progress` block before `/clear`.
 
 ## Finding Triage — Log vs Fix Now
 
@@ -151,10 +149,8 @@ Markdown-authored Claude Code plugin + self-hosted marketplace — no language r
 
 - [`docs/overview.md`](docs/overview.md) — product context, data flow, module index.
 - [`docs/techstack.md`](docs/techstack.md) — stack, architecture rules, coding patterns.
-- [`docs/backlog.md`](docs/backlog.md) — open items (`BUG-###` / `DEBT-###` / `GAP-###`), captured via `/super-bootstrap:log`, deleted on resolve.
+- [`docs/work/`](docs/work/README.md) — open cards (`BUG-###` / `DEBT-###` / `GAP-###` append-only threads), captured via `/super-bootstrap:log`, deleted on resolve; `README.md` holds the thread contract + ID high-water line.
 - [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
-- `docs/work/specs/` — design specs from up-front design work (temporal — deleted after merge)
-- `docs/work/plans/` — implementation plans (temporal — deleted after merge)
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)
 
-> **Two kinds of specs:** `docs/specs/` = permanent source of truth. `docs/work/specs/` = temporal work orders.
+> `docs/specs/` = permanent source of truth; working design and plan live as blocks on the owning card's thread.

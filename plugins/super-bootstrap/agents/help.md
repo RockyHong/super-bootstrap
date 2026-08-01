@@ -37,7 +37,7 @@ Parse each skill's `tags:` frontmatter and map to coarse categories:
 
 - `git` — commit, push, PR, branch, merge, rebase
 - `docs` — overview, techstack, spec, plan, sync, scaffold
-- `pipeline` — pipeline, todo, triage, backlog, log, help
+- `pipeline` — pipeline, todo, triage, cards, log, help
 - `meta` — bootstrap, harness, resolve, audit
 - `dev` — debug, test, refactor, lint
 - `utils` — format, search, lookup

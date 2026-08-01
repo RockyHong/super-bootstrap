@@ -6,7 +6,7 @@ tags: [bootstrap, orchestrator, detect, gate, curation, meta]
 
 # Super Bootstrap — Public Entry, Thin Orchestrator
 
-The single command users invoke. Orchestrates — detect, route, dispatch, integrate — and owns no install procedure itself: scaffolding lives in the generic runway, [`/super-bootstrap:harness-bootstrap`](../harness-bootstrap/SKILL.md). The entry writes no product content and asks no product questions. `overview.md` / `techstack.md` / `backlog.md` are scaffolded by the runway; their product content fills later at GAP-card pickup.
+The single command users invoke. Orchestrates — detect, route, dispatch, integrate — and owns no install procedure itself: scaffolding lives in the generic runway, [`/super-bootstrap:harness-bootstrap`](../harness-bootstrap/SKILL.md). The entry writes no product content and asks no product questions. `overview.md` / `techstack.md` are scaffolded by the runway; their product content fills later at GAP-card pickup.
 
 ## Orchestration spine
 
@@ -35,7 +35,7 @@ This is the only branch the entry makes: not-substantive → greenfield (seed GA
 
 The runway returned with empty product skeletons. Seed three GAP cards through the capture funnel, then stop at the resolve gate — there is nothing to curate until the product is resolved.
 
-**Idempotency guard (run first).** Read `docs/backlog.md`. If GAP cards for the overview, techstack, and tech-curation steps are already present (match on the card summary text — IDs are minted by `/log`), skip seeding and log "GAP cards already seeded." Re-run stays safe.
+**Idempotency guard (run first).** Check `docs/work/` for card files (`GAP-###.md`) matching the overview, techstack, and tech-curation summaries. If all three are already present (match on the H1 heading text — IDs are minted by `/log`), skip seeding and log "GAP cards already seeded." Re-run stays safe.
 
 **Seed via [`/super-bootstrap:log`](../log/SKILL.md)** — one invocation, all three observations batched, passing Source context `/super-bootstrap bootstrap` in the dispatch:
 
@@ -59,7 +59,7 @@ The runway returned and the seed docs are substantive (a just-resolved greenfiel
 
 1. **`Skill(resolve-plugins)`** — [`/super-bootstrap:resolve-plugins`](../resolve-plugins/SKILL.md) curates stack-matched skill / MCP / hook picks. It reads stack from `docs/techstack.md` and external-tools from `docs/overview.md`'s `<!-- harness-meta -->` block (the relocated external-tools signal). No Q&A — the signal is already in the docs.
 2. **`/super-bootstrap:release-init`** — offer once as an optional step to generate a project-level `/release` skill.
-3. **Clear the `tech-curation` seed card** — if `docs/backlog.md` carries the greenfield `tech-curation` GAP card (match on summary text, same as the greenfield idempotency guard), delete it — this branch running *is* its resolution, so the card never lingers as a stale open row once curation has run.
+3. **Clear the `tech-curation` seed card** — if a card file in `docs/work/` carries the greenfield `tech-curation` GAP card (match on H1 heading text, same as the greenfield idempotency guard), delete the card file — this branch running *is* its resolution, so the card never lingers once curation has run.
 
 **Rules-seeding stays runway-owned.** Path-scoped rule seeding (frontend / MV3 / migrations / tests) fires at runway-time in [`/super-bootstrap:harness-bootstrap`](../harness-bootstrap/SKILL.md) Phase 1. Tier-2 adds no rule seeding — one home per signal, no double-seed.
 

@@ -9,7 +9,7 @@ tags: [drain, worktree, parallel, pipeline]
 
 One wave per invocation over the board. Scan → Cloud-gate → wave-select → confirm → spawn one isolated subprocess per item → each halts at a user wall. The orchestrator (gateway) holds no in-head state; every tick re-reads from files. Capacity ceiling = how many halts the user can resolve, not machine throughput.
 
-**Consumer contract:** assumes the super-bootstrap harness shape — `docs/backlog.md`, `docs/work/specs|plans/`, `/super-bootstrap:merge`, `/super-bootstrap:commit`. Not portable below that line. First run self-installs the worktree infra (§Pre-flight step 0).
+**Consumer contract:** assumes the super-bootstrap harness shape — `docs/work/{BUG,DEBT,GAP}-###.md` card files, `/super-bootstrap:merge`, `/super-bootstrap:commit`. Not portable below that line. First run self-installs the worktree infra (§Pre-flight step 0).
 
 Trigger: user types `/super-bootstrap:drain`. Never auto-fires.
 
@@ -17,8 +17,8 @@ Trigger: user types `/super-bootstrap:drain`. Never auto-fires.
 
 - **One wave, one shot per invocation.** No internal loop across waves, no `--all`. Turn ends after the wave is dispatched. Next invocation cold-reads files and re-picks.
 - **No auto-merge — ever.** Each subprocess stops at a ready-to-merge state. The user confirms; the merge runs via `/super-bootstrap:merge` (the destructive-git lane). Subprocesses are denied push/merge/rebase/branch-delete/worktree at the permission layer.
-- **Admission-gate, not type-gate.** Eligible = the item's next phase is drainable, across BUG/DEBT/GAP and across specs/plans. When the scale module is wired the gate is next-phase venue ∈ {T, S} (`.claude/rules/venue-map.md`); without it the gate falls back to `intent == Cloud` (cloud-safe). Either way `Device`/`Discuss` and venue U/P defer — drain never spawns for them. A mislabel is fixed upstream (clarify the row, the shared criterion, or the venue map), never overridden here.
-- **Stage-resume.** Each item enters its phase chain at its current pipeline stage (file presence): `raw`→triage, `triaged`→plan, `spec`→plan, `plan`→execute, `review`→review. Each phase is named by the artifact it lands (`assets/phase-loop.md §Phase → artifact`). Committed upstream phases are inherited, not re-run.
+- **Admission-gate, not type-gate.** Eligible = the item's next phase is drainable, across BUG/DEBT/GAP card types. When the scale module is wired the gate is next-phase venue ∈ {T, S} (`.claude/rules/venue-map.md`); without it the gate falls back to `intent == Cloud` (cloud-safe). Either way `Device`/`Discuss` and venue U/P defer — drain never spawns for them. A mislabel is fixed upstream (clarify the card, the shared criterion, or the venue map), never overridden here.
+- **Stage-resume.** Each item enters its phase chain at its current pipeline stage (thread-state): `raw`→triage, `triaged`→plan, `spec`→plan, `plan`→execute, `review`→review. Each phase is named by the artifact it lands (`assets/phase-loop.md §Phase → artifact`). Committed upstream phases are inherited, not re-run.
 - **Halts are outcomes.** A wall surfaces a finding; that finding plus any committed earlier phases are progress, not waste.
 - **Wave member = no blocker.** Orphans + chain-heads enter; chain-tails and conflicts defer to a later invocation. No forward projection — render the current wave only.
 
@@ -33,7 +33,7 @@ Run in order; any HALT exits the turn with a §Halt summary.
 ## Shape
 
 1. **Sync base.** Fast-forward / rebase the base branch (`git fetch` + `git rebase origin/{base}`) so worktrees branch from current head. Conflict → surface + exit.
-2. **Scan + classify.** Read `docs/work/specs/*.md`, `docs/work/plans/*.md`, `docs/backlog.md` (and `docs/test-queue.md` when present — scale module, skip if absent); derive each item's `{action, intent, stage}` per the **shared classification spec**: resolve the absolute path to `../../shared/classify-actionable.md` from the skill base directory (surfaced in the skill invocation as `Base directory for this skill: <abs path>`), then use the Read tool on that resolved absolute path (SSOT, also consumed by `/super-bootstrap:todo`). Classify EXACTLY per it. Then apply `assets/eligibility.md` to keep only the drain-eligible items — next-phase venue ∈ {T, S} when `.claude/rules/venue-map.md` is present, else the `intent == Cloud` fallback. Items whose next phase is a wall (venue U/P, or `Device`/`Discuss`) skip and surface.
+2. **Scan + classify.** Read open cards (`docs/work/{BUG,DEBT,GAP}-###.md`) and `docs/test-queue.md` when present (scale module, skip if absent); derive each item's `{action, intent, stage}` per the **shared classification spec**: resolve the absolute path to `../../shared/classify-actionable.md` from the skill base directory (surfaced in the skill invocation as `Base directory for this skill: <abs path>`), then use the Read tool on that resolved absolute path (SSOT, also consumed by `/super-bootstrap:todo`). Classify EXACTLY per it. Then apply `assets/eligibility.md` to keep only the drain-eligible items — next-phase venue ∈ {T, S} when `.claude/rules/venue-map.md` is present, else the `intent == Cloud` fallback. Items whose next phase is a wall (venue U/P, or `Device`/`Discuss`) skip and surface.
 3. **Relation analysis + wave selection.** `assets/relations.md`. Output: current wave (disjoint orphans + chain-heads). Tails and conflicts defer.
 4. **Confirm gate.** §Confirm gate. Single-item wave → short-circuit to the normal pipeline (no gate rendered). Multi-item → render + confirm; decline = clean exit — no worktrees, no claims.
 5. **Spawn.** One subprocess per wave member — `assets/ensure-infra.md` (warm) → §Phase loop. Background dispatch; notification-driven.
@@ -88,7 +88,7 @@ Dispatched `Bash(run_in_background: true)`. Lane select (eng vs doc), phase chai
 
 **Polymorphic lanes (locked).** A code-shaped item runs the eng lane — lean by default: triage → build (TDD) → review → halt at merge. A prose-shaped item (doc-hygiene — the doc edit is the deliverable) runs the doc lane: doc-edit → review → halt at merge, no TDD (`assets/phase-loop.md §Lane select`).
 
-**Pre-plan confirm gate (user wall before the build fan-out).** After triage, before the plan/build phase, the gateway reads the `scope.md` verdict tags: a deterministic fix (`Fix-shape: mechanical|systematic`, no probe deps) flows straight through; anything carrying a design/product judgment or a `Probe-deps` dependency **halts for the user** before drain spends the build (`assets/phase-loop.md §Pre-plan confirm gate`).
+**Pre-plan confirm gate (user wall before the build fan-out).** After triage, before the plan/build phase, the gateway reads the Verdict block header tags from the card: a deterministic fix (`Fix-shape: mechanical|systematic`, no probe deps) flows straight through; anything carrying a design/product judgment or a `Probe-deps` dependency **halts for the user** before drain spends the build (`assets/phase-loop.md §Pre-plan confirm gate`).
 
 **Escalate-or-build.** If a subprocess discovers a real design surface mid-flight (needs spec / a decision), it halts and the item routes back to the user for design-settling rather than building further.
 

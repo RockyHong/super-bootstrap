@@ -1,12 +1,12 @@
 ---
 name: todo
-description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the need-me board — drainable work collapses to a count, need-me work groups by venue category with a downstream fan-out signal (no MCQ, dispatched immediately). Sub-verbs slice explicitly: `/super-bootstrap:todo discuss` (decisions, spec approvals), `/super-bootstrap:todo cloud` (drainable detail), `/super-bootstrap:todo device` (UI/e2e/manual), `/super-bootstrap:todo harness` (orchestration-engine rows, careful handle), `/super-bootstrap:todo full` (flat everything). Scans docs/work/specs|plans + docs/backlog.md, plus docs/test-queue.md when present. Bundled with super-bootstrap — works in any repo with the development pipeline."
+description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the need-me board — drainable work collapses to a count, need-me work groups by venue category with a downstream fan-out signal (no MCQ, dispatched immediately). Sub-verbs slice explicitly: `/super-bootstrap:todo discuss` (decisions, design approvals), `/super-bootstrap:todo cloud` (drainable detail), `/super-bootstrap:todo device` (UI/e2e/manual), `/super-bootstrap:todo harness` (orchestration-engine rows, careful handle), `/super-bootstrap:todo full` (flat everything). Scans open cards in docs/work/, plus docs/test-queue.md when present. Bundled with super-bootstrap — works in any repo with the development pipeline."
 tags: [todo, scan, status, pipeline]
 ---
 
 # Todo — Intent-Filtered Pipeline Scanner
 
-Default render is the **need-me board** — momentum-driven, not a kanban: autonomously-drainable work collapses to one count line, and work that needs the human groups by venue category (decide / device-bound / harness / probe) with a `unblocks N` fan-out signal. Bare invoke dispatches it immediately — no MCQ, no picker (a rendered surface the user navigates by typing a sub-verb, not a modal stop). Sub-verbs slice explicitly (deciding / drainable detail / on device Claude / touching the engine / flat everything). State reconstructed from `docs/work/specs/*.md`, `docs/work/plans/*.md`, and `docs/backlog.md` (three core sources), plus `docs/test-queue.md` when present (the scale module's test queue). Pipeline state = file presence (spec/plan/code presence drives stage classification).
+Default render is the **need-me board** — momentum-driven, not a kanban: autonomously-drainable work collapses to one count line, and work that needs the human groups by venue category (decide / device-bound / harness / probe) with a `unblocks N` fan-out signal. Bare invoke dispatches it immediately — no MCQ, no picker (a rendered surface the user navigates by typing a sub-verb, not a modal stop). Sub-verbs slice explicitly (deciding / drainable detail / on device Claude / touching the engine / flat everything). State reconstructed from open cards in `docs/work/` (glob: `{BUG|DEBT|GAP}-###.md`), plus `docs/test-queue.md` when present (the scale module's test queue). Pipeline state = card thread state (block presence drives stage classification).
 
 ## Arguments
 
@@ -14,8 +14,8 @@ Default render is the **need-me board** — momentum-driven, not a kanban: auton
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/super-bootstrap:todo`        | **Default.** Render the **need-me board** (drainable→count, need-me grouped by venue category with fan-out). No mode-picker, no MCQ — dispatch immediately.                                            |
 | `/super-bootstrap:todo full`   | Flat escape — every row (need-me + drainable), ungrouped, ranked.                                                                                                                    |
-| `/super-bootstrap:todo discuss`| Decision shape — specs awaiting user approval, design-open specs needing dialogue, backlog items flagged for user decision, any row whose blocker is "user". **Macro header on top.**          |
-| `/super-bootstrap:todo cloud`  | Cloud-safe filter — plan-writes for approved specs, executing plans on pure-logic surfaces, review-stage reads, doc cleanup, backlog triage. **Macro header on top.**                                  |
+| `/super-bootstrap:todo discuss`| Decision shape — designs awaiting approval, surface verdicts awaiting user decision, cards flagged for user decision, any row whose blocker is "user". **Macro header on top.**          |
+| `/super-bootstrap:todo cloud`  | Cloud-safe filter — plan-writes for approved designs, executing plans on pure-logic surfaces, review-stage reads, doc cleanup, card triage. **Macro header on top.**                                  |
 | `/super-bootstrap:todo device` | Device-only filter — executing plans on UI / e2e / manual surfaces, manual verification of review-stage plans. **Macro header on top.**                                                                |
 | `/super-bootstrap:todo harness`| Harness filter — rows whose deliverable is the orchestration engine (`CLAUDE.md`, `.claude/**`, plugin-source harness files), grouped **Deliberate** (new doctrine) / **Apply** (existing doctrine, bounded site). Never mixed into the autonomous slices. **Macro header on top.**                                          |
 | *any other value*             | **Fallback.** Dispatch `mode: needme` (the default board), and print this line above the relayed board: `Unrecognized sub-verb '{value}' — rendering the default board. Modes: full · discuss · cloud · device · harness.` Never map an unlisted value onto a listed mode by semantic proximity — this table is the whole set. |
@@ -34,10 +34,10 @@ loads no file content, fires no `docs/**` path-scoped rule):
   available but no runway installed. Print, no dispatch:
   > "No runway installed. Run `/super-bootstrap` to set up the pipeline."
 - **`docs/work/` present** → **dispatch the `todo` subagent unconditionally.**
-  The empty/non-empty determination moves into the subagent: it reads the three
-  sources and renders either the empty-state (`No active work…`) or the board.
+  The empty/non-empty determination moves into the subagent: it reads the card
+  files and renders either the empty-state (`No active work…`) or the board.
 
-The gateway performs **no content read** of `docs/backlog.md`, specs, or plans —
+The gateway performs **no content read** of cards or the test queue —
 all `docs/**` reads happen inside the subagent (no `docs/**` path-rule loads in
 the gateway's context).
 
@@ -47,7 +47,7 @@ On bare `/super-bootstrap:todo`:
 2. Otherwise dispatch the `todo` subagent with `mode: needme`. No picker, no questions.
 3. Relay the agent's rendered output verbatim. No editorial, no preface.
 
-`/super-bootstrap:todo full` dispatches `mode: full` — the flat-escape board: every open row from every source (specs, plans, backlog, test queue) in one ranked table, ungrouped, nothing collapsed to a count.
+`/super-bootstrap:todo full` dispatches `mode: full` — the flat-escape board: every open row from every source (cards, test queue) in one ranked table, ungrouped, nothing collapsed to a count.
 
 On sub-verb invocation (`/super-bootstrap:todo cloud` etc.): run the skip-gate, then dispatch immediately with that mode.
 

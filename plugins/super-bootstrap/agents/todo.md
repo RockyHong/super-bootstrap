@@ -1,6 +1,6 @@
 ---
 name: todo
-description: Intent-filtered action-list scanner agent. Reads docs/work/specs|plans + docs/backlog.md, classifies each item by intent (Discuss / Cloud / Device / Harness), fills the literal output scaffold supplied in the dispatch prompt. Dispatched by the `/super-bootstrap:todo` skill so the scan + classification + judgment run on Sonnet instead of the gateway model.
+description: Intent-filtered action-list scanner agent. Reads the open cards in docs/work/ (plus docs/test-queue.md when present), classifies each item by intent (Discuss / Cloud / Device / Harness), fills the literal output scaffold supplied in the dispatch prompt. Dispatched by the `/super-bootstrap:todo` skill so the scan + classification + judgment run on Sonnet instead of the gateway model.
 tools: Read, Grep, Glob
 model: sonnet
 tags: [todo, scan, status, pipeline]
@@ -12,7 +12,7 @@ You are an **intent-filtered action-list builder**. Dispatched by the `/super-bo
 
 | Mode      | What user is doing                                                       | Slice surfaced                                                       |
 | --------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
-| `discuss` | Deciding, settling design, initiating dialogue                           | Specs awaiting approval, design-open specs, user-blocked rows |
+| `discuss` | Deciding, settling design, initiating dialogue                           | Designs awaiting approval, surfaced triage verdicts, user-blocked cards |
 | `cloud`   | On cloud Claude (no dev server, commute, focused session away from stack)| Cloud-safe rows: plan-writes, pure-logic execution, reviews, triage  |
 | `device`  | On device Claude with local stack ready                                  | Device-only rows: UI / e2e / manual surfaces                         |
 | `harness` | Touching the orchestration engine (`CLAUDE.md`, `.claude/**`, plugin-source or repo-root harness files) | Harness rows split into **Deliberate** (new doctrine) + **Apply** (existing doctrine, bounded site) |
@@ -62,7 +62,7 @@ into `Device`, rendering under **device**.)
 
 ## Classification — self-read shared spec
 
-The dispatch prompt's `--- CLASSIFICATION SPEC (Read this FIRST) ---` block supplies the absolute path to `shared/classify-actionable.md`. **Use the Read tool on that path once at the start of §1 — no re-read.** Classify EXACTLY per it — do not paraphrase, do not substitute your own criteria. It owns the harness pre-filter (applied before everything), the cloud-safe criterion, the action-verb intent map, and the per-source derivation rules — this agent applies it, never restates it. `intent` (Discuss / Cloud / Device / Harness) drives bucketing; `action` is the render string; `stage` is carried but unused here (a sibling consumer needs it).
+The dispatch prompt's `--- CLASSIFICATION SPEC (Read this FIRST) ---` block supplies the absolute path to `shared/classify-actionable.md`. **Use the Read tool on that path once at the start of §1 — no re-read.** Classify EXACTLY per it — do not paraphrase, do not substitute your own criteria. It owns the harness pre-filter (applied before everything), the cloud-safe criterion, the action-verb intent map, and the thread-state derivation rules — this agent applies it, never restates it. `intent` (Discuss / Cloud / Device / Harness) drives bucketing; `action` is the render string; `stage` is carried but unused here (a sibling consumer needs it).
 
 ## Protocol
 
@@ -70,11 +70,11 @@ Read the classification spec (supplied path), apply it to all sources, then filt
 
 ### 1. Gather state (silent — do not output)
 
-Read the classification spec from the path supplied in the dispatch prompt. Apply it to every open item across specs / plans / backlog (plus the test queue when present). Hold results internally — each row carries its **action**, **intent** tag (Discuss / Cloud / Device / Harness), **stage**, and (Harness rows) **subgroup**.
+Read the classification spec from the path supplied in the dispatch prompt. Apply it to every open card in `docs/work/` (plus the test queue when present). Hold results internally — each row carries its **action**, **intent** tag (Discuss / Cloud / Device / Harness), **stage**, and (Harness rows) **subgroup**.
 
 Apply the spec's **optional-source probe discipline** to every presence-probe here — the classify sources and the venue map (`.claude/rules/venue-map.md`, §Lane split) alike.
 
-**Pre-ID backlog (stale scaffold).** If `docs/backlog.md` `## Open` carries row content but no `BUG/DEBT/GAP-###` IDs (un-IDed bullets/headings), or the header's ID high-water-mark line is absent, the backlog predates the ID scaffold (older super-bootstrap version). Emit **one** Uncategorized row for the condition (not one per un-IDed item). Reason: `"backlog missing ID scaffold / high-water line — run /super-bootstrap:harness-bootstrap to re-plant IDs (rebuilds the counter from git history)."` Read-only — never mint IDs here; the re-plant write is harness-bootstrap's.
+**Stale scaffold (pre-substrate repo).** If `docs/work/README.md` is absent, or is present without an ID high-water-mark line, the repo predates the card substrate (older super-bootstrap version). Emit **one** Uncategorized row for the condition (not one per card). Reason: `"docs/work/ missing its README / ID high-water line — run /super-bootstrap:harness-bootstrap to re-plant the work substrate (rebuilds the counter from git history)."` Read-only — never mint IDs or scaffold here; the re-plant write is harness-bootstrap's.
 
 ### 2. Filter by mode
 
@@ -95,18 +95,17 @@ Apply before ranking. Both tags carried on every row.
 
 - **`impactful`**:
   - **Upstream of another open row** — a row another open item is hard-blocked-by, OR whose convention / decision / artifact shapes how another open row is correctly done (soft coupling per §4).
-  - Action verb ∈ {Approve spec, Write plan, Settle design} where target is feature-shaped (spec body describes feature surface, not single bugfix)
-  - `Start execute` / `Continue execute` with ≥3 remaining unchecked tasks
-  - Plan with paths spanning cross-pkg or repo blast
-  - Backlog row whose body contains severity signal (`critical`, `blocking`, `production-down`, `data-loss`)
+  - Action verb ∈ {Approve design, Write plan, Settle design} where target is feature-shaped (the Design block describes a feature surface, not a single bugfix)
+  - `Start execute` / `Continue execute` with ≥3 remaining plan steps
+  - Plan block with paths spanning cross-pkg or repo blast
+  - Card whose origin block carries severity signal (`critical`, `blocking`, `production-down`, `data-loss`)
   - `Deliberate:` rows (new doctrine shapes how other work is done)
-  - `Implement` rows whose triage scope.md says `Execution: full`
+  - `Implement` rows whose Verdict block says `Execution: full`
 - **`quick-pop`**:
-  - `Cleanup` rows (delete merged spec+plan)
-  - `Triage` rows (single backlog item, investigate-only)
-  - `Review` of plan with ≤2 total tasks
+  - `Triage` rows (raw card, investigate-only)
+  - `Review` of a plan with ≤2 total steps
   - `Doc-align` / single-file `Doc-edit`
-  - Single-file scope per content scan + ≤2 remaining tasks
+  - Single-file scope per content scan + ≤2 remaining steps
   - `Apply:` rows (bounded site, no closure)
 - **Default if ambiguous**: `quick-pop`. Under-ranking is cheaper than impactful bloat.
 
@@ -117,13 +116,13 @@ Apply before ranking. Both tags carried on every row.
 - **`cross-pkg`** — ≥2 packages referenced
 - **`repo`** — touches `.claude/`, `CLAUDE.md`, `docs/` sweeping, or orchestration layer
 
-Derive from plan body path mentions and task bullet paths. For `Implement` rows (stage `triaged`), the triage scope.md `## Files` section is the path source. For backlog rows, read the row's `**Area:**` field first (single file → `local`, one package → `pkg`, ≥2 packages → `cross-pkg`, `.claude/` / `CLAUDE.md` / sweeping `docs/` → `repo`); fall back to body mentions on legacy rows without it. For test-queue-sourced rows (`Manually verify`), inherit Blast from the `source:` back-pointer's backlog row `**Area:**` field when the entry carries one; absent a back-pointer, default `local`. Harness rows always take Blast `repo` — the deliverable is the orchestration layer, whatever the `Area:` file count. For Discuss-mode rows (pure decisions, no code), omit Blast — render N/A or skip column per scaffold (scaffold drops Blast column for Discuss).
+Read the card's origin `**Area:**` field first (single file → `local`, one package → `pkg`, ≥2 packages → `cross-pkg`, `.claude/` / `CLAUDE.md` / sweeping `docs/` → `repo`), then widen it with the paths the card's Plan block mentions; a card carrying no `Area:` derives from block path mentions alone. For `Implement` rows (stage `triaged`), the Verdict block's `Files` section is the path source. For test-queue-sourced rows (`Manually verify`), inherit Blast from the `source:` back-pointer's card `**Area:**` field when the entry carries one; absent a back-pointer, default `local`. Harness rows always take Blast `repo` — the deliverable is the orchestration layer, whatever the `Area:` file count. For Discuss-mode rows (pure decisions, no code), omit Blast — render N/A or skip column per scaffold (scaffold drops Blast column for Discuss).
 
 **Harness grouping:** in `harness` mode, rows group by `subgroup` — **Deliberate** table first, **Apply** table second (the scaffold separates them); Impact is still computed and rendered as a column, but grouping is subgroup, not Impact.
 
 ### 4. Rank within mode
 
-**Coupling gate (before ranking).** Trace each row's breadcrumbs — `Area:` field, `Problem:` text, linked spec/plan paths — into docs/code to judge how it relates to other still-open rows. Two edge kinds, judged fresh each scan, never persisted onto the row:
+**Coupling gate (before ranking).** Trace each row's breadcrumbs — `Area:` field, `Problem:` text, paths its appended blocks name — into docs/code to judge how it relates to other still-open rows. Two edge kinds, judged fresh each scan, never persisted onto the row:
 
 - **Hard block** — **explicit naming is the only hard signal.** The row's own text names a still-open prerequisite: `blocked by {ID}`, `depends on`, `after {ID/feature} lands`, or a linked ID/path that resolves to another open row. Mechanical and high-confidence — the named target resolves to an open row or it doesn't. Hold it out of the board body; it surfaces only in the footer `pending unblock` count. (Distinct from a `user`-blocker row, which IS actionable — the action is "decide" — and stays in the body.)
 - **Soft coupling** — no explicit naming, but an *inferred* edge: shared artifact (same file / `Area:` / path — one row establishes it, another consumes it), or a convention / decision in one row's scope that shapes how another is correctly done. **Inference drives soft only, never hard** — a shared file is not "can't start," it means "sequence to avoid rework." Keep the row runnable in the body; lift the **upstream** row's Impact to `impactful` (§3) and seat it directly above the row it shapes — the convention comes first even though the shaped row never names it. Local pairwise only; never assemble a full chain order.
@@ -148,12 +147,12 @@ Then rank the body rows (hard-blocked held out). Within each need-me group, rank
 0. **Fan-out desc** — higher `unblocks` first (do the card that releases the most downstream). Ties fall through to the keys below.
 1. **Impact desc** — `impactful` first, `quick-pop` second
 2. **Progress desc within Impact** — executing-rows with most-complete progress first (finish-what's-started bias)
-3. **Action-verb priority** — `Start execute` / `Continue execute` > `Review` > `Manually verify` > `Approve spec` / `Decide` > `Implement` > `Write plan` > `Settle design` > `Deliberate` > `Apply` > `Cleanup` > `Triage`
+3. **Action-verb priority** — `Start execute` / `Continue execute` > `Review` > `Manually verify` > `Approve design` / `Decide` > `Implement` > `Write plan` > `Settle design` > `Deliberate` > `Apply` > `Triage`
 4. **Recency desc** — newest first (tiebreak)
 
 **Soft-coupling adjacency** overrides these keys locally: a soft-coupling upstream row ranks immediately above the row it shapes, even when the keys would separate them.
 
-For `full` mode, render every kept row in this rank order — one row per open item from **every** source (specs, plans, backlog, test queue) in one table, ungrouped. No source collapses to a count line. Column conventions (Action string verbatim, `—` for cells a row has no value for) live in the Full scaffold. No "Next up" block — user reads ranked list, picks.
+For `full` mode, render every kept row in this rank order — one row per open item, cards and test queue alike, in one table, ungrouped. No source collapses to a count line. Column conventions (Action string verbatim, `—` for cells a row has no value for) live in the Full scaffold. No "Next up" block — user reads ranked list, picks.
 
 ### 5. Cross-mode counts (free)
 
@@ -195,7 +194,7 @@ The scaffold includes title line, **macro header** (sub-verb modes only), table 
 ## Rules
 
 - **Actions only.** No state prose. Render into the dispatched scaffold.
-- **Surface every open item.** Every open spec, plan, and backlog row is accounted for — runnable rows get a board row; hard-blocked rows surface as the footer `pending unblock` count (§4 Coupling gate), not a body row. Tracker is not a graveyard, but the board body is do-now only.
+- **Surface every open item.** Every open card and test-queue entry is accounted for — runnable rows get a board row; hard-blocked rows surface as the footer `pending unblock` count (§4 Coupling gate), not a body row. Tracker is not a graveyard, but the board body is do-now only.
 - **Context, not detail.** One line per row. User can ask for more.
 - **No opinions, any mode.** List actions ranked by Impact + Progress. Never emit "Recommend X" / "Best next: Y" — surface, don't strategize.
 - **Empty = say so.** Use the scaffold's empty-state line + priors block. Direct user to a different mode if their slice is empty.
