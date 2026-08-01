@@ -40,6 +40,6 @@ No phase prescription per category — triage decides how much ceremony the work
 
 **Live tracking:** in-session execution state belongs to the platform's native task list; durable progress lands as a Progress block.
 
-**Resolve:** the resolving session deletes the card file — git history is the archive.
+**Resolve:** the resolving session deletes the card file — work completed and direction dropped both resolve; the deleting commit's message carries the why. Git history is the archive.
 
 **Conflict:** keep either side whole or regenerate from its blocks; never hand-merge block content.
