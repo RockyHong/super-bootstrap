@@ -166,7 +166,7 @@ One harness core dep:
 
 `/super-bootstrap:harness-bootstrap` Phase 2a pins it pre-resolve.
 
-A process harness (superpowers or any other) is an ordinary adaptive pick here — proposable, droppable, trust-signals re-fetched like any other.
+A process harness is an ordinary adaptive pick here — proposable, droppable, trust-signals re-fetched like any other.
 
 **Harness-active marker:** `docs/work/` directory exists in the repo. Detect with one Glob.
 
@@ -219,7 +219,7 @@ Steps execute sequentially within a candidate. Multiple candidates may install i
   ```json
   {
     "enabledPlugins": {
-      "superpowers@claude-plugins-official": true,
+      "graphify@claude-plugins-official": true,
       "caveman@caveman": true
     },
     "extraKnownMarketplaces": {

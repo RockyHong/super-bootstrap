@@ -111,17 +111,14 @@ deliberately: a `brainstorming|writing-plans` pattern is blind to `/brainstorm`,
 `/write-plan`, and `/execute-plan` — the form a live dispatch actually takes, and the form
 that survived the skeleton cut unseen.
 
-**Two hit classes are sanctioned and stay.** Neither routes anything:
+**One hit class is sanctioned and stays.** It routes nothing:
 
-- **Illustrative** — `resolve-plugins` naming a process harness as an example adaptive
-  pick ("superpowers or any other") and the sample output that goes with it. It names a
-  candidate the user may take or drop, which is the opposite of routing to it.
 - **Historical** — `harness-bootstrap`'s mature-repo detector must keep matching the
   pre-rename `chore: scaffold|sync superpowers pipeline` strings, because it reads commit
   history. Dropping them would make every already-bootstrapped repo read as
   never-bootstrapped.
 
-No live couplings remain. A hit outside those two classes is a regression — the pattern
+No live couplings remain. A hit outside that class is a regression — the pattern
 catches a live command referent whether it dispatches (a subprocess phase prompt) or only
 reads as prose, and prose that seeds through the capture funnel carries the referent into
 every consumer repo's own backlog, where it outlives the cut.
@@ -364,7 +361,7 @@ Two constraints outlive the change:
 - Retiring the cloud-safe derivation must replace drain's admission predicate
   (`eligibility.md` Cloud-gate fallback) in the same change — `DEBT-027` is the one card
   that can, and without the venue map `intent == Cloud` is drain's whole gate.
-- A hit outside §4's two sanctioned classes is a regression, whether it dispatches or only
+- A hit outside §4's one sanctioned class is a regression, whether it dispatches or only
   reads as prose.
 
 **Vacating means naming the discipline and shipping nothing.** A card whose fix reads

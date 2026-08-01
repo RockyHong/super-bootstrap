@@ -47,13 +47,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks/commit-channel.hook.json`; `.claude/settings.json` (dogfood hook wiring); root `README` (hook guarantee claim)
 **Prior:** Widen the matcher to cover all commit-landing tool paths, or document the enforcement gap and narrow the README guarantee to match what is actually enforced.
 
-### DEBT-038 — resolve-plugins hardcodes `superpowers` as example name at three shipped sites, creating sampling bias against the bare-posture intent
-
-**Logged:** 2026-07-26 · **Source:** observation against repo owner's stated posture — "recommend whatever the live query surfaces, pin nothing, bake in no recommendation"
-**Problem:** `resolve-plugins` uses `superpowers` as its illustrative adaptive-pick name at SKILL.md:169 (prose), SKILL.md:222 (sample settings.json output), and `assets/formats.md:53-54` (sample candidate output). The mechanism already matches the bare posture (routing removed, no core pin); only the example names do not. A hardcoded name is simultaneously a prior for the curation pass and a user expectation, even where surrounding prose says take-or-drop. `docs/specs/harness-architecture.md` §4 sanctions these as "illustrative" for coupling reasons — correctly, they route nothing — but sampling bias is orthogonal to coupling and unaddressed. Fix shape: replace with a placeholder (e.g. `<process-harness>`) or drop the example; §4's illustrative-class prose rides the same change as a propagation closure item.
-**Area:** `plugins/super-bootstrap/skills/resolve-plugins/SKILL.md` lines 169, 222; `plugins/super-bootstrap/skills/resolve-plugins/assets/formats.md` lines 53–54; `docs/specs/harness-architecture.md` §4 (propagation closure)
-**Prior:** Replace hardcoded name with `<process-harness>` placeholder or remove the example; update §4 in the same change.
-
 ### GAP-045 — No fire-moment gate when a review claim enters a container — false claims pass all existing harness checks
 
 **Logged:** 2026-07-26 · **Source:** DEBT-032 controlled probe runs (3/3 false-review-finding implemented and shipped); closed fork in `docs/decisions.md` explicitly reopens on this shape

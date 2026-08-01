@@ -50,8 +50,8 @@ candidate: graphify
   [hook]    post-commit-graphify      -> .claude/hooks/ + settings.json wiring
   [bin]     graphify (manual: brew install graphify per README)
 
-candidate: superpowers
-  [plugin]  superpowers@claude-plugins-official  -> enabledPlugins
+candidate: toolset
+  [plugin]  toolset@claude-plugins-official  -> enabledPlugins
 ```
 
 ---
