@@ -14,7 +14,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, triage decides how much ceremony the work earns. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-021` · `DEBT-038` · `GAP-046` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-022` · `DEBT-038` · `GAP-047` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -32,6 +32,20 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### BUG-022 — triage NEEDS_CONTEXT route names `/super-bootstrap:log` amendment as landing site; log agent refuses the write
+
+**Logged:** 2026-08-01 · **Source:** DEBT-034 triage pass finding 4 (`docs/work/triage/DEBT-034-notes.md`); surfaced as needing its own card if DEBT-034 closed narrowly (which it did — deferred)
+**Problem:** `plugins/super-bootstrap/skills/triage/SKILL.md:24` routes a `NEEDS_CONTEXT` verdict to "the user (or a follow-up `/super-bootstrap:log` amendment)". `agents/log.md:16` scopes itself to new rows only ("Edits or deletes on existing rows — the session that resolves an item owns its row") and explicitly lists row edits as out of lane. The amendment path named in the skill cannot execute — a `NEEDS_CONTEXT` verdict producing new context has no sanctioned landing site. Same refusal-loop shape as DEBT-036's dup-branch dead end, on a different surface.
+**Area:** `plugins/super-bootstrap/skills/triage/SKILL.md:24` (NEEDS_CONTEXT route); `plugins/super-bootstrap/agents/log.md:16,78` (new-rows-only scope)
+**Prior:** Third refusal-loop instance sharing DEBT-034's root defect (unassigned mid-life mutation authority); rides the DEBT-034 fix if that fix covers this surface, else resolved here.
+
+### GAP-047 — Work-tracking substrate redesign: ledger-shaped per-item layout with append-only reframes
+
+**Logged:** 2026-08-01 · **Source:** Repo owner reframe raised during DEBT-034 triage review (2026-08-01); entry point for design discussion: `docs/work/triage/DEBT-034-notes.md`
+**Problem:** The current substrate (single growing `docs/backlog.md`, write-once rows, delete-on-resolve) has no amendment path for mid-life facts, forces a full-file re-read at every triage and board render pass, and binds board rendering to ordering — a separation-of-concerns violation in `/super-bootstrap:todo`. Owner direction: a ledger-shaped or thread-shaped substrate (same family as `SESSION-STATE/` carry) — per-item folder-and-file layout with append-only context accretion (origin breadcrumb stays; reframes append, not overwrite). If adopted, DEBT-034 and DEBT-036 dissolve (amendment path exists), DEBT-022 and DEBT-027 shrink (per-item layout admits incremental reads where one file forces a full re-read). Not settled, not specced; deferred to a cold session.
+**Area:** `docs/backlog.md` (current substrate); `/super-bootstrap:todo` render + ordering coupling; `plugins/super-bootstrap/agents/log.md`; `plugins/super-bootstrap/agents/triage.md`; `plugins/super-bootstrap/skills/log/SKILL.md`; `plugins/super-bootstrap/skills/triage/SKILL.md` — propagation closure mapped in `docs/work/triage/DEBT-034-notes.md` § Scope reach
+**Prior:** Per-item folder-and-file layout (one file per card, ID-keyed) with append-only amendment blocks; board rendering decoupled from file ordering.
 
 ### BUG-021 — need-me scaffold hardcodes footer lines while SKILL.md claims agent-computed footer governs both modes
 
