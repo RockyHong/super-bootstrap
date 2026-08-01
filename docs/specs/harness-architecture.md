@@ -2,13 +2,13 @@
 
 **Scope.** This doc owns the concern map: which slots super-bootstrap occupies, which
 it delegates, and the mechanism at the boundary. It is the grounding artifact for the
-de-routing work — a cold reader should be able to act on the backlog cards without
+de-routing work — a cold reader should be able to act on the cards without
 reconstructing the analysis.
 
 Companion docs: [`docs/overview.md`](../overview.md) (product context),
 [`docs/techstack.md`](../techstack.md) (stack + architecture rules),
 [`docs/decisions.md`](../decisions.md) (closed forks),
-[`docs/backlog.md`](../backlog.md) (open cards).
+[`docs/work/`](../work/README.md) (open cards).
 
 ---
 
@@ -39,8 +39,8 @@ substrate-permanent. Harness engineering's durable work domain is the permanent 
 | Shared language | — | `CONTEXT.md` + ADR | — |
 | Entry selection (routing) | **absent** | `ask-matt` (owns its own) | Cluster table — **shape recognition, not entry routing**; rows name disciplines a harness would otherwise supply |
 | Fast capture | — | — | **`/log`** |
-| Standing work state | — | defers to a real tracker | **`docs/backlog.md`** |
-| Per-feature work order | temporal specs/plans | `to-tickets` → whatever tracker setup configured | `docs/work/plans/` |
+| Standing work state | — | defers to a real tracker | **`docs/work/` cards** |
+| Per-feature work order | temporal specs/plans | `to-tickets` → whatever tracker setup configured | the card's `## Design` / `## Plan` blocks |
 | Propagation gate | — | — | **doc-sync** |
 | Cold-start data map | — | `CONTEXT.md` + `docs/adr/` | `overview` + `techstack` + `decisions` |
 | Awareness wiring | full-body ambient injection | static `## Agent skills` pointers in CLAUDE.md | **path-scoped rules (`paths:` frontmatter)** |
@@ -82,7 +82,7 @@ inseparable from it.
 | `harness-bootstrap` § Core plugin pins — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. A process harness is an ordinary adaptive pick in `resolve-plugins`, pinned by nothing. |
 | The temporal work folder | **Ours**, at `docs/work/`. His artifact skills own no path — they publish to whatever tracker is configured (§4) — so there was no slot to defer to. |
 | drain's stage machine (`raw→triage→plan→execute→review`) | **Live** — the stage set reads this repo's own artifact slots by file presence, so only the per-phase command dispatch was foreign. Each phase names the artifact it lands (`phase-loop.md §Phase → artifact`) and dispatches a repo door where one exists. |
-| **log / backlog / commit / doc-sync / rules** | **Unaffected.** |
+| **log / cards / commit / doc-sync / rules** | **Unaffected.** |
 | `skills/triage/SKILL.md` + `agents/triage.md` — investigation doctrine | Referent dead, **discipline live**: the clause is stated inline, naming no harness. The pointer never resolved even where superpowers is installed — the agent's tool list carries no `Skill`. |
 
 **The table was 8 rows and all 8 survive** — three of them restated. Its real function is
@@ -121,10 +121,10 @@ that survived the skeleton cut unseen.
 No live couplings remain. A hit outside that class is a regression — the pattern
 catches a live command referent whether it dispatches (a subprocess phase prompt) or only
 reads as prose, and prose that seeds through the capture funnel carries the referent into
-every consumer repo's own backlog, where it outlives the cut.
+every consumer repo's own card set, where it outlives the cut.
 
 The folder shape is gone: `docs/superpowers/` is now `docs/work/`. Phase 2a scaffolds
-`specs/` and `plans/`; `triage/` appears on demand when a verdict is first written. The
+`README.md` + `TEMPLATE.md`; cards land flat beside them as work is logged. The
 naming rides the same path — skill `description:`, the runway intro, the emitted commit
 strings, and the pipeline-family `tags:` keyword are all harness-neutral, so a consumer
 re-bootstrapping migrates in one run.
@@ -140,7 +140,7 @@ re-bootstrapping migrates in one run.
 He ships seed templates for the first three (`issue-tracker-github.md`,
 `issue-tracker-gitlab.md`, `issue-tracker-local.md`) but **none for "Other"** — that
 branch is authored fresh. So super-bootstrap can ship its own seed for that slot,
-declaring `docs/backlog.md` + `/super-bootstrap:log` as the repo's tracker. His
+declaring `docs/work/` + `/super-bootstrap:log` as the repo's tracker. His
 `to-spec` and `triage` then write into our home.
 
 **His artifact skills own no paths — they ask the repo.** Read at grade A (2026-07-26):
@@ -154,7 +154,7 @@ would only have made sense if his set owned that slot at a fixed path; it does n
 declaring our own path through the tracker socket composes with his skills exactly as
 well as deleting the slot would. That raises `GAP-038` from nice-to-have to the actual
 composition mechanism — the seed is what tells his skills where to publish. His taxonomy
-is spec → tickets → implement, with no "plans" artifact at all, so our `plans/` slot has
+is spec → tickets → implement, with no "plans" artifact at all, so our `## Plan` block has
 no counterpart to defer to.
 
 **Known weakness of this seam — read out, and worse than "prose, not schema".** His setup
@@ -173,8 +173,8 @@ before it is executable at all.
 
 The seed shape it would have to match is known: `Status:`, `Type:
 research|prototype|grilling|task`, `Blocked by: NN, NN`, a `## Comments` section, the
-publish–fetch–resolve operations, and a `map.md` wayfinding file. **Our backlog rows carry
-none of those fields** — the scale module's backlog fact fields are the only plausible home.
+publish–fetch–resolve operations, and a `map.md` wayfinding file. **Our cards carry
+none of those fields** — the scale module's fact fields are the only plausible home.
 
 **The middle of any sandwich can only be human-typed.** Every user-invoked skill sampled
 carries `disable-model-invocation: true` — `ask-matt`, `implement`, `grill-me`, `triage`
@@ -297,7 +297,7 @@ superpowers may stay installed — it simply stops being routed.
 
 *De-routing rests on the dissolve test alone, not on a measurement.* The de-routed state
 is not a bare run — CLAUDE.md minus its routing sections, ~1.6k tokens of skill
-descriptions, the path-scoped rules, and the log / backlog / doc-sync / commit doors all
+descriptions, the path-scoped rules, and the log / card / doc-sync / commit doors all
 remain. Removing the routing layer gives a clean reading of **that layer's** cost and
 nothing wider; it does not test whether the harness as a whole helps or hurts. Most of
 what such a test would report is static arithmetic anyway (ambient token count, per-board
