@@ -8,7 +8,7 @@ No language runtime, no build step. The product is markdown: skills are `SKILL.m
 
 ## Framework
 
-Claude Code plugin architecture. A root `.claude-plugin/marketplace.json` declares the self-hosted marketplace; `plugins/super-bootstrap/.claude-plugin/plugin.json` declares the plugin. Layout: `plugins/super-bootstrap/{skills,agents,shared}`. The `source` field in `marketplace.json` (`./plugins/super-bootstrap`) is the install boundary — only that subtree ships to installers; repo-root files (this doc, CLAUDE.md, backlog) are dev-workspace-only and never reach a user's project.
+Claude Code plugin architecture. A root `.claude-plugin/marketplace.json` declares the self-hosted marketplace; `plugins/super-bootstrap/.claude-plugin/plugin.json` declares the plugin. Layout: `plugins/super-bootstrap/{skills,agents,shared}`. The `source` field in `marketplace.json` (`./plugins/super-bootstrap`) is the install boundary — only that subtree ships to installers; repo-root files (this doc, CLAUDE.md, the `docs/work/` cards) are dev-workspace-only and never reach a user's project.
 
 ## Key Dependencies
 
