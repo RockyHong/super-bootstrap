@@ -359,8 +359,8 @@ above). `GAP-038` stays parked behind change B.
 Two constraints outlive the change:
 
 - Retiring the cloud-safe derivation must replace drain's admission predicate
-  (`eligibility.md` Cloud-gate fallback) in the same change — `DEBT-027` is the one card
-  that can, and without the venue map `intent == Cloud` is drain's whole gate.
+  (`eligibility.md` Cloud-gate fallback) in the same change — without the venue map
+  `intent == Cloud` is drain's whole gate.
 - A hit outside §4's one sanctioned class is a regression, whether it dispatches or only
   reads as prose.
 
