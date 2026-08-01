@@ -153,6 +153,7 @@ Markdown-authored Claude Code plugin + self-hosted marketplace — no language r
 
 - [`docs/overview.md`](docs/overview.md) — product context, data flow, module index.
 - [`docs/techstack.md`](docs/techstack.md) — stack, architecture rules, coding patterns.
+- [`docs/specs/`](docs/specs/) — persistent feature specs, one `.md` per feature. Filename + heading is the catalog; no index.
 - [`docs/work/`](docs/work/README.md) — open cards (`BUG-###` / `DEBT-###` / `GAP-###` append-only threads), captured via `/super-bootstrap:log`, deleted on resolve; `README.md` holds the thread contract + ID high-water line.
 - [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)
