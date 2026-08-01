@@ -67,6 +67,8 @@ Before every commit, scan for prose describing behavior touched by the diff — 
 2. Resolve together — update or acknowledge it's still accurate
 3. Never silently fix. Never silently skip.
 
+Scan predicate — every doc the change touches gets an outcome marker (updated, or read-and-confirmed-unchanged): [`.claude/guidelines/work-discipline/doc-impact-mirror.md`](.claude/guidelines/work-discipline/doc-impact-mirror.md).
+
 **Write boundary** — doc-sync writes narrative docs only: `docs/` and the root `README`. All harness — `CLAUDE.md`, `.claude/rules/`, skills, agents, plugin manifests — is **read-only within this step**: flag the drift and route the fix to its owner (a deliberate harness edit carrying its own verify pass; `/release` for manifests).
 
 **Dimension routing (state XOR history — decide before writing any `docs/` file):**
@@ -85,11 +87,13 @@ Before writing, reviewing, or refactoring code, read the coding standard: the pi
 
 A repo that declares its own `CODING_STANDARDS.md` overrides that default; the file is the standard where it exists.
 
-## Edit Discipline — Renames & Replace-All
+## Edit Discipline — Renames, Replace-All & Stale State
 
 Rename preference order: LSP rename → per-occurrence Edit → `sed` (unique 8+ char literals) → `replace_all` (long unique literals only).
 
-Banned-terms list + pre-flight checklist + recovery protocol: [`docs/techstack.md` § Edit Discipline](docs/techstack.md#edit-discipline).
+Stale-state family: Read a file before its first Edit; re-Read after a stale/unread Edit error, or after any write that landed behind your read-tracker (formatter hook, a returned file-writing subagent — `git diff` is not a Read). Two consecutive same-file Edit failures = mandatory re-Read.
+
+Banned-terms list + pre-flight checklist + recovery protocol: [`docs/techstack.md` § Edit Discipline](docs/techstack.md#edit-discipline). Stale-state predicate + re-Read triggers: [`.claude/guidelines/work-discipline/edit-discipline.md`](.claude/guidelines/work-discipline/edit-discipline.md) § Stale-state edits.
 
 ## Context Hygiene
 
