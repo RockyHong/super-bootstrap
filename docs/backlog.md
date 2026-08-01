@@ -14,7 +14,7 @@ New rows route through `/super-bootstrap:log` — one funnel for classification,
 
 No phase prescription per category — when an item rolls into a session, triage decides how much ceremony the work earns. Surface "clear fix" can become design work after evidence; pre-routing biases that judgment.
 
-**ID high-water mark:** `BUG-020` · `DEBT-038` · `GAP-046` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
+**ID high-water mark:** `BUG-021` · `DEBT-038` · `GAP-046` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved rows are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from open rows.
 
 **Row shape** — stable ID + frozen claim, newest at top. When resolved, **delete the row** — git history is the archive.
 
@@ -32,6 +32,13 @@ The claim is write-once — captured at the richest-context moment, read cold by
 ---
 
 ## Open
+
+### BUG-021 — need-me scaffold hardcodes footer lines while SKILL.md claims agent-computed footer governs both modes
+
+**Logged:** 2026-08-01 · **Source:** cold dry-run agent authoring a dispatch from scaffold text alone during BUG-019 / GAP-037 implementation session (2026-08-01); outside that card's propagation closure, deferred and captured here
+**Problem:** `SKILL.md` § Footer rule states the footer is always computed by the todo agent at render time per `agents/todo.md` § Render footer-hint, with the gateway relaying verbatim without computing it. `scaffolds.md` § Full honors this with a `{footer per § Render footer-hint}` placeholder. But `scaffolds.md` § Need-me hardcodes two literal footer lines (`flat list: /super-bootstrap:todo full · drainable detail: /super-bootstrap:todo cloud` and `more: /super-bootstrap:help`) directly in the scaffold body. The need-me board's footer is scaffold-literal; the full board's footer is agent-computed. One rule claims to govern both modes; the two modes resolve through different mechanisms.
+**Area:** `plugins/super-bootstrap/skills/todo/SKILL.md` § Footer rule; `plugins/super-bootstrap/skills/todo/assets/scaffolds.md` § Need-me and § Full; `plugins/super-bootstrap/agents/todo.md` § Render footer-hint
+**Prior:** Align the need-me scaffold — replace the hardcoded lines with the `{footer per § Render footer-hint}` placeholder, or update the SKILL.md rule to explicitly sanction need-me's scaffold-literal footer (documenting the intentional divergence).
 
 ### GAP-046 — doc-sync has no premise-closure predicate for a product-anchor revision
 
