@@ -61,13 +61,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `CLAUDE.md` § The envelope (`Review received, not absorbed`); `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` § The envelope; `plugins/super-bootstrap/skills/drain/assets/phase-loop.md` (review→execute phase boundary)
 **Prior:** Root cause confirmed in the DEBT-032 closed fork: the failure is activation, not compression — the law was in context and still did not fire. Fix must place a gate at the fire-moment a review claim enters a container; evaluate the three candidate surfaces (dispatch-boundary hook, receive-review skill, verdict-field contract in the review-return shape).
 
-### DEBT-037 — drain's parallel-worktrees dispatch uses prompt-first ordering instead of `--` terminator and omits `Agent` from allowedTools
-
-**Logged:** 2026-07-26 · **Source:** DEBT-028 verify pass — device claude-shape snapshot `~/.claude/guidelines/claude-shape/subprocess-tool-gates.md`
-**Problem:** `parallel-worktrees.md` § Required flags prescribes prompt-first ordering to stop the variadic `--allowedTools` swallowing the prompt. The device claude-shape snapshot supersedes this with a bare `--` terminator (`claude -p … --allowedTools "Skill,Agent" -- "<prompt>"`), which neutralizes every trailing variadic at once. The snapshot also recommends granting `Agent` defensively alongside `Skill` — drain's triage phase dispatches `/super-bootstrap:triage`, which spawns a subagent; that dispatch is ungated today but the auto-trust is version-fragile. Both are robustness issues on the same dispatch line.
-**Area:** `plugins/super-bootstrap/skills/drain/assets/parallel-worktrees.md` § Required flags
-**Prior:** Replace prompt-first ordering with `-- "<prompt>"` terminator; add `Agent` to the allowedTools grant alongside `Skill`.
-
 ### GAP-044 — drain doc-lane skip-review condition names no evaluator — gateway pre-spawn vs subprocess self-skip both read consistently
 
 **Logged:** 2026-07-26 · **Source:** DEBT-028 verify pass — cold dry-run agent authoring phase prompts from `phase-loop.md` alone

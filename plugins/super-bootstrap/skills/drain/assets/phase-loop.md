@@ -4,10 +4,10 @@ Per wave member: the gateway enters the item's phase chain at its `stage` (from 
 
 ```
 cd .claude/worktrees/drain-{id}
-claude -p "<phase prompt>" --model sonnet --setting-sources local,project --permission-mode acceptEdits --allowedTools "Skill"
+claude -p --model sonnet --setting-sources local,project --permission-mode acceptEdits --allowedTools "Skill,Agent" -- "<phase prompt>"
 ```
 
-The `<phase prompt>` is `assets/worktree-boundary.md` (embedded verbatim — the subprocess attention anchor) followed by the phase task. **Prompt is the first positional** — `--allowedTools` is variadic and swallows a trailing prompt (`parallel-worktrees.md §Dispatch step`). Embedding at dispatch is the delivery mechanism: a `.claude/worktrees/**` path-glob rule would never fire, since the subprocess's project root is the worktree and its own reads are root-relative.
+The `<phase prompt>` is `assets/worktree-boundary.md` (embedded verbatim — the subprocess attention anchor) followed by the phase task. **`--` terminates option parsing** before the prompt — `--allowedTools` is variadic and swallows a trailing prompt without it (`parallel-worktrees.md §Dispatch step`). Embedding at dispatch is the delivery mechanism: a `.claude/worktrees/**` path-glob rule would never fire, since the subprocess's project root is the worktree and its own reads are root-relative.
 
 Background (`Bash(run_in_background: true)`), notification-driven (push, not poll). The phase task names its **artifact transition** — what the phase produces and where it lands (§Phase → artifact) — and the discipline it runs under comes from the repo's own `CLAUDE.md`, which the worktree carries. The subprocess then writes its status. Required-flags table (flag → consequence-if-missing, includes `--model` and `--allowedTools`): `parallel-worktrees.md §Required flags` — canonical, don't restate here.
 

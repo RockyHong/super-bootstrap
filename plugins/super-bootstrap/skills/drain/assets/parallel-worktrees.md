@@ -34,33 +34,35 @@ cp .claude/templates/worktree-settings.local.json .claude/worktrees/drain-{id}/.
 
 ```bash
 cd .claude/worktrees/drain-{id}
-claude -p "<phase prompt>" \
+claude -p \
   --model sonnet \
   --setting-sources local,project \
   --permission-mode acceptEdits \
-  --allowedTools "Skill"
+  --allowedTools "Skill,Agent" \
+  -- "<phase prompt>"
 ```
 
 ### Required flags (miss one → silent degrade or hard failure, not a loud error)
 
 Canonical spot for this table — cross-referenced, not restated, from `SKILL.md` and `phase-loop.md`.
 
-| Flag / ordering | If missing |
-| ---------------- | ---------- |
-| Prompt-first ordering | `--allowedTools` (variadic) swallows a trailing prompt as tool-rule values → `Error: Input must be provided`. |
-| `--allowedTools "Skill"` | Bundled skills (`/code-review`) are permission-denied in `-p` mode — review phase silently degrades to a no-op. |
+| Flag | If missing |
+| ---- | ---------- |
+| `--` terminator before prompt | `--allowedTools` (variadic) swallows a trailing prompt as tool-rule values → `Error: Input must be provided`. |
+| `--allowedTools "Skill,Agent"` | Bundled skills (`/code-review`) permission-denied in `-p` mode; `Agent` grant hedges version-fragile subagent dispatch auto-trust — review phase degrades or dispatch breaks. |
 | `--model sonnet` | Subprocess inherits the invoking (gateway) model instead — drain is the widest fan-out surface in the system, so an unspecified tier multiplies cost per item across the whole wave. |
 | `--setting-sources local,project` | Worktree's own `settings.local.json` + committed `.claude/` (rules, skills) never register — subprocess runs against the wrong config. |
 | `--permission-mode acceptEdits` | Edit/Write inside the worktree prompt for confirmation instead of auto-applying — breaks headless (`-p`) execution. |
 
 Mechanism detail the table doesn't carry (consequences live in the table only):
 
-- Prompt-first: keep the prompt as the first positional, matching the official-docs example `claude -p "<prompt>" --allowedTools ...`; never trail it after `--allowedTools`.
+- `-- "<prompt>"` terminator: end option parsing with `--` so the prompt lands positional regardless of how many variadics precede it; more robust than prompt-first ordering, which dodges only one variadic.
+- `--allowedTools "Skill,Agent"` — `Skill` gates bundled skill calls (`/code-review`); `Agent` hedges version-fragile subagent dispatch auto-trust (the triage phase spawns `/super-bootstrap:triage`, which dispatches a subagent). Tools comma-join into a single token — no space-variadic.
 - `--model sonnet` — one subprocess-level pin shared by every phase (triage/execute/review); split per-phase only if a phase proves to need a different tier.
 - `--setting-sources local,project` — because cwd = worktree, `project` resolves to the worktree tree (registering its rules + skills); user sources stay excluded. The FS wall is cwd-default + no `--add-dir <gateway>`, independent of source selection.
 - `--permission-mode acceptEdits` — auto-accepts Edit/Write within the allow set only; Bash stays deny-by-default unless allowed.
 
-_These `claude -p` flags + the prompt-first ordering are confirmed against the official Claude Code CLI reference and a live end-to-end drain smoke (CC 2.1.183): `--setting-sources` accepts `user,project,local`; `acceptEdits` is a valid `--permission-mode` value; `--allowedTools` is valid (alias `--allowed-tools`) and variadic; `--model` accepts an alias (`sonnet`/`opus`/`haiku`) or a full model id. Re-confirm if the CLI surface moves._
+_These `claude -p` flags are confirmed against the official Claude Code CLI reference and a live end-to-end drain smoke (CC 2.1.183): `--setting-sources` accepts `user,project,local`; `acceptEdits` is a valid `--permission-mode` value; `--allowedTools` is valid (alias `--allowed-tools`) and variadic; `--model` accepts an alias (`sonnet`/`opus`/`haiku`) or a full model id. The `--` terminator and the `Agent` grant are defensive rather than smoke-confirmed — they neutralize the variadic swallow whatever precedes the prompt, and hedge subagent-dispatch auto-trust that CLI versions may stop granting. Re-confirm if the CLI surface moves._
 
 Dispatch via `Bash(run_in_background: true)` so multiple subprocesses run concurrently; the gateway is notified on each completion (push, not poll).
 
