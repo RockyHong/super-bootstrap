@@ -3,9 +3,6 @@
     "super-bootstrap@super-bootstrap": true,
     "superpowers@claude-plugins-official": true,
     "andrej-karpathy-skills@karpathy-skills": true,
-    "plugin-dev@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true,
     "axioms@axioms-protocol": true
   },
   "extraKnownMarketplaces": {
