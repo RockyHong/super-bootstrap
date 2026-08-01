@@ -110,20 +110,6 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `plugins/super-bootstrap/shared/classify-actionable.md` § Cloud-safe criterion; `agents/todo.md` §1; `plugins/super-bootstrap/skills/drain/assets/eligibility.md`
 **Prior:** Sibling of DEBT-022 — that one asks whether the pass scales to row count, this one whether one phase of it earns its keep at all; triage may collapse them. Cheapest shape to test: a verb-map-only intent (drop the per-row body reads, keep the verb→intent table's locked rows, default the derived ones) and check whether any real board verdict changes. **Any retirement must replace drain's admission predicate in the same change** — without the venue map, `intent == Cloud` is drain's whole gate. Not a de-routing card: the axis names no foreign harness (`docs/decisions.md`).
 
-### BUG-019 — `todo full` scaffold renders empty table in spec-free repos, contradicting "every row, flat" contract
-
-**Logged:** 2026-07-25 · **Source:** live session running `/super-bootstrap:todo all` on super-bootstrap source repo (2026-07-25, 3 open DEBT rows)
-**Problem:** `SKILL.md` Arguments table documents `full` as "every row (need-me + drainable), ungrouped, ranked"; plugin.json description says "flat everything". But `assets/scaffolds.md` § Full table only accepts `specs/{date}-{slug}.md` and `plans/{date}-{slug}.md` rows — backlog rows are collapsed to a single count line ("Backlog: N BUG, M DEBT, K GAP open"). In a repo with no spec/plan files the rendered output is an empty table plus the count line — less informative than the default need-me board, which surfaces individual backlog rows as `Triage: {ID}` lines. Observed render on 2026-07-25: table header only, no data rows, then "Backlog: 0 BUG, 3 DEBT, 0 GAP open".
-**Area:** `plugins/super-bootstrap/skills/todo/SKILL.md` Arguments table · `plugins/super-bootstrap/skills/todo/assets/scaffolds.md` § Full · `plugins/super-bootstrap/.claude-plugin/plugin.json` todo description
-**Prior:** Either (a) make the Full scaffold render each backlog row as a table row (one row per open ID, same table or separate), or (b) align SKILL.md / plugin.json wording to match the scaffold's actual output shape.
-
-### GAP-037 — `todo` sub-verb has no fallback contract for unlisted argument values
-
-**Logged:** 2026-07-25 · **Source:** incidental observation alongside BUG-019 (same live session)
-**Problem:** `all` is not listed in SKILL.md's Arguments table; the gateway inferred a mapping to `full` by semantic proximity. No fallback behavior is documented — the contract is silent on what happens when an unrecognized sub-verb is passed (fail / default to need-me / map to nearest match). Any unlisted value silently falls through to model-discretion resolution.
-**Area:** `plugins/super-bootstrap/skills/todo/SKILL.md` Arguments table
-**Prior:** Add a fallback contract to the Arguments table: unrecognized sub-verb → default to need-me board (or explicit error), so behavior is specified rather than inferred.
-
 ### DEBT-023 — doc-sync-scan per-commit Sonnet dispatch burns ~8-12k tokens for a read-only advisory
 
 **Logged:** 2026-07-25 · **Source:** GitHub issue #24 (claude-config-manager 2026-07-23 harness-pain harvest, absorbed via /pull-issue)

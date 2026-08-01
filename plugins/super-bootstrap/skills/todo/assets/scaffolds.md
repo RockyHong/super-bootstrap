@@ -247,27 +247,35 @@ more: /super-bootstrap:help
 
 ### Full
 
+One ranked table, one row per open item, every source (specs, plans, backlog, test queue) in the same table. No grouping, no aggregate lines — a source that collapses to a count is not flat.
+
+Column conventions — every row fills every column; a column inapplicable to a row renders `—`:
+
+- **#** — rank position from agent §4, `1` = top. Sequential over the whole table, never restarted.
+- **Action** — the classification spec's `action` string verbatim (`Triage: {ID} {title}`, `Continue execute: {file} ({x}/{y})`, `Settle design: {file}`, `Deliberate: {topic}`, `Apply: {rule} → {site}`). It already names the file or ID, so Full carries no separate File column.
+- **Stage** — the spec's `stage`: `raw` | `triaged` | `spec` | `plan` | `review` | `done`.
+- **Progress** — `{x}/{y}` where a plan's checkboxes supply it; `—` on spec, backlog, and test-queue rows.
+- **Blocker** — `user` where the row awaits a user decision, else `none`.
+- **Impact** / **Blast** — per agent §3, computed on every row including backlog rows.
+
 ```
 # To-Do — {date}
 
-| File                                  | Stage         | Progress | Blocker          | Impact       | Blast       |
-| ------------------------------------- | ------------- | -------- | ---------------- | ------------ | ----------- |
-| specs/{date}-{slug}.md                | {stage}       | {x/y|—}  | {none|user|...}  | {tag}        | {tag}       |
-| plans/{date}-{slug}.md                | {stage}       | {x/y|—}  | {none|user|...}  | {tag}        | {tag}       |
-
-{Backlog: N BUG, M DEBT, K GAP open (see docs/backlog.md) — only if backlog.md exists}
+| #  | Action                                              | Stage    | Progress | Blocker     | Impact       | Blast       |
+| -- | --------------------------------------------------- | -------- | -------- | ----------- | ------------ | ----------- |
+| 1  | {action string}                                     | {stage}  | {x/y|—}  | {none|user} | {tag}        | {tag}       |
 
 ## Uncategorized
 
-| #  | File                                                | Why ambiguous                                    |
+| #  | Action                                              | Why ambiguous                                    |
 | -- | --------------------------------------------------- | ------------------------------------------------ |
-| 1  | {file}                                              | {one-line}                                       |
+| 1  | {verb + what}                                       | {one-line — what signal was missing}             |
 
-{pending unblock: {n} — only if n>0}
+{pending unblock: {n} — count of rows the agent §4 Coupling gate held out as hard-blocked; only if n>0}
 {footer per § Render footer-hint}
 ```
 
-No macro header for Full — full IS the macro. Harness-intent spec/plan files render as normal Full rows with no `Deliberate:`/`Apply:` prefix (no column carries it — the Stage/Impact/Blast cells carry the signal); harness backlog rows ride the backlog count line. No "Next up" recommendation block in any mode. Momentum-driven surfacing is **computed foregrounding** — venue grouping + fan-out rank order the board by objective leverage, no opinion prose. The bar stands on strategizing ("Best next: Y" / "Recommend X"), never on ranked ordering: surface, don't editorialize.
+No macro header for Full — full IS the macro. Harness rows render inline in rank order, their `Deliberate:` / `Apply:` prefix riding the Action string (no separate group — grouping is `harness` mode's job). No "Next up" recommendation block in any mode. Momentum-driven surfacing is **computed foregrounding** — venue grouping + fan-out rank order the board by objective leverage, no opinion prose. The bar stands on strategizing ("Best next: Y" / "Recommend X"), never on ranked ordering: surface, don't editorialize.
 
 Footer: fill per § Render footer-hint in the todo agent (`agents/todo.md`) — canonical home.
 

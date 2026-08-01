@@ -18,6 +18,7 @@ Default render is the **need-me board** — momentum-driven, not a kanban: auton
 | `/super-bootstrap:todo cloud`  | Cloud-safe filter — plan-writes for approved specs, executing plans on pure-logic surfaces, review-stage reads, doc cleanup, backlog triage. **Macro header on top.**                                  |
 | `/super-bootstrap:todo device` | Device-only filter — executing plans on UI / e2e / manual surfaces, manual verification of review-stage plans. **Macro header on top.**                                                                |
 | `/super-bootstrap:todo harness`| Harness filter — rows whose deliverable is the orchestration engine (`CLAUDE.md`, `.claude/**`, plugin-source harness files), grouped **Deliberate** (new doctrine) / **Apply** (existing doctrine, bounded site). Never mixed into the autonomous slices. **Macro header on top.**                                          |
+| *any other value*             | **Fallback.** Dispatch `mode: needme` (the default board), and print this line above the relayed board: `Unrecognized sub-verb '{value}' — rendering the default board. Modes: full · discuss · cloud · device · harness.` Never map an unlisted value onto a listed mode by semantic proximity — this table is the whole set. |
 
 **Macro header** (sub-verb modes only): single line right under title showing cross-mode counts — `Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}`. Free (agent classified all rows pre-filter), ignore-or-pickup. Counts only — no IDs, no recommendations.
 
@@ -46,9 +47,11 @@ On bare `/super-bootstrap:todo`:
 2. Otherwise dispatch the `todo` subagent with `mode: needme`. No picker, no questions.
 3. Relay the agent's rendered output verbatim. No editorial, no preface.
 
-`/super-bootstrap:todo full` dispatches `mode: full` — the flat-escape board (every row, need-me + drainable, ungrouped).
+`/super-bootstrap:todo full` dispatches `mode: full` — the flat-escape board: every open row from every source (specs, plans, backlog, test queue) in one ranked table, ungrouped, nothing collapsed to a count.
 
 On sub-verb invocation (`/super-bootstrap:todo cloud` etc.): run the skip-gate, then dispatch immediately with that mode.
+
+On an argument matching no Arguments-table row: run the skip-gate, print the fallback notice (§Arguments), then dispatch `mode: needme`. Resolve by table lookup only — an unlisted value is unlisted, not a near-match.
 
 ## Footer rule
 
@@ -63,7 +66,7 @@ When dispatching the agent, the prompt **must embed the scaffold** literal for t
 **Dispatch prompt template:**
 
 ```
-mode: {discuss | cloud | device | harness | full}
+mode: {needme | discuss | cloud | device | harness | full}
 
 Classify every open item per this spec, then render EXACTLY the scaffold below. Fill bracketed slots from your gathered + filtered + ranked rows per agent protocol. Do NOT change shape, do NOT swap to an alternative template, do NOT merge or split groups the scaffold separates. Omit a group's table only if its row count is zero (omit the sub-heading too).
 
@@ -82,7 +85,7 @@ Before classifying, use the Read tool on this exact path: {classify_spec_path}. 
 
 Steps:
 
-1. Run the skip-gate (§Dispatch behavior). Confirmed dispatch → continue to step 2.
+1. Run the skip-gate (§Dispatch behavior). Confirmed dispatch → resolve the mode by Arguments-table lookup (no argument → `needme`; no matching row → fallback notice + `needme`), then continue to step 2.
 2. Resolve the classification spec path: take the skill base directory (surfaced in the skill invocation as `Base directory for this skill: <abs path>`), append `../../shared/classify-actionable.md`. Read `assets/scaffolds.md` (sibling) and embed the chosen-mode section verbatim in the dispatch prompt. Pass the resolved absolute path as `{classify_spec_path}` — never the file contents. Ranking + render live in the `todo` agent.
 3. Build dispatch prompt per template above.
 4. `Agent` tool, `subagent_type: "todo"`, prompt = the built dispatch prompt.
@@ -93,5 +96,5 @@ Steps:
 
 - **Read-only.** Never modifies files. Never executes git operations.
 - **Works in any repo** — `docs/work/` present (created by `/super-bootstrap:harness-bootstrap`) drives the board; absent → the skip-gate redirects to `/super-bootstrap`.
-- **Verbatim relay rule.** Agent's output IS the value. Gateway adds nothing — no preface, no editorial.
+- **Verbatim relay rule.** Agent's output IS the value. Gateway adds nothing — no preface, no editorial. Sole exception: the §Arguments fallback notice, printed above the board as its own line, never woven into the render.
 - **Footer-hint convention.** Footer is the agent's render concern, computed per `agents/todo.md` § Render footer-hint (see §Footer rule). Gateway relays verbatim.

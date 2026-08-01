@@ -153,7 +153,7 @@ Then rank the body rows (hard-blocked held out). Within each need-me group, rank
 
 **Soft-coupling adjacency** overrides these keys locally: a soft-coupling upstream row ranks immediately above the row it shapes, even when the keys would separate them.
 
-For `full` mode, render rows in this rank order (file column shows actual filename). No "Next up" block — user reads ranked list, picks.
+For `full` mode, render every kept row in this rank order — one row per open item from **every** source (specs, plans, backlog, test queue) in one table, ungrouped. No source collapses to a count line. Column conventions (Action string verbatim, `—` for cells a row has no value for) live in the Full scaffold. No "Next up" block — user reads ranked list, picks.
 
 ### 5. Cross-mode counts (free)
 
