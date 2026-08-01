@@ -145,9 +145,3 @@ The claim is write-once — captured at the richest-context moment, read cold by
 **Area:** `agents/todo.md`; `plugins/super-bootstrap/skills/todo/**`
 **Prior:** Right-size the classify+render work to actual working-set size — skip or shorten classify phases when row count is small.
 
-### DEBT-021 — log agent ID allocation has no recovery contract for concurrent session collision
-
-**Logged:** 2026-07-25 · **Source:** GitHub issue #26 (repo owner, absorbed via /pull-issue)
-**Problem:** `agents/log.md` step 4 requires bumping the ID high-water mark in the same write, but specifies no recovery when two concurrent sessions both read the header before either writes — both compute the same `max+1` and allocate the same ID. The Edit tool's `old_string` mismatch catches the collision (stale-state detection), but what the subagent does after that failure is model discretion, not a spec contract. Same exposure on `PARK-000` high-water in `docs/parked.md`. Cost of a slip is higher than volatile state — the backlog is a durable queue, not something a fresh session regenerates.
-**Area:** `agents/log.md` step 4; `docs/backlog.md` ID high-water mark line; `docs/parked.md` `PARK-000` line
-**Prior:** Add explicit recovery to step 4: on Edit failure (HWM mismatch), re-read the header and recompute the ID before retrying.
