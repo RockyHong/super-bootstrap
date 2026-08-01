@@ -253,15 +253,16 @@ requires RED-first for behavior-shaping prose. Shipping a rule here would be tha
 shape with no failing test behind it.
 
 **Shipped shape.** The ambient-laws line carries three disciplines **the repo declares**, one
-line each, no external referent — test-first, verify-before-claiming,
+line each, no foreign-harness referent — test-first, verify-before-claiming,
 review-received-not-absorbed. The fourth (`dispatching-parallel-agents`) is cut outright,
 because § Dispatch is its single home (VII). The rejected rules-layer direction is recorded
 in [`docs/decisions.md`](../decisions.md) so it is not re-proposed.
 
-**What the compression costs is open.** Each named skill carried a full body that loaded at
-its fire moment; a one-liner does not. `Verify before claiming` plausibly compresses without
-loss, `Review received, not absorbed` does not. `DEBT-032` holds that question — the answer is
-not a rule glob (closed above) but whether the repo authors its own discipline bodies.
+**What the compression costs — answered for the review law.** Each named skill carried a full
+body that loaded at its fire moment; a one-liner does not. `Verify before claiming` plausibly
+compresses without loss; `Review received, not absorbed` did not — the repo authors its own
+discipline body for it: the `review-intake` agent, with § Dispatch routing judgment-grade
+findings through it before any implementer. The answer was never a rule glob (closed above).
 
 ### § Coding Principles is a different concern, riding Wave 1 by name-adjacency
 
@@ -282,12 +283,12 @@ socket follows deliberately: `harness-bootstrap` writes no such file, so leading
 socket would lead with the branch that fires in no repo the runway produces. That residual is
 `GAP-042`.
 
-Dispatch doctrine came through intact: of CLAUDE.md § Dispatch's six bullets, only the
+Dispatch doctrine came through intact: of CLAUDE.md § Dispatch's bullets, only the
 "build inside a superpowers chain → that chain's executor governs" clause was coupled, and
-it is cut. The other five — closure-judged inline-vs-dispatch, per-phase build dispatch,
-transcription is not a build, parallel within a phase not across, create-new-file dispatches
-foreground — are harness-agnostic and untouched, and the cut bullet's own commit-door
-mechanics survive under a harness-neutral heading.
+it is cut. The rest — closure-judged inline-vs-dispatch, per-phase build dispatch,
+transcription is not a build, review findings gated through `review-intake`, parallel within
+a phase not across, create-new-file dispatches foreground — are harness-agnostic, and the cut
+bullet's own commit-door mechanics survive under a harness-neutral heading.
 
 ## 6. Decided vs open
 
