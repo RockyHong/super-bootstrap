@@ -27,21 +27,21 @@ In Claude Code:
 
 One command per repo. Auto-routes:
 
-- **Pre-existing repo** → scans stack, asks a few clarifying Qs, scaffolds `CLAUDE.md` + docs, curates skills / MCPs / hooks.
-- **Greenfield** → lean ideation Q&A seeds foundation docs with first move queued, then scaffolds the harness.
+The runway installs or syncs first either way — no product Q&A at any point. What follows depends on whether the seed docs already carry product content:
+
+- **Seed docs substantive** → curates skills / MCPs / hooks against the stack those docs already declare.
+- **Seed docs unfilled (greenfield)** → seeds three GAP cards (overview, techstack, tech curation) and stops at the resolve gate; curation waits until the product is settled.
 
 Picks are matched to your stack and labeled by trust signal (Anthropic-vetted / popular / fresh / unaudited).
 
 ```mermaid
 flowchart TD
     entry(["/super-bootstrap"])
-    entry --> gate{"greenfield?"}
-    gate -->|yes| ideate["ideation"]
-    gate -->|no| scan
-    ideate -->|writes| seeds["foundation docs"]
-    seeds --> scan["project scan"]
-    scan --> scaffold["scaffold CLAUDE.md<br/>+ skeleton docs"]
-    scaffold --> curate["curate skills / MCPs / hooks"]
+    entry --> runway["install / sync runway<br/>CLAUDE.md + skeleton docs + rules"]
+    runway --> gate{"seed docs<br/>substantive?"}
+    gate -->|yes| curate["curate skills / MCPs / hooks"]
+    gate -->|no| cards["seed 3 GAP cards"]
+    cards --> hold["resolve gate — fill<br/>overview + techstack, re-run"]
     curate --> done["harness live<br/>start building"]
 ```
 
