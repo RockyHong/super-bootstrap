@@ -1,6 +1,6 @@
 ---
 name: harness-bootstrap
-description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, skeleton docs (overview, techstack, work/), path-scoped rules, and core plugin pins; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap; opt-in earn-gated scale module (parked + test-queue containers, venue-map rule, backlog fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks on re-run. Solo dev workflow."
+description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, skeleton docs (overview, techstack, work/), path-scoped rules, and core plugin pins; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap; opt-in earn-gated scale module (parked + test-queue containers, venue-map rule, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks on re-run. Solo dev workflow."
 tags: [harness, scaffold, setup, meta, docs]
 ---
 
@@ -142,7 +142,7 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - `docs/decisions.md` § Closed Forks table rows (consumer-filled history)
 - `.claude/rules/<rule>.md` grown sections (additions the user/doc-sync added below the skeleton scaffold)
 - `.claude/rules/<rule>.md` files the user authored without a matching skeleton (treat as fully project-owned)
-- Scale-module container content — `docs/parked.md` `## Entries` + `## Sweep log` content, `docs/test-queue.md` `## Pending` / `## Failed (re-queued for fix)` rows (consumer-filled, like backlog rows; only the skeleton headers/shape stay pipeline-owned)
+- Scale-module container content — `docs/parked.md` `## Entries` + `## Sweep log` content, `docs/test-queue.md` `## Pending` / `## Failed (re-queued for fix)` rows (consumer-filled, like card content; only the skeleton headers/shape stay pipeline-owned)
 - Other settings in `.claude/settings.json` outside the plugin-pin keys
 
 ### 2a: Folders & core plugin pin
@@ -244,7 +244,7 @@ On `skip`: nothing placed; drain's own §Pre-flight step 0 installs on first `/s
 
 ### 2a-scale: Scale module (opt-in, earn-gated)
 
-The scale module adds backlog-adjacent runway — a parked-items artifact, a manual-verification queue, and a phase→venue map — for repos whose backlog has outgrown one flat list. Earn-gated: offer only when a signal shows the repo has grown into it, silent skip otherwise (no prompt spam on small repos).
+The scale module adds work-substrate-adjacent runway — a parked-items artifact, a manual-verification queue, and a phase→venue map — for repos whose card set has outgrown simple scanning. Earn-gated: offer only when a signal shows the repo has grown into it, silent skip otherwise (no prompt spam on small repos).
 
 Signals — any one arms the offer:
 - Card files (`{BUG|DEBT|GAP}-###.md`) in `docs/work/` ≥ 10.
@@ -255,14 +255,14 @@ None hold → skip silently, place nothing. A later re-run re-offers once a sign
 
 When armed, ask once:
 
-> Install the scale module? — `docs/parked.md` (deferred items with named triggers) + `docs/test-queue.md` (manual-verification queue) + `.claude/rules/venue-map.md` (phase → run-location map, feeds `/super-bootstrap:todo` + `/super-bootstrap:drain`) + backlog fact-field guidance.
+> Install the scale module? — `docs/parked.md` (deferred items with named triggers) + `docs/test-queue.md` (manual-verification queue) + `.claude/rules/venue-map.md` (phase → run-location map, feeds `/super-bootstrap:todo` + `/super-bootstrap:drain`) + card fact-field guidance.
 > Install now? (y / skip)
 
 On `y`, place the four `assets/scale/` skeletons per Phase 2's per-artifact rule (all copy verbatim — no substitutions):
 - `parked-skeleton.md` → `docs/parked.md`
 - `test-queue-skeleton.md` → `docs/test-queue.md`
 - `rules-venue-map-skeleton.md` → `.claude/rules/venue-map.md`
-- `backlog-fact-fields.md` → insert its marker-delimited block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`) into the `docs/work/README.md` header, immediately after the `## Categories` section; skip if the markers are already present.
+- `card-fact-fields.md` → insert its marker-delimited block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`) into the `docs/work/README.md` header, immediately after the `## Categories` section; skip if the markers are already present.
 
 Add one summary bullet to CLAUDE.md § Rules for the seeded `venue-map.md` (existing mechanism — glob + 2–4 one-line key points). Stage the placed files with the Phase 2c commit.
 
@@ -434,7 +434,7 @@ Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write fro
 
 **Bootstrap-plan task adaptation:**
 
-The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed backlog` / `Task 3: Cleanup`. Adapt at write time:
+The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed cards` / `Task 3: Cleanup`. Adapt at write time:
 
 - `docs/specs/` NOT scaffolded → drop Task 1
 - No source-code features yet (greenfield / fresh scaffold, Module Index empty) → drop Task 1 — specs document built features; none exist to seed

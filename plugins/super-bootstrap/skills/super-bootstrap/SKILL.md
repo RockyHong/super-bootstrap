@@ -6,7 +6,7 @@ tags: [bootstrap, orchestrator, detect, gate, curation, meta]
 
 # Super Bootstrap — Public Entry, Thin Orchestrator
 
-The single command users invoke. Orchestrates — detect, route, dispatch, integrate — and owns no install procedure itself: scaffolding lives in the generic runway, [`/super-bootstrap:harness-bootstrap`](../harness-bootstrap/SKILL.md). The entry writes no product content and asks no product questions. `overview.md` / `techstack.md` are scaffolded by the runway; their product content fills later at GAP-card pickup. Work tracking (`docs/work/README.md` + `TEMPLATE.md`) is also scaffolded by the runway.
+The single command users invoke. Orchestrates — detect, route, dispatch, integrate — and owns no install procedure itself: scaffolding lives in the generic runway, [`/super-bootstrap:harness-bootstrap`](../harness-bootstrap/SKILL.md). The entry writes no product content and asks no product questions. `overview.md` / `techstack.md` are scaffolded by the runway; their product content fills later at GAP-card pickup.
 
 ## Orchestration spine
 

@@ -1,13 +1,13 @@
 # super-bootstrap
 
-<img src=".github/assets/hero.webp" alt="super-bootstrap: one command writes CLAUDE.md, curates MCPs + skills, seeds tasks/backlog" width="720">
+<img src=".github/assets/hero.webp" alt="super-bootstrap: one command writes CLAUDE.md, curates MCPs + skills, seeds work cards" width="720">
 
 Skip the per-project Claude setup grind. One command picks your skills, writes `CLAUDE.md`, pins your config, **and gives Claude a phase-gated workflow** — every session runs the pipeline, but only the phases the work actually needs. Workflow, not just a toolbelt. The harness names disciplines, not skills, so it does not marry you to any one process-harness plugin.
 
 ## Best for
 
 Solo devs juggling multiple repos — agentic builders, not just coders. The harness carries
-product context (problem, user, gap backlog) alongside the engineering pipeline, because a
+product context (problem, user, gap cards) alongside the engineering pipeline, because a
 codebase answers *solution* only.
 
 ## Install
@@ -58,7 +58,7 @@ Re-run any time — incremental, never overwrites your edits.
 | `.claude/super-bootstrap-runway.json` | **Version-stamped** — records the plugin version that scaffolded/synced this runway. On re-run a stale or missing stamp forces a full drift re-check (no "looks current" skim). |
 | `.env*`, `*.key`, `*credential*` | **Skipped** from scan entirely — never read, never written. |
 
-Also bundles `/super-bootstrap:todo` (intent-filtered work board), `/super-bootstrap:log` (capture observations into the backlog), `/super-bootstrap:commit` (session-isolated, doc-sync-gated), `/super-bootstrap:merge` (absorb feature branches; aborts + surfaces on conflict), and `/super-bootstrap:help` (index of installed user-invoke skills) — all namespaced under `super-bootstrap:` so plugin manager disambiguates collisions automatically. The `/super-bootstrap` entry stays bare (plugin-name == skill-name special case).
+Also bundles `/super-bootstrap:todo` (intent-filtered work board), `/super-bootstrap:log` (capture observations as work cards), `/super-bootstrap:commit` (session-isolated, doc-sync-gated), `/super-bootstrap:merge` (absorb feature branches; aborts + surfaces on conflict), and `/super-bootstrap:help` (index of installed user-invoke skills) — all namespaced under `super-bootstrap:` so plugin manager disambiguates collisions automatically. The `/super-bootstrap` entry stays bare (plugin-name == skill-name special case).
 
 Optional bonus: `/super-bootstrap:release-init` — one-shot scaffolder. Detects project type (unity / tauri / node / ios-native / android-native / generic) and generates a tailored `/release` skill at `.claude/skills/release/SKILL.md` (project-level skill, bare invocation since it lives in the user's repo, not under this plugin's namespace). Run only on repos that ship versioned releases.
 
