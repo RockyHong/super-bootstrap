@@ -2,7 +2,7 @@
 paths:
   - "docs/**/*.md"
   - "README.md"
-description: "Fires on read of a prose doc. Author concepts with links to their SSOT home — the emit half of doc-link discipline. Predicate + guards in work-discipline/doc-link-discipline.md."
+description: "Fires on read of a prose doc. Link each concept to its SSOT home as you write. Predicate + guards in work-discipline/doc-link-discipline.md."
 ---
 
 # SSOT Doc-Link — Emit at Authoring

@@ -34,9 +34,12 @@ predicate lives here; the action lives with each.
    present-tense in the state-SSOT, stripped of when/why-decided. "Refinement is
    deferred behind the port" — not "on <date> we decided to defer refinement
    because…".
-4. **Verification stamps stay.** A stamp recording *when a fact was last checked*
-   (probed / measured on date) is current-state metadata — it tells the reader the
-   fact's freshness. Not history pollution.
+4. **When-checked → git.** A "last checked on date" stamp reads as freshness
+   metadata, but the datum is historical — git commit metadata is its drift-proof
+   home; an in-body copy is a parallel truth that goes stale on the next overwrite.
+   The standing decay note plus git cover freshness; the body carries no date. A
+   version-bound pin ("valid as of vX.Y") is the exception — it bounds the fact's
+   validity, so it is substantive state, not a date stamp.
 
 ## Audit predicate — pollution shapes
 

@@ -2,18 +2,17 @@
 paths:
   - "docs/**/*.md"
   - "README.md"
-description: "Fires on read of a prose doc. Classify its dimension (state vs history) before propagating — the emit half of doc-dimension discipline. Predicate in work-discipline/doc-dimension-discipline.md."
+description: "Fires on read of a prose doc. Classify its dimension (state vs history) and author to it before propagating. Full predicate in work-discipline/doc-dimension-discipline.md."
 ---
 
 # Dimension Discipline — Classify Before You Propagate
 
-Before editing a prose doc, classify what it owns: **state** (what is true now —
-overwrite stale facts in place) or **history** (a dated chronicle of what was
-decided when — append-only, git's job, not prose).
-
-Author to the doc's dimension: state-SSOT overwrites to truth-now; a binding past
-decision states present-tense as a live constraint, stripped of when/why-decided;
-verification stamps (last-checked dates) stay; genuine chronicle routes to git.
+Before editing a prose doc, classify its dimension — **state** (true now) or
+**history** (a dated chronicle) — and author to that dimension. One thing reads
+as history but stays: a still-binding past decision states present-tense as a live
+constraint. A "last-checked" date is not an exception — its home is git commit
+metadata, not the body (a version-bound pin like "valid as of vX.Y" is a
+substantive fact, not a date stamp).
 
 **Tripwire — the artifact is the trap.** If the doc you are about to edit ALREADY
 mixes dimensions (timestamps crawling into a state-SSOT, a chronicle leaking

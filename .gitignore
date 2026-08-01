@@ -16,3 +16,6 @@ Thumbs.db
 .claude/skills/*/.served
 .claude/agents/*.md.served
 .claude/rules/*.md.served
+
+# claude-config-manager — consult-check hook per-session cache (regenerated, local-only)
+.claude/.consult-catalog

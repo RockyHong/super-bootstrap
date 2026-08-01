@@ -28,7 +28,8 @@ An Edit failing `"File has not been read yet"` or `"File has been modified since
 
 - **Read before the first Edit of a file each session** — the tool contract requires it; an Edit without a prior Read trips the guard and buys a forced round-trip.
 - **Re-Read after either error class above** before the next Edit of that file.
-- **Re-Read after any save the harness mutates behind you** — formatter hook, linter-on-commit (prettier / lint-staged repos mutate on every commit).
+- **Re-Read after any save that lands behind your read-tracker** — formatter hook, linter-on-commit (prettier / lint-staged repos mutate on every commit), and any file-writing subagent that returned (a skill may have dispatched it): it wrote in its own context, invisible to yours. Prevention half — sequencing the writer dispatch itself — in [`dispatch-run-mode.md`](dispatch-run-mode.md).
+- **`git diff` output is not a Read** — after reviewing another agent's edits via diff, Read the file itself before editing it.
 - **Two consecutive same-file Edit failures = mandatory re-Read**, no exceptions — the loop is unwinnable without fresh state.
 
 ## When a `replace_all` slips through
