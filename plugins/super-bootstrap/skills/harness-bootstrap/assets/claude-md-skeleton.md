@@ -60,7 +60,7 @@ The gateway orchestrates; it does not build. Inline lane = orchestration, reads,
 
 ## Doc Sync (non-negotiable)
 
-Named pipeline step — every route includes it between user review and commit. The commit door (`/super-bootstrap:commit`) runs gateway-inline; a mechanical grep-gate dispatches the cold `doc-sync-scan` agent when the diff touches the doc surface, and its `stale-docs` return goes to the gateway, which resolves with the user before the commit lands. Coverage backstop: `/check-docs-consistency` (on-demand, whole-repo).
+Named pipeline step — every route includes it between user review and commit. The commit door (`/super-bootstrap:commit`) runs gateway-inline; a mechanical grep-gate dispatches the cold `doc-sync-scan` agent when the diff touches the doc surface, and its `stale-docs` return goes to the gateway, which resolves with the user before the commit lands. Three refinements live in the commit door: card-lifecycle diffs (`docs/work/`-only) skip the gate; product-anchor diffs (`docs/overview.md` § Problem / § User) route through its premise-closure lane; a bundled link-integrity check runs every commit. Coverage backstop: `/check-docs-consistency` (on-demand, whole-repo).
 
 Before every commit, scan for prose describing behavior touched by the diff — `docs/` (specs, overview, techstack, the [`docs/work/`](docs/work/README.md) card set) **and behavior-narrating prose outside `docs/`: the root `README`, plus any manifest/description field the diff's behavior changes**. If any looks stale:
 

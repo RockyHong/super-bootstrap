@@ -222,7 +222,7 @@ safe-by-default (rationale + full procedure:
 
 | # | Asset | Fires on | Effect |
 | - | - | - | - |
-| 1 | `commit-channel` (PreToolUse) | `Bash(git commit *)` | Deny raw `git commit` from worker subagents — deny text routes the worker back to `/super-bootstrap:commit`; main session and separate-process workers pass. The commit door runs mechanics gateway-inline and dispatches a cold `doc-sync-scan` only on a grep-gate hit — no separate gate hook |
+| 1 | `commit-channel` (PreToolUse) | `Bash(git commit *)` | Deny raw `git commit` from worker subagents — deny text routes the worker back to `/super-bootstrap:commit`; main session and separate-process workers pass. The commit door runs mechanics gateway-inline, runs a bundled link-integrity check every commit, and dispatches a cold `doc-sync-scan` only on a grep-gate hit — no separate gate hook |
 
 Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) — copies the script to `.claude/hooks/` and merges the settings snippet into `.claude/settings.json` (`hooks.PreToolUse[]`: commit-channel). Content-aware (copy-on-drift — a version-marker mismatch re-copies the asset, so an upstream fix reaches existing repos), silent when already current; stage the placed files with the Phase 2c commit. Same asset-copy + guarded-merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3) — one pattern, reused here rather than re-derived.
 

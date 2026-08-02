@@ -15,11 +15,16 @@ Commits the changes this Claude session produced, leaving prior uncommitted work
 2. **Gather state** — `git status`, `git diff`, `git diff --staged`, `git log --oneline -10` (recent style).
 
 3. **Doc-sync grep-gate** — mechanical, no judgment:
+   - **Deferred mode — check first** (drain-worktree isolated commit): doc-sync belongs to the merge boundary — skip all of §3, go to §5.
+   - **Card-lifecycle exemption:** every changed path inside `docs/work/` (card-thread appends, card deletions, work-README high-water bump) → skip the gate, go to the link check below then §5. Card threads are self-contained; cross-card ID mentions are frozen provenance, not behavior narration. Mixed diff → run the gate on the non-`docs/work/` paths only.
+   - **Premise lane — product-anchor paths:** the diff touches the product anchor (`docs/overview.md` § Problem / § User, or a dedicated product doc where the repo splits one out) → route the anchor portion through §3b instead of the behavior scan; the rest of the diff continues through this gate.
    - Extract terms from the changed files: `*/skills/<X>/SKILL.md`, `*/agents/<X>.md`, `*/rules/<X>.md` → `<X>`; else basename sans extension. Drop generics (`SKILL`, `CLAUDE`, `README`, `TEMPLATE`, `backlog`, `marketplace`, `plugin`, `gitignore`).
    - Grep the doc surface (CLAUDE.md § Doc Sync owns it — `docs/**` + root `README` + manifest description fields) for any term, excluding the changed files themselves. This is a cheap **pre-filter** on dispatch, not the scan — the agent re-scans cold.
    - **Any hit → dispatch the doc-sync scan (§4).**
    - **No hit → the diff narrates nothing; go to §5.**
-   - **Deferred mode** (drain-worktree isolated commit): doc-sync belongs to the merge boundary — skip the gate, go to §5.
+   - **Link integrity (every non-deferred commit, exemption included):** run `<skill-base>/assets/doc-links.sh check` from the repo root — `<skill-base>` is the `Base directory for this skill:` path surfaced at invocation; zero model tokens. Broken links (path or anchor) surface to the user with the commit: fix or explicitly acknowledge before landing; never silently skip.
+
+3b. **Premise-closure lane (product-anchor diff)** — a problem/ICP revision changes premise, not behavior; its closure is every doc whose framing leans on the anchor. Enumerate mechanically — union of `<skill-base>/assets/doc-links.sh refs <anchor-path>` (reverse index) and the fallback glob `docs/work/GAP-*.md` + `docs/specs/*.md` (a GAP names a capability gap relative to problem + ICP; a spec builds on the premise). Judgment runs only over the enumerated set, at the gateway with the user (still-valid / re-frame / drop per doc) — no dedicated judge container. Then continue §3 on the rest of the diff.
 
 4. **Doc-sync scan (dispatched on hit)** — `Agent`, `subagent_type: "doc-sync-scan"`; prompt = the diff (`git diff` + `git diff --staged`) + today's date. It runs its own cold scan of the doc surface and returns one shape:
    - **`stale-docs`** → resolve each candidate with the user (update / acknowledge-accurate / skip — never silently fix, never silently skip). Land approved doc edits (inline for bounded prose; dispatch by closure). Resolved docs join the stage list.
