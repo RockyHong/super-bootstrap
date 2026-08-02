@@ -157,7 +157,7 @@ do_index() {
             rel="$(printf '%s' "$resolved" | cut -f1)"
             printf '%s\t%s\n' "$rel" "$doc"
         done < <(extract_links "$doc")
-    done < <(collect_docs) | sort
+    done < <(collect_docs) | sort -u
 }
 
 case "$MODE" in
