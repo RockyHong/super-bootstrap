@@ -18,9 +18,9 @@ Two lane shapes; pick per item before entering the stage chain:
 | Lane | Item shape | Chain |
 | ---- | ---------- | ----- |
 | **eng** (default) | code-shaped — a fix/feature with a build + test surface | triage → [escalate-or-build gate] → plan → execute (TDD) → review → **merge gate (halt)** |
-| **doc** (doc-hygiene) | prose-shaped — the doc edit **is** the deliverable, no build/test surface | doc-edit → review (skip review for a ≤1-file, grep-verifiable invariant) → **merge gate (halt)** |
+| **doc** (doc-hygiene) | prose-shaped — the doc edit **is** the deliverable, no build/test surface | doc-edit → review (dispatcher evaluates pre-spawn: skip if ≤1-file, grep-verifiable invariant) → **merge gate (halt)** |
 
-**Lane derivation (file-presence + classification, no hand-maintained field):** doc lane when the item is prose-shaped — signalled by any of: the shared-classification `action` verb is `Doc-edit` / `Refine spec`; the triage Verdict block names only prose/doc surfaces (`## Files` all under `docs/**`, `*.md`, no code paths); or (scale module) the card carries `Test-feel: doc-only`. Everything else is the eng lane. In the doc lane the edit itself is the change — there is no separate build phase and no TDD; review runs only when the edit isn't a trivial grep-checkable invariant.
+**Lane derivation (file-presence + classification, no hand-maintained field):** doc lane when the item is prose-shaped — signalled by any of: the shared-classification `action` verb is `Doc-edit` / `Refine spec`; the triage Verdict block names only prose/doc surfaces (`## Files` all under `docs/**`, `*.md`, no code paths); or (scale module) the card carries `Test-feel: doc-only`. Everything else is the eng lane. In the doc lane the edit itself is the change — there is no separate build phase and no TDD; the dispatcher evaluates pre-spawn: review is spawned only when the edit is not a trivial grep-checkable invariant.
 
 ## Stage entry → phase chain (eng lane, lean default)
 
