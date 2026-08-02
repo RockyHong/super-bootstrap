@@ -27,3 +27,16 @@
   - **B — re-key the table to agent-level.** Per-agent rationale rows (what the card's Prior asks for), skills keep a mode column. Direct answer to "no per-agent rows", but rewrites 13 settled rows and splits one concern across two tables, with the model/tier facts then duplicated against each agent's own frontmatter.
   - **C — no doc change; close on the evaluation result.** The 7 skill rows already state the rationale, `review-intake`'s sits in `docs/decisions.md` row 22 + `docs/specs/harness-architecture.md`:261-265. Accepts that the table's "only home" claim (README:70) is inaccurate for one agent.
 - recommendation: **A** — it fixes the one real gap (an agent outside the table's key) without re-keying a settled SSOT, and DEBT-039's two rows drop into the same shape unchanged. Note for whoever lands it: the *evaluation result* (zero collapse candidates) is history — it belongs in this block and the commit message, not narrated into the README, which holds only the binding present-tense rationale.
+
+## Amendment — 2026-08-02 · per-item audit user-reviewed; residue on hold
+
+The verdict's 8-agent sweep was reviewed per-item with the user. Outcomes:
+
+- `todo` — keep for now; the cost remake is owned by GAP-050 → DEBT-022 (queued, same surfaces), not this card.
+- `log` — collapse-to-inline candidate + dedup-must-surface-MCQ contract change → appended to DEBT-030.
+- `help` — split to DEBT-045 (mechanical script path; dispatch saves no gateway context since the menu returns verbatim anyway).
+- `plugin-digest` — keep Haiku (freeform README extraction — no true-mechanical path; judgment minimal; omission risk accepted at lifecycle frequency).
+- `doc-sync-scan` / `triage` / `triage-report` / `review-intake` — keep; cold context is the correctness mechanism.
+- Verdict supersession: the "DEBT-039 collision (add drain + release-init rows)" finding is falsified — both rows have existed since `71a3c2b` / `3ae1595`, predating DEBT-039; that card closes on git evidence with no diff.
+
+Residue on hold: option A's README edits (unowned-agent row for `review-intake` + table-key note) wait on the user's open question — review-intake's trigger moment / whether it is a bandaid over an upstream cause.

@@ -8,3 +8,10 @@
 ## Amendment — 2026-08-01 · GAP-047 substrate landing
 
 Contract half resolved: the funnel now admits a sanctioned transcription path — hand-copying `TEMPLATE.md` with the same high-water bump (`docs/work/README.md` § routing). Remaining scope: the cost half only — right-size the log dispatch's classify+write pass to entry count.
+
+## Amendment — 2026-08-02 · user-reviewed dispatch audit (DEBT-044 per-item pass)
+
+Card re-scopes from cost-only to shape + contract, two new facts:
+
+- **Collapse-to-inline candidate.** The dispatch prompt already carries each observation phrased for cold pickup — classification is near-done at prompt-authoring; ID assignment + TEMPLATE write are mechanical. The agent's only remaining real judgment is dedup. The bias-exclusion rationale (shell never pre-classifies) has lost weight as models strengthened. Evaluate collapsing the log agent into gateway-inline capture — the sanctioned transcription path (README § Routing) is already half the shape.
+- **Dedup must surface, not auto-resolve.** Current contract auto-drops pure dups and auto-appends Amendments on new-fact dups — the user never sees the call. Contract change: dup / suspected-dup → write nothing, return the match + context to the gateway → gateway MCQs the user (amend / new card / drop).
