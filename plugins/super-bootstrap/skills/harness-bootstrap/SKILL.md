@@ -162,6 +162,7 @@ destination — report those paths rather than resolving them.
 ```
 docs/
   decisions.md   ← closed forks / rejected directions (history dimension — always scaffolded, starts empty)
+  specs/         ← feature specs, one .md per feature (empty + .gitkeep; files seeded by Task 1 of bootstrap-plan)
   work/
     README.md    ← work-unit workspace header: contract, categories, ID high-water line
     TEMPLATE.md  ← copy-to-create card template
@@ -170,17 +171,11 @@ docs/
     index.md     ← rule-authoring guide (path-scoped — loads when editing rules)
 ```
 
-**Created when source code is present (adaptive):**
-```
-docs/
-  specs/         ← persistent feature specs, one .md per feature (seeded by Task 1 of bootstrap-plan)
-```
-
 For each: create if missing, skip if present. Add `.gitkeep` in empty folders. If `docs/` or `.claude/` already exists, nest alongside. Report status per directory.
 
-`docs/specs/` is scaffolded as an empty folder with `.gitkeep`. There is no index file — the folder + filename convention IS the catalog. Spec files are seeded by Task 1 of the bootstrap plan, each opening with `# {Feature Name}` and a one-paragraph intro.
+There is no `docs/specs/` index file — the folder + filename convention IS the catalog. Spec files are seeded by Task 1 of the bootstrap plan, each opening with `# {Feature Name}` and a one-paragraph intro.
 
-**Hard gate — `docs/specs/` requires source-code features to document.** Scaffold `docs/specs/` only when the repo has feature modules in source code. **No source files → skip it** (e.g. a greenfield repo: `overview.md`/`techstack.md` present, no code). A `docs/specs/` file with no built feature behind it is speculative, and invisible to `/super-bootstrap:todo`.
+`docs/specs/` is **always** scaffolded (empty folder + `.gitkeep`), matching `overview.md` / `techstack.md` / `decisions.md`. Spec **files** are seeded only when source-code features exist to document (Task 1 of the bootstrap plan) — the empty folder carries no speculative content.
 
 `docs/decisions.md` is **always** scaffolded — copy `assets/decisions-skeleton.md` to `docs/decisions.md` if missing (no substitutions). Starts empty (header + `## Closed Forks` table). Its scope header is pipeline-owned (drift-checked); the table rows are project-owned (never touched).
 
@@ -427,7 +422,7 @@ Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write fro
 - `{date}` — today's date
 - Manifest detection facts (Runtime / Framework / Key Dependencies / Build & Distribution) → fill into CLAUDE.md Tech Stack one-liner AND `techstack.md` skeleton sections
 - Problem / User / Current State (`overview.md` skeleton sections) → left empty at install; filled at GAP-card pickup, not by the runway
-- Bracketed conditional lines `{- docs/specs/ — ...}` and the bracketed `{> docs/specs/ = ...}` blockquote — keep only if the corresponding adaptive doc is scaffolded for this repo (specs per the 2a code-presence gate); drop the whole line otherwise
+- Bracketed conditional lines (`{- docs/parked.md — ...}`, `{- docs/test-queue.md — ...}`) — keep only if the corresponding adaptive doc is scaffolded for this repo (scale module per its 2a install gate); drop the whole line otherwise
 - **Monorepo tier** (Phase 1 § Monorepo detection) — fill CLAUDE.md's conditional monorepo block (workspace tool + the workspace-aware filtered build command) and `techstack.md` § Packages table rows (package | path | role | build command) from the Phase 1 package enumeration. Single-package repo → drop the CLAUDE.md monorepo block and the § Packages section entirely
 - CLAUDE.md § **Rules** summary bullets — fill from seeded `.claude/rules/*.md` files (one bullet per rule with glob + 2-4 one-line key points). If no rules seeded, drop the example placeholders and keep only the explanatory paragraph.
 - Rule skeleton placeholders (`{component path glob}`, `{Framework}`, body bullets in `assets/rules-*-skeleton.md`) → fill from Phase 1 detection. Lines that don't apply get dropped during scaffold.
@@ -436,7 +431,6 @@ Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write fro
 
 The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed cards` / `Task 3: Cleanup`. Adapt at write time:
 
-- `docs/specs/` NOT scaffolded → drop Task 1
 - No source-code features yet (greenfield / fresh scaffold, Module Index empty) → drop Task 1 — specs document built features; none exist to seed
 - Re-run with `docs/specs/` already populated → drop Task 1
 - Re-run with card files already present in `docs/work/` → drop Task 2
@@ -505,7 +499,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/work/README.md` (if newly written, re-planted, or fact-fields block inserted this run at 2a-scale)
 - `docs/work/TEMPLATE.md` (if newly written)
 - `docs/work/bootstrap.md` (if newly written or regenerated)
-- `docs/specs/.gitkeep` (if scaffolded)
+- `docs/specs/.gitkeep`
 - `docs/parked.md`, `docs/test-queue.md`, `.claude/rules/venue-map.md` (scale-module targets — only if installed this run at 2a-scale)
 - `.claude/super-bootstrap-runway.json` (runway version stamp — written/overwritten every sync)
 - Superseded-fork deletions (adopt mode, § 2b-adopt) — staged removals of approved consumer `.claude/skills/<name>/` dirs / `.claude/agents/<name>.md` files that root artifacts now supersede
