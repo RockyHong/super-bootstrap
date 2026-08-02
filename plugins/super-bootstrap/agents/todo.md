@@ -183,7 +183,7 @@ The scaffold includes title line, **macro header** (sub-verb modes only), table 
 
 **Pending-unblock line** (Full mode only) — when the §4 Coupling gate held `n ≥ 1` hard-blocked rows out of the body, emit `pending unblock: {n}` as the first footer line (above filter legend / more). Count only — the held rows stay in the docs SSOT; the count is the route to them, not a body row each. Omit the line when `n = 0`.
 
-**Footer-hint** — sub-verb modes (discuss / cloud / device / harness) always end with `more: /super-bootstrap:help`. Full mode footer is conditional on total open row count `T = D + C + V + H` (computed during §1 classification):
+**Footer-hint** — sub-verb modes (discuss / cloud / device / harness) always end with `more: /super-bootstrap:help`. Need-me mode footer depends on board state (known at render from §2): need-me rows present → emit `flat list: /super-bootstrap:todo full · drainable detail: /super-bootstrap:todo cloud` then `more: /super-bootstrap:help`; drainable-only (no need-me rows) → emit `flat list: /super-bootstrap:todo full` then `more: /super-bootstrap:help`. Full mode footer is conditional on total open row count `T = D + C + V + H` (computed during §1 classification):
 
 - `T ≤ 5` → footer is just `more: /super-bootstrap:help`. Board small; sub-verb hint is premature noise.
 - `T ≥ 6` → prepend a filter legend line above `more: /super-bootstrap:help`:

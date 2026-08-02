@@ -54,8 +54,7 @@ Drainable: {N}  →  /super-bootstrap:drain
 | 1  | {verb + what}                           | {one-line — what signal was missing}   |
 
 {pending unblock: {n} — only if n>0}
-flat list: /super-bootstrap:todo full · drainable detail: /super-bootstrap:todo cloud
-more: /super-bootstrap:help
+{footer per § Render footer-hint}
 ```
 
 Empty state (no need-me rows AND no drainable):
@@ -75,8 +74,7 @@ Drainable: {N}  →  /super-bootstrap:drain
 
 Nothing needs you right now — the board is all auto-runnable.
 
-flat list: /super-bootstrap:todo full
-more: /super-bootstrap:help
+{footer per § Render footer-hint}
 ```
 
 ### Discuss
