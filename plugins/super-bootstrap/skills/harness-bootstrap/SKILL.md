@@ -427,7 +427,7 @@ Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write fro
 - `{date}` — today's date
 - Manifest detection facts (Runtime / Framework / Key Dependencies / Build & Distribution) → fill into CLAUDE.md Tech Stack one-liner AND `techstack.md` skeleton sections
 - Problem / User / Current State (`overview.md` skeleton sections) → left empty at install; filled at GAP-card pickup, not by the runway
-- Bracketed conditional lines `{- docs/specs/ — ...}` — keep only if the corresponding adaptive doc is scaffolded for this repo (specs per the 2a code-presence gate); drop the whole line otherwise
+- Bracketed conditional lines `{- docs/specs/ — ...}` and the bracketed `{> docs/specs/ = ...}` blockquote — keep only if the corresponding adaptive doc is scaffolded for this repo (specs per the 2a code-presence gate); drop the whole line otherwise
 - **Monorepo tier** (Phase 1 § Monorepo detection) — fill CLAUDE.md's conditional monorepo block (workspace tool + the workspace-aware filtered build command) and `techstack.md` § Packages table rows (package | path | role | build command) from the Phase 1 package enumeration. Single-package repo → drop the CLAUDE.md monorepo block and the § Packages section entirely
 - CLAUDE.md § **Rules** summary bullets — fill from seeded `.claude/rules/*.md` files (one bullet per rule with glob + 2-4 one-line key points). If no rules seeded, drop the example placeholders and keep only the explanatory paragraph.
 - Rule skeleton placeholders (`{component path glob}`, `{Framework}`, body bullets in `assets/rules-*-skeleton.md`) → fill from Phase 1 detection. Lines that don't apply get dropped during scaffold.

@@ -44,7 +44,7 @@ Route defaults assume worst-case — fuzzy-new work, a cold executor, every task
 - **Per-task verify depth scales to surface centrality** — an ambient-loaded harness surface (CLAUDE.md, a rule, an agent) earns a full cold verify pass whatever the change size; an isolated low-centrality surface (a README line, a manifest field, a docs paragraph) earns a light pass.
 - **Same-session author == executor → reference, don't embed** — a plan written for a cold executor embeds full file bodies; when the authoring session also executes, reference draft bodies by section instead of re-embedding full file text.
 
-Settled design and step sequence land as `## Design` / `## Plan` blocks on the card's own thread ([`docs/work/`](docs/work/README.md)). Persistent specs (kept after merge) go to `docs/specs/`.
+Settled design and step sequence land as `## Design` / `## Plan` blocks on the card's own thread ([`docs/work/`](docs/work/README.md)).
 
 ## Dispatch — who holds each phase
 
@@ -154,11 +154,11 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 
 - [`docs/overview.md`](docs/overview.md) — product context, data flow, module index.
 - [`docs/techstack.md`](docs/techstack.md) — stack, architecture rules, coding patterns.
-{- [`docs/specs/`](docs/specs/) — persistent feature specs, one `.md` per feature. Filename + heading is the catalog; no index.}
+{- [`docs/specs/`](docs/specs/) — feature specs, one `.md` per feature. Filename + heading is the catalog; no index.}
 - [`docs/work/`](docs/work/README.md) — open cards (`BUG-###` / `DEBT-###` / `GAP-###` append-only threads), captured via `/super-bootstrap:log`, deleted on resolve; `README.md` holds the thread contract + ID high-water line.
 {- [`docs/parked.md`](docs/parked.md) — deferred items with named triggers (scale module)}
 {- [`docs/test-queue.md`](docs/test-queue.md) — manual-verification queue (scale module)}
 - [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)
 
-> `docs/specs/` = permanent source of truth; working design and plan live as blocks on the owning card's thread.
+{> `docs/specs/` = permanent source of truth; working design and plan live as blocks on the owning card's thread.}
