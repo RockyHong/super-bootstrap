@@ -18,7 +18,7 @@ Three outputs per item:
 
 Before the verb map and any per-source rule: an item whose **deliverable is the harness layer** — `CLAUDE.md`, anything under `.claude/` (rules, skills, agents, hooks, settings), plugin-source harness files (`plugins/*/{skills,agents,shared}/**`, in repos that ship plugins), or a harness-source top-level layout (`skills/*/SKILL.md`, `agents/**`, `rules/**` at the repo root — the shape a repo uses when Claude configuration *is* its product, shipping harness at the tree root rather than under `.claude/` or `plugins/`) — classifies **intent: Harness**, regardless of verb or state. Judge from the card's `Area:` field, its Verdict-block `Files` paths, or its Plan-block step paths: the discriminator is the harness-file marker, not its directory prefix — a `SKILL.md`, agent, or rule target is a harness deliverable wherever it sits. A product change that touches a harness file incidentally is NOT harness — classify by the dominant surface; Harness = the harness file IS the deliverable.
 
-The harness layer is the orchestration engine: it never rides the autonomous queue. Consumers gating on `intent == Cloud` (drain) exclude Harness rows for free.
+The harness layer is the orchestration engine: it never rides the autonomous queue. A row the pre-filter catches exits here — intent: `Harness`, subgroup assigned below — before any cloud-safe derivation or content read. Consumers gating on `intent == Cloud` (drain) exclude Harness rows for free.
 
 Each Harness row carries a `subgroup` tag:
 
@@ -28,29 +28,29 @@ Each Harness row carries a `subgroup` tag:
 
 ## Cloud-safe criterion
 
-Single positive rule applied to every row before bucketing:
+Applied to `Cloud OR Device (derive)` rows — those the verb map does not lock outright. Inputs read cheapest-first; stop at the first that locks the row:
 
 > **Cloud-safe = phase produces a verifiable artifact via tooling alone. No human visual judgment, no real browser/device interaction, no "looks right" call.**
 
-### Derivation inputs (read per row when classifying)
+### Derivation inputs (read in order — stop at the first that locks the row)
 
-1. **Plan-block content** — grep the card's latest `## Plan` block for device signals:
+1. **Phase verb** in derived action:
+   - `Write plan` / `Approve design` / `Triage` / `Extract` / `Doc-edit` → cloud-safe regardless of paths
+   - `Manually verify` / `E2E run` / `Smoke test` → device-only
+   - `Start execute` / `Continue execute` / `Review` / `Implement` → derive per #2 + #3 (for `Implement` rows, skip the free-text keyword grep — read the `auto-fix` Verdict block as fields: its `Files` paths feed #2's path arms, and its `Test Strategy` field feeds #3 — `e2e` there → device-suspicion, `unit` → cloud-lean; the field's literal value never re-enters the keyword scan)
+2. **Plan-block content** — grep the card's latest `## Plan` block for device signals:
    - Keywords: `manual test`, `e2e`, `playwright`, `cypress`, `visual`, `device`, `mobile`, `browser`, `screenshot`
    - Paths in step lines: `**/components/**`, `**/app/**`, `**/pages/**`, `**/views/**`, `apps/web/**`, `apps/mobile/**` → device-suspicion
    - If only pure-logic paths (`lib/`, `utils/`, `core/`, `packages/{logic-name}/`) and no device keywords → cloud-safe
-2. **Design-block success criteria** (when the card carries a `## Design` block) — explicit `manual verification`, `visual check`, `e2e pass` → device-only for the executing/review row
-3. **Phase verb** in derived action:
-   - `Write plan` / `Approve design` / `Triage` / `Extract` / `Doc-edit` → cloud-safe regardless of paths
-   - `Start execute` / `Continue execute` / `Review` / `Implement` → derive per #1 + #2 (for `Implement` rows, skip the free-text keyword grep — read the `auto-fix` Verdict block as fields: its `Files` paths feed #1's path arms, and its `Test Strategy` field feeds #2 — `e2e` there → device-suspicion, `unit` → cloud-lean; the field's literal value never re-enters the keyword scan)
-   - `Manually verify` / `E2E run` / `Smoke test` → device-only
+3. **Design-block success criteria** (when the card carries a `## Design` block) — explicit `manual verification`, `visual check`, `e2e pass` → device-only for the executing/review row
 
 ### Default
 
 If no signal is conclusive, default cloud-safe for design / plan-write / triage rows; default device for executing rows touching UI surfaces; default cloud for executing rows on pure-logic surfaces.
 
-## Action-verb intent map (applied FIRST after the Harness pre-filter)
+## Action-verb intent map (applied after the Harness pre-filter)
 
-Intent is determined by action verb before path/state rules.
+Intent is determined by action verb before content reads. Rows locked to a definite intent exit here; `Cloud OR Device (derive)` rows proceed to the cloud-safe criterion.
 
 | Action verb prefix                                              | Intent (locked)              | Why                                                                          |
 | --------------------------------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------- |
