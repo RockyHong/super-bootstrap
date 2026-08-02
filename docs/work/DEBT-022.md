@@ -38,3 +38,7 @@ Card narrows to the residue the spec-ordering fix (split to DEBT-043) does not c
 - **Fixed instruction floor** — ~32 KB ≈ 8k tokens land before the first card read (`agents/todo.md` 16,875 B + `shared/classify-actionable.md` 12,481 B + scaffold + dispatch template). Unreachable by any row-count gate. Corroborated by DEBT-030: fixed ≈ 21.8k, marginal ≈ 1.5k/entry.
 - **Closed sub-item:** "no computation reuse between invokes" — closed as a fix direction. A cross-invoke cache requires a write; `agents/todo.md:4` grants `tools: Read, Grep, Glob` only. Reopen only if the read-only grant is deliberately revisited.
 - **Cross-reference:** spec phase-ordering contradiction and Harness pre-filter short-circuit split out to DEBT-043.
+
+## Amendment — 2026-08-02 · cross-reference resolved
+
+DEBT-043 resolved and deleted — `classify-actionable.md` derivation inputs now read cheapest-first (verb #1) with the Harness pre-filter exit stated explicitly. This card's residue scope (§4 breadcrumb trace + fixed instruction floor) is unaffected.
