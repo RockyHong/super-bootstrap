@@ -1,4 +1,4 @@
-# Carry — non-mattpocock batch; GAP-050/051/046 shipped + v2.27.0 released, probes / DEBT next
+# Carry — non-mattpocock batch; probes + DEBT-041/045 shipped, dispatch-cost family next
 
 ## Anchor
 
@@ -6,20 +6,21 @@ Work the remaining non-mattpocock board items; mattpocock-parked group stays unt
 
 ## Read first
 
-- `docs/work/GAP-052.md` — browser-MCP multi-instance + headless-e2e probes（`wall(shape)` venue reclassification 的 gate）
-- `docs/decisions.md` top row — code-review layer deferral（reopen at §6 orthogonal-trial plugin selection）
-- `plugins/super-bootstrap/agents/premise-closure.md` — 第四 grounding door（形狀樣板：door 自讀 `shared/grounding-discipline.md`）
+- `docs/work/GAP-052.md` — probe (2) headless-e2e GREEN(amendment 已載);probe (1) browser-MCP multi-instance 仍開(device-gated,需活 Chrome)
+- `docs/work/DEBT-046.md` — frozen drain template 死 Write 規則(fix = 刪兩行 + version-bump propagation)
+- `docs/work/DEBT-022.md` + `DEBT-030.md` — dispatch-cost family 殘餘(fixed floor / breadcrumb trace / log collapse-to-inline + dedup-surfacing 契約),DEBT-045 的 52.3k 實測數據已入 git(卡已刪)可援引
 
 ## State
 
-GAP-050/051/046 全 shipped + resolved；v2.26.0、v2.27.0 released + pushed，main == origin。`${CLAUDE_PLUGIN_ROOT}` lore finding 已 `/contribute`（`inbox/claude-plugin-root-agent-substitution-20260803-172420/`，CCM 端 digest 待跑）。All micro-tests GREEN；audits dispositioned per commit。
+DEBT-041 resolved(repo 端 + lore reshape 送 CCM inbox `edit-discipline-dedupe-reshape-20260803-235240`)。DEBT-045 resolved(help agent retired → `render-menu.py` + gateway-inline filter,cold audit 5 findings applied)。GAP-052 half-verified。三筆 CCM inbox 提交(headless-e2e fact、Write-rule fact、lore reshape)+ 先前兩筆,共五筆待 CCM 端 digest。Main 領先 origin 2 commits(ec7aa5a、a224464)未 push;plugin source 已變(help retire + skeleton mirrors)未 release。
 
 ## Next step
 
-User picks: GAP-052 probes（可 drain 化的第一批 shape 驗證）· 開放 DEBT 卡（022/030/041/045）· mattpocock 討論（解凍 DEBT-035/040, GAP-038/042）· GAP-048。
+User picks: push + /release · DEBT-046(小,mechanical)· DEBT-022/030 doctrine 批(dispatch 何時 earn its cost,45 的數據為據)· GAP-052 probe (1)(需 Chrome 在場)· GAP-048 design fork · mattpocock 討論(解凍 DEBT-035/040, GAP-038/042)。
 
 ## Watch-outs
 
 - mattpocock parked group 不動直到 change B 討論
-- CCM inbox 兩筆待 digest：`harness-audit-gate-shared-path-gap-20260802-130847`、`claude-plugin-root-agent-substitution-20260803-172420` — repo 端責任
-- drain 新機器（scoped-brief session）尚無實跑 — 第一次 `/super-bootstrap:drain` 是它的 live smoke
+- drain scoped-brief session 尚無實跑;GAP-052 probe (2) 的 worktree spawn 是最接近的一次 smoke(green)
+- CCM inbox 五筆待 digest — repo 端責任
+- help retire 後第一次真 `/super-bootstrap:help` 實跑(published copy 更新後)是新路徑的 live smoke
