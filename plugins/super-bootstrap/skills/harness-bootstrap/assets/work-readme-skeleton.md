@@ -42,4 +42,6 @@ No phase prescription per category — triage decides how much ceremony the work
 
 **Resolve:** the resolving session deletes the card file — work completed and direction dropped both resolve; the deleting commit's message carries the why. Git history is the archive.
 
+**Aim switch:** a thread cuts by aim, not by phase. Same aim, changed understanding → append (the new block takes over the lead). The problem itself superseded → resolve this card with the counter-diagnosis and open a successor card whose origin cites the predecessor ID — the breadcrumb survives in the pointer + git.
+
 **Conflict:** keep either side whole or regenerate from its blocks; never hand-merge block content.
