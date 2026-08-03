@@ -94,7 +94,7 @@ Rename preference order: LSP rename → per-occurrence Edit → `sed` (unique 8+
 
 Stale-state family: Read a file before its first Edit; re-Read after a stale/unread Edit error, or after any write that landed behind your read-tracker (formatter hook, a returned file-writing subagent — `git diff` is not a Read). Two consecutive same-file Edit failures = mandatory re-Read.
 
-Banned-terms list + pre-flight checklist + recovery protocol: [`docs/techstack.md` § Edit Discipline](docs/techstack.md#edit-discipline). Stale-state predicate + re-Read triggers: [`.claude/guidelines/work-discipline/edit-discipline.md`](.claude/guidelines/work-discipline/edit-discipline.md) § Stale-state edits.
+Banned-terms list + pre-flight checklist + recovery protocol + stale-state predicate + re-Read triggers: [`docs/techstack.md` § Edit Discipline](docs/techstack.md#edit-discipline).
 
 ## Context Hygiene
 

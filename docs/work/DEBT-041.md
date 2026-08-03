@@ -8,3 +8,9 @@ Constraint: the obvious fix — reduce `docs/techstack.md` § Edit Discipline to
 Interim applied (this session): CLAUDE.md § Edit Discipline split its two pointers by scope — `docs/techstack.md` § Edit Discipline owns banned-terms / checklist / recovery; `edit-discipline.md` owns the § Stale-state edits half. Removes the dual-authority ambiguity in the ambient layer but does not deduplicate the two bodies.
 **Area:** `docs/techstack.md` § Edit Discipline; `.claude/guidelines/work-discipline/edit-discipline.md`; `plugins/super-bootstrap/skills/harness-bootstrap/assets/techstack-skeleton.md` (line 37); `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` (line 94)
 **Prior:** Make `docs/techstack.md` the single maintained source for the banned-terms / checklist / recovery body; rewrite the lore file to refer rather than re-author (adding the § Stale-state edits section to `techstack.md` to close the current gap). The skeleton and downstream consumers stay self-contained; the lore file becomes a thin addendum.
+
+## Progress — 2026-08-03 · repo side landed, lore side pending /contribute
+
+Repo-side dedupe shipped (cold-audited, 3 findings applied): `docs/techstack.md` § Edit Discipline now carries the full body incl. § Stale-state edits (with the CC 2.1.208+ Edit-guard relaxation reword and the `dispatch-run-mode.md` cross-ref); root `CLAUDE.md` § Edit Discipline collapsed to a single techstack pointer (no "single source" claim while the lore copy still exists); `techstack-skeleton.md` mirrors the body self-contained (lore link deliberately omitted); `claude-md-skeleton.md` pointer extended (its "single maintained source" claim valid — downstream has no lore copy).
+
+Remaining: lore-side reshape (`edit-discipline.md` → thin § Stale-state-only addendum or stub, + same Edit-guard reword) routes via `/contribute` — CCM-side authoring decision at digest. Card deletes once the submission is in the inbox.
