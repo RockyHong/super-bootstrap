@@ -33,7 +33,7 @@ git merge --no-commit --no-ff drain/{id-lower}    # materialize on the non-neste
 ```
 
 - The merge is left **un-committed** until the probe is green, so a red probe aborts cleanly with zero base pollution.
-- Red → the item is not done: re-dispatch its build phase in the same worktree (`phase-loop.md`) to iterate, then re-probe. This is the venue-S row of `phase-loop.md §Halts`.
+- Red → the item is not done: re-spawn the item's session in the same worktree (`phase-loop.md §Dispatch`, brief refreshed with the probe's red output) to iterate, then re-probe. This is the venue-S row of `phase-loop.md §Halts`.
 - Any machine-global runner cache (browser binaries, toolchains) is a one-time install per machine, shared across worktrees — not a per-drain cost. If the consumer's techstack names an install command, run it once, not per item.
 
 ## Boundary

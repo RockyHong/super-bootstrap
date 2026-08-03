@@ -1,6 +1,6 @@
 ---
 name: drain
-description: "Parallel-worktree auto-drain of the board. One `/super-bootstrap:drain` turn = scan the pipeline sources (specs/plans/backlog, plus the scale module's test queue when present) → keep only admissible items → relation-analyze into a conflict-free wave → confirm with the user → spawn one isolated git worktree + headless `claude -p` per item, each resuming at its pipeline stage and running phase-by-phase to the next user wall, then halting. A single-item wave hands off to the normal in-session pipeline (drain offers no parallelism for one item); inline-sized items in a larger wave roll in-session, no worktree. State lives in files; the next invocation cold-reads and picks the next wave. Merge is never automatic — it delegates to `/super-bootstrap:merge`. Sub-verbs: `status`, `release {id}`, `--dry-run`. Manual invocation only."
+description: "Parallel-worktree auto-drain of the board. One `/super-bootstrap:drain` turn = scan the pipeline sources (specs/plans/backlog, plus the scale module's test queue when present) → keep only admissible items → relation-analyze into a conflict-free wave → confirm with the user → spawn one isolated git worktree + headless `claude -p` per item, each consuming a scoped brief rendered from its card thread and running to its first wall (typed user|shape), then halting. A single-item wave hands off to the normal in-session pipeline (drain offers no parallelism for one item); inline-sized items in a larger wave roll in-session, no worktree. State lives in files; the next invocation cold-reads and picks the next wave. Merge is never automatic — it delegates to `/super-bootstrap:merge`. Sub-verbs: `status`, `release {id}`, `--dry-run`. Manual invocation only."
 disable-model-invocation: true
 tags: [drain, worktree, parallel, pipeline]
 ---
@@ -18,8 +18,8 @@ Trigger: user types `/super-bootstrap:drain`. Never auto-fires.
 - **One wave, one shot per invocation.** No internal loop across waves, no `--all`. Turn ends after the wave is dispatched. Next invocation cold-reads files and re-picks.
 - **No auto-merge — ever.** Each subprocess stops at a ready-to-merge state. The user confirms; the merge runs via `/super-bootstrap:merge` (the destructive-git lane). Subprocesses are denied push/merge/rebase/branch-delete/worktree at the permission layer.
 - **Admission-gate, not type-gate.** Eligible = the item's next phase is drainable, across BUG/DEBT/GAP card types. When the scale module is wired the gate is next-phase venue ∈ {T, S} (`.claude/rules/venue-map.md`); without it the gate falls back to `intent == Cloud` (cloud-safe). Either way `Device`/`Discuss` and venue U/P defer — drain never spawns for them. A mislabel is fixed upstream (clarify the card, the shared criterion, or the venue map), never overridden here.
-- **Stage-resume.** Each item enters its phase chain at its current pipeline stage (thread-state): `raw`→triage, `triaged`→plan, `aimed`→plan, `executing`→execute, `review`→review. Each phase is named by the artifact it lands (`assets/phase-loop.md §Phase → artifact`). Committed upstream phases are inherited, not re-run.
-- **Halts are outcomes.** A wall surfaces a finding; that finding plus any committed earlier phases are progress, not waste.
+- **Stage-resume.** Each item's brief enters the chain at its current stage (thread-state): `raw`→ground, `triaged`→plan, `aimed`→plan, `executing`→execute, `review`→review. Each phase is named by the artifact it lands (`assets/phase-loop.md §Phase → artifact`). Committed upstream phases are inherited, not re-run.
+- **Drain-till-wall; halts are outcomes.** Drainable is a phase attribute, not a ticket attribute: admission scores only the next phase, and the session runs phase-to-phase to its first wall (typed `user` | `shape` — `assets/phase-loop.md §Walls`), then halts. The wall's finding plus any committed earlier phases are progress, not waste; a resolved wall re-enters on the next invocation.
 - **Wave member = no blocker.** Orphans + chain-heads enter; chain-tails and conflicts defer to a later invocation. No forward projection — render the current wave only.
 
 ## Pre-flight
@@ -75,22 +75,13 @@ Never `Read` a path under `.claude/worktrees/{id}/` — a worktree-internal Read
 
 ## Phase loop
 
-Per item: enter at the item's `stage` (§Invariants stage-resume), run phase-by-phase until a user wall. Each phase = one headless subprocess from the worktree cwd:
+Per item: render one **scoped brief** from the card files (anchor + breadcrumb, never payload) and spawn **one** headless session from the worktree cwd; the session runs the remaining chain itself to its first wall (§Invariants drain-till-wall). Dispatch command, brief shape, lane select (eng vs doc), stage-entry + phase→artifact map, the typed wall table, and the status contract (`DONE` · `WALL:{user|shape}:{phase}` · `BLOCKED` · `NEEDS_CONTEXT`): `assets/phase-loop.md` — canonical, don't restate here.
 
-```
-cd .claude/worktrees/drain-{id}
-claude -p --model sonnet --setting-sources local,project --permission-mode acceptEdits --allowedTools "Skill,Agent" -- "<phase prompt>"
-```
+Explicit `--model sonnet` in the dispatch — drain is the widest fan-out surface in the system; an unspecified tier inherits the invoking (gateway) model and multiplies its cost per item. Required-flags table: `assets/parallel-worktrees.md §Required flags`. Dispatched `Bash(run_in_background: true)`.
 
-Explicit `--model sonnet` — drain is the widest fan-out surface in the system; an unspecified tier inherits the invoking (gateway) model and multiplies its cost per item. Required-flags table (flag → consequence-if-missing): `assets/parallel-worktrees.md §Required flags`.
+**Polymorphic lanes (locked).** A code-shaped item runs the eng lane — lean by default: ground → plan → execute (TDD) → review → halt at merge. A prose-shaped item (doc-hygiene — the doc edit is the deliverable) runs the doc lane: doc-edit → review → halt at merge, no TDD (`assets/phase-loop.md §Lane select`).
 
-Dispatched `Bash(run_in_background: true)`. Lane select (eng vs doc), phase chain, stage-entry + phase→artifact map, status contract (`DONE` / `DONE_WITH_CONCERNS` / `BLOCKED` / `NEEDS_CONTEXT`), the escalate-or-build branch, and the pre-plan confirm gate: `assets/phase-loop.md`.
-
-**Polymorphic lanes (locked).** A code-shaped item runs the eng lane — lean by default: triage → build (TDD) → review → halt at merge. A prose-shaped item (doc-hygiene — the doc edit is the deliverable) runs the doc lane: doc-edit → review → halt at merge, no TDD (`assets/phase-loop.md §Lane select`).
-
-**Pre-plan confirm gate (user wall before the build fan-out).** After triage, before the plan/build phase, the gateway reads the Verdict block header tags from the card: a deterministic fix (`Fix-shape: mechanical|systematic`, no probe deps) flows straight through; anything carrying a design/product judgment or a `Probe-deps` dependency **halts for the user** before drain spends the build (`assets/phase-loop.md §Pre-plan confirm gate`).
-
-**Escalate-or-build.** If a subprocess discovers a real design surface mid-flight (needs spec / a decision), it halts and the item routes back to the user for design-settling rather than building further.
+**Walls are session-side.** The pre-build wall check (surface verdict, non-deterministic fix-shape, probe deps) and the mid-flight walls (design surface, cost, smoke, device-bound or unverified capability) fire inside the session, which stops and writes the typed status — the gateway reads halts, it does not gate between phases (`assets/phase-loop.md §Walls`).
 
 ## Merge gate
 
@@ -105,8 +96,7 @@ Full halt table + the §Halt summary format: `assets/phase-loop.md §Halts`.
 ## Crash recovery
 
 1. The live `.drain-status` file at the worktree root is the source of truth (read via `cat .claude/worktrees/drain-{id}/.drain-status`, never worktree-internal `Read`). Written atomically + uncommitted (`phase-loop.md §Status contract`). Subprocess exit code is advisory only.
-2. **Status set ⇒ advance; status absent ⇒ halt + surface**, regardless of exit code. Diagnose a halted worktree via `git -C .claude/worktrees/{id} status|diff|log`, never the `Read` tool.
-3. No phase-level auto-retry beyond the one TDD retry inside the build phase.
+2. **Status set ⇒ act on it; status absent ⇒ halt + surface**, regardless of exit code. Diagnose a halted worktree via `git -C .claude/worktrees/{id} status|diff|log`, never the `Read` tool.
 
 ## Sub-verbs
 

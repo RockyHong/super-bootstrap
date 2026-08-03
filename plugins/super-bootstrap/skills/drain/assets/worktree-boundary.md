@@ -1,6 +1,6 @@
 # Worktree Boundary — dispatch anchor
 
-> Embedded verbatim by the gateway at the head of every drain phase prompt (`phase-loop.md §Dispatch`). It rides the prompt so it is always present in the subprocess context — no reliance on a path-glob rule firing inside the worktree (the subprocess's project root **is** the worktree, so a `.claude/worktrees/**` glob never matches its own reads).
+> Embedded verbatim by the gateway at the head of every drain scoped brief (`phase-loop.md §Dispatch`). It rides the prompt so it is always present in the subprocess context — no reliance on a path-glob rule firing inside the worktree (the subprocess's project root **is** the worktree, so a `.claude/worktrees/**` glob never matches its own reads).
 
 You are running as a subprocess Claude inside an isolated drain worktree. This is your attention anchor. Read `OWNED_BY` at the worktree root for your dispatch contract — purpose, branch, item-id, dispatch session.
 

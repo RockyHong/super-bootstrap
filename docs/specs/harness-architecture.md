@@ -81,11 +81,11 @@ inseparable from it.
 | `docs/specs/superpowers-topology.md` | Dead. The file is gone. |
 | `harness-bootstrap` § Core plugin pins — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. A process harness is an ordinary adaptive pick in `resolve-plugins`, pinned by nothing. |
 | The temporal work folder | **Ours**, at `docs/work/`. His artifact skills own no path — they publish to whatever tracker is configured (§4) — so there was no slot to defer to. |
-| drain's stage machine (`raw→triage→plan→execute→review`) | **Re-cut by GAP-050** — the stage set was distillation-shaped after all: Design/Plan slots are now conditional context-scope sections (thread contract), stage vocabulary re-cut to `aimed`/`executing`. Drain's surviving value — cold-executor parallelism over scoped briefs — re-derives via `GAP-051`. |
+| drain's stage machine (`raw→triage→plan→execute→review`) | **Re-cut by GAP-050, re-derived by GAP-051** — the per-phase command dispatch was distillation-shaped; drain now spawns one scoped-brief session per item (anchor + breadcrumb rendered from the card thread), running drain-till-wall with typed walls (`user`\|`shape`). Stage vocabulary `aimed`/`executing` keys entry only. |
 | **log / cards / commit / doc-sync / rules** | **Unaffected.** |
 | `skills/triage/SKILL.md` + `agents/triage.md` — investigation doctrine | Referent dead, **discipline live**: the clause is stated inline, naming no harness. The pointer never resolved even where superpowers is installed — the agent's tool list carries no `Skill`. |
 
-**The table was 8 rows; 7 survive** (drain's stage machine re-cut by GAP-050 → `GAP-051`) — three of them restated. Its real function is
+**The table was 8 rows; 7 survive** (drain's stage machine re-cut by GAP-050, re-derived to scoped-brief sessions) — three of them restated. Its real function is
 sizing ceremony to shape, and that is harness-independent: clusters 5 and 6 say "no
 ceremony", 7 routes harness edits, 8 routes triage to our own door, and 1–3 name the
 disciplines a process harness would otherwise supply. Deleting rows rather than restating
@@ -322,13 +322,19 @@ designed against read skill text: §4's head/tail contracts are mechanically con
 must carry for his lane to consume it — is unknown until his lane has consumed one. Any
 interface proposal authored before that trial is speculation dressed as a contract.
 
-**Open — drain's anchor.** drain's own doc names its ceiling: "Capacity ceiling = how
-many halts the user can resolve, not machine throughput." Whether parallel spawns produce
-net progress or net walls is unmeasured. This determines whether drain survives at 53 KB,
-shrinks, or goes.
+**Resolved — drain's anchor** (GAP-051). drain's own doc names its ceiling: "Capacity
+ceiling = how many halts the user can resolve, not machine throughput." The
+classification below settles the shape question without measurement: dependency-ordered
+elicitation never enters drain — the `Discuss` intent excludes it at admission — and
+every halt drain actually produces (surface verdict, pre-build wall check, merge gate)
+is a one-shot framed decision the user can batch. `intent == Cloud` was a proxy for
+"verification-shaped": the gate was sound and mis-named. Admission now scores the next
+phase only and the session runs drain-till-wall with typed walls (`user`|`shape`). The
+wall-vs-progress *ratio* stays unmeasured — cheap to instrument if batch-review load
+grows.
 
-*One classification cheapens that question before any measurement.* Human gates split by
-whether the human's answer changes the next question:
+*The classification.* Human gates split by whether the human's answer changes the next
+question:
 
 | Gate shape | Mechanism | Parallelizable |
 | --- | --- | --- |
@@ -337,9 +343,9 @@ whether the human's answer changes the next question:
 
 drain is sound over verification-shaped halts and becomes engagement-monitoring exactly
 where it fans out elicitation-shaped work, because each halt then costs a design
-conversation the human cannot hold N of concurrently. So the open question reduces to
-classifying drain's existing halts — and to whether `intent == Cloud` is in fact a proxy
-for "verification-shaped", in which case the gate is sound and mis-named.
+conversation the human cannot hold N of concurrently. The halt audit (GAP-051) found no
+elicitation-shaped halt inside drain's lane — design settling walls out at admission or
+via the typed `user` wall, one-shot per item.
 
 This is also why mattpocock's set reads as gate-maximal without being ceremony: his gates
 are almost entirely elicitation (`grilling` asks one question at a time, supplies a
@@ -443,8 +449,9 @@ what that card already names.
 1. Seed-template shape read at grade B (§4) — but `GAP-038`'s premise is the deeper block:
    the shippable artifact is an operator-supplied description for the "Other" branch, not a
    file, and a pre-written `docs/agents/issue-tracker.md` has no skip guarantee.
-2. drain's wall-vs-progress ratio — unmeasured, though §6's elicitation-vs-verification
-   classification answers much of it without measurement.
+2. drain's wall-vs-progress ratio — unmeasured; §6's elicitation-vs-verification
+   classification is resolved (GAP-051: elicitation excluded at admission, remaining
+   halts batch), leaving only the ratio itself to instrument if load grows.
 3. **No orthogonal run exists.** §6 makes this the gating item: his set has never been run
    independently on a greenfield repo, so every head-contract content question is inference
    off skill text.

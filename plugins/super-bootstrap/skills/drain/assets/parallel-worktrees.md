@@ -39,7 +39,7 @@ claude -p \
   --setting-sources local,project \
   --permission-mode acceptEdits \
   --allowedTools "Skill,Agent" \
-  -- "<phase prompt>"
+  -- "<scoped brief>"
 ```
 
 ### Required flags (miss one → silent degrade or hard failure, not a loud error)

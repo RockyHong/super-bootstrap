@@ -1,6 +1,6 @@
 # Ensure infra — idempotent worktree-infra install
 
-drain needs three pieces of infra committed in the consumer repo. (A fourth — the subprocess boundary anchor — rides the dispatch prompt, not the repo: `phase-loop.md §Dispatch`.) They ship as **frozen assets** beside this file; ensure-infra places them by mechanical copy / merge — never by regeneration, so there is no drift between repos. Run as `SKILL.md §Pre-flight` step 0.
+drain needs three pieces of infra committed in the consumer repo. (A fourth — the subprocess boundary anchor — rides the scoped brief, not the repo: `phase-loop.md §Dispatch`.) They ship as **frozen assets** beside this file; ensure-infra places them by mechanical copy / merge — never by regeneration, so there is no drift between repos. Run as `SKILL.md §Pre-flight` step 0.
 
 ## The three pieces
 

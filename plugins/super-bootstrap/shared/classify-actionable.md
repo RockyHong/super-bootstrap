@@ -28,7 +28,7 @@ Each Harness row carries a `subgroup` tag:
 
 ## Cloud-safe criterion
 
-Applied to `Cloud OR Device (derive)` rows — those the verb map does not lock outright. Inputs read cheapest-first; stop at the first that locks the row:
+Applied to `Cloud OR Device (derive)` rows — those the verb map does not lock outright. The criterion judges the item's **next phase** — the phase its action names — never the whole chain: a device-bound tail (an e2e verify) walls its own phase, not the build in front of it. Inputs read cheapest-first; stop at the first that locks the row:
 
 > **Cloud-safe = phase produces a verifiable artifact via tooling alone. No human visual judgment, no real browser/device interaction, no "looks right" call.**
 
@@ -37,12 +37,12 @@ Applied to `Cloud OR Device (derive)` rows — those the verb map does not lock 
 1. **Phase verb** in derived action:
    - `Write plan` / `Approve design` / `Triage` / `Extract` / `Doc-edit` → cloud-safe regardless of paths
    - `Manually verify` / `E2E run` / `Smoke test` → device-only
-   - `Start execute` / `Continue execute` / `Review` / `Implement` → derive per #2 + #3 (for `Implement` rows, skip the free-text keyword grep — read the `auto-fix` Verdict block as fields: its `Files` paths feed #2's path arms, and its `Test Strategy` field feeds #3 — `e2e` there → device-suspicion, `unit` → cloud-lean; the field's literal value never re-enters the keyword scan)
+   - `Start execute` / `Continue execute` / `Review` / `Implement` → derive per #2 + #3 (for `Implement` rows, skip the free-text keyword grep — read the `auto-fix` Verdict block as fields: its `Files` paths feed #2's path arms; its `Test Strategy` field gates the **review-phase row only** — `e2e` walls the verify phase, never the build row in front of it; the field's literal value never re-enters the keyword scan)
 2. **Plan-block content** — grep the card's latest `## Plan` block for device signals:
    - Keywords: `manual test`, `e2e`, `playwright`, `cypress`, `visual`, `device`, `mobile`, `browser`, `screenshot`
    - Paths in step lines: `**/components/**`, `**/app/**`, `**/pages/**`, `**/views/**`, `apps/web/**`, `apps/mobile/**` → device-suspicion
    - If only pure-logic paths (`lib/`, `utils/`, `core/`, `packages/{logic-name}/`) and no device keywords → cloud-safe
-3. **Design-block success criteria** (when the card carries a `## Design` block) — explicit `manual verification`, `visual check`, `e2e pass` → device-only for the executing/review row
+3. **Design-block success criteria** (when the card carries a `## Design` block) — explicit `manual verification`, `visual check`, `e2e pass` → device-only for the **review** row (the phase the criterion gates); executing rows derive from #2 alone
 
 ### Default
 

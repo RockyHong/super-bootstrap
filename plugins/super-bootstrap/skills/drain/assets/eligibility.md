@@ -66,4 +66,4 @@ A `Device`/`Discuss`/`Harness` verdict — or a venue `U`/`P` — you disagree w
 
 ## Runtime walls are the backstop
 
-The gate is a cheap pre-filter on the *known* — it scores only the **next** phase, and never spawns for an already-walled item. An item that passes but turns out mid-flight to need a human (a downstream phase resolving to venue U/P, a `Probe-deps` tag, a design fork) still halts at its wall (`SKILL.md §Phase loop` + `§Pre-plan confirm gate`, `phase-loop.md §Halts`). That halt is an outcome, not a waste — the surfaced finding plus any committed earlier phases are progress.
+The gate is a cheap pre-filter on the *known* — it scores only the **next** phase, and never spawns for an already-walled item. An item that passes but turns out mid-flight to need a human (a downstream phase resolving to venue U/P, a `Probe-deps` tag, a design fork) still halts at its wall — the session self-gates and writes the typed status (`phase-loop.md §Walls`, `§Halts`). That halt is an outcome, not a waste — the surfaced finding plus any committed earlier phases are progress.
