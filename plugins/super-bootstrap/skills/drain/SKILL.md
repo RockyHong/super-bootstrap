@@ -81,7 +81,7 @@ Explicit `--model sonnet` in the dispatch — drain is the widest fan-out surfac
 
 **Polymorphic lanes (locked).** A code-shaped item runs the eng lane — lean by default: ground → plan → execute (TDD) → review → halt at merge. A prose-shaped item (doc-hygiene — the doc edit is the deliverable) runs the doc lane: doc-edit → review → halt at merge, no TDD (`assets/phase-loop.md §Lane select`).
 
-**Walls are session-side.** The pre-build wall check (surface verdict, non-deterministic fix-shape, probe deps) and the mid-flight walls (design surface, cost, smoke, device-bound or unverified capability) fire inside the session, which stops and writes the typed status — the gateway reads halts, it does not gate between phases (`assets/phase-loop.md §Walls`).
+**Walls are session-side.** The pre-build wall check (surface verdict, non-deterministic fix-shape, probe deps) and the mid-flight walls (design surface, cost, smoke, device-bound capability — browser MCP or human-eyes verify) fire inside the session, which stops and writes the typed status — the gateway reads halts, it does not gate between phases (`assets/phase-loop.md §Walls`).
 
 ## Merge gate
 

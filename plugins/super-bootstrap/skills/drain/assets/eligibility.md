@@ -38,7 +38,7 @@ The plugin's baseline gate is `intent == Cloud` (cloud-safe: phase produces a ve
 | **Cloud-gate (fallback)** | no `.claude/rules/venue-map.md` | `intent == Cloud` admits; `Device`/`Discuss` defer. The plugin's original predicate, unchanged. |
 
 - `nextPhaseVenue(item)` resolves the item's next phase from its `stage` and reads that phase's venue — canonical in `.claude/rules/venue-map.md` (`§Derivation`, `§Modality overrides`). drain **consumes** the map; it never re-derives venue by hand.
-- **Graceful degrade is a file-presence branch, not a code path fork.** Without the venue map, `T ≈ Cloud` (drainable in-worktree) and the `S`/`U`/`P` refinements collapse: an e2e item that the venue map would call **S** classifies `Device` under the bare cloud-safe criterion and defers, and a manual-verify item that would be **U** likewise. The consumer without the scale module gets exactly the plugin's prior behavior; the consumer with it gets the merge-probe (S) lane on top.
+- **Graceful degrade is a file-presence branch, not a code path fork.** Without the venue map, `T ≈ Cloud` (drainable in-worktree) and the `S`/`U`/`P` refinements collapse: an interactive-browser e2e item that the venue map would call **S** classifies `Device` under the bare cloud-safe criterion and defers (a fully-automated headless suite classifies `Cloud` and drains), and a manual-verify item that would be **U** likewise. The consumer without the scale module gets exactly the plugin's prior behavior; the consumer with it gets the merge-probe (S) lane on top.
 
 ## Inline / wave-of-one carve-out (skip the worktree)
 

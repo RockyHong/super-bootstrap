@@ -67,7 +67,7 @@ The session runs phase-to-phase and stops at the first wall; the wall's type rid
 | Real external cost, user smoke test, or a harness-file deliverable discovered mid-flight | user | the phase itself |
 | Security finding during review — vulnerability or irreversible-action concern | user | review phase |
 | `Probe-deps` ≠ `none` — probe/tooling grant lane | shape | after ground |
-| Phase needs a device-bound or unverified capability (e2e runner, browser MCP — capability unverified) | shape | the phase itself |
+| Phase needs a device-bound capability (browser MCP — absent in headless runs — or human-eyes verify; a fully-automated headless e2e suite runs in-worktree, no wall) | shape | the phase itself |
 
 `Execution: phased(skip: …)` in the Verdict block → advance skipping exactly the named stages (the verdict already sized them out); `Execution: inline` never reaches here (rolled in-session per `eligibility.md §Inline / wave-of-one carve-out`).
 
@@ -106,7 +106,7 @@ The gateway reads it live via `cat .claude/worktrees/drain-{id}/.drain-status` (
 | Empty wave (all conflicting) | Shape 3 |
 | User declines wave | Confirm gate |
 | `WALL:user:*` — design/product judgment, security finding, cost, smoke, harness surface | §Walls (session self-gate) |
-| `WALL:shape:*` — probe deps, device-bound or unverified capability | §Walls (session self-gate) |
+| `WALL:shape:*` — probe deps, device-bound capability (browser MCP / human-eyes verify) | §Walls (session self-gate) |
 | `BLOCKED` / `NEEDS_CONTEXT` | Any phase |
 | Tests still red after the one TDD retry | Execute phase |
 | Merge-probe (venue S) red → abort + re-spawn | Merge gate (`merge-probe.md`) |

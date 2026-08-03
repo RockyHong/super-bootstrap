@@ -28,21 +28,22 @@ Each Harness row carries a `subgroup` tag:
 
 ## Cloud-safe criterion
 
-Applied to `Cloud OR Device (derive)` rows — those the verb map does not lock outright. The criterion judges the item's **next phase** — the phase its action names — never the whole chain: a device-bound tail (an e2e verify) walls its own phase, not the build in front of it. Inputs read cheapest-first; stop at the first that locks the row:
+Applied to `Cloud OR Device (derive)` rows — those the verb map does not lock outright. The criterion judges the item's **next phase** — the phase its action names — never the whole chain: a device-bound tail (a manual verify) walls its own phase, not the build in front of it. Inputs read cheapest-first; stop at the first that locks the row:
 
-> **Cloud-safe = phase produces a verifiable artifact via tooling alone. No human visual judgment, no real browser/device interaction, no "looks right" call.**
+> **Cloud-safe = phase produces a verifiable artifact via tooling alone. No human visual judgment, no interactive browser/device step, no "looks right" call. A fully-automated headless suite (playwright et al., assertions only) is tooling; browser-MCP automation is not — the extension relay attaches to interactive sessions only, so a headless run never reaches it.**
 
 ### Derivation inputs (read in order — stop at the first that locks the row)
 
 1. **Phase verb** in derived action:
    - `Write plan` / `Approve design` / `Triage` / `Extract` / `Doc-edit` → cloud-safe regardless of paths
-   - `Manually verify` / `E2E run` / `Smoke test` → device-only
-   - `Start execute` / `Continue execute` / `Review` / `Implement` → derive per #2 + #3 (for `Implement` rows, skip the free-text keyword grep — read the `auto-fix` Verdict block as fields: its `Files` paths feed #2's path arms; its `Test Strategy` field gates the **review-phase row only** — `e2e` walls the verify phase, never the build row in front of it; the field's literal value never re-enters the keyword scan)
+   - `Manually verify` → device-only
+   - `E2E run` / `Smoke test` → derive from the suite's run shape: fully-automated headless suite (assertions only) → cloud-safe; human eyes, screenshot judgment, or a browser-MCP step → device-only; shape unstated → device-only
+   - `Start execute` / `Continue execute` / `Review` / `Implement` → derive per #2 + #3 (for `Implement` rows, skip the free-text keyword grep — read the `auto-fix` Verdict block as fields: its `Files` paths feed #2's path arms; its `Test Strategy` field gates the **review-phase row only** — a device-bound strategy (manual / visual / interactive-browser) walls the verify phase, never the build row in front of it; a fully-automated headless suite does not wall; the field's literal value never re-enters the keyword scan)
 2. **Plan-block content** — grep the card's latest `## Plan` block for device signals:
-   - Keywords: `manual test`, `e2e`, `playwright`, `cypress`, `visual`, `device`, `mobile`, `browser`, `screenshot`
+   - Keywords: `manual test`, `visual`, `device`, `mobile`, `browser`, `screenshot` (`e2e` / `playwright` / `cypress` alone are not device signals — a fully-automated headless suite is cloud-runnable; they wall only when paired with a visual / manual / interactive-browser signal)
    - Paths in step lines: `**/components/**`, `**/app/**`, `**/pages/**`, `**/views/**`, `apps/web/**`, `apps/mobile/**` → device-suspicion
    - If only pure-logic paths (`lib/`, `utils/`, `core/`, `packages/{logic-name}/`) and no device keywords → cloud-safe
-3. **Design-block success criteria** (when the card carries a `## Design` block) — explicit `manual verification`, `visual check`, `e2e pass` → device-only for the **review** row (the phase the criterion gates); executing rows derive from #2 alone
+3. **Design-block success criteria** (when the card carries a `## Design` block) — explicit `manual verification`, `visual check` → device-only for the **review** row (the phase the criterion gates); executing rows derive from #2 alone
 
 ### Default
 
@@ -59,7 +60,8 @@ Intent is determined by action verb before content reads. Rows locked to a defin
 | `Refine spec`, `Doc-edit`                                       | **Cloud**                    | Doc artifact, headless.                                                      |
 | `Start execute`, `Continue execute`, `Resume`                   | **Cloud OR Device** (derive) | Depends on paths + content per cloud-safe criterion.                         |
 | `Review` (read diff of completed plan)                          | **Cloud**                    | Reading diff is headless.                                                    |
-| `Manually verify`, `E2E run`, `Smoke test`                      | **Device**                   | Real browser / device required.                                             |
+| `Manually verify`                                               | **Device**                   | Human visual judgment required.                                              |
+| `E2E run`, `Smoke test`                                         | **Cloud OR Device** (derive) | Fully-automated headless suite → Cloud; human eyes or browser-MCP step → Device (cloud-safe criterion #1). |
 | `Triage` (raw card, investigate-only)                           | **Cloud**                    | Investigate-only artifact, headless.                                         |
 | `Implement` (card carrying an `auto-fix` Verdict block)          | **Cloud OR Device** (derive) | Depends on the Verdict block's `Files` paths + `Test Strategy` per cloud-safe criterion. |
 | `Deliberate`, `Apply` (harness surface)                         | **Harness**                  | Pre-filter already caught it; the verb renders the subgroup.                  |
