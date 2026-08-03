@@ -1,0 +1,6 @@
+# DEBT-046 — frozen drain worktree template carries dead Write allow/deny rules that emit CC warnings on every subprocess spawn
+
+**Logged:** 2026-08-03 · **Source:** GAP-052 probe session, 2026-08-03
+**Problem:** `plugins/super-bootstrap/skills/drain/assets/worktree-settings.local.json` contains two Write permission rules that are no-ops on CC 2.1.220: the `Write(./**)` allow (line 6) and the `Write(.claude/settings*.json)` deny (line 66). CC warns verbatim: "Permission allow rule (.claude\settings.local.json): Write(./**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(./**) instead (Edit rules cover all file-editing tools)." The warning fires at the head of every `claude -p` worktree spawn output. Coverage holds via the parallel `Edit(./**)` allow and `Edit(.claude/settings*.json)` deny already present in the same file; the Write lines are dead weight.
+**Area:** `plugins/super-bootstrap/skills/drain/assets/worktree-settings.local.json` (lines 6, 66); version-bump propagation per the template's own `_comment` header
+**Prior:** Delete the two Write lines from the frozen template; frozen-asset touch triggers version-bump propagation per the template's `_comment` header.
