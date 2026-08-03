@@ -13,7 +13,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `log` — capture front door for backlog rows; dispatches `agents/log.md` (Sonnet).
 - `triage` — read-only grounding phase for one backlog card (premise verify / aim validate / blast collect); dispatches `agents/triage.md` (Opus).
 - `triage-report` — drains `.review/` scan reports with per-finding dispositions; dispatches `agents/triage-report.md` (Sonnet).
-- `help` — on-demand index of installed user-invoke skills; dispatches `agents/help.md` (Haiku).
+- `help` — on-demand index of installed user-invoke skills; inline + bundled extraction script.
 - `commit` — session-isolated, doc-sync-gated commit; grep-gate dispatches `agents/doc-sync-scan.md` (Sonnet), product-anchor diffs dispatch `agents/premise-closure.md` (Sonnet).
 - `merge` — absorb feature branches; aborts + surfaces on conflict.
 - `check-docs-consistency` — cross-references project docs for drift, stale references, contradictions; timestamped report to `.review/`, report-only.
@@ -65,7 +65,7 @@ A single matching reason on either side decides.
 | `log` | dispatch (Sonnet) | Bounded classify + gate + write — Sonnet fit; dispatch also enforces bias exclusion (shell never pre-classifies buckets) |
 | `triage` | dispatch (Opus) | Grounding is the highest-judgment lane — root-cause depth for broken behavior, need/aim verification for capability and debt claims (verdict errors propagate into every downstream phase — Opus floor); read-only toolset + clean context enforce the phase identity and priors isolation |
 | `triage-report` | dispatch (Sonnet) | Bounded per-finding disposition — Sonnet fit; gateway coverage review + `/log` dedup judge the sheet downstream; dispatch enforces bias exclusion (shell passes no priors) |
-| `help` | dispatch (Haiku) | Pure manifest lookup + render — Haiku model fit, skill frontmatter can't pin a model so dispatch is the escape hatch |
+| `help` | inline + script asset | Extraction is deterministic (JSON manifests + YAML frontmatter) → bundled `render-menu.py` does it in one tool call, zero model tokens; the sole judgment (user-invoke filter) runs gateway-inline over the emitted rows. Probed: the retired Haiku dispatch cost 52.3k tokens / 29 tool uses per bare invoke vs ~0 + the menu's own size |
 | `review-intake` *(agent, no owning skill — gateway-routed via consumer CLAUDE.md § Dispatch)* | dispatch (Sonnet) | Cold per-claim premise judge at the claim's entry moment — an inline judge defeats the fire-moment cold-container mechanism; dispatch enforces bias exclusion (no fix preferences, no dispatcher theories ride in) |
 
 When adding a new skill: update this table. This table is the only home for inline-vs-dispatch rationale — SKILL.md bodies carry the dispatch instruction, not the reasoning (harness MDs hold rules, not why-essays). Rows are skill-keyed; an agent no skill dispatches (gateway-routed) carries its own row, marked *(agent)*.
