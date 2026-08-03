@@ -1,12 +1,12 @@
 ---
 name: triage
-description: 'Read-only verdict phase for a card. `/super-bootstrap:triage {ID}` dispatches the `triage` subagent (Opus) to trace the card''s root cause cold and append a Verdict block — `## Verdict — auto-fix · {date}` (Fix-shape / Probe-deps / Execution tags) or `## Verdict — surface · {date}` (decision for the user) — to `docs/work/{ID}.md`. No code changes — the fix is a separate phase. Use at raw-card pickup (todo board `Triage:` rows) or when the user asks to triage/investigate a BUG/DEBT/GAP item.'
+description: 'Read-only grounding phase for a card — every card''s pickup. `/super-bootstrap:triage {ID}` dispatches the `triage` subagent (Opus) to ground the card cold — premise verify, aim validate, blast collect — and append a Verdict block — `## Verdict — auto-fix · {date}` (Fix-shape / Probe-deps / Execution tags) or `## Verdict — surface · {date}` (decision for the user) — to `docs/work/{ID}.md`. No code changes — the fix is a separate phase. Use at raw-card pickup (todo board `Triage:` rows) or when the user asks to triage/investigate a BUG/DEBT/GAP item.'
 tags: [triage, verdict, card, pipeline]
 ---
 
-# Triage — Read-Only Verdict Phase
+# Triage — Read-Only Grounding Phase
 
-Investigate-only pickup lane for a card. The thinking runs in the `triage` subagent (`agents/triage.md`, `model: opus`); this skill is the dispatch shell + absorption protocol. The agent traces root cause cold, sizes the fix, appends a Verdict block to the card; the fix is a later phase that inherits the verdict.
+Grounding pickup lane for a card. The thinking runs in the `triage` subagent (`agents/triage.md`, `model: opus`); this skill is the dispatch shell + absorption protocol. The agent grounds the card cold — premise verify, aim validate, blast collect — sizes the fix, appends a Verdict block to the card; the fix is a later phase that inherits the verdict as its context scope.
 
 ## Arguments
 

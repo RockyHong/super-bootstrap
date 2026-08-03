@@ -11,7 +11,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`; Phase 2.5 dispatches `agents/plugin-digest.md` (Haiku) for README→digest parse.
 - `todo` — intent-filtered board scanner; dispatches `agents/todo.md` (Sonnet).
 - `log` — capture front door for backlog rows; dispatches `agents/log.md` (Sonnet).
-- `triage` — read-only verdict phase for one backlog card; dispatches `agents/triage.md` (Opus).
+- `triage` — read-only grounding phase for one backlog card (premise verify / aim validate / blast collect); dispatches `agents/triage.md` (Opus).
 - `triage-report` — drains `.review/` scan reports with per-finding dispositions; dispatches `agents/triage-report.md` (Sonnet).
 - `help` — on-demand index of installed user-invoke skills; dispatches `agents/help.md` (Haiku).
 - `commit` — session-isolated, doc-sync-gated commit.
@@ -63,7 +63,7 @@ A single matching reason on either side decides.
 | `check-docs-consistency` | inline | Single-pass scan by default (rung 1); scale rides the opt-in § Workflow Fan-Out — a Workflow launch from the invoking context, not an Agent dispatch |
 | `todo` | dispatch (Sonnet) | Multi-file scan + bounded classification + render — Sonnet fit, isolate from gateway |
 | `log` | dispatch (Sonnet) | Bounded classify + gate + write — Sonnet fit; dispatch also enforces bias exclusion (shell never pre-classifies buckets) |
-| `triage` | dispatch (Opus) | Root-cause trace is the highest-judgment lane (verdict errors propagate into every downstream phase — Opus floor); read-only toolset + clean context enforce the phase identity and priors isolation |
+| `triage` | dispatch (Opus) | Grounding is the highest-judgment lane — root-cause depth for broken behavior, need/aim verification for capability and debt claims (verdict errors propagate into every downstream phase — Opus floor); read-only toolset + clean context enforce the phase identity and priors isolation |
 | `triage-report` | dispatch (Sonnet) | Bounded per-finding disposition — Sonnet fit; gateway coverage review + `/log` dedup judge the sheet downstream; dispatch enforces bias exclusion (shell passes no priors) |
 | `help` | dispatch (Haiku) | Pure manifest lookup + render — Haiku model fit, skill frontmatter can't pin a model so dispatch is the escape hatch |
 

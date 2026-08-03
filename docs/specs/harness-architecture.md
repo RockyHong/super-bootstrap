@@ -431,7 +431,8 @@ The last is the counterpart of [`docs/decisions.md`](../decisions.md), narrower 
 rejected enhancements only, while ours admits closed forks across every domain.
 
 **Two lanes collide by name, not by work.** His `triage` sorts an inbox; our
-`/super-bootstrap:triage` is a cold single-card root-cause verdict phase. They coexist. The
+`/super-bootstrap:triage` is a cold single-card grounding phase (premise verify / aim
+validate / blast collect). They coexist. The
 comparison surface for `DEBT-035`'s vacate question is therefore `diagnosing-bugs`, which is
 what that card already names.
 
