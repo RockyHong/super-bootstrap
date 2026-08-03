@@ -26,8 +26,8 @@ Venue is derived fresh per read — never stored. Chain: the shared classificati
 |---|---|---|
 | `raw` | Triage | **T** |
 | `triaged` | Implement | derive — § Modality overrides over the card's Verdict block |
-| `spec` | Write plan | **T** |
-| `plan` | Execute | derive — § Modality overrides |
+| `aimed` | Execute | derive — § Modality overrides |
+| `executing` | Execute | derive — § Modality overrides |
 | `review` | Review | **T** — manual-verification arm → **U** / **S** per Test-feel |
 
 ## Modality overrides
@@ -36,7 +36,7 @@ Downgrade an otherwise-**T** phase when the row carries the signal.
 
 | Signal | Effect |
 |---|---|
-| `Stochastic: llm` | triage / build / test → **P**; plan / spec / doc stay **T** |
+| `Stochastic: llm` | triage / build / test → **P**; plan-write / aim-settle / doc stay **T** |
 | visual-taste acceptance | acting phase → **U** — who accepts this as done? the user's eyes → U (never keyword matching) |
 | `Test-feel: e2e` | verify phase → **S** |
 | `Test-feel: manual` | verify phase → **U** |

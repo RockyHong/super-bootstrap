@@ -81,11 +81,11 @@ inseparable from it.
 | `docs/specs/superpowers-topology.md` | Dead. The file is gone. |
 | `harness-bootstrap` § Core plugin pins — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. A process harness is an ordinary adaptive pick in `resolve-plugins`, pinned by nothing. |
 | The temporal work folder | **Ours**, at `docs/work/`. His artifact skills own no path — they publish to whatever tracker is configured (§4) — so there was no slot to defer to. |
-| drain's stage machine (`raw→triage→plan→execute→review`) | **Live** — the stage set reads this repo's own artifact slots by file presence, so only the per-phase command dispatch was foreign. Each phase names the artifact it lands (`phase-loop.md §Phase → artifact`) and dispatches a repo door where one exists. |
+| drain's stage machine (`raw→triage→plan→execute→review`) | **Re-cut by GAP-050** — the stage set was distillation-shaped after all: Design/Plan slots are now conditional context-scope sections (thread contract), stage vocabulary re-cut to `aimed`/`executing`. Drain's surviving value — cold-executor parallelism over scoped briefs — re-derives via `GAP-051`. |
 | **log / cards / commit / doc-sync / rules** | **Unaffected.** |
 | `skills/triage/SKILL.md` + `agents/triage.md` — investigation doctrine | Referent dead, **discipline live**: the clause is stated inline, naming no harness. The pointer never resolved even where superpowers is installed — the agent's tool list carries no `Skill`. |
 
-**The table was 8 rows and all 8 survive** — three of them restated. Its real function is
+**The table was 8 rows; 7 survive** (drain's stage machine re-cut by GAP-050 → `GAP-051`) — three of them restated. Its real function is
 sizing ceremony to shape, and that is harness-independent: clusters 5 and 6 say "no
 ceremony", 7 routes harness edits, 8 routes triage to our own door, and 1–3 name the
 disciplines a process harness would otherwise supply. Deleting rows rather than restating
@@ -353,9 +353,11 @@ no information flowing back — are the antipattern, and he ships nearly none.
 super-bootstrap routes no external process harness. The §4 grep returns only the two
 sanctioned classes, and the shape check holds beside it — zero name-hits was never
 sufficient on its own, since a stage chain renamed to harness-neutral words would still
-carry the foreign decomposition; drain's stage set is derived from this repo's own
-artifact slots, not renamed foreign phases. The runway declares its bare posture (§6
-above). `GAP-038` stays parked behind change B.
+carry the foreign decomposition. GAP-050's per-slot audit confirmed that risk was real:
+the staging ceremony (Design/Plan as default gates) was distillation residue — the thread
+contract now carries them as conditional context-scope sections, and drain's stage set
+re-derives from grounding-native artifacts (`GAP-051`). The runway declares its bare
+posture (§6 above). `GAP-038` stays parked behind change B.
 
 Two constraints outlive the change:
 

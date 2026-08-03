@@ -28,8 +28,8 @@ Two lane shapes; pick per item before entering the stage chain:
 | ------------- | ----- |
 | `raw` (card, no Verdict) | triage → [escalate-or-build gate] → [pre-plan confirm gate] → plan → execute (TDD) → review → **merge gate (halt)** |
 | `triaged` (auto-fix Verdict, no Plan block) | [pre-plan confirm gate] → plan → execute (TDD) → review → **merge gate (halt)** — triage inherited from the Verdict block, never re-run |
-| `spec` (Design block, no plan) | plan → execute → review → **merge gate (halt)** |
-| `plan` (executing) | continue execute → review → **merge gate (halt)** |
+| `aimed` (Design block, no plan) | plan → execute → review → **merge gate (halt)** |
+| `executing` (Plan block in flight) | continue execute → review → **merge gate (halt)** |
 | `review` (all plan steps reported done) | review → **merge gate (halt)** |
 
 Committed upstream phases are inherited from base (branched fresh) — drain never re-runs a phase already landed.
@@ -46,7 +46,7 @@ Each phase is named by what it lands, in this repo's own slots — the same slot
 | review | findings against the branch diff | `/code-review` |
 | doc-edit (doc lane) | the doc change itself | — |
 
-### Escalate-or-build gate (raw + spec entries)
+### Escalate-or-build gate (raw + aimed entries)
 
 After triage, before building: if the subprocess finds a **real design surface** — needs a spec, an unresolved decision, or a fork the user owns — it writes `DONE_WITH_CONCERNS` and **halts**. The gateway surfaces it and the item leaves the drain lane — design-settling is a user wall; the item re-enters the board via `/super-bootstrap:todo discuss`. drain does not build further. Lean fix-loop is the default; escalation is the exception that keeps drain from building past a design wall.
 

@@ -26,12 +26,12 @@ No phase prescription per category — triage decides how much ceremony the work
 
 **Origin block** (H1 + field lines) — frozen at capture; the breadcrumb at the top of the thread.
 
-**Five block types**, each appended at end of file, dated + sourced:
+**Five block types**, each appended at end of file, dated + sourced — context-scope sections assembled on need, never stages a card must pass:
 
 - `## Amendment — {date} · {source}` — reframe, premise supersession, new fact, NEEDS_CONTEXT answer.
 - `## Verdict — auto-fix|surface · {date}` — triage output.
-- `## Design — {date}` — settled design; approval = one appended line.
-- `## Plan — {date}` — step sequence only; no checkboxes, no status marks. Revision = new Plan block that takes over; old stays in the chain.
+- `## Design — {date}` — settled-aim section; lands only when a genuine fork put the aim to the user (taste gate) — the chosen option, settled; approval = one appended line.
+- `## Plan — {date}` — step-order section; lands only when a cold executor runs the work (drain worktree, cross-session handoff); step sequence only — no checkboxes, no status marks. Revision = new Plan block that takes over; old stays in the chain.
 - `## Progress — {date}` — durable milestone or interruption state; the cross-session handoff surface.
 
 **Mutation authority:** any session or agent appends (end-of-file only, dated + sourced); a changed understanding appends a new block that takes over the lead. Existing content is never edited.

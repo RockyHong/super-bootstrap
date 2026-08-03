@@ -8,7 +8,7 @@ Three outputs per item:
 
 - **`action`** — the one-line actionable verb-phrase (`"Triage: BUG-12 …"`, `"Continue execute: GAP-31 … (3/7)"`). The render string.
 - **`intent`** — `Discuss` | `Cloud` | `Device` | `Harness`. The runnability bucket. `Harness` rows additionally carry **`subgroup`** — `deliberate` | `apply` (§Harness pre-filter).
-- **`stage`** — where the item sits in the pipeline, read from the card's thread state: `raw` (no verdict, or a `surface` verdict awaiting the user) · `triaged` (`auto-fix` Verdict block, no plan) · `spec` (Design block, no plan) · `plan` (Plan block executing) · `review` (latest Progress reports every plan step done). The entry point for stage-resuming consumers.
+- **`stage`** — where the item's thread stands: `raw` (no verdict, or a `surface` verdict awaiting the user) · `triaged` (`auto-fix` Verdict block, no plan) · `aimed` (settled-aim Design block, no step-order Plan) · `executing` (Plan block in flight) · `review` (latest Progress reports every plan step done). The entry point for stage-resuming consumers.
 
 `intent` is the gate; `stage` is the entry point; `action` is for human render.
 
@@ -81,10 +81,10 @@ Each card is one append-only thread: a frozen origin block, then dated `## Amend
 - **No blocks** (origin only) → action: `"Triage: {ID} {title}"`, **intent: Cloud** (triage is investigate-only), **stage: raw**.
 - **Latest Verdict is `## Verdict — surface`** (fork waiting on the user) → action: `"Decide: {ID} {title} — triage verdict"`, **intent: Discuss**, **stage: raw**.
 - **Latest Verdict is `## Verdict — auto-fix`, no Design or Plan block after it** → action: `"Implement: {ID} {title}"`, intent per cloud-safe derivation over that block's `Files` paths + its `Test Strategy` line, **stage: triaged**.
-- **`## Design` block with no approval line appended after it** → action: `"Approve design: {ID} {title}"`, **intent: Discuss**, **stage: spec**.
-- **Approved Design, no `## Plan` block after it** → action: `"Write plan: {ID} {title}"`, **intent: Cloud**, **stage: spec**.
-- **Latest `## Plan`, no `## Progress` after it** → action: `"Start execute: {ID} {title}"`, **stage: plan**. Intent per cloud-safe derivation.
-- **Latest `## Plan` + a later `## Progress` reporting some of its steps done** → action: `"Continue execute: {ID} {title} ({done}/{total})"`, **stage: plan**. Intent per cloud-safe derivation.
+- **`## Design` block with no approval line appended after it** → action: `"Approve design: {ID} {title}"`, **intent: Discuss**, **stage: aimed**.
+- **Approved Design, no `## Plan` block after it** → action: `"Start execute: {ID} {title}"`, **stage: aimed**, intent per cloud-safe derivation. A later `## Progress` → `"Continue execute: {ID} {title}"`, same stage and intent. `"Write plan: {ID} {title}"` (**intent: Cloud**) replaces either only when the card's latest block names a cold-executor route (a drain-wave queue, a cross-session handoff).
+- **Latest `## Plan`, no `## Progress` after it** → action: `"Start execute: {ID} {title}"`, **stage: executing**. Intent per cloud-safe derivation.
+- **Latest `## Plan` + a later `## Progress` reporting some of its steps done** → action: `"Continue execute: {ID} {title} ({done}/{total})"`, **stage: executing**. Intent per cloud-safe derivation.
 - **Latest `## Plan` + a later `## Progress` reporting all of its steps done** → action: `"Review: {ID} {title}"`, **stage: review**. Intent per cloud-safe derivation (manual verification → Device; diff-read → Cloud). Resolution rides the review — the reviewing session deletes the card file; no separate row for it.
 
 **Step counting.** Plan blocks carry steps only, no checkboxes or status marks: `{total}` = steps the latest Plan lists, `{done}` = those the latest Progress reports done, remaining = the difference. Read the Progress prose for which steps it names; a Progress that names none reports zero.
