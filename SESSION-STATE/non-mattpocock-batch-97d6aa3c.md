@@ -1,4 +1,4 @@
-# Carry — non-mattpocock batch; GAP-050 wave shipped, GAP-051 / release next
+# Carry — non-mattpocock batch; GAP-050/051/046 shipped, release + probes next
 
 ## Anchor
 
@@ -6,20 +6,20 @@ Work the remaining non-mattpocock board items; mattpocock-parked group stays unt
 
 ## Read first
 
-- `docs/work/GAP-051.md` — drain re-derivation, now unblocked (GAP-050 deliverables 1–4 landed; vocabulary Amendment on card)
-- `docs/work/GAP-046.md` — judge container unblocked (Amendment 2026-08-03: fourth-thin-door path via `shared/grounding-discipline.md`)
-- `docs/decisions.md` top row — code-review layer deferral (was GAP-050's deferred item)
+- `docs/work/GAP-052.md` — browser-MCP multi-instance + headless-e2e probes (gate `wall(shape)` venue reclassification)
+- `docs/decisions.md` top row — code-review layer deferral
+- `plugins/super-bootstrap/agents/premise-closure.md` — fourth grounding door (GAP-046 container, shipped)
 
 ## State
 
-GAP-050 wave shipped + card resolved/deleted: d1 `e15b079` (triage charter → universal grounding), d4 `6f313e2` (grounding-discipline shared spec + three doors thinned, DEBT-044 residue row), d2+d3 `f10dd83` (thread contract de-staged + classify `aimed`/`executing`). Spec §6 change-A defense + dissolution row updated. All micro-tests GREEN; audits dispositioned per commit.
+GAP-050 wave shipped + resolved (v2.26.0 released + pushed). GAP-051 shipped + resolved (`bffd528` design, `6b5744f` aim-switch, `e41eb7c` drain scoped-brief machine). GAP-046 shipped + resolved (premise-closure door + commit §3b wiring). All micro-tests GREEN; audits dispositioned per commit. main ahead of origin (post-v2.26.0 commits unpushed).
 
 ## Next step
 
-User picks: GAP-051 (drain re-derivation) · GAP-046 judge container · `/release` + push · mattpocock discussion.
+User picks: `/release` + push（GAP-051/046 波次）· GAP-052 probes · mattpocock 討論 · 開放 DEBT 卡（022/030/035/040/041/045）。
 
 ## Watch-outs
 
-- **Walls pending user:** `/release`(wave-1 + GAP-050 wave 一起攤)· push(main ahead of origin)· mattpocock parked group(DEBT-035/040, GAP-038/042)
-- `/contribute` owed: `${CLAUDE_PLUGIN_ROOT}` substitutes in plugin agent bodies (verified vs plugins-reference § Environment variables)— claude-shape lore candidate; consumer guidelines read-only here
+- **Walls pending user:** `/release` + push（新 commits 未攤）· mattpocock parked group（DEBT-035/040, GAP-038/042）
+- `/contribute` owed: `${CLAUDE_PLUGIN_ROOT}` substitutes in plugin agent bodies（verified vs plugins-reference § Environment variables）— claude-shape lore candidate
 - CCM inbox pending finding `harness-audit-gate-shared-path-gap-20260802-130847` — repo 端 digest,非本 repo 責任

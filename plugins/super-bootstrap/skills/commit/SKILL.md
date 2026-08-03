@@ -1,6 +1,6 @@
 ---
 name: commit
-description: "Commit the current session's changes only, gateway-inline. Session-isolated (never -A), doc-sync-gated. The gateway runs the commit inline — it already holds the diff, session file list, and change intent; only the doc-sync scan dispatches, and only when a mechanical grep-gate shows the diff touches the doc surface. Conventional message, commits directly, offers push on explicit confirmation. Bundled with super-bootstrap — encodes the harness commit rules."
+description: "Commit the current session's changes only, gateway-inline. Session-isolated (never -A), doc-sync-gated. The gateway runs the commit inline — it already holds the diff, session file list, and change intent; the doc-sync scan dispatches on a mechanical grep-gate hit, and the premise-closure judge on a product-anchor hit — nothing else leaves the gateway. Conventional message, commits directly, offers push on explicit confirmation. Bundled with super-bootstrap — encodes the harness commit rules."
 tags: [commit, git, session, doc-sync]
 ---
 
@@ -24,7 +24,7 @@ Commits the changes this Claude session produced, leaving prior uncommitted work
    - **No hit → the diff narrates nothing; go to §5.**
    - **Link integrity (every non-deferred commit, exemption included):** run `<skill-base>/assets/doc-links.sh check` from the repo root — `<skill-base>` is the `Base directory for this skill:` path surfaced at invocation; zero model tokens. Broken links (path or anchor) surface to the user with the commit: fix or explicitly acknowledge before landing; never silently skip.
 
-3b. **Premise-closure lane (product-anchor diff)** — a problem/ICP revision changes premise, not behavior; its closure is every doc whose framing leans on the anchor. Enumerate mechanically — union of `<skill-base>/assets/doc-links.sh refs <anchor-path>` (reverse index) and the fallback glob `docs/work/GAP-*.md` + `docs/specs/*.md` (a GAP names a capability gap relative to problem + ICP; a spec builds on the premise). Judgment runs only over the enumerated set, at the gateway with the user (still-valid / re-frame / drop per doc) — no dedicated judge container. Then continue §3 on the rest of the diff.
+3b. **Premise-closure lane (product-anchor diff)** — a problem/ICP revision changes premise, not behavior; its closure is every doc whose framing leans on the anchor. Enumerate mechanically — union of `<skill-base>/assets/doc-links.sh refs <anchor-path>` (reverse index) and the fallback glob `docs/work/GAP-*.md` + `docs/specs/*.md` (a GAP names a capability gap relative to problem + ICP; a spec builds on the premise). Judgment runs only over the enumerated set — dispatch the `premise-closure` agent (`Agent` tool, `subagent_type: "premise-closure"`; prompt = the anchor diff hunks + the anchor path + the enumerated paths, no staleness leans): its sheet (holds / re-frame / dangling per doc + coverage line) returns here; resolve with the user before the commit lands — re-frame: update the doc to align / acknowledge still-accurate; dangling: drop / merge / defer. Never silently fix, never silently skip. Then continue §3 on the rest of the diff.
 
 4. **Doc-sync scan (dispatched on hit)** — `Agent`, `subagent_type: "doc-sync-scan"`; prompt = the diff (`git diff` + `git diff --staged`) + today's date. It runs its own cold scan of the doc surface and returns one shape:
    - **`stale-docs`** → resolve each candidate with the user (update / acknowledge-accurate / skip — never silently fix, never silently skip). Land approved doc edits (inline for bounded prose; dispatch by closure). Resolved docs join the stage list.
@@ -44,7 +44,7 @@ Commits the changes this Claude session produced, leaving prior uncommitted work
 
 ## Rules
 
-- **Gateway-inline; only doc-sync dispatches.** The gateway holds the diff, session list, and intent → mechanics stay inline (no closure a fresh container would hold). The cold doc-sync scan is the one step a clean context serves.
+- **Gateway-inline; two dispatch paths, each on its own gate.** The gateway holds the diff, session list, and intent → mechanics stay inline (no closure a fresh container would hold). The cold doc-sync scan (grep-gate hit) and the premise-closure judge (product-anchor hit) are the steps a clean context serves.
 - **Grep-gate is mechanical.** Term extraction is path-structure only, never a judgment about which identifiers matter — a judgment gate gets omitted. Any hit dispatches; conservative by design. A pure asset/binary diff with no narrated path is the skippable class.
 - **Session-isolated.** The session list decides; prior dirty state is sacred. Explicit paths, never `-A`.
 - **Doc-sync round-trip, never bypass** — a `stale-docs` return goes through the user before commit.

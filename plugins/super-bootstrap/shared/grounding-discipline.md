@@ -1,6 +1,6 @@
 # Grounding Discipline — shared spec
 
-Single source of truth for the cold-judge discipline every grounding door instantiates — `agents/triage.md` (card pickup), `agents/triage-report.md` (`.review/` scan reports), `agents/review-intake.md` (mid-flow review findings). Each door self-reads this file at dispatch (its MD names this path via `${CLAUDE_PLUGIN_ROOT}`); door-native concerns — entry surface, procedure, verdict vocabulary, output payload, model tier — live in each door's own MD, never here.
+Single source of truth for the cold-judge discipline every grounding door instantiates — `agents/triage.md` (card pickup), `agents/triage-report.md` (`.review/` scan reports), `agents/review-intake.md` (mid-flow review findings), `agents/premise-closure.md` (product-anchor revisions at the commit door). Each door self-reads this file at dispatch (its MD names this path via `${CLAUDE_PLUGIN_ROOT}`); door-native concerns — entry surface, procedure, verdict vocabulary, output payload, model tier — live in each door's own MD, never here.
 
 > **Doors self-read, never paraphrase.** Restating these rules in a door MD forks the discipline — the drift this shared home exists to prevent.
 
