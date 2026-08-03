@@ -1,4 +1,4 @@
-# Carry — non-mattpocock batch; probes + DEBT-041/045 shipped, dispatch-cost family next
+# Carry — non-mattpocock batch; probes + DEBT-041/045 shipped + v2.28.0 out, dispatch-cost family next
 
 ## Anchor
 
@@ -12,15 +12,15 @@ Work the remaining non-mattpocock board items; mattpocock-parked group stays unt
 
 ## State
 
-DEBT-041 resolved(repo 端 + lore reshape 送 CCM inbox `edit-discipline-dedupe-reshape-20260803-235240`)。DEBT-045 resolved(help agent retired → `render-menu.py` + gateway-inline filter,cold audit 5 findings applied)。GAP-052 half-verified。三筆 CCM inbox 提交(headless-e2e fact、Write-rule fact、lore reshape)+ 先前兩筆,共五筆待 CCM 端 digest。Main 領先 origin 2 commits(ec7aa5a、a224464)未 push;plugin source 已變(help retire + skeleton mirrors)未 release。
+DEBT-041 resolved(repo 端 + lore reshape 送 CCM inbox `edit-discipline-dedupe-reshape-20260803-235240`)。DEBT-045 resolved(help agent retired → `render-menu.py` + gateway-inline filter,cold audit 5 findings applied)。GAP-052 half-verified。v2.28.0 released + tagged。CCM inbox 五筆待 digest(本 session 三筆 + 先前兩筆)。
 
 ## Next step
 
-User picks: push + /release · DEBT-046(小,mechanical)· DEBT-022/030 doctrine 批(dispatch 何時 earn its cost,45 的數據為據)· GAP-052 probe (1)(需 Chrome 在場)· GAP-048 design fork · mattpocock 討論(解凍 DEBT-035/040, GAP-038/042)。
+User picks: DEBT-046(小,mechanical,下個版本 bump 一起)· DEBT-022/030 doctrine 批(dispatch 何時 earn its cost,45 的數據為據;本 session 的 audit/scan 開銷 ~330k 亦是活證據)· GAP-052 probe (1)(需 Chrome 在場)· GAP-048 design fork · mattpocock 討論(解凍 DEBT-035/040, GAP-038/042)。
 
 ## Watch-outs
 
 - mattpocock parked group 不動直到 change B 討論
 - drain scoped-brief session 尚無實跑;GAP-052 probe (2) 的 worktree spawn 是最接近的一次 smoke(green)
 - CCM inbox 五筆待 digest — repo 端責任
-- help retire 後第一次真 `/super-bootstrap:help` 實跑(published copy 更新後)是新路徑的 live smoke
+- `/plugin update super-bootstrap` 至 2.28.0 後,第一次真 `/super-bootstrap:help` 是新 script+inline-filter 路徑的 live smoke
