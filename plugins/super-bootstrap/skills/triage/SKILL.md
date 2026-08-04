@@ -21,7 +21,7 @@ Grounding pickup lane for a card. The thinking runs in the `triage` subagent (`a
 2. Dispatch: `Agent` tool, `subagent_type: "triage"`, prompt = the card ID + today's date + the gateway-aligned problem-aim when framing sharpened or corrected the card claim (premise / problem / scenario only). Exclude cause theories and fix preferences (bias-input exclusion) — the aligned aim is the user-validated target, not a prior; the card row carries the frozen claim.
 3. Absorb the agent's report (`agents/triage.md` § Reporting):
    - **DONE / DONE_WITH_CONCERNS** — relay verdict + card path. auto-fix Verdict block → post the route line off its `Execution:` tag (inline / phased → implement within the envelope, skipping what the tag skips; full → cluster route per CLAUDE.md). surface Verdict block → surface its `## Decision needed` to the user.
-   - **NEEDS_CONTEXT** — relay the named gaps; the answer returns as an `## Amendment` append on the card — via `/super-bootstrap:log` (the log agent's `amended` branch) or directly by the answering session.
+   - **NEEDS_CONTEXT** — relay the named gaps; the answer returns as an `## Amendment` append on the card — via `/super-bootstrap:log` (its amend path) or directly by the answering session.
    - **NEEDS_GRANTS** — grant the named tooling and re-dispatch; user round-trip only when the grant itself is user-owned (cost, consent).
    - **BLOCKED** — premise wrong; relay the counter-diagnosis to the user.
 4. The verdict artifact rides the session's normal envelope commit — no in-phase commit.

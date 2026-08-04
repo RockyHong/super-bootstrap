@@ -1,42 +1,39 @@
 ---
 name: log
-description: 'Capture front door. Logs 1..N observations as card files at docs/work/{ID}.md (BUG / DEBT / GAP), classified + deduped on Sonnet. A duplicate carrying a new fact lands as an Amendment block on the owning card (amended branch). Use when the user says "log this", "track that", "note this down", or types `/super-bootstrap:log <observation>` — and when Claude needs to file its own findings (out-of-scope findings from a review, audit, or returned subagent report). Dispatches the `log` subagent so classify + write run off the gateway model. Captures raw — the real/worth/now call is triage''s at `/super-bootstrap:todo` pickup. Does NOT triage (that is the `/super-bootstrap:todo` triage lane). Feature ideas log as GAP.'
+description: 'Capture front door. Logs 1..N observations as card files at docs/work/{ID}.md (BUG / DEBT / GAP), gateway-inline — no dispatch. Use when the user says "log this", "track that", "note this down", or types `/super-bootstrap:log <observation>` — and when Claude needs to file its own findings (out-of-scope findings from a review, audit, or returned subagent report). A suspected duplicate is surfaced for the user''s pick (amend / new card / drop), never auto-resolved. Captures raw — the real/worth/now call is triage''s at `/super-bootstrap:todo` pickup. Does NOT triage (that is the `/super-bootstrap:todo` triage lane). Feature ideas log as GAP.'
 tags: [log, capture, cards, pipeline]
 ---
 
 # Log — Capture Front Door
 
-Muscle-memory capture. Takes whatever the caller hands it — one observation or a batch — classifies each into **BUG / DEBT / GAP**, dedups against open cards, and writes each as a card file at `docs/work/{ID}.md`. A duplicate carrying a genuinely new fact lands as an Amendment block appended to the owning card (`amended` output branch). Capture is unconditional (bugs, debt, design gaps, unverified ideas all land); the real/worth/now call runs at `/super-bootstrap:todo` triage on pickup. The thinking runs in the `log` subagent (`agents/log.md`, `model: sonnet`); this skill is the dispatch shell.
+Muscle-memory capture, run **gateway-inline** in the calling session — no dispatch. Takes one observation or a batch, classifies each into **BUG / DEBT / GAP**, checks against open cards, and writes each clear entry as `docs/work/{ID}.md` in `docs/work/TEMPLATE.md`'s shape. Capture is unconditional about worth (bugs, debt, design gaps, unverified ideas all land); the real/worth/now call runs at `/super-bootstrap:todo` triage on pickup.
 
-All new cards route through here — user-initiated and Claude-initiated captures alike. Sanctioned alternative: hand-copy `docs/work/TEMPLATE.md` and bump the ID high-water line in `docs/work/README.md` in the same write.
+All new cards route through this door — user-initiated and Claude-initiated captures alike. Hand-copying `docs/work/TEMPLATE.md` with the same high-water bump is the same door, by hand.
 
 ## When it fires
 
-- **User** — explicit `/super-bootstrap:log <observation>`, or natural-language "log this / track that / note this down".
-- **Claude** — its own captures: a bug spotted mid-task, the out-of-scope findings a review or returned subagent surfaced. Batch them into one invocation — never one dispatch per finding.
+- **User** — explicit `/super-bootstrap:log <observation>`, or natural-language "log this / track that / note this down". Bare `/super-bootstrap:log` → ask what to capture (one line).
+- **Claude** — its own captures: a bug spotted mid-task, out-of-scope findings a review or returned subagent surfaced. Batch them into one pass.
 
-**A card is owed only for deferred or dropped work** — work that exits the current flow incomplete. Work completed in-flow, whoever directed it, carries no card debt. The trigger is completion-state (observable), not worth.
+**A card is owed only for deferred or dropped work** — work that exits the current flow incomplete. Work completed in-flow carries no card debt. The trigger is completion-state (observable), not worth.
 
-Out of lane: **triage** (root-cause investigation → the `/super-bootstrap:todo` triage lane). Feature ideas and unverified hunches are in lane — they log as GAP. This skill creates new cards and new-fact Amendments only.
+Out of lane: root-cause investigation (the triage lane), card deletion (the resolving session), rewriting existing blocks (threads are append-only). Feature ideas and unverified hunches are in lane — they log as GAP.
 
-## Arguments
+## Procedure
 
-The argument is the raw observation(s). Free-form. May be one item or many (a list, a pasted findings block). The skill does not parse buckets from the arg — the subagent classifies.
-
-| Invocation | Behavior |
-| --- | --- |
-| `/super-bootstrap:log <text>` | Dispatch the `log` subagent with the text as entries. |
-| `/super-bootstrap:log` (bare) | Ask the caller what to capture (one line), then dispatch. |
-
-## Execution
-
-1. Gather the entries — the user's text and/or the findings block the gateway is holding. Keep each entry's context (where it came from, any source file/line) so the subagent can dedup + write a faithful row.
-2. Dispatch: `Agent` tool, `subagent_type: "log"`, prompt = the entries (1..N) + any source context, verbatim, + today's date. Do not pre-classify, do not pre-judge buckets — that is the subagent's job, and pre-judging feeds it bias.
-3. Relay the subagent's return to the caller verbatim. Return shape: `agents/log.md` § Output contract.
-4. **Spot-check:** sample one written row against the entry it captures; a confirmed miss → `/super-bootstrap:log` (tier re-pinning evidence).
+1. Read `docs/work/README.md` — categories, thread contract, and the **ID high-water mark** line. README absent, or present without the high-water line → write nothing; route: "run `/super-bootstrap:harness-bootstrap` to (re-)plant the work substrate, then re-log." When present: read `docs/decisions.md` § Closed Forks and `docs/parked.md`'s header too — each skipped silently when absent.
+2. Classify each entry — **BUG** (broken behavior) / **DEBT** (works but rotting) / **GAP** (design hole or unverified idea). Two gates per entry:
+   - **Card shape** — every card names something to **do, fix, or decide**. A standing-watch entry (monitor / revisit later) rephrases as an action; names a trigger + `docs/parked.md` exists → park as `### PARK-###` (bump its `PARK-000` high-water in the same write); otherwise return it with the real fork: wire an observer at the fire-moment, or drop.
+   - **Closed forks** — an entry re-walking a `docs/decisions.md` § Closed Forks verdict → surface the fork (its Because + Ref) instead of logging; genuinely new counter-evidence → ask as a reopen question. Never silently re-log a closed direction.
+3. **Dedup — the call is the user's, not capture's.** Grep the open cards for each entry's subject (title keywords, `Area:` paths); open a suspected match to confirm coverage. A suspected dup — pure duplicate or duplicate-with-new-fact alike — **writes nothing yet**: surface the entry, the covering card (ID + the covering line), and the pick — **amend** (append the new fact) / **new card** (genuinely distinct) / **drop**. Execute the pick: amend → append `## Amendment — {date} · {source}` at the owning card's end, the new fact alone, nothing restated.
+4. Assign IDs — next per category = max+1 from the README's high-water line, **bumped in the same change** as the card write. Never derive an ID from the live card files: resolved cards are deleted and their IDs stay consumed.
+5. Write each clear entry as `docs/work/{ID}.md` — origin block only, `TEMPLATE.md`'s shape (H1 + `Logged:` / `Source:` / `Problem:` / `Area:` / `Prior:`; drop the template's leading comment). Stamp today's date. Capture the claim faithfully — this is the richest-context moment; the pickup session reads it cold. `Prior:` is a one-line suspected cause at most — later work falsifies it.
+6. An entry too thin to classify or phrase as a readable card → hold it unwritten and ask its one discriminating question (e.g. "broken now, or works-but-suboptimal?"); the answer lands it.
 
 ## Rules
 
-- **Route input to the subagent; the subagent classifies.** The category + dedup decisions live in the `log` subagent. This shell routes input and relays output.
-- **Batch over loop.** Many findings → one dispatch with all entries. Per-finding dispatch is the anti-pattern this skill exists to avoid.
-- **Relay questions, never auto-answer.** Thin context is the subagent's signal to ask; the caller resolves it. Silent guessing files wrong rows the caller then trusts.
+- **Batch over loop.** Classify the whole batch in one pass; clear entries land immediately, dup and too-thin entries surface together — never block clear writes waiting on one fork.
+- **Capture, don't gate.** Write every classifiable, non-duplicate entry — unverified ideas included. Worth is triage's call at pickup.
+- **Append, never overwrite.** Origin blocks are frozen at capture; the only write to an existing card is a new dated `## Amendment` at end of file — and only on the user's amend pick.
+- **Write cards, never investigate.** No root-cause prose, no fix design.
+- **Minimum questions.** One discriminating question per genuinely ambiguous entry — capture dies if logging becomes an interrogation.

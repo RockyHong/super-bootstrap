@@ -23,9 +23,9 @@ Argument is an optional report path. Without one, resolve from the queue — the
 1. **Dispatch:** `Agent` tool, `subagent_type: "triage-report"`, prompt = the report path + scan date if known. Nothing else — no gateway priors on which findings matter.
 2. **Review the sheet** (gateway): coverage line must hold (findings = verdicts). Dismiss is the lossy verdict — a dismissal whose rationale doesn't beat the scanner's stated reasoning bounces back as `needs-investigation`.
 3. **Absorb:**
-   - **promote** → one batched `/super-bootstrap:log` dispatch carrying the agent's draft claim blocks. Rows land raw; the pipeline rolls at normal pickup.
+   - **promote** → one batched `/super-bootstrap:log` pass carrying the agent's draft claim blocks. Rows land raw; the pipeline rolls at normal pickup.
    - **patch** → doc-mechanical edits only, landed per CLAUDE.md § Dispatch (gateway inline, or dispatched by closure). Anything wider re-verdicts as promote.
-   - **dup** → fold any new-fact into the `/super-bootstrap:log` batch — rides the log agent's `amended` branch (Amendment append on the owning card).
+   - **dup** → fold any new-fact into the `/super-bootstrap:log` batch — rides the log door's amend path (dedup surfaces for the user's pick; the Amendment lands on the owning card).
    - **needs-investigation** → the single question rides `/super-bootstrap:triage` when it names a card; otherwise an investigate-only probe dispatch. Verdicts return to step 2.
 4. **Close out** — only after every finding holds a terminal verdict and every patch has landed: delete the report; the deletion + a dispositions summary ride the session's envelope commit (dismissal rationales survive in git log).
 

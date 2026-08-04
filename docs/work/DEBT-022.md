@@ -42,3 +42,13 @@ Card narrows to the residue the spec-ordering fix (split to DEBT-043) does not c
 ## Amendment — 2026-08-02 · cross-reference resolved
 
 DEBT-043 resolved and deleted — `classify-actionable.md` derivation inputs now read cheapest-first (verb #1) with the Harness pre-filter exit stated explicitly. This card's residue scope (§4 breadcrumb trace + fixed instruction floor) is unaffected.
+
+## Design — 2026-08-04 · user-settled (doctrine 批)
+
+**Cards-only classification: the todo agent reads card text (+ test queue), zero repo reads.**
+
+- §4 coupling gate: soft-coupling artifact trace (reads into docs/code) cut — its own text concedes the hard-block edge needs only a card-text grep, and the soft edge buys one rank adjacency. Hard-block edge stays (explicit ID naming in card text).
+- §3 Blast: derive from card text alone — `Area:` field string, block path *mentions*; no reading the named files, no Plan-path widening into the repo.
+- Dependency ordering moves from inferred to explicit: repos that need ordering name deps in card text (hard-block edge already supports it; scale-module fact fields are the formal home). Greenfield repos pay nothing — user-confirmed: most consumer repos are greenfield, the deep-read ordering served a need they don't have, at 10–20 min wall-clock per board.
+- Fixed instruction floor: trim rides the cut (the two removed passages shrink `agents/todo.md`); no structural split — split's burden of proof unmet, `classify-actionable.md` stays whole (todo+drain seam).
+- Self-log-loop concern resolved without machinery: capture's admission is completion-state, worth-judgment sits at triage (dismiss is a first-class resolve), board is pull-based — the loop breaks at human pickup. No cull ritual / volume cap; card it if observed in practice. → docs/decisions.md row on resolve.

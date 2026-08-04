@@ -15,3 +15,13 @@ Card re-scopes from cost-only to shape + contract, two new facts:
 
 - **Collapse-to-inline candidate.** The dispatch prompt already carries each observation phrased for cold pickup — classification is near-done at prompt-authoring; ID assignment + TEMPLATE write are mechanical. The agent's only remaining real judgment is dedup. The bias-exclusion rationale (shell never pre-classifies) has lost weight as models strengthened. Evaluate collapsing the log agent into gateway-inline capture — the sanctioned transcription path (README § Routing) is already half the shape.
 - **Dedup must surface, not auto-resolve.** Current contract auto-drops pure dups and auto-appends Amendments on new-fact dups — the user never sees the call. Contract change: dup / suspected-dup → write nothing, return the match + context to the gateway → gateway MCQs the user (amend / new card / drop).
+
+## Design — 2026-08-04 · user-settled (doctrine 批)
+
+**Collapse to gateway-inline, no escape hatch; the `log` agent retires.**
+
+- Offload accounting closed the hygiene claim: dispatch keeps only the dedup card-reads out of the gateway — the observation is already in gateway context, the dispatch prompt transcribes it out, the report transcribes it back. Inline Grep replaces the card-reads at near-zero cost. Net offload ≈ 0; the ~21.8k fixed floor buys nothing.
+- The funnel contract is untouched: all new cards still route through the `/super-bootstrap:log` door (classification, dedup check, ID high-water bump, TEMPLATE shape all kept) — only the implementation moves from dispatch to gateway-inline. The findings-persistence closed fork (docs/decisions.md) binds the door, not the container.
+- Dedup: suspected dup → write nothing, surface match + context, user picks amend / new card / drop. Judgment moves to the user, per escalation-design (preference-grade call).
+- Bias-exclusion rationale (shell never pre-classifies) retired: capture does no worth-judgment by contract; the fresh-eyes home is the triage lane downstream.
+- No heavy-context escape hatch: Finding Triage's context-budget axis already covers "heavy context → log terse now"; inline card-write is the minimal action.
