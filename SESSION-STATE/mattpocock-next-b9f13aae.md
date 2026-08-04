@@ -1,4 +1,4 @@
-# Carry — mattpocock next; GAP-048 closed, non-mattpocock batch drained
+# Carry — mattpocock next; GAP-048 closed, 2.29.1 smoke 過半
 
 ## Anchor
 
@@ -10,13 +10,12 @@ mattpocock change B 討論 — 解凍 parked group（DEBT-035/040、GAP-038/042�
 
 ## State
 
-GAP-048 closed（5/5 pressure-test 證偽 clobber 前提，收 decisions.md row，skill 未動）。board 上只剩 mattpocock parked 四張。CCM inbox 五筆待 digest（repo 端責任）。
+GAP-048 closed（5/5 pressure-test 證偽 clobber 前提，收 decisions.md row，skill 未動）。2.29.1 smoke：help script ✓（產出 BUG-023 mojibake）、board cards-only ✓（產出 BUG-024 narration leak）、log inline capture ✓（BUG-023/024 就是 live 演練）。
 
 ## Next step
 
-mattpocock 討論（change B）→ 解凍四卡。
+mattpocock 討論（change B）→ 解凍四卡。BUG-023/024 為新開非 parked 卡，可隨時 triage/drain。
 
 ## Watch-outs
 
-- 2.29.x 未驗項：help script 路徑 smoke、drain template warning 消失、drain scoped-brief 實跑
-- 第一次真 `/super-bootstrap:log` 是 inline capture + dedup-surface live smoke；第一次真 board 是 cards-only 提速驗證
+- 2.29.x 未驗殘項：drain template warning 消失、drain scoped-brief 實跑（等真 drainable 工作）；log dedup-surface 分支未演練（等一個真 dup）
