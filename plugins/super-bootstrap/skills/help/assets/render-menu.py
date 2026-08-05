@@ -14,6 +14,12 @@ the gateway cuts.
 """
 import json, os, re, sys
 
+# Callers read these streams as UTF-8. Redirected output otherwise encodes with the
+# platform's ANSI codepage, which mangles punctuation and raises on anything outside
+# its repertoire — descriptions come from third-party plugin frontmatter.
+sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+sys.stderr.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+
 project = sys.argv[1] if len(sys.argv) > 1 else "."
 home = os.path.expanduser("~")
 
