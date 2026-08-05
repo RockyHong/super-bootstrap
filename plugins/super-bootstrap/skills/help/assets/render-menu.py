@@ -35,6 +35,16 @@ CAT_MAP = {  # tag -> coarse category (mirrors SKILL.md's grouping contract)
 CAT_ORDER = ["meta", "pipeline", "git", "docs", "dev", "utils"]
 
 
+def unquote(value):
+    """Strip a scalar's matched outer quotes. `''` is the only escape YAML defines
+    inside a single-quoted scalar; doubled inside a plain or double-quoted one it is
+    literal, so the unescape rides the quote style — knowable only here."""
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
+        inner = value[1:-1]
+        return inner.replace("''", "'") if value[0] == "'" else inner
+    return value
+
+
 def frontmatter(path):
     try:
         with open(path, encoding="utf-8") as f:
@@ -48,7 +58,7 @@ def frontmatter(path):
     for line in m.group(1).splitlines():
         kv = re.match(r"^([\w-]+):\s*(.*)$", line)
         if kv:
-            fm[kv.group(1)] = kv.group(2).strip().strip('"')
+            fm[kv.group(1)] = unquote(kv.group(2).strip())
     return fm
 
 
@@ -65,7 +75,7 @@ def emit(rows, plugin_name, skills_dir, prefix=True):
                else f"/{plugin_name}" if prefix else f"/{name}")
         tags = re.findall(r"[\w-]+", fm.get("tags", ""))
         cat = next((CAT_MAP[t] for t in tags if t in CAT_MAP), "utils")
-        desc = fm["description"].split(". ")[0][:120].strip("'\"")
+        desc = fm["description"].split(". ")[0][:120]
         rows.append((cat, cmd, desc))
         n += 1
     return n
