@@ -17,6 +17,8 @@ description: Prepare a version release — bump version files, commit, and tag. 
 
 ## Protocol
 
+Code blocks below are POSIX `bash` — on a PowerShell-primary device, run them via the Bash tool; if porting to PowerShell, rewrite in its idiom and single-quote git's caret/brace revisions (`git rev-parse 'v1.2.3^{commit}'`).
+
 ### 1. Qualify
 
 Run in parallel:
