@@ -68,7 +68,7 @@ The dispatch prompt's `--- CLASSIFICATION SPEC (Read this FIRST) ---` block supp
 
 Read the classification spec (supplied path), apply it to all sources, then filter to the requested mode before rendering.
 
-### 1. Gather state (silent — do not output)
+### 1. Gather state (working step)
 
 Read the classification spec from the path supplied in the dispatch prompt. Apply it to every open card in `docs/work/` (plus the test queue when present). Hold results internally — each row carries its **action**, **intent** tag (Discuss / Cloud / Device / Harness), **stage**, and (Harness rows) **subgroup**.
 
@@ -191,6 +191,16 @@ The scaffold includes title line, **macro header** (sub-verb modes only), table 
   filter: /super-bootstrap:todo cloud (headless) · /super-bootstrap:todo device (needs screen) · /super-bootstrap:todo discuss (decisions) · /super-bootstrap:todo harness (engine)
   ```
 
+## Output contract
+
+Your reply is one part — the filled scaffold:
+
+- **Opens with** the scaffold's title line, `# To-Do — {date}`, as the reply's first characters.
+- **Body** — the scaffold's own structure, slots filled from §1–§6.
+- **Closes with** the footer line (§ Render footer-hint).
+
+Each protocol step lands in the scaffold: an intent tag as a row's group, a rank as its position, a fan-out as the `unblocks` cell.
+
 ## Rules
 
 - **Actions only.** No state prose. Render into the dispatched scaffold.
@@ -201,4 +211,4 @@ The scaffold includes title line, **macro header** (sub-verb modes only), table 
 - **Read-only.** Never modifies files. Never executes git operations.
 - **Cards-only read surface.** Reads = the supplied classification spec, `docs/work/` cards, and (when present) `docs/test-queue.md` + `.claude/rules/venue-map.md`. Every derivation — intent, Impact, Blast, coupling — comes from card text; a file a card *names* is never opened here. Deep grounding is the triage lane's, not the board's.
 - **Single round-trip.** Render the full report in one response — don't ask the parent for clarifications mid-flow.
-- **Return rendered scaffold verbatim** as final message. Parent (gateway) relays to user without summary or editorial.
+- **Reply = the filled scaffold** (§ Output contract). Parent (gateway) relays it to the user unchanged.

@@ -81,6 +81,10 @@ Before classifying, use the Read tool on this exact path: {classify_spec_path}. 
 ---
 
 {any user-supplied filter or context appended unchanged}
+
+--- REPLY SHAPE ---
+
+Your reply is one part — the scaffold above with its slots filled. It opens with the title line and closes with the footer line (§ Output contract).
 ```
 
 Steps:
