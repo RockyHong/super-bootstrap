@@ -1,0 +1,6 @@
+# DEBT-048 — rules-index-skeleton step 2 names a pointer as the "full ammo" exemplar
+
+**Logged:** 2026-08-06 · **Source:** GitHub issue #27 (https://github.com/RockyHong/super-bootstrap/issues/27), surfaced during a v2.24.1 consumer sync (verbatim adoption chosen, fix routed upstream)
+**Problem:** `skills/harness-bootstrap/assets/rules-index-skeleton.md` step 2 names `CLAUDE.md` § Edit Discipline as the imperative full-detail style exemplar, but `assets/claude-md-skeleton.md:88-92` writes that section as a three-line pointer to `docs/techstack.md` § Edit Discipline — the actual full-detail body lives in `assets/techstack-skeleton.md:37-65`. Step 2 points a new rule author at the pointer, not the ammo; every scaffolded repo reproduces the mismatch. Secondary: `CLAUDE.md` § Edit Discipline is not a rule body at all, so it's a poor shape exemplar regardless of length. Not wrong: the "full ammo" descriptor itself — the shipped rule skeletons (`rules-mv3-skeleton.md`, `rules-frontend-skeleton.md`) are genuinely full-detail.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/rules-index-skeleton.md`
+**Prior:** issue's suggested fix — point step 2 at the shipped `assets/rules-*-skeleton.md` as the shape reference instead of `CLAUDE.md` § Edit Discipline.
