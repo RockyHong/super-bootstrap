@@ -2,7 +2,7 @@
 paths:
   - "docs/work/README.md"
   - "docs/test-queue.md"
-description: "Phase → run-location map. One map, two filters: /super-bootstrap:todo reads it cloud-vs-device, /super-bootstrap:drain reads it dispatch-vs-wall. Fires on work-space / test-queue reads."
+description: "Phase → run-location map. One map, two filters: /super-bootstrap:todo reads it drainable vs need-me, /super-bootstrap:drain reads it dispatch vs wall. Fires on work-space / test-queue reads."
 ---
 
 # Venue Map — Phase → Run-Location

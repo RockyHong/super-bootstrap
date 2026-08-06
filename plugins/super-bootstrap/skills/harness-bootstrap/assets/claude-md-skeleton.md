@@ -14,7 +14,7 @@ Work enters by picking up a card — a `docs/work/` card file (`/super-bootstrap
 - **Verify before claiming** — evidence before "done / fixed / passing": run the check, read the output, then claim.
 - **Review received, not absorbed** — check a review claim against the code before implementing it; disagree with grounds rather than complying performatively. Judgment-grade findings: `review-intake` first (§ Dispatch).
 
-**The runway ships bare by design** — no process-harness plugin stands behind these laws; installing one is an operator choice `/super-bootstrap:resolve-plugins` treats as an ordinary adaptive pick.
+To install a process-harness plugin behind these laws: `/super-bootstrap:resolve-plugins` — an ordinary adaptive pick, not a requirement.
 
 ### Cluster routing
 
@@ -53,20 +53,19 @@ The gateway orchestrates; it does not build. Inline lane = orchestration, reads,
 - **Build** (within Implement) → dispatch per phase, gateway integrates + verifies between. Build is never a live tweak. **Every build-dispatch prompt carries the commit convention up front** — finish, report the work as built with the file list, do not `git commit`; the gateway fires `/super-bootstrap:commit`.
 - **Transcription is not a build** — when the exact content is already in hand (a plan supplies verbatim old/new text, or the gateway already holds the final text) with no runtime to derive against, applying it carries zero closure: inline it, even mid-dispatch-regime. Reserve dispatch for content a container must derive: reads, integration, judgment.
 - **Review findings are claims, not instructions** — a judgment-grade review finding routes through the cold `review-intake` judge before any implementer sees it: claims pass numbered + verbatim with their cited surfaces (pointer-less ones marked `(no surface citation)`), minus fix preferences and dispatcher theories; per-claim `confirmed | falsified | needs-evidence` + a coverage line return to the gateway. Confirmed → dispatch at fix grade; falsified → stops at the gateway; needs-evidence → run or delegate the named check. A transcription-grade patch skips intake only when the gateway itself verified the cited text.
-- **Subagent commits route through the commit door** — a dispatched implementer implements + tests + reports (built + file list); the gateway commits via `/super-bootstrap:commit` (gateway-inline mechanics; the cold doc-sync scan dispatches on its grep-gate hit, the premise-closure judge on a product-anchor hit). A fix→re-review loop scales to fix grade — a transcription-grade fix (shape fully supplied) → dispatcher verifies against the diff, no re-review dispatch; a judgment-grade fix (shape left to the implementer) → re-review dispatches. For free per-implementer commits, use the drain-worktree path — isolated commits, doc-sync deferred to the merge boundary.
+- **Subagent commits route through the commit door** — a dispatched implementer implements + tests + reports (built + file list); the gateway commits via `/super-bootstrap:commit`. A fix→re-review loop scales to fix grade — a transcription-grade fix (shape fully supplied) → dispatcher verifies against the diff, no re-review dispatch; a judgment-grade fix (shape left to the implementer) → re-review dispatches. For free per-implementer commits, use the drain-worktree path — isolated commits, doc-sync deferred to the merge boundary.
 - **Doc-sync scan** (envelope step) → gateway-inline; a grep-gate dispatches the cold `doc-sync-scan` agent only on a doc-surface hit (mechanism: § Doc Sync); resolving writes land inline or dispatched by closure.
 - **Parallel within a phase, not across it** — N build sub-goals or N doc surfaces fan out together; build → doc-sync stays ordered (doc-sync needs the finished diff).
-- **Create-new-file subagents dispatch foreground** — a subagent tasked to CREATE a new harness/skill file runs foreground, not `run_in_background`: backgrounded, its new-file Write fails and the subagent stalls before writing. Editing an existing file and creating a non-harness file background cleanly.
+- **Create-new-file subagents dispatch foreground** — a backgrounded subagent's new-file Write fails when a paired PreToolUse(Write) context-injector hook fires on it (platform defect; the subagent stalls before writing); foreground dispatch is immune under any hook setup. Edits to existing files background cleanly.
 
 ## Doc Sync (non-negotiable)
 
-Named pipeline step — every route includes it between user review and commit. The commit door (`/super-bootstrap:commit`) runs gateway-inline; a mechanical grep-gate dispatches the cold `doc-sync-scan` agent when the diff touches the doc surface, and its `stale-docs` return goes to the gateway, which resolves with the user before the commit lands. Three refinements live in the commit door: card-lifecycle diffs (`docs/work/`-only) skip the gate; product-anchor diffs (`docs/overview.md` § Problem / § User) route through its premise-closure lane; a bundled link-integrity check runs every commit. Coverage backstop: `/check-docs-consistency` (on-demand, whole-repo).
+Named pipeline step — every route includes it between user review and commit. The commit door (`/super-bootstrap:commit`) runs gateway-inline; a mechanical grep-gate dispatches the cold `doc-sync-scan` agent when the diff touches the doc surface, and its `stale-docs` return goes to the gateway, which resolves with the user before the commit lands. Its refinements — card-lifecycle skip, premise-closure lane, link-integrity check — live in the commit door's skill body. Coverage backstop: `/check-docs-consistency` (on-demand, whole-repo).
 
 Before every commit, scan for prose describing behavior touched by the diff — `docs/` (specs, overview, techstack, the [`docs/work/`](docs/work/README.md) card set) **and behavior-narrating prose outside `docs/`: the root `README`, plus any manifest/description field the diff's behavior changes**. If any looks stale:
 
 1. Report it — path, what looks outdated, relevant diff context
-2. Resolve together — update or acknowledge it's still accurate
-3. Never silently fix. Never silently skip.
+2. Resolve together — update or acknowledge it's still accurate; never silently fix or skip.
 
 Scan predicate — every doc the change touches gets an outcome marker (updated, or read-and-confirmed-unchanged).
 
@@ -94,7 +93,7 @@ Rename preference order: LSP rename → per-occurrence Edit → `sed` (unique 8+
 
 Stale-state family: Read a file before its first Edit; re-Read after a stale/unread Edit error, or after any write that landed behind your read-tracker (formatter hook, a returned file-writing subagent — `git diff` is not a Read). Two consecutive same-file Edit failures = mandatory re-Read.
 
-Banned-terms list + pre-flight checklist + recovery protocol + stale-state predicate + re-Read triggers: [`docs/techstack.md` § Edit Discipline](docs/techstack.md#edit-discipline) — the single maintained source for this body.
+Banned-terms list + pre-flight checklist + recovery protocol + stale-state predicate + re-Read triggers: [`docs/techstack.md` § Edit Discipline](docs/techstack.md#edit-discipline).
 
 ## Context Hygiene
 

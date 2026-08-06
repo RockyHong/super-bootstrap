@@ -191,6 +191,8 @@ Render using §batch-presentation in `assets/formats.md`.
 
 Path tag column (`[hook]` / `[slash]` / `[delegation]` / `[bundle]` / `[committed-stack: <term>]` / `[override: <reason>]`) shows the hard invocation path Phase 3 admitted the pick on — surfaces "why this one earned its slot" at a glance.
 
+An LSP pick's row carries two rider notes: (a) the language-server **binary** is a separate install — state its install command (npm / rustup / go / dotnet per language) beside the pick; a pinned plugin without the binary reads as installed while the `LSP` tool returns no-server-configured. (b) coverage is typed symbols only — string literals, comments, config and markdown stay grep-and-verify.
+
 `Rejected (earn-right): {R} candidates collapsed` line renders only when Phase 3 produced rejections. Default collapsed; user types `expand rejected` to expand into per-source breakdown.
 
 `also in:` line collapses dedupe alternates from Phase 3. User can ask to expand if primary's signal looks weaker than an alternate.

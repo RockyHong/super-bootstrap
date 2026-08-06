@@ -306,9 +306,9 @@ cost); the part that is not — omission rate — needs controlled runs this rep
 apparatus for.
 
 **Decided — the runway is bare by design.** No process harness stands behind the seeded
-disciplines, and the seeded `CLAUDE.md` says so under § The envelope. Installing one is an
-operator choice `resolve-plugins` already handles as an ordinary adaptive pick; bootstrap
-recommends nothing. Independent of change B — adopting a harness there does not make the
+disciplines; the seeded `CLAUDE.md` § The envelope carries only the install pointer
+(`resolve-plugins`, an ordinary adaptive pick — the rationale lives here, not ambient).
+Bootstrap recommends nothing. Independent of change B — adopting a harness there does not make the
 bare runway retroactively a gap.
 
 **Open — harness swap (change B).** Whether to move from superpowers to
