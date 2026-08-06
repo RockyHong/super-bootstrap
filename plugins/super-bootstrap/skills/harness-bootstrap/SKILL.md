@@ -94,18 +94,20 @@ If user answers `dry-run`, walk Phases 1–2b without writing — render the syn
 
 ### Version-staleness signal (harnessed-but-stale)
 
-Rot signals catch renamed literals; they miss template drift that shifted structure without renaming a token. The version stamp closes that gap.
+Rot signals catch renamed literals; they miss template drift that shifted structure without renaming a token. The runway receipt closes that gap.
 
-Read `.claude/super-bootstrap-runway.json` in the target repo (the runway version marker — shape `{ "version": "x.y.z" }`). Compare its `version` to the running plugin's own version — read `version` from the plugin's `.claude-plugin/plugin.json`, located at the plugin root two directory levels above this skill's base directory (`skills/harness-bootstrap/` → `skills/` → plugin root). That is the version currently installing/syncing.
+Read `.claude/super-bootstrap-runway.json` in the target repo (the runway coverage receipt — shape `{ "version": "x.y.z", "covered": [...], "declined": [...] }`; `covered` lists the sections the last sync read-and-compared, `declined` a subset of `covered` whose drift the user declined at that version — divergence accepted, not pending). Compare its `version` to the running plugin's own version — read `version` from the plugin's `.claude-plugin/plugin.json`, located at the plugin root two directory levels above this skill's base directory (`skills/harness-bootstrap/` → `skills/` → plugin root). That is the version currently installing/syncing.
 
-- **Marker matches plugin version** → normal path.
 - **Marker stale (older) or absent** → set `version_stale`, consumed by Phase 2b to enforce the full drift check (see § 2b). Surface ONCE up front:
   - Stale: `runway stamped v{old} < plugin v{new} — full drift re-check enforced.`
   - Absent: `runway carries no version stamp — full drift re-check enforced.`
+- **Marker matches plugin version** → judge the receipt: enumerate the pipeline-owned sections applicable to this repo (§ Pipeline-owned, honoring the tier conditionals — monorepo, scale module) and set-difference against `covered`. A legacy version-only stamp carries no `covered` — its coverage is unknown, so every applicable section counts as uncovered.
+  - Difference empty → normal path.
+  - Difference non-empty → set `version_stale` with the gap list. Surface ONCE up front: `runway stamped v{cur} but coverage gaps: {list} — full drift re-check enforced.`
 
-Detection only — Phase 1 reads the stamp's old value and stops; it does not act on the flag or alter its own scan. Phase 2c overwrites the stamp later, after sync completes.
+Detection only — Phase 1 reads the receipt and stops; it does not act on the flag or alter its own scan. Phase 2c overwrites the receipt later, after sync completes.
 
-**Output of Phase 1 (version lane):** record `version_stale` (plus the old/new version strings) for Phase 2b to consume.
+**Output of Phase 1 (version lane):** record `version_stale` (plus the old/new version strings, and the coverage-gap list when that was the trigger) for Phase 2b to consume.
 
 ---
 
@@ -132,7 +134,7 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - `.claude/rules/index.md` (rule-authoring guide)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` plugin pins (`enabledPlugins`, `extraKnownMarketplaces`)
-- `.claude/super-bootstrap-runway.json` (runway version stamp — presence + value checked, not diffed section-by-section; read at Phase 1, written at 2c; durable marker, no cleaner — persists for the life of the harness)
+- `.claude/super-bootstrap-runway.json` (runway coverage receipt `{ version, covered, declined }` — presence + content checked, not diffed section-by-section; read at Phase 1, written at 2c from the sync-report rows; durable marker, no cleaner — persists for the life of the harness)
 - Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md`), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`)
 
 **Project-owned** (never touched):
@@ -337,7 +339,7 @@ Per-migration handling:
 
 **Never destructive without confirmation.** Show source → dest mapping, get explicit approval, only then move content.
 
-**The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `docs/work/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new`), and — for drifted rows — the diff. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. Overwrite any stale report from a prior run.
+**The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `docs/work/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new`), and — for drifted rows — the diff, plus the resolution as it lands at Block 2 (`updated` / `declined`); Phase 2c derives the coverage receipt from these rows. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. Overwrite any stale report from a prior run.
 
 **Version-stale enforcement.** When Phase 1 set `version_stale`, this enumeration is mandatory in full this run — every pipeline-owned section gets an actual read-and-compare row; the "sections look similar → `✓ current`" skim is forbidden. No new mechanism — the 2c gate already refuses commit on any uncovered section (see § 2c). Print the Phase 1 surfaced line once at the top of Block 1 as the reminder.
 
@@ -445,7 +447,7 @@ Tech curation (skill / MCP / hook picks) is gated tier-2 — orchestrated by `/s
 
 Migration machinery for repos that **forked the harness before this plugin existed** — they carry their own copies of skills/agents the plugin now ships as root artifacts (a local `commit` / `merge` / `log` / `todo` / `drain` skill + agent that the installed plugin supersedes). On re-run, offer to delete the superseded forks so the single root copy takes over. Repos with no such collision see nothing — silent skip, like § 2a-scale.
 
-**Superseded-artifact map — derived at runtime, never hardcoded.** Enumerate the plugin's own shipped skills and agents from the install: the plugin's `skills/<name>/` directory names + `agents/<name>.md` basenames, read at the plugin root two directory levels above this skill's base dir (same anchor as the Phase 1 version-stamp read). That listing IS the map — it tracks the plugin as its skill/agent set grows, so no static list drifts.
+**Superseded-artifact map — derived at runtime, never hardcoded.** Enumerate the plugin's own shipped skills and agents from the install: the plugin's `skills/<name>/` directory names + `agents/<name>.md` basenames, read at the plugin root two directory levels above this skill's base dir (same anchor as the Phase 1 receipt read). That listing IS the map — it tracks the plugin as its skill/agent set grows, so no static list drifts.
 
 **Collision detection.** In the consumer repo, scan `.claude/skills/<name>/` directories and `.claude/agents/<name>.md` files. A consumer artifact whose **name** matches a shipped skill/agent name is a superseded-fork candidate — the installed root copy supersedes it. Name-non-colliding consumer skills/agents are **project delta** — never touched, never listed, never surfaced.
 
@@ -483,7 +485,7 @@ Per-candidate handling:
 | .claude/rules/mv3.md                | ⊕ new        | seeded (signal: MV3 manifest) |
 ```
 
-**Stamp write.** Once the sync completes, write `.claude/super-bootstrap-runway.json` = `{ "version": "{current plugin version}" }` — fresh install writes it new, re-run overwrites with the just-synced version. Present + value-checked, so a matching stamp is a no-op write. This runs even when every other row is `✓ current` — the stamp records "last synced at this version," independent of whether content changed.
+**Receipt write.** Once the sync completes, write `.claude/super-bootstrap-runway.json` = `{ "version": "{current plugin version}", "covered": [...], "declined": [...] }` — fresh install writes it new, re-run overwrites whole. `covered` is copied mechanically from the sync-report's per-section rows (the same rows the gate above just cross-checked; row identity `{file} § {Section}`, whole-file artifacts by path); `declined` is the drifted rows resolved `declined` at Block 2. The report is the receipt's sole source. This runs even when every row is `✓ current` — the receipt records "synced at this version, these sections compared," independent of whether content changed.
 
 If every row is `✓ current` and nothing changed on disk, report and skip the commit.
 
@@ -501,7 +503,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/work/bootstrap.md` (if newly written or regenerated)
 - `docs/specs/.gitkeep`
 - `docs/parked.md`, `docs/test-queue.md`, `.claude/rules/venue-map.md` (scale-module targets — only if installed this run at 2a-scale)
-- `.claude/super-bootstrap-runway.json` (runway version stamp — written/overwritten every sync)
+- `.claude/super-bootstrap-runway.json` (runway coverage receipt — written/overwritten every sync)
 - Superseded-fork deletions (adopt mode, § 2b-adopt) — staged removals of approved consumer `.claude/skills/<name>/` dirs / `.claude/agents/<name>.md` files that root artifacts now supersede
 - Any other adaptive files / folders created
 
