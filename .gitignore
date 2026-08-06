@@ -19,3 +19,7 @@ Thumbs.db
 
 # claude-config-manager — consult-check hook per-session cache (regenerated, local-only)
 .claude/.consult-catalog
+
+# drain — worktree isolation (frozen infra)
+.claude/worktrees/
+.drain-status

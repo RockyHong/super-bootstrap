@@ -12,6 +12,15 @@
         ]
       },
       {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "fp=$(jq -r '.tool_input.file_path // empty'); if echo \"$CLAUDE_PROJECT_DIR\" | grep -qE '[/\\\\]\\.claude[/\\\\]worktrees[/\\\\]'; then exit 0; fi; if echo \"$fp\" | grep -qE '\\.claude[/\\\\]worktrees[/\\\\]'; then echo 'BLOCKED: worktree-internal Read re-injects that worktree CLAUDE.md. Read-around: git show {branch}:<path> / Grep / Glob.' >&2; exit 2; fi"
+          }
+        ]
+      },
+      {
         "matcher": "Workflow",
         "hooks": [
           {
