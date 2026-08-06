@@ -1,6 +1,6 @@
 ---
 name: harness-bootstrap
-description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, skeleton docs (overview, techstack, work/), path-scoped rules, and core plugin pins; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap; opt-in earn-gated scale module (parked + test-queue containers, venue-map rule, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks on re-run. Solo dev workflow."
+description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, skeleton docs (overview, techstack, work/), path-scoped rules, and core plugin pins; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap; opt-in earn-gated scale module (parked + test-queue containers, venue-map rule, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks and backfills skeleton sections added since bootstrap on re-run. Solo dev workflow."
 tags: [harness, scaffold, setup, meta, docs]
 ---
 
@@ -96,7 +96,7 @@ If user answers `dry-run`, walk Phases 1–2b without writing — render the syn
 
 Rot signals catch renamed literals; they miss template drift that shifted structure without renaming a token. The runway receipt closes that gap.
 
-Read `.claude/super-bootstrap-runway.json` in the target repo (the runway coverage receipt — shape `{ "version": "x.y.z", "covered": [...], "declined": [...] }`; `covered` lists the sections the last sync read-and-compared, `declined` a subset of `covered` whose drift the user declined at that version — divergence accepted, not pending). Compare its `version` to the running plugin's own version — read `version` from the plugin's `.claude-plugin/plugin.json`, located at the plugin root two directory levels above this skill's base directory (`skills/harness-bootstrap/` → `skills/` → plugin root). That is the version currently installing/syncing.
+Read `.claude/super-bootstrap-runway.json` in the target repo (the runway coverage receipt — shape `{ "version": "x.y.z", "covered": [...], "declined": [...] }`; `covered` lists the sections the last sync read-and-compared, `declined` a subset of `covered` the user declined to update at that version — divergence accepted, not pending). Compare its `version` to the running plugin's own version — read `version` from the plugin's `.claude-plugin/plugin.json`, located at the plugin root two directory levels above this skill's base directory (`skills/harness-bootstrap/` → `skills/` → plugin root). That is the version currently installing/syncing.
 
 - **Marker stale (older) or absent** → set `version_stale`, consumed by Phase 2b to enforce the full drift check (see § 2b). Surface ONCE up front:
   - Stale: `runway stamped v{old} < plugin v{new} — full drift re-check enforced.`
@@ -123,6 +123,7 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - Missing → write from template / curate fresh
 - Exists, matches template → skip (`✓ current`)
 - Exists, drifted from template → show diff, get approval per change, then write
+- Exists, pipeline-owned section absent → `⊕ new` — show the template section, get approval, insert
 - Project-owned content → never touch, even on drift
 
 **Pipeline-owned** (subject to drift check):
@@ -288,6 +289,7 @@ On greenfield (no manifest, no source files), `overview.md` / `techstack.md` wri
 
 - **Missing** → fill placeholders, write.
 - **Exists, drifted in pipeline-owned section** → diff that section vs template, present to user, get approval per section, write approved.
+- **Exists, pipeline-owned section absent** → `⊕ new` row: render the template section at Block 2, get approval, insert at the skeleton-defined position relative to the surviving sections.
 - **Exists, current** → mark `✓ current`. **Still show the per-section comparison briefly** (one-line per pipeline-owned section: `[Runtime] ✓ matches`, `[Framework] ✓ matches`, etc.) — asserting "current" without showing the comparison is a gap.
 - **Project-owned content** → never touched, even on drift.
 - **Legacy / unrecognized format** — if existing doc structure doesn't align with template sections (different headings, merged sections, doc was written by an older version of this skill or by hand) → surface as **legacy format detected**, propose: `(a) rewrite to current skeleton format (preserves grown sections), (b) leave as-is and accept template drift, (c) show full template-vs-current diff`. **Do not silently skip drift detection** because section names don't match — that hides real drift.
@@ -339,7 +341,7 @@ Per-migration handling:
 
 **Never destructive without confirmation.** Show source → dest mapping, get explicit approval, only then move content.
 
-**The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `docs/work/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new`), and — for drifted rows — the diff, plus the resolution as it lands at Block 2 (`updated` / `declined`); Phase 2c derives the coverage receipt from these rows. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. Overwrite any stale report from a prior run.
+**The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `docs/work/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new`), and — for drifted and `⊕ new` rows — the diff or template section, plus the resolution as it lands at Block 2 (`updated` / `inserted` / `declined`); Phase 2c derives the coverage receipt from these rows. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. Overwrite any stale report from a prior run.
 
 **Version-stale enforcement.** When Phase 1 set `version_stale`, this enumeration is mandatory in full this run — every pipeline-owned section gets an actual read-and-compare row; the "sections look similar → `✓ current`" skim is forbidden. No new mechanism — the 2c gate already refuses commit on any uncovered section (see § 2c). Print the Phase 1 surfaced line once at the top of Block 1 as the reminder.
 
@@ -353,7 +355,7 @@ Block 1 (shown to the user, rendered from the report — one row per pipeline-ow
   [{Section C}] ✓ matches template     (lines P–Q)
 ```
 
-Block 2 (only for `⚠ drifted` rows — one expansion per drifted section):
+Block 2 (for `⚠ drifted` and `⊕ new` rows — one expansion per section):
 
 ```
 {file path} sync — drift detected:
@@ -365,6 +367,19 @@ Block 2 (only for `⚠ drifted` rows — one expansion per drifted section):
   ───────────────────────────────────────────────
 
   Update? (y / n / show full diff)
+```
+
+`⊕ new` expansion (section in the current skeleton, absent from the existing file):
+
+```
+{file path} sync — pipeline-owned section absent:
+
+  [{Section Name}] in the current skeleton, missing here:
+  ───────────────────────────────────────────────
+  {template section body}
+  ───────────────────────────────────────────────
+
+  Insert at the skeleton's position? (y / n)
 ```
 
 The report is the forcing function: Phase 2c refuses to commit unless it exists and carries a row for every pipeline-owned section in scope (§ 2c gate). A collapsed "skeleton sections match" with no rows fails that gate mechanically — there is no assertion to trust, so there is nothing to collapse into one. Drift approval (Block 2) protects against (a) legit template updates the user wants to review and (b) bad-actor template injection on a future re-run — you see what's about to change before it's overwritten.
@@ -473,7 +488,7 @@ Per-candidate handling:
 
 ### 2c: Sync report + commit
 
-**Gate — the sync report must exist and cover every pipeline-owned section before commit.** Read `docs/work/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row. Missing file, or any uncovered section → halt, return to 2b, produce the missing rows. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
+**Gate — the sync report must exist and cover every pipeline-owned section before commit.** Read `docs/work/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row. Missing file, or any uncovered section → halt, return to 2b, produce the missing rows. A `⚠ drifted` or `⊕ new` row must also carry its Block 2 resolution (`updated` / `inserted` / `declined`) — an unresolved row halts the same way. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
 
 **Sync report** — rendered from the artifact (the file is canonical; this table is its commit-time view). Always shown before commit. Fresh repos see "all new"; re-run repos see drift fixes and current items.
 
@@ -485,14 +500,14 @@ Per-candidate handling:
 | .claude/rules/mv3.md                | ⊕ new        | seeded (signal: MV3 manifest) |
 ```
 
-**Receipt write.** Once the sync completes, write `.claude/super-bootstrap-runway.json` = `{ "version": "{current plugin version}", "covered": [...], "declined": [...] }` — fresh install writes it new, re-run overwrites whole. `covered` is copied mechanically from the sync-report's per-section rows (the same rows the gate above just cross-checked; row identity `{file} § {Section}`, whole-file artifacts by path); `declined` is the drifted rows resolved `declined` at Block 2. The report is the receipt's sole source. This runs even when every row is `✓ current` — the receipt records "synced at this version, these sections compared," independent of whether content changed.
+**Receipt write.** Once the sync completes, write `.claude/super-bootstrap-runway.json` = `{ "version": "{current plugin version}", "covered": [...], "declined": [...] }` — fresh install writes it new, re-run overwrites whole. `covered` is copied mechanically from the sync-report's per-section rows (the same rows the gate above just cross-checked; row identity `{file} § {Section}`, whole-file artifacts by path); `declined` is the rows resolved `declined` at Block 2 — a drift kept, or an insert declined. The report is the receipt's sole source. This runs even when every row is `✓ current` — the receipt records "synced at this version, these sections compared," independent of whether content changed.
 
 If every row is `✓ current` and nothing changed on disk, report and skip the commit.
 
 Otherwise use `/super-bootstrap:commit` to stage:
 - `CLAUDE.md` (new, modified, or post-migration)
-- `docs/techstack.md` (new, skeleton-section drift, or post-migration absorbed content)
-- `docs/overview.md` (new or skeleton-section drift)
+- `docs/techstack.md` (new, skeleton-section drift or insert, or post-migration absorbed content)
+- `docs/overview.md` (new, skeleton-section drift or insert)
 - `docs/decisions.md` (new, scope-header drift, or post-retirement migration from techstack)
 - `.claude/settings.json` (core plugin pins seeded at 2a; harness hooks merged at 2a-hooks)
 - `.claude/hooks/commit-channel.sh` (frozen hook script seeded at 2a-hooks — always, default-on)

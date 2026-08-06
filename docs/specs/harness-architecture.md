@@ -487,17 +487,19 @@ copied from the other — but our pins carry no written justification, which is 
 `DEBT-035`'s sibling reasoning applies to: a pattern nobody wrote a reason for is
 indistinguishable from one nobody chose.
 
-## 8. Downstream migration — what adopt mode does and does not retire
+## 8. Downstream migration — what adopt mode does and does not cover
 
 `harness-bootstrap` § Phase 2 applies a per-artifact rule: missing → write; matches
-template → skip; **drifted → show diff, approve per change, write**; project-owned →
-never touch. Its CLAUDE.md coverage is **keyed to a named section list** (Development
+template → skip; **drifted → show diff, approve per change, write**; pipeline-owned
+section absent → `⊕ new`, approve, insert; project-owned → never touch. Its CLAUDE.md
+coverage is **keyed to a named section list** (Development
 Workflow, Dispatch, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene,
 Finding Triage, Rules, Git Notes, Planning).
 
-| Retirement shape | Covered? | Why |
+| Migration shape | Covered? | Why |
 | --- | --- | --- |
 | Content removed **within** a retained section | **Yes** | Section stays on the owned list; drift check fires and diffs it |
+| A section **added** to the skeleton after a consumer bootstrapped | **Yes** | The walk is skeleton-driven — the new section gets a `⊕ new` row; Block 2 approval-gates the insert |
 | A whole section **dropped** from the skeleton | **No** | The walk is skeleton-driven — a section no longer on the owned list is never visited, so it orphans in consumer repos |
 | A scaffolded **folder** retired | **No** | Phase 2a states folders have only two states, missing or present ("create if missing, skip if present") — there is no removal path |
 
