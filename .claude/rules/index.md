@@ -6,7 +6,7 @@ description: "Rule-authoring guide — loads when any file under .claude/rules/ 
 
 # Rules — Authoring Guide
 
-> Active rules are catalogued in `CLAUDE.md` § Rules (the always-on discovery surface). This file is the authoring guide — it loads only when you edit a rule.
+> Active rules are catalogued in `CLAUDE.md` § Rules (the always-on discovery surface). This file is the authoring guide — it loads whenever a file under `.claude/rules/` is read.
 >
 > **Cold-load caveat:** a rule fires on file *read*, not on intent. Mirror each rule's summary into `CLAUDE.md` § Rules so the orchestrator knows it exists during planning.
 >
