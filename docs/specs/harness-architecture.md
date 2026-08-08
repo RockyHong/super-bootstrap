@@ -152,8 +152,9 @@ tracker-specific", defaulting to local markdown **only when no tracker was provi
 **The temporal work folder therefore stays ours**, as `docs/work/`. Retiring it outright
 would only have made sense if his set owned that slot at a fixed path; it does not, so
 declaring our own path through the tracker socket composes with his skills exactly as
-well as deleting the slot would. That raises `GAP-038` from nice-to-have to the actual
-composition mechanism — the seed is what tells his skills where to publish. His taxonomy
+well as deleting the slot would. That makes the tracker declaration the actual
+composition mechanism — it is what tells his skills where to publish; the shipped
+recipe lives in [`mattpocock-coexistence.md`](mattpocock-coexistence.md). His taxonomy
 is spec → tickets → implement, with no "plans" artifact at all, so our `## Plan` block has
 no counterpart to defer to.
 
@@ -168,8 +169,8 @@ Shipping a seed template connects to nothing either: his templates load from
 
 **The socket that does work is the "Other" branch** — it ships no template and is authored
 at setup time from the user's own description of the workflow. So the composable artifact
-is *a description the operator supplies*, not a file we ship. `GAP-038` needs that re-aim
-before it is executable at all.
+is *a description the operator supplies*, not a file we ship. That description is
+authored: [`mattpocock-coexistence.md`](mattpocock-coexistence.md) § The tracker recipe.
 
 The seed shape it would have to match is known: `Status:`, `Type:
 research|prototype|grilling|task`, `Blocked by: NN, NN`, a `## Comments` section, the
@@ -196,8 +197,8 @@ stays head-and-tail by construction.
 
 Change B is resolved as coexistence (§6): the runway ships bare, bootstrap recommends
 nothing, and mattpocock enters a repo only as `resolve-plugins`' ordinary adaptive pick.
-**`GAP-038` is executable only in re-aimed form** — its deliverable is the
-operator-supplied "Other"-branch description above, not a shipped file.
+The operator-supplied "Other"-branch description — not a shipped file — is the
+deliverable; it lives in [`mattpocock-coexistence.md`](mattpocock-coexistence.md).
 `plugins/super-bootstrap/` references mattpocock nowhere, so bootstrap behavior is
 unchanged.
 
@@ -371,7 +372,8 @@ carry the foreign decomposition. GAP-050's per-slot audit confirmed that risk wa
 the staging ceremony (Design/Plan as default gates) was distillation residue — the thread
 contract now carries them as conditional context-scope sections, and drain's stage set
 re-derives from grounding-native artifacts (`GAP-051`). The runway declares its bare
-posture (§6 above). `GAP-038` is unparked by change B's resolution, re-aimed per §4.
+posture (§6 above). The tracker-recipe deliverable §4 re-aimed is shipped —
+[`mattpocock-coexistence.md`](mattpocock-coexistence.md).
 
 Two constraints outlive the change:
 
