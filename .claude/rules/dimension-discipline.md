@@ -12,7 +12,10 @@ Before editing a prose doc, classify its dimension — **state** (true now) or
 as history but stays: a still-binding past decision states present-tense as a live
 constraint. A "last-checked" date is not an exception — its home is git commit
 metadata, not the body (a version-bound pin like "valid as of vX.Y" is a
-substantive fact, not a date stamp).
+substantive fact, not a date stamp). A ticket-ID reference (`BUG-##` / any
+tracker prefix) is chronicle too — a durable doc records the decided behavior,
+never the card that decided it; ticket refs belong in history-dimension docs and
+temporal work-tracking files (their provenance fields), git log holds the rest.
 
 **Tripwire — the artifact is the trap.** If the doc you are about to edit ALREADY
 mixes dimensions (timestamps crawling into a state-SSOT, a chronicle leaking

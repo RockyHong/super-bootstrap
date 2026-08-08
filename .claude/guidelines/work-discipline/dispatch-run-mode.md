@@ -3,9 +3,10 @@
 A file-writing subagent dispatched in the background returns behind the
 caller's read-tracker: it writes (and often commits, with formatter passes) in
 its own context while the dispatching session keeps editing the same paths.
-The caller's next Edit there fails `"File has been modified since read"` — an
-orchestration-made stale race, structural whenever writer and caller share
-paths.
+The caller's next Edit there carries an `old_string` built from the pre-write
+file. The tool auto re-reads current disk content, but where the writer's change
+removed that `old_string`, no re-read restores it. An orchestration-made stale
+race, structural whenever writer and caller share paths.
 
 - **Writer dispatches run foreground when the caller keeps working the
   writer's paths.** A short writer agent whose job is touching shared files —
@@ -18,8 +19,6 @@ paths.
   long build buys nothing when the session isn't editing the build's paths;
   the foreground rule targets short writers.
 
-Recovery half — the caller's re-Read obligation after any writer returns —
-lives in [`edit-discipline.md`](edit-discipline.md) § Stale-state edits.
 Siblings: [`dispatch-breadcrumb.md`](dispatch-breadcrumb.md) — what a brief
 carries; [`dispatch-brief-shape.md`](dispatch-brief-shape.md) — how much; this
 file — when the dispatch runs relative to the caller's own work.

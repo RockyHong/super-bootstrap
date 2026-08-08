@@ -40,13 +40,20 @@ predicate lives here; the action lives with each.
    The standing decay note plus git cover freshness; the body carries no date. A
    version-bound pin ("valid as of vX.Y") is the exception — it bounds the fact's
    validity, so it is substantive state, not a date stamp.
+5. **Ticket IDs → chronicle homes.** A ticket-ID reference (`BUG-##` / `DEBT-##`
+   / any tracker prefix) in a durable doc is when/why-decided provenance leaking
+   into state — record the decided behavior or policy present-tense; the deciding
+   card is git log's to serve. Ticket refs belong in the chronicle homes by
+   design: history-dimension docs (decision logs) and temporal work-tracking
+   files (cards, handoffs — their origin provenance fields).
 
 ## Audit predicate — pollution shapes
 
 A doc shows dimension pollution when any holds:
 
-1. **Chronicle crawl-in** — timestamps / "was X, now Y" / decision-dated prose
-   accumulating in a persistent state-SSOT doc.
+1. **Chronicle crawl-in** — timestamps / "was X, now Y" / ticket-ID refs ("per
+   `DEBT-###` …") / decision-dated prose accumulating in a persistent state-SSOT
+   doc.
 2. **Stale workspace doc** — a vaporizable / status doc gone out-of-date against
    the reality it claims to track.
 3. **State leak into history** — a history / decision-timeline doc carrying

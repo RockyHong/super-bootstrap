@@ -7,9 +7,13 @@
 #
 # Sources (curated-signal constraint, bench/FINDINGS-gap045.md § What the build
 # inherits):
-#   1. project docs/**/*.md — recursive; superpowers/ excluded (specs|plans are
-#      work-tracking, not consult targets — pipeline convention, not name
-#      guessing; other temporal dirs stay listed, the forced YES/NO judges them)
+#   1. project docs/**/*.md — recursive; superpowers/ + work/ excluded
+#      (specs|plans|cards are work-tracking, not consult targets — pipeline
+#      convention, not name guessing; work/ is the post-rename home of the same
+#      substrate). A repo that renames its temporal home declares it in
+#      .claude/consult-exclude — one find -path glob per line (e.g. */drafts/*),
+#      # comments allowed — instead of this list accreting per-repo names.
+#      Undeclared temporal dirs stay listed, the forced YES/NO judges them.
 #   2. project .claude/guidelines/**/*.md
 #   3. device plant ~/.claude/guidelines/**/*.md (absent on cloud — degrades
 #      gracefully to project-only)
@@ -39,8 +43,19 @@ CACHE="$ROOT/.claude/.consult-catalog"
 
 HOME_DIR="${HOME:-$USERPROFILE}"
 
+# Built-in exclusions = pipeline-convention work-tracking homes; per-repo
+# temporal-dir names come from .claude/consult-exclude (header § Sources).
+excl=( ! -path '*/superpowers/*' ! -path '*/docs/work/*' )
+if [ -f "$ROOT/.claude/consult-exclude" ]; then
+  while IFS= read -r glob || [ -n "$glob" ]; do
+    glob="${glob%$'\r'}"
+    case "$glob" in ''|\#*) continue ;; esac
+    excl+=( ! -path "$glob" )
+  done < "$ROOT/.claude/consult-exclude"
+fi
+
 paths="$(
-  find "$ROOT/docs" -name '*.md' ! -path '*/superpowers/*' 2>/dev/null | sed "s|^$ROOT/||" | sort
+  find "$ROOT/docs" -name '*.md' "${excl[@]}" 2>/dev/null | sed "s|^$ROOT/||" | sort
   find "$ROOT/.claude/guidelines" -name '*.md' ! -name 'index.md' 2>/dev/null | sort
   find "$HOME_DIR/.claude/guidelines" -name '*.md' ! -name 'index.md' 2>/dev/null | sort
 )"
