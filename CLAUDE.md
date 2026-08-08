@@ -121,7 +121,7 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
   • Taste-coupling: dogfood harness (this repo's own CLAUDE.md/rules) may wire served guidelines; shipped skeletons (`plugins/*/skills/*/assets/**`) must be self-contained — downstream ≠ author.
   • Sync direction: editing a dogfood-harness section pulls any shipped-skeleton counterpart into the edit's closure; propagate stripped of dogfood-only refs, or state it's dogfood-specific.
 - **`skill-authoring.md`** (native) — fires on `plugins/*/skills/**`
-  • Skill edits route by test surface: behavior-shaping prose → `superpowers:writing-skills` RED first (micro-test floor); mechanical → audit + release checks.
+  • Skill edits route by test surface: behavior-shaping prose → RED first (micro-test floor); mechanical → audit + release checks.
 
 First two served from the personal claude-config repo (predicates in `.claude/guidelines/work-discipline/`). Add a project-specific rule file when a path-scoped pattern emerges (e.g. a SKILL.md authoring convention), then mirror a one-line summary here.
 
