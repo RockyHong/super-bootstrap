@@ -61,8 +61,20 @@ normalize_path() {
 # Extract inline markdown links from file. Output: lineno TAB raw-target
 extract_links() {
     awk '
+    BEGIN { in_fence = 0 }
     {
-        line = $0
+        if ($0 ~ /^[[:space:]]*(`{3,}|~{3,})/) { in_fence = !in_fence; next }
+        if (in_fence) next
+        # strip inline code spans (matched backtick-run delimiters) before link matching
+        line = $0; out = ""
+        while (match(line, /`+/)) {
+            delim = substr(line, RSTART, RLENGTH)
+            out   = out substr(line, 1, RSTART - 1)
+            rest  = substr(line, RSTART + RLENGTH)
+            cpos  = index(rest, delim)
+            line  = (cpos > 0) ? substr(rest, cpos + length(delim)) : rest
+        }
+        line = out line
         while (match(line, /\[[^\]]*\]\([^)]+\)/)) {
             seg  = substr(line, RSTART, RLENGTH)
             p    = index(seg, "](")
