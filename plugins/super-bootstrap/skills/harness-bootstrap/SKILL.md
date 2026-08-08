@@ -278,7 +278,7 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 | Asset | Destination | Notes |
 |---|---|---|
 | `assets/claude-md-skeleton.md` | `CLAUDE.md` (project root) | Includes Rules summary section — fill bullets from seeded rule files |
-| `assets/techstack-skeleton.md` | `docs/techstack.md` | Coding Patterns grown section absorbs migrated CLAUDE.md content |
+| `assets/techstack-skeleton.md` | `docs/techstack.md` | Grown sections absorb migrated CLAUDE.md state-dimension content (Architecture Rules: still-binding decisions; Coding Patterns: examples) |
 | `assets/overview-skeleton.md` | `docs/overview.md` | `<!-- harness-meta -->` block at top: seed `external-tools:` as a YAML list defaulting to `[github]`. Read by `/super-bootstrap:resolve-plugins` (tier-2 curation) as the external-tools source. Update manually or via the entry skill when the tool list changes. Treat as pipeline-owned for drift checks. |
 | `assets/decisions-skeleton.md` | `docs/decisions.md` | Always — scope header pipeline-owned (drift-checked), `## Closed Forks` table rows project-owned |
 | `assets/work-readme-skeleton.md` | `docs/work/README.md` | Always — categories, thread contract, ID high-water line |
@@ -301,21 +301,23 @@ On greenfield (no manifest, no source files), `overview.md` / `techstack.md` wri
 
 **Legacy CLAUDE.md migration (re-run on already-installed repos):**
 
-Older sp-bootstrap skeletons baked content into CLAUDE.md that now belongs in `.claude/rules/` (path-scoped) or `docs/techstack.md` Coding Patterns (reference). When Phase 1 flagged legacy blocks in pipeline-owned slots, propose per-section migration BEFORE running the normal drift check on those sections.
+Older sp-bootstrap skeletons baked content into CLAUDE.md that now belongs in `.claude/rules/` (path-scoped), `docs/techstack.md` grown sections (state reference), or `docs/decisions.md` (closed history). When Phase 1 flagged legacy blocks in pipeline-owned slots, propose per-section migration BEFORE running the normal drift check on those sections.
 
 Migration patterns (illustrative — judge by content shape, not heading exact-match):
 
 | Legacy CLAUDE.md content | Proposed destination | Reason |
 |---|---|---|
 | Enforcement rules with clear file-scope (component patterns, Tailwind tokens, async style, framework idioms) | `.claude/rules/<scope>.md` | Path-scoped — full body fires when matching file is read. **Cold-file alternative would silent-miss enforcement.** |
-| Reference material — rejected alternatives, design rationale, architecture decisions, deep examples for browsing | `docs/techstack.md` § Coding Patterns (grown section) | On-demand reading, not enforcement. Safe to be cold. |
+| Closed history — rejected alternatives, roads-not-taken, closed design rationale | `docs/decisions.md` § Closed Forks | History dimension — a state doc never holds it (same lane as § Rejected Alternatives retirement below). |
+| Still-binding architecture decisions — module boundaries, data-flow direction, layering | `docs/techstack.md` § Architecture Rules (grown section) | State — a live constraint, written present-tense, stripped of when/why-decided. |
+| Live reference — deep examples, pattern walkthroughs for browsing | `docs/techstack.md` § Coding Patterns (grown section) | On-demand reading, not enforcement. Safe to be cold. |
 | MV3 / service-worker rules path-bound to `src/background/**` | `.claude/rules/mv3.md` | Path-scoped |
 | `## Project Structure` directory tree | drop | `ls` / `tree` covers it; not load-bearing for any decision |
 | Cross-cutting items inside a path-scoped list (storage-key constants, type-centralization across UI ↔ background, message-contract types) | keep in CLAUDE.md (no clean glob — every layer touches them) | Genuinely ambient |
 
 **Default-to-rules when ambiguous.** A "Coding Standards" block named like reference but written as imperatives (must / never / always) is enforcement — silent-miss in a cold file costs more than slight rule over-attach.
 
-Surface the migration plan as a single proposal. Format below pins shape — one row per legacy block, judged via the migration table above. Destinations: `.claude/rules/<scope>.md` | `docs/techstack.md` § Coding Patterns | keep in CLAUDE.md | drop.
+Surface the migration plan as a single proposal. Format below pins shape — one row per legacy block, judged via the migration table above. Destinations: `.claude/rules/<scope>.md` | `docs/decisions.md` § Closed Forks | `docs/techstack.md` § Architecture Rules | `docs/techstack.md` § Coding Patterns | keep in CLAUDE.md | drop.
 
 ```
 {path}: legacy content detected — propose migrations:
@@ -338,7 +340,7 @@ Concrete fill-in (one example, not a template — judge by analogy for the actua
 ```
 
 Per-migration handling:
-- **User approves** → write content into destination with proper format conversion (rule files get `paths:` frontmatter; techstack grown sections get conventional headings). Remove from CLAUDE.md. Add summary bullet to CLAUDE.md § Rules for any rule-file destination.
+- **User approves** → write content into destination with proper format conversion (rule files get `paths:` frontmatter; techstack grown sections get conventional headings; `docs/decisions.md` gets one `Domain | Rejected direction | Because | Ref` row per closed fork — same conversion as § Rejected Alternatives retirement below). Remove from CLAUDE.md. Add summary bullet to CLAUDE.md § Rules for any rule-file destination.
 - **User rejects** → leave content in CLAUDE.md, mark section project-owned for future runs (no further drift attempts on that section).
 - **User selects per-section** → walk one at a time.
 
@@ -513,7 +515,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `CLAUDE.md` (new, modified, or post-migration)
 - `docs/techstack.md` (new, skeleton-section drift or insert, or post-migration absorbed content)
 - `docs/overview.md` (new, skeleton-section drift or insert)
-- `docs/decisions.md` (new, scope-header drift, or post-retirement migration from techstack)
+- `docs/decisions.md` (new, scope-header drift, post-retirement migration from techstack, or closed-history rows from legacy CLAUDE.md migration)
 - `.claude/settings.json` (core plugin pins seeded at 2a; harness hooks merged at 2a-hooks)
 - `.claude/hooks/commit-channel.sh` (frozen hook script seeded at 2a-hooks — always, default-on)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
