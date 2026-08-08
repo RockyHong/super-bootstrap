@@ -35,7 +35,7 @@ Versioned via the `/release` skill. `plugin.json` is the single version source �
 - **Dispatch-shell + typed-agent split** — skills with bounded-judgment verbs route through a dispatch shell + typed agent pair; monolithic skill bodies don't own execution judgment. → [`skill-authoring.md`](../.claude/rules/skill-authoring.md)
 - **Frozen-asset versioning** — shipped assets are placed by mechanical copy/merge at release time and never regenerated, eliminating inter-repo drift. → [`ensure-infra.md`](../plugins/super-bootstrap/skills/drain/assets/ensure-infra.md)
 - **Skeleton/dogfood sync direction** — dogfood-harness edits carry their shipped-skeleton counterpart in the edit's closure; skeletons must be self-contained (no dogfood-only wiring). → [`repo-boundary.md`](../.claude/rules/repo-boundary.md)
-- **Gateway-inline vs dispatched lanes** — closure-judged (not diff-size-judged): build phases dispatch to clean subagents; transcription applies inline; parallel within a phase only; create-new-file subagents foreground. → [`CLAUDE.md` § Dispatch](../CLAUDE.md#dispatch--who-holds-each-phase)
+- **Gateway-inline vs dispatched lanes** — closure-judged (not diff-size-judged): build phases dispatch to clean subagents; transcription applies inline; parallel within a phase only; writer run mode keyed on path overlap. → [`CLAUDE.md` § Dispatch](../CLAUDE.md#dispatch--who-holds-each-phase)
 
 ## Coding Patterns
 

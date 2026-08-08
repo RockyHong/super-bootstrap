@@ -287,7 +287,7 @@ Dispatch doctrine came through intact: of CLAUDE.md § Dispatch's bullets, only 
 "build inside a superpowers chain → that chain's executor governs" clause was coupled, and
 it is cut. The rest — closure-judged inline-vs-dispatch, per-phase build dispatch,
 transcription is not a build, review findings gated through `review-intake`, parallel within
-a phase not across, create-new-file dispatches foreground — are harness-agnostic, and the cut
+a phase not across, writer run mode keyed on path overlap — are harness-agnostic, and the cut
 bullet's own commit-door mechanics survive under a harness-neutral heading.
 
 ## 6. Decided vs open
