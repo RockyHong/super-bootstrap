@@ -160,20 +160,21 @@ If many candidates from the same source reject for the same reason, collapse to 
 
 ### Core pins (locked when harness-active)
 
-One harness core dep:
+Two harness core deps:
 
+- `super-bootstrap@super-bootstrap` — requires `super-bootstrap` entry in `extraKnownMarketplaces` (source: `github` / `RockyHong/super-bootstrap`).
 - `andrej-karpathy-skills@karpathy-skills` — requires `karpathy-skills` entry in `extraKnownMarketplaces` (source: `github` / `forrestchang/andrej-karpathy-skills`).
 
-`/super-bootstrap:harness-bootstrap` Phase 2a pins it pre-resolve.
+`/super-bootstrap:harness-bootstrap` Phase 2a pins them pre-resolve.
 
 A process harness is an ordinary adaptive pick here — proposable, droppable, trust-signals re-fetched like any other.
 
 **Harness-active marker:** `docs/work/` directory exists in the repo. Detect with one Glob.
 
 - **Harness-active + pinned + present** → keep silently, do not surface in batch.
-- **Harness-active + pin absent** (user manually removed; or fresh harness call hadn't reached Phase 2a yet) → **propose re-pin** as a locked core dep, short message: "core dep missing, re-pinning so CLAUDE.md triggers resolve." User can decline only with explicit override; flag what breaks (karpathy-skills → § Coding Principles trigger rule misfires silently).
+- **Harness-active + pin absent** (user manually removed; or fresh harness call hadn't reached Phase 2a yet) → **propose re-pin** as a locked core dep, short message: "core dep missing, re-pinning so CLAUDE.md triggers resolve." User can decline only with explicit override; flag what breaks (karpathy-skills → § Coding Principles trigger rule misfires silently; super-bootstrap → every `/super-bootstrap:*` door in CLAUDE.md dangles, and the committed `commit-channel.sh` routes workers to a command that doesn't resolve).
 - **Not harness-active** (no `docs/work/` folder — standalone curation on a non-harness repo) → no core lock applies. The core dep, if present, is treated as a regular adaptive pick the user may drop.
-- Locked picks: never propose drop, never re-fetch trust signals (karpathy-skills locked by harness contract — `~150-line MIT skill, single-author repo, license + behavior pinned by harness contract`).
+- Locked picks: never propose drop, never re-fetch trust signals (karpathy-skills locked by harness contract — `~150-line MIT skill, single-author repo, license + behavior pinned by harness contract`; super-bootstrap locked as the harness's own door set — the runway it installed names it).
 
 ### Adaptive picks
 
@@ -215,7 +216,7 @@ Steps execute sequentially within a candidate. Multiple candidates may install i
 
 ### Phase 5.2: Settings.json write
 
-- Add accepted picks to `enabledPlugins`. Drop rejected picks. **When harness-active (`docs/work/` exists), never drop the core pin** (`andrej-karpathy-skills@karpathy-skills`) — see Phase 4 § Core pins.
+- Add accepted picks to `enabledPlugins`. Drop rejected picks. **When harness-active (`docs/work/` exists), never drop the core pins** (`super-bootstrap@super-bootstrap`, `andrej-karpathy-skills@karpathy-skills`) — see Phase 4 § Core pins.
 - For any plugin NOT from `claude-plugins-official`, ensure its source is in `extraKnownMarketplaces` so cloud sessions / fresh machines can resolve.
 - Example shape:
   ```json
