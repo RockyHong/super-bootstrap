@@ -8,6 +8,7 @@
 #
 # Run from repo root. docs/ may be absent (treated as empty).
 # External links (http/https/mailto) and empty targets are skipped.
+# Links inside fenced code blocks (```/~~~) and inline code spans are ignored.
 # Anchor slugs: GitHub-style (lowercase, strip non-alnum except hyphens/spaces/underscores, spaces→hyphens).
 
 set -uo pipefail
