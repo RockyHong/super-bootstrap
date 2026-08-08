@@ -194,12 +194,12 @@ once:
 An unnamed middle is therefore the only mechanically available shape; our end of the seam
 stays head-and-tail by construction.
 
-One further question rides the same decision: whether wiring anything mattpocock-shaped
-into bootstrap presupposes change B, which §6 leaves open. The provisioning half is
-settled — §6 decides the runway ships bare, so bootstrap recommends nothing and the only
-live route is `resolve-plugins`' ordinary adaptive pick. **`GAP-038` is therefore not
-executable as its title reads.** `plugins/super-bootstrap/` references mattpocock nowhere,
-so bootstrap behavior is unchanged.
+Change B is resolved as coexistence (§6): the runway ships bare, bootstrap recommends
+nothing, and mattpocock enters a repo only as `resolve-plugins`' ordinary adaptive pick.
+**`GAP-038` is executable only in re-aimed form** — its deliverable is the
+operator-supplied "Other"-branch description above, not a shipped file.
+`plugins/super-bootstrap/` references mattpocock nowhere, so bootstrap behavior is
+unchanged.
 
 **A second socket exists for coding standards:** his `code-review` reads
 `CODING_STANDARDS.md` / `CONTRIBUTING.md`, and a documented repo standard overrides its
@@ -311,16 +311,24 @@ disciplines; the seeded `CLAUDE.md` § The envelope carries only the install poi
 Bootstrap recommends nothing. Independent of change B — adopting a harness there does not make the
 bare runway retroactively a gap.
 
-**Open — harness swap (change B).** Whether to move from superpowers to
-mattpocock/skills. Depends on evidence graded second-hand in §7.
+**Decided — coexistence (change B).** Thin super-bootstrap vs sb+mattpocock (the swap
+framing is dead — superpowers is already de-routed) resolves to coexistence as separate
+axes: sb keeps its slots (§2); mattpocock/skills enters a repo only as a per-repo
+adaptive pick in `resolve-plugins` — bootstrap pins nothing. Composition is bounded to
+the three mechanically available surfaces (§4): awareness pointers the human types, the
+"Other" tracker socket declaring `docs/work/` + `/super-bootstrap:log` as the tracker,
+and his model-invoked discipline layer firing on description-match. The sb-only fallback
+stays open at tag `pre-mattpocock`; its cost is deleting the mattpocock-coupled cards.
 
-**Decided — orthogonal trial precedes any interface work.** Nothing composes with
-mattpocock's set until it has been run independently on a greenfield repo, with
-super-bootstrap's own gaps fixed first. The seam's shape is read out of a real run, not
-designed against read skill text: §4's head/tail contracts are mechanically constrained
-(the middle is human-typed only) but the *content* of a head hand-off — what a work item
-must carry for his lane to consume it — is unknown until his lane has consumed one. Any
-interface proposal authored before that trial is speculation dressed as a contract.
+**Decided — live adoption is the trial; interface work waits for a real hand-off.** The
+seam's shape is read out of live runs, not designed against read skill text: §4's
+head/tail contracts are mechanically constrained (the middle is human-typed only) but the
+*content* of a head hand-off — what a work item must carry for his lane to consume it —
+is unknown until his lane has consumed one. Any interface proposal authored before that
+is speculation dressed as a contract. The observation apparatus is sb's own capture
+funnel — the repo running his set logs friction as cards. A lab-isolated greenfield run
+is not required; the opt-in posture plus the `pre-mattpocock` rollback tag keep reversal
+a card-deletion away.
 
 **Resolved — drain's anchor** (GAP-051). drain's own doc names its ceiling: "Capacity
 ceiling = how many halts the user can resolve, not machine throughput." The
@@ -354,7 +362,7 @@ recommended answer, and lets no action proceed before confirmed alignment;
 `ready-for-human` rather than assuming either). Monitoring gates — approve-each-step with
 no information flowing back — are the antipattern, and he ships nearly none.
 
-### Change A is complete; change B is open
+### Change A is complete; change B is resolved
 
 super-bootstrap routes no external process harness. The §4 grep returns only the two
 sanctioned classes, and the shape check holds beside it — zero name-hits was never
@@ -363,7 +371,7 @@ carry the foreign decomposition. GAP-050's per-slot audit confirmed that risk wa
 the staging ceremony (Design/Plan as default gates) was distillation residue — the thread
 contract now carries them as conditional context-scope sections, and drain's stage set
 re-derives from grounding-native artifacts (`GAP-051`). The runway declares its bare
-posture (§6 above). `GAP-038` stays parked behind change B.
+posture (§6 above). `GAP-038` is unparked by change B's resolution, re-aimed per §4.
 
 Two constraints outlive the change:
 
@@ -444,17 +452,15 @@ validate / blast collect). They coexist. The
 comparison surface for `DEBT-035`'s vacate question is therefore `diagnosing-bugs`, which is
 what that card already names.
 
-### Open questions blocking change B
+### Questions carried into live coexistence
 
-1. Seed-template shape read at grade B (§4) — but `GAP-038`'s premise is the deeper block:
-   the shippable artifact is an operator-supplied description for the "Other" branch, not a
-   file, and a pre-written `docs/agents/issue-tracker.md` has no skip guarantee.
+1. Head-contract content — what a work item must carry for his lane to consume it —
+   stays unknown until a live hand-off happens; interface work waits on it (§6).
 2. drain's wall-vs-progress ratio — unmeasured; §6's elicitation-vs-verification
    classification is resolved (GAP-051: elicitation excluded at admission, remaining
    halts batch), leaving only the ratio itself to instrument if load grows.
-3. **No orthogonal run exists.** §6 makes this the gating item: his set has never been run
-   independently on a greenfield repo, so every head-contract content question is inference
-   off skill text.
+3. His set's ambient token weight — static arithmetic, measurable at first install;
+   anchors the Leverage weighing's cost side.
 ### His dispatch posture — settled at grade A
 
 Dispatch is not his default; it fires at three triggers and nowhere else.

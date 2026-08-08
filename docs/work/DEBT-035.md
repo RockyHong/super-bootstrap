@@ -8,3 +8,7 @@
 ## Amendment — 2026-08-02 · user direction
 
 Parked per user decision: same class as change-B-parked cards (DEBT-040, GAP-038) — test surface is mattpocock's `diagnosing-bugs` text; user directed the pipeline to run without the superpowers/mattpocock pair until change B resolves. Do not pick up before change B.
+
+## Amendment — 2026-08-08 · change B resolved, unparked
+
+Change B resolved: coexistence, mattpocock per-repo opt-in (spec §6). Park lifts — the comparison surface (`diagnosing-bugs`, grade A) stands and the Prior's per-bullet vacate test is runnable as written. §6 still binds the fix shape: vacating means naming the discipline, shipping no pointer to his skill.
