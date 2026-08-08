@@ -1,7 +1,7 @@
 ---
 paths:
   - ".claude/rules/**"
-description: "Rule-authoring guide — loads when editing files under .claude/rules/"
+description: "Rule-authoring guide — loads when any file under .claude/rules/ is read"
 ---
 
 # Rules — Authoring Guide
@@ -22,5 +22,5 @@ description: "Rule-authoring guide — loads when editing files under .claude/ru
    description: "When this rule applies and why"
    ---
    ```
-2. Body uses the same imperative, full-detail style as `CLAUDE.md` § Edit Discipline — rules are loaded with full ammo.
+2. Body is imperative and full-detail — a rule loads with full ammo at its decision moment, so don't compress it to a summary. Sibling rule files beside this index, when present, are the shape reference.
 3. Add a one-line summary bullet to `CLAUDE.md` § Rules.

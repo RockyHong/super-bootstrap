@@ -79,6 +79,12 @@
     "superpowers@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
+    "super-bootstrap": {
+      "source": {
+        "source": "github",
+        "repo": "RockyHong/super-bootstrap"
+      }
+    },
     "karpathy-skills": {
       "source": {
         "source": "github",

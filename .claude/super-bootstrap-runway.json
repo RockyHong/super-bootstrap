@@ -1,1 +1,38 @@
-{ "version": "2.25.0" }
+{
+  "version": "2.29.7",
+  "covered": [
+    "CLAUDE.md § Development Workflow",
+    "CLAUDE.md § Dispatch",
+    "CLAUDE.md § Doc Sync",
+    "CLAUDE.md § Coding Principles",
+    "CLAUDE.md § Edit Discipline",
+    "CLAUDE.md § Context Hygiene",
+    "CLAUDE.md § Finding Triage",
+    "CLAUDE.md § Rules",
+    "CLAUDE.md § Git Notes",
+    "CLAUDE.md § Planning",
+    "docs/techstack.md § Runtime",
+    "docs/techstack.md § Framework",
+    "docs/techstack.md § Key Dependencies",
+    "docs/techstack.md § Build & Distribution",
+    "docs/techstack.md § Edit Discipline",
+    "docs/overview.md § Problem",
+    "docs/overview.md § User",
+    "docs/overview.md § Current State",
+    "docs/decisions.md § scope header",
+    "docs/work/README.md",
+    "docs/work/TEMPLATE.md",
+    "docs/work/bootstrap.md",
+    ".claude/rules/index.md",
+    ".claude/settings.json plugin pins",
+    ".claude/hooks/commit-channel.sh",
+    ".claude/super-bootstrap-runway.json"
+  ],
+  "declined": [
+    "CLAUDE.md § Development Workflow",
+    "CLAUDE.md § Doc Sync",
+    "docs/techstack.md § Edit Discipline",
+    "docs/work/README.md",
+    "docs/work/bootstrap.md"
+  ]
+}
