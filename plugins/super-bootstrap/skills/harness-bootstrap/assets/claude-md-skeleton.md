@@ -89,7 +89,7 @@ Before writing, reviewing, or refactoring code, read the coding standard: the pi
 
 ## Edit Discipline — Renames, Replace-All & Stale State
 
-Rename preference order: LSP rename → per-occurrence Edit → `sed` (unique 8+ char literals) → `replace_all` (long unique literals only).
+Rename preference order: per-occurrence Edit (call sites from LSP `findReferences` or Grep) → `sed` (unique 8+ char literals) → `replace_all` (long unique literals only).
 
 Stale-state family: Read a file before its first Edit; re-Read after a stale/unread Edit error, or after any write that landed behind your read-tracker (formatter hook, a returned file-writing subagent — `git diff` is not a Read). Two consecutive same-file Edit failures = mandatory re-Read.
 
