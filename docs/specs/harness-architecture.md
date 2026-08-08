@@ -277,11 +277,11 @@ Its carded fix has an SSOT constraint. Copying the skill's four principles into
 
 **Shipped:** the ambient slot keeps its fire moment ("before writing, reviewing, or
 refactoring code"), the *mandatory* invocation is gone, the pinned skill is the default
-standard, and `CODING_STANDARDS.md` overrides it where a repo declares one. The ambient line
-is the guaranteed reader the card's title assumed a file could be. The default leads and the
-socket follows deliberately: `harness-bootstrap` writes no such file, so leading with the
-socket would lead with the branch that fires in no repo the runway produces. That residual is
-`GAP-042`.
+standard, and `CODING_STANDARDS.md` overrides it where it declares content —
+`harness-bootstrap` scaffolds the file headings-only, so the default governs until sections
+fill. The ambient line is the guaranteed reader the card's title assumed a file could be.
+The default leads and the socket follows deliberately: the scaffold starts empty, so the
+default is the live branch in every fresh repo.
 
 Dispatch doctrine came through intact: of CLAUDE.md § Dispatch's bullets, only the
 "build inside a superpowers chain → that chain's executor governs" clause was coupled, and

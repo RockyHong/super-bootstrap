@@ -13,7 +13,7 @@ Claude Code plugin architecture. A root `.claude-plugin/marketplace.json` declar
 ## Key Dependencies
 
 - **[super-bootstrap](https://github.com/RockyHong/super-bootstrap)** (self-pin) — core pin: the scaffolded CLAUDE.md routes every door through `/super-bootstrap:*` and the committed `commit-channel.sh` names `/super-bootstrap:commit`, so the project pin must resolve them on any boundary without the authoring device's user-scope settings (fresh clone, cloud session).
-- **[andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills)** — core pin. `karpathy-guidelines` is the coding standard wherever the scaffolded repo declares no `CODING_STANDARDS.md`.
+- **[andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills)** — core pin. `karpathy-guidelines` is the default coding standard; the always-scaffolded `CODING_STANDARDS.md` overrides it only where sections fill.
 - **No process harness is a dependency.** The scaffolded CLAUDE.md's route rows name disciplines, not process-harness skill entries, so a process harness ([superpowers](https://github.com/obra/superpowers) or another) is an ordinary `/super-bootstrap:resolve-plugins` candidate the user may take or drop. Rationale + cut map: [`docs/specs/harness-architecture.md`](specs/harness-architecture.md).
 - Discovery sources for `/super-bootstrap:resolve-plugins`: Anthropic plugin marketplace, MCP registry, everything-claude-code, awesome-claude-skills, VoltAgent/awesome-agent-skills (see README § Sources).
 

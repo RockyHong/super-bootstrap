@@ -131,6 +131,7 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution, Edit Discipline, Packages (monorepo tier only — the § header + column shape; table rows are consumer-grown, project-owned)
 - `docs/overview.md` skeleton sections: Problem, User, Current State
 - `docs/decisions.md` scope header (the blockquote + `## Closed Forks` heading)
+- `CODING_STANDARDS.md` preamble + section headings (drift checked against `assets/coding-standards-skeleton.md`)
 - `docs/work/README.md`, `docs/work/TEMPLATE.md`, `docs/work/bootstrap.md`
 - `.claude/rules/index.md` (rule-authoring guide)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
@@ -143,6 +144,7 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - `docs/techstack.md` grown sections: Architecture Rules, Coding Patterns
 - `docs/overview.md` grown sections: Module Index, Data Flow, Key Boundaries
 - `docs/decisions.md` § Closed Forks table rows (consumer-filled history)
+- `CODING_STANDARDS.md` section content (consumer-grown via doc-sync)
 - `.claude/rules/<rule>.md` grown sections (additions the user/doc-sync added below the skeleton scaffold)
 - `.claude/rules/<rule>.md` files the user authored without a matching skeleton (treat as fully project-owned)
 - Scale-module container content — `docs/parked.md` `## Entries` + `## Sweep log` content, `docs/test-queue.md` `## Pending` / `## Failed (re-queued for fix)` rows (consumer-filled, like card content; only the skeleton headers/shape stay pipeline-owned)
@@ -172,6 +174,7 @@ docs/
 .claude/
   rules/         ← path-scoped rules, full-body fires on file match
     index.md     ← rule-authoring guide (path-scoped — loads when editing rules)
+CODING_STANDARDS.md ← repo coding standard (headings-only scaffold; sections fill via doc-sync)
 ```
 
 For each: create if missing, skip if present. Add `.gitkeep` in empty folders. If `docs/` or `.claude/` already exists, nest alongside. Report status per directory.
@@ -184,12 +187,14 @@ There is no `docs/specs/` index file — the folder + filename convention IS the
 
 Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no substitutions). Copy `assets/work-template-skeleton.md` to `docs/work/TEMPLATE.md` if missing (no substitutions).
 
+`CODING_STANDARDS.md` is **always** scaffolded — copy `assets/coding-standards-skeleton.md` to the repo root if missing (no substitutions). Starts headings-only; its preamble states the override contract. Preamble + headings pipeline-owned (drift-checked); section content project-owned (grown via doc-sync).
+
 `.claude/rules/` machinery is **always** scaffolded (zero-cost when empty). `index.md` is seeded from `assets/rules-index-skeleton.md`. Individual rule bodies fill in Phase 2b based on Phase 1 signal detection.
 
 **Core plugin pins (pre-resolve).** The harness CLAUDE.md skeleton names two plugins by its own wiring:
 
 - `super-bootstrap` — the skeleton routes every door through `/super-bootstrap:*`, and the committed `commit-channel.sh` deny text routes workers to `/super-bootstrap:commit`. All of it must resolve from the project pin alone on any boundary where the authoring device's user-scope settings don't apply (fresh clone, second machine, cloud session) — the committed hook fires there regardless of plugin state.
-- `karpathy-guidelines` — the coding standard where the repo declares no `CODING_STANDARDS.md` (see CLAUDE.md § Coding Principles).
+- `karpathy-guidelines` — the coding standard until `CODING_STANDARDS.md` sections fill (scaffold starts empty — see CLAUDE.md § Coding Principles).
 
 They are **core deps, not adaptive picks** — pinned here at 2a so tier-2 curation (`/super-bootstrap:resolve-plugins`, run later by `/super-bootstrap`) layers adaptive picks on a guaranteed base. Dangling-rule risk: if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently. Pin first.
 
@@ -283,6 +288,7 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 | `assets/decisions-skeleton.md` | `docs/decisions.md` | Always — scope header pipeline-owned (drift-checked), `## Closed Forks` table rows project-owned |
 | `assets/work-readme-skeleton.md` | `docs/work/README.md` | Always — categories, thread contract, ID high-water line |
 | `assets/work-template-skeleton.md` | `docs/work/TEMPLATE.md` | Always — copy-to-create card template |
+| `assets/coding-standards-skeleton.md` | `CODING_STANDARDS.md` (project root) | Always — preamble + headings pipeline-owned (drift-checked), section content consumer-grown |
 | `assets/bootstrap-plan.md` | `docs/work/bootstrap.md` | |
 | `assets/rules-index-skeleton.md` | `.claude/rules/index.md` | Always — machinery |
 | `assets/rules-frontend-skeleton.md` | `.claude/rules/<framework>.md` | Only if frontend signal fired in Phase 1 |
