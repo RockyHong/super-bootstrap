@@ -29,12 +29,16 @@ slugify() {
 }
 
 # Does <anchor> exist as a heading slug in <file>?
+# Slugs collect into a variable first: feeding `grep -q` from a live pipeline
+# lets its early exit EPIPE the upstream writers, which under `pipefail`
+# reports a found anchor as not-found (race — fires when the match is not the
+# last heading; msys additionally spams "tr: write error").
 anchor_exists() {
-    local file="$1" anchor="$2"
-    grep '^#' "$file" 2>/dev/null \
+    local file="$1" anchor="$2" slugs
+    slugs="$(grep '^#' "$file" 2>/dev/null \
         | sed 's/^#\+ *//' \
-        | while IFS= read -r h; do slugify "$h"; done \
-        | grep -qxF -- "$anchor"
+        | while IFS= read -r h; do slugify "$h"; done)"
+    grep -qxF -- "$anchor" <<<"$slugs"
 }
 
 # Pure-string path normaliser: resolves . and .. components
