@@ -461,8 +461,11 @@ what that card already names.
 2. drain's wall-vs-progress ratio — unmeasured; §6's elicitation-vs-verification
    classification is resolved (GAP-051: elicitation excluded at admission, remaining
    halts batch), leaving only the ratio itself to instrument if load grows.
-3. His set's ambient token weight — static arithmetic, measurable at first install;
-   anchors the Leverage weighing's cost side.
+3. His set's ambient token weight — measured at v1.2.3 install (2026-08-08): 35 skills,
+   20 user-invoked (model-unreachable), 15 model-invocable whose descriptions load
+   ambient at ~3.1k chars ≈ 0.8k tokens. The model-invocable set includes `tdd`,
+   `code-review`, `grilling`, `diagnosing-bugs`, `domain-modeling` — the
+   description-match discipline layer is wider than the 4/4 user-invoked sample above.
 ### His dispatch posture — settled at grade A
 
 Dispatch is not his default; it fires at three triggers and nowhere else.

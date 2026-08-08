@@ -51,7 +51,6 @@ The two ends stay super-bootstrap's — capture via `/super-bootstrap:log`, comm
 Friction observed in live runs is logged as cards via `/super-bootstrap:log`, per [§6](harness-architecture.md#6-decided-vs-open)'s live-adoption-is-the-trial. Known open questions ([§7 carried questions](harness-architecture.md#7-evidence-index)):
 
 - Head-contract content — what a hand-off into his lane must carry; read out of the first live hand-off, interface work waits on it.
-- His model-invoked discipline layer firing inside sb-dispatched subagents (doctrine injection into build containers) — unverified.
+- His model-invoked discipline layer firing inside sb-dispatched subagents (doctrine injection into build containers) — live surface at v1.2.3: `tdd`, `code-review`, `grilling`, `diagnosing-bugs`, `domain-modeling` and 10 more are model-invocable; behavior unobserved.
 - His lane committing outside the commit door — worst case one missed doc-sync scan; observe, then decide whether an overlay earns its slot (trust-upstream-defaults: canonical first).
 - Field-shape breaks — where his skills actually need `Type:`/`Blocked by:` the recipe declares away.
-- His set's ambient token weight — measure at first install.
