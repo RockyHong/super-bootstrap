@@ -195,10 +195,13 @@ once:
 An unnamed middle is therefore the only mechanically available shape; our end of the seam
 stays head-and-tail by construction.
 
-Change B is resolved as coexistence (§6): the runway ships bare, bootstrap recommends
-nothing, and mattpocock enters a repo only as `resolve-plugins`' ordinary adaptive pick.
-The operator-supplied "Other"-branch description — not a shipped file — is the
-deliverable; it lives in [`mattpocock-coexistence.md`](mattpocock-coexistence.md).
+Change B resolved as coexistence and then moved to pairing (§6, `GAP-056`): bootstrap
+performs the per-repo enable and the wiring, so neither "bootstrap recommends nothing"
+nor "an ordinary adaptive pick" survives as the posture, and the "Other"-branch
+description stops being operator-supplied — shipping it is part of the card. What holds
+unchanged is this section's mechanical finding: the middle stays human-typed, so pairing
+buys install-plus-prompt and never model-driven routing. The description's current text
+lives in [`mattpocock-coexistence.md`](mattpocock-coexistence.md).
 `plugins/super-bootstrap/` references mattpocock nowhere, so bootstrap behavior is
 unchanged.
 
@@ -315,7 +318,15 @@ bare runway retroactively a gap.
 **Decided — coexistence (change B).** Thin super-bootstrap vs sb+mattpocock (the swap
 framing is dead — superpowers is already de-routed) resolves to coexistence as separate
 axes: sb keeps its slots (§2); mattpocock/skills enters a repo only as a per-repo
-adaptive pick in `resolve-plugins` — bootstrap pins nothing. Composition is bounded to
+adaptive pick in `resolve-plugins` — bootstrap pins nothing. **Superseded — pairing is
+decided (`GAP-056`).** The two ship paired, not adaptively picked: the plugin installs
+once at device scope and sits disabled there, enabling is per repo, and bootstrap does
+the enable plus the wiring (awareness prompts + the initial per-repo setup process).
+Pairing is not hard coupling — sb's own doors never depend on his lane, and a repo
+disables him without a doc change. The clause above stands only as the posture pairing
+replaces; the propagation (this section's bare-runway paragraph, `harness-bootstrap` §2a
+core pins, the §4 grep contract, the shipped skeleton) is the card's scope. Composition
+is bounded to
 the three mechanically available surfaces (§4): awareness pointers the human types, the
 "Other" tracker socket declaring `docs/work/` + `/super-bootstrap:log` as the tracker,
 and his model-invoked discipline layer firing on description-match. The sb-only fallback
@@ -328,8 +339,8 @@ head/tail contracts are mechanically constrained (the middle is human-typed only
 is unknown until his lane has consumed one. Any interface proposal authored before that
 is speculation dressed as a contract. The observation apparatus is sb's own capture
 funnel — the repo running his set logs friction as cards. A lab-isolated greenfield run
-is not required; the opt-in posture plus the `pre-mattpocock` rollback tag keep reversal
-a card-deletion away.
+is not required; the per-repo enable plus the `pre-mattpocock` rollback tag keep reversal
+a disable-and-card-deletion away.
 
 **Resolved — drain's anchor** (GAP-051). drain's own doc names its ceiling: "Capacity
 ceiling = how many halts the user can resolve, not machine throughput." The
