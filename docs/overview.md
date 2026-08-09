@@ -42,7 +42,7 @@ Active development.
 - `.claude-plugin/plugin.json` — plugin manifest: name, version, skills list
 
 `.claude-plugin/marketplace.json` — self-hosted marketplace declaration; `source` field pins the install boundary
-`docs/` — dev-workspace docs (this file, [`techstack.md`](techstack.md), [`specs/`](specs/), [`work/`](work/README.md)); never ships to users
+`docs/` — dev-workspace docs (this file, [`techstack.md`](techstack.md), [`specs/`](specs/), [`work/`](work/README.md), plus `agents/` — config the installed mattpocock/skills set reads, per [`specs/mattpocock-coexistence.md`](specs/mattpocock-coexistence.md)); never ships to users
 `tests/` — 2 shell smoke tests (`commit-channel.test.sh`, `render-menu.test.sh`)
 
 ## Data Flow

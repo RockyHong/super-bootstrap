@@ -19,7 +19,7 @@ Once per repo (after `harness-bootstrap` has run — the log door and `docs/work
 2. At the issue-tracker question pick **Other**.
 3. Paste the recipe below as the workflow description.
 
-Do **not** pre-create `docs/agents/*` — his setup owns those files and carries no skip guarantee for pre-existing ones.
+His setup owns `docs/agents/*` — never hand-create them ahead of it. Where a prior run already wrote them (this repo included), his skill is silent on pre-existing files, so a re-run may overwrite: diff before accepting.
 
 ## The tracker recipe
 
