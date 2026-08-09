@@ -39,7 +39,7 @@ Active development.
 - `skills/` — 13 bundled skills; per-skill contract in each `SKILL.md`; full catalog → [`plugins/super-bootstrap/README.md § Skill catalog`](../plugins/super-bootstrap/README.md#skill-catalog)
 - `agents/` — 7 dispatched subagents: `doc-sync-scan`, `plugin-digest`, `premise-closure`, `review-intake`, `todo`, `triage-report`, `triage`; each runs cold-context and read-only
 - `shared/` — 2 cross-skill specs: [`classify-actionable.md`](../plugins/super-bootstrap/shared/classify-actionable.md) (item classification SSOT for `todo` + `drain`), [`grounding-discipline.md`](../plugins/super-bootstrap/shared/grounding-discipline.md) (cold-judge rules SSOT for 4 grounding agents)
-- `.claude-plugin/plugin.json` — plugin manifest: name, version, skills list
+- `.claude-plugin/plugin.json` — plugin manifest: name, description, version, and metadata; carries no `skills` array ([`techstack.md § Framework`](techstack.md#framework))
 
 `.claude-plugin/marketplace.json` — self-hosted marketplace declaration; `source` field pins the install boundary
 `docs/` — dev-workspace docs (this file, [`techstack.md`](techstack.md), [`specs/`](specs/), [`work/`](work/README.md), plus `agents/` — config the installed mattpocock/skills set reads, per [`specs/mattpocock-coexistence.md`](specs/mattpocock-coexistence.md)); never ships to users
@@ -65,7 +65,7 @@ Active development.
 
 > Grows via doc-sync as API contracts, internal interfaces, and external dependencies stabilize.
 
-**Plugin-loader contract** — Claude Code reads `plugin.json` to discover skills; loads each skill's `SKILL.md` frontmatter at invocation. No runtime execution; skills and agents are markdown. The loader never reads outside the `source` subtree.
+**Plugin-loader contract** — Claude Code reads `plugin.json` for the plugin's identity and, where it declares a `skills` array, for the exact set to load; with that key absent (this plugin's case) it discovers `skills/*/` by folder scan. It loads each skill's `SKILL.md` frontmatter at invocation. No runtime execution; skills and agents are markdown. The loader never reads outside the `source` subtree.
 
 **Install boundary** — `.claude-plugin/marketplace.json` `source: ./plugins/super-bootstrap` pins what ships to installers; all repo-root files (`docs/`, `tests/`, `CLAUDE.md`, `README.md`) are dev-workspace-only. Layout + `marketplace.json`/`plugin.json` relationship: [`docs/techstack.md § Framework`](techstack.md#framework).
 

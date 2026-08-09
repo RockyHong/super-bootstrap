@@ -461,9 +461,12 @@ what that card already names.
 2. drain's wall-vs-progress ratio — unmeasured; §6's elicitation-vs-verification
    classification is resolved (GAP-051: elicitation excluded at admission, remaining
    halts batch), leaving only the ratio itself to instrument if load grows.
-3. His set's ambient token weight — measured at v1.2.3 install (2026-08-08): 35 skills,
-   20 user-invoked (model-unreachable), 15 model-invocable whose descriptions load
-   ambient at ~3.1k chars ≈ 0.8k tokens. The model-invocable set includes `tdd`,
+3. His set's ambient token weight — measured at v1.2.3 install (2026-08-08): the repo tree
+   carries 35 `SKILL.md`, but `plugin.json` registers 25 and an explicit `skills` array is
+   an allowlist, so the loaded set is those 25 — 14 user-invoked (model-unreachable) and 11
+   model-invocable whose descriptions load ambient at ~2.3k chars ≈ 0.6k tokens. The 10
+   unregistered folders (`in-progress/`, `misc/`) never load, 4 of them model-invocable —
+   count the manifest, not the tree. The model-invocable set includes `tdd`,
    `code-review`, `grilling`, `diagnosing-bugs`, `domain-modeling` — the
    description-match discipline layer is wider than the 4/4 user-invoked sample above.
 ### His dispatch posture — settled at grade A
