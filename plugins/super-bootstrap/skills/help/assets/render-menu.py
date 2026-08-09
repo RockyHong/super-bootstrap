@@ -4,8 +4,18 @@
 Usage: python render-menu.py <project-root>
 
 Reads ~/.claude/plugins/installed_plugins.json (skip silently if absent),
-<project>/.claude/settings.json enabledPlugins, each enabled plugin's
-skills/*/SKILL.md frontmatter, and <project>/.claude/skills/*/SKILL.md.
+<project>/.claude/settings.json enabledPlugins, then each enabled plugin's skills
+plus <project>/.claude/skills. Skill-set resolution order, per source:
+
+1. Manifest — a plugin's <installPath>/.claude-plugin/plugin.json `skills` array
+   is an allowlist; when present, resolve exactly those paths and no others
+   (folders absent from it are never loaded by Claude Code).
+2. Walk — no manifest file, or no `skills` key (and always for project
+   .claude/skills, which has no manifest): recurse for SKILL.md under the skills
+   root. A skill directory is one that CONTAINS SKILL.md, at any depth — plugins
+   may group skills into category subfolders (skills/<category>/<name>/SKILL.md).
+
+Frontmatter (name, description, tags) comes from each resolved SKILL.md.
 
 Emits every discovered skill as a candidate row:  category<TAB>command<TAB>description
 The user-invoke FILTER is deliberately NOT here — it is the one judgment in the
@@ -62,15 +72,39 @@ def frontmatter(path):
     return fm
 
 
-def emit(rows, plugin_name, skills_dir, prefix=True):
+def declared_skill_dirs(install_path):
+    """A plugin manifest's `skills` array is an ALLOWLIST — Claude Code loads exactly
+    those paths, so a folder absent from it never loads and must never reach the menu.
+    Returns None when the plugin declares no array; the caller then walks."""
+    try:
+        with open(os.path.join(install_path, ".claude-plugin/plugin.json"), encoding="utf-8") as f:
+            declared = json.load(f).get("skills")
+    except (OSError, ValueError):
+        return None
+    if not isinstance(declared, list):
+        return None
+    return [os.path.normpath(os.path.join(install_path, p)) for p in declared]
+
+
+def walk_skill_dirs(skills_dir):
+    """Identify a skill directory by CONTAINING SKILL.md, not by its depth — plugins
+    may group skills into category subfolders. A skill owns its subtree, so stop
+    descending at one (a nested SKILL.md is a skill's own asset, not a sibling skill)."""
+    found = []
+    for dirpath, dirnames, filenames in os.walk(skills_dir):
+        if "SKILL.md" in filenames:
+            found.append(dirpath)
+            dirnames[:] = []
+    return sorted(found)
+
+
+def emit(rows, plugin_name, skills_dir, prefix=True, allowlist=None):
     n = 0
-    if not os.path.isdir(skills_dir):
-        return 0
-    for skill in sorted(os.listdir(skills_dir)):
-        fm = frontmatter(os.path.join(skills_dir, skill, "SKILL.md"))
+    for skill_dir in (walk_skill_dirs(skills_dir) if allowlist is None else allowlist):
+        fm = frontmatter(os.path.join(skill_dir, "SKILL.md"))
         if not fm or "description" not in fm:
             continue
-        name = fm.get("name", skill)
+        name = fm.get("name", os.path.basename(skill_dir))
         cmd = (f"/{plugin_name}:{name}" if prefix and plugin_name != name
                else f"/{plugin_name}" if prefix else f"/{name}")
         tags = re.findall(r"[\w-]+", fm.get("tags", ""))
@@ -94,7 +128,9 @@ if os.path.isfile(reg_path):
         if not enabled.get(plugin_key):
             continue
         plugin_name = plugin_key.split("@")[0]
-        n = emit(rows, plugin_name, os.path.join(installs[0]["installPath"], "skills"))
+        install_path = installs[0]["installPath"]
+        n = emit(rows, plugin_name, os.path.join(install_path, "skills"),
+                 allowlist=declared_skill_dirs(install_path))
         sources.append(f"{plugin_key} ({n} skills)")
 
 n = emit(rows, "", os.path.join(project, ".claude/skills"), prefix=False)

@@ -1,6 +1,6 @@
 ---
 name: help
-description: "Passive on-demand index of installed user-invoke skills, grouped by category. Bundled with super-bootstrap. Invoke as `/super-bootstrap:help` (namespaced to avoid colliding with Claude Code's built-in `/help`); `/super-bootstrap:help <category>` filters. Reads installed-plugin manifest + project skills + per-plugin bundled skills via a bundled script — zero-dispatch. No active reminders — discovery is pull-only, zero ambient cost."
+description: "Passive on-demand index of installed user-invoke skills, grouped by category. Bundled with super-bootstrap. Invoke as `/super-bootstrap:help` (namespaced to avoid colliding with Claude Code's built-in `/help`); `/super-bootstrap:help <category>` filters. Reads installed-plugin registry + project skills + each enabled plugin's skills via a bundled script — zero-dispatch. No active reminders — discovery is pull-only, zero ambient cost."
 tags: [help, discovery, menu, pipeline]
 ---
 
@@ -22,7 +22,7 @@ When the user invokes `/super-bootstrap:help [category]`:
 
 1. **Extract** — run the bundled script, passing the project root (the session's working directory — `pwd`):
    `python3 "${CLAUDE_PLUGIN_ROOT}/skills/help/assets/render-menu.py" "$(pwd)"`
-   It emits one candidate per line (`category<TAB>command<TAB>description`) from the installed-plugin manifest, `enabledPlugins`, per-plugin `skills/*/SKILL.md` frontmatter, and project `.claude/skills`. It deliberately over-reports — no filter lives in the script.
+   It emits one candidate per line (`category<TAB>command<TAB>description`) from the installed-plugin registry, `enabledPlugins`, each enabled plugin's skills, and project `.claude/skills`. It deliberately over-reports — no filter lives in the script.
 2. **Filter to user-invoke** — drop rows a user would never type: delegation-only skills (dispatched by other skills or the model, e.g. process/reference skills another skill invokes), hook-fired skills, and reference-material bundles. Keep anything a user plausibly types as a slash command. This is the judgment step; do it from the emitted descriptions — no file reads.
 3. **Render** — group surviving rows under their category headers (`[meta]` `[pipeline]` `[git]` `[docs]` `[dev]` `[utils]`), one line per skill: command + one-line summary. Header: `Available slash commands ({N} total):`. A category argument renders only that category; unknown category → list available categories.
 4. **Fallback** — `python3` missing on the device: scan the same sources manually with Read/Grep (structure documented in the script header) and render the same shape.
