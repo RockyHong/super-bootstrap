@@ -528,7 +528,7 @@ on the owned list.
 | § Coding Principles body replaced | section retained on the owned list | Yes |
 | triage lane's doctrine clause restated inline | `plugins/super-bootstrap/**` ships with the plugin, never scaffolded into a consumer repo | N/A downstream |
 | todo lane's `brainstorm` vocabulary renamed + `/brainstorm` empty-state door repointed | same — `shared/`, `agents/`, `skills/todo/` all ship with the plugin | N/A downstream |
-| `superpowers` core pin removed from § Core plugin pins | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** Already-bootstrapped repos keep the pin — superpowers stays installed where it is, which §6 permits |
+| `superpowers` core pin removed from § Core plugin pins | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** 2a never strips the pin from an already-bootstrapped repo, so removal there is a hand-sweep — which §6 permits, its de-routing resting on the dissolve test rather than on uninstalling anything |
 
 **DEBT-026 closed the folder hole rather than accepting it.** The rename to `docs/work/`
 would otherwise strand every already-bootstrapped repo's specs and plans: the scans read

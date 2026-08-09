@@ -75,8 +75,7 @@
   "enabledPlugins": {
     "super-bootstrap@super-bootstrap": true,
     "andrej-karpathy-skills@karpathy-skills": true,
-    "axioms@axioms-protocol": true,
-    "superpowers@claude-plugins-official": true
+    "axioms@axioms-protocol": true
   },
   "extraKnownMarketplaces": {
     "super-bootstrap": {
