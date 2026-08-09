@@ -20,7 +20,7 @@ New cards enter via `/super-bootstrap:log` (classify + dedup + ID assignment) or
 
 No phase prescription per category — triage decides how much ceremony the work earns at pickup.
 
-**ID high-water mark:** `BUG-034` · `DEBT-058` · `GAP-057` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved cards are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from live files.
+**ID high-water mark:** `BUG-034` · `DEBT-060` · `GAP-057` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved cards are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from live files.
 
 ## Thread contract
 
