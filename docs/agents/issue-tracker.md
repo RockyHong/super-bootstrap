@@ -16,8 +16,8 @@ List / read `docs/work/*.md`. A card file present = the issue is open. There is 
 
 ## Comment
 
-Append an `## Amendment — {date}` block to the card. Cards are append-only threads —
-never rewrite an earlier block.
+Append an `## Amendment — {date} · {source}` block to the card. Cards are append-only
+threads — never rewrite or drop an earlier block.
 
 ## Resolve
 
@@ -25,8 +25,8 @@ Delete the card file. Git history is the archive (`git log --grep="<id>"`).
 
 ## Field shape
 
-Cards carry no `Type:` or `Blocked by:` fields. Express type and blocking relationships
-in the card's prose body.
+Cards carry no `Type:`, `Status:`, or `Blocked by:` fields. Express type and blocking
+relationships in the card's prose body.
 
 ## Before filing an enhancement
 

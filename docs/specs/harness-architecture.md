@@ -79,7 +79,7 @@ inseparable from it.
 | Dispatch § SDD carve-out — the "chain's executor governs" clause | Dead. The clause is gone; the bullet's commit-door mechanics are harness-agnostic and stand. |
 | § The envelope ambient-laws line (4 skill names) | Referent dead, **discipline live**: three laws stated inline. `dispatching-parallel-agents` carried nothing § Dispatch does not already own. |
 | `docs/specs/superpowers-topology.md` | Dead. The file is gone. |
-| `harness-bootstrap` § Core plugin pins — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. A process harness is an ordinary adaptive pick in `resolve-plugins`, pinned by nothing. |
+| `harness-bootstrap` § Core plugin pins — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. superpowers is pinned by nothing. The process-harness slot is filled instead by the mattpocock **paired pin** (§4) — seeded per repo, droppable, and backing no name in any pipeline-owned doc; a harness a repo adds on its own is an ordinary adaptive pick in `resolve-plugins`. |
 | The temporal work folder | **Ours**, at `docs/work/`. His artifact skills own no path — they publish to whatever tracker is configured (§4) — so there was no slot to defer to. |
 | drain's stage machine (`raw→triage→plan→execute→review`) | **Re-cut by GAP-050, re-derived by GAP-051** — the per-phase command dispatch was distillation-shaped; drain now spawns one scoped-brief session per item (anchor + breadcrumb rendered from the card thread), running drain-till-wall with typed walls (`user`\|`shape`). Stage vocabulary `aimed`/`executing` keys entry only. |
 | **log / cards / commit / doc-sync / rules** | **Unaffected.** |
@@ -103,25 +103,51 @@ invoke model-invoked skills but never another user-invoked one, and `implement` 
 
 ## 4. The seam: runtime-orthogonal, setup-time-composed
 
-**Runtime.** super-bootstrap names zero foreign skills. This is grep-verifiable, not a
-policy: `rg 'superpowers|systematic-debugging|brainstorm|writing-plans|write-plan|execute-plan'`
-over `plugins/super-bootstrap/` returns only the sanctioned exceptions below. The
-pattern carries `brainstorm` **unstemmed** and both hyphenated command spellings
-deliberately: a `brainstorming|writing-plans` pattern is blind to `/brainstorm`,
-`/write-plan`, and `/execute-plan` — the form a live dispatch actually takes, and the form
-that survived the skeleton cut unseen.
+**Runtime.** super-bootstrap names zero foreign skills **at runtime** — no shipped door
+dispatches to one, routes to one, or depends on one resolving. This is grep-verifiable,
+not a policy:
 
-**One hit class is sanctioned and stays.** It routes nothing:
+```text
+rg 'superpowers|systematic-debugging|brainstorm|writing-plans|write-plan|execute-plan|mattpocock|matt-pocock|ask-matt|grill-me|grill-with-docs|to-spec|to-tickets|wayfinder' plugins/super-bootstrap/
+```
 
-- **Historical** — `harness-bootstrap`'s mature-repo detector must keep matching the
-  pre-rename `chore: scaffold|sync superpowers pipeline` strings, because it reads commit
-  history. Dropping them would make every already-bootstrapped repo read as
-  never-bootstrapped.
+Every hit falls in one of the two sanctioned classes below. The pattern carries
+`brainstorm` **unstemmed** and both hyphenated command spellings deliberately: a
+`brainstorming|writing-plans` pattern is blind to `/brainstorm`, `/write-plan`, and
+`/execute-plan` — the form a live dispatch actually takes, and the form that survived the
+skeleton cut unseen. `mattpocock` and `matt-pocock` are separate alternates for the same
+reason: neither spelling matches the other, and his setup command uses the hyphenated one.
 
-No live couplings remain. A hit outside that class is a regression — the pattern
-catches a live command referent whether it dispatches (a subprocess phase prompt) or only
-reads as prose, and prose that seeds through the capture funnel carries the referent into
-every consumer repo's own card set, where it outlives the cut.
+**Two hit classes are sanctioned. Neither routes anything.**
+
+- **Historical** — `harness-bootstrap` must keep matching pre-rename spellings it reads out
+  of an already-bootstrapped repo: the `chore: scaffold|sync superpowers pipeline` commit
+  strings its mature-repo detector greps, and the `docs/superpowers/` folder its Phase 2a
+  migration moves to `docs/work/`. Dropping the first makes every existing consumer read as
+  never-bootstrapped; dropping the second strands its old tree on disk (§8).
+- **Setup-time composition** — pairing with mattpocock/skills is deliberate (§6) and reaches
+  exactly three sites, all of them install-time:
+  1. **The paired pin** — the `enabledPlugins` entry `"mattpocock-skills@mattpocock"` plus
+     its `extraKnownMarketplaces.mattpocock` source, wherever the plugin seeds or documents
+     that pair: `harness-bootstrap` §2a writes it, `resolve-plugins` handles it as its own
+     pin class (Phase 4 pre-resolve pins, Phase 5.2 write), and the plugin README states the
+     class in its skill summary. A settings key and a marketplace coordinate — no skill
+     referent, so nothing here backs a name in a consumer repo's prose.
+  2. **The tracker recipe** —
+     [`mattpocock-tracker-recipe.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/mattpocock-tracker-recipe.md),
+     the paste-able answer to the "Other" branch of his setup.
+  3. **The Phase 3 handoff message** — the first-run text naming his commands and telling
+     the operator to type `/setup-matt-pocock-skills`. Chat output, not prose written into
+     the consumer repo.
+
+  Nothing the pipeline commits into a consumer repo names a mattpocock command — not the
+  `CLAUDE.md` skeleton, not any scaffolded doc. That is what keeps dropping the pin a
+  settings edit with no doc change, and it is the property the grep guards.
+
+A hit outside those two classes is a regression — the pattern catches a live command
+referent whether it dispatches (a subprocess phase prompt) or only reads as prose, and
+prose that seeds through the capture funnel carries the referent into every consumer repo's
+own card set, where it outlives the cut.
 
 The folder shape is gone: `docs/superpowers/` is now `docs/work/`. Phase 2a scaffolds
 `README.md` + `TEMPLATE.md`; cards land flat beside them as work is logged. The
@@ -153,8 +179,9 @@ tracker-specific", defaulting to local markdown **only when no tracker was provi
 would only have made sense if his set owned that slot at a fixed path; it does not, so
 declaring our own path through the tracker socket composes with his skills exactly as
 well as deleting the slot would. That makes the tracker declaration the actual
-composition mechanism — it is what tells his skills where to publish; the shipped
-recipe lives in [`mattpocock-coexistence.md`](mattpocock-coexistence.md). His taxonomy
+composition mechanism — it is what tells his skills where to publish; the shipped recipe is
+[`mattpocock-tracker-recipe.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/mattpocock-tracker-recipe.md),
+and [`mattpocock-coexistence.md`](mattpocock-coexistence.md) is its runbook. His taxonomy
 is spec → tickets → implement, with no "plans" artifact at all, so our `## Plan` block has
 no counterpart to defer to.
 
@@ -168,9 +195,10 @@ Shipping a seed template connects to nothing either: his templates load from
 `./issue-tracker-*.md` inside his own skill folder, with no cross-plugin lookup path.
 
 **The socket that does work is the "Other" branch** — it ships no template and is authored
-at setup time from the user's own description of the workflow. So the composable artifact
-is *a description the operator supplies*, not a file we ship. That description is
-authored: [`mattpocock-coexistence.md`](mattpocock-coexistence.md) § The tracker recipe.
+at setup time from a description of the workflow. So the composable artifact is a
+description supplied at the prompt, not a file his loader reads. super-bootstrap ships that
+description as a plugin asset and the operator pastes it —
+[`mattpocock-tracker-recipe.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/mattpocock-tracker-recipe.md).
 
 The seed shape it would have to match is known: `Status:`, `Type:
 research|prototype|grilling|task`, `Blocked by: NN, NN`, a `## Comments` section, the
@@ -195,15 +223,12 @@ once:
 An unnamed middle is therefore the only mechanically available shape; our end of the seam
 stays head-and-tail by construction.
 
-Change B resolved as coexistence and then moved to pairing (§6, `GAP-056`): bootstrap
-performs the per-repo enable and the wiring, so neither "bootstrap recommends nothing"
-nor "an ordinary adaptive pick" survives as the posture, and the "Other"-branch
-description stops being operator-supplied — shipping it is part of the card. What holds
-unchanged is this section's mechanical finding: the middle stays human-typed, so pairing
-buys install-plus-prompt and never model-driven routing. The description's current text
-lives in [`mattpocock-coexistence.md`](mattpocock-coexistence.md).
-`plugins/super-bootstrap/` references mattpocock nowhere, so bootstrap behavior is
-unchanged.
+**What bootstrap does at this seam is install-plus-prompt, and that is a ceiling, not a
+stage.** It seeds the paired pin (§6) and hands over the two moves it cannot make: the
+handoff message tells the operator to type `/setup-matt-pocock-skills`, and the shipped
+recipe is what they paste at the "Other" branch. This section's mechanical finding is what
+bounds it — the middle is human-typed, so no amount of pairing buys model-driven routing
+into his lane.
 
 **A second socket exists for coding standards:** his `code-review` reads
 `CODING_STANDARDS.md` / `CONTRIBUTING.md`, and a documented repo standard overrides its
@@ -309,28 +334,33 @@ what such a test would report is static arithmetic anyway (ambient token count, 
 cost); the part that is not — omission rate — needs controlled runs this repo has no
 apparatus for.
 
-**Decided — the runway is bare by design.** No process harness stands behind the seeded
-disciplines; the seeded `CLAUDE.md` § The envelope carries only the install pointer
-(`resolve-plugins`, an ordinary adaptive pick — the rationale lives here, not ambient).
-Bootstrap recommends nothing. Independent of change B — adopting a harness there does not make the
-bare runway retroactively a gap.
+**Decided — the seeded runway names no harness.** The seeded `CLAUDE.md` and every
+scaffolded doc state disciplines, never skill entries; § The envelope carries only the
+install pointer (`resolve-plugins`, an ordinary adaptive pick — the rationale lives here,
+not ambient). Bootstrap does seed the paired pin below, but a pin is a settings key: no
+seeded prose stands on it, which is exactly why dropping it costs no doc change.
 
-**Decided — coexistence (change B).** Thin super-bootstrap vs sb+mattpocock (the swap
-framing is dead — superpowers is already de-routed) resolves to coexistence as separate
-axes: sb keeps its slots (§2); mattpocock/skills enters a repo only as a per-repo
-adaptive pick in `resolve-plugins` — bootstrap pins nothing. **Superseded — pairing is
-decided (`GAP-056`).** The two ship paired, not adaptively picked: the plugin installs
-once at device scope and sits disabled there, enabling is per repo, and bootstrap does
-the enable plus the wiring (awareness prompts + the initial per-repo setup process).
-Pairing is not hard coupling — sb's own doors never depend on his lane, and a repo
-disables him without a doc change. The clause above stands only as the posture pairing
-replaces; the propagation (this section's bare-runway paragraph, `harness-bootstrap` §2a
-core pins, the §4 grep contract, the shipped skeleton) is the card's scope. Composition
-is bounded to
-the three mechanically available surfaces (§4): awareness pointers the human types, the
-"Other" tracker socket declaring `docs/work/` + `/super-bootstrap:log` as the tracker,
-and his model-invoked discipline layer firing on description-match. The sb-only fallback
-stays open at tag `pre-mattpocock`; its cost is deleting the mattpocock-coupled cards.
+**Decided — pairing (change B).** super-bootstrap and mattpocock/skills ship paired, on
+separate axes rather than as a swap (the swap framing is dead — superpowers is already
+de-routed): sb keeps its slots (§2), and no sb door routes his lane. The plugin installs
+once at device scope and sits disabled there; the enable is per repo, and bootstrap
+performs it along with the wiring a fresh repo needs — the awareness prompt and the
+tracker declaration (§4).
+
+Pairing is not hard coupling. Every sb door works with his lane absent, and a repo drops
+him by setting `"mattpocock-skills@mattpocock": false`. **The spelling is load-bearing:**
+deleting the key instead re-seeds it on the next sync, because `harness-bootstrap` §2a
+merges absent keys and skips present ones. `resolve-plugins` offers the paired pin for
+drop, never re-proposes a dropped one, and never re-fetches its trust signals.
+
+The pin reaches already-bootstrapped repos too, at their next sync, and silently — pins
+carry no drift diff. Under pairing that is the intended reach, not a leak.
+
+Composition is bounded to the three mechanically available surfaces (§4): awareness
+pointers the human types, the "Other" tracker socket declaring `docs/work/` +
+`/super-bootstrap:log` as the tracker, and his model-invoked discipline layer firing on
+description-match. The sb-only fallback stays open at tag `pre-mattpocock`; its cost is
+deleting the mattpocock-coupled cards.
 
 **Decided — live adoption is the trial; interface work waits for a real hand-off.** The
 seam's shape is read out of live runs, not designed against read skill text: §4's
@@ -382,16 +412,16 @@ sufficient on its own, since a stage chain renamed to harness-neutral words woul
 carry the foreign decomposition. GAP-050's per-slot audit confirmed that risk was real:
 the staging ceremony (Design/Plan as default gates) was distillation residue — the thread
 contract now carries them as conditional context-scope sections, and drain's stage set
-re-derives from grounding-native artifacts (`GAP-051`). The runway declares its bare
-posture (§6 above). The tracker-recipe deliverable §4 re-aimed is shipped —
-[`mattpocock-coexistence.md`](mattpocock-coexistence.md).
+re-derives from grounding-native artifacts (`GAP-051`). The seeded runway names no harness
+(§6 above). The tracker-recipe deliverable §4 re-aimed ships as a plugin asset —
+[`mattpocock-tracker-recipe.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/mattpocock-tracker-recipe.md).
 
 Two constraints outlive the change:
 
 - Retiring the cloud-safe derivation must replace drain's admission predicate
   (`eligibility.md` Cloud-gate fallback) in the same change — without the venue map
   `intent == Cloud` is drain's whole gate.
-- A hit outside §4's one sanctioned class is a regression, whether it dispatches or only
+- A hit outside §4's two sanctioned classes is a regression, whether it dispatches or only
   reads as prose.
 
 **Vacating means naming the discipline and shipping nothing.** A card whose fix reads

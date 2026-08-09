@@ -158,23 +158,37 @@ If many candidates from the same source reject for the same reason, collapse to 
 
 ## Phase 4: Diff vs pinned, present batch
 
-### Core pins (locked when harness-active)
+### Pre-resolve pins (core + paired)
 
-Two harness core deps:
+`/super-bootstrap:harness-bootstrap` Phase 2a pins these before curation runs. Two classes, handled apart here.
+
+**Core pins** — locked when harness-active:
 
 - `super-bootstrap@super-bootstrap` — requires `super-bootstrap` entry in `extraKnownMarketplaces` (source: `github` / `RockyHong/super-bootstrap`).
 - `andrej-karpathy-skills@karpathy-skills` — requires `karpathy-skills` entry in `extraKnownMarketplaces` (source: `github` / `forrestchang/andrej-karpathy-skills`).
 
-`/super-bootstrap:harness-bootstrap` Phase 2a pins them pre-resolve.
+**Paired pin** — seeded like a core pin, droppable unlike one:
 
-A process harness is an ordinary adaptive pick here — proposable, droppable, trust-signals re-fetched like any other.
+- `mattpocock-skills@mattpocock` — requires `mattpocock` entry in `extraKnownMarketplaces` (source: `github` / `mattpocock/skills`). No harness door depends on its lane, so dropping it breaks nothing — the locked-core what-breaks clause has nothing to state here.
+
+A process harness a repo adds on its own is an ordinary adaptive pick — proposable, droppable, trust-signals re-fetched like any other. The paired pin is not: it arrives pinned pre-resolve and is never scored or re-scored.
 
 **Harness-active marker:** `docs/work/` directory exists in the repo. Detect with one Glob.
+
+Core pins:
 
 - **Harness-active + pinned + present** → keep silently, do not surface in batch.
 - **Harness-active + pin absent** (user manually removed; or fresh harness call hadn't reached Phase 2a yet) → **propose re-pin** as a locked core dep, short message: "core dep missing, re-pinning so CLAUDE.md triggers resolve." User can decline only with explicit override; flag what breaks (karpathy-skills → § Coding Principles trigger rule misfires silently; super-bootstrap → every `/super-bootstrap:*` door in CLAUDE.md dangles, and the committed `commit-channel.sh` routes workers to a command that doesn't resolve).
 - **Not harness-active** (no `docs/work/` folder — standalone curation on a non-harness repo) → no core lock applies. The core dep, if present, is treated as a regular adaptive pick the user may drop.
 - Locked picks: never propose drop, never re-fetch trust signals (karpathy-skills locked by harness contract — `~150-line MIT skill, single-author repo, license + behavior pinned by harness contract`; super-bootstrap locked as the harness's own door set — the runway it installed names it).
+
+Paired pin:
+
+- **Harness-active + value `true`** → surface one drop offer in the batch — no trust block, no score, no what-breaks clause. Keep is the default.
+- **Harness-active + value `false`** → dropped on purpose. Keep the key, keep the value, never re-propose. `false` is a present key, so Phase 2a's merge skips it and the drop survives every sync.
+- **Harness-active + key absent** (repo bootstrapped before the pairing shipped) → propose the pin as the same droppable offer, never as a locked re-pin. A decline writes `false`, not a missing key.
+- **Not harness-active** → no pairing applies; treat as an ordinary adaptive pick the user may drop.
+- Trust signals are never re-fetched for the paired pin, in any branch.
 
 ### Adaptive picks
 
@@ -216,7 +230,7 @@ Steps execute sequentially within a candidate. Multiple candidates may install i
 
 ### Phase 5.2: Settings.json write
 
-- Add accepted picks to `enabledPlugins`. Drop rejected picks. **When harness-active (`docs/work/` exists), never drop the core pins** (`super-bootstrap@super-bootstrap`, `andrej-karpathy-skills@karpathy-skills`) — see Phase 4 § Core pins.
+- Add accepted picks to `enabledPlugins`. Drop rejected picks. **When harness-active (`docs/work/` exists), never drop the core pins** (`super-bootstrap@super-bootstrap`, `andrej-karpathy-skills@karpathy-skills`) — see Phase 4 § Pre-resolve pins. The paired pin (`mattpocock-skills@mattpocock`) **is** droppable there — an accepted drop writes the key to `false`, never deletes it; a deleted key is silently merged back in on the next `harness-bootstrap` sync.
 - For any plugin NOT from `claude-plugins-official`, ensure its source is in `extraKnownMarketplaces` so cloud sessions / fresh machines can resolve.
 - Example shape:
   ```json

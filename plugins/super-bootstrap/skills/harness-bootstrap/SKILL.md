@@ -198,7 +198,13 @@ Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no su
 
 They are **core deps, not adaptive picks** — pinned here at 2a so tier-2 curation (`/super-bootstrap:resolve-plugins`, run later by `/super-bootstrap`) layers adaptive picks on a guaranteed base. Dangling-rule risk: if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently. Pin first.
 
-No process harness is provisioned — the skeleton's route rows name disciplines, not skill entries.
+A third plugin pins beside them in its own class — a **paired pin**:
+
+- `mattpocock-skills` — the process harness super-bootstrap ships paired with. Seeded unconditionally like a core dep, but **droppable per repo**: no runway door depends on his lane, so a repo may run without it.
+
+Keep every pipeline-owned surface free of paired-pin command names — the skeleton's route rows name disciplines, not skill entries. Dropping the paired pin then stays a settings edit: no doc change, no dangling-rule risk.
+
+**Drop spelling is load-bearing.** A repo drops the paired pin by setting its value to `false` — **never** by deleting the key. The merge rule below is what persists the drop: a present key is skipped, an absent key is merged back in on the next sync.
 
 Ensure `.claude/settings.json` contains:
 
@@ -206,7 +212,8 @@ Ensure `.claude/settings.json` contains:
 {
   "enabledPlugins": {
     "super-bootstrap@super-bootstrap": true,
-    "andrej-karpathy-skills@karpathy-skills": true
+    "andrej-karpathy-skills@karpathy-skills": true,
+    "mattpocock-skills@mattpocock": true
   },
   "extraKnownMarketplaces": {
     "super-bootstrap": {
@@ -214,6 +221,9 @@ Ensure `.claude/settings.json` contains:
     },
     "karpathy-skills": {
       "source": { "source": "github", "repo": "forrestchang/andrej-karpathy-skills" }
+    },
+    "mattpocock": {
+      "source": { "source": "github", "repo": "mattpocock/skills" }
     }
   }
 }
@@ -224,7 +234,14 @@ Ensure `.claude/settings.json` contains:
 - Key already present → skip (`✓ pinned`).
 - Other `.claude/settings.json` content → never touched.
 
-Both plugins live outside the official marketplace, so their `extraKnownMarketplaces` entries are required for cloud / fresh-machine resolution. Tier-2 curation (`/super-bootstrap:resolve-plugins`) treats both pins as locked: never proposes drop, never re-prompts the user. Adaptive picks (stack-matched skills / MCPs / hooks) layer on top when curation runs.
+All three live outside the official marketplace, so their `extraKnownMarketplaces` entries are required for cloud / fresh-machine resolution. Tier-2 curation (`/super-bootstrap:resolve-plugins`) reads the two classes apart:
+
+- **Core pins** (`super-bootstrap`, `karpathy-guidelines`) are **locked** — never proposes drop, never re-prompts the user.
+- **The paired pin** (`mattpocock-skills`) is **droppable** — offered for drop, never re-proposed once dropped (`false` is a present key), trust signals never re-fetched.
+
+Adaptive picks (stack-matched skills / MCPs / hooks) layer on top when curation runs.
+
+**Consequence on an already-bootstrapped repo.** The paired pin's keys are absent there, so the next sync merges them in **silently** — pins are missing-or-present, not diff-and-approve, so they raise no drift row to approve. Intended, not a gap. A repo that already dropped it carries `false`, hits the skip branch, and stays dropped.
 
 ### 2a-hooks: Harness hooks (default-on)
 
@@ -522,7 +539,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/techstack.md` (new, skeleton-section drift or insert, or post-migration absorbed content)
 - `docs/overview.md` (new, skeleton-section drift or insert)
 - `docs/decisions.md` (new, scope-header drift, post-retirement migration from techstack, or closed-history rows from legacy CLAUDE.md migration)
-- `.claude/settings.json` (core plugin pins seeded at 2a; harness hooks merged at 2a-hooks)
+- `.claude/settings.json` (core + paired plugin pins seeded at 2a; harness hooks merged at 2a-hooks)
 - `.claude/hooks/commit-channel.sh` (frozen hook script seeded at 2a-hooks — always, default-on)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)
@@ -547,7 +564,14 @@ After committing (or reporting no changes needed), present results based on repo
 
 **First-run (just scaffolded):**
 
-> **Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. The core plugin pins (super-bootstrap, karpathy) sit in `.claude/settings.json`; no process harness is pinned — stack-matched skill / MCP / hook picks, a process harness among them, come when `/super-bootstrap` runs gated tier-2 curation.
+> **Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. The core plugin pins (super-bootstrap, karpathy) and the paired pin (mattpocock-skills) sit in `.claude/settings.json`; stack-matched skill / MCP / hook picks come when `/super-bootstrap` runs gated tier-2 curation.
+>
+> {If the paired pin landed this run (`mattpocock-skills@mattpocock` is `true`): "**The paired process harness is enabled here — two steps only you can run.**
+>
+> His lane is user-invoked: a model cannot call these, you type them. Shape the work — `/grill-me`, `/grill-with-docs`, `/to-spec`, `/to-tickets`, `/wayfinder`, `/implement`. Sweep and sort — `/improve-codebase-architecture`, `/triage`. Session moves — `/handoff`, `/teach`, `/to-questionnaire`, `/wait-what`, `/ask-matt`.
+>
+> 1. Type `/setup-matt-pocock-skills`. It writes his `docs/agents/*` config and a CLAUDE.md § Agent skills block; nothing here pre-wrote those files, and it is model-unreachable, so this step is yours.
+> 2. At its issue-tracker question pick **Other**, then paste the recipe at [`assets/mattpocock-tracker-recipe.md`](assets/mattpocock-tracker-recipe.md) — it declares this repo's `docs/work/` cards and `/super-bootstrap:log` as the tracker. Render it inline on request."}
 >
 > {If product skeletons are empty (greenfield): "`docs/overview.md` / `docs/techstack.md` are empty skeletons — `/super-bootstrap` seeds GAP cards for them and surfaces the resolve gate."}
 >
