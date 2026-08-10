@@ -21,6 +21,16 @@ Emits every discovered skill as a candidate row:  category<TAB>command<TAB>descr
 The user-invoke FILTER is deliberately NOT here — it is the one judgment in the
 pipeline and stays with the gateway (see SKILL.md). This script over-reports;
 the gateway cuts.
+
+stdout carries candidate rows only. stderr carries the source diagnostics:
+
+    # sources: <source> (<n> skills); ...          always, one line
+    # anomalies: <source> — declared <d>, emitted <n>; ...   only when short
+
+An anomaly means a source came back SHORT of its own branch's expectation —
+discovery failed there, so a zero or a low count is not the truth about what
+that source ships. `declared` names the manifest-allowlist expectation,
+`discovered` the walked-tree one.
 """
 import json, os, re, sys
 
@@ -99,10 +109,15 @@ def walk_skill_dirs(skills_dir):
 
 
 def emit(rows, plugin_name, skills_dir, prefix=True, allowlist=None):
+    """Returns (emitted, expected). `expected` is the branch's OWN expectation —
+    the allowlist's length, or the count of SKILL.md dirs the walk found — carried
+    out because this is the only place it is known; a caller comparing an emitted
+    count against anything else (the tree behind an allowlist) false-flags."""
+    targets = walk_skill_dirs(skills_dir) if allowlist is None else allowlist
     n = 0
-    for skill_dir in (walk_skill_dirs(skills_dir) if allowlist is None else allowlist):
+    for skill_dir in targets:
         fm = frontmatter(os.path.join(skill_dir, "SKILL.md"))
-        if not fm or "description" not in fm:
+        if not fm or "description" not in fm:  # unreadable path, or no description
             continue
         name = fm.get("name", os.path.basename(skill_dir))
         cmd = (f"/{plugin_name}:{name}" if prefix and plugin_name != name
@@ -112,10 +127,26 @@ def emit(rows, plugin_name, skills_dir, prefix=True, allowlist=None):
         desc = fm["description"].split(". ")[0][:120]
         rows.append((cat, cmd, desc))
         n += 1
-    return n
+    return n, len(targets)
 
 
-rows, sources = [], []
+def anomaly_note(source, n, expected, skills_dir, allowlist):
+    """A source is anomalous when it comes back short of ITS OWN branch's
+    expectation — never of the tree. Returns the stderr note, or None.
+
+    Allowlist branch: a declared path that failed to resolve. A manifest that
+    legitimately declares fewer skills than the tree holds is not short.
+    Walk branch: the skills dir exists yet emitted less than it discovered — or
+    emitted nothing at all, which a bare zero cannot distinguish from a plugin
+    that genuinely ships no skills. An absent dir stays a truthful zero."""
+    if allowlist is not None:
+        return f"{source} — declared {expected}, emitted {n}" if n < expected else None
+    if os.path.isdir(skills_dir) and (n == 0 or n < expected):
+        return f"{source} — discovered {expected}, emitted {n}"
+    return None
+
+
+rows, sources, anomalies = [], [], []
 reg_path = os.path.join(home, ".claude/plugins/installed_plugins.json")
 enabled = {}
 for scope in (os.path.join(home, ".claude/settings.json"),          # user scope first,
@@ -129,16 +160,28 @@ if os.path.isfile(reg_path):
             continue
         plugin_name = plugin_key.split("@")[0]
         install_path = installs[0]["installPath"]
-        n = emit(rows, plugin_name, os.path.join(install_path, "skills"),
-                 allowlist=declared_skill_dirs(install_path))
+        skills_dir = os.path.join(install_path, "skills")
+        allowlist = declared_skill_dirs(install_path)
+        n, expected = emit(rows, plugin_name, skills_dir, allowlist=allowlist)
         sources.append(f"{plugin_key} ({n} skills)")
+        note = anomaly_note(plugin_key, n, expected, skills_dir, allowlist)
+        if note:
+            anomalies.append(note)
 
-n = emit(rows, "", os.path.join(project, ".claude/skills"), prefix=False)
-if n:
+# An existing project skills dir is listed at any count — a zero it emitted is
+# itself the signal the anomaly predicate reads; only an absent dir is silent.
+proj_skills = os.path.join(project, ".claude/skills")
+n, expected = emit(rows, "", proj_skills, prefix=False)
+if os.path.isdir(proj_skills):
     sources.append(f"project .claude/skills ({n} skills)")
+    note = anomaly_note("project .claude/skills", n, expected, proj_skills, None)
+    if note:
+        anomalies.append(note)
 
 for cat in CAT_ORDER:
     for c, cmd, desc in rows:
         if c == cat:
             print(f"{c}\t{cmd}\t{desc}")
 print(f"# sources: {'; '.join(sources)}", file=sys.stderr)
+if anomalies:
+    print(f"# anomalies: {'; '.join(anomalies)}", file=sys.stderr)
