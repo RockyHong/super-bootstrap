@@ -75,6 +75,7 @@
   "enabledPlugins": {
     "super-bootstrap@super-bootstrap": true,
     "andrej-karpathy-skills@karpathy-skills": true,
+    "mattpocock-skills@mattpocock": true,
     "axioms@axioms-protocol": true
   },
   "extraKnownMarketplaces": {
@@ -88,6 +89,12 @@
       "source": {
         "source": "github",
         "repo": "forrestchang/andrej-karpathy-skills"
+      }
+    },
+    "mattpocock": {
+      "source": {
+        "source": "github",
+        "repo": "mattpocock/skills"
       }
     },
     "axioms-protocol": {
