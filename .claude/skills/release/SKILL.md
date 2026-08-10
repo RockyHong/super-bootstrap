@@ -109,7 +109,7 @@ Omit empty sections. Show to user for approval.
 ```bash
 git add plugins/super-bootstrap/.claude-plugin/plugin.json .claude-plugin/marketplace.json
 git commit -m "chore: release v{version}"
-git tag -a v{version} -m "<release notes>"
+git tag -a v{version} --cleanup=verbatim -m "<release notes>"
 ```
 
 Use annotated tag. Pass message via HEREDOC.
@@ -128,7 +128,7 @@ Push only on explicit yes. Skip by default if the user is silent. Never force pu
 - Push only on explicit confirmation — offer after commit/tag, run `git push origin main --tags` on yes, never force, never unannounced.
 - Working tree must be clean before proceeding — step 1 enforces this.
 - Never delete or move existing tags.
-- All tags are annotated (`git tag -a`).
+- All tags are annotated (`git tag -a`) and written with `--cleanup=verbatim` — the default strips every line starting with `#`, which would delete the release-notes headings.
 - Run `/release` with no arguments — the skill auto-detects state.
 - `plugin.json` is the single version source — bump it only. Do not add a `version` field to `marketplace.json`.
 - `marketplace.json` `plugins[0].description` is a derived mirror of `plugin.json` `description` — this skill syncs it at release; direct edits get overwritten.

@@ -115,7 +115,7 @@ Omit empty sections. Show to user for approval.
 ```bash
 git add {{version_file_paths}}
 git commit -m "chore: release v{version}"
-git tag -a v{version} -m "<release notes>"
+git tag -a v{version} --cleanup=verbatim -m "<release notes>"
 ```
 
 Use annotated tag. Pass message via HEREDOC.
@@ -147,7 +147,7 @@ If multiple remaining:
 **Step 3 — Tag:**
 
 ```bash
-git tag -a v{version}-{platform} -m "{Platform} upload — build {build_number}"
+git tag -a v{version}-{platform} --cleanup=verbatim -m "{Platform} upload — build {build_number}"
 ```
 
 **Step 4 — Report + offer push:**
@@ -164,5 +164,5 @@ Push only on explicit yes. Skip by default if silent.
 - Push only on explicit confirmation — offer after commit/tag, run `git push ... --tags` on yes, never force, never unannounced.
 - Working tree must be clean before proceeding — step 1 enforces this.
 - Never delete or move existing tags.
-- All tags are annotated (`git tag -a`).
+- All tags are annotated (`git tag -a`) and written with `--cleanup=verbatim` — the default strips every line starting with `#`, which would delete the release-notes headings.
 - Run `/release` with no arguments — the skill auto-detects state.
