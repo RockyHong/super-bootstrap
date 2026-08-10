@@ -18,7 +18,9 @@ The dispatch prompt supplies: the diff (`git diff` + `git diff --staged`) and to
 
 3. **Grep the surface** for prose describing that behavior. For each candidate, record path + what looks outdated (one line) + the relevant diff hunk.
 
-4. **Judge staleness, don't just match.** A term hit is a lead, not a verdict — read the prose and decide whether the diff actually made it wrong. A doc that still describes current behavior is not stale.
+4. **Compare claims, not only terms.** First enumerate what the diff *asserts* — each posture, default, or contract it states — and write each one as the question it answers ("how does X get installed?", "which door owns Y?", "what is the default for Z?"). A new file is all-added lines, so every claim in it is diff content; an unchanged context line inside a hunk is a claim too. Then, per question, find every doc that answers it and set the answers side by side. Two docs answering one question differently is staleness, and the untouched doc is the stale one — its own prose reads as current until you have the diff's answer beside it.
+
+5. **Judge staleness, don't just match.** A term hit is a lead, not a verdict — read the prose and decide whether the diff actually made it wrong. A doc that still describes current behavior is not stale — but "current" means current *after* this diff lands, which is what step 4 settles for claims.
 
 ## Output contract
 
