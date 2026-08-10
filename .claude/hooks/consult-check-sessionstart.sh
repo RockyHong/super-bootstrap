@@ -5,32 +5,37 @@
 # matcher), so the per-prompt injector stays a pure read. Staleness tolerance =
 # one session.
 #
-# Sources (curated-signal constraint, bench/FINDINGS-gap045.md § What the build
-# inherits):
-#   1. project docs/**/*.md — recursive; superpowers/ + work/ excluded
-#      (specs|plans|cards are work-tracking, not consult targets — pipeline
-#      convention, not name guessing; work/ is the post-rename home of the same
-#      substrate). A repo that renames its temporal home declares it in
-#      .claude/consult-exclude — one find -path glob per line (e.g. */drafts/*),
-#      # comments allowed — instead of this list accreting per-repo names.
-#      Undeclared temporal dirs stay listed, the forced YES/NO judges them.
-#   2. project .claude/guidelines/**/*.md
-#   3. device plant ~/.claude/guidelines/**/*.md (absent on cloud — degrades
-#      gracefully to project-only)
-# index.md files excluded (navigation — the catalog replaces them). Dedup by
-# path-under-guidelines/ (the source repo holds source + device-plant copies
-# of the same files; consumers' subtrees are channel-disjoint, no-op there).
+# Source (curated-signal constraint, bench/FINDINGS-gap045.md § What the build
+# inherits) — project docs/**/*.md, recursive, with superpowers/ + work/
+# excluded (specs|plans|cards are work-tracking, not consult targets — pipeline
+# convention, not name guessing; work/ is the post-rename home of the same
+# substrate). A repo that renames its temporal home declares it in
+# .claude/consult-exclude — one find -path glob per line (e.g. */drafts/*),
+# # comments allowed — instead of this list accreting per-repo names.
+# Undeclared temporal dirs stay listed, the forced YES/NO judges them.
 #
-# Catalog = grouped stems, one line per directory: "- <dir>/: stem, stem, …".
-# Every stem is kept — stems are the measured recall carrier (why-text is not
-# load-bearing; bench § forcedeval-compact). Grouping only removes repeated
-# path prefixes + per-line overhead, so nested project docs fit the same
-# budget that per-line rendering blew (GAP-052: nested docs were invisible,
-# lore filled the list).
+# The guidelines trees are deliberately NOT sourced (GAP-123). Lore reaches
+# readers through its own doors: /load-harness-principles and
+# /audit-harness-edits at the harness-edit moment, plus a path-scoped rule or
+# hook per *wired* work-discipline principle at its work moment (four are
+# cold-ref-by-design and have no wire — docs/architecture.md § Guidelines).
+# Listing it here
+# as well cost a fixed 943 chars of every consumer's budget — 62-72% of the
+# render — against the 49-200 chars of project docs this bundle exists to
+# surface.
+#
+# Catalog = grouped stems, one line per directory: "- <dir>/: stem, stem, …",
+# where <dir> is the repo-relative path itself — one row, one path, no guessing
+# at the prompt moment. Every stem is kept — stems are the measured recall
+# carrier (why-text is not load-bearing; bench § forcedeval-compact). Grouping
+# only removes repeated path prefixes + per-line overhead, so nested docs fit
+# the budget that per-line rendering blew (GAP-052).
 #
 # Budget: whole injected block <= ~500 tok (pre-registered gate 4). List capped
 # at 1700 chars; an overflowing group line is truncated to the stems that fit
-# plus a "+N more" tail — reachability never silently vanishes.
+# plus a "+N more" tail — reachability never silently vanishes. That tail is
+# reserved inside the fill loop; the dropped-groups tail is written after it, so
+# the fill runs twice when that tail appears, reserving its width (DEBT-073).
 #
 # No stdout — this hook only writes the cache; injection is the check slot's
 # per-prompt job. Defensive exits are silent: a failed derivation is a missing
@@ -40,8 +45,6 @@ set +e
 ROOT="${CLAUDE_PROJECT_DIR:-$PWD}"
 CACHE="$ROOT/.claude/.consult-catalog"
 [ -d "$ROOT/.claude" ] || exit 0
-
-HOME_DIR="${HOME:-$USERPROFILE}"
 
 # Built-in exclusions = pipeline-convention work-tracking homes; per-repo
 # temporal-dir names come from .claude/consult-exclude (header § Sources).
@@ -54,64 +57,59 @@ if [ -f "$ROOT/.claude/consult-exclude" ]; then
   done < "$ROOT/.claude/consult-exclude"
 fi
 
-paths="$(
-  find "$ROOT/docs" -name '*.md' "${excl[@]}" 2>/dev/null | sed "s|^$ROOT/||" | sort
-  find "$ROOT/.claude/guidelines" -name '*.md' ! -name 'index.md' 2>/dev/null | sort
-  find "$HOME_DIR/.claude/guidelines" -name '*.md' ! -name 'index.md' 2>/dev/null | sort
-)"
+# Rows stay repo-relative, so each one resolves exactly one way at the prompt
+# moment and the injector needs no path fallback (BUG-031).
+paths="$(find "$ROOT/docs" -name '*.md' "${excl[@]}" 2>/dev/null | sed "s|^$ROOT/||" | sort)"
 
-# Guidelines rows collapse to their stem after "guidelines/"; the stem doubles
-# as the dedup key, so source and device-plant copies of the same file merge
-# (project emitted first → project copy wins).
-paths="$(awk '{ i=index($0,"guidelines/"); if (i) $0=substr($0,i+11); if (!seen[$0]++) print }' <<<"$paths")"
-
-# Group by directory: docs/ groups at its first subdir level; guideline stems
-# group by tree (root-level guideline files land under "guidelines/"). Known
-# trees carry a short hint to sharpen the group line's YES/NO.
+# Group by directory at docs/'s first subdir level, so the group key resolves as
+# a repo-relative path.
 lines="$(awk '
   {
-    p=$0; sub(/\.md$/, "", p)
-    if (p ~ /^docs\//) {
-      rest=substr(p, 6)
-      if (rest ~ /\//) { split(rest, a, "/"); key="docs/" a[1] "/"; stem=substr(rest, length(a[1]) + 2) }
-      else             { key="docs/"; stem=rest }
-    } else {
-      if (p ~ /\//)    { split(p, a, "/"); key=a[1] "/"; stem=substr(p, length(a[1]) + 2) }
-      else             { key="guidelines/"; stem=p }
-    }
+    p=$0; sub(/\.md$/, "", p); rest=substr(p, 6)
+    if (rest ~ /\//) { split(rest, a, "/"); key="docs/" a[1] "/"; stem=substr(rest, length(a[1]) + 2) }
+    else             { key="docs/"; stem=rest }
     if (!(key in g)) order[++n]=key
     g[key] = (g[key] == "" ? "" : g[key] ", ") stem
   }
-  END {
-    hint["work-discipline/"]=" (Claude-at-work discipline)"
-    hint["axiom-principles/"]=" (harness-design lore)"
-    hint["claude-shape/"]=" (Claude-Code current-shape facts)"
-    for (i=1; i<=n; i++) { k=order[i]; printf "- %s%s: %s\n", k, hint[k], g[k] }
-  }
+  END { for (i=1; i<=n; i++) { k=order[i]; printf "- %s: %s\n", k, g[k] } }
 ' <<<"$paths")"
 
-budget=1700
-out=""
-used=0
-dropped=0
-while IFS= read -r line; do
-  [ -n "$line" ] || continue
-  n=$(( ${#line} + 1 ))
-  if [ $(( used + n )) -le "$budget" ]; then
-    out+="$line"$'\n'
-    used=$(( used + n ))
-    continue
-  fi
-  # Group line overflows: keep the stems that fit, name the remainder.
-  avail=$(( budget - used - 40 ))  # room for the "+N more" tail
-  if [ "$avail" -lt 60 ]; then dropped=$(( dropped + 1 )); continue; fi
-  head="${line:0:$avail}"
-  head="${head%,*}"
-  total=$(awk -F', ' '{print NF}' <<<"$line")
-  kept=$(awk -F', ' '{print NF}' <<<"$head")
-  out+="$head, +$(( total - kept )) more — Glob the dir"$'\n'
-  used=$budget
-done <<<"$lines"
+# Fill the list to a budget, leaving the result in $out/$used/$dropped. The
+# dropped-groups tail below is appended after the loop with no width of its own
+# in `used`, so its room must come off the budget — but only in the runs that
+# write it. Reserving unconditionally instead costs list capacity in every run
+# that truncates without dropping, i.e. the consumers nearest the cap. So: fill
+# once to learn whether the tail appears, refill with its width reserved when it
+# does. A smaller budget never drops fewer groups, so the second pass still
+# writes the tail it reserved for.
+fill() {
+  local budget=$1 line n avail head total kept
+  out=""
+  used=0
+  dropped=0
+  while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    n=$(( ${#line} + 1 ))
+    if [ $(( used + n )) -le "$budget" ]; then
+      out+="$line"$'\n'
+      used=$(( used + n ))
+      continue
+    fi
+    # Group line overflows: keep the stems that fit, name the remainder.
+    avail=$(( budget - used - 40 ))  # room for the "+N more" tail
+    if [ "$avail" -lt 60 ]; then dropped=$(( dropped + 1 )); continue; fi
+    head="${line:0:$avail}"
+    head="${head%,*}"
+    total=$(awk -F', ' '{print NF}' <<<"$line")
+    kept=$(awk -F', ' '{print NF}' <<<"$head")
+    out+="$head, +$(( total - kept )) more — Glob the dir"$'\n'
+    used=$budget
+  done <<<"$lines"
+}
+
+fill 1700
+# 100 covers the tail's 95 bytes plus its newline and the count's digits.
+[ "$dropped" -gt 0 ] && fill $(( 1700 - 100 ))
 [ "$dropped" -gt 0 ] && out+="- (+$dropped more doc groups over token budget — Glob the trees above if none of the listed docs fit)"$'\n'
 
 printf '%s' "$out" > "$CACHE"
