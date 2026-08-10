@@ -22,7 +22,8 @@ Read the ones relevant to the topic. If a file doesn't exist, proceed silently.
 
 Read the docs above; **do not write to them.** They are this repo's canonical SSOT with
 their own dimension rules (`docs/decisions.md` is append-only history with stated admission
-criteria; `docs/overview.md` and `docs/techstack.md` are state-dimension docs) and their own
+criteria and one bounded additive-annotation form its own header defines; `docs/overview.md`
+and `docs/techstack.md` are state-dimension docs) and their own
 write door (the `/super-bootstrap:commit` doc-sync step).
 
 If `/domain-modeling` needs to record a glossary or a decision, write it to its own homes —
