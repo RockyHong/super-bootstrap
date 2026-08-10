@@ -79,7 +79,7 @@ inseparable from it.
 | Dispatch § SDD carve-out — the "chain's executor governs" clause | Dead. The clause is gone; the bullet's commit-door mechanics are harness-agnostic and stand. |
 | § The envelope ambient-laws line (4 skill names) | Referent dead, **discipline live**: three laws stated inline. `dispatching-parallel-agents` carried nothing § Dispatch does not already own. |
 | `docs/specs/superpowers-topology.md` | Dead. The file is gone. |
-| `harness-bootstrap` § Core plugin pins — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. superpowers is pinned by nothing. The process-harness slot is filled instead by the mattpocock **paired pin** (§4) — seeded per repo, droppable, and backing no name in any pipeline-owned doc; a harness a repo adds on its own is an ordinary adaptive pick in `resolve-plugins`. |
+| `harness-bootstrap` § Core plugin pin — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. superpowers is pinned by nothing. The process-harness slot is filled instead by the mattpocock **paired pin** (§4) — seeded per repo, droppable, and backing no name in any pipeline-owned doc; a harness a repo adds on its own is an ordinary adaptive pick in `resolve-plugins`. |
 | The temporal work folder | **Ours**, at `docs/work/`. His artifact skills own no path — they publish to whatever tracker is configured (§4) — so there was no slot to defer to. |
 | drain's stage machine (`raw→triage→plan→execute→review`) | **Re-cut by GAP-050, re-derived by GAP-051** — the per-phase command dispatch was distillation-shaped; drain now spawns one scoped-brief session per item (anchor + breadcrumb rendered from the card thread), running drain-till-wall with typed walls (`user`\|`shape`). Stage vocabulary `aimed`/`executing` keys entry only. |
 | **log / cards / commit / doc-sync / rules** | **Unaffected.** |
@@ -232,8 +232,9 @@ into his lane.
 
 **A second socket exists for coding standards:** his `code-review` reads
 `CODING_STANDARDS.md` / `CONTRIBUTING.md`, and a documented repo standard overrides its
-built-in Fowler baseline. Repo-level coding principles belong in that file rather than
-as a mandatory skill invocation wired into CLAUDE.md.
+built-in Fowler baseline. § Coding Principles names that same file, so both surfaces read
+one standard. Repo-level coding principles belong there rather than as a mandatory skill
+invocation wired into CLAUDE.md.
 
 ## 5. Awareness wiring is the strongest uncontested position
 
@@ -252,8 +253,8 @@ construction — it needs no change when the process harness is swapped or remov
 
 De-routing removes routing, not discipline. Four laws named in `CLAUDE.md` § The envelope
 (`test-driven-development`, `verification-before-completion`, `receiving-code-review`,
-`dispatching-parallel-agents`) are superpowers skill names, and § Coding Principles mandates
-a `karpathy-guidelines` invocation. Where they land is settled by the rules layer's own
+`dispatching-parallel-agents`) are superpowers skill names, and § Coding Principles carries
+a fifth fence — the coding standard. Where they land is settled by the rules layer's own
 firing mechanism, not by preference.
 
 **A path-scoped rule fires on file *read*, not on intent** — stated in the shipped
@@ -295,22 +296,20 @@ findings through it before any implementer. The answer was never a rule glob (cl
 
 ### § Coding Principles is a different concern, riding Wave 1 by name-adjacency
 
-§3's dissolve test does not list it. `karpathy-guidelines` is a **standards** skill, not a
-process harness, so de-routing does not touch it and `DEBT-029` is not a de-routing card.
-Its real problem stands on its own: a standard bound to one invocation, invisible to any
-reviewer not running that skill.
+§3's dissolve test does not list this slot. A coding standard is a **standards** concern,
+not a process harness, so de-routing does not touch it. Its own problem stands separately:
+a standard bound to one skill invocation is invisible to any reviewer not running that
+skill.
 
-Its carded fix has an SSOT constraint. Copying the skill's four principles into
-`CODING_STANDARDS.md` duplicates a body that lives upstream — a parallel truth (VII), and
-`CLAUDE.md` already says "Skill body is upstream — don't paraphrase it here."
+An in-repo file carries no such binding, and duplicates no body that lives upstream — so
+the parallel-truth constraint (VII) that rules against copying a foreign skill's content
+into `CODING_STANDARDS.md` never binds the file itself.
 
 **Shipped:** the ambient slot keeps its fire moment ("before writing, reviewing, or
-refactoring code"), the *mandatory* invocation is gone, the pinned skill is the default
-standard, and `CODING_STANDARDS.md` overrides it where it declares content —
-`harness-bootstrap` scaffolds the file headings-only, so the default governs until sections
-fill. The ambient line is the guaranteed reader the card's title assumed a file could be.
-The default leads and the socket follows deliberately: the scaffold starts empty, so the
-default is the live branch in every fresh repo.
+refactoring code") and names `CODING_STANDARDS.md` as the standard — no pinned default
+behind it. `harness-bootstrap` scaffolds the file headings-only, so a concern no section
+declares is left to default judgment. The ambient line is the guaranteed reader that
+carries the file to every code touch.
 
 Dispatch doctrine came through intact: of CLAUDE.md § Dispatch's bullets, only the
 "build inside a superpowers chain → that chain's executor governs" clause was coupled, and
@@ -569,7 +568,7 @@ on the owned list.
 | § Coding Principles body replaced | section retained on the owned list | Yes |
 | triage lane's doctrine clause restated inline | `plugins/super-bootstrap/**` ships with the plugin, never scaffolded into a consumer repo | N/A downstream |
 | todo lane's `brainstorm` vocabulary renamed + `/brainstorm` empty-state door repointed | same — `shared/`, `agents/`, `skills/todo/` all ship with the plugin | N/A downstream |
-| `superpowers` core pin removed from § Core plugin pins | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** 2a never strips the pin from an already-bootstrapped repo, so removal there is a hand-sweep — which §6 permits, its de-routing resting on the dissolve test rather than on uninstalling anything |
+| `superpowers` core pin removed from § Core plugin pin | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** 2a never strips the pin from an already-bootstrapped repo, so removal there is a hand-sweep — which §6 permits, its de-routing resting on the dissolve test rather than on uninstalling anything |
 
 **DEBT-026 closed the folder hole rather than accepting it.** The rename to `docs/work/`
 would otherwise strand every already-bootstrapped repo's specs and plans: the scans read

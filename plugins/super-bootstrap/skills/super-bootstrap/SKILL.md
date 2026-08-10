@@ -23,7 +23,7 @@ If the repo is not a git repo (`git rev-parse --git-dir` fails), run `git init` 
 
 ## Dispatch the runway (always)
 
-Invoke `/super-bootstrap:harness-bootstrap` via the Skill tool. The runway installs fresh or syncs drift — its own detection — scaffolding CLAUDE.md, skeleton docs, path-scoped rules, core plugin pins, and returns "runway installed/synced + committed." The entry dispatches it unconditionally, so a documented-but-stale repo still gets runway sync. Then check whether the seed docs are substantive.
+Invoke `/super-bootstrap:harness-bootstrap` via the Skill tool. The runway installs fresh or syncs drift — its own detection — scaffolding CLAUDE.md, skeleton docs, path-scoped rules, the core plugin pin, and returns "runway installed/synced + committed." The entry dispatches it unconditionally, so a documented-but-stale repo still gets runway sync. Then check whether the seed docs are substantive.
 
 ## Detect — seed docs substantive?
 

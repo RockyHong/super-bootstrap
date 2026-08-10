@@ -66,7 +66,6 @@ Optional bonus: `/super-bootstrap:release-init` — one-shot scaffolder. Detects
 
 | Tool | Role |
 |---|---|
-| [andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | Core dep auto-pinned in `.claude/settings.json`. Scaffolded CLAUDE.md § Coding Principles takes its `karpathy-guidelines` skill as the default coding standard (think-before-coding, simplicity, surgical changes, goal-driven execution); the always-scaffolded `CODING_STANDARDS.md` starts headings-only and overrides it only as sections fill. |
 | [mattpocock/skills](https://github.com/mattpocock/skills) | Paired process harness, auto-pinned in `.claude/settings.json` — and droppable per repo: set its `enabledPlugins` value to `false` and it stays dropped. Nothing scaffolded names his commands, so dropping him needs no doc change and breaks no door. |
 | [superpowers](https://github.com/obra/superpowers) | Alternative process harness — an ordinary curation candidate, not pinned. The scaffolded CLAUDE.md names disciplines (root cause before fix, settle the design, write the sequence), so any harness slots in without the harness knowing its name. |
 | [claude-code-setup](https://claude.com/plugins/claude-code-setup) | Anthropic's plugin recommender — fast-path source if installed |

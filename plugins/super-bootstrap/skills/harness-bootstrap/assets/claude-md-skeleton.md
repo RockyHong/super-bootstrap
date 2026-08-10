@@ -83,9 +83,7 @@ State docs (`overview.md`, `techstack.md`, specs) hold what is **true now** — 
 
 ## Coding Principles
 
-Before writing, reviewing, or refactoring code, read the coding standard: the pinned `karpathy-guidelines` skill — four principles (think-before-coding, simplicity-first, surgical-changes, goal-driven-execution). Skill body is upstream — don't paraphrase it.
-
-`CODING_STANDARDS.md` at the repo root overrides that default where it declares content — filled sections govern their concern; empty sections and an unfilled scaffold defer to the pinned skill.
+Before writing, reviewing, or refactoring code, read `CODING_STANDARDS.md` at the repo root — a filled section governs its concern; where no section declares a concern, default judgment applies.
 
 ## Edit Discipline — Renames, Replace-All & Stale State
 

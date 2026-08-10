@@ -1,12 +1,12 @@
 ---
 name: harness-bootstrap
-description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, skeleton docs (overview, techstack, work/), path-scoped rules, and core plugin pins; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap; opt-in earn-gated scale module (parked + test-queue containers, venue-map rule, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks and backfills skeleton sections added since bootstrap on re-run. Solo dev workflow."
+description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, skeleton docs (overview, techstack, work/), path-scoped rules, and the core plugin pin; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap; opt-in earn-gated scale module (parked + test-queue containers, venue-map rule, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks and backfills skeleton sections added since bootstrap on re-run. Solo dev workflow."
 tags: [harness, scaffold, setup, meta, docs]
 ---
 
 # Super Bootstrap — Development Pipeline for Any Repo
 
-Set up (or sync) the development pipeline in a project. Installs harness — workflow rules, doc-sync gate, skeleton docs, core plugin pins — in one scaffold session. The doc-sync gate at every later commit grows the skeleton docs over time, so there's no deferred deep-scan stage.
+Set up (or sync) the development pipeline in a project. Installs harness — workflow rules, doc-sync gate, skeleton docs, the core plugin pin — in one scaffold session. The doc-sync gate at every later commit grows the skeleton docs over time, so there's no deferred deep-scan stage.
 
 Designed for a solo developer working across multiple Claude Code sessions and cloud Claude Code.
 
@@ -187,18 +187,17 @@ There is no `docs/specs/` index file — the folder + filename convention IS the
 
 Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no substitutions). Copy `assets/work-template-skeleton.md` to `docs/work/TEMPLATE.md` if missing (no substitutions).
 
-`CODING_STANDARDS.md` is **always** scaffolded — copy `assets/coding-standards-skeleton.md` to the repo root if missing (no substitutions). Starts headings-only; its preamble states the override contract. Preamble + headings pipeline-owned (drift-checked); section content project-owned (grown via doc-sync).
+`CODING_STANDARDS.md` is **always** scaffolded — copy `assets/coding-standards-skeleton.md` to the repo root if missing (no substitutions). Starts headings-only; its preamble states the fill contract. Preamble + headings pipeline-owned (drift-checked); section content project-owned (grown via doc-sync).
 
 `.claude/rules/` machinery is **always** scaffolded (zero-cost when empty). `index.md` is seeded from `assets/rules-index-skeleton.md`. Individual rule bodies fill in Phase 2b based on Phase 1 signal detection.
 
-**Core plugin pins (pre-resolve).** The harness CLAUDE.md skeleton names two plugins by its own wiring:
+**Core plugin pin (pre-resolve).** The harness CLAUDE.md skeleton names one plugin by its own wiring:
 
 - `super-bootstrap` — the skeleton routes every door through `/super-bootstrap:*`, and the committed `commit-channel.sh` deny text routes workers to `/super-bootstrap:commit`. All of it must resolve from the project pin alone on any boundary where the authoring device's user-scope settings don't apply (fresh clone, second machine, cloud session) — the committed hook fires there regardless of plugin state.
-- `karpathy-guidelines` — the coding standard until `CODING_STANDARDS.md` sections fill (scaffold starts empty — see CLAUDE.md § Coding Principles).
 
-They are **core deps, not adaptive picks** — pinned here at 2a so tier-2 curation (`/super-bootstrap:resolve-plugins`, run later by `/super-bootstrap`) layers adaptive picks on a guaranteed base. Dangling-rule risk: if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently. Pin first.
+It is a **core dep, not an adaptive pick** — pinned here at 2a so tier-2 curation (`/super-bootstrap:resolve-plugins`, run later by `/super-bootstrap`) layers adaptive picks on a guaranteed base. Dangling-rule risk: if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently. Pin first.
 
-A third plugin pins beside them in its own class — a **paired pin**:
+A second plugin pins beside it in its own class — a **paired pin**:
 
 - `mattpocock-skills` — the process harness super-bootstrap ships paired with. Seeded unconditionally like a core dep, but **droppable per repo**: no runway door depends on his lane, so a repo may run without it.
 
@@ -212,15 +211,11 @@ Ensure `.claude/settings.json` contains:
 {
   "enabledPlugins": {
     "super-bootstrap@super-bootstrap": true,
-    "andrej-karpathy-skills@karpathy-skills": true,
     "mattpocock-skills@mattpocock": true
   },
   "extraKnownMarketplaces": {
     "super-bootstrap": {
       "source": { "source": "github", "repo": "RockyHong/super-bootstrap" }
-    },
-    "karpathy-skills": {
-      "source": { "source": "github", "repo": "forrestchang/andrej-karpathy-skills" }
     },
     "mattpocock": {
       "source": { "source": "github", "repo": "mattpocock/skills" }
@@ -234,9 +229,9 @@ Ensure `.claude/settings.json` contains:
 - Key already present → skip (`✓ pinned`).
 - Other `.claude/settings.json` content → never touched.
 
-All three live outside the official marketplace, so their `extraKnownMarketplaces` entries are required for cloud / fresh-machine resolution. Tier-2 curation (`/super-bootstrap:resolve-plugins`) reads the two classes apart:
+Both live outside the official marketplace, so their `extraKnownMarketplaces` entries are required for cloud / fresh-machine resolution. Tier-2 curation (`/super-bootstrap:resolve-plugins`) reads the two classes apart:
 
-- **Core pins** (`super-bootstrap`, `karpathy-guidelines`) are **locked** — never proposes drop, never re-prompts the user.
+- **The core pin** (`super-bootstrap`) is **locked** — never proposes drop, never re-prompts the user.
 - **The paired pin** (`mattpocock-skills`) is **droppable** — offered for drop, never re-proposed once dropped (`false` is a present key), trust signals never re-fetched.
 
 Adaptive picks (stack-matched skills / MCPs / hooks) layer on top when curation runs.
@@ -564,7 +559,7 @@ After committing (or reporting no changes needed), present results based on repo
 
 **First-run (just scaffolded):**
 
-> **Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. The core plugin pins (super-bootstrap, karpathy) and the paired pin (mattpocock-skills) sit in `.claude/settings.json`; stack-matched skill / MCP / hook picks come when `/super-bootstrap` runs gated tier-2 curation.
+> **Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. The core plugin pin (super-bootstrap) and the paired pin (mattpocock-skills) sit in `.claude/settings.json`; stack-matched skill / MCP / hook picks come when `/super-bootstrap` runs gated tier-2 curation.
 >
 > {If the paired pin landed this run (`mattpocock-skills@mattpocock` is `true`): "**The paired process harness is enabled here — two steps only you can run.**
 >

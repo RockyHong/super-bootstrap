@@ -74,7 +74,6 @@
   },
   "enabledPlugins": {
     "super-bootstrap@super-bootstrap": true,
-    "andrej-karpathy-skills@karpathy-skills": true,
     "mattpocock-skills@mattpocock": true,
     "axioms@axioms-protocol": true
   },
@@ -83,12 +82,6 @@
       "source": {
         "source": "github",
         "repo": "RockyHong/super-bootstrap"
-      }
-    },
-    "karpathy-skills": {
-      "source": {
-        "source": "github",
-        "repo": "forrestchang/andrej-karpathy-skills"
       }
     },
     "mattpocock": {
