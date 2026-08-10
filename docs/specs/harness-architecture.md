@@ -81,11 +81,11 @@ inseparable from it.
 | `docs/specs/superpowers-topology.md` | Dead. The file is gone. |
 | `harness-bootstrap` § Core plugin pin — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. superpowers is pinned by nothing. The process-harness slot is filled instead by the mattpocock **paired pin** (§4) — seeded per repo, droppable, and backing no name in any pipeline-owned doc; a harness a repo adds on its own is an ordinary adaptive pick in `resolve-plugins`. |
 | The temporal work folder | **Ours**, at `docs/work/`. His artifact skills own no path — they publish to whatever tracker is configured (§4) — so there was no slot to defer to. |
-| drain's stage machine (`raw→triage→plan→execute→review`) | **Re-cut by GAP-050, re-derived by GAP-051** — the per-phase command dispatch was distillation-shaped; drain now spawns one scoped-brief session per item (anchor + breadcrumb rendered from the card thread), running drain-till-wall with typed walls (`user`\|`shape`). Stage vocabulary `aimed`/`executing` keys entry only. |
+| drain's stage machine (`raw→triage→plan→execute→review`) | **Dead as a stage chain, drain live** — the per-phase command dispatch was distillation-shaped; drain now spawns one scoped-brief session per item (anchor + breadcrumb rendered from the card thread), running drain-till-wall with typed walls (`user`\|`shape`). Stage vocabulary `aimed`/`executing` keys entry only. |
 | **log / cards / commit / doc-sync / rules** | **Unaffected.** |
 | `skills/triage/SKILL.md` + `agents/triage.md` — investigation doctrine | Referent dead, **discipline live**: the clause is stated inline, naming no harness. The pointer never resolved even where superpowers is installed — the agent's tool list carries no `Skill`. |
 
-**The table was 8 rows; 7 survive** (drain's stage machine re-cut by GAP-050, re-derived to scoped-brief sessions) — three of them restated. Its real function is
+**The table was 8 rows; 7 survive** (drain's stage machine re-cut to scoped-brief sessions) — three of them restated. Its real function is
 sizing ceremony to shape, and that is harness-independent: clusters 5 and 6 say "no
 ceremony", 7 routes harness edits, 8 routes triage to our own door, and 1–3 name the
 disciplines a process harness would otherwise supply. Deleting rows rather than restating
@@ -169,7 +169,7 @@ branch is authored fresh. So super-bootstrap can ship its own seed for that slot
 declaring `docs/work/` + `/super-bootstrap:log` as the repo's tracker. His
 `to-spec` and `triage` then write into our home.
 
-**His artifact skills own no paths — they ask the repo.** Read at grade A (2026-07-26):
+**His artifact skills own no paths — they ask the repo.** Read at grade A (§7):
 `to-tickets` §5 publishes "depending on the tracker `/setup-matt-pocock-skills`
 configured", and `.scratch/<feature-slug>/issues/` is only its *local-files fallback*;
 `wayfinder` says outright that where its map and tickets "physically live is
@@ -269,8 +269,8 @@ intent") and in § Rules above. Hold each fence against that:
 | test-driven-development | about to write implementation | Source globs — but unknowable in the skeleton (stack detected at Phase 1) |
 | coding principles | about to write code | same as above |
 
-So **`GAP-039`'s premise is mechanically unavailable**: no `paths:` glob can fire at "about
-to claim done". Same failure class as the closed worktree-glob fork in
+So **the path-scoped-rule premise is mechanically unavailable**: no `paths:` glob can fire at
+"about to claim done". Same failure class as the closed worktree-glob fork in
 [`docs/decisions.md`](../decisions.md) — a path rule matches paths *under* a root, never a
 moment.
 
@@ -371,7 +371,7 @@ funnel — the repo running his set logs friction as cards. A lab-isolated green
 is not required; the per-repo enable plus the `pre-mattpocock` rollback tag keep reversal
 a disable-and-card-deletion away.
 
-**Resolved — drain's anchor** (GAP-051). drain's own doc names its ceiling: "Capacity
+**Resolved — drain's anchor.** drain's own doc names its ceiling: "Capacity
 ceiling = how many halts the user can resolve, not machine throughput." The
 classification below settles the shape question without measurement: dependency-ordered
 elicitation never enters drain — the `Discuss` intent excludes it at admission — and
@@ -392,7 +392,7 @@ question:
 
 drain is sound over verification-shaped halts and becomes engagement-monitoring exactly
 where it fans out elicitation-shaped work, because each halt then costs a design
-conversation the human cannot hold N of concurrently. The halt audit (GAP-051) found no
+conversation the human cannot hold N of concurrently. The halt audit found no
 elicitation-shaped halt inside drain's lane — design settling walls out at admission or
 via the typed `user` wall, one-shot per item.
 
@@ -408,10 +408,10 @@ no information flowing back — are the antipattern, and he ships nearly none.
 super-bootstrap routes no external process harness. The §4 grep returns only the two
 sanctioned classes, and the shape check holds beside it — zero name-hits was never
 sufficient on its own, since a stage chain renamed to harness-neutral words would still
-carry the foreign decomposition. GAP-050's per-slot audit confirmed that risk was real:
+carry the foreign decomposition. The per-slot audit confirmed that risk was real:
 the staging ceremony (Design/Plan as default gates) was distillation residue — the thread
 contract now carries them as conditional context-scope sections, and drain's stage set
-re-derives from grounding-native artifacts (`GAP-051`). The seeded runway names no harness
+re-derives from grounding-native artifacts. The seeded runway names no harness
 (§6 above). The tracker-recipe deliverable §4 re-aimed ships as a plugin asset —
 [`mattpocock-tracker-recipe.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/mattpocock-tracker-recipe.md).
 
@@ -431,6 +431,12 @@ foreign harness to another rebuilds the coupling change A paid to remove.
 
 Verification grades: **A** = literal text read; **B** = model-summarized fetch, claims
 usable but not quotable; **C** = inferred, unverified.
+
+**Dimension boundary.** The External and Internal tables are a provenance index: each row
+claims something about an unversioned external artifact tracked at `main`, so the read date
+is the only bound its validity has and no other record holds it. Dates belong in those two
+tables, plus a version-bound pin where one applies. Everything else in this doc is state
+prose — it carries no dates and no card references.
 
 ### External
 
@@ -471,7 +477,7 @@ mattpocock-skills@mattpocock` (managed bundle). Both require
 | super-bootstrap plugin source | `plugins/super-bootstrap/` | A | 55 files / 319 KB; `harness-bootstrap` 93.8 KB, `drain` 53 KB (SKILL 12.6 KB + 10 assets) |
 | Ambient description weight | all 13 shipped `SKILL.md` frontmatter | A | 6,456 chars ≈ 1.6k tokens, present in every session |
 | Foreign-name coupling | `plugins/super-bootstrap/**` | A | 85 occurrences / 19 files; skeleton holds 15 |
-| todo driver cost | `agents/todo.md` | A | ~33.5k subagent tokens / ~197 s for a 3-row board; `DEBT-022` records ~34.3k / ~226 s for 4 rows |
+| todo driver cost | `agents/todo.md` | A | ~33.5k subagent tokens / ~197 s for a 3-row board; ~34.3k / ~226 s for 4 rows |
 | Shipped CLAUDE.md skeleton | `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` | A | Carries the routing table into every bootstrapped repo |
 
 ### His path per card shape
@@ -490,17 +496,18 @@ rejected enhancements only, while ours admits closed forks across every domain.
 
 **Two lanes collide by name, not by work.** His `triage` sorts an inbox; our
 `/super-bootstrap:triage` is a cold single-card grounding phase (premise verify / aim
-validate / blast collect). They coexist. The
-comparison surface for `DEBT-035`'s vacate question is therefore `diagnosing-bugs`, which is
-what that card already names.
+validate / blast collect). They coexist. The surface an external-coverage vacate of our lane
+would have to clear is therefore `diagnosing-bugs`, not his `triage` — and it does not clear
+it: a per-bullet read at grade A found zero coverage, so that direction is closed
+([`docs/decisions.md`](../decisions.md)).
 
 ### Questions carried into live coexistence
 
 1. Head-contract content — what a work item must carry for his lane to consume it —
    stays unknown until a live hand-off happens; interface work waits on it (§6).
 2. drain's wall-vs-progress ratio — unmeasured; §6's elicitation-vs-verification
-   classification is resolved (GAP-051: elicitation excluded at admission, remaining
-   halts batch), leaving only the ratio itself to instrument if load grows.
+   classification is resolved (elicitation excluded at admission, remaining halts
+   batch), leaving only the ratio itself to instrument if load grows.
 3. His set's ambient token weight — measured at v1.2.3 install (2026-08-08): the repo tree
    carries 35 `SKILL.md`, but `plugin.json` registers 25 and an explicit `skills` array is
    an allowlist, so the loaded set is those 25 — 14 user-invoked (model-unreachable) and 11
@@ -537,9 +544,8 @@ granularity, pruning, and leading words.
 That absence does not convict our tier pins. His skills delegate the model choice to the
 session because cost is not a concern his set addresses; ours pin because dispatch grade
 and cost are the same decision here. The two answer different questions, so neither is
-copied from the other — but our pins carry no written justification, which is the gap
-`DEBT-035`'s sibling reasoning applies to: a pattern nobody wrote a reason for is
-indistinguishable from one nobody chose.
+copied from the other — but our pins carry no written justification, and a pattern nobody
+wrote a reason for is indistinguishable from one nobody chose.
 
 ## 8. Downstream migration — what adopt mode does and does not cover
 
@@ -564,13 +570,13 @@ on the owned list.
 | Cut site (landed) | Shape | Covered? |
 | --- | --- | --- |
 | Routing rows restated, "inside a route" removed, SDD clause cut, ambient-laws line rewritten | content changed within § Development Workflow / § Dispatch (both on the owned list) | Yes |
-| Topology doc deleted | repo-local; the shipped skeleton never referenced it (verified 2026-07-26, zero hits) | N/A downstream |
+| Topology doc deleted | repo-local; the shipped skeleton never referenced it (zero grep hits) | N/A downstream |
 | § Coding Principles body replaced | section retained on the owned list | Yes |
 | triage lane's doctrine clause restated inline | `plugins/super-bootstrap/**` ships with the plugin, never scaffolded into a consumer repo | N/A downstream |
 | todo lane's `brainstorm` vocabulary renamed + `/brainstorm` empty-state door repointed | same — `shared/`, `agents/`, `skills/todo/` all ship with the plugin | N/A downstream |
 | `superpowers` core pin removed from § Core plugin pin | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** 2a never strips the pin from an already-bootstrapped repo, so removal there is a hand-sweep — which §6 permits, its de-routing resting on the dissolve test rather than on uninstalling anything |
 
-**DEBT-026 closed the folder hole rather than accepting it.** The rename to `docs/work/`
+**The folder hole is closed rather than accepted.** The rename to `docs/work/`
 would otherwise strand every already-bootstrapped repo's specs and plans: the scans read
 the new path only, so the old tree stays on disk and goes invisible. Phase 2a therefore
 migrates before it creates — `git mv docs/superpowers docs/work` when the old tree is
