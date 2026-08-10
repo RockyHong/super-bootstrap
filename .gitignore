@@ -23,3 +23,8 @@ Thumbs.db
 # drain — worktree isolation (frozen infra)
 .claude/worktrees/
 .drain-status
+
+# local settings — never repo state. Committed settings.json is the only durable
+# source, so device behavior stays identical everywhere; anything here is a
+# one-off carve-out, discarded when the work that needed it finishes.
+.claude/settings.local.json
