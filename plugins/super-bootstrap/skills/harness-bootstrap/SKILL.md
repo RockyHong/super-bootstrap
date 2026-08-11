@@ -240,16 +240,18 @@ Adaptive picks (stack-matched skills / MCPs / hooks) layer on top when curation 
 
 ### 2a-hooks: Harness hooks (default-on)
 
-One hook asset ships as a frozen file and installs **unconditionally** — no
-opt-in confirm, unlike drain's worktree infra (§2a-drain below); it is
+Three hook assets ship as frozen files and install **unconditionally** — no
+opt-in confirm, unlike drain's worktree infra (§2a-drain below); all are
 safe-by-default (rationale + full procedure:
 [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md)).
 
 | # | Asset | Fires on | Effect |
 | - | - | - | - |
-| 1 | `commit-channel` (PreToolUse) | `Bash(git commit *)` | Deny raw `git commit` from worker subagents — deny text routes the worker back to `/super-bootstrap:commit`; main session and separate-process workers pass. The commit door runs mechanics gateway-inline, runs a bundled link-integrity check every commit, and dispatches a cold `doc-sync-scan` only on a grep-gate hit — no separate gate hook |
+| 1 | `commit-channel` (PreToolUse) | `Bash(git commit *)` | Deny raw `git commit` from worker subagents — deny text routes the worker back to `/super-bootstrap:commit`; main session and separate-process workers pass. The commit door runs mechanics gateway-inline, runs a bundled link-integrity check every commit, and dispatches a cold `doc-sync-scan` only on a grep- or declared-citer hit — no separate gate hook |
+| 2 | `consult-check-sessionstart` (SessionStart) | `startup\|resume\|clear\|compact` | Derives the compact `docs/**` catalog into the gitignored `.claude/.consult-catalog` cache, once per session boundary |
+| 3 | `consult-check-check` (UserPromptSubmit) | every prompt | Injects the catalog + a forced YES/NO-per-doc relevance evaluation — the read boundary's activation layer: the right project docs get read at the prompt moment (pure cache read; installs as a pair with #2) |
 
-Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) — copies the script to `.claude/hooks/` and merges the settings snippet into `.claude/settings.json` (`hooks.PreToolUse[]`: commit-channel). Content-aware (copy-on-drift — a version-marker mismatch re-copies the asset, so an upstream fix reaches existing repos), silent when already current; stage the placed files with the Phase 2c commit. Same asset-copy + guarded-merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3) — one pattern, reused here rather than re-derived.
+Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) — copies the scripts to `.claude/hooks/` and merges each settings snippet into `.claude/settings.json` (`hooks.PreToolUse[]`: commit-channel; `hooks.SessionStart[]` + `hooks.UserPromptSubmit[]`: the consult-check pair). Content-aware (copy-on-drift — a version-marker mismatch re-copies the asset, so an upstream fix reaches existing repos), silent when already current; stage the placed files with the Phase 2c commit. Same asset-copy + guarded-merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3) — one pattern, reused here rather than re-derived.
 
 ### 2a-drain: Drain infra (opt-in)
 
@@ -535,7 +537,8 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/overview.md` (new, skeleton-section drift or insert)
 - `docs/decisions.md` (new, scope-header drift, post-retirement migration from techstack, or closed-history rows from legacy CLAUDE.md migration)
 - `.claude/settings.json` (core + paired plugin pins seeded at 2a; harness hooks merged at 2a-hooks)
-- `.claude/hooks/commit-channel.sh` (frozen hook script seeded at 2a-hooks — always, default-on)
+- `.claude/hooks/commit-channel.sh`, `.claude/hooks/consult-check-{sessionstart,check}.sh` (frozen hook scripts seeded at 2a-hooks — always, default-on)
+- `.gitignore` (when 2a-hooks appended `.claude/.consult-catalog` — skip if the line was already present)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)
 - `docs/work/README.md` (if newly written, re-planted, or fact-fields block inserted this run at 2a-scale)

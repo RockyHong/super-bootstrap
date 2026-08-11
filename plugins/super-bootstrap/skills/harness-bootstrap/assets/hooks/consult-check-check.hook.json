@@ -1,0 +1,9 @@
+{
+  "_comment": "FROZEN consult-check UserPromptSubmit injector. hooks-ensure-infra.md MERGES this single entry into the consumer's .claude/settings.json hooks.UserPromptSubmit array — never overwrites the file or other hooks. Fires on every prompt; pure read of the .claude/.consult-catalog cache written by consult-check-sessionstart.sh (its .hook.json sibling — install as a pair). Command path is $CLAUDE_PROJECT_DIR-relative so it resolves from any cwd inside the repo.",
+  "hooks": [
+    {
+      "type": "command",
+      "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/consult-check-check.sh\""
+    }
+  ]
+}

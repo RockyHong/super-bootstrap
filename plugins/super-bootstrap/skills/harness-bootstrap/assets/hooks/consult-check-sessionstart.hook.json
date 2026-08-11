@@ -1,0 +1,10 @@
+{
+  "_comment": "FROZEN consult-check SessionStart catalog deriver. hooks-ensure-infra.md MERGES this single entry into the consumer's .claude/settings.json hooks.SessionStart array — never overwrites the file or other hooks. Runs once per session boundary (startup|resume|clear|compact) and writes the .claude/.consult-catalog cache the UserPromptSubmit injector reads (its .hook.json sibling — install as a pair). Command path is $CLAUDE_PROJECT_DIR-relative so it resolves from any cwd inside the repo.",
+  "matcher": "startup|resume|clear|compact",
+  "hooks": [
+    {
+      "type": "command",
+      "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/consult-check-sessionstart.sh\""
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+.claude/guidelines/claude-shape/attention-budget.md	attention budget|budget	Recall-curve sweet spots (≤80k / 200k–300k / 1M), clean-budget target.
+.claude/guidelines/claude-shape/harness-audit-signals.md	harness audit signals|audit|signals|.claude/rules/	subagent asset externalization (dir-shape), `.claude/rules/` extraction guidance.
+.claude/guidelines/claude-shape/layer-placement.md	layer placement|layer|instructionsloaded	Five-layer table (CLAUDE.md / nested CLAUDE.md / project rules / device / skill), eager-vs-lazy loading mechanics (Read-only trigger, post-c
+.claude/guidelines/claude-shape/knowledge-placement.md	knowledge placement|knowledge	Per-surface inventory-row table (skill / agent / MCP / hook / plugin), MEMORY.md scope, decision flow with Claude-Code paths.
+.claude/guidelines/claude-shape/glob-claude-root-empty.md	glob claude root empty|claude|empty|~/.claude	Glob false-empty for descending patterns anchored at `~/.claude`.
+.claude/guidelines/claude-shape/hook-feedback-channels.md	hook feedback channels|feedback|channels|additionalcontext|startup\|resume\|clear\|compact	Per-event hook feedback matrix: `additionalContext` with `allow`/`defer`, PreToolUse stdout black hole, exit-2 asymmetry, `ask` channel gap.
+.claude/guidelines/claude-shape/hook-input-channel.md	hook input channel|input|channel|tool_input.file_path|claude_file_path	Tool input reaches a hook only via stdin JSON (`tool_input.file_path`), never an env var — no `CLAUDE_FILE_PATH`; a guard reading it is si
+.claude/guidelines/claude-shape/hook-agent-type.md	hook agent type|agent|agent_type|agent_id|// "main"	`agent_type` / `agent_id` stdin fields for subagent context-gating (subagent frontmatter `name`, main-session absence, `// "main"` default);
+.claude/guidelines/claude-shape/workflow-tool-response.md	workflow tool response|workflow|response|tool_response|scriptpath|status=async_launched|.claude/workflows/<name>.js	PostToolUse(Workflow) `tool_response` fields (`scriptPath`, `runId`, `status=async_launched`); read fields directly, `runId` has hyphens, Wi
+.claude/guidelines/claude-shape/subprocess-tool-gates.md	subprocess tool gates|subprocess|gates|claude -p|--allowedtools "skill"|--allowedtools|--add-dir|allowedtools	Three `claude -p` invocation traps: (1) skill invocation routes through the permission-gated `Skill` tool, bundled skills denied without `--
+.claude/guidelines/claude-shape/worktree-isolation.md	worktree isolation|worktree|isolation|claude -p|isolation:"worktree"|permissions.deny	OS sandbox is per-process (Seatbelt/bubblewrap wrap the process), so per-worktree OS write boundaries need separate `claude -p` processes; `
+.claude/guidelines/claude-shape/fact-verification.md	fact verification|verification	Gap protocol — when no file here answers a shape question: official docs ground truth, community complementary signal, date + land finding
+.claude/guidelines/claude-shape/model-roster.md	model roster|model|roster|opusplan	Dispatch-tier enum (opus/sonnet/haiku/fable), model IDs, context windows, pricing.
+.claude/guidelines/axiom-principles/attention-is-north-star.md	attention is north star|north	Apex.
+.claude/guidelines/axiom-principles/attention-budget.md	attention budget|budget	Token cost downstream of attention cost.
+.claude/guidelines/axiom-principles/agent-shapes.md	agent shapes|agent|shapes	Three primitives compose every harness.
+.claude/guidelines/axiom-principles/skill-authoring.md	skill authoring|skill|authoring	Project-agnostic body, clear IO contract, exclude bias inputs, return questions on incomplete context, topic-lock deep skills.
+.claude/guidelines/axiom-principles/prompt-anchoring.md	prompt anchoring|prompt|anchoring	Boundaries are routes (every "not me" carries forward route); role names are posture primes (a prior over rigor/tone — never carries autho
+.claude/guidelines/axiom-principles/harness-md-discipline.md	harness md discipline|discipline	Cut test (delete), compress-retained (tighten noise from kept lines, never ammo), no-precedent rule, positive-over-negative phrasing, mirror
+.claude/guidelines/axiom-principles/harness-audit-signals.md	harness audit signals|audit|signals	Cognitive signals a harness piece needs reshape: subagent overload, skill↔subagent direction flips, always-on instruction bloat.
+.claude/guidelines/axiom-principles/layer-placement.md	layer placement|layer	Visibility axis (universal vs local surfaces); decision-moment routing (every fragment loads at its moment of need; action vs omission — o
+.claude/guidelines/axiom-principles/knowledge-placement.md	knowledge placement|knowledge	Agent-instruction file is agent's reading, not human notebook.
+.claude/guidelines/axiom-principles/pipeline-design.md	pipeline design|pipeline|design	State = file presence (session-safe reconstruction).
+.claude/guidelines/axiom-principles/candidate-not-artifact.md	candidate not artifact|candidate|artifact	Incoming submissions are reference input.
+.claude/guidelines/axiom-principles/investigation-value-decomposition.md	investigation value decomposition|investigation|value|decomposition	Read-before-write delivers two orthogonal values: investigation depth (scales with complexity) + fresh-context audit (scales with downstream
+.claude/guidelines/axiom-principles/escalation-design.md	escalation design|escalation|design	Surface with context — never silently deviate.
+.claude/guidelines/axiom-principles/single-source-of-truth.md	single source of truth|single|source|truth	Two coupled rules: one truth + clear pillars.
+.claude/guidelines/axiom-principles/doc-dimension-ssot.md	doc dimension ssot|dimension	A pillar owns one dimension (state XOR history), not just one topic.

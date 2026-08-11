@@ -1,20 +1,31 @@
 # Hooks ensure-infra — content-aware default-on hook install
 
-harness-bootstrap ships one hook asset. Unlike drain's worktree infra
+harness-bootstrap ships three hook assets. Unlike drain's worktree infra
 (`../drain/assets/ensure-infra.md`), install runs **unconditionally** — no opt-in
-confirm. It is safe-by-default: `commit-channel` fires only on git commit and denies
-raw commits from worker subagents — the main session is never blocked. It ships as a
-**frozen asset** beside this file; ensure-infra places it by mechanical copy /
-merge — never regeneration, so there is no drift between repos. Run as
+confirm. All are safe-by-default: `commit-channel` fires only on git commit and denies
+raw commits from worker subagents — the main session is never blocked; the
+`consult-check` pair only injects a doc catalog (read activation, no gating). Each
+ships as a **frozen asset** beside this file; ensure-infra places it by mechanical
+copy / merge — never regeneration, so there is no drift between repos. Run as
 `SKILL.md §2a-hooks`, part of Phase 2a.
 
-## The asset
+## The assets
 
 | # | Frozen script asset | Destination | Frozen settings snippet | Merge target |
 | - | - | - | - | - |
 | 1 | `hooks/commit-channel.sh` | `.claude/hooks/commit-channel.sh` | `hooks/commit-channel.hook.json` | `.claude/settings.json` → `hooks.PreToolUse[]` |
+| 2 | `hooks/consult-check-sessionstart.sh` | `.claude/hooks/consult-check-sessionstart.sh` | `hooks/consult-check-sessionstart.hook.json` | `.claude/settings.json` → `hooks.SessionStart[]` |
+| 3 | `hooks/consult-check-check.sh` | `.claude/hooks/consult-check-check.sh` | `hooks/consult-check-check.hook.json` | `.claude/settings.json` → `hooks.UserPromptSubmit[]` |
 
-Copy the script with Bash `cp` (plain file copy — invoked via `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/commit-channel.sh"`, so no executable bit is required). Merge the `.hook.json` entry into `.claude/settings.json`'s target array via a guarded read-modify-write that touches only that array — the same merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3), reused rather than re-derived.
+Copy each script with Bash `cp` (plain file copy — invoked via `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/<name>.sh"`, so no executable bit is required). Merge each `.hook.json` entry into `.claude/settings.json`'s target array via a guarded read-modify-write that touches only that array — the same merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3), reused rather than re-derived.
+
+The consult pair installs together — the SessionStart deriver writes the
+`.claude/.consult-catalog` cache the UserPromptSubmit injector reads; one without the
+other is either a dead write or a silent no-op. Its install also appends
+`.claude/.consult-catalog` to the repo's `.gitignore` when absent (per-session
+regenerated cache, local-only). A repo that already carries the pair from another
+manager (a prior device-level plant) is drift-checked by the same version-marker
+mechanism below — the frozen asset here is the SSOT.
 
 ## Retired hooks — remove on re-sync
 
@@ -62,12 +73,18 @@ scriptCurrent(name):
   # mismatch (absent | different version | edited) → re-copy the asset verbatim
 
 hooksInfraPresent():
-  scriptCurrent(commit-channel)      AND
-  settings.json hooks.PreToolUse  has an entry whose command references commit-channel.sh
+  scriptCurrent(commit-channel)              AND
+  scriptCurrent(consult-check-sessionstart)  AND
+  scriptCurrent(consult-check-check)         AND
+  settings.json hooks.PreToolUse       has an entry whose command references commit-channel.sh          AND
+  settings.json hooks.SessionStart     has an entry whose command references consult-check-sessionstart.sh AND
+  settings.json hooks.UserPromptSubmit has an entry whose command references consult-check-check.sh     AND
+  .gitignore contains .claude/.consult-catalog
 ```
 
 All current → skip silently (`✓ current`), no message. Any drift → re-copy the drifted
-script (verbatim, overwriting the stale copy) and/or merge the missing settings entry,
+script (verbatim, overwriting the stale copy), and/or merge the missing settings entry,
+and/or re-append `.claude/.consult-catalog` to `.gitignore`,
 report what changed, stage with the Phase 2c commit. This is copy-on-drift, not a
 migration engine — the asset is always the source of truth, the installed copy is
 replaceable. **No confirm gate** — default-on, unlike drain's `infraPresent()`
@@ -84,13 +101,17 @@ Durable harness config, not a temporal pipeline artifact — so no cleaner:
 
 - **Creator** — harness-bootstrap Phase 2a-hooks (first run, and every sync re-run —
   idempotent, so a re-run only fills what's missing).
-- **Consumer** — the consumer repo's own `git commit` calls (`commit-channel`).
+- **Consumer** — the consumer repo's own `git commit` calls (`commit-channel`); every
+  session boundary + prompt in the repo (`consult-check` pair).
 - **Cleaner** — none; the infra lives until the user removes the harness.
 
 ## Self-containment (hard constraint)
 
-The script and its settings snippet are copied verbatim — no template
+The scripts and their settings snippets are copied verbatim — no template
 substitution, no reference to any super-bootstrap-specific state beyond what
 harness-bootstrap itself stamps (`CLAUDE.md`, `.claude/rules/`, `docs/`).
 `commit-channel.sh`'s deny text names only `/super-bootstrap:commit` (a bundled
 plugin skill every consumer has) — no device-only skill names, no super-bootstrap state.
+The `consult-check` pair reads only the consumer's own `docs/**` and
+`.claude/consult-exclude`; its bench provenance lives at the plugin-source repo
+(`bench/consult-hook/`), never referenced at runtime.
