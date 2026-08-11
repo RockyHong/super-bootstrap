@@ -1,4 +1,4 @@
-# Dispatch Run Mode — Foreground Writers, Background Builds
+# Dispatch Run Mode — Path Overlap Decides
 
 A file-writing subagent dispatched in the background returns behind the
 caller's read-tracker: it writes (and often commits, with formatter passes) in
@@ -15,9 +15,9 @@ race, structural whenever writer and caller share paths.
   next edit instead of racing its read-tracker.
 - **Path overlap is the criterion, not writer class.** A writer touching only
   paths the session is done with can stay background.
-- **Long build-class dispatches stay background** — blocking the session on a
-  long build buys nothing when the session isn't editing the build's paths;
-  the foreground rule targets short writers.
+- **Long dispatches with no path overlap stay background** — blocking the
+  session on a long build buys nothing when the session isn't editing the
+  build's paths.
 
 Siblings: [`dispatch-breadcrumb.md`](dispatch-breadcrumb.md) — what a brief
 carries; [`dispatch-brief-shape.md`](dispatch-brief-shape.md) — how much; this

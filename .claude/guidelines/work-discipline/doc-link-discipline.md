@@ -39,9 +39,21 @@ every shared token reads as a missing link.
 - **Two homes (concept vs surface).** A concept defined as an idea in one doc and
   as a surface (endpoint, storage, schema) in another → the link points at the
   **concept-definition** home; the surface home is a different concern.
-- **Contradicting home.** If the candidate home contradicts the using line, do not
-  link — that is a consistency defect (the docs disagree), not a missing link.
-  Resolve the contradiction first.
+- **Contradicting home.** A candidate home that contradicts the using line is the
+  mandatory case: link it as a declared supersession — the using line names which
+  side binds and cites the other (`supersedes [the earlier bound](path.md#anchor)`
+  / `superseded by [...]`). The declaration is the deliverable and an interim one:
+  it keeps a reader landing on either side reaching the other, and the
+  contradiction is logged for the docs' owner to resolve. Where the using line
+  cannot name the binding side, cite the other as contested — the binding call is
+  the owner's.
+
+## Placement
+
+The link rides the **asserting line** — the sentence that leans on the concept —
+not the paragraph or section head above it. A citation on a heading leaves every
+later assertion reading as self-standing, so the reader trusts it without ever
+seeing the pointer.
 
 ## Boundary
 
