@@ -39,7 +39,7 @@ Versioned via the `/release` skill. `plugin.json` is the single version source �
 
 ## Coding Patterns
 
-> Grows via doc-sync as patterns crystallize. Import style, error handling convention, naming, class-vs-function bias, type usage.
+> Grows via [doc-sync](../CLAUDE.md#doc-sync-non-negotiable) as patterns crystallize. Import style, error handling convention, naming, class-vs-function bias, type usage.
 
 - **POSIX-bash asset dialect** — code assets use POSIX `bash`; on a PowerShell-primary device, run via the Bash tool or rewrite in its idiom. → [`release/SKILL.md`](../.claude/skills/release/SKILL.md)
 

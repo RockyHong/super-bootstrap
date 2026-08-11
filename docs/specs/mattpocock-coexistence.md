@@ -18,7 +18,7 @@ Per repo, `harness-bootstrap` §2a owns the enable: it seeds `"mattpocock-skills
 1. Type `/setup-matt-pocock-skills`.
 2. At its issue-tracker question pick **Other**, then paste the recipe (below) as the workflow description.
 
-His setup owns `docs/agents/*` — nothing pre-writes them, here or downstream. Where a prior run already wrote them (this repo included), his skill is silent on pre-existing files, so a re-run may overwrite: diff before accepting.
+His setup owns `docs/agents/*` — nothing pre-writes them, here or downstream. Where a prior run already wrote them (this repo included), his skill is silent on pre-existing files, so [a re-run may overwrite](harness-architecture.md#4-the-seam-runtime-orthogonal-setup-time-composed): diff before accepting.
 
 To drop him in a repo, set the pin to `false` — never delete the key. §2a merges absent keys back in on every sync; a present `false` is skipped, so the drop survives.
 

@@ -57,7 +57,7 @@ Active development.
 
 **Board** — `/super-bootstrap:todo` → dispatches `agents/todo.md` (Sonnet) → reads `docs/work/` → renders intent-filtered board.
 
-**Commit** — `/super-bootstrap:commit` → gateway-inline stage + classify → grep + citer gate → doc-surface hit dispatches `agents/doc-sync-scan.md` (Sonnet) → stale-doc report resolved → `git commit`; product-anchor hit also dispatches `agents/premise-closure.md`.
+**Commit** — `/super-bootstrap:commit` → gateway-inline stage + classify → [mechanical doc-sync gate](../CLAUDE.md#doc-sync-non-negotiable) (grep + citers + link-targets) → doc-surface hit dispatches `agents/doc-sync-scan.md` (Sonnet) → stale-doc report resolved → `git commit`; product-anchor hit also dispatches `agents/premise-closure.md`.
 
 **Drain** — `/super-bootstrap:drain` → selects admissible wave → spawns one `claude -p` per item in an isolated git worktree → each runs the full envelope and writes `.drain-status`; gateway collects statuses at wave close.
 
