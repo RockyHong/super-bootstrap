@@ -2,13 +2,13 @@
 
 <img src=".github/assets/hero.webp" alt="super-bootstrap: one command writes CLAUDE.md, curates MCPs + skills, seeds work cards" width="720">
 
-Skip the per-project Claude setup grind. One command picks your skills, writes `CLAUDE.md`, pins your config, **and gives Claude a phase-gated workflow** — every session runs the pipeline, but only the phases the work actually needs. Workflow, not just a toolbelt. The harness names disciplines, not skills, so it does not marry you to any one process-harness plugin.
+Skip the per-project Claude setup grind. One command picks your skills, writes `CLAUDE.md`, pins your config, **and gives Claude a phase-gated workflow** — every session runs the pipeline, but only the phases the work actually needs. Workflow, not just a toolbelt. The harness [names disciplines, not skills](docs/specs/harness-architecture.md#6-decided-vs-open), so it does not marry you to any one process-harness plugin.
 
 ## Best for
 
 Solo devs juggling multiple repos — agentic builders, not just coders. The harness carries
 product context (problem, user, gap cards) alongside the engineering pipeline, because a
-codebase answers *solution* only.
+[codebase answers *solution* only](docs/overview.md#user).
 
 ## Install
 
@@ -27,7 +27,7 @@ In Claude Code:
 
 One command per repo. Auto-routes:
 
-The runway installs or syncs first either way — no product Q&A at any point. What follows depends on whether the seed docs already carry product content:
+The runway installs or syncs first either way — [no product Q&A at any point](docs/overview.md#problem). What follows depends on whether the seed docs already carry product content:
 
 - **Seed docs substantive** → curates skills / MCPs / hooks against the stack those docs already declare.
 - **Seed docs unfilled (greenfield)** → seeds three GAP cards (overview, techstack, tech curation) and stops at the resolve gate; curation waits until the product is settled.

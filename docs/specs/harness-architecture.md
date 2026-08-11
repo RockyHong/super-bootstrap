@@ -90,8 +90,8 @@ sizing ceremony to shape, and that is harness-independent: clusters 5 and 6 say 
 ceremony", 7 routes harness edits, 8 routes triage to our own door, and 1–3 name the
 disciplines a process harness would otherwise supply. Deleting rows rather than restating
 them would have dropped verified-load-bearing prose — [`docs/decisions.md`](../decisions.md)
-records a pressure test where the route line alone sent a runtime-symptom bug to the triage
-lane in 2/2 control runs.
+records a pressure test where the [route line](../../CLAUDE.md#cluster-routing) alone sent a
+runtime-symptom bug to the triage lane in 2/2 control runs.
 
 mattpocock ships `ask-matt` — a router over his own user-invoked skills — so the gap
 that forced our routing layer does not exist for him. Building one anyway would create
@@ -127,8 +127,9 @@ reason: neither spelling matches the other, and his setup command uses the hyphe
   never-bootstrapped; dropping the second strands its old tree on disk (§8).
 - **Setup-time composition** — pairing with mattpocock/skills is deliberate (§6) and reaches
   exactly three sites, all of them install-time:
-  1. **The paired pin** — the `enabledPlugins` entry `"mattpocock-skills@mattpocock"` plus
-     its `extraKnownMarketplaces.mattpocock` source, wherever the plugin seeds or documents
+  1. **The [paired pin](../techstack.md#key-dependencies)** — the `enabledPlugins` entry
+     `"mattpocock-skills@mattpocock"` plus its `extraKnownMarketplaces.mattpocock` source,
+     wherever the plugin seeds or documents
      that pair: `harness-bootstrap` §2a writes it, `resolve-plugins` handles it as its own
      pin class (Phase 4 pre-resolve pins, Phase 5.2 write), and the plugin README states the
      class in its skill summary. A settings key and a marketplace coordinate — no skill
@@ -167,7 +168,8 @@ He ships seed templates for the first three (`issue-tracker-github.md`,
 `issue-tracker-gitlab.md`, `issue-tracker-local.md`) but **none for "Other"** — that
 branch is authored fresh. So super-bootstrap can ship its own seed for that slot,
 declaring `docs/work/` + `/super-bootstrap:log` as the repo's tracker. His
-`to-spec` and `triage` then write into our home.
+`to-spec` and `triage` then write into our home
+([lane split](../agents/triage-labels.md#the-two-triage-lanes)).
 
 **His artifact skills own no paths — they ask the repo.** Read at grade A (§7):
 `to-tickets` §5 publishes "depending on the tracker `/setup-matt-pocock-skills`
@@ -203,7 +205,8 @@ description as a plugin asset and the operator pastes it —
 The seed shape it would have to match is known: `Status:`, `Type:
 research|prototype|grilling|task`, `Blocked by: NN, NN`, a `## Comments` section, the
 publish–fetch–resolve operations, and a `map.md` wayfinding file. **Our cards carry
-none of those fields** — the scale module's fact fields are the only plausible home.
+[none of those fields](../agents/issue-tracker.md#field-shape)** — the scale module's fact
+fields are the only plausible home.
 
 **The middle of any sandwich can only be human-typed.** Every user-invoked skill sampled
 carries `disable-model-invocation: true` — `ask-matt`, `implement`, `grill-me`, `triage`
@@ -215,8 +218,8 @@ once:
   a situation question, not a work item.
 - **A dispatched subagent is also a model, so drain cannot drive his lane.** The wall is the
   flag, not `wayfinder`'s one-ticket-per-session rule — that rule holds per-agent, since
-  each drain worktree is its own atomic session and the entry session orchestrates rather
-  than works.
+  each [drain worktree](../overview.md#data-flow) is its own atomic session and the entry
+  session orchestrates rather than works.
 - The only bypass is pasting his skill bodies into a dispatch prompt, which is the
   distil-foreign-doctrine direction §6 already rules out.
 
@@ -232,8 +235,9 @@ into his lane.
 
 **A second socket exists for coding standards:** his `code-review` reads
 `CODING_STANDARDS.md` / `CONTRIBUTING.md`, and a documented repo standard overrides its
-built-in Fowler baseline. § Coding Principles names that same file, so both surfaces read
-one standard. Repo-level coding principles belong there rather than as a mandatory skill
+built-in Fowler baseline. [§ Coding Principles](../../CLAUDE.md#coding-principles) names that
+same file, so both surfaces read one standard. Repo-level coding principles belong there
+rather than as a mandatory skill
 invocation wired into CLAUDE.md.
 
 ## 5. Awareness wiring is the strongest uncontested position
@@ -246,16 +250,18 @@ Docs existing ≠ the agent attending to them. The three systems solve this diff
 | mattpocock | static `## Agent skills` pointer block in CLAUDE.md | low | coarse |
 | super-bootstrap | `.claude/rules/*.md` with `paths:` frontmatter — full body fires when a matching file is read | **zero when irrelevant** | **decision moment** |
 
-Path-scoped rules bind to **file paths, not skill names**, so this slot is orthogonal by
-construction — it needs no change when the process harness is swapped or removed.
+[Path-scoped rules](../../CLAUDE.md#rules-auto-load-on-file-match) bind to **file paths, not
+skill names**, so this slot is orthogonal by construction — it needs no change when the
+process harness is swapped or removed.
 
 ### The fences stay ambient — the cut is a rename, not a relocation
 
 De-routing removes routing, not discipline. Four laws named in `CLAUDE.md` § The envelope
 (`test-driven-development`, `verification-before-completion`, `receiving-code-review`,
-`dispatching-parallel-agents`) are superpowers skill names, and § Coding Principles carries
-a fifth fence — the coding standard. Where they land is settled by the rules layer's own
-firing mechanism, not by preference.
+`dispatching-parallel-agents`) are superpowers skill names (the pre-cut state, superseded by
+the shipped [§ The envelope](../../CLAUDE.md#the-envelope), which binds and names three
+declared disciplines), and § Coding Principles carries a fifth fence — the coding standard.
+Where they land is settled by the rules layer's own firing mechanism, not by preference.
 
 **A path-scoped rule fires on file *read*, not on intent** — stated in the shipped
 rule-authoring guide (`rules-index-skeleton.md`: "a rule fires on file *read*, not on
@@ -285,8 +291,9 @@ shape with no failing test behind it.
 **Shipped shape.** The ambient-laws line carries three disciplines **the repo declares**, one
 line each, no foreign-harness referent — test-first, verify-before-claiming,
 review-received-not-absorbed. The fourth (`dispatching-parallel-agents`) is cut outright,
-because § Dispatch is its single home (VII). The rejected rules-layer direction is recorded
-in [`docs/decisions.md`](../decisions.md) so it is not re-proposed.
+because [§ Dispatch](../../CLAUDE.md#dispatch--who-holds-each-phase) is its single home (VII).
+The rejected rules-layer direction is recorded in [`docs/decisions.md`](../decisions.md) so it
+is not re-proposed.
 
 **What the compression costs — answered for the review law.** Each named skill carried a full
 body that loaded at its fire moment; a one-liner does not. `Verify before claiming` plausibly
@@ -409,9 +416,10 @@ super-bootstrap routes no external process harness. The §4 grep returns only th
 sanctioned classes, and the shape check holds beside it — zero name-hits was never
 sufficient on its own, since a stage chain renamed to harness-neutral words would still
 carry the foreign decomposition. The per-slot audit confirmed that risk was real:
-the staging ceremony (Design/Plan as default gates) was distillation residue — the thread
-contract now carries them as conditional context-scope sections, and drain's stage set
-re-derives from grounding-native artifacts. The seeded runway names no harness
+the staging ceremony (Design/Plan as default gates) was distillation residue — the [thread
+contract](../work/README.md#thread-contract) now carries them as conditional context-scope
+sections, and drain's stage set re-derives from grounding-native artifacts. The seeded runway
+names no harness
 (§6 above). The tracker-recipe deliverable §4 re-aimed ships as a plugin asset —
 [`mattpocock-tracker-recipe.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/mattpocock-tracker-recipe.md).
 
@@ -486,7 +494,7 @@ mattpocock-skills@mattpocock` (managed bundle). Both require
 | --- | --- | --- |
 | Build / feature | `grill-me`→`grilling` → `to-spec` → `to-tickets` → `wayfinder` → `implement` (`tdd` + `code-review`) | Elicitation first, one question at a time; tickets carry `Type` + `Blocked by` edges; one ticket per session |
 | Bug fix | `diagnosing-bugs` | Six phases with "build a tight, red-capable feedback loop" as a **hard gate** — no red-capable command, no Phase 2 — then 3–5 ranked falsifiable hypotheses shown before testing |
-| Triage | `triage` | **Label state machine, not root cause.** Inbox sorting over a tracker (external PRs included); targeted verification, redundancy search, prior-rejection check; emits agent brief or triage note |
+| Triage | `triage` | **Label state machine, not root cause.** Inbox sorting over the config-declared tracker (external-PR coverage is config-gated — off in this repo); targeted verification, redundancy search, prior-rejection check; emits agent brief or triage note |
 | Maintenance / debt | `improve-codebase-architecture` | Commit-history hot spots → `Explore` subagent scan → deletion test → throwaway HTML report for the human to pick → `/grilling`; proposes only |
 
 Three cross-cutting artifacts carry the state: `CONTEXT.md` (glossary, maintained by

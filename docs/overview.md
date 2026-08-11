@@ -5,18 +5,18 @@ Default [github]; add any of: notion, linear, jira, slack, trello, clickup, othe
 external-tools: [github]
 -->
 
-> Living doc. Skeleton sections (Problem / User / Current State) start empty at scaffold and fill at GAP-card pickup. Grown sections (Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync — every commit that adds, removes, or reshapes a module triggers a sync proposal. See `CLAUDE.md` Doc Sync.
+> Living doc. Skeleton sections (Problem / User / Current State) start empty at scaffold and fill at GAP-card pickup. Grown sections (Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync — every commit that adds, removes, or reshapes a module triggers a sync proposal. See [`CLAUDE.md` Doc Sync](../CLAUDE.md#doc-sync-non-negotiable).
 
 ## Problem
 
-Per-project Claude Code setup is a repeated grind: write `CLAUDE.md`, pick skills/MCPs/hooks, pin config, establish a workflow. super-bootstrap collapses that into one command (`/super-bootstrap`) that inspects a repo and installs a development pipeline — CLAUDE.md, skeleton docs, path-scoped rules, curated skill/MCP/hook picks — plus a **phase-gated workflow** so every session runs only the pipeline phases the work actually needs (workflow, not just a toolbelt). The harness names disciplines rather than skill entries, so no process-harness plugin is a dependency ([`docs/specs/harness-architecture.md`](specs/harness-architecture.md)); the one it does pin — mattpocock/skills, seeded paired ([`docs/specs/mattpocock-coexistence.md`](specs/mattpocock-coexistence.md)) — is droppable per repo, and nothing breaks without it. Greenfield repos get lean ideation Q&A first; repos with code get scanned and scaffolded. It also bundles the companion skills that run the pipeline day-to-day: commit, todo, log, triage, triage-report, help, merge, drain, check-docs-consistency, and optional release-init.
+Per-project Claude Code setup is a repeated grind: write `CLAUDE.md`, pick skills/MCPs/hooks, pin config, establish a workflow. super-bootstrap collapses that into one command (`/super-bootstrap`) that inspects a repo and installs a development pipeline — CLAUDE.md, skeleton docs, path-scoped rules, curated skill/MCP/hook picks — plus a **phase-gated workflow** so every session runs only the pipeline phases the work actually needs (workflow, not just a toolbelt). The harness names disciplines rather than skill entries, so no process-harness plugin is a dependency ([`docs/specs/harness-architecture.md`](specs/harness-architecture.md)); the one it does pin — mattpocock/skills, seeded paired ([`docs/specs/mattpocock-coexistence.md`](specs/mattpocock-coexistence.md)) — is droppable per repo, and nothing breaks without it. Greenfield repos get three seed GAP cards (overview, techstack, tech curation) whose pickup settles the product shape — no upfront product Q&A; repos with code get scanned and scaffolded. It also bundles the companion skills that run the pipeline day-to-day: commit, todo, log, triage, triage-report, help, merge, drain, check-docs-consistency, and optional release-init.
 
 ## User
 
 Solo devs juggling multiple repos — **agentic builders, not pure engineers**. They hold
 product intent (what problem, for whom) alongside the code, so the harness covers the
 product dimension and not only the engineering pipeline: `/super-bootstrap:log` admits
-feature `GAP`s beside defects, this doc carries Problem / User, and
+[feature `GAP`s](work/README.md#categories) beside defects, this doc carries Problem / User, and
 [`docs/decisions.md`](decisions.md) admits product and business forks beside technical
 ones.
 
@@ -71,6 +71,6 @@ Active development.
 
 **Shipped-skeleton self-containment** — assets `harness-bootstrap` seeds into consumer repos (`plugins/*/skills/*/assets/`) must resolve with only the installed plugin — no wire to `.claude/guidelines/`, no reference to a plugin-internal path a consumer repo lacks. Rule: [`.claude/rules/repo-boundary.md`](../.claude/rules/repo-boundary.md).
 
-**Frozen-asset install contract** — hook assets (the `commit-channel` and `consult-check-{check,sessionstart}` script/snippet pairs) and drain infra (`read-hook.json`, `worktree-settings.local.json`) are frozen in `plugins/super-bootstrap/skills/{harness-bootstrap,drain}/assets/`; installed into consumer repos by idempotent `ensure-infra` procedures, never edited in place. The `commit-channel` hook confines raw `git commit` to the session commit door in every installed repo; the `consult-check` pair injects prompt-time doc recall.
+**Frozen-asset install contract** — hook assets (the `commit-channel` and `consult-check-{check,sessionstart}` script/snippet pairs) and drain infra (`read-hook.json`, `worktree-settings.local.json`) are frozen in `plugins/super-bootstrap/skills/{harness-bootstrap,drain}/assets/`; installed into consumer repos by idempotent `ensure-infra` procedures, [never edited in place](techstack.md#architecture-rules). The `commit-channel` hook confines raw `git commit` to the session commit door in every installed repo; the `consult-check` pair injects prompt-time doc recall.
 
 **Files-as-contract handoff** — skills communicate via committed docs (`docs/overview.md`, `docs/techstack.md`, `.claude/settings.json`), not in-memory state, so each skill runs standalone. SSOT map: [`plugins/super-bootstrap/README.md § Source of truth boundaries`](../plugins/super-bootstrap/README.md#source-of-truth-boundaries).

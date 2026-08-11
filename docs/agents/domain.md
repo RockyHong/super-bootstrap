@@ -24,7 +24,7 @@ Read the docs above; **do not write to them.** They are this repo's canonical SS
 their own dimension rules (`docs/decisions.md` is append-only history with stated admission
 criteria and one bounded additive-annotation form its own header defines; `docs/overview.md`
 and `docs/techstack.md` are state-dimension docs) and their own
-write door (the `/super-bootstrap:commit` doc-sync step).
+write door (the `/super-bootstrap:commit` [doc-sync step](../../CLAUDE.md#doc-sync-non-negotiable)).
 
 If `/domain-modeling` needs to record a glossary or a decision, write it to its own homes —
 `CONTEXT.md` at the repo root, `docs/adr/` for ADRs — and surface the addition so it can be

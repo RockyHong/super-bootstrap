@@ -2,7 +2,7 @@
 
 The skills speak in terms of five canonical triage roles. This repo's
 [issue tracker](issue-tracker.md) carries no label field — a card's state is its file
-presence plus its `## Verdict` block. The right-hand column maps each role onto the state
+presence plus its [`## Verdict` block](../work/README.md#thread-contract). The right-hand column maps each role onto the state
 that actually exists.
 
 | Label in mattpocock/skills | State in our tracker | Meaning |
@@ -16,12 +16,13 @@ that actually exists.
 ## There is nothing to stamp
 
 These states are written, not labelled. A card moves between them by running
-`/super-bootstrap:triage {ID}`, which appends the `## Verdict` block. Do not hand-write a
+[`/super-bootstrap:triage {ID}`](../overview.md#data-flow), which appends the `## Verdict` block. Do not hand-write a
 Verdict block and do not invent a label field on a card.
 
 ## The two triage lanes
 
-`/triage` (mattpocock) sorts an inbox — external PRs and GitHub issues included. That lane
-stays on GitHub; `/pull-issue` absorbs its output into cards.
-`/super-bootstrap:triage` is cold single-card grounding — premise verify, aim validate,
+`/triage` (mattpocock) sorts whatever inbox the [issue-tracker config](issue-tracker.md)
+declares — here, the card files themselves. GitHub-side requests reach cards through
+`/pull-issue`, a separate absorption door, not through his lane.
+`/super-bootstrap:triage` is [cold single-card grounding](../specs/harness-architecture.md#7-evidence-index) — premise verify, aim validate,
 blast collect. Same word, different work; they do not compete for the same card.

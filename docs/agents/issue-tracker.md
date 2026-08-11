@@ -6,8 +6,10 @@ GAP). `docs/work/README.md` and `docs/work/TEMPLATE.md` are contract files, not 
 
 ## Publish
 
-Invoke `/super-bootstrap:log <observation>`. Never write a card file directly — the log
-door classifies the observation, surfaces suspected duplicates, and assigns the ID.
+Two doors, per [`docs/work/README.md` § Routing](../work/README.md#routing): invoke
+`/super-bootstrap:log <observation>` (classifies the observation, surfaces suspected
+duplicates, assigns the ID), or hand-copy `TEMPLATE.md` to `{ID}.md` — taking the next
+ID from the README high-water line and bumping it in the same change.
 
 ## Fetch
 
@@ -17,7 +19,7 @@ List / read `docs/work/*.md`. A card file present = the issue is open. There is 
 ## Comment
 
 Append an `## Amendment — {date} · {source}` block to the card. Cards are append-only
-threads — never rewrite or drop an earlier block.
+[threads](../work/README.md#thread-contract) — never rewrite or drop an earlier block.
 
 ## Resolve
 
@@ -31,5 +33,5 @@ relationships in the card's prose body.
 ## Before filing an enhancement
 
 Check [`docs/decisions.md`](../decisions.md) for a previously rejected direction — it is
-this repo's `.out-of-scope/` superset, and a closed fork is expected to surface before it
+this repo's [`.out-of-scope/` superset](../specs/harness-architecture.md#7-evidence-index), and a closed fork is expected to surface before it
 is re-walked.
