@@ -2,9 +2,10 @@
 # doc-links.sh — markdown link checker and reverse index for a docs surface
 #
 # Modes:
-#   check          scan docs/**/*.md + README.md for broken links; exit 1 if any
-#   refs <path>    print doc-surface files that link to <path> (repo-relative)
-#   index          print full inverted map: target<TAB>referrer, sorted
+#   check              scan docs/**/*.md + README.md for broken links; exit 1 if any
+#   refs <path>[#a]    print doc-surface files that link to <path> (repo-relative);
+#                      with #a, only files whose link cites that anchor (section grain)
+#   index              print full inverted map: target[#anchor]<TAB>referrer, sorted
 #
 # Run from repo root. docs/ may be absent (treated as empty).
 # External links (http/https/mailto) and empty targets are skipped.
@@ -150,15 +151,21 @@ do_check() {
 }
 
 do_refs() {
-    local query
-    query="$(normalize_path "$1")"
+    local query qpath qanchor
+    query="$1"
+    if [[ "$query" == *'#'* ]]; then
+        qpath="$(normalize_path "${query%%#*}")"; qanchor="${query#*#}"
+    else
+        qpath="$(normalize_path "$query")"; qanchor=""
+    fi
     while IFS= read -r doc; do
         while IFS=$'\t' read -r lineno raw; do
-            local resolved rel
+            local resolved rel anchor
             resolved="$(resolve_target "$doc" "$raw")"
             case "$resolved" in external|intradoc:*) continue ;; esac
             rel="$(printf '%s' "$resolved" | cut -f1)"
-            if [ "$rel" = "$query" ]; then
+            anchor="$(printf '%s' "$resolved" | cut -f2)"
+            if [ "$rel" = "$qpath" ] && { [ -z "$qanchor" ] || [ "$anchor" = "$qanchor" ]; }; then
                 echo "$doc"; break
             fi
         done < <(extract_links "$doc")
@@ -168,10 +175,12 @@ do_refs() {
 do_index() {
     while IFS= read -r doc; do
         while IFS=$'\t' read -r lineno raw; do
-            local resolved rel
+            local resolved rel anchor
             resolved="$(resolve_target "$doc" "$raw")"
             case "$resolved" in external|intradoc:*) continue ;; esac
             rel="$(printf '%s' "$resolved" | cut -f1)"
+            anchor="$(printf '%s' "$resolved" | cut -f2)"
+            [ -n "$anchor" ] && rel="$rel#$anchor"
             printf '%s\t%s\n' "$rel" "$doc"
         done < <(extract_links "$doc")
     done < <(collect_docs) | sort -u
@@ -180,10 +189,10 @@ do_index() {
 case "$MODE" in
     check) do_check ;;
     refs)
-        [ -z "${2:-}" ] && { printf 'Usage: %s refs <path>\n' "$0" >&2; exit 1; }
+        [ -z "${2:-}" ] && { printf 'Usage: %s refs <path>[#anchor]\n' "$0" >&2; exit 1; }
         do_refs "$2" ;;
     index) do_index ;;
     *)
-        printf 'Usage: %s check | refs <path> | index\n' "$0" >&2
+        printf 'Usage: %s check | refs <path>[#anchor] | index\n' "$0" >&2
         exit 1 ;;
 esac
