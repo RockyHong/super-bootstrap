@@ -117,6 +117,9 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
   • Before editing a prose doc, classify what it owns: state (overwrite in place) vs history (append-only, git's job).
 - **`ssot-doc-link.md`** — fires on `docs/**/*.md`, `README.md`
   • Link each concept to its SSOT home as you write — born-linked, not back-filled.
+- **`config-overlay.md`** — fires on `.claude/settings.json`, `.claude/settings.local.json`, `.claude/hooks/**`, `.mcp.json`
+  • Default to upstream canonical wiring as shipped; empirically prove canonical fails before authoring an overlay, and date-stamp any overlay kept as decay debt.
+  • Place ambient-behavior config at the lowest layer every target runtime loads; document parity exceptions explicitly.
 - **`repo-boundary.md`** (native) — fires on `CLAUDE.md`, `plugins/**`, `.claude/rules/**`, `.claude/guidelines/**`
   • State which copy is under test (published vs in-repo dev). Route findings: this repo's artifacts → `/super-bootstrap:log`; device/global config → `/contribute` (imported artifacts read-only).
   • Taste-coupling: dogfood harness (this repo's own CLAUDE.md/rules) may wire served guidelines; shipped skeletons (`plugins/*/skills/*/assets/**`) must be self-contained — downstream ≠ author.
@@ -124,7 +127,7 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 - **`skill-authoring.md`** (native) — fires on `plugins/*/skills/**`
   • Skill edits route by test surface: behavior-shaping prose → RED first (micro-test floor); mechanical → audit + release checks.
 
-First two served from the personal claude-config repo (predicates in `.claude/guidelines/work-discipline/`). Add a project-specific rule file when a path-scoped pattern emerges (e.g. a SKILL.md authoring convention), then mirror a one-line summary here.
+First three served from the personal claude-config repo (predicates in `.claude/guidelines/work-discipline/`). Add a project-specific rule file when a path-scoped pattern emerges (e.g. a SKILL.md authoring convention), then mirror a one-line summary here.
 
 If rule body needs more context than its summary provides during planning, read the rule file directly before designing — `Read .claude/rules/<name>.md`.
 
