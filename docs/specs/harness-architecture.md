@@ -85,7 +85,7 @@ inseparable from it.
 | **log / cards / commit / doc-sync / rules** | **Unaffected.** |
 | `skills/triage/SKILL.md` + `agents/triage.md` — investigation doctrine | Referent dead, **discipline live**: the clause is stated inline, naming no harness. The pointer never resolved even where superpowers is installed — the agent's tool list carries no `Skill`. |
 
-**The table was 8 rows; 7 survive** (drain's stage machine re-cut to scoped-brief sessions) — three of them restated. Its real function is
+**The cluster routing table survives the dissolve whole** — rows 1–3 restated as inline disciplines, the rest already harness-neutral. Its real function is
 sizing ceremony to shape, and that is harness-independent: clusters 5 and 6 say "no
 ceremony", 7 routes harness edits, 8 routes triage to our own door, and 1–3 name the
 disciplines a process harness would otherwise supply. Deleting rows rather than restating
