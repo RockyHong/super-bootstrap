@@ -35,7 +35,7 @@ This is the only branch the entry makes: not-substantive → greenfield (seed GA
 
 The runway returned with empty product skeletons. Seed three GAP cards through the capture funnel, then stop at the resolve gate — there is nothing to curate until the product is resolved.
 
-**Idempotency guard (run first).** Check `docs/work/` for card files (`GAP-###.md`) matching the overview, techstack, and tech-curation summaries. If all three are already present (match on the H1 heading text — IDs are minted by `/log`), skip seeding and log "GAP cards already seeded." Re-run stays safe.
+**Idempotency guard (run first).** Check `docs/work/` for card files (`GAP-###.md`) matching the overview, techstack, and tech-curation summaries. If all three are already present (match on the H1 heading text — IDs are minted by `/super-bootstrap:log`), skip seeding and log "GAP cards already seeded." Re-run stays safe.
 
 **Seed via [`/super-bootstrap:log`](../log/SKILL.md)** — one invocation, all three observations batched, passing Source context `/super-bootstrap bootstrap` in the dispatch:
 

@@ -38,7 +38,7 @@ substrate-permanent. Harness engineering's durable work domain is the permanent 
 | Alignment / elicitation | `brainstorming` | `grill-me` / `grill-with-docs` | — |
 | Shared language | — | `CONTEXT.md` + ADR | — |
 | Entry selection (routing) | **absent** | `ask-matt` (owns its own) | Cluster table — **shape recognition, not entry routing**; rows name disciplines a harness would otherwise supply |
-| Fast capture | — | — | **`/log`** |
+| Fast capture | — | — | **`/super-bootstrap:log`** |
 | Standing work state | — | defers to a real tracker | **`docs/work/` cards** |
 | Per-feature work order | temporal specs/plans | `to-tickets` → whatever tracker setup configured | the card's `## Design` / `## Plan` blocks |
 | Propagation gate | — | — | **doc-sync** |

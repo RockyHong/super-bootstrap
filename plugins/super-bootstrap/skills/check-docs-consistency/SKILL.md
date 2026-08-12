@@ -11,7 +11,7 @@ Stateless scan. Read docs, cross-reference, write timestamped report. Report-onl
 
 ## When to Use
 
-User invokes `/check-docs-consistency` when:
+User invokes `/super-bootstrap:check-docs-consistency` when:
 
 - Starting a new feature pipeline (verify source of truth before writing specs)
 - Drift pain surfaces ("wait, didn't we decide the opposite?")
