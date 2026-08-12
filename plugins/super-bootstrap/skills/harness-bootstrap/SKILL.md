@@ -321,7 +321,7 @@ On greenfield (no manifest, no source files), `overview.md` / `techstack.md` wri
 
 **Legacy CLAUDE.md migration (re-run on already-installed repos):**
 
-Older sp-bootstrap skeletons baked content into CLAUDE.md that now belongs in `.claude/rules/` (path-scoped), `docs/techstack.md` grown sections (state reference), or `docs/decisions.md` (closed history). When Phase 1 flagged legacy blocks in pipeline-owned slots, propose per-section migration BEFORE running the normal drift check on those sections.
+Older super-bootstrap skeletons baked content into CLAUDE.md that now belongs in `.claude/rules/` (path-scoped), `docs/techstack.md` grown sections (state reference), or `docs/decisions.md` (closed history). When Phase 1 flagged legacy blocks in pipeline-owned slots, propose per-section migration BEFORE running the normal drift check on those sections.
 
 Migration patterns (illustrative — judge by content shape, not heading exact-match):
 

@@ -113,7 +113,7 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 
 `.claude/rules/*.md` files attach to file reads via `paths:` frontmatter — full-body rule fires at the decision moment, zero ambient cost when irrelevant.
 
-{seeded by sp-bootstrap based on Phase 1 stack signals — examples:}
+{seeded by super-bootstrap based on Phase 1 stack signals — examples:}
 
 {- **`rules/<framework>.md`** — fires on `{framework component glob}`}
 {  • {one-line key rule}}

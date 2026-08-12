@@ -45,6 +45,16 @@ Legacy `sb-*` prefix migrations:
 - `/sb-resolve-plugins` → `/super-bootstrap:resolve-plugins`
 - `/sb-release-init` → `/super-bootstrap:release-init`
 
+Pre-rename plugin-name migrations:
+
+- `/sp-bootstrap` → `/super-bootstrap` — entry keeps plugin name only
+
+## Plugin names
+
+Bare plugin-name references in prose. Slash-command forms of the same rename live under [§ Slash commands](#slash-commands).
+
+- `sp-bootstrap` → `super-bootstrap` — pre-rename plugin name
+
 ## Skeleton headings / structure
 
 (none yet — append entries here when section names rename)

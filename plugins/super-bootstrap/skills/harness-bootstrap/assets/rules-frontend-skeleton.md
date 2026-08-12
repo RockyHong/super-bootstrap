@@ -8,7 +8,7 @@ description: "{Framework} component & styling conventions for this project"
 
 ## Component Shape
 
-{filled by sp-bootstrap or doc-sync from detected stack — examples:}
+{filled by super-bootstrap or doc-sync from detected stack — examples:}
 
 {- Function components only (`React.FC<Props>` or equivalent for the framework). No class components.}
 {- Default export for the primary symbol; named exports for helpers.}
@@ -17,7 +17,7 @@ description: "{Framework} component & styling conventions for this project"
 
 ## Styling
 
-{filled by sp-bootstrap or doc-sync from detected stack — examples:}
+{filled by super-bootstrap or doc-sync from detected stack — examples:}
 
 {- Use the project's class-merge utility (`cn(...)`, `clsx`, `tw-merge`) for conditional classes — pick the one already installed; do not add a new one.}
 {- Use semantic theme tokens (`bg-primary`, `text-text-primary`) — never raw hex. New colors go into the theme/config first.}
@@ -25,21 +25,21 @@ description: "{Framework} component & styling conventions for this project"
 
 ## Type Centralization
 
-{filled by sp-bootstrap or doc-sync — examples:}
+{filled by super-bootstrap or doc-sync — examples:}
 
 {- Domain types shared across UI ↔ background (or UI ↔ API) live in `src/types/` (or equivalent). Component-only prop shapes stay inline.}
 {- Persisted-state types and message-contract types are always centralized.}
 
 ## Async / Error Handling in Components
 
-{filled by sp-bootstrap or doc-sync — examples:}
+{filled by super-bootstrap or doc-sync — examples:}
 
 {- Prefer `async/await`. Reserve `.then().catch()` for top-level fire-and-forget call sites where awaiting would block listener registration.}
 {- Errors logged with a contextual prefix (`console.error("<area>:", err)`) and swallowed only when the caller can recover.}
 
 ## Imports
 
-{filled by sp-bootstrap or doc-sync — examples:}
+{filled by super-bootstrap or doc-sync — examples:}
 
 {- Match the dominant style (relative vs `@` alias) — don't mix without reason.}
 {- Re-export through barrels where the project has them.}
