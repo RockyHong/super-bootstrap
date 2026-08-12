@@ -247,7 +247,7 @@ safe-by-default (rationale + full procedure:
 
 | # | Asset | Fires on | Effect |
 | - | - | - | - |
-| 1 | `commit-channel` (PreToolUse) | `Bash(git commit *)` | Deny raw `git commit` from worker subagents — deny text routes the worker back to `/super-bootstrap:commit`; main session and separate-process workers pass. The commit door runs mechanics gateway-inline, runs a bundled link-integrity check every commit, and dispatches a cold `doc-sync-scan` only on a grep- or declared-citer hit — no separate gate hook |
+| 1 | `commit-channel` (PreToolUse) | `Bash(git commit *)` | Deny raw `git commit` from worker subagents — deny text routes the worker back to `/super-bootstrap:commit`; main session and separate-process workers pass. The commit door runs mechanics gateway-inline, runs a bundled link-integrity check every commit, and dispatches a cold `doc-sync-scan` on a grep, declared-citer, or link-target hit — no separate gate hook |
 | 2 | `consult-check-sessionstart` (SessionStart) | `startup\|resume\|clear\|compact` | Derives the compact `docs/**` catalog into the gitignored `.claude/.consult-catalog` cache, once per session boundary |
 | 3 | `consult-check-check` (UserPromptSubmit) | every prompt | Injects the catalog + a forced YES/NO-per-doc relevance evaluation — the read boundary's activation layer: the right project docs get read at the prompt moment (pure cache read; installs as a pair with #2) |
 
