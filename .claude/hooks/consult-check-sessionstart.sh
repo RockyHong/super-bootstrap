@@ -1,41 +1,37 @@
-#!/bin/bash
-# SessionStart hook — consult-check catalog derivation (GAP-045 build; GAP-052
-# grouped render). Derives the compact doc catalog that consult-check-check.sh
-# injects, once per session boundary (startup|resume|clear|compact — default
-# matcher), so the per-prompt injector stays a pure read. Staleness tolerance =
-# one session.
+#!/usr/bin/env bash
+# FROZEN consult-check-sessionstart v1
+# SessionStart hook — consult-check catalog derivation (grouped render).
+# Derives the compact doc catalog that consult-check-check.sh injects, once per
+# session boundary (startup|resume|clear|compact — default matcher), so the
+# per-prompt injector stays a pure read. Staleness tolerance = one session.
 #
-# Source (curated-signal constraint, bench/FINDINGS-gap045.md § What the build
-# inherits) — project docs/**/*.md, recursive, with superpowers/ + work/
-# excluded (specs|plans|cards are work-tracking, not consult targets — pipeline
-# convention, not name guessing; work/ is the post-rename home of the same
-# substrate). A repo that renames its temporal home declares it in
+# Source (curated-signal constraint — bench + findings: repo-root
+# bench/consult-hook/) — project docs/**/*.md, recursive, with superpowers/ +
+# work/ excluded (specs|plans|cards are work-tracking, not consult targets —
+# pipeline convention, not name guessing; work/ is the post-rename home of the
+# same substrate). A repo that renames its temporal home declares it in
 # .claude/consult-exclude — one find -path glob per line (e.g. */drafts/*),
 # # comments allowed — instead of this list accreting per-repo names.
 # Undeclared temporal dirs stay listed, the forced YES/NO judges them.
 #
-# The guidelines trees are deliberately NOT sourced (GAP-123). Lore reaches
-# readers through its own doors: /load-harness-principles and
-# /audit-harness-edits at the harness-edit moment, plus a path-scoped rule or
-# hook per *wired* work-discipline principle at its work moment (four are
-# cold-ref-by-design and have no wire — docs/architecture.md § Guidelines).
-# Listing it here
-# as well cost a fixed 943 chars of every consumer's budget — 62-72% of the
-# render — against the 49-200 chars of project docs this bundle exists to
-# surface.
+# Device/personal lore trees are deliberately NOT sourced. Lore reaches
+# readers through its own doors — path-scoped rules and the harness-edit
+# skills at their fire moments. Listing it here as well cost a measured fixed
+# 943 chars of every consumer's budget — 62-72% of the render — against the
+# 49-200 chars of project docs this bundle exists to surface.
 #
 # Catalog = grouped stems, one line per directory: "- <dir>/: stem, stem, …",
 # where <dir> is the repo-relative path itself — one row, one path, no guessing
 # at the prompt moment. Every stem is kept — stems are the measured recall
-# carrier (why-text is not load-bearing; bench § forcedeval-compact). Grouping
-# only removes repeated path prefixes + per-line overhead, so nested docs fit
-# the budget that per-line rendering blew (GAP-052).
+# carrier (why-text is not load-bearing). Grouping only removes repeated path
+# prefixes + per-line overhead, so nested docs fit the budget that per-line
+# rendering blew.
 #
-# Budget: whole injected block <= ~500 tok (pre-registered gate 4). List capped
-# at 1700 chars; an overflowing group line is truncated to the stems that fit
-# plus a "+N more" tail — reachability never silently vanishes. That tail is
-# reserved inside the fill loop; the dropped-groups tail is written after it, so
-# the fill runs twice when that tail appears, reserving its width (DEBT-073).
+# Budget: whole injected block <= ~500 tok (pre-registered bench gate). List
+# capped at 1700 chars; an overflowing group line is truncated to the stems
+# that fit plus a "+N more" tail — reachability never silently vanishes. That
+# tail is reserved inside the fill loop; the dropped-groups tail is written
+# after it, so the fill runs twice when that tail appears, reserving its width.
 #
 # No stdout — this hook only writes the cache; injection is the check slot's
 # per-prompt job. Defensive exits are silent: a failed derivation is a missing
@@ -58,7 +54,7 @@ if [ -f "$ROOT/.claude/consult-exclude" ]; then
 fi
 
 # Rows stay repo-relative, so each one resolves exactly one way at the prompt
-# moment and the injector needs no path fallback (BUG-031).
+# moment and the injector needs no path fallback.
 paths="$(find "$ROOT/docs" -name '*.md' "${excl[@]}" 2>/dev/null | sed "s|^$ROOT/||" | sort)"
 
 # Group by directory at docs/'s first subdir level, so the group key resolves as

@@ -1,5 +1,5 @@
 {
-  "version": "2.29.7",
+  "version": "2.34.2",
   "covered": [
     "CLAUDE.md § Development Workflow",
     "CLAUDE.md § Dispatch",
@@ -20,16 +20,21 @@
     "docs/overview.md § User",
     "docs/overview.md § Current State",
     "docs/decisions.md § scope header",
+    "CODING_STANDARDS.md",
     "docs/work/README.md",
     "docs/work/TEMPLATE.md",
     "docs/work/bootstrap.md",
     ".claude/rules/index.md",
     ".claude/settings.json plugin pins",
     ".claude/hooks/commit-channel.sh",
+    ".claude/hooks/consult-check-check.sh",
+    ".claude/hooks/consult-check-sessionstart.sh",
+    ".gitignore consult-catalog line",
     ".claude/super-bootstrap-runway.json"
   ],
   "declined": [
     "CLAUDE.md § Development Workflow",
+    "CLAUDE.md § Dispatch",
     "CLAUDE.md § Doc Sync",
     "docs/techstack.md § Edit Discipline",
     "docs/work/README.md",
