@@ -485,7 +485,7 @@ mattpocock-skills@mattpocock` (managed bundle). Both require
 | super-bootstrap plugin source | `plugins/super-bootstrap/` | A | 55 files / 319 KB; `harness-bootstrap` 93.8 KB, `drain` 53 KB (SKILL 12.6 KB + 10 assets) |
 | Ambient description weight | all 13 shipped `SKILL.md` frontmatter | A | 6,456 chars ≈ 1.6k tokens, present in every session |
 | Foreign-name coupling | `plugins/super-bootstrap/**` | A | 85 occurrences / 19 files; skeleton holds 15 |
-| todo driver cost | `agents/todo.md` | A | ~33.5k subagent tokens / ~197 s for a 3-row board; ~34.3k / ~226 s for 4 rows |
+| todo dispatch-lane driver cost | `agents/todo.md` | A | ~33.5k subagent tokens / ~197 s for a 3-row board; ~34.3k / ~226 s for 4 rows. Measures the agent dispatch, since demoted to the venue-map/failure fallback — the primary render is the bundled `render-board.py` (zero model tokens) |
 | Shipped CLAUDE.md skeleton | `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` | A | Carries the routing table into every bootstrapped repo |
 
 ### His path per card shape

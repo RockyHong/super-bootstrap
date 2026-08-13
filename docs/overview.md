@@ -55,7 +55,7 @@ Active development.
 
 **Triage** — `/super-bootstrap:triage {ID}` → dispatches `agents/triage.md` (Opus, clean context) → reads card + live tree → appends `## Verdict` block to `docs/work/{ID}.md`.
 
-**Board** — `/super-bootstrap:todo` → dispatches `agents/todo.md` (Sonnet) → reads `docs/work/` → renders intent-filtered board.
+**Board** — `/super-bootstrap:todo` → runs the bundled `render-board.py` (zero dispatch, gateway relays stdout) → reads `docs/work/` → renders intent-filtered board; `agents/todo.md` (Sonnet) dispatches only as the venue-map/failure fallback.
 
 **Commit** — `/super-bootstrap:commit` → gateway-inline stage + classify → [mechanical doc-sync gate](../CLAUDE.md#doc-sync-non-negotiable) (grep + citers + link-targets) → doc-surface hit dispatches `agents/doc-sync-scan.md` (Sonnet) → stale-doc report resolved → `git commit`; product-anchor hit also dispatches `agents/premise-closure.md`.
 

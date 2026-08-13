@@ -4,7 +4,7 @@
 
 ## Runtime
 
-No language runtime, no build step. The product is markdown: skills are `SKILL.md` files with YAML frontmatter, agents and shared fragments are markdown, loaded directly by [Claude Code's plugin loader](overview.md#key-boundaries).
+No build step, no runtime dependency. The product is markdown: skills are `SKILL.md` files with YAML frontmatter, agents and shared fragments are markdown, loaded directly by [Claude Code's plugin loader](overview.md#key-boundaries). Python 3 is an optional runtime two skill assets invoke for zero-dispatch mechanical extraction (`help`'s menu, `todo`'s board render); each degrades — manual scan or agent dispatch — when `python3` is absent.
 
 ## Framework
 
@@ -41,7 +41,8 @@ Versioned via the `/release` skill. `plugin.json` is the single version source �
 
 > Grows via [doc-sync](../CLAUDE.md#doc-sync-non-negotiable) as patterns crystallize. Import style, error handling convention, naming, class-vs-function bias, type usage.
 
-- **POSIX-bash asset dialect** — code assets use POSIX `bash`; on a PowerShell-primary device, run via the Bash tool or rewrite in its idiom. → [`release/SKILL.md`](../.claude/skills/release/SKILL.md)
+- **POSIX-bash asset dialect** — shell code assets use POSIX `bash`; on a PowerShell-primary device, run via the Bash tool or rewrite in its idiom. → [`release/SKILL.md`](../.claude/skills/release/SKILL.md)
+- **Python mechanical-extraction assets** — where a skill's mechanical half (parse + classify + render, zero judgment) outgrows shell, it ships as a Python 3 script invoked via `python3 "${CLAUDE_PLUGIN_ROOT}/…"`, UTF-8/LF output, stdout = the product and stderr = diagnostics, with a declared degrade path when `python3` is absent. → [`help/assets/render-menu.py`](../plugins/super-bootstrap/skills/help/assets/render-menu.py), [`todo/assets/render-board.py`](../plugins/super-bootstrap/skills/todo/assets/render-board.py)
 
 ## Edit Discipline
 

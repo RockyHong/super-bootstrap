@@ -1,6 +1,6 @@
 ---
 name: todo
-description: Intent-filtered action-list scanner agent. Reads the open cards in docs/work/ (plus docs/test-queue.md when present), classifies each item by intent (Discuss / Cloud / Device / Harness), fills the literal output scaffold supplied in the dispatch prompt. Dispatched by the `/super-bootstrap:todo` skill so the scan + classification + judgment run on Sonnet instead of the gateway model.
+description: Intent-filtered action-list scanner agent — the `/super-bootstrap:todo` skill's fallback lane. Primary render is the skill's bundled render-board.py script (zero dispatch); this agent dispatches only when the script defers (venue map wired) or fails (python3 absent, non-zero exit). Reads the open cards in docs/work/ (plus docs/test-queue.md when present), classifies each item by intent (Discuss / Cloud / Device / Harness) per the same shared spec the script encodes, fills the literal output scaffold supplied in the dispatch prompt.
 tools: Read, Grep, Glob
 model: sonnet
 tags: [todo, scan, status, pipeline]

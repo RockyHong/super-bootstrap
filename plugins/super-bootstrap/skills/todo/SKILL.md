@@ -1,12 +1,14 @@
 ---
 name: todo
-description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the need-me board — drainable work collapses to a count, need-me work groups by venue category with a downstream fan-out signal (no MCQ, dispatched immediately). Sub-verbs slice explicitly: `/super-bootstrap:todo discuss` (decisions, design approvals), `/super-bootstrap:todo cloud` (drainable detail), `/super-bootstrap:todo device` (UI/e2e/manual), `/super-bootstrap:todo harness` (orchestration-engine rows, careful handle), `/super-bootstrap:todo full` (flat everything). Scans open cards in docs/work/, plus docs/test-queue.md when present. Bundled with super-bootstrap — works in any repo with the development pipeline."
+description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the need-me board — drainable work collapses to a count, need-me work groups by venue category with a downstream fan-out signal (no MCQ, rendered immediately by a bundled zero-dispatch script; the todo agent dispatches only as the venue-map/failure fallback). Sub-verbs slice explicitly: `/super-bootstrap:todo discuss` (decisions, design approvals), `/super-bootstrap:todo cloud` (drainable detail), `/super-bootstrap:todo device` (UI/e2e/manual), `/super-bootstrap:todo harness` (orchestration-engine rows, careful handle), `/super-bootstrap:todo full` (flat everything). Scans open cards in docs/work/, plus docs/test-queue.md when present. Bundled with super-bootstrap — works in any repo with the development pipeline."
 tags: [todo, scan, status, pipeline]
 ---
 
 # Todo — Intent-Filtered Pipeline Scanner
 
-Default render is the **need-me board** — momentum-driven, not a kanban: autonomously-drainable work collapses to one count line, and work that needs the human groups by venue category (decide / device-bound / harness / probe) with a `unblocks N` fan-out signal. Bare invoke dispatches it immediately — no MCQ, no picker (a rendered surface the user navigates by typing a sub-verb, not a modal stop). Sub-verbs slice explicitly (deciding / drainable detail / on device Claude / touching the engine / flat everything). State reconstructed from open cards in `docs/work/` (glob: `{BUG|DEBT|GAP}-###.md`), plus `docs/test-queue.md` when present (the scale module's test queue). Pipeline state = card thread state (block presence drives stage classification).
+Default render is the **need-me board** — momentum-driven, not a kanban: autonomously-drainable work collapses to one count line, and work that needs the human groups by venue category (decide / device-bound / harness / probe) with a `unblocks N` fan-out signal. Bare invoke renders it immediately — no MCQ, no picker (a rendered surface the user navigates by typing a sub-verb, not a modal stop). Sub-verbs slice explicitly (deciding / drainable detail / on device Claude / touching the engine / flat everything). State reconstructed from open cards in `docs/work/` (glob: `{BUG|DEBT|GAP}-###.md`), plus `docs/test-queue.md` when present (the scale module's test queue). Pipeline state = card thread state (block presence drives stage classification).
+
+Two render lanes, one classification SSOT (`shared/classify-actionable.md`): the **script lane** (primary) runs the bundled `assets/render-board.py` — a mechanical encoding of the spec, zero model tokens, sub-second — and the **dispatch lane** (fallback) runs the `todo` agent when the script defers or fails.
 
 ## Arguments
 
@@ -24,42 +26,58 @@ Default render is the **need-me board** — momentum-driven, not a kanban: auton
 
 **Empty-state expanded priors** (sub-verb modes): when current mode has zero rows, agent surfaces top 1-3 IDs from each non-empty other mode. Closes with `Next mode: yours.` — no recommendation. Lets user navigate from empty without blind retype.
 
-## Dispatch behavior
+## Render behavior
 
 **Canonical skip-gate (existence-only — the gateway never content-reads `docs/**`).**
-The gateway decides dispatch from **directory presence alone** (Glob lists paths,
+The gateway decides from **directory presence alone** (Glob lists paths,
 loads no file content, fires no `docs/**` path-scoped rule):
 
 - **`docs/work/` absent** (Glob returns nothing) → repo has the pipeline
-  available but no runway installed. Print, no dispatch:
+  available but no runway installed. Print, no render:
   > "No runway installed. Run `/super-bootstrap` to set up the pipeline."
-- **`docs/work/` present** → **dispatch the `todo` subagent unconditionally.**
-  The empty/non-empty determination moves into the subagent: it reads the card
-  files and renders either the empty-state (`No active work…`) or the board.
+- **`docs/work/` present** → render via the script lane; its exit code routes
+  the fallback. The empty/non-empty determination lives in the executor: it
+  reads the card files and renders either the empty-state (`No active work…`)
+  or the board.
 
-The gateway performs **no content read** of cards or the test queue —
-all `docs/**` reads happen inside the subagent (no `docs/**` path-rule loads in
-the gateway's context).
+The gateway performs **no content read** of cards or the test queue — all
+`docs/**` reads happen inside the script or the subagent (script stdout is a
+tool result, not a file read, so no `docs/**` path-rule loads in the gateway's
+context).
 
-On bare `/super-bootstrap:todo`:
+**Script lane (primary).** Resolve the mode by Arguments-table lookup (no
+argument → `needme`; no matching row → print the fallback notice, mode
+`needme`), then run:
 
-1. Run the skip-gate above.
-2. Otherwise dispatch the `todo` subagent with `mode: needme`. No picker, no questions.
-3. Relay the agent's rendered output verbatim. No editorial, no preface.
+`python3 "${CLAUDE_PLUGIN_ROOT}/skills/todo/assets/render-board.py" "$(pwd)" {mode}`
 
-`/super-bootstrap:todo full` dispatches `mode: full` — the flat-escape board: every open row from every source (cards, test queue) in one ranked table, ungrouped, nothing collapsed to a count.
+(The script body is opaque to the permission engine — the grant to carve is the
+invocation itself, e.g. `Bash(python3 *)`.)
 
-On sub-verb invocation (`/super-bootstrap:todo cloud` etc.): run the skip-gate, then dispatch immediately with that mode.
+- **Exit 0** → relay stdout verbatim. No editorial, no preface. Then spot-check
+  one rendered row against the doc it cites; a confirmed miss →
+  `/super-bootstrap:log` (a renderer defect against the spec). Done — no dispatch.
+- **Exit 3** (venue map wired — the scale module's map is judgment prose the
+  script does not parse) → dispatch lane.
+- **Any other failure** (`python3` missing, non-zero exit, empty stdout) →
+  dispatch lane.
 
-On an argument matching no Arguments-table row: run the skip-gate, print the fallback notice (§Arguments), then dispatch `mode: needme`. Resolve by table lookup only — an unlisted value is unlisted, not a near-match.
+**Dispatch lane (fallback).** Dispatch the `todo` subagent with the resolved
+mode per §Execution — the pre-script path, unchanged. Relay the agent's
+rendered output verbatim.
+
+Resolve modes by table lookup only — an unlisted value is unlisted, not a
+near-match. `full` renders the flat-escape board: every open row from every
+source (cards, test queue) in one ranked table, ungrouped, nothing collapsed
+to a count.
 
 ## Footer rule
 
-Footer is computed by the `todo` agent at render time — it counts total open rows `T` during classification and picks the footer shape. Canonical logic: `agents/todo.md` § Render footer-hint. The gateway relays the agent's output verbatim — it does not compute the footer.
+Footer is computed by the rendering executor (script or agent) — it counts total open rows `T` during classification and picks the footer shape. Canonical logic: `agents/todo.md` § Render footer-hint; the script encodes the same logic. The gateway relays the rendered output verbatim — it does not compute the footer.
 
-## Execution
+## Execution — dispatch lane
 
-The full protocol lives in the `todo` agent (`agents/todo.md`, `model: sonnet`, read-only tools).
+The fallback protocol lives in the `todo` agent (`agents/todo.md`, `model: sonnet`, read-only tools). It runs only when §Render behavior routes here (venue map wired, or script failure).
 
 When dispatching the agent, the prompt **must embed the scaffold** literal for the chosen mode, and supply the **classification spec path** for the agent to self-read. Agent fills bracketed slots per spec; cannot reach for alternative templates or paraphrase the criteria. Without the scaffold literal, prior training pulls render toward generic shapes. Without the explicit path + "classify EXACTLY" instruction, training pulls classification toward generic criteria.
 
@@ -89,16 +107,17 @@ Your reply is one part — the scaffold above with its slots filled. It opens wi
 
 Steps:
 
-1. Run the skip-gate (§Dispatch behavior). Confirmed dispatch → resolve the mode by Arguments-table lookup (no argument → `needme`; no matching row → fallback notice + `needme`), then continue to step 2.
+1. Reached from §Render behavior with the mode already resolved (skip-gate passed, script lane deferred or failed).
 2. Resolve the classification spec path: take the skill base directory (surfaced in the skill invocation as `Base directory for this skill: <abs path>`), append `../../shared/classify-actionable.md`. Read `assets/scaffolds.md` (sibling) and embed the chosen-mode section verbatim in the dispatch prompt. Pass the resolved absolute path as `{classify_spec_path}` — never the file contents. Ranking + render live in the `todo` agent.
 3. Build dispatch prompt per template above.
 4. `Agent` tool, `subagent_type: "todo"`, prompt = the built dispatch prompt.
 5. Agent returns rendered scaffold (or empty-state). **Relay verbatim.**
-6. **Spot-check:** sample one classified row from the reply against the doc it cites; a confirmed miss → `/super-bootstrap:log` (tier re-pinning evidence).
+6. **Spot-check:** sample one classified row from the reply against the doc it cites; a confirmed miss → `/super-bootstrap:log` (tier re-pinning evidence). The script lane carries its own spot-check under §Render behavior's Exit 0 clause.
 
 ## Rules
 
 - **Read-only.** Never modifies files. Never executes git operations.
 - **Works in any repo** — `docs/work/` present (created by `/super-bootstrap:harness-bootstrap`) drives the board; absent → the skip-gate redirects to `/super-bootstrap`.
-- **Verbatim relay rule.** Agent's output IS the value. Gateway adds nothing — no preface, no editorial. Sole exception: the §Arguments fallback notice, printed above the board as its own line, never woven into the render.
-- **Footer-hint convention.** Footer is the agent's render concern, computed per `agents/todo.md` § Render footer-hint (see §Footer rule). Gateway relays verbatim.
+- **Verbatim relay rule.** The executor's rendered output IS the value — script stdout and agent reply alike. Gateway adds nothing — no preface, no editorial. Sole exceptions: the §Arguments fallback notice, printed above the board as its own line, never woven into the render.
+- **Footer-hint convention.** Footer is the executor's render concern (see §Footer rule). Gateway relays verbatim.
+- **One classification SSOT.** `shared/classify-actionable.md` + `assets/scaffolds.md` bind both lanes; the script encodes them, the agent self-reads them. An edit to either propagates to the script (bench check: `bench/todo-board/` in the source repo) and never forks a lane-local criterion.
