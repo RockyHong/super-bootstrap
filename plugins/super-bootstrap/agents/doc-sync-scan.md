@@ -12,7 +12,7 @@ The dispatch prompt supplies: the diff (`git diff` + `git diff --staged`), today
 
 ## Scan
 
-1. **Read the surface owner.** Read the consumer's **CLAUDE.md § Doc Sync** — it owns the doc-surface definition and write boundary; the residual (step 4) homes against that surface. If absent, default the surface to `docs/**` plus behavior-narrating prose outside it (root `README`, manifest description fields the diff's behavior changes).
+1. **Read the surface owner.** Read the consumer's **CLAUDE.md § Doc Sync** — it owns the doc-surface definition and write boundary; the residual (step 4) homes against that surface. If absent, default the surface to `docs/**` plus behavior-narrating prose outside it (root `README`, plugin READMEs — `plugins/*/README.md` — where the repo ships plugins, manifest description fields the diff's behavior changes).
 
 2. **Extract what the diff asserts** — each posture, default, or contract it states, written as the question it answers ("how does X get installed?", "which door owns Y?", "what is the default for Z?"). Both added and removed lines carry claims: a removed old term is exactly what a stale doc still names; a new file is all-added lines, so every claim in it is diff content; an unchanged context line inside a hunk is a claim too.
 
