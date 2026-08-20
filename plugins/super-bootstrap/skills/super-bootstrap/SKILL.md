@@ -59,7 +59,7 @@ The runway returned and the seed docs are substantive (a just-resolved greenfiel
 
 1. **`Skill(resolve-plugins)`** — [`/super-bootstrap:resolve-plugins`](../resolve-plugins/SKILL.md) curates stack-matched skill / MCP / hook picks. It reads stack from `docs/techstack.md` and external-tools from `docs/overview.md`'s `<!-- harness-meta -->` block (the relocated external-tools signal). No Q&A — the signal is already in the docs.
 2. **`/super-bootstrap:release-init`** — offer once as an optional step to generate a project-level `/release` skill.
-3. **Clear the `tech-curation` seed card** — if a card file in `docs/work/` carries the greenfield `tech-curation` GAP card (match on H1 heading text, same as the greenfield idempotency guard), delete the card file — this branch running *is* its resolution, so the card never lingers once curation has run.
+3. **Clear the `tech-curation` seed card** — if a card file in `docs/work/` carries the greenfield `tech-curation` GAP card (match on H1 heading text, same as the greenfield idempotency guard), delete the card file and land the deletion through `/super-bootstrap:commit` (card-lifecycle — no doc-sync gate) — this branch running *is* its resolution, so the card never lingers once curation has run, and the tree is clean when § Disclosure renders.
 
 **Rules-seeding stays runway-owned.** Path-scoped rule seeding (frontend / MV3 / migrations / tests) fires at runway-time in [`/super-bootstrap:harness-bootstrap`](../harness-bootstrap/SKILL.md) Phase 1. Tier-2 adds no rule seeding — one home per signal, no double-seed.
 
@@ -67,10 +67,12 @@ The gate between the runway and tier-2 is the substantive check: substantive pro
 
 ## Disclosure (post-hoc)
 
-Invoking the command is consent — there is no upfront proceed gate. After the runway (and tier-2 if it ran), the done-summary carries one heads-up line pointing the user at the diff:
+Invoking the command is consent — there is no upfront proceed gate. Each dispatched step that writes commits its own work (runway §2c, resolve-plugins, release-init, the seed-card clear above), so when the done-summary renders the working tree is clean and the commits are the inventory. The summary carries one heads-up line. `{N}` is derived, never left as a placeholder: record `git rev-parse HEAD` before the runway dispatch (empty on a fresh init), then at disclosure `git rev-list --count {that}..HEAD` — `git rev-list --count HEAD` when there was no prior commit:
 
 ```
-{Initialized git repo. }Wrote/changed: CLAUDE.md, .claude/settings.json, docs/ skeletons{, rules}. Review with `git diff` (or `git diff HEAD~N`).
+{Initialized git repo. }Wrote/changed: {N} commit{s} this run — review with `git log --stat -{N}`.
 ```
 
-Reconciliation is `git diff`, not a gate.
+Zero commits (harness already current, no curation delta): `Nothing written — harness already current.`
+
+Reconciliation is `git log`, not a gate.
