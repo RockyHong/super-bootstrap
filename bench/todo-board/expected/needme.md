@@ -1,6 +1,6 @@
 # To-Do — 2026-08-14
 
-Drainable: 2  →  /super-bootstrap:drain
+Drainable: 4  →  /super-bootstrap:drain
 
 ▸ Need me
 
@@ -9,8 +9,9 @@ Drainable: 2  →  /super-bootstrap:drain
 | # | Action | unblocks | Impact | Blast |
 | -- | -- | -- | -- | -- |
 | 1 | Approve design: GAP-104 settings import wizard | 2 | impactful | — |
-| 2 | Decide: GAP-109 telemetry opt-in copy — waiting on user for final wording | 0 | quick-pop | — |
-| 3 | Decide: GAP-102 export command shape unsettled — triage verdict | 0 | quick-pop | — |
+| 2 | Decide: BUG-111 retry backoff resets on transient socket errors — triage verdict | 0 | quick-pop | — |
+| 3 | Decide: GAP-109 telemetry opt-in copy — waiting on user for final wording | 0 | quick-pop | — |
+| 4 | Decide: GAP-102 export command shape unsettled — triage verdict | 0 | quick-pop | — |
 
 ## Device-bound
 

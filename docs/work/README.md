@@ -30,7 +30,7 @@ No phase prescription per category — triage decides [how much ceremony the wor
 
 - `## Amendment — {date} · {source}` — reframe, premise supersession, new fact, NEEDS_CONTEXT answer.
 - `## Verdict — auto-fix|surface · {date}` — triage output.
-- `## Design — {date}` — settled-aim section; lands only when [a genuine fork](../../CLAUDE.md#framing--route--state-dont-gate) put the aim to the user (taste gate) — the chosen option, settled; approval = one appended line.
+- `## Design — {date}` — settled-aim section; lands when [a genuine fork](../../CLAUDE.md#framing--route--state-dont-gate) put the aim to the user — at route time (taste gate), or as a `## Verdict — surface` the user then rules — the chosen option, settled; approval = one appended line.
 - `## Plan — {date}` — step-order section; lands only when a cold executor runs the work (drain worktree, cross-session handoff, scope past the session-carry ledger); step sequence only — no checkboxes, no status marks. Revision = new Plan block that takes over; old stays in the chain.
 - `## Progress — {date}` — durable milestone or interruption state; the cross-session handoff surface.
 

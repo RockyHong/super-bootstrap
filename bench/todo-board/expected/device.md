@@ -1,6 +1,6 @@
 # To-Do (Device) — 2026-08-14
 
-Macro: Discuss 3 · Cloud 3 · Device 3 · Harness 1 · Full 10
+Macro: Discuss 4 · Cloud 5 · Device 3 · Harness 1 · Full 13
 
 | # | Action | Progress | Impact | Blast |
 | -- | -- | -- | -- | -- |

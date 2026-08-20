@@ -12,6 +12,12 @@ script never redefines a criterion, it only encodes one. Where the spec leaves a
 judgment call, the encoding is the documented mechanical reading:
 
 - Approval line   = a line starting "Approv…" inside the latest Design block.
+- Ruled fork      = a `## Design` block is where a ruling on a `surface` Verdict
+                    lands, so a Design or Plan anywhere on the card clears the
+                    Decide row and the Design rules take over. Spec wording is
+                    "after it"; the thread contract appends, so on-card reads it.
+- Ungrounded card = no Verdict / Design / Plan block, whatever else it carries —
+                    the `Triage:` row, same as origin-only.
 - User-blocker    = the spec's explicit keyword list only; the fuzzy "unresolved ?
                     directed at the user" arm is not encoded (fix the card text —
                     the mislabel doctrine in drain's eligibility.md).
@@ -229,7 +235,7 @@ def classify_card(card):
         files_paths = paths_in(m.group(1)) if m else []
     design_text = design.body if design else ""
 
-    if not card.blocks:
+    if not (verdict or design or plan):
         row = Row(f"Triage: {label}", "Cloud", "raw", card, "Triage")
     elif verdict and verdict.verdict_kind == "surface" and not (design or plan):
         row = Row(f"Decide: {label} — triage verdict", "Discuss", "raw", card, "Decide")
@@ -261,7 +267,7 @@ def classify_card(card):
                           "executing", card, "Continue execute")
                 row.progress = (done, len(steps))
 
-    # user-blocker override (keyword arm; surface verdicts already carry the Decide shape)
+    # user-blocker override (keyword arm; an unruled surface Verdict already carries the Decide shape)
     if row.verb != "Decide":
         lead = card.blocks[-1].body if card.blocks else card.origin
         m = USER_BLOCK_RE.search(card.origin) or USER_BLOCK_RE.search(lead)

@@ -80,8 +80,8 @@ Cards own BUG/DEBT/GAP — bugs, debt, and design gaps / unverified feature idea
 
 Each card is one append-only thread: a frozen origin block, then dated `## Amendment` / `## Verdict` / `## Design` / `## Plan` / `## Progress` blocks (contract: `docs/work/README.md`). Take the first rule that matches:
 
-- **No blocks** (origin only) → action: `"Triage: {ID} {title}"`, **intent: Cloud** (triage is investigate-only), **stage: raw**.
-- **Latest Verdict is `## Verdict — surface`** (fork waiting on the user) → action: `"Decide: {ID} {title} — triage verdict"`, **intent: Discuss**, **stage: raw**.
+- **No Verdict / Design / Plan block** (origin only, or Amendments only — nothing has grounded the card yet) → action: `"Triage: {ID} {title}"`, **intent: Cloud** (triage is investigate-only), **stage: raw**.
+- **Latest Verdict is `## Verdict — surface`, no Design or Plan block after it** (fork still waiting on the user) → action: `"Decide: {ID} {title} — triage verdict"`, **intent: Discuss**, **stage: raw**.
 - **Latest Verdict is `## Verdict — auto-fix`, no Design or Plan block after it** → action: `"Implement: {ID} {title}"`, intent per cloud-safe derivation over that block's `Files` paths + its `Test Strategy` line, **stage: triaged**.
 - **`## Design` block with no approval line appended after it** → action: `"Approve design: {ID} {title}"`, **intent: Discuss**, **stage: aimed**.
 - **Approved Design, no `## Plan` block after it** → action: `"Start execute: {ID} {title}"`, **stage: aimed**, intent per cloud-safe derivation. A later `## Progress` → `"Continue execute: {ID} {title}"`, same stage and intent. `"Write plan: {ID} {title}"` (**intent: Cloud**) replaces either only when the card's latest block names a cold-executor route (a drain-wave queue, a cross-session handoff).
@@ -91,7 +91,7 @@ Each card is one append-only thread: a frozen origin block, then dated `## Amend
 
 **Step counting.** Plan blocks carry steps only, no checkboxes or status marks: `{total}` = steps the latest Plan lists, `{done}` = those the latest Progress reports done, remaining = the difference. Read the Progress prose for which steps it names; a Progress that names none reports zero.
 
-**User-blocker override.** A card whose origin block or latest appended block explicitly waits on the user (`needs user`, `decision required`, `route?`, `waiting on user`, an unresolved `?` directed at the user) → action: `"Decide: {ID} {title} — {what's open}"`, **intent: Discuss**, keeping the **stage** its thread state gives. Overrides the derived action above; a `surface` Verdict is its most common form.
+**User-blocker override.** A card whose origin block or latest appended block explicitly waits on the user (`needs user`, `decision required`, `route?`, `waiting on user`, an unresolved `?` directed at the user) → action: `"Decide: {ID} {title} — {what's open}"`, **intent: Discuss**, keeping the **stage** its thread state gives. Overrides the derived action above; an *unruled* `surface` Verdict is its most common form.
 
 Any other file at `docs/work/` root — neither a card (`{BUG|DEBT|GAP}-###.md`) nor `README.md` / `TEMPLATE.md`: emit as `Uncategorized` with reason `"non-canonical work file; docs/work/ holds BUG/DEBT/GAP cards (feature ideas log as GAP). New cards route through /super-bootstrap:log."` — never invent classification.
 

@@ -7,10 +7,13 @@
 | 3 | Implement: BUG-103 cache key collision on unicode names | triaged | — | none | impactful | local |
 | 4 | Deliberate: codify dispatch-grade rule for probe scripts | raw | — | none | impactful | repo |
 | 5 | Continue execute: GAP-105 onboarding flow revamp (2/4) | executing | 2/4 | none | quick-pop | local |
-| 6 | Manually verify: Snapshot suite re-run after flake fix | review | — | none | quick-pop | local |
-| 7 | Manually verify: New-user tour on tablet | review | — | none | quick-pop | local |
-| 8 | Decide: GAP-109 telemetry opt-in copy — waiting on user for final wording | raw | — | user | quick-pop | — |
-| 9 | Decide: GAP-102 export command shape unsettled — triage verdict | raw | — | user | quick-pop | — |
+| 6 | Start execute: BUG-110 CSV export drops the header row on empty result sets | aimed | — | none | quick-pop | local |
+| 7 | Manually verify: Snapshot suite re-run after flake fix | review | — | none | quick-pop | local |
+| 8 | Manually verify: New-user tour on tablet | review | — | none | quick-pop | local |
+| 9 | Decide: BUG-111 retry backoff resets on transient socket errors — triage verdict | raw | — | user | quick-pop | — |
+| 10 | Decide: GAP-109 telemetry opt-in copy — waiting on user for final wording | raw | — | user | quick-pop | — |
+| 11 | Decide: GAP-102 export command shape unsettled — triage verdict | raw | — | user | quick-pop | — |
+| 12 | Triage: BUG-112 digest email sends twice when the scheduler restarts mid-batch | raw | — | none | quick-pop | local |
 
 ## Uncategorized
 
