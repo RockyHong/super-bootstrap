@@ -45,20 +45,37 @@ flowchart TD
     curate --> done["harness live<br/>start building"]
 ```
 
-Re-run any time — incremental, never overwrites your edits.
+Re-run any time — incremental, never overwrites your edits. A re-run also retires consumer fork skills/agents the plugin now supersedes (per-deletion confirm) and backfills runway sections added since the last sync. A workspace manifest (`pnpm-workspace.yaml`, `turbo.json`, …) switches on the monorepo tier — rules and build pre-flight fan out per package. Repos whose card set outgrows one flat list can opt into the scale module (`docs/parked.md` + `docs/test-queue.md` + a venue-map rule) — offered only once earned, never by default.
 
 ## How files are handled
 
 | Path | Behavior |
 |---|---|
 | `CLAUDE.md` | **Layered** per-section — never overwritten. Diff shown before any write. |
-| `.claude/settings.json` | **Merged** — adds `enabledPlugins` + `extraKnownMarketplaces`; your other settings preserved. |
+| `.claude/settings.json` | **Merged** — adds `enabledPlugins` + `extraKnownMarketplaces` for two pin classes: the core self-pin and the [paired `mattpocock-skills` pin](docs/techstack.md#key-dependencies) (drop it by setting its value to `false` — deleting the key re-seeds it on the next sync); your other settings preserved. |
+| `CODING_STANDARDS.md` | **Seeded** headings-only at the repo root — preamble + section headings drift-checked on re-run, section content is yours and fills via doc-sync. |
 | `docs/`, `.claude/rules/` | **Seeded** with new files from detected stack. User-grown content never touched on re-run. |
 | `.claude/hooks/` | **Installed** by default — three hook assets: `commit-channel` (PreToolUse) confines raw `git commit` to the main-session commit door — worker subagents are routed back to `/super-bootstrap:commit`, which runs commit mechanics gateway-inline, runs a bundled link-integrity check every commit, and dispatches a cold doc-sync scan on a grep, declared-citer, or link-target hit and a premise-closure judge on a product-anchor hit. The `consult-check` pair (SessionStart + UserPromptSubmit) derives a compact `docs/**` catalog once per session and injects a forced per-doc relevance evaluation at every prompt — the read boundary's activation layer. |
 | `.claude/super-bootstrap-runway.json` | **Coverage receipt** — records the plugin version that scaffolded/synced this runway plus which sections that sync actually checked — compared, or proposed for insert (`covered` / `declined`). On re-run a stale or missing stamp — or a matching version with coverage gaps — forces a full drift re-check (no "looks current" skim). |
 | `.env*`, `*.key`, `*credential*` | **Skipped** from scan entirely — never read, never written. |
 
-Also bundles `/super-bootstrap:todo` (intent-filtered work board), `/super-bootstrap:log` (capture observations as work cards), `/super-bootstrap:commit` (session-isolated, doc-sync-gated), `/super-bootstrap:merge` (absorb feature branches; aborts + surfaces on conflict), and `/super-bootstrap:help` (index of installed user-invoke skills) — all namespaced under `super-bootstrap:` so plugin manager disambiguates collisions automatically. The `/super-bootstrap` entry stays bare (plugin-name == skill-name special case).
+## Day to day
+
+The runway's doors are bundled skills — all namespaced `super-bootstrap:` so the plugin manager disambiguates collisions; only the `/super-bootstrap` entry stays bare (plugin-name == skill-name special case). Work enters as a card in `docs/work/` ([`BUG` / `DEBT` / `GAP`](docs/work/README.md#categories)) and runs one envelope — ground → implement → verify → doc-sync → commit — with only the phases the card's shape needs.
+
+| Door | Role |
+|---|---|
+| `/super-bootstrap:log <observation>` | Capture — writes a card; feature ideas log as `GAP` beside defects. Suspected duplicates surface for your pick, never auto-merge. |
+| `/super-bootstrap:todo` | Board — need-me work grouped by venue, drainable work collapsed to a count; rendered by a bundled script, zero model dispatch. |
+| `/super-bootstrap:triage {ID}` | Grounding — a cold, read-only subagent verifies the card's premise and appends a Verdict block; no code changes. |
+| `/super-bootstrap:commit` | Commit door — session-isolated (never `-A`), link-integrity check every commit, cold doc-sync scan only on a grep / citer / link-target hit. |
+| `/super-bootstrap:drain` | Parallel drain — one isolated git worktree + headless `claude -p` per admissible card, each running to its first user wall and halting. |
+| `/super-bootstrap:merge` | Absorb feature branches; aborts + surfaces the file list on conflict. |
+| `/super-bootstrap:check-docs-consistency` | On-demand whole-surface doc drift scan; timestamped report to `.review/`, report-only. |
+| `/super-bootstrap:triage-report` | Drain the `.review/` queue — per-finding promote / patch / dup / investigate / dismiss. |
+| `/super-bootstrap:help` | Index of installed user-invoke skills, grouped by category. |
+
+Per-skill contract = that skill's `SKILL.md` frontmatter; one-line index in the [plugin README](plugins/super-bootstrap/README.md#skill-catalog); pipeline shape in [`docs/overview.md` § Data Flow](docs/overview.md#data-flow).
 
 Optional bonus: `/super-bootstrap:release-init` — one-shot scaffolder. Detects project type (unity / tauri / node / ios-native / android-native / generic) and generates a tailored `/release` skill at `.claude/skills/release/SKILL.md` (project-level skill, bare invocation since it lives in the user's repo, not under this plugin's namespace). Run only on repos that ship versioned releases.
 
