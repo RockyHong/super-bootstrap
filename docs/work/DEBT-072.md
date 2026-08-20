@@ -1,0 +1,6 @@
+# DEBT-072 — harness-bootstrap description omits the CODING_STANDARDS.md seed
+
+**Logged:** 2026-08-20 · **Source:** root README refresh — cold doc-sync scan noted the gap while verifying the new `CODING_STANDARDS.md` file-handling row
+**Problem:** `harness-bootstrap/SKILL.md` frontmatter `description:` lists the scaffolded skeleton docs as "(overview, techstack, work/)" but omits `CODING_STANDARDS.md`, which the body § 2a always scaffolds at the consumer's repo root (headings-only; preamble + headings drift-checked, section content consumer-grown). The description is the skill's canonical contract — plugin README § Skill catalog defers to it — and feeds the `/super-bootstrap:help` menu, so the omission under-reports what a sync writes to a consumer repo.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md` line 3 (frontmatter); mirror check: `plugins/super-bootstrap/README.md` § Skill catalog `harness-bootstrap` line, `plugins/super-bootstrap/.claude-plugin/plugin.json` description
+**Prior:** Description predates the always-scaffold CODING_STANDARDS.md change; add it to the skeleton list. Harness edit — carries `audit-harness-edits` + `/release` description-sync closure.
