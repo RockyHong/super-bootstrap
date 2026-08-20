@@ -379,9 +379,11 @@ def couple(rows):
     for r in rows:
         if not r.card:
             continue
-        for m in re.finditer(r"(?:blocked by|depends on|after)\s+((?:BUG|DEBT|GAP)-\d+)(?:\s+lands)?",
-                             r.card.text, re.I):
-            target = by_id.get(m.group(1).upper())
+        # one (blocker, blocked) pair counts once however many times the thread restates it
+        blockers = {m.group(1).upper() for m in re.finditer(
+            r"(?:blocked by|depends on|after)\s+((?:BUG|DEBT|GAP)-\d+)(?:\s+lands)?", r.card.text, re.I)}
+        for bid in sorted(blockers):
+            target = by_id.get(bid)
             if target and target is not r:
                 r.hard_blocked = True
                 target.fanout += 1
