@@ -30,7 +30,7 @@ No phase prescription per category — triage decides how much ceremony the work
 
 - `## Amendment — {date} · {source}` — reframe, premise supersession, new fact, NEEDS_CONTEXT answer.
 - `## Verdict — auto-fix|surface · {date}` — triage output.
-- `## Design — {date}` — settled-aim section; lands only when a genuine fork put the aim to the user (taste gate) — the chosen option, settled; approval = one appended line.
+- `## Design — {date}` — settled-aim section; lands only when a genuine fork put the aim to the user (taste gate) — the chosen option, settled; approval = one appended line. A ruling whose settled aim is to wait names the awaited party — `blocked on {party}` — so the board holds the card as a Decide row rather than executable.
 - `## Plan — {date}` — step-order section; lands only when a cold executor runs the work (drain worktree, cross-session handoff); step sequence only — no checkboxes, no status marks. Revision = new Plan block that takes over; old stays in the chain.
 - `## Progress — {date}` — durable milestone or interruption state; the cross-session handoff surface.
 

@@ -32,4 +32,15 @@ else
   "$PY" "$SCRIPT" bench/todo-board/fixture-allblocked needme --date "$DATE" 2>/dev/null     | diff "bench/todo-board/expected/needme-allblocked.md" -
   fail=1
 fi
+for m in needme full; do
+  if "$PY" "$SCRIPT" bench/todo-board/fixture-extwait "$m" --date "$DATE" 2>/dev/null \
+     | diff "bench/todo-board/expected/$m-extwait.md" - >/dev/null; then
+    echo "PASS $m-extwait"
+  else
+    echo "FAIL $m-extwait"
+    "$PY" "$SCRIPT" bench/todo-board/fixture-extwait "$m" --date "$DATE" 2>/dev/null \
+      | diff "bench/todo-board/expected/$m-extwait.md" -
+    fail=1
+  fi
+done
 exit "$fail"

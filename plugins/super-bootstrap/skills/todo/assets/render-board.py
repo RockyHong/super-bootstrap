@@ -18,9 +18,12 @@ judgment call, the encoding is the documented mechanical reading:
                     "after it"; the thread contract appends, so on-card reads it.
 - Ungrounded card = no Verdict / Design / Plan block, whatever else it carries —
                     the `Triage:` row, same as origin-only.
-- User-blocker    = the spec's explicit keyword list only; the fuzzy "unresolved ?
+- Wait override   = the spec's explicit keyword list only; the fuzzy "unresolved ?
                     directed at the user" arm is not encoded (fix the card text —
-                    the mislabel doctrine in drain's eligibility.md).
+                    the mislabel doctrine in drain's eligibility.md). The external
+                    arm demands a word after the phrase, so `blocked on {party}` in
+                    prose about the vocabulary is a mention, not a wait; `blocked by
+                    {ID}` stays the hard block below.
 - Hard block      = the explicit verb forms only (`blocked by {ID}` / `depends on
                     {ID}` / `after {ID} lands`); a bare ID mention is soft signal.
 - Soft-coupling direction = the row declaring the shared path in a Design/Plan
@@ -52,7 +55,7 @@ PATH_TOKEN_RE = re.compile(r"[\w.-]+(?:/[\w.*{}-]+)+/?|[\w-]+\.(?:md|ts|tsx|js|j
 PATH_EXT_RE = re.compile(r"\.(?:md|ts|tsx|js|jsx|py|sh|json|css|rs|go)$")
 UNCAT_REASON = ("non-canonical work file; docs/work/ holds BUG/DEBT/GAP cards "
                 "(feature ideas log as GAP). New cards route through /super-bootstrap:log.")
-USER_BLOCK_RE = re.compile(r"needs user|decision required|route\?|waiting on user", re.I)
+WAIT_RE = re.compile(r"needs user|decision required|route\?|waiting on\s+\w|blocked on\s+\w", re.I)
 SEVERITY_RE = re.compile(r"\b(critical|blocking|production-down|data-loss)\b", re.I)
 APPLY_RE = re.compile(r"\b(typo|path fix|broken (?:link|path)|formatting|one-line)\b", re.I)
 DEVICE_KEYWORD_RE = re.compile(r"manual test|visual|device|mobile|browser|screenshot", re.I)
@@ -267,10 +270,11 @@ def classify_card(card):
                           "executing", card, "Continue execute")
                 row.progress = (done, len(steps))
 
-    # user-blocker override (keyword arm; an unruled surface Verdict already carries the Decide shape)
+    # wait override — the user or a named external party (keyword arm; an unruled
+    # surface Verdict already carries the Decide shape)
     if row.verb != "Decide":
         lead = card.blocks[-1].body if card.blocks else card.origin
-        m = USER_BLOCK_RE.search(card.origin) or USER_BLOCK_RE.search(lead)
+        m = WAIT_RE.search(card.origin) or WAIT_RE.search(lead)
         if m:
             src = m.string
             clause = re.split(r"[.\n]", src[m.start():], 1)[0].strip()

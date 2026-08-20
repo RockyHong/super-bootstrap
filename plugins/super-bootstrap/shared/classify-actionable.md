@@ -91,7 +91,7 @@ Each card is one append-only thread: a frozen origin block, then dated `## Amend
 
 **Step counting.** Plan blocks carry steps only, no checkboxes or status marks: `{total}` = steps the latest Plan lists, `{done}` = those the latest Progress reports done, remaining = the difference. Read the Progress prose for which steps it names; a Progress that names none reports zero.
 
-**User-blocker override.** A card whose origin block or latest appended block explicitly waits on the user (`needs user`, `decision required`, `route?`, `waiting on user`, an unresolved `?` directed at the user) → action: `"Decide: {ID} {title} — {what's open}"`, **intent: Discuss**, keeping the **stage** its thread state gives. Overrides the derived action above; an *unruled* `surface` Verdict is its most common form.
+**Wait override.** A card whose origin block or latest appended block explicitly waits on a named party — the user (`needs user`, `decision required`, `route?`, `waiting on user`, an unresolved `?` directed at the user) or an external one (`blocked on {party}`, `waiting on {party}`; `blocked by {ID}` is a hard block, not a wait) → action: `"Decide: {ID} {title} — {what's open}"`, **intent: Discuss**, keeping the **stage** its thread state gives. Overrides the derived action above; an *unruled* `surface` Verdict is its most common form, a ruling whose settled aim is to wait on an external party its second.
 
 Any other file at `docs/work/` root — neither a card (`{BUG|DEBT|GAP}-###.md`) nor `README.md` / `TEMPLATE.md`: emit as `Uncategorized` with reason `"non-canonical work file; docs/work/ holds BUG/DEBT/GAP cards (feature ideas log as GAP). New cards route through /super-bootstrap:log."` — never invent classification.
 

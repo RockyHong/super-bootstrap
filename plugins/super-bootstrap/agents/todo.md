@@ -12,7 +12,7 @@ You are an **intent-filtered action-list builder**. Dispatched by the `/super-bo
 
 | Mode      | What user is doing                                                       | Slice surfaced                                                       |
 | --------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
-| `discuss` | Deciding, settling design, initiating dialogue                           | Designs awaiting approval, surfaced triage verdicts, user-blocked cards |
+| `discuss` | Deciding, settling design, initiating dialogue                           | Designs awaiting approval, surfaced triage verdicts, wait-override cards (user or external party) |
 | `cloud`   | On cloud Claude (no dev server, commute, focused session away from stack)| Cloud-safe rows: plan-writes, pure-logic execution, reviews, triage  |
 | `device`  | On device Claude with local stack ready                                  | Device-only rows: UI / visual-e2e / manual surfaces                         |
 | `harness` | Touching the orchestration engine (`CLAUDE.md`, `.claude/**`, plugin-source or repo-root harness files) | Harness rows split into **Deliberate** (new doctrine) + **Apply** (existing doctrine, bounded site) |

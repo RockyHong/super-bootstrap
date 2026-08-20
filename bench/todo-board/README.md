@@ -10,13 +10,16 @@ scaffolds, or the script re-runs this bench (`bash bench/todo-board/run.sh`).
   surface verdict plus an unrelated Amendment · Amendment-only · auto-fix derive ·
   unapproved Design · executing with Progress · review suppressed by a queue
   back-pointer · harness pre-filter · hard block · hard-blocked Discuss row (held
-  out of the body, counted in the footer) · user-blocker override · non-canonical
+  out of the body, counted in the footer) · wait override (user arm) · non-canonical
   file).
 - `fixture-empty/` — substrate present, no cards (empty-state render).
 - `fixture-allblocked/` — two cards mutually hard-blocked: zero body rows, yet the
   board must still disclose them (`pending unblock: 2`), never the empty state.
-- `expected/` — goldens for all six modes plus the empty and all-blocked states, pinned to
-  `--date 2026-08-14`.
+- `fixture-extwait/` — one card whose approved Design rules the aim to be a wait on an
+  external party: the wait override's external arm — a `Decide` row naming the party,
+  Drainable 0, never a `Start execute`.
+- `expected/` — goldens for all six modes plus the empty, all-blocked, and external-wait
+  states, pinned to `--date 2026-08-14`.
 
 One known accepted divergence from a cold agent render: the soft-coupling
 *direction* cell is mechanically normalized (the row declaring the shared path

@@ -262,7 +262,7 @@ Column conventions — every row fills every column; a column inapplicable to a 
 - **Action** — the classification spec's `action` string verbatim (`Triage: {ID} {title}`, `Continue execute: {ID} {title} ({done}/{total})`, `Approve design: {ID} {title}`, `Deliberate: {topic}`, `Apply: {rule} → {site}`). It already names the ID, so Full carries no separate File column.
 - **Stage** — the spec's `stage`: `raw` | `triaged` | `aimed` | `executing` | `review`.
 - **Progress** — `{x}/{y}` where the card's latest Progress block reports steps done; `—` on cards without a Plan/Progress block and test-queue rows.
-- **Blocker** — `user` where the row awaits a user decision, else `none`.
+- **Blocker** — `user` where the row awaits a user decision — a fork to rule, or an external wait only the user can chase or drop — else `none`.
 - **Impact** / **Blast** — per agent §3, computed on every row including backlog rows.
 
 ```
