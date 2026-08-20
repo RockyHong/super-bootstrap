@@ -61,23 +61,35 @@ Re-run any time — incremental, never overwrites your edits. A re-run also reti
 
 ## Day to day
 
-The runway's doors are bundled skills — all namespaced `super-bootstrap:` so the plugin manager disambiguates collisions; only the `/super-bootstrap` entry stays bare (plugin-name == skill-name special case). Work enters as a card in `docs/work/` ([`BUG` / `DEBT` / `GAP`](docs/work/README.md#categories)) and runs one envelope — ground → implement → verify → doc-sync → commit — with only the phases the card's shape needs.
+The runway's doors are bundled skills — all namespaced `super-bootstrap:` so the plugin manager disambiguates collisions; only the `/super-bootstrap` entry stays bare (plugin-name == skill-name special case). Work enters as a card in `docs/work/` ([`BUG` / `DEBT` / `GAP`](docs/work/README.md#categories)) and runs one envelope — ground → implement → verify → doc-sync → commit — with only the phases the card's shape needs. Most doors Claude reaches on its own; you type three daily, two when the moment calls.
+
+**You type**
 
 | Door | Role |
 |---|---|
 | `/super-bootstrap:log <observation>` | Capture — writes a card; feature ideas log as `GAP` beside defects. Suspected duplicates surface for your pick, never auto-merge. |
-| `/super-bootstrap:todo` | Board — need-me work grouped by venue, drainable work collapsed to a count; rendered by a bundled script, zero model dispatch. |
-| `/super-bootstrap:triage {ID}` | Grounding — a cold, read-only subagent verifies the card's premise and appends a Verdict block; no code changes. |
-| `/super-bootstrap:commit` | Commit door — session-isolated (never `-A`), link-integrity check every commit, cold doc-sync scan only on a grep / citer / link-target hit. |
-| `/super-bootstrap:drain` | Parallel drain — one isolated git worktree + headless `claude -p` per admissible card, each running to its first user wall and halting. |
-| `/super-bootstrap:merge` | Absorb feature branches; aborts + surfaces the file list on conflict. |
-| `/super-bootstrap:check-docs-consistency` | On-demand whole-surface doc drift scan; timestamped report to `.review/`, report-only. |
-| `/super-bootstrap:triage-report` | Drain the `.review/` queue — per-finding promote / patch / dup / investigate / dismiss. |
+| `/super-bootstrap:todo` | Board — need-me work grouped by venue, drainable work collapsed to a count; rendered by a bundled script, zero model dispatch. Session opener. |
 | `/super-bootstrap:help` | Index of installed user-invoke skills, grouped by category. |
+| `/super-bootstrap:drain` | When the board holds a wave — one isolated git worktree + headless `claude -p` per admissible card, each running to its first user wall and halting. User-only by design. |
+| `/super-bootstrap:merge` | When feature branches are ready — absorbs them; aborts + surfaces the file list on conflict. |
+
+**Claude runs** — reached by the pipeline, not typed (typing them works; you rarely need to)
+
+| Door | When |
+|---|---|
+| `/super-bootstrap:triage {ID}` | Every card pickup — a cold, read-only subagent verifies the card's premise and appends a Verdict block; no code changes. |
+| `/super-bootstrap:commit` | End of every cycle — session-isolated (never `-A`), link-integrity check every commit, cold doc-sync scan only on a grep / citer / link-target hit. The `commit-channel` hook routes a worker subagent's raw `git commit` back here. |
+| `/super-bootstrap:triage-report` | When a scan report lands in `.review/` — per-finding promote / patch / dup / investigate / dismiss. |
 
 Per-skill contract = that skill's `SKILL.md` frontmatter; one-line index in the [plugin README](plugins/super-bootstrap/README.md#skill-catalog); pipeline shape in [`docs/overview.md` § Data Flow](docs/overview.md#data-flow).
 
-Optional bonus: `/super-bootstrap:release-init` — one-shot scaffolder. Detects project type (unity / tauri / node / ios-native / android-native / generic) and generates a tailored `/release` skill at `.claude/skills/release/SKILL.md` (project-level skill, bare invocation since it lives in the user's repo, not under this plugin's namespace). Run only on repos that ship versioned releases.
+## Occasional
+
+Not day-to-day — run when the moment calls:
+
+- `/super-bootstrap:check-docs-consistency` — whole-surface doc drift scan, timestamped report to `.review/`, report-only; the commit door's scoped scan covers the everyday case. User-only by design.
+- `/super-bootstrap:resolve-plugins` — standalone refresh of the curated skill / MCP / hook pins (the same curation `/super-bootstrap` runs as tier 2).
+- `/super-bootstrap:release-init` — one-shot scaffolder. Detects project type (unity / tauri / node / ios-native / android-native / generic) and generates a tailored `/release` skill at `.claude/skills/release/SKILL.md` (project-level skill, bare invocation since it lives in the user's repo, not under this plugin's namespace). Run only on repos that ship versioned releases.
 
 ## Sources
 
