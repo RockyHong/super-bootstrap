@@ -533,6 +533,7 @@ If every row is `✓ current` and nothing changed on disk, report and skip the c
 
 Otherwise use `/super-bootstrap:commit` to stage:
 - `CLAUDE.md` (new, modified, or post-migration)
+- `CODING_STANDARDS.md` (new, or approved preamble / heading drift fix)
 - `docs/techstack.md` (new, skeleton-section drift or insert, or post-migration absorbed content)
 - `docs/overview.md` (new, skeleton-section drift or insert)
 - `docs/decisions.md` (new, scope-header drift, post-retirement migration from techstack, or closed-history rows from legacy CLAUDE.md migration)
