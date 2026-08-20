@@ -448,7 +448,7 @@ def context_cell(r):
 
 def render(mode, rows, uncat, held_count, date):
     body_rows = [r for r in rows if not r.hard_blocked]
-    counts = {k: sum(1 for r in rows if r.intent == k) for k in ("Discuss", "Cloud", "Device", "Harness")}
+    counts = {k: sum(1 for r in body_rows if r.intent == k) for k in ("Discuss", "Cloud", "Device", "Harness")}
     total = sum(counts.values())
     macro = (f"Macro: Discuss {counts['Discuss']} · Cloud {counts['Cloud']} · "
              f"Device {counts['Device']} · Harness {counts['Harness']} · Full {total}")
@@ -462,7 +462,7 @@ def render(mode, rows, uncat, held_count, date):
     if mode == "needme":
         drainable = [r for r in body_rows if r.intent == "Cloud"]
         needme = [r for r in body_rows if r.intent != "Cloud"]
-        if not needme and not drainable and not uncat:
+        if not needme and not drainable and not uncat and not held_count:
             return f"# To-Do — {date}\n\nNo active work. Ground something with /super-bootstrap:log or give me a task."
         out.append(f"# To-Do — {date}")
         out.append(f"Drainable: {len(drainable)}  →  /super-bootstrap:drain\n")
@@ -549,7 +549,11 @@ def render(mode, rows, uncat, held_count, date):
                          [[str(i + 1), r.action, prog_cell(r), r.impact, r.blast] for i, r in enumerate(kept)]))
     if uncat_section:
         out.append(uncat_section.strip("\n"))
-    out.append("more: /super-bootstrap:help")
+    footer = []
+    if held_count:
+        footer.append(f"pending unblock: {held_count}")
+    footer.append("more: /super-bootstrap:help")
+    out.append("\n".join(footer))
     return "\n\n".join(out)
 
 

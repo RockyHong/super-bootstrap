@@ -156,7 +156,7 @@ For `full` mode, render every kept row in this rank order — one row per open i
 
 ### 5. Cross-mode counts (free)
 
-Since §1 classified all rows before §2 filtered, you have cross-mode counts in working memory. Emit them in the macro header for sub-verb modes. Total `T` = Discuss + Cloud + Device + Harness (no Monitor track here — distinct from upstream forks).
+Since §1 classified all rows before §2 filtered, you have cross-mode counts in working memory. Count **body rows only** — the §4 Coupling gate's hard-blocked rows are held out of every mode's count, so each number equals the rows that mode's board renders; held rows surface in the footer `pending unblock` count instead. Emit them in the macro header for sub-verb modes. Total `T` = Discuss + Cloud + Device + Harness (no Monitor track here — distinct from upstream forks).
 
 ### 6. Empty-state expanded priors (sub-verb modes only)
 
@@ -181,9 +181,9 @@ The scaffold includes title line, **macro header** (sub-verb modes only), table 
 
 **Ranked list, no recommendation** — Surface all rows ranked per §4; user reads ranked list, picks. System surfaces, doesn't strategize.
 
-**Pending-unblock line** (Full mode only) — when the §4 Coupling gate held `n ≥ 1` hard-blocked rows out of the body, emit `pending unblock: {n}` as the first footer line (above filter legend / more). Count only — the held rows stay in the docs SSOT; the count is the route to them, not a body row each. Omit the line when `n = 0`.
+**Pending-unblock line** (every mode) — when the §4 Coupling gate held `n ≥ 1` hard-blocked rows out of the body, emit `pending unblock: {n}` as the first footer line (above filter legend / more). Count only — the held rows stay in the docs SSOT; the count is the route to them, not a body row each. Omit the line when `n = 0`.
 
-**Footer-hint** — sub-verb modes (discuss / cloud / device / harness) always end with `more: /super-bootstrap:help`. Need-me mode footer depends on board state (known at render from §2): need-me rows present → emit `flat list: /super-bootstrap:todo full · drainable detail: /super-bootstrap:todo cloud` then `more: /super-bootstrap:help`; drainable-only (no need-me rows) → emit `flat list: /super-bootstrap:todo full` then `more: /super-bootstrap:help`. Full mode footer is conditional on total open row count `T = D + C + V + H` (computed during §1 classification):
+**Footer-hint** — sub-verb modes (discuss / cloud / device / harness) always end with `more: /super-bootstrap:help`. Need-me mode footer depends on board state (known at render from §2): need-me rows present → emit `flat list: /super-bootstrap:todo full · drainable detail: /super-bootstrap:todo cloud` then `more: /super-bootstrap:help`; drainable-only (no need-me rows) → emit `flat list: /super-bootstrap:todo full` then `more: /super-bootstrap:help`. Full mode footer is conditional on the body row count `T = D + C + V + H` (§5):
 
 - `T ≤ 5` → footer is just `more: /super-bootstrap:help`. Board small; sub-verb hint is premature noise.
 - `T ≥ 6` → prepend a filter legend line above `more: /super-bootstrap:help`:

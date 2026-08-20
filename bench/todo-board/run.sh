@@ -25,4 +25,11 @@ if "$PY" "$SCRIPT" bench/todo-board/fixture-empty needme --date "$DATE" 2>/dev/n
 else
   echo "FAIL needme-empty"; fail=1
 fi
+if "$PY" "$SCRIPT" bench/todo-board/fixture-allblocked needme --date "$DATE" 2>/dev/null    | diff "bench/todo-board/expected/needme-allblocked.md" - >/dev/null; then
+  echo "PASS needme-allblocked"
+else
+  echo "FAIL needme-allblocked"
+  "$PY" "$SCRIPT" bench/todo-board/fixture-allblocked needme --date "$DATE" 2>/dev/null     | diff "bench/todo-board/expected/needme-allblocked.md" -
+  fail=1
+fi
 exit "$fail"

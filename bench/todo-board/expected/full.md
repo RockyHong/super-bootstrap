@@ -21,6 +21,6 @@
 | -- | -- | -- |
 | 1 | notes-scratch.md | non-canonical work file; docs/work/ holds BUG/DEBT/GAP cards (feature ideas log as GAP). New cards route through /super-bootstrap:log. |
 
-pending unblock: 1
+pending unblock: 2
 filter: /super-bootstrap:todo cloud (headless) · /super-bootstrap:todo device (needs screen) · /super-bootstrap:todo discuss (decisions) · /super-bootstrap:todo harness (engine)
 more: /super-bootstrap:help

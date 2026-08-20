@@ -22,7 +22,7 @@ Two render lanes, one classification SSOT (`shared/classify-actionable.md`): the
 | `/super-bootstrap:todo harness`| Harness filter — rows whose deliverable is the orchestration engine (`CLAUDE.md`, `.claude/**`, plugin-source harness files), grouped **Deliberate** (new doctrine) / **Apply** (existing doctrine, bounded site). Never mixed into the autonomous slices. **Macro header on top.**                                          |
 | *any other value*             | **Fallback.** Dispatch `mode: needme` (the default board), and print this line above the relayed board: `Unrecognized sub-verb '{value}' — rendering the default board. Modes: full · discuss · cloud · device · harness.` Never map an unlisted value onto a listed mode by semantic proximity — this table is the whole set. |
 
-**Macro header** (sub-verb modes only): single line right under title showing cross-mode counts — `Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}`. Free (agent classified all rows pre-filter), ignore-or-pickup. Counts only — no IDs, no recommendations.
+**Macro header** (sub-verb modes only): single line right under title showing cross-mode counts — `Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}`. Free (agent classified every row before filtering), ignore-or-pickup. Body rows only — each count matches the rows that mode's board renders; hard-blocked rows ride the footer `pending unblock` count. Counts only — no IDs, no recommendations.
 
 **Empty-state expanded priors** (sub-verb modes): when current mode has zero rows, agent surfaces top 1-3 IDs from each non-empty other mode. Closes with `Next mode: yours.` — no recommendation. Lets user navigate from empty without blind retype.
 

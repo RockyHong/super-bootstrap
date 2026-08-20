@@ -2,7 +2,7 @@
 
 Date placeholder `{date}` = today's date in YYYY-MM-DD form. Agent fills it.
 
-**Macro header** (sub-verb modes only — discuss / cloud / device / harness): single line right under title showing cross-mode counts. Always emit even when current mode is non-empty (free — agent classified all rows pre-filter). Format:
+**Macro header** (sub-verb modes only — discuss / cloud / device / harness): single line right under title showing cross-mode counts. Always emit even when current mode is non-empty (free — agent classified every row before filtering). Counts are **body rows only** — rows the coupling gate held as hard-blocked are excluded, so each count equals the rows that mode's board renders; the footer `pending unblock` line carries the held ones. Format:
 
 ```
 Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
@@ -57,7 +57,7 @@ Drainable: {N}  →  /super-bootstrap:drain
 {footer per § Render footer-hint}
 ```
 
-Empty state (no need-me rows AND no drainable):
+Empty state (no need-me rows AND no drainable AND nothing held by the coupling gate — a held row keeps the board on the drainable-pending shape below, with its `pending unblock` count):
 
 ```
 # To-Do — {date}
@@ -74,6 +74,7 @@ Drainable: {N}  →  /super-bootstrap:drain
 
 Nothing needs you right now — the board is all auto-runnable.
 
+{pending unblock: {n} — only if n>0}
 {footer per § Render footer-hint}
 ```
 
@@ -94,6 +95,7 @@ Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 | -- | --------------------------------------------------- | ------------------------------------------------ |
 | 1  | {verb + what}                                       | {one-line — what signal was missing}             |
 
+{pending unblock: {n} — only if n>0}
 more: /super-bootstrap:help
 ```
 
@@ -113,6 +115,7 @@ Macro priors (no recommendation):
 
 Next mode: yours. /super-bootstrap:todo cloud · /super-bootstrap:todo device · /super-bootstrap:todo harness · /super-bootstrap:todo (full board)
 
+{pending unblock: {n} — only if n>0}
 more: /super-bootstrap:help
 ```
 
@@ -133,6 +136,7 @@ Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 | -- | --------------------------------------------------- | ------------------------------------------------ |
 | 1  | {verb + what}                                       | {one-line — what signal was missing}             |
 
+{pending unblock: {n} — only if n>0}
 more: /super-bootstrap:help
 ```
 
@@ -152,6 +156,7 @@ Macro priors (no recommendation):
 
 Next mode: yours. /super-bootstrap:todo discuss · /super-bootstrap:todo device · /super-bootstrap:todo harness · /super-bootstrap:todo (full board)
 
+{pending unblock: {n} — only if n>0}
 more: /super-bootstrap:help
 ```
 
@@ -172,6 +177,7 @@ Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 | -- | --------------------------------------------------- | ------------------------------------------------ |
 | 1  | {verb + what}                                       | {one-line — what signal was missing}             |
 
+{pending unblock: {n} — only if n>0}
 more: /super-bootstrap:help
 ```
 
@@ -191,6 +197,7 @@ Macro priors (no recommendation):
 
 Next mode: yours. /super-bootstrap:todo cloud · /super-bootstrap:todo discuss · /super-bootstrap:todo harness · /super-bootstrap:todo (full board)
 
+{pending unblock: {n} — only if n>0}
 more: /super-bootstrap:help
 ```
 
@@ -221,6 +228,7 @@ Engine surface — careful handle. Ground in git log + the repo's rules before e
 | -- | --------------------------------------------------- | ------------------------------------------------ |
 | 1  | {verb + what}                                       | {one-line — what signal was missing}             |
 
+{pending unblock: {n} — only if n>0}
 more: /super-bootstrap:help
 ```
 
@@ -240,6 +248,7 @@ Macro priors (no recommendation):
 
 Next mode: yours. /super-bootstrap:todo discuss · /super-bootstrap:todo cloud · /super-bootstrap:todo device · /super-bootstrap:todo (full board)
 
+{pending unblock: {n} — only if n>0}
 more: /super-bootstrap:help
 ```
 

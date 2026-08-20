@@ -2,4 +2,4 @@
 
 Minimal substrate copy for the board bench. Only the line the tooling greps matters:
 
-**ID high-water mark:** `BUG-113` · `DEBT-106` · `GAP-109` — last consumed ID per category.
+**ID high-water mark:** `BUG-100` · `DEBT-100` · `GAP-202` — last consumed ID per category.
