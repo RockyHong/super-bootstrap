@@ -260,7 +260,7 @@ Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-in
 > Install `/super-bootstrap:drain` worktree infra? — worktree settings template + `PreToolUse(Read)` guard + `.claude/worktrees/` gitignore. Most dev repos: yes. Skill / plugin / docs repos: skip (drain self-installs on first use anyway).
 > Install now? (y / skip)
 
-On `y`: execute the procedure in [`../drain/assets/ensure-infra.md`](../drain/assets/ensure-infra.md) — the same idempotent 4-piece install drain self-runs on first invocation. One install home; harness-bootstrap delegates to it, never carries its own copy. Stage the placed files with the Phase 2c commit.
+On `y`: execute the procedure in [`../drain/assets/ensure-infra.md`](../drain/assets/ensure-infra.md) — the same idempotent three-piece install drain self-runs on first invocation. One install home; harness-bootstrap delegates to it, never carries its own copy. Stage the placed files with the Phase 2c commit.
 
 On `skip`: nothing placed; drain's own §Pre-flight step 0 installs on first `/super-bootstrap:drain`.
 
@@ -537,9 +537,10 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/techstack.md` (new, skeleton-section drift or insert, or post-migration absorbed content)
 - `docs/overview.md` (new, skeleton-section drift or insert)
 - `docs/decisions.md` (new, scope-header drift, post-retirement migration from techstack, or closed-history rows from legacy CLAUDE.md migration)
-- `.claude/settings.json` (core + paired plugin pins seeded at 2a; harness hooks merged at 2a-hooks)
+- `.claude/settings.json` (core + paired plugin pins seeded at 2a; harness hooks merged at 2a-hooks; drain's `PreToolUse(Read)` guard merged at 2a-drain)
 - `.claude/hooks/commit-channel.sh`, `.claude/hooks/consult-check-{sessionstart,check}.sh` (frozen hook scripts seeded at 2a-hooks — always, default-on)
-- `.gitignore` (when 2a-hooks appended `.claude/.consult-catalog` — skip if the line was already present)
+- `.gitignore` (when any 2a step appended a line — 2a-hooks' `.claude/.consult-catalog`, 2a-drain's `.claude/worktrees/` + `.drain-status`; skip if every line was already present)
+- `.claude/templates/worktree-settings.local.json` (drain worktree settings template — only if installed this run at 2a-drain)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)
 - `docs/work/README.md` (if newly written, re-planted, or fact-fields block inserted this run at 2a-scale)
