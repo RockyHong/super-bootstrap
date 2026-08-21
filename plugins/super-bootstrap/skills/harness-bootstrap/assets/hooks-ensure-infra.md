@@ -2,8 +2,10 @@
 
 harness-bootstrap ships three hook assets. Unlike drain's worktree infra
 (`../drain/assets/ensure-infra.md`), install runs **unconditionally** — no opt-in
-confirm. All are safe-by-default: `commit-channel` fires only on git commit and denies
-raw commits from worker subagents — the main session is never blocked; the
+confirm. All are safe-by-default: `commit-channel`'s hook process spawns on any `git`
+call (its `if` anchors on the bare command) and denies only raw `git commit` from
+worker subagents — everything else exits 0 silently, and the main session is never
+blocked; the
 `consult-check` pair only injects a doc catalog (read activation, no gating). Each
 ships as a **frozen asset** beside this file; ensure-infra places it by mechanical
 copy / merge — never regeneration, so there is no drift between repos. Run as
@@ -24,7 +26,7 @@ The consult pair installs together — the SessionStart deriver writes the
 other is either a dead write or a silent no-op. Its install also appends
 `.claude/.consult-catalog` to the repo's `.gitignore` when absent (per-session
 regenerated cache, local-only). A repo that already carries the pair from another
-manager (a prior device-level plant) is drift-checked by the same version-marker
+manager (a prior device-level plant) is drift-checked by the same copy-on-drift
 mechanism below — the frozen asset here is the SSOT.
 
 ## Retired hooks — remove on re-sync
@@ -59,11 +61,12 @@ already clean, nothing to do.
 
 ## Idempotency — content-aware (copy-on-drift)
 
-Existence alone is not enough: an upstream fix to a frozen script must reach repos
-that already have an older copy. Each frozen script carries a version marker on its
-second line — `# FROZEN <name> vN` (e.g. `# FROZEN commit-channel v4`). The
-present-check compares the **installed** copy's marker against the **asset's** marker
-and re-copies on any mismatch (missing, older, or byte-differing):
+Existence alone is not enough: an upstream fix to a frozen asset — script **or**
+settings snippet — must reach repos that already have an older copy. Each frozen script
+carries a version marker on its second line — `# FROZEN <name> vN` (e.g.
+`# FROZEN commit-channel v5`); a snippet carries no marker, so its check is a
+deep-equal against the asset entry. Both present-checks compare **installed** against
+**asset** and re-place on any mismatch (missing, older, or byte-differing):
 
 ```
 scriptCurrent(name):
@@ -72,18 +75,27 @@ scriptCurrent(name):
   marker-line of installed == marker-line of asset hooks/<name>.sh
   # mismatch (absent | different version | edited) → re-copy the asset verbatim
 
+snippetCurrent(name):
+  entry = the settings.json target-array entry whose command references <name>.sh
+  exists(entry)   AND
+  entry deep-equals asset hooks/<name>.hook.json's entry
+                   (matcher + hooks; the asset's top-level _comment is ignored)
+  # mismatch (absent | differing) → absent: merge the asset entry;
+  #   differing: replace that one entry in place — surgical, touching no other entry
+
 hooksInfraPresent():
   scriptCurrent(commit-channel)              AND
   scriptCurrent(consult-check-sessionstart)  AND
   scriptCurrent(consult-check-check)         AND
-  settings.json hooks.PreToolUse       has an entry whose command references commit-channel.sh          AND
-  settings.json hooks.SessionStart     has an entry whose command references consult-check-sessionstart.sh AND
-  settings.json hooks.UserPromptSubmit has an entry whose command references consult-check-check.sh     AND
+  snippetCurrent(commit-channel)             AND
+  snippetCurrent(consult-check-sessionstart) AND
+  snippetCurrent(consult-check-check)        AND
   .gitignore contains .claude/.consult-catalog
 ```
 
 All current → skip silently (`✓ current`), no message. Any drift → re-copy the drifted
-script (verbatim, overwriting the stale copy), and/or merge the missing settings entry,
+script (verbatim, overwriting the stale copy), and/or merge the missing settings entry
+or replace the drifted one in place,
 and/or re-append `.claude/.consult-catalog` to `.gitignore`,
 report what changed, stage with the Phase 2c commit. This is copy-on-drift, not a
 migration engine — the asset is always the source of truth, the installed copy is

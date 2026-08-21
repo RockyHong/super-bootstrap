@@ -7,7 +7,7 @@
           {
             "type": "command",
             "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/commit-channel.sh\"",
-            "if": "Bash(git commit *)"
+            "if": "Bash(git *)"
           }
         ]
       },

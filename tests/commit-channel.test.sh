@@ -44,6 +44,10 @@ echo "== commit-channel: real invocation from main passes =="
 out=$(run_channel "git commit -m x" "main")
 check "real git commit from main -> allowed" allowed "$out"
 
+echo "== commit-channel: settings snippet pre-filter anchors on the bare command =="
+snippet_if=$(jq -r '.hooks[0].if' "$ASSETS/commit-channel.hook.json")
+check "BUG-039: settings snippet pre-filter anchors on the bare command" [ "$snippet_if" = "Bash(git *)" ]
+
 echo
 echo "RESULT: $pass passed, $fail failed"
 [ "$fail" -eq 0 ]

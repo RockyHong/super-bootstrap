@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# FROZEN commit-channel v4 (single-channel commit guard)
-# Primary filter: the `if: "Bash(git commit *)"` field on the merged settings
-# entry. Defense-in-depth: the command is re-checked in-script; anything that
-# is not a `git commit` passes through untouched.
+# FROZEN commit-channel v5 (single-channel commit guard)
+# Spawn pre-filter: the `if: "Bash(git *)"` field on the merged settings entry
+# anchors on the bare `git` command — a sub-command-anchored pattern misses git
+# global-flag forms (`git -C <dir> commit`, `git --no-pager commit`). The real
+# commit filter is the in-script regex below; non-commit git calls exit 0.
 #
 # Gate: `agent_type` stdin field = the running subagent's frontmatter name
 # (plugin agents may arrive namespaced, e.g. `super-bootstrap:commit`); absent
