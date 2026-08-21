@@ -26,7 +26,7 @@ Trigger: user types `/super-bootstrap:drain`. Never auto-fires.
 
 Run in order; any HALT exits the turn with a §Halt summary.
 
-0. **Ensure infra (idempotent).** Confirm the worktree infra is installed in this repo; install if missing. Procedure + file list: `assets/ensure-infra.md`. First run surfaces a one-time confirm; subsequent runs pass silently when present.
+0. **Ensure infra (idempotent).** Confirm the worktree infra is installed in this repo; install if missing. Procedure + file list: `assets/ensure-infra.md`. First run surfaces a one-time confirm; subsequent runs pass silently when present and current (a drifted frozen asset is re-placed without a confirm and reported — content-aware, `assets/ensure-infra.md §Idempotency`).
 1. **Concurrent-drain check.** `Grep`/`Glob` for `.claude/worktrees/drain-*/OWNED_BY`. Found → surface count + IDs + each worktree's stage; HALT. User merges in-flight branches (`/super-bootstrap:merge`) or `/super-bootstrap:drain release {id}` per abandoned worktree, then re-fires.
 2. **Orphan check.** Any `drain-{id}` worktree dir without a matching open item, or vice-versa → state drift; HALT + surface for repair (gateway, not auto-fix).
 

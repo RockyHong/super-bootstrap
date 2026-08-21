@@ -540,7 +540,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `.claude/settings.json` (core + paired plugin pins seeded at 2a; harness hooks merged at 2a-hooks; drain's `PreToolUse(Read)` guard merged at 2a-drain)
 - `.claude/hooks/commit-channel.sh`, `.claude/hooks/consult-check-{sessionstart,check}.sh` (frozen hook scripts seeded at 2a-hooks — always, default-on)
 - `.gitignore` (when any 2a step appended a line — 2a-hooks' `.claude/.consult-catalog`, 2a-drain's `.claude/worktrees/` + `.drain-status`; skip if every line was already present)
-- `.claude/templates/worktree-settings.local.json` (drain worktree settings template — only if installed this run at 2a-drain)
+- `.claude/templates/worktree-settings.local.json` (drain worktree settings template — only if placed or refreshed on drift this run at 2a-drain)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)
 - `docs/work/README.md` (if newly written, re-planted, or fact-fields block inserted this run at 2a-scale)
