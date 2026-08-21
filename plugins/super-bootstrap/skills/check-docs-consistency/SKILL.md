@@ -51,6 +51,7 @@ Read each file once. While reading, extract everything into a working set:
 - Feature/module names mentioned across multiple docs
 - File paths referenced in any doc
 - Each prose doc's dimension — state-SSOT (truth-now) vs history-SSOT (dated chronicle) — per the classify predicate in `assets/dimension-predicate.md`. Skip harness MDs (CLAUDE.md, skill/agent/rule files — own no-precedent discipline). Needed for Step 2's P2 dimension-pollution check.
+- Catalog rows and their entry files — for each doc (or section) passing the catalog predicate in `assets/catalog-predicate.md`: per row, the **claim set** (what the row asserts about its entry — behavior, arguments, defaults, refusals) and, for the entry file that row resolves to, the **section roster** (`##`/`###` headings plus what each section states). Extract per row against its own file — never a whole-corpus load. Needed for Step 2's P0/P1 catalog-row checks.
 
 **Project-aware extractions (discover from what exists):**
 
@@ -75,11 +76,14 @@ All validations run against the extracted set. Every finding comes from comparin
 - Same concept defined differently in two docs (contradictory definitions)
 - API endpoint/route in one doc but missing or different in another
 - Schema/field in one doc that contradicts another doc's schema
+- Catalog row asserts something its entry file's corresponding section states the negation of (catalog predicate: `assets/catalog-predicate.md`)
+- Catalog row omits a whole named contract-class section of its entry file — a constraint its reader would violate unseen (contract-class per `assets/catalog-predicate.md`)
 
 **P1 — Would Waste Dev Cycles:**
 
 - Concept referenced as if it exists but has been removed or renamed in another doc
 - Component/module in one catalog but missing from another
+- Catalog row omits a whole named descriptive section of its entry file (descriptive per `assets/catalog-predicate.md`)
 - Orphan doc (not referenced by any other file, not an index)
 - Stale doc/file path in orchestration files (referenced file missing, glob has no matches)
 - Removed feature/screen still referenced elsewhere
