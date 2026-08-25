@@ -46,7 +46,7 @@ SUBAGENT_TYPE="$(jq -r '.tool_input.subagent_type // empty' <<< "$PAYLOAD")"
 # Prints the value (surrounding quotes/whitespace stripped), or nothing if absent.
 extract_pin() {
     local raw
-    raw="$(sed -n '1{/^---$/!q};/^---$/,/^---$/{/^model:[[:space:]]*.\+/p}' "$1" | head -n 1)"
+    raw="$(sed -n '1{/^---$/!q;};/^---$/,/^---$/{/^model:[[:space:]]*./p;}' "$1" | head -n 1)"
     [ -n "$raw" ] || return 1
     printf '%s' "$raw" | sed -E 's/^model:[[:space:]]*//; s/[[:space:]]*$//; s/^"(.*)"$/\1/; s/^'"'"'(.*)'"'"'$/\1/'
 }

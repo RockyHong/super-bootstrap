@@ -2,6 +2,7 @@
 paths:
   - "docs/**/*.md"
   - "README.md"
+  - "plugins/*/README.md"
 description: "Fires on read of a prose doc. Link each concept to its SSOT home as you write. Predicate, home-selection edges + placement in work-discipline/doc-link-discipline.md."
 ---
 

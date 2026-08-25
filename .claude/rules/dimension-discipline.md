@@ -2,6 +2,7 @@
 paths:
   - "docs/**/*.md"
   - "README.md"
+  - "plugins/*/README.md"
 description: "Fires on read of a prose doc. Classify its dimension (state vs history) and author to it before propagating. Full predicate in work-discipline/doc-dimension-discipline.md."
 ---
 
