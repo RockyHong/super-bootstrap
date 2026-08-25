@@ -24,7 +24,7 @@ trap 'rm -rf "$TMP"' EXIT
 echo "== doc-links: BUG-040 — no GNU-only BRE escape in any sed BRE expression =="
 # Scope: lines invoking sed in BRE mode (no -E/-r). GNU-only escapes are
 # \+ \? \| — POSIX BRE reads each as the literal character.
-sed_bre_lines="$(grep -nE '(^|\| *)sed ' "$LINKS" | grep -vE 'sed +-[Er]' || true)"
+sed_bre_lines="$(grep -nE '(^|[^a-zA-Z0-9_-])sed ' "$LINKS" | grep -vE 'sed +-[Er]' || true)"
 gnu_hits="$(printf '%s\n' "$sed_bre_lines" | grep -E '\\[+?|]' || true)"
 if [ -z "$gnu_hits" ]; then
   ok "no GNU-only BRE escape (\\+ \\? \\|) in sed BRE expressions"
