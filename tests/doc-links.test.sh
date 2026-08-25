@@ -33,6 +33,20 @@ else
   printf '%s\n' "$gnu_hits" | sed 's/^/        /'
 fi
 
+echo "== doc-links: BUG-042 — no interval expression in any awk regex =="
+# mawk 1.3.4-20200120 (Debian/Ubuntu default awk) and one-true-awk builds before
+# 2019 (macOS) read `{3,}` as literal braces, so the fence toggle never fires and
+# every path inside a fenced block reports as a broken link. The host awk (GNU)
+# accepts intervals, so this is a construct grep, not a behavior test — the
+# cross-awk behavior check runs under Docker (see docs/techstack.md § Coding Patterns).
+interval_hits="$(grep -nE '\{[0-9]+(,[0-9]*)?\}' "$LINKS" || true)"
+if [ -z "$interval_hits" ]; then
+  ok "no interval expression ({n,} / {n,m}) in the asset"
+else
+  bad "interval expression in awk regex:"
+  printf '%s\n' "$interval_hits" | sed 's/^/        /'
+fi
+
 echo "== doc-links: anchor slugs resolve (behavior lock — guards against over-stripping) =="
 mkdir -p "$TMP/ok/docs"
 cat > "$TMP/ok/docs/a.md" <<'EOF'

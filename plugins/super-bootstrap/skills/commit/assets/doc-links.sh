@@ -65,7 +65,7 @@ extract_links() {
     awk '
     BEGIN { in_fence = 0 }
     {
-        if ($0 ~ /^[[:space:]]*(`{3,}|~{3,})/) { in_fence = !in_fence; next }
+        if ($0 ~ /^[ \t]*(```|~~~)/) { in_fence = !in_fence; next }
         if (in_fence) next
         # strip inline code spans (matched backtick-run delimiters) before link matching
         line = $0; out = ""
