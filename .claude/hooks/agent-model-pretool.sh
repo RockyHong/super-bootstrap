@@ -46,7 +46,18 @@ SUBAGENT_TYPE="$(jq -r '.tool_input.subagent_type // empty' <<< "$PAYLOAD")"
 # Prints the value (surrounding quotes/whitespace stripped), or nothing if absent.
 extract_pin() {
     local raw
-    raw="$(sed -n '1{/^---$/!q;};/^---$/,/^---$/{/^model:[[:space:]]*./p;}' "$1" | head -n 1)"
+    # Frontmatter parse runs under BSD awk/sed on macOS, so this stays awk: a
+    # sed script there rejects `;` straight after `}`, and GNU BRE `\+` reads as
+    # a literal plus (measured: `model: opus` does not match, `model: a+` does).
+    # `[ \t]` rather than `[[:space:]]` — older one-true-awk builds carry no
+    # POSIX classes. The leading `sub` keeps a CRLF checkout parseable.
+    raw="$(awk '
+        { sub(/\r$/, "") }
+        NR == 1 && $0 != "---" { exit }
+        NR == 1 { next }
+        $0 == "---" { exit }
+        /^model:[ \t]*[^ \t]/ { print; exit }
+    ' "$1")"
     [ -n "$raw" ] || return 1
     printf '%s' "$raw" | sed -E 's/^model:[[:space:]]*//; s/[[:space:]]*$//; s/^"(.*)"$/\1/; s/^'"'"'(.*)'"'"'$/\1/'
 }
