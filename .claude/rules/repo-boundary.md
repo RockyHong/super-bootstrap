@@ -1,10 +1,13 @@
 ---
-description: "Repo-boundary discipline — state which copy is under test (published vs in-repo dev); route findings to /super-bootstrap:log vs /contribute by ownership; shipped skeletons stay self-contained while the dogfood harness may taste-couple; a dogfood edit propagates to its shipped-skeleton mirror"
+description: "Repo-boundary discipline — state which copy is under test (published vs in-repo dev); route findings by ownership, served copies under this repo's own .claude/ included (/super-bootstrap:log for native artifacts, /contribute for served or imported ones — never a local-clone edit); shipped skeletons stay self-contained while the dogfood harness may taste-couple; a dogfood edit propagates to its shipped-skeleton mirror"
 paths:
   - "CLAUDE.md"
   - "plugins/**"
   - ".claude/rules/**"
   - ".claude/guidelines/**"
+  - ".claude/hooks/**"
+  - ".claude/skills/**"
+  - ".claude/agents/**"
 ---
 
 # Repo Boundary — Copy Under Test, Finding Lanes, Taste-Coupling
@@ -17,10 +20,22 @@ Default: verify against published; work the dev copy only when the session
 explicitly targets it.
 
 **Finding lanes.** Findings about this repo's own artifacts →
-`/super-bootstrap:log`. Findings about device/global Claude config
-(`~/.claude`, served rules, imported work-discipline guidelines) →
-`/contribute` — imported artifacts are read-only here; surface, never edit
-in place.
+`/super-bootstrap:log`. Findings about served or imported artifacts →
+`/contribute` — the door hands the finding to the serving repo's inbox; that
+handoff is the dedup step, so a fix to a served file lands there, never as an
+edit here or in a local clone of the serving repo. Served copies live under this repo's own `.claude/`
+as well as at device level (`~/.claude`, imported work-discipline guidelines).
+Tell a served copy by provenance, per class:
+
+- `rule:` / `agent:` — a `<file>.served` sidecar beside it.
+- `skill:` — a `.served` marker inside the skill directory.
+- `hook:` — no marker; a `.claude/hooks/` file is served when it is
+  byte-identical to `templates/<same name>` in the serving repo.
+
+The serving repo is the path in `~/.claude/.repo-path`; its `must-have.txt`
+lists the served classes but not every served hook, so the byte-compare is
+the hook oracle. Served and imported artifacts are read-only here —
+surface, never edit in place.
 
 **Taste-coupling layers.** Two authoring layers, opposite latitude on wiring the
 author's served `.claude/guidelines/`:

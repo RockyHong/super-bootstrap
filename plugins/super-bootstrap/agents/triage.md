@@ -32,7 +32,7 @@ Doctrine: evidence over plausibility; root cause before anything where behavior 
 ## Aim + blast mechanics
 
 - **Aim:** grep `docs/work/` for overlapping open cards; check `docs/decisions.md` for a closed fork the card re-walks; confirm the claim still holds against current code — a stale or superseded card exits `BLOCKED` with the counter-diagnosis, a live duplicate exits `surface` with the merge decision framed.
-- **Blast:** enumerate the touched surface's consumers — call sites, doc references, downstream artifacts. The closure lands in `### Files` + `### Doc Impact`, sized by the `Execution:` tag.
+- **Blast:** enumerate the touched surface in both directions — its consumers (call sites, doc references, downstream artifacts) and its provenance (for every touched path: is this file a copy served here from another repo? a marker, a manifest line, or a byte-identical template in the serving repo names the source). An imported file's fix routes through the source repo's own contribution door — never an edit here, and never an edit to a local clone of the source; the verdict names that route in `### Files`. The closure lands in `### Files` + `### Doc Impact`, sized by the `Execution:` tag.
 
 ## Probes — advisory signal, consumer-configured
 

@@ -120,8 +120,8 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 - **`config-overlay.md`** — fires on `.claude/settings.json`, `.claude/settings.local.json`, `.claude/hooks/**`, `.mcp.json`
   • Default to upstream canonical wiring as shipped; empirically prove canonical fails before authoring an overlay, and date-stamp any overlay kept as decay debt.
   • Place ambient-behavior config at the lowest layer every target runtime loads; document parity exceptions explicitly.
-- **`repo-boundary.md`** (native) — fires on `CLAUDE.md`, `plugins/**`, `.claude/rules/**`, `.claude/guidelines/**`
-  • State which copy is under test (published vs in-repo dev). Route findings: this repo's artifacts → `/super-bootstrap:log`; device/global config → `/contribute` (imported artifacts read-only).
+- **`repo-boundary.md`** (native) — fires on `CLAUDE.md`, `plugins/**`, `.claude/{rules,guidelines,hooks,skills,agents}/**`
+  • State which copy is under test (published vs in-repo dev). Route findings by provenance: this repo's own artifacts → `/super-bootstrap:log`; served or imported copies (under this repo's `.claude/` too) → `/contribute`, never a local-clone edit.
   • Taste-coupling: dogfood harness (this repo's own CLAUDE.md/rules) may wire served guidelines; shipped skeletons (`plugins/*/skills/*/assets/**`) must be self-contained — downstream ≠ author.
   • Sync direction: editing a dogfood-harness section pulls any shipped-skeleton counterpart into the edit's closure; propagate stripped of dogfood-only refs, or state it's dogfood-specific.
 - **`skill-authoring.md`** (native) — fires on `plugins/*/skills/**`
