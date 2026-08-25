@@ -9,7 +9,9 @@
 #
 # Run from repo root. docs/ may be absent (treated as empty).
 # External links (http/https/mailto) and empty targets are skipped.
-# Links inside fenced code blocks (```/~~~) and inline code spans are ignored.
+# Links inside fenced code blocks (```/~~~) and inline code spans are ignored;
+# a fence closes only on the same character with a run at least as long as its
+# opener and nothing after it, so a nested shorter fence stays inside the block.
 # Anchor slugs: GitHub-style (lowercase, strip non-alnum except hyphens/spaces/underscores, spaces→hyphens).
 
 set -uo pipefail
@@ -63,9 +65,26 @@ normalize_path() {
 # Extract inline markdown links from file. Output: lineno TAB raw-target
 extract_links() {
     awk '
-    BEGIN { in_fence = 0 }
+    BEGIN { in_fence = 0; fence_char = ""; fence_len = 0 }
     {
-        if ($0 ~ /^[ \t]*(```|~~~)/) { in_fence = !in_fence; next }
+        # fence lines: opening records the opener char + run length; a closer needs
+        # the same char, a run at least as long, and nothing but whitespace after it
+        # (an info string marks an opener, never a closer). No interval expressions.
+        if (match($0, /^[ \t]*(`+|~+)/)) {
+            run = substr($0, RSTART, RLENGTH)
+            sub(/^[ \t]*/, "", run)
+            fchar = substr(run, 1, 1)
+            flen  = length(run)
+            frest = substr($0, RSTART + RLENGTH)
+            if (flen >= 3) {
+                if (!in_fence) {
+                    in_fence = 1; fence_char = fchar; fence_len = flen
+                } else if (fchar == fence_char && flen >= fence_len && frest ~ /^[ \t]*$/) {
+                    in_fence = 0; fence_char = ""; fence_len = 0
+                }
+                next
+            }
+        }
         if (in_fence) next
         # strip inline code spans (matched backtick-run delimiters) before link matching
         line = $0; out = ""

@@ -82,6 +82,59 @@ EOF
 out="$(cd "$TMP/bad" && bash "$LINKS" check 2>&1)"; rc=$?
 check "negative fixture: missing anchor -> non-zero exit" [ "$rc" -ne 0 ]
 
+echo "== doc-links: BUG-043 — fence close honors opener char/run-length (nesting) =="
+# (a) An outer longer-run fence wrapping an inner ```-fence: the toggle closed the
+# outer block at the inner opener, so the inner body's link leaked out as a real
+# target. Also covers an inner opener carrying an info string at the OUTER run
+# length — a closer never carries an info string, so it must not close the outer.
+mkdir -p "$TMP/nest/docs"
+: > "$TMP/nest/docs/realA.md"
+: > "$TMP/nest/docs/realA2.md"
+cat > "$TMP/nest/docs/a.md" <<'EOF'
+# Doc A
+
+Before [p](./realA.md).
+
+````
+```
+See [inner](./insideInner.md).
+```
+````bash
+See [inner2](./insideInner2.md).
+````
+
+After [q](./realA2.md).
+EOF
+
+out="$(cd "$TMP/nest" && bash "$LINKS" check 2>&1)"; rc=$?
+if [ "$rc" -eq 0 ] && [ -z "$out" ]; then
+  ok "nested longer-run fence: inner body links stay unchecked, check exits 0"
+else
+  bad "nested longer-run fence: inner body links stay unchecked, check exits 0 (rc=$rc)"
+  printf '%s\n' "$out" | sed 's/^/        /'
+fi
+
+# (b) Odd fence-line count inside a wrapped block (a doc showing what an opener
+# looks like): the toggle left in_fence set past the true outer closer, silently
+# swallowing every later prose link instead of checking it.
+mkdir -p "$TMP/odd/docs"
+cat > "$TMP/odd/docs/b.md" <<'EOF'
+# Doc B
+
+````
+```
+````
+
+After [r](./realB.md).
+EOF
+
+out="$(cd "$TMP/odd" && bash "$LINKS" check 2>&1)"; rc=$?
+if [ "$rc" -ne 0 ] && printf '%s' "$out" | grep -q 'docs/realB.md'; then
+  ok "odd fence count in wrapped block: link after outer closer is still checked"
+else
+  bad "odd fence count in wrapped block: link after outer closer is still checked (rc=$rc)"
+  printf '%s\n' "$out" | sed 's/^/        /'
+fi
 echo
 echo "RESULT: $pass passed, $fail failed"
 [ "$fail" -eq 0 ]
