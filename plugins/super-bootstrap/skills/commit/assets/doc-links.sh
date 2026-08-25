@@ -11,7 +11,7 @@
 # External links (http/https/mailto) and empty targets are skipped.
 # Links inside fenced code blocks (```/~~~) and inline code spans are ignored;
 # a fence closes only on the same character with a run at least as long as its
-# opener and nothing after it, so a nested shorter fence stays inside the block.
+# opener and nothing but whitespace after it, so a nested shorter fence stays inside the block.
 # Anchor slugs: GitHub-style (lowercase, strip non-alnum except hyphens/spaces/underscores, spaces→hyphens).
 
 set -uo pipefail
