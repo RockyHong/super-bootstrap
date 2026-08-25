@@ -43,7 +43,7 @@ Active development.
 
 `.claude-plugin/marketplace.json` — self-hosted marketplace declaration; `source` field pins the install boundary
 `docs/` — dev-workspace docs (this file, [`techstack.md`](techstack.md), [`specs/`](specs/), [`work/`](work/README.md), plus `agents/` — config the installed mattpocock/skills set reads, per [`specs/mattpocock-coexistence.md`](specs/mattpocock-coexistence.md)); never ships to users
-`tests/` — 2 shell smoke tests (`commit-channel.test.sh`, `render-menu.test.sh`)
+`tests/` — 3 shell smoke tests (`commit-channel.test.sh`, `doc-links.test.sh`, `render-menu.test.sh`)
 `bench/` — 3 measured fixtures kept beside the SSOT they test: `catalog-axis/` (RED fixture + tier probe for `check-docs-consistency`'s catalog-row axis), `consult-hook/` (test surface for the shipped `consult-check` pair), `todo-board/` (golden test for the `todo` board renderer)
 
 ## Data Flow

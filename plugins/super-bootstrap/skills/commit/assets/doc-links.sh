@@ -38,7 +38,7 @@ slugify() {
 anchor_exists() {
     local file="$1" anchor="$2" slugs
     slugs="$(grep '^#' "$file" 2>/dev/null \
-        | sed 's/^#\+ *//' \
+        | sed 's/^#* *//' \
         | while IFS= read -r h; do slugify "$h"; done)"
     grep -qxF -- "$anchor" <<<"$slugs"
 }
