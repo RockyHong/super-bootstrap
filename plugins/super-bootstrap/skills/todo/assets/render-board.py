@@ -35,14 +35,18 @@ judgment call, the encoding is the documented mechanical reading:
 - Harness subgroup = `apply` only on an explicit bounded-fix marker in the origin
                     (typo / path fix / broken link / formatting / one-line),
                     else `deliberate` (the spec's careful-handle default).
+- Venue lane      = with the scale module wired, the need-me partition reads each
+                    row's venue off a built-in encoding of the shipped venue-map
+                    skeleton (§ venue map below), never the placed file; a placed
+                    map whose tables differ draws a stderr notice, not a different
+                    board. Unwired, the partition is the intent axis, unchanged.
 - Outward entry   = `### OUT-### — {summary}` under `## Entries`; fields read by
                     their bold labels. `unblocks` = 1 when `Owning card:` names an
                     open card, else 0 — leverage signal only: an outward row's
                     Impact stays `quick-pop` (the repo moves nothing here), and its
                     Context cell renders the entry's repo tail.
 
-Exit codes: 0 board rendered · 2 usage · 3 defer to dispatch (venue map wired —
-the scale module's map is prose this script does not parse) · 4 substrate absent.
+Exit codes: 0 board rendered · 2 usage · 4 substrate absent.
 stdout carries the board only. stderr carries `# sources:` diagnostics.
 """
 import argparse
@@ -82,6 +86,54 @@ VERB_PRIORITY = ["Start execute", "Continue execute", "Review", "Manually verify
                  "Approve design", "Decide", "Outward", "Implement", "Write plan",
                  "Settle design", "Deliberate", "Apply", "Triage"]
 STAGE_ORDER = {"raw": 0, "triaged": 1, "aimed": 2, "executing": 3, "review": 4}
+
+# ---------- venue map (scale module) ----------
+#
+# Built-in encoding of the scale module's phase → run-location map. Provenance: the
+# shipped skeleton `skills/harness-bootstrap/assets/scale/rules-venue-map-skeleton.md`
+# (§ Venues + § Derivation + § Modality overrides), transcribed once at authoring
+# time — the placed `.claude/rules/venue-map.md` is never parsed. `venue()` encodes
+# the derivation; VENUE_MAP_TABLES holds the same three tables and feeds the
+# divergence notice only.
+#
+# Divergence normalization = table rows alone (a line whose stripped form opens
+# with `|`), cells stripped, separator rows dropped. Prose around the tables is
+# free to be reworded without touching the lane; a table cell is what the encoding
+# would have to follow, so a table cell edit is what the notice reports.
+VENUE_MAP_TABLES = """Venue|Meaning|Cloud-run|Drainable
+**T**|Tooling/headless — artifact via tooling alone|yes|yes, in-worktree
+**S**|Stack-bound — needs a real runner (emulator/ports/browser), no human|no|via gateway merge-probe
+**U**|User-walled — needs human eyes/decision|no|no — halts to user
+**P**|Probe/stochastic — LLM-eval, cost-sensitive, non-deterministic|no|no — excluded
+Stage|Next phase|Venue
+`raw`|Triage|**T**
+`triaged`|Implement|derive — § Modality overrides over the card's Verdict block
+`aimed`|Execute|derive — § Modality overrides
+`executing`|Execute|derive — § Modality overrides
+`review`|Review|**T** — manual-verification arm → **U** / **S** per Test-feel
+Signal|Effect
+`Stochastic: llm`|triage / build / test → **P**; plan-write / aim-settle / doc stay **T**
+visual-taste acceptance|acting phase → **U** — who accepts this as done? the user's eyes → U (never keyword matching)
+`Test-feel: e2e`|verify phase → **S**
+`Test-feel: manual`|verify phase → **U**
+"""
+NEEDME_GROUPS = ("decide", "outward", "device", "harness", "probe")
+GROUP_HEADINGS = {"decide": "Decide / approve", "outward": "Outward — your move",
+                  "device": "Device-bound", "harness": "Harness", "probe": "Probe / grant"}
+
+
+def map_tables(text):
+    """The placed map's table rows, normalized for the divergence compare."""
+    rows = []
+    for ln in text.splitlines():
+        s = ln.strip()
+        if not s.startswith("|"):
+            continue
+        cells = [c.strip() for c in s.strip("|").split("|")]
+        if all(re.fullmatch(r":?-+:?", c) for c in cells):
+            continue
+        rows.append("|".join(cells))
+    return "\n".join(rows) + "\n"
 
 
 def die(code, msg) -> NoReturn:
@@ -140,7 +192,7 @@ class Card:
             b.body = "\n".join(b.body)
         self.origin = "\n".join(origin_lines)
         self.fields = {}
-        for m in re.finditer(r"\*\*(Logged|Source|Problem|Area|Prior|Actor):\*\*\s*([^\n·]*)", self.origin):
+        for m in re.finditer(r"\*\*(Logged|Source|Problem|Area|Prior|Actor|Test-feel|Stochastic):\*\*\s*([^\n·]*)", self.origin):
             self.fields[m.group(1)] = m.group(2).strip()
         self.text = text
 
@@ -170,6 +222,7 @@ class Row:
         self.outward = False                   # docs/outward.md entry (§c)
         self.context: Optional[str] = None     # Context cell override (outward: repo tail)
         self.progress: Optional[Tuple[int, int]] = None
+        self.modality = ("", "")               # (Test-feel, Stochastic) — venue signals
         self.impact = "quick-pop"
         self.blast = "local"
         self.fanout = 0
@@ -239,6 +292,27 @@ def cloud_safe(row_kind, plan_text, design_text, files_paths):
     if row_kind == "execute" and any(DEVICE_PATH_RE.search(p) for p in ps):
         return "Device"
     return "Cloud"
+
+
+def modality(card):
+    """The venue signals a card carries — `(Test-feel, Stochastic)`, case-folded.
+
+    Two surfaces hold them: the origin block's scale-module fact fields
+    (`harness-bootstrap/assets/scale/card-fact-fields.md`) and the triage Verdict
+    block's `### Test Strategy:` line. The origin field wins — it is the
+    capture-time fact, the Verdict a per-phase strategy. An unfilled Verdict
+    template value (`unit | e2e`) reads as absent.
+    """
+    if card is None:
+        return "", ""
+    tf = card.fields.get("Test-feel", "").strip().lower()
+    st = card.fields.get("Stochastic", "").strip().lower()
+    if not tf:
+        v = card.latest("Verdict")
+        m = re.search(r"^#*\s*Test Strategy:\s*(.+?)\s*$", v.body, re.M) if v else None
+        if m and "|" not in m.group(1):
+            tf = m.group(1).strip().lower()
+    return tf, st
 
 
 def classify_card(card):
@@ -313,6 +387,7 @@ def classify_card(card):
         hrow.subgroup, hrow.progress = subgroup, row.progress
         row = hrow
     row.recency = card.recency
+    row.modality = modality(card)
     return row
 
 
@@ -344,6 +419,7 @@ def classify_queue(queue_text, cards_by_id):
                 src = cards_by_id.get(m.group(1))
                 if src:
                     row.blast_paths = paths_in(src.fields.get("Area", ""))
+                    row.modality = modality(src)
             rows.append(row)
     return rows, suppressed
 
@@ -507,7 +583,77 @@ def context_cell(r):
     return f"{sent} (unblocks {r.fanout})" if r.fanout else (sent or "—")
 
 
-def render(mode, rows, uncat, held_count, date):
+def venue(row):
+    """The row's next-phase venue — § Derivation over its stage, downgraded by
+    § Modality overrides (VENUE_MAP_TABLES). Judgment the tables leave open, and
+    the mechanical reading taken here:
+
+    - visual-taste acceptance is explicitly "never keyword matching" and no fact
+      field carries it, so it is not encoded — a card that wants the **U** lane
+      declares `Test-feel: manual`.
+    - a modality field gates only its own phase: `Test-feel` gates verify, so a
+      build phase (`triaged` / `aimed` / `executing`) is never downgraded by it.
+    - the verify phase takes `Test-feel` alone: § Derivation sends `review` to
+      **T**, naming Test-feel as its only override, so `Stochastic: llm` cannot
+      downgrade it — that signal covers the triage / build / test phases the
+      Derivation table leaves to § Modality overrides.
+    - a `Manually verify` row IS the review row's manual-verification arm,
+      whatever fields its back-pointed card carries.
+    """
+    tf, st = row.modality
+    if row.verb == "Manually verify":
+        return "S" if tf == "e2e" else "U"
+    if row.stage == "review":
+        if tf == "manual":
+            return "U"
+        if tf == "e2e":
+            return "S"
+        return "T"
+    return "P" if st == "llm" else "T"
+
+
+def wired_lane(row):
+    """§ Lane split, venue-map-wired arm: venue → lane, with `intent: Harness`,
+    `intent: Discuss`, and an outward source each winning over the venue."""
+    if row.intent == "Harness":
+        return "need-me", "harness"
+    if row.outward:
+        return "need-me", "outward"
+    if row.intent == "Discuss":
+        return "need-me", "decide"
+    v = venue(row)
+    if v in ("T", "S"):
+        return "drainable", None
+    if v == "P":
+        return "need-me", "probe"
+    device = row.modality[0] == "manual" or row.verb == "Manually verify"
+    return "need-me", ("device" if device else "decide")
+
+
+def unwired_lane(row):
+    """§ Lane split, venue-map-absent arm: the intent axis (no `probe` group —
+    **P** folds into the cloud-safe axis, **S** into Device)."""
+    if row.intent == "Cloud":
+        return "drainable", None
+    if row.outward:
+        return "need-me", "outward"
+    if row.intent == "Discuss":
+        return "need-me", "decide"
+    if row.intent == "Device":
+        return "need-me", "device"
+    return "need-me", "harness"
+
+
+def partition(rows, wired):
+    """Drainable rows + the need-me groups in the scaffold's fixed order."""
+    drainable, by_group = [], {g: [] for g in NEEDME_GROUPS}
+    for r in rows:
+        lane, group = wired_lane(r) if wired else unwired_lane(r)
+        (drainable if lane == "drainable" else by_group[group]).append(r)
+    return drainable, [(GROUP_HEADINGS[g], by_group[g]) for g in NEEDME_GROUPS]
+
+
+def render(mode, rows, uncat, held_count, date, wired=False):
     body_rows = [r for r in rows if not r.hard_blocked]
     counts = {k: sum(1 for r in body_rows if r.intent == k) for k in ("Discuss", "Cloud", "Device", "Harness")}
     total = sum(counts.values())
@@ -521,20 +667,15 @@ def render(mode, rows, uncat, held_count, date):
             [[str(i + 1), name, reason] for i, (name, reason) in enumerate(uncat)])
 
     if mode == "needme":
-        drainable = [r for r in body_rows if r.intent == "Cloud"]
-        needme = [r for r in body_rows if r.intent != "Cloud"]
+        drainable, grouped = partition(body_rows, wired)
+        needme = [r for _, grp in grouped for r in grp]
         if not needme and not drainable and not uncat and not held_count:
             return f"# To-Do — {date}\n\nNo active work. Ground something with /super-bootstrap:log or give me a task."
         out.append(f"# To-Do — {date}")
         out.append(f"Drainable: {len(drainable)}  →  /super-bootstrap:drain\n")
         if needme:
             out.append("▸ Need me")
-            groups = [("Decide / approve",
-                       [r for r in needme if r.intent == "Discuss" and not r.outward]),
-                      ("Outward — your move", [r for r in needme if r.outward]),
-                      ("Device-bound", [r for r in needme if r.intent == "Device"]),
-                      ("Harness", [r for r in needme if r.intent == "Harness"])]
-            for heading, grp in groups:
+            for heading, grp in grouped:
                 if not grp:
                     continue
                 ranked = sort_rows(grp, with_fanout=True)
@@ -632,8 +773,11 @@ def main():
     except SystemExit:
         die(2, "usage: render-board.py <project-root> <mode> [--date YYYY-MM-DD]")
 
-    if os.path.isfile(os.path.join(args.root, ".claude/rules/venue-map.md")):
-        die(3, "# defer: venue map wired — the scale module's lane belongs to the todo agent dispatch")
+    placed_map = os.path.join(args.root, ".claude/rules/venue-map.md")
+    wired = os.path.isfile(placed_map)
+    if wired and map_tables(read(placed_map)) != VENUE_MAP_TABLES:
+        print("# note: local venue-map edits are not honored by the script lane "
+              "(map differs from the shipped skeleton)", file=sys.stderr)
     work = os.path.join(args.root, "docs/work")
     if not os.path.isdir(work):
         die(4, "# defer: docs/work absent — skip-gate should have caught this")
@@ -678,7 +822,7 @@ def main():
         compute_impact(r)
     held = sum(1 for r in rows if r.hard_blocked)
 
-    print(render(args.mode, rows, uncat, held, args.date))
+    print(render(args.mode, rows, uncat, held, args.date, wired))
     print(f"# sources: docs/work ({len(cards)} cards); test-queue ({len(queue_rows)} entries); "
           f"outward ({len(outward_rows)} entries); held {held}", file=sys.stderr)
 

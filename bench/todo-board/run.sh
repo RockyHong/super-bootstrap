@@ -65,4 +65,30 @@ for m in needme full; do
     fail=1
   fi
 done
+# Wired venue map (scale module installed). The board renders from the script's
+# built-in encoding of the shipped skeleton; the divergent-map root additionally
+# emits a one-line stderr notice, appended to its golden (`# sources:` is not).
+for m in needme full; do
+  if "$PY" "$SCRIPT" bench/todo-board/fixture-venue "$m" --date "$DATE" 2>/dev/null      | diff "bench/todo-board/expected/$m-venue.md" - >/dev/null; then
+    echo "PASS $m-venue"
+  else
+    echo "FAIL $m-venue"
+    "$PY" "$SCRIPT" bench/todo-board/fixture-venue "$m" --date "$DATE" 2>/dev/null       | diff "bench/todo-board/expected/$m-venue.md" -
+    fail=1
+  fi
+done
+err=$(mktemp)
+render_edited() {
+  "$PY" "$SCRIPT" bench/todo-board/fixture-venue-edited needme --date "$DATE" 2>"$err"
+  grep '^# note:' "$err"
+}
+if render_edited | diff "bench/todo-board/expected/needme-venue-edited.md" - >/dev/null; then
+  echo "PASS needme-venue-edited"
+else
+  echo "FAIL needme-venue-edited"
+  render_edited | diff "bench/todo-board/expected/needme-venue-edited.md" -
+  fail=1
+fi
+rm -f "$err"
+
 exit "$fail"

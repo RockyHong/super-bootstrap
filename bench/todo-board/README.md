@@ -25,8 +25,22 @@ scaffolds, or the script re-runs this bench (`bash bench/todo-board/run.sh`).
   entries (one with an `Owning card:` back-pointer): the outward group — its own
   need-me table, `unblocks` from the owning card, the card's own `Triage` row still
   drainable.
+- `fixture-venue/` — the scale module wired: a `.claude/rules/venue-map.md`
+  copied from the shipped skeleton (the compare reads its tables, so prose
+  rewordings upstream leave this green), plus cards exercising the wired lane split
+  (`agents/todo.md` § Lane split) — raw → **T** drainable · `Stochastic: llm` →
+  **P** probe · review-stage `Test-feel: manual` → **U** device (its intent is
+  still `Cloud`, so the group can only come from the venue) · review-stage
+  `Test-feel: e2e` → **S** drainable · review-stage `Stochastic: llm` with no
+  `Test-feel` → **T** drainable (the verify phase takes `Test-feel` alone) ·
+  `surface` verdict and `Actor: author` →
+  decide (intent `Discuss` wins over venue) · triaged `Test-feel: manual` → **T**
+  drainable (a modality field gates only its own phase, and verify is not the
+  next phase here).
+- `fixture-venue-edited/` — the same cards under a map whose Venues table differs
+  from the skeleton by one cell: identical board, plus the `# note:` stderr line.
 - `expected/` — goldens for all six modes plus the empty, all-blocked, external-wait,
-  actor, and outward states, pinned to `--date 2026-08-14`.
+  actor, outward, and wired-map states, pinned to `--date 2026-08-14`.
 
 One known accepted divergence from a cold agent render: the soft-coupling
 *direction* cell is mechanically normalized (the row declaring the shared path
