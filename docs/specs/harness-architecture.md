@@ -427,7 +427,8 @@ Two constraints outlive the change:
 
 - Retiring the cloud-safe derivation must replace drain's admission predicate
   (`eligibility.md` Cloud-gate fallback) in the same change — without the venue map
-  `intent == Cloud` is drain's whole gate.
+  `intent == Cloud` is drain's whole admission gate (the intent lane guards — `Harness`,
+  `Discuss` — sit in front of it either way).
 - A hit outside §4's two sanctioned classes is a regression, whether it dispatches or only
   reads as prose.
 

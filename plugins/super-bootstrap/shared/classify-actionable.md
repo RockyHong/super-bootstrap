@@ -18,7 +18,7 @@ Three outputs per item:
 
 Before the verb map and any per-source rule: an item whose **deliverable is the harness layer** — `CLAUDE.md`, anything under `.claude/` (rules, skills, agents, hooks, settings), plugin-source harness files (`plugins/*/{skills,agents,shared}/**`, in repos that ship plugins), or a harness-source top-level layout (`skills/*/SKILL.md`, `agents/**`, `rules/**` at the repo root — the shape a repo uses when Claude configuration *is* its product, shipping harness at the tree root rather than under `.claude/` or `plugins/`) — classifies **intent: Harness**, regardless of verb or state. Judge from the card's `Area:` field, its Verdict-block `Files` paths, or its Plan-block step paths: the discriminator is the harness-file marker, not its directory prefix — a `SKILL.md`, agent, or rule target is a harness deliverable wherever it sits. A product change that touches a harness file incidentally is NOT harness — classify by the dominant surface; Harness = the harness file IS the deliverable.
 
-The harness layer is the orchestration engine: it never rides the autonomous queue. A row the pre-filter catches exits here — intent: `Harness`, subgroup assigned below — before any cloud-safe derivation or content read. Consumers gating on `intent == Cloud` (drain) exclude Harness rows for free.
+The harness layer is the orchestration engine: it never rides the autonomous queue. A row the pre-filter catches exits here — intent: `Harness`, subgroup assigned below — before any cloud-safe derivation or content read. drain's intent lane guard excludes Harness rows before its admission gate runs.
 
 Each Harness row carries a `subgroup` tag:
 
@@ -114,6 +114,6 @@ If `docs/test-queue.md` doesn't exist, skip §b.
 This spec stops at `{action, intent, stage}`. What each caller does next is **its own** concern, not shared here:
 
 - **`todo`** — Impact/Blast tags, coupling gate, harness Deliberate/Apply grouping, within-mode ranking, scaffold render. Lives in `skills/todo/assets/render-board.py` (primary, mechanical encoding) and `agents/todo.md` (dispatch-lane fallback).
-- **`drain`** — `Cloud`-gate, relation-analysis (file-overlap parallelism), wave selection, worktree spawn, stage-keyed phase entry. Lives in `skills/drain/`. `Harness` rows fail the `Cloud` gate by construction — the engine never drains.
+- **`drain`** — intent lane guards (`Harness` and `Discuss` never admit), then the admission gate (next-phase venue when the scale module is wired, `Cloud` otherwise), relation-analysis (file-overlap parallelism), wave selection, worktree spawn, stage-keyed phase entry. Lives in `skills/drain/`.
 
 Edit the classification here; edit each caller's downstream in its own home.

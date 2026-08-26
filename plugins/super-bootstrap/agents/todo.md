@@ -37,10 +37,14 @@ re-derive it:
 | **U**, no device modality | need-me | **decide** |
 | **U** via device modality (visual-taste / `Test-feel: manual`) | need-me | **device** |
 | **P** (probe/stochastic) | need-me | **probe** |
+| `intent: Discuss` (user-decision shape — intent-map-locked verb or wait override) | need-me | **decide** |
 | `intent: Harness` (pre-filter, drain-excluded) | need-me | **harness** |
 
-`intent: Harness` wins over venue — the harness layer never drains, whatever its
-phase venue. The modality that splits **U** into decide vs device is read from the
+`intent: Harness` and `intent: Discuss` win over venue — the harness layer never
+drains, and a user-decision row (a verb the shared spec's intent map locks to `Discuss`,
+or its wait override) lands in **decide** whatever its phase venue: venue is advisory
+run-location metadata that never overrides `{action, intent, stage}`
+(`venue-map.md §Consumer boundary`). The modality that splits **U** into decide vs device is read from the
 row's fields (the same signals `venue-map.md §Modality overrides` consumes), never
 by keyword-guessing the action text.
 

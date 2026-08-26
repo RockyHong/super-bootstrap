@@ -2,7 +2,7 @@
 
 Called from `SKILL.md §Shape` step 2, after the shared classification (`../../shared/classify-actionable.md`) has produced `{action, intent, stage}` for every open item across the `docs/work/` card set, plus the test queue when present.
 
-Admission has two layers: **lane guards** (venue-independent — claim-freedom, harness exclusion) always apply, then an **admission gate** that is venue-keyed when the scale module is wired and Cloud-keyed otherwise. Type (BUG/DEBT/GAP) is **never** a gate — a clear GAP that admits drains; a device-bound BUG does not.
+Admission has two layers: **lane guards** (venue-independent — claim-freedom, harness exclusion, the user-decision shape) always apply, then an **admission gate** that is venue-keyed when the scale module is wired and Cloud-keyed otherwise. Type (BUG/DEBT/GAP) is **never** a gate — a clear GAP that admits drains; a device-bound BUG does not.
 
 ## isEligible
 
@@ -10,6 +10,7 @@ Admission has two layers: **lane guards** (venue-independent — claim-freedom, 
 isEligible(item):
   # --- Lane guards (always apply, independent of the admission gate) ---
   if item.intent == "Harness":  return false, "Harness — orchestration engine, never drains"
+  if item.intent == "Discuss":  return false, "user-decision shape — only the user can resolve; surfaces as a Decide row"
   if claimed(item):             return false, "already in flight"                 # .claude/worktrees/drain-{id}/ exists
   if onUnmergedBranch(item):    return false, "work already on an unmerged branch — no double-claim"
   if item.uncategorized:        return false, "foreign prefix — route to /super-bootstrap:log"
@@ -27,6 +28,7 @@ isEligible(item):
 - `claimed(item)` — a `drain-{id}` worktree dir exists (`Grep`/`Glob` on `OWNED_BY`). Read-around discipline: never `Read` inside the worktree.
 - `onUnmergedBranch(item)` — `git branch --no-merged {base}` names a branch for this item (e.g. an in-flight `drain/{id-lower}` or a manual feature branch). Excludes it so drain never branches a second worktree over live work.
 - `item.intent == "Harness"` — the harness layer is the orchestration engine; it never rides the autonomous queue (`../../shared/classify-actionable.md §Harness pre-filter`). Harness rows are excluded in both the venue and the Cloud-gate paths — they route to `/super-bootstrap:todo`'s harness lane, never drain.
+- `item.intent == "Discuss"` — the shared classification's user-decision shape — a row its §Action-verb intent map locks to `Discuss`, or one its §Wait override marks as waiting on a named party (the user or an external one). Intent is venue-independent — the venue map is advisory run-location metadata that never overrides `{action, intent, stage}` (`.claude/rules/venue-map.md §Consumer boundary`) — so the guard runs before the venue read in both admission layers; the row surfaces on `/super-bootstrap:todo`'s decide group.
 
 ## Admission gate — venue when wired, Cloud-gate when not
 
