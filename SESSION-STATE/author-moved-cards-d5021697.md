@@ -1,8 +1,8 @@
-# Carry — GAP-064: pilot sync issues resolved in-repo (unreleased); migration tail still open
+# Carry — GAP-064: pilot sync issues shipped as v2.41.0; migration tail still open
 
 ## Anchor
 
-GAP-064 + OUT-001. Pilot (Magnetized Remake) synced 2.34.2 → 2.40.0, verdict `SYNC WITH ISSUES` — mechanism clean. The three producer findings are resolved on `main` (DEBT-096 `2770607` test-queue parser + note · DEBT-098 `5479fde` declined · DEBT-097 `7ae4935` stale-vs-fork hook copy-on-drift) but **unreleased** — consumers still run 2.40.0. Card + OUT-001 close only when the pilot migrates its author-moved cards (its DEBT-088).
+GAP-064 + OUT-001. Pilot (Magnetized Remake) synced 2.34.2 → 2.40.0, verdict `SYNC WITH ISSUES` — mechanism clean. The three producer findings are resolved on `main` (DEBT-096 `2770607` test-queue parser + note · DEBT-098 `5479fde` declined · DEBT-097 `7ae4935` stale-vs-fork hook copy-on-drift) and released as **v2.41.0** (tag pushed). Card + OUT-001 close only when the pilot migrates its author-moved cards (its DEBT-088).
 
 ## Read first
 
@@ -13,12 +13,12 @@ GAP-064 + OUT-001. Pilot (Magnetized Remake) synced 2.34.2 → 2.40.0, verdict `
 
 ## State
 
-`f5c26c0` (cards) pushed; `2770607` · `5479fde` · `7ae4935` (fixes) on `main`, push pending at close. Platform finding (user-scope plugin pin overriding project-scope) → `/contribute` to claude-shape lore alongside the two from the jowagoko sync — not yet filed.
+`f5c26c0` (cards) pushed; `2770607` · `5479fde` · `7ae4935` (fixes) + `d9f4fe8` (release v2.41.0) pushed; `main == origin/main`. Installed plugin cache still 2.40.0 → `/plugin update super-bootstrap` + restart before the pilot sync. Platform finding (user-scope plugin pin overriding project-scope) → `/contribute` to claude-shape lore alongside the two from the jowagoko sync — not yet filed.
 
 ## Next step
 
 1. Pilot repo: migrate its author-moved cards per its DEBT-088 → here: delete `docs/work/GAP-064.md` + OUT-001 via `/super-bootstrap:commit` (card-lifecycle exemption). Then this carry clears.
-2. `/release` (v2.41.0 — parser fix + fork-aware copy-on-drift + `placed` receipt field) so the pilot's re-sync exercises the new hook path: its first sync after upgrade will raise fork prompts for its multi-root `consult-check-*` (no `placed` entry) — expected; pick `keep` until GAP-065 lands.
+2. `/plugin update super-bootstrap` (→ 2.41.0) + restart; pilot re-runs `/super-bootstrap:harness-bootstrap` sync — the new hook path: its first sync after upgrade will raise fork prompts for its multi-root `consult-check-*` (no `placed` entry) — expected; pick `keep` until GAP-065 lands.
 3. `/contribute` the plugin-scope-resolution lore (three platform findings now).
 
 ## Watch-outs
