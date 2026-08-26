@@ -135,6 +135,164 @@ else
   bad "odd fence count in wrapped block: link after outer closer is still checked (rc=$rc)"
   printf '%s\n' "$out" | sed 's/^/        /'
 fi
+
+# ---------------------------------------------------------------------------
+# BUG-045 — one-pass slug table + fork-free resolve path.
+# Three locks: (a) output parity across the four finding classes plus `.`/`..`
+# normalization, (b) the constructs whose per-link forks caused the blow-up,
+# (c) a wall-clock ceiling on a synthetic 50-doc surface. The ceiling is
+# deliberately generous: fork cost is platform-bound (msys ~10-20 ms, Linux far
+# less), so the lock asserts an order of magnitude, never a tight number.
+# ---------------------------------------------------------------------------
+
+echo "== doc-links: BUG-045 — finding-class parity (missing path / target anchor / intradoc anchor / . + .. normalization) =="
+mkdir -p "$TMP/parity/docs/sub"
+cat > "$TMP/parity/docs/real.md" <<'EOF'
+# Real Target
+
+## Known Section
+
+Body.
+EOF
+cat > "$TMP/parity/docs/a.md" <<'EOF'
+# Doc A
+
+## Alpha Section
+
+Missing path: [m](./missing.md).
+Missing target anchor: [n](real.md#no-such).
+Missing intradoc anchor: [o](#nope).
+Good intradoc: [p](#alpha-section).
+Good rel: [q](./real.md#known-section).
+Good up-down: [r](../docs/sub/b.md#beta-section).
+EOF
+cat > "$TMP/parity/docs/sub/b.md" <<'EOF'
+# Doc B
+
+## Beta Section
+
+Up-link: [s](../real.md#known-section).
+Dotted: [t](./../real.md).
+EOF
+cat > "$TMP/parity/README.md" <<'EOF'
+# Readme
+
+## Top
+
+Good: [u](docs/real.md#known-section).
+Bad: [v](docs/real.md#ghost).
+EOF
+
+expected_findings="README.md:6: docs/real.md#ghost — anchor not found in target
+docs/a.md:5: docs/missing.md — path not found
+docs/a.md:6: docs/real.md#no-such — anchor not found in target
+docs/a.md:7: #nope — anchor not found in same file"
+
+out="$(cd "$TMP/parity" && bash "$LINKS" check 2>"$TMP/parity.err")"; rc=$?
+got="$(printf '%s\n' "$out" | LC_ALL=C sort)"
+check "parity fixture: check exits 1" [ "$rc" -eq 1 ]
+if [ "$got" = "$expected_findings" ]; then
+  ok "parity fixture: exact finding lines, all four classes + ./ and ../ resolve"
+else
+  bad "parity fixture: exact finding lines, all four classes + ./ and ../ resolve"
+  printf 'expected:\n%s\ngot:\n%s\n' "$expected_findings" "$got" | sed 's/^/        /'
+fi
+check "parity fixture: summary count on stderr" grep -qxF '4 broken link(s)' "$TMP/parity.err"
+
+echo "== doc-links: BUG-045 — CJK / diacritic / punctuation heading slug still resolves =="
+mkdir -p "$TMP/cjk/docs"
+cat > "$TMP/cjk/docs/c.md" <<'EOF'
+# Doc C
+
+## 測試 Café — Setup!
+
+Intradoc: [w](#-caf--setup).
+EOF
+cat > "$TMP/cjk/docs/d.md" <<'EOF'
+# Doc D
+
+Cross-file: [x](c.md#-caf--setup).
+EOF
+out="$(cd "$TMP/cjk" && bash "$LINKS" check 2>&1)"; rc=$?
+if [ "$rc" -eq 0 ] && [ -z "$out" ]; then
+  ok "CJK/diacritic heading: slug resolves intradoc + cross-file, check exits 0"
+else
+  bad "CJK/diacritic heading: slug resolves intradoc + cross-file, check exits 0 (rc=$rc)"
+  printf '%s\n' "$out" | sed 's/^/        /'
+fi
+
+echo "== doc-links: BUG-045 — no per-link fork in the resolve path, no per-heading slugify loop =="
+fn_body() { # fn_body <name> — print the body lines of a top-level shell function
+  awk -v fn="$1" '
+    $0 ~ ("^" fn "\\(\\) \\{") { inb = 1; next }
+    inb && /^\}/ { inb = 0 }
+    inb { print }
+  ' "$LINKS"
+}
+fork_hits=""
+for fn in do_check do_refs do_index; do
+  h="$(fn_body "$fn" | grep -nE '\$\(resolve_target|cut +-f' | sed "s/^/$fn:/" || true)"
+  if [ -n "$h" ]; then
+    fork_hits="$fork_hits$h
+"
+  fi
+done
+if [ -z "$fork_hits" ]; then
+  ok "do_check/do_refs/do_index: no \$(resolve_target …) substitution, no cut -f"
+else
+  bad "do_check/do_refs/do_index: no \$(resolve_target …) substitution, no cut -f"
+  printf '%s' "$fork_hits" | sed 's/^/        /'
+fi
+
+ae_flat="$(fn_body anchor_exists | tr '\n' ' ')"
+if printf '%s' "$ae_flat" | grep -qE 'while[^;]*read[^;]*; *do[^;]*slugify'; then
+  bad "anchor_exists: per-heading slugify shell loop is gone"
+else
+  ok "anchor_exists: per-heading slugify shell loop is gone"
+fi
+
+echo "== doc-links: BUG-045 — whole-surface check under a generous wall-clock ceiling =="
+now_ns="$(date +%s%N 2>/dev/null || true)"
+case "$now_ns" in
+  ''|*[!0-9]*)
+    echo "  note: skipped — 'date +%s%N' unavailable on this host (no nanosecond clock)" ;;
+  *)
+    mkdir -p "$TMP/perf/docs/gen"
+    i=1
+    while [ "$i" -le 50 ]; do
+      f="$(printf 'f%02d' "$i")"
+      {
+        printf '# %s\n\n' "$f"
+        j=1
+        while [ "$j" -le 30 ]; do
+          printf '## Section %02d\n\nBody %s %s.\n\n' "$j" "$f" "$j"
+          j=$((j + 1))
+        done
+        k=1
+        while [ "$k" -le 20 ]; do
+          t=$(( (i + k) % 50 + 1 ))
+          printf 'Link %s: [l](../gen/%s.md#section-%02d).\n' "$k" "$(printf 'f%02d' "$t")" "$k"
+          k=$((k + 1))
+        done
+      } > "$TMP/perf/docs/gen/$f.md"
+      i=$((i + 1))
+    done
+    ceiling_s=30
+    t0="$(date +%s%N)"
+    if command -v timeout >/dev/null 2>&1; then
+      (cd "$TMP/perf" && timeout "$ceiling_s" bash "$LINKS" check) >/dev/null 2>&1; prc=$?
+    else
+      (cd "$TMP/perf" && bash "$LINKS" check) >/dev/null 2>&1; prc=$?
+    fi
+    t1="$(date +%s%N)"
+    elapsed_ms=$(( (t1 - t0) / 1000000 ))
+    if [ "$prc" -eq 0 ] && [ "$elapsed_ms" -lt $((ceiling_s * 1000)) ]; then
+      ok "50 docs x 30 headings x 20 anchored cross-links: check in ${elapsed_ms}ms (< ${ceiling_s}s)"
+    else
+      bad "50 docs x 30 headings x 20 anchored cross-links: check took ${elapsed_ms}ms (ceiling ${ceiling_s}s, rc=$prc)"
+    fi
+    ;;
+esac
 echo
 echo "RESULT: $pass passed, $fail failed"
 [ "$fail" -eq 0 ]

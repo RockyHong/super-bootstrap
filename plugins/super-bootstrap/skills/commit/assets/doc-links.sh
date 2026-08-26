@@ -13,6 +13,12 @@
 # a fence closes only on the same character with a run at least as long as its
 # opener and nothing but whitespace after it, so a nested shorter fence stays inside the block.
 # Anchor slugs: GitHub-style (lowercase, strip non-alnum except hyphens/spaces/underscores, spaces→hyphens).
+#
+# Fork discipline: `check` walks (anchored links × headings in each target), so
+# any per-item subprocess multiplies across the whole surface. Slug tables are
+# derived by one awk pass per file and memoized per file; path normalisation and
+# target resolution are pure bash returning through globals — no command
+# substitution and no `cut` inside any per-link loop.
 
 set -uo pipefail
 
@@ -24,42 +30,91 @@ collect_docs() {
     return 0
 }
 
-# GitHub-style heading → anchor slug
-slugify() {
-    printf '%s\n' "$1" \
-        | tr '[:upper:]' '[:lower:]' \
-        | sed 's/[^a-z0-9 _-]//g' \
-        | tr ' ' '-'
+# GitHub-style heading → anchor slug table for <file>: one awk pass over the
+# file emitting one slug per heading line — lowercase, strip everything outside
+# [a-z0-9 _-], spaces→hyphens. Same transform the former per-heading
+# `printf | tr | sed | tr` pipeline performed, at one process per file instead
+# of four per heading. Portable-awk dialect: no interval expressions, no POSIX
+# character classes.
+slug_lines() {
+    awk '
+    /^#/ {
+        s = $0
+        sub(/^#*/, "", s)
+        sub(/^ */, "", s)
+        s = tolower(s)
+        gsub(/[^a-z0-9 _-]/, "", s)
+        gsub(/ /, "-", s)
+        print s
+    }
+    ' "$1" 2>/dev/null
+}
+
+# Slug table for <file>, memoized — many anchored links resolve into the same
+# target, and re-deriving that target's table per link was the dominant cost of
+# `check`. bash 3.2 has no associative arrays, so the cache key is a sanitised
+# variable name; a companion SLUGFILE_ variable records which file owns the
+# entry, so two paths that sanitise alike recompute rather than answer for each
+# other. Result in $SLUG_TABLE.
+#
+# The table is buffered into a variable before any matching: feeding slugs from
+# a live pipeline into an early-exiting matcher lets the matcher EPIPE its
+# upstream writers, which under `pipefail` reports a found anchor as not-found
+# (race — fires when the match is not the last heading; msys additionally spams
+# "tr: write error"). The one-pass form preserves that guarantee by construction.
+SLUG_TABLE=""
+slug_table() {
+    local file="$1" san="${1//[^a-zA-Z0-9]/_}" owner
+    eval "owner=\"\${SLUGFILE_$san-}\""
+    if [ "$owner" = "$file" ]; then
+        eval "SLUG_TABLE=\"\$SLUGCACHE_$san\""
+    else
+        SLUG_TABLE="$(slug_lines "$file")"
+        eval "SLUGCACHE_$san=\"\$SLUG_TABLE\"; SLUGFILE_$san=\"\$file\""
+    fi
 }
 
 # Does <anchor> exist as a heading slug in <file>?
-# Slugs collect into a variable first: feeding `grep -q` from a live pipeline
-# lets its early exit EPIPE the upstream writers, which under `pipefail`
-# reports a found anchor as not-found (race — fires when the match is not the
-# last heading; msys additionally spams "tr: write error").
+# Whole-line match against the buffered table via `case` — quoted, so an anchor
+# carrying glob characters stays literal — instead of a `grep -qxF` fork per link.
 anchor_exists() {
-    local file="$1" anchor="$2" slugs
-    slugs="$(grep '^#' "$file" 2>/dev/null \
-        | sed 's/^#* *//' \
-        | while IFS= read -r h; do slugify "$h"; done)"
-    grep -qxF -- "$anchor" <<<"$slugs"
+    slug_table "$1"
+    case "
+$SLUG_TABLE
+" in
+        *"
+$2
+"*) return 0 ;;
+    esac
+    return 1
 }
 
-# Pure-string path normaliser: resolves . and .. components
+# Pure-string path normaliser: resolves . and .. components. Pure bash, no awk
+# fork — it runs once per link on the whole surface. Semantics preserved exactly:
+# skip empty and "." segments, pop on ".." only when the accumulator is
+# non-empty. Result in $NORM.
+NORM=""
 normalize_path() {
-    printf '%s\n' "$1" | awk '
-    {
-        n = split($0, a, "/")
-        j = 0
-        for (i = 1; i <= n; i++) {
-            if (a[i] == "" || a[i] == ".") continue
-            if (a[i] == "..") { if (j > 0) j-- }
-            else parts[++j] = a[i]
-        }
-        out = ""
-        for (i = 1; i <= j; i++) out = out (i > 1 ? "/" : "") parts[i]
-        print out
-    }'
+    local rest="$1" seg out=""
+    while [ -n "$rest" ]; do
+        seg="${rest%%/*}"
+        if [ "$seg" = "$rest" ]; then rest=""; else rest="${rest#*/}"; fi
+        case "$seg" in
+            ''|.) ;;
+            ..)
+                if [ -n "$out" ]; then
+                    case "$out" in
+                        */*) out="${out%/*}" ;;
+                        *)   out="" ;;
+                    esac
+                fi
+                ;;
+            *)
+                if [ -n "$out" ]; then out="$out/$seg"; else out="$seg"; fi
+                ;;
+        esac
+    done
+    NORM="$out"
 }
 
 # Extract inline markdown links from file. Output: lineno TAB raw-target
@@ -107,52 +162,59 @@ extract_links() {
     ' "$1"
 }
 
-# Resolve a raw link target relative to src file.
-# Output: "external" | "intradoc:<anchor>" | "<repo-rel-path>TAB<anchor>"
+# Resolve a raw link target relative to src file. Returns through globals rather
+# than stdout — a stdout return costs a command substitution (fork) per link:
+#   R_KIND=external                      http/https/mailto, or a bare empty path
+#   R_KIND=intradoc  R_ANCHOR=<anchor>   same-file "#a" link
+#   R_KIND=path      R_PATH=<repo-rel>   R_ANCHOR=<anchor> or empty
+# The src parent directory is stripped with `case`, not a `dirname` fork.
+R_KIND=""; R_PATH=""; R_ANCHOR=""
 resolve_target() {
-    local src="$1" raw="$2"
+    local src="$1" raw="$2" path anchor src_dir joined
+    R_KIND=""; R_PATH=""; R_ANCHOR=""
     case "$raw" in
-        http://*|https://*|mailto:*) echo "external"; return ;;
-        '#'*) printf 'intradoc:%s\n' "${raw#'#'}"; return ;;
+        http://*|https://*|mailto:*) R_KIND="external"; return ;;
+        '#'*) R_KIND="intradoc"; R_ANCHOR="${raw#'#'}"; return ;;
     esac
 
-    local path anchor
     if [[ "$raw" == *'#'* ]]; then
         path="${raw%%#*}"; anchor="${raw#*#}"
     else
         path="$raw"; anchor=""
     fi
 
-    [ -z "$path" ] && { echo "external"; return; }   # edge: bare empty path
+    [ -z "$path" ] && { R_KIND="external"; return; }   # edge: bare empty path
 
-    local src_dir
-    src_dir="$(dirname "$src")"
+    case "$src" in
+        */*) src_dir="${src%/*}" ;;
+        *)   src_dir="" ;;
+    esac
     [ "$src_dir" = "." ] && src_dir=""
 
-    local joined
-    [ -n "$src_dir" ] && joined="$src_dir/$path" || joined="$path"
+    if [ -n "$src_dir" ]; then joined="$src_dir/$path"; else joined="$path"; fi
 
-    printf '%s\t%s\n' "$(normalize_path "$joined")" "$anchor"
+    normalize_path "$joined"
+    R_KIND="path"; R_PATH="$NORM"; R_ANCHOR="$anchor"
 }
 
 do_check() {
     local findings=0
     while IFS= read -r doc; do
         while IFS=$'\t' read -r lineno raw; do
-            local resolved rel anchor
-            resolved="$(resolve_target "$doc" "$raw")"
-            case "$resolved" in
+            local rel anchor
+            resolve_target "$doc" "$raw"
+            case "$R_KIND" in
                 external) continue ;;
-                intradoc:*)
-                    anchor="${resolved#intradoc:}"
+                intradoc)
+                    anchor="$R_ANCHOR"
                     if [ -n "$anchor" ] && ! anchor_exists "$doc" "$anchor"; then
                         printf '%s:%s: #%s — anchor not found in same file\n' "$doc" "$lineno" "$anchor"
                         findings=$((findings + 1))
                     fi
                     continue ;;
             esac
-            rel="$(printf '%s' "$resolved" | cut -f1)"
-            anchor="$(printf '%s' "$resolved" | cut -f2)"
+            rel="$R_PATH"
+            anchor="$R_ANCHOR"
             if [ ! -e "$rel" ]; then
                 printf '%s:%s: %s — path not found\n' "$doc" "$lineno" "$rel"
                 findings=$((findings + 1))
@@ -173,17 +235,17 @@ do_refs() {
     local query qpath qanchor
     query="$1"
     if [[ "$query" == *'#'* ]]; then
-        qpath="$(normalize_path "${query%%#*}")"; qanchor="${query#*#}"
+        normalize_path "${query%%#*}"; qpath="$NORM"; qanchor="${query#*#}"
     else
-        qpath="$(normalize_path "$query")"; qanchor=""
+        normalize_path "$query"; qpath="$NORM"; qanchor=""
     fi
     while IFS= read -r doc; do
         while IFS=$'\t' read -r lineno raw; do
-            local resolved rel anchor
-            resolved="$(resolve_target "$doc" "$raw")"
-            case "$resolved" in external|intradoc:*) continue ;; esac
-            rel="$(printf '%s' "$resolved" | cut -f1)"
-            anchor="$(printf '%s' "$resolved" | cut -f2)"
+            local rel anchor
+            resolve_target "$doc" "$raw"
+            case "$R_KIND" in external|intradoc) continue ;; esac
+            rel="$R_PATH"
+            anchor="$R_ANCHOR"
             if [ "$rel" = "$qpath" ] && { [ -z "$qanchor" ] || [ "$anchor" = "$qanchor" ]; }; then
                 echo "$doc"; break
             fi
@@ -194,11 +256,11 @@ do_refs() {
 do_index() {
     while IFS= read -r doc; do
         while IFS=$'\t' read -r lineno raw; do
-            local resolved rel anchor
-            resolved="$(resolve_target "$doc" "$raw")"
-            case "$resolved" in external|intradoc:*) continue ;; esac
-            rel="$(printf '%s' "$resolved" | cut -f1)"
-            anchor="$(printf '%s' "$resolved" | cut -f2)"
+            local rel anchor
+            resolve_target "$doc" "$raw"
+            case "$R_KIND" in external|intradoc) continue ;; esac
+            rel="$R_PATH"
+            anchor="$R_ANCHOR"
             [ -n "$anchor" ] && rel="$rel#$anchor"
             printf '%s\t%s\n' "$rel" "$doc"
         done < <(extract_links "$doc")
