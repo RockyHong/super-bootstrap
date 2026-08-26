@@ -6,3 +6,14 @@
 **Prior:** Absorb first: widen the frozen asset to the three-root scan so the copy is a true superset; until then, copy-on-drift on a file whose installed copy is a superset owned by another manager should surface a `⚠ foreign-owned, wider` row and wait for approval instead of defaulting to overwrite.
 **Test-feel:** manual
 **Blast:** cross-module
+
+## Amendment — 2026-08-27 · cold triage (BLOCKED — premise falsified; re-aimed)
+
+Counter-diagnosis, verified against the shipped asset, the device's installed copies, and both repos' `decisions.md`:
+
+- **Holds:** copy-on-drift fires (`scriptCurrent()` compares the header line — CCM-era `GAP-045 build` vs `# FROZEN consult-check-sessionstart v1`) and reaches every consumer on such a device: 7 of 10 installed copies under `D:/Git` still carry the pre-frozen wide pair.
+- **Falsified — "owned elsewhere":** claude-config-manager no longer plants the pair (`resolve-claude-config/SKILL.md`: "the bundle is super-bootstrap-shipped … this repo no longer serves it"; no `consult-check-*` under its `templates/`). The wide copies are orphans of a completed handoff, not a live foreign owner's superset.
+- **Falsified — "superset / downgrade":** the narrow `docs/**` scan is a ratified narrowing, not an unfinished absorption — the asset header records the measurement (guidelines rows cost 943 chars, 62–72 % of every render), the wide copy's guidelines rows resolve two ways (project vs device root) so its injector guesses at every prompt, `hooks-ensure-infra.md` § Self-containment forbids a shipped asset reading `$HOME`, and [`docs/decisions.md`](../decisions.md)'s absorption row names the split-out as the precondition that made the catalog consumer-resolvable (CCM's `decisions.md` closes lore-in-catalog on the same number). The Prior would re-walk two closed forks.
+- **Falsified — "silently":** § Idempotency reports what changed and the installer declined it in the receipt.
+
+**Re-aimed problem (the residual):** `hooks-ensure-infra.md` § Retired hooks enumerates five retired scripts by name; the pre-frozen consult-check pair is not among them, and nothing tells a syncing installer that a `GAP-045 build` copy losing two scan roots is the intended migration. A correct migration therefore reads as a downgrade and gets declined — the observable in the Source line. Fix shape: one absorption note in that asset (name the pre-frozen pair, state the layer split is deliberate, cite the ratified reason). No scan change. `Blast:` local, not cross-module.

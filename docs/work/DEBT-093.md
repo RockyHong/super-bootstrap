@@ -6,3 +6,40 @@
 **Prior:** One sentence at the skeleton's head: the three tables are the contract `render-board.py` reads (cells compared after normalization); the prose between them is the rule's explanation and may be reworded or localized. Align the `harness-bootstrap` drift check to the same scope, or state that it compares whole-file and the tables are the part that must match.
 **Test-feel:** doc-only
 **Blast:** local
+
+## Verdict — auto-fix · 2026-08-27
+
+**Fix-shape:** systematic
+**Probe-deps:** none
+**Execution:** phased(skip: design settling, written plan) — depth: content shape is codified precedent (`coding-standards-skeleton.md`'s preamble blockquote already states its own ownership contract in-file), nothing to design; closure: four surfaces across two skills plus the byte-identical dogfood mirror, on an ambient path-scoped harness file that earns a full cold `audit-harness-edits` whatever the diff size.
+
+### Repro (pinned)
+
+From the card: a consumer that localizes harness prose "asked which parts of the placed `venue-map.md` it may translate; the answer lives only in `render-board.py`'s comment". Two failure arms: "A consumer that translates a table cell breaks the compare and boards a `# note:` divergence on every `todo` run; one that leaves the prose untouched out of caution carries English it wanted to localize."
+
+### Root cause (verified)
+
+Both mechanisms read as the card describes, and the skeleton states neither.
+
+1. **Script lane = table rows only.** `render-board.py:99-102` comment: "Divergence normalization = table rows alone (a line whose stripped form opens with `|`), cells stripped, separator rows dropped. Prose around the tables is free to be reworded without touching the lane; a table cell is what the encoding would have to follow". `map_tables()` (`:125-136`) implements exactly that — `if not s.startswith("|"): continue`, separator rows dropped. Fired at `:778-782`: `if wired and map_tables(read(placed_map)) != VENUE_MAP_TABLES` → `# note: local venue-map edits are not honored by the script lane` to stderr, every run. Derivation itself is unaffected — `:95` "the placed `.claude/rules/venue-map.md` is never parsed"; `venue()` is a transcribed Python encoding. So a translated table cell costs the notice, not behavior.
+2. **Bootstrap lane = whole body.** `harness-bootstrap/SKILL.md:140` § Pipeline-owned: "`.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md`)" — no table/prose split; § Project-owned (`:148-150`) exempts only *grown sections below the scaffold* and user-authored rules with no skeleton. Per-artifact rule at `:125`: "Exists, drifted from template → show diff, get approval per change, then write". So reworded prose raises an approvable `⚠ drifted` row; a decline is recorded in the runway receipt's `declined` list ("divergence accepted, not pending", `:99`), but `version_stale` on the next version bump "enforce[s] the full drift check" (`:101-103`), so the row re-raises per version.
+3. **The skeleton says neither.** Read whole: frontmatter + `# Venue Map` lede + § Venues / § Derivation / § Modality overrides / § Consumer boundary. § Consumer boundary documents the rule's *callers* (`/todo`, `/drain`) and nothing about its machine reader or its maintenance ownership. `diff .claude/rules/venue-map.md <skeleton>` → identical, so the dogfood mirror carries the same silence.
+
+**Aim judgment (the question the dispatch posed): plugin gap for any consumer, not a localization fit issue.** Three grounds, none needing a text-first repo: (a) the tables-are-contract fact's only home is a Python comment inside a *different* skill's asset — unreadable to any consumer, and its claim "prose is free to be reworded" is contested in practice by the bootstrap drift row, so the plugin currently ships two scopes and zero statement; (b) the non-localization case is sharper — a consumer adding a repo-local row to § Modality overrides (exactly the customization `CLAUDE.md` § Rules invites) trips `map_tables` and boards the `# note:` on **every** `todo` run forever, with nothing in the file explaining what happened or what to do; (c) the codified fix pattern already exists in this plugin (`coding-standards-skeleton.md` preamble states its own fill/ownership contract in-file), so this is that rule applied to a new instance.
+
+**The fork in the card's Prior resolves to the doc-only arm — do not narrow either check.** "Align the `harness-bootstrap` drift check to the same scope" is defeated on verifiable grounds: the skeleton's prose is *model-read rule content* (§ Derivation carries "derived fresh per read — never stored"; § Consumer boundary carries the advisory bound), so a table-rows-only drift check would freeze every consumer's prose at its bootstrap version and cut off upstream prose fixes. The two scopes differ legitimately because their readers differ — the script consumes a transcribed table encoding, the sync maintains the body a model reads. Nothing changes behavior; the fix states the split and names its cost.
+
+### Files (fix surface)
+
+- `plugins/super-bootstrap/skills/harness-bootstrap/assets/scale/rules-venue-map-skeleton.md:9` (lede) or § Consumer boundary `:44` — the statement's SSOT home: three tables = the contract `render-board.py` reads (cells compared after normalization; an edited or translated cell boards a divergence notice on every `todo` run); prose between them is explanation, freely reworded or localized; the whole body stays pipeline-owned, so any in-place edit raises an approvable drift row at the next `harness-bootstrap` sync (decline is recorded, and re-raises on a version bump). Prefer § Consumer boundary — it already owns reader-boundary content — and keep it out of the tables so the compare is untouched.
+- `.claude/rules/venue-map.md` — dogfood mirror, verified byte-identical to the skeleton; same text verbatim, per `repo-boundary.md` § Sync direction. Native to this repo (CLAUDE.md § Rules marks it `(native)`), so it is editable here — no `/contribute` route.
+- `plugins/super-bootstrap/skills/todo/assets/render-board.py:97-102` — the current de-facto SSOT; retarget the comment to point at the skeleton statement rather than assert the rule. `:781-782` note text says "local venue-map edits" while the trigger is table-scoped — keep it honest in the same pass.
+- `plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md:140` — § Pipeline-owned venue-map entry; state the compare is whole-body (tables being the part the script also reads) so the two mechanisms stop reading as a disagreement.
+
+### Doc Impact
+
+- `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` § Rules `venue-map.md` bullet block + root `CLAUDE.md` § Rules mirror — read against the diff; the bullet carries fires-on + derivation key points, so it likely stays unchanged, but a decline must be recorded as read-and-confirmed. `CLAUDE.md` is harness — read-only inside doc-sync; a change there is a deliberate harness edit.
+- `docs/work/README.md` + `docs/test-queue.md` — the rule's `paths:` targets, no content dependency; expect confirmed-unchanged.
+- Related, not a duplicate: `DEBT-094` sits on the same pipeline-owned-body vs consumer-local-edit tension (a consumer left a line in place because "removing it locally creates permanent drift against the pipeline-owned section"). Different content, different fix; do not merge.
+
+### Test Strategy: e2e
