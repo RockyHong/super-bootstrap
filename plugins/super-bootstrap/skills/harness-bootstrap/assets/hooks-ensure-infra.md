@@ -102,6 +102,14 @@ migration engine — the asset is always the source of truth, the installed copy
 replaceable. **No confirm gate** — default-on, unlike drain's `infraPresent()`
 install-confirm.
 
+One migration this covers by design: an installed `consult-check` pair predating
+the frozen assets — header line `# SessionStart hook — consult-check catalog
+derivation (GAP-045 build …`, no `# FROZEN … v1` marker — is superseded by the
+frozen v1 pair, whose scan covers the consumer's own `docs/**` alone; the
+guidelines trees are split out deliberately (their rows resolve two ways and
+cost most of the render budget), so a re-copy dropping those roots is the
+intended migration — accept it.
+
 ## Hook activation
 
 `settings.json` hook edits are picked up mid-session by the file-watcher (no restart
