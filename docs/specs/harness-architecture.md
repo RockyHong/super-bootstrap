@@ -559,7 +559,9 @@ wrote a reason for is indistinguishable from one nobody chose.
 
 `harness-bootstrap` § Phase 2 applies a per-artifact rule: missing → write; matches
 template → skip; **drifted → show diff, approve per change, write**; pipeline-owned
-section absent → `⊕ new`, approve, insert; project-owned → never touch. Its CLAUDE.md
+section absent → `⊕ new`, approve, insert; project-owned → never touch; an artifact
+placed for the first time or deleted → a `registration:` row naming the consumer surfaces
+that enumerate it, edited in the same commit ([§ Registration rule](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md)). Its CLAUDE.md
 coverage is **keyed to a named section list** (Development
 Workflow, Dispatch, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene,
 Finding Triage, Rules, Git Notes, Planning).

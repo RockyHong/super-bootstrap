@@ -126,6 +126,21 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - Exists, pipeline-owned section absent → `⊕ new` — show the template section, get approval, insert
 - Project-owned content → never touch, even on drift
 
+**Registration rule** (2a / 2a-scale / 2b plantings, 2b-adopt deletions): a durable artifact this run places for the first time or deletes earns its own sync-report row — status `⊕ new` for a planting, `⊘ removed` for a deletion:
+
+```
+registration: {artifact} → {surfaces, or none}
+```
+
+`{surfaces}` names the consumer-authored surfaces that enumerate the artifact's class — a table or list carrying one entry per member (a glob that already covers the artifact needs no edit and is not a surface; a curated shortlist of a few files is not an enumeration). Grep each of four places for the artifact's path and for its parent directory string (`docs/`, `.claude/skills/`), and name every place whose hit is such a list:
+
+1. `.claude/rules/*.md` `paths:` frontmatter entries that name paths literally
+2. root `README.md` — any table or list naming `docs/` paths
+3. `docs/**/README.md` and `docs/overview.md` § Module Index
+4. `.claude/rules/*.md` bodies — any table or list naming `docs/` paths (ownership / routing); `CLAUDE.md`'s pipeline-owned sections are the plugin's own registration and stay out of this search
+
+The row resolves `updated` once every named surface is edited, before § 2c runs, in the same commit — or `none`, earned only when all four greps return nothing. An unresolved row halts § 2c like a drifted one. The 2a-hooks and 2a-drain steps sit outside this rule, scripts included: the `.claude/settings.json` and `.gitignore` entries those steps already write are their registration.
+
 **Pipeline-owned** (subject to drift check):
 - CLAUDE.md sections: Development Workflow, Dispatch, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene, Finding Triage, Rules, Git Notes, Planning, Monorepo (monorepo tier only — the conditional cross-package build block)
 - `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution, Edit Discipline, Packages (monorepo tier only — the § header + column shape; table rows are consumer-grown, project-owned)
@@ -373,7 +388,7 @@ Per-migration handling:
 
 **Never destructive without confirmation.** Show source → dest mapping, get explicit approval, only then move content.
 
-**The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `docs/work/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new`), and — for drifted and `⊕ new` rows — the diff or template section, plus the resolution as it lands at Block 2 (`updated` / `inserted` / `declined`); Phase 2c derives the coverage receipt from these rows. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. Overwrite any stale report from a prior run.
+**The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `docs/work/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new`), and — for drifted and `⊕ new` rows — the diff or template section, plus the resolution as it lands at Block 2 (`updated` / `inserted` / `declined`); Phase 2c derives the coverage receipt from these rows. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. For each artifact this run placed for the first time or deleted (§ Registration rule), append its `registration:` row before closing the enumeration. Overwrite any stale report from a prior run.
 
 **Version-stale enforcement.** When Phase 1 set `version_stale`, this enumeration is mandatory in full this run — every pipeline-owned section gets an actual read-and-compare row; the "sections look similar → `✓ current`" skim is forbidden. No new mechanism — the 2c gate already refuses commit on any uncovered section (see § 2c). Print the Phase 1 surfaced line once at the top of Block 1 as the reminder.
 
@@ -520,7 +535,7 @@ Per-candidate handling:
 
 ### 2c: Sync report + commit
 
-**Gate — the sync report must exist and cover every pipeline-owned section before commit.** Read `docs/work/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row. Missing file, or any uncovered section → halt, return to 2b, produce the missing rows. A `⚠ drifted` or `⊕ new` row must also carry its Block 2 resolution (`updated` / `inserted` / `declined`) — an unresolved row halts the same way. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
+**Gate — the sync report must exist and cover every pipeline-owned section, plus every artifact the § Registration rule covers, before commit.** Read `docs/work/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row, and every durable artifact the § Registration rule covers must have a `registration:` row. Missing file, or any uncovered section or artifact → halt, return to 2b, produce the missing rows. A `⚠ drifted` or `⊕ new` row must also carry its Block 2 resolution (`updated` / `inserted` / `declined`), a `registration:` row its own (`updated` / `none`) — an unresolved row halts the same way. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
 
 **Sync report** — rendered from the artifact (the file is canonical; this table is its commit-time view). Always shown before commit. Fresh repos see "all new"; re-run repos see drift fixes and current items.
 
@@ -531,6 +546,8 @@ Per-candidate handling:
 | docs/techstack.md: Runtime          | ⚠ drifted    | updated (approved)  |
 | .claude/rules/mv3.md                | ⊕ new        | seeded (signal: MV3 manifest) |
 | .claude/settings.json: paired pin   | ⊕ new        | inserted (approved) |
+| registration: docs/outward.md → README.md docs list (illustrative — name what the greps hit) | ⊕ new | updated |
+| registration: .claude/skills/commit/ → none | ⊘ removed | none |
 ```
 
 **Receipt write.** Once the sync completes, write `.claude/super-bootstrap-runway.json` = `{ "version": "{current plugin version}", "covered": [...], "declined": [...] }` — fresh install writes it new, re-run overwrites whole. `covered` is copied mechanically from the sync-report's per-section rows (the same rows the gate above just cross-checked; row identity `{file} § {Section}`, whole-file artifacts by path); `declined` is the rows resolved `declined` at Block 2 — a drift kept, or an insert declined. The report is the receipt's sole source. This runs even when every row is `✓ current` — the receipt records "synced at this version, these sections compared," independent of whether content changed.
@@ -556,6 +573,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/parked.md`, `docs/test-queue.md`, `docs/outward.md`, `.claude/rules/venue-map.md` (scale-module targets — only if installed this run at 2a-scale)
 - `.claude/super-bootstrap-runway.json` (runway coverage receipt — written/overwritten every sync)
 - Superseded-fork deletions (adopt mode, § 2b-adopt) — staged removals of approved consumer `.claude/skills/<name>/` dirs / `.claude/agents/<name>.md` files that root artifacts now supersede
+- Consumer surfaces edited to register a placed or deleted artifact (§ Registration rule — skip when every registration row resolved `none`)
 - Any other adaptive files / folders created
 
 Commit message: `chore: scaffold harness pipeline` on fresh repos, `chore: sync harness pipeline` when only drift fixes shipped, `refactor: migrate CLAUDE.md to rules layer + sync pipeline` when re-run performed legacy migration. These strings double as the mature-repo detector above — keep them in step with its match list.
