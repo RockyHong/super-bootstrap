@@ -21,8 +21,12 @@ scaffolds, or the script re-runs this bench (`bash bench/todo-board/run.sh`).
 - `fixture-actor/` — two origin-only cards carrying the scale module's `Actor:` fact
   field (`external` / `author`), no wait keyword in their prose: the actor override —
   a `Decide` row naming the mover, Drainable 0, never a `Triage`.
+- `fixture-outward/` — one plain drainable card plus a `docs/outward.md` holding two
+  entries (one with an `Owning card:` back-pointer): the outward group — its own
+  need-me table, `unblocks` from the owning card, the card's own `Triage` row still
+  drainable.
 - `expected/` — goldens for all six modes plus the empty, all-blocked, external-wait,
-  and actor states, pinned to `--date 2026-08-14`.
+  actor, and outward states, pinned to `--date 2026-08-14`.
 
 One known accepted divergence from a cold agent render: the soft-coupling
 *direction* cell is mechanically normalized (the row declaring the shared path

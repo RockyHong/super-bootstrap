@@ -35,6 +35,11 @@ judgment call, the encoding is the documented mechanical reading:
 - Harness subgroup = `apply` only on an explicit bounded-fix marker in the origin
                     (typo / path fix / broken link / formatting / one-line),
                     else `deliberate` (the spec's careful-handle default).
+- Outward entry   = `### OUT-### — {summary}` under `## Entries`; fields read by
+                    their bold labels. `unblocks` = 1 when `Owning card:` names an
+                    open card, else 0 — leverage signal only: an outward row's
+                    Impact stays `quick-pop` (the repo moves nothing here), and its
+                    Context cell renders the entry's repo tail.
 
 Exit codes: 0 board rendered · 2 usage · 3 defer to dispatch (venue map wired —
 the scale module's map is prose this script does not parse) · 4 substrate absent.
@@ -59,6 +64,11 @@ PATH_EXT_RE = re.compile(r"\.(?:md|ts|tsx|js|jsx|py|sh|json|css|rs|go)$")
 UNCAT_REASON = ("non-canonical work file; docs/work/ holds BUG/DEBT/GAP cards "
                 "(feature ideas log as GAP). New cards route through /super-bootstrap:log.")
 WAIT_RE = re.compile(r"needs user|decision required|route\?|waiting on\s+\w|blocked on\s+\w", re.I)
+OUT_HEAD_RE = re.compile(r"^(OUT-\d+) — (.+?)\s*$")
+OUT_FIELD_RE = re.compile(
+    r"^\*\*(Next move|Waiting on|Repo tail — fires on|Owning card):\*\*\s*(.+?)\s*$", re.M)
+OUT_LOGGED_RE = re.compile(r"\*\*Logged:\*\*\s*([^\n·]*)")
+CARD_ID_RE = re.compile(r"(?:BUG|DEBT|GAP)-\d+")
 SEVERITY_RE = re.compile(r"\b(critical|blocking|production-down|data-loss)\b", re.I)
 APPLY_RE = re.compile(r"\b(typo|path fix|broken (?:link|path)|formatting|one-line)\b", re.I)
 DEVICE_KEYWORD_RE = re.compile(r"manual test|visual|device|mobile|browser|screenshot", re.I)
@@ -69,7 +79,7 @@ HARNESS_PATH_RE = re.compile(
     r"|^plugins/[\w-]+/(?:skills|agents|shared|rules)/"
     r"|^(?:skills|agents|rules|hooks)/")
 VERB_PRIORITY = ["Start execute", "Continue execute", "Review", "Manually verify",
-                 "Approve design", "Decide", "Implement", "Write plan",
+                 "Approve design", "Decide", "Outward", "Implement", "Write plan",
                  "Settle design", "Deliberate", "Apply", "Triage"]
 STAGE_ORDER = {"raw": 0, "triaged": 1, "aimed": 2, "executing": 3, "review": 4}
 
@@ -157,6 +167,8 @@ class Row:
         self.card = card
         self.verb = verb or action.split(":")[0]
         self.subgroup: Optional[str] = None    # Harness rows: deliberate | apply
+        self.outward = False                   # docs/outward.md entry (§c)
+        self.context: Optional[str] = None     # Context cell override (outward: repo tail)
         self.progress: Optional[Tuple[int, int]] = None
         self.impact = "quick-pop"
         self.blast = "local"
@@ -336,6 +348,34 @@ def classify_queue(queue_text, cards_by_id):
     return rows, suppressed
 
 
+def classify_outward(text, cards_by_id):
+    """Thread-state derivation §c — outward entries under `## Entries`."""
+    rows = []
+    m = re.search(r"^## Entries\s*$", text, re.M)
+    if not m:
+        return rows
+    tail = text[m.end():]
+    nxt = re.search(r"^## ", tail, re.M)
+    if nxt:
+        tail = tail[:nxt.start()]
+    for chunk in re.split(r"^### ", tail, flags=re.M)[1:]:
+        head, _, body = chunk.partition("\n")
+        h = OUT_HEAD_RE.match(head)
+        if not h:
+            continue
+        f = dict(OUT_FIELD_RE.findall(body))
+        row = Row(f"Outward: {h.group(1)} {h.group(2)} — {f.get('Next move', '—')}"
+                  f" · waiting on {f.get('Waiting on', '—')}", "Discuss", "raw", None, "Outward")
+        row.outward = True
+        row.context = f.get("Repo tail — fires on")
+        owner = CARD_ID_RE.search(f.get("Owning card", ""))
+        row.fanout = 1 if owner and owner.group(0) in cards_by_id else 0
+        lg = OUT_LOGGED_RE.search(body)
+        row.recency = date_key(lg.group(1) if lg else "")
+        rows.append(row)
+    return rows
+
+
 # ---------- impact / blast / coupling (agents/todo.md §3–§4) ----------
 
 def module_root(p):
@@ -366,6 +406,9 @@ def compute_blast(row):
 
 
 def compute_impact(row):
+    if row.outward:            # fan-out is leverage signal only; the repo moves nothing here
+        row.impact = "quick-pop"
+        return
     card = row.card
     imp = False
     if row.soft_upstream_of or row.fanout:
@@ -457,7 +500,8 @@ def prog_cell(r):
 
 
 def context_cell(r):
-    sent = re.split(r"(?<=\.)\s", (r.card.fields.get("Problem", "") if r.card else ""))[0].strip()
+    sent = r.context or re.split(
+        r"(?<=\.)\s", (r.card.fields.get("Problem", "") if r.card else ""))[0].strip()
     if len(sent) > 80:
         sent = sent[:77] + "…"
     return f"{sent} (unblocks {r.fanout})" if r.fanout else (sent or "—")
@@ -485,7 +529,9 @@ def render(mode, rows, uncat, held_count, date):
         out.append(f"Drainable: {len(drainable)}  →  /super-bootstrap:drain\n")
         if needme:
             out.append("▸ Need me")
-            groups = [("Decide / approve", [r for r in needme if r.intent == "Discuss"]),
+            groups = [("Decide / approve",
+                       [r for r in needme if r.intent == "Discuss" and not r.outward]),
+                      ("Outward — your move", [r for r in needme if r.outward]),
                       ("Device-bound", [r for r in needme if r.intent == "Device"]),
                       ("Harness", [r for r in needme if r.intent == "Harness"])]
             for heading, grp in groups:
@@ -613,11 +659,17 @@ def main():
     if os.path.isfile(queue_path):
         queue_rows, suppressed = classify_queue(read(queue_path), cards)
 
+    outward_rows = []
+    outward_path = os.path.join(args.root, "docs/outward.md")
+    if os.path.isfile(outward_path):
+        outward_rows = classify_outward(read(outward_path), cards)
+
     for cid, card in cards.items():
         if cid in suppressed:
             continue
         rows.append(classify_card(card))
     rows += queue_rows
+    rows += outward_rows
 
     couple(rows)
     for r in rows:
@@ -628,7 +680,7 @@ def main():
 
     print(render(args.mode, rows, uncat, held, args.date))
     print(f"# sources: docs/work ({len(cards)} cards); test-queue ({len(queue_rows)} entries); "
-          f"held {held}", file=sys.stderr)
+          f"outward ({len(outward_rows)} entries); held {held}", file=sys.stderr)
 
 
 if __name__ == "__main__":

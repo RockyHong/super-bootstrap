@@ -54,4 +54,15 @@ for m in needme full; do
     fail=1
   fi
 done
+for m in needme full; do
+  if "$PY" "$SCRIPT" bench/todo-board/fixture-outward "$m" --date "$DATE" 2>/dev/null \
+     | diff "bench/todo-board/expected/$m-outward.md" - >/dev/null; then
+    echo "PASS $m-outward"
+  else
+    echo "FAIL $m-outward"
+    "$PY" "$SCRIPT" bench/todo-board/fixture-outward "$m" --date "$DATE" 2>/dev/null \
+      | diff "bench/todo-board/expected/$m-outward.md" -
+    fail=1
+  fi
+done
 exit "$fail"

@@ -158,6 +158,7 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 - [`docs/work/`](docs/work/README.md) — open cards (`BUG-###` / `DEBT-###` / `GAP-###` append-only threads), captured via `/super-bootstrap:log`, deleted on resolve; `README.md` holds the thread contract + ID high-water line.
 {- [`docs/parked.md`](docs/parked.md) — deferred items with named triggers (scale module)}
 {- [`docs/test-queue.md`](docs/test-queue.md) — manual-verification queue (scale module)}
+{- [`docs/outward.md`](docs/outward.md) — outward items: next move + waiting-on party (scale module)}
 - [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)
 

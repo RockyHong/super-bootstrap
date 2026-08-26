@@ -9,7 +9,7 @@ real regression.
 
 ## When it runs
 
-Only when the project keeps an open-item tracker (e.g. `docs/work/` card set — `{BUG,DEBT,GAP}-###.md` files + `README.md` high-water header); skip
+Only when the project keeps an open-item tracker (e.g. `docs/work/` card set — `{BUG,DEBT,GAP}-###.md` files + `README.md` high-water header — plus `docs/parked.md` / `docs/outward.md` entries where those exist); skip
 otherwise. Run AFTER all findings are identified and classified — the annotation
 is a layer over a finished finding set, never a gate on it. Every finding stays
 in the report regardless of tag.
@@ -35,6 +35,7 @@ Assign each finding exactly one tag:
 | Closed row, git log claims fixed | `⚠️ potential regression ({ID} claims fixed)` |
 | Closed row, git log shows dismissed | `🚫 previously dismissed — rationale may be stale` |
 | Parked/deferred item | `🅿️ parked — trigger: {trigger text}` |
+| Outward item | `↗ outward — waiting on {party}` |
 
 Matching is simple, no fuzzy match: exact file path + location → match; exact
 file path + identifier → match; a globally unique identifier alone → match;

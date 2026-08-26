@@ -45,7 +45,7 @@ flowchart TD
     curate --> done["harness live<br/>start building"]
 ```
 
-Re-run any time — incremental, never overwrites your edits. A re-run also retires consumer fork skills/agents the plugin now supersedes (per-deletion confirm) and backfills runway sections added since the last sync. A workspace manifest (`pnpm-workspace.yaml`, `turbo.json`, …) switches on the monorepo tier — rules and build pre-flight fan out per package. Repos whose card set outgrows one flat list can opt into the scale module (`docs/parked.md` + `docs/test-queue.md` + a venue-map rule) — offered only once earned, never by default.
+Re-run any time — incremental, never overwrites your edits. A re-run also retires consumer fork skills/agents the plugin now supersedes (per-deletion confirm) and backfills runway sections added since the last sync. A workspace manifest (`pnpm-workspace.yaml`, `turbo.json`, …) switches on the monorepo tier — rules and build pre-flight fan out per package. Repos whose card set outgrows one flat list can opt into the scale module (`docs/parked.md` + `docs/test-queue.md` + `docs/outward.md` + a venue-map rule) — offered only once earned, never by default.
 
 ## How files are handled
 

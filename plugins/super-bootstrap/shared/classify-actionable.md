@@ -1,6 +1,6 @@
 # Classify Actionable — shared spec
 
-Single source of truth for deriving, from the open work cards (plus the scale module's test queue when present), **each open item's `{action, intent, stage}`**. Consumed by every caller that needs the classification — `todo`'s bundled `skills/todo/assets/render-board.py` (the primary board renderer, a mechanical encoding of this spec), the `todo` subagent (fallback lane — Reads it at classify time, then ranks + renders a board), and `drain` (gateway Reads it inline, then gates on `Cloud` + spawns per stage). One criterion, many callers: no caller re-derives it.
+Single source of truth for deriving, from the open work cards (plus the scale module's test queue and outward file when present), **each open item's `{action, intent, stage}`**. Consumed by every caller that needs the classification — `todo`'s bundled `skills/todo/assets/render-board.py` (the primary board renderer, a mechanical encoding of this spec), the `todo` subagent (fallback lane — Reads it at classify time, then ranks + renders a board), and `drain` (gateway Reads it inline, then gates on `Cloud` + spawns per stage). One criterion, many callers: no caller re-derives it.
 
 > **Callers self-read, never paraphrase — and an edit here propagates to the script.** Read this file at classify time and apply it exactly — `todo`'s skill passes the resolved absolute path into the dispatch prompt for the subagent to Read; `drain`'s gateway Reads it inline. Paraphrasing forks the taxonomy — the drift this shared home exists to prevent. The script is the one consumer that *encodes* rather than reads: editing a criterion here pulls `render-board.py` into the edit's closure, checked by the golden bench (`bench/todo-board/` in the source repo).
 
@@ -64,15 +64,16 @@ Intent is determined by action verb before content reads. Rows locked to a defin
 | `E2E run`, `Smoke test`                                         | **Cloud OR Device** (derive) | Fully-automated headless suite → Cloud; human eyes or browser-MCP step → Device (cloud-safe criterion #1). |
 | `Triage` (raw card, investigate-only)                           | **Cloud**                    | Investigate-only artifact, headless.                                         |
 | `Implement` (card carrying an `auto-fix` Verdict block)          | **Cloud OR Device** (derive) | Depends on the Verdict block's `Files` paths + `Test Strategy` per cloud-safe criterion. |
+| `Outward` (outward entry — the author or an outside party moves it) | **Discuss**                  | Author-or-outside-party move; the repo owns only its result tail.            |
 | `Deliberate`, `Apply` (harness surface)                         | **Harness**                  | Pre-filter already caught it; the verb renders the subgroup.                  |
 
 ## Thread-state derivation
 
-One source: the open cards at `docs/work/{BUG,DEBT,GAP}-###.md` (plus the scale module's test queue when present). Read each card, derive its `{action, intent, stage}` from where its thread stands. Apply the Harness pre-filter, then the Action-verb intent map, then the content rules.
+Three sources: the open cards at `docs/work/{BUG,DEBT,GAP}-###.md`, plus the scale module's test queue and outward file when present. Read each, derive its `{action, intent, stage}` from where its thread stands. Apply the Harness pre-filter, then the Action-verb intent map, then the content rules.
 
 **Latest-block-leads.** Derive from the **latest** block of each type: a newer `## Plan` supersedes the older one it replaced, the latest `## Progress` reports current execution state. Earlier blocks are grounding for the read, never the lead.
 
-**Optional-source probe discipline.** `docs/work/` and the test queue are optional — absent until a repo reaches that stage. Probe presence by listing the concrete path (a concrete project-relative target lists reliably), not by content-reading a maybe-absent file. An absent optional source — an empty listing *or* a "does not exist" error — is an expected branch of this spec, not an anomaly to diagnose: record it empty, take its skip (§a–b), and move on immediately.
+**Optional-source probe discipline.** `docs/work/`, the test queue, and the outward file are optional — absent until a repo reaches that stage. Probe presence by listing the concrete path (a concrete project-relative target lists reliably), not by content-reading a maybe-absent file. An absent optional source — an empty listing *or* a "does not exist" error — is an expected branch of this spec, not an anomaly to diagnose: record it empty, take its skip (§a–c), and move on immediately.
 
 ### a. Cards (`docs/work/{BUG|DEBT|GAP}-###.md`)
 
@@ -108,6 +109,15 @@ Entries are `### {plain descriptive title}` headings under `## Pending` (no ID i
 - **Entry carries a `source: {BUG|DEBT|GAP}-###` back-pointer** → don't double-emit against that card's own §a row; the queue entry's row covers the verify obligation.
 
 If `docs/test-queue.md` doesn't exist, skip §b.
+
+### c. Outward (`docs/outward.md` — scale module, skip if absent)
+
+Entries are `### OUT-### — {summary}` headings under `## Entries`, each carrying `**Next move:**`, `**Waiting on:**`, `**Repo tail — fires on:**`, and an optional `**Owning card:**` field.
+
+- **Each entry** → action: `"Outward: OUT-### {summary} — {Next move} · waiting on {Waiting on}"`, **intent: Discuss**, **stage: raw**. The author or an outside party moves it; the repo owns only its result tail.
+- **Entry whose `Owning card:` names an open card** → that card keeps its own §a row. The card's repo work stays the card's; the entry is its external wall.
+
+If `docs/outward.md` doesn't exist, skip §c.
 
 ---
 

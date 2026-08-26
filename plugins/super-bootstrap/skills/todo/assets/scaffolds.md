@@ -12,7 +12,7 @@ Counts only — no IDs, no impact tags. Decision-is-yours; surface priors not ca
 
 ### Need-me (default — bare `/super-bootstrap:todo`)
 
-Drainable rows collapse to the count line; the four need-me groups render as
+Drainable rows collapse to the count line; the five need-me groups render as
 tables. Omit any group whose row count is zero (drop its heading too). Groups
 render in this fixed order.
 
@@ -28,6 +28,12 @@ Drainable: {N}  →  /super-bootstrap:drain
 | #  | Action                                  | unblocks | Impact       | Blast       |
 | -- | ---------------------------------------- | -------- | ------------ | ----------- |
 | 1  | {verb + what + one-line reason}         | {n}      | {tag}        | {tag}       |
+
+## Outward — your move
+
+| #  | Action                                  | unblocks | Impact       | Blast       |
+| -- | ---------------------------------------- | -------- | ------------ | ----------- |
+| 1  | Outward: {ID} {summary} — {next move} · waiting on {party} | {n} | quick-pop | —           |
 
 ## Device-bound
 
@@ -254,14 +260,14 @@ more: /super-bootstrap:help
 
 ### Full
 
-One ranked table, one row per open item, every source (cards, test queue) in the same table. No grouping, no aggregate lines — a source that collapses to a count is not flat.
+One ranked table, one row per open item, every source (cards, test queue, outward file) in the same table. No grouping, no aggregate lines — a source that collapses to a count is not flat.
 
 Column conventions — every row fills every column; a column inapplicable to a row renders `—`:
 
 - **#** — rank position from agent §4, `1` = top. Sequential over the whole table, never restarted.
 - **Action** — the classification spec's `action` string verbatim (`Triage: {ID} {title}`, `Continue execute: {ID} {title} ({done}/{total})`, `Approve design: {ID} {title}`, `Deliberate: {topic}`, `Apply: {rule} → {site}`). It already names the ID, so Full carries no separate File column.
 - **Stage** — the spec's `stage`: `raw` | `triaged` | `aimed` | `executing` | `review`.
-- **Progress** — `{x}/{y}` where the card's latest Progress block reports steps done; `—` on cards without a Plan/Progress block and test-queue rows.
+- **Progress** — `{x}/{y}` where the card's latest Progress block reports steps done; `—` on cards without a Plan/Progress block, test-queue rows, and outward rows.
 - **Blocker** — `user` where the row awaits a user decision — a fork to rule, or an external wait only the user can chase or drop — else `none`.
 - **Impact** / **Blast** — per agent §3, computed on every row including backlog rows.
 
