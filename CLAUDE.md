@@ -126,6 +126,9 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
   • Sync direction: editing a dogfood-harness section pulls any shipped-skeleton counterpart into the edit's closure; propagate stripped of dogfood-only refs, or state it's dogfood-specific.
 - **`skill-authoring.md`** (native) — fires on `plugins/*/skills/**`
   • Skill edits route by test surface: behavior-shaping prose → RED first (micro-test floor); mechanical → audit + release checks.
+- **`venue-map.md`** (native) — fires on `docs/work/README.md`, `docs/test-queue.md`
+  • Derive a work item's venue (T / S / U / P) fresh per read from its next phase — never its terminal phase, never stored.
+  • One map, two filters: `/super-bootstrap:todo` reads it drainable vs need-me, `/super-bootstrap:drain` reads it dispatch vs wall.
 
 First three served from the personal claude-config repo (predicates in `.claude/guidelines/work-discipline/`). Add a project-specific rule file when a path-scoped pattern emerges (e.g. a SKILL.md authoring convention), then mirror a one-line summary here.
 
@@ -160,6 +163,9 @@ Markdown-authored Claude Code plugin + self-hosted marketplace — no language r
 - [`docs/specs/`](docs/specs/) — feature specs, one `.md` per feature. Filename + heading is the catalog; no index.
 - [`docs/work/`](docs/work/README.md) — open cards (`BUG-###` / `DEBT-###` / `GAP-###` append-only threads), captured via `/super-bootstrap:log`, deleted on resolve; `README.md` holds the thread contract + ID high-water line.
 - [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
+- [`docs/parked.md`](docs/parked.md) — deferred items with named triggers (scale module)
+- [`docs/test-queue.md`](docs/test-queue.md) — manual-verification queue (scale module)
+- [`docs/outward.md`](docs/outward.md) — outward items: next move + waiting-on party (scale module)
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)
 
 > `docs/specs/` = permanent source of truth; working design and plan live as blocks on the owning card's thread.

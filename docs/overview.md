@@ -42,7 +42,7 @@ Active development.
 - `.claude-plugin/plugin.json` — plugin manifest: name, description, version, and metadata; carries no `skills` array ([`techstack.md § Framework`](techstack.md#framework))
 
 `.claude-plugin/marketplace.json` — self-hosted marketplace declaration; `source` field pins the install boundary
-`docs/` — dev-workspace docs (this file, [`techstack.md`](techstack.md), [`specs/`](specs/), [`work/`](work/README.md), plus `agents/` — config the installed mattpocock/skills set reads, per [`specs/mattpocock-coexistence.md`](specs/mattpocock-coexistence.md)); never ships to users
+`docs/` — dev-workspace docs (this file, [`techstack.md`](techstack.md), [`specs/`](specs/), [`work/`](work/README.md), the scale-module containers [`parked.md`](parked.md) / [`test-queue.md`](test-queue.md) / [`outward.md`](outward.md), plus `agents/` — config the installed mattpocock/skills set reads, per [`specs/mattpocock-coexistence.md`](specs/mattpocock-coexistence.md)); never ships to users
 `tests/` — 3 shell unit tests (`commit-channel.test.sh`, `doc-links.test.sh`, `render-menu.test.sh`)
 `bench/` — 3 measured fixtures kept beside the SSOT they test: `catalog-axis/` (RED fixture + tier probe for `check-docs-consistency`'s catalog-row axis), `consult-hook/` (test surface for the shipped `consult-check` pair), `todo-board/` (golden test for the `todo` board renderer)
 
@@ -56,7 +56,7 @@ Active development.
 
 **Triage** — `/super-bootstrap:triage {ID}` → dispatches `agents/triage.md` (Opus, clean context) → reads card + live tree → appends `## Verdict` block to `docs/work/{ID}.md`.
 
-**Board** — `/super-bootstrap:todo` → runs the bundled `render-board.py` (zero dispatch, gateway relays stdout) → reads `docs/work/` → renders intent-filtered board; `agents/todo.md` (Sonnet) dispatches only as the venue-map/failure fallback.
+**Board** — `/super-bootstrap:todo` → runs the bundled `render-board.py` (zero dispatch, gateway relays stdout) → reads `docs/work/` (plus the scale module's test queue and outward file when present) → renders intent-filtered board; `agents/todo.md` (Sonnet) dispatches only as the venue-map/failure fallback.
 
 **Commit** — `/super-bootstrap:commit` → gateway-inline stage + classify → [mechanical doc-sync gate](../CLAUDE.md#doc-sync-non-negotiable) (grep + citers + link-targets) → doc-surface hit dispatches `agents/doc-sync-scan.md` (Sonnet) → stale-doc report resolved → `git commit`; product-anchor hit also dispatches `agents/premise-closure.md`.
 
