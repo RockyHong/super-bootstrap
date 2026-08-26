@@ -5,7 +5,8 @@ the zero-dispatch executor of [`shared/classify-actionable.md`](../../plugins/su
 + the todo agent's rank/render protocol. An edit to the classification spec, the
 scaffolds, or the script re-runs this bench (`bash bench/todo-board/run.sh`).
 
-- `fixture/` — a mini project root: 13 cards + a test queue covering every spec
+- `fixture/` — a mini project root: 13 cards + a test queue (entries in the shape
+  `test-queue-skeleton.md` § Entry shape ships) covering every spec
   branch (raw · surface verdict · surface verdict ruled by a later approved Design ·
   surface verdict plus an unrelated Amendment · Amendment-only · auto-fix derive ·
   unapproved Design · executing with Progress · review suppressed by a queue
@@ -40,8 +41,12 @@ scaffolds, or the script re-runs this bench (`bash bench/todo-board/run.sh`).
   next phase here).
 - `fixture-venue-edited/` — the same cards under a map whose Venues table differs
   from the skeleton by one cell: identical board, plus the `# note:` stderr line.
+- `fixture-queue-table/` — one card plus a `docs/test-queue.md` whose `## Pending`
+  holds a markdown table instead of `### ` entries: the board parses zero entries
+  and says so on the `# note:` stderr channel. Its golden appends both stderr
+  lines (`# note:` and `# sources:`) to the board.
 - `expected/` — goldens for all six modes plus the empty, all-blocked, external-wait,
-  actor, outward, and wired-map states, pinned to `--date 2026-08-14`.
+  actor, outward, wired-map, and unparseable-queue states, pinned to `--date 2026-08-14`.
 
 One known accepted divergence from a cold agent render: the soft-coupling
 *direction* cell is mechanically normalized (the row declaring the shared path

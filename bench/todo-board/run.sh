@@ -89,6 +89,19 @@ else
   render_edited | diff "bench/todo-board/expected/needme-venue-edited.md" -
   fail=1
 fi
+# A `## Pending` section in a foreign shape (markdown table): zero entries parse,
+# and the board says so on the stderr note channel. Golden = board + both stderr lines.
+render_queue_table() {
+  "$PY" "$SCRIPT" bench/todo-board/fixture-queue-table needme --date "$DATE" 2>"$err"
+  grep -E '^# (note|sources):' "$err"
+}
+if render_queue_table | diff "bench/todo-board/expected/needme-queue-table.md" - >/dev/null; then
+  echo "PASS needme-queue-table"
+else
+  echo "FAIL needme-queue-table"
+  render_queue_table | diff "bench/todo-board/expected/needme-queue-table.md" -
+  fail=1
+fi
 rm -f "$err"
 
 exit "$fail"

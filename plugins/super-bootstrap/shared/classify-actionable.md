@@ -102,11 +102,11 @@ If `docs/work/` holds no cards, skip §a.
 
 ### b. Test queue (`docs/test-queue.md` — scale module, skip if absent)
 
-Entries are `### {plain descriptive title}` headings under `## Pending` (no ID in the heading).
+Entries are `### {plain descriptive title}` headings under `## Pending` (no ID in the heading); each field is a list bullet with a bold label, exactly as `docs/test-queue.md` § Entry shape ships it.
 
-- **`## Pending` entry with `result: pending`** → action: `"Manually verify: {entry title}"`, **intent: Device** (verb-map row already locks it), **stage: review**.
+- **`## Pending` entry whose `result` bullet reads `pending`** → action: `"Manually verify: {entry title}"`, **intent: Device** (verb-map row already locks it), **stage: review**.
 - **`## Failed` entries** → emit nothing; their re-queue + bug row already cover them.
-- **Entry carries a `source: {BUG|DEBT|GAP}-###` back-pointer** → don't double-emit against that card's own §a row; the queue entry's row covers the verify obligation.
+- **Entry carries a `source` bullet naming a `{BUG|DEBT|GAP}-###` back-pointer** → don't double-emit against that card's own §a row; the queue entry's row covers the verify obligation.
 
 If `docs/test-queue.md` doesn't exist, skip §b.
 

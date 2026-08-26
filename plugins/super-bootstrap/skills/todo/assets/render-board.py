@@ -40,6 +40,11 @@ judgment call, the encoding is the documented mechanical reading:
                     skeleton (§ venue map below), never the placed file; a placed
                     map whose tables differ draws a stderr notice, not a different
                     board. Unwired, the partition is the intent axis, unchanged.
+- Test-queue entry = `### {title}` under `## Pending`; `result:` / `source:`
+                    read in the skeleton's bullet + bold-label form
+                    (`- **result:** pending`), the bare-label form tolerated.
+                    `## Pending` content holding no `### ` entry draws a stderr
+                    `# note:`, not a different board.
 - Outward entry   = `### OUT-### — {summary}` under `## Entries`; fields read by
                     their bold labels. `unblocks` = 1 when `Owning card:` names an
                     open card, else 0 — leverage signal only: an outward row's
@@ -51,7 +56,8 @@ judgment call, the encoding is the documented mechanical reading:
                     ACTION_WIDTH with `…` (scaffolds.md § Sheet columns).
 
 Exit codes: 0 board rendered · 2 usage · 4 substrate absent.
-stdout carries the board only. stderr carries `# sources:` diagnostics.
+stdout carries the board only. stderr carries `# sources:` diagnostics plus any
+`# note:` lines (venue-map divergence · unparseable `## Pending` content).
 """
 import argparse
 import datetime
@@ -75,6 +81,9 @@ WAIT_RE = re.compile(r"needs user|decision required|route\?|waiting on\s+\w|bloc
 OUT_HEAD_RE = re.compile(r"^(OUT-\d+) — (.+?)\s*$")
 OUT_FIELD_RE = re.compile(
     r"^\*\*(Next move|Waiting on|Repo tail — fires on|Owning card):\*\*\s*(.+?)\s*$", re.M)
+QUEUE_FIELD_RE = re.compile(
+    r"^[ \t]*(?:[-*+][ \t]+)?\*{0,2}(result|source)\*{0,2}:\*{0,2}[ \t]*(.+?)\s*$", re.M)
+QUEUE_PLACEHOLDER_RE = re.compile(r"^\*\(empty\b.*\)\*$")
 OUT_LOGGED_RE = re.compile(r"\*\*Logged:\*\*\s*([^\n·]*)")
 CARD_ID_RE = re.compile(r"(?:BUG|DEBT|GAP)-\d+")
 SEVERITY_RE = re.compile(r"\b(critical|blocking|production-down|data-loss)\b", re.I)
@@ -414,18 +423,36 @@ def classify_queue(queue_text, cards_by_id):
             lines = entry.splitlines()
             title = lines[0].strip()
             body = "\n".join(lines[1:])
-            if not re.search(r"^result:\s*pending", body, re.M):
+            fields = {}
+            for label, value in QUEUE_FIELD_RE.findall(body):
+                fields.setdefault(label.lower(), value)
+            if not fields.get("result", "").lower().startswith("pending"):
                 continue
             row = Row(f"Manually verify: {title}", "Device", "review", None, "Manually verify")
-            m = re.search(r"^source:\s*((?:BUG|DEBT|GAP)-\d+)", body, re.M)
+            m = re.match(r"(?:BUG|DEBT|GAP)-\d+", fields.get("source", ""))
             if m:
-                suppressed.add(m.group(1))
-                src = cards_by_id.get(m.group(1))
+                suppressed.add(m.group(0))
+                src = cards_by_id.get(m.group(0))
                 if src:
                     row.blast_paths = paths_in(src.fields.get("Area", ""))
                     row.modality = modality(src)
             rows.append(row)
     return rows, suppressed
+
+
+def pending_unparseable(queue_text):
+    """True when `## Pending` holds content (not blanks, not the skeleton placeholder)
+    but no `### ` entry heading — the shape the parser cannot read at all."""
+    m = re.search(r"^## Pending\s*$", queue_text, re.M)
+    if not m:
+        return False
+    tail = queue_text[m.end():]
+    nxt = re.search(r"^## ", tail, re.M)
+    if nxt:
+        tail = tail[:nxt.start()]
+    lines = [l.strip() for l in tail.splitlines()]
+    content = [l for l in lines if l and not QUEUE_PLACEHOLDER_RE.match(l)]
+    return bool(content) and not any(l.startswith("### ") for l in content)
 
 
 def classify_outward(text, cards_by_id):
@@ -829,7 +856,12 @@ def main():
     queue_rows, suppressed = [], set()
     queue_path = os.path.join(args.root, "docs/test-queue.md")
     if os.path.isfile(queue_path):
-        queue_rows, suppressed = classify_queue(read(queue_path), cards)
+        queue_text = read(queue_path)
+        queue_rows, suppressed = classify_queue(queue_text, cards)
+        if pending_unparseable(queue_text):
+            print("# note: docs/test-queue.md `## Pending` holds content but no "
+                  "`### ` entries — reshape them to its `## Entry shape` "
+                  "(`### {title}` + `- **result:** pending`)", file=sys.stderr)
 
     outward_rows = []
     outward_path = os.path.join(args.root, "docs/outward.md")

@@ -65,7 +65,9 @@ The script renders in both wiring states. With the scale module's
 off a built-in encoding of the shipped map (`agents/todo.md` § Lane split, wired
 arm); without it, by the intent axis. A placed map whose tables differ from that
 encoding renders the same board plus one `# note:` line on stderr — the
-diagnostic that local map edits do not reach the script lane.
+diagnostic that local map edits do not reach the script lane. A `docs/test-queue.md`
+whose `## Pending` holds content but no `### ` entry draws another
+`# note:` line, pointing at that file's § Entry shape.
 
 **Dispatch lane (fallback).** Dispatch the `todo` subagent with the resolved
 mode per §Execution — the pre-script path, unchanged. Relay the agent's
@@ -123,6 +125,6 @@ Steps:
 
 - **Read-only.** Never modifies files. Never executes git operations.
 - **Works in any repo** — `docs/work/` present (created by `/super-bootstrap:harness-bootstrap`) drives the board; absent → the skip-gate redirects to `/super-bootstrap`.
-- **Verbatim relay rule.** The executor's rendered output IS the value — script stdout and agent reply alike. Gateway adds nothing — no preface, no editorial. Sole exceptions, each printed above the board as its own line, never woven into the render: the §Arguments fallback notice, and the script's `# note:` stderr line when present (§Render behavior). The board closes the turn: every tool call the skill makes (the spot-check included) lands before it, so the rendered surface is the last thing on screen.
+- **Verbatim relay rule.** The executor's rendered output IS the value — script stdout and agent reply alike. Gateway adds nothing — no preface, no editorial. Sole exceptions, each printed above the board as its own line, never woven into the render: the §Arguments fallback notice, and the script's `# note:` stderr line(s) when present (§Render behavior). The board closes the turn: every tool call the skill makes (the spot-check included) lands before it, so the rendered surface is the last thing on screen.
 - **Footer-hint convention.** Footer is the executor's render concern (see §Footer rule). Gateway relays verbatim.
 - **One classification SSOT.** `shared/classify-actionable.md` + `assets/scaffolds.md` bind both lanes; the script encodes them, the agent self-reads them. An edit to either propagates to the script (bench check: `bench/todo-board/` in the source repo) and never forks a lane-local criterion.
