@@ -27,7 +27,8 @@ other is either a dead write or a silent no-op. Its install also appends
 `.claude/.consult-catalog` to the repo's `.gitignore` when absent (per-session
 regenerated cache, local-only). A repo that already carries the pair from another
 manager (a prior device-level plant) is drift-checked by the same copy-on-drift
-mechanism below — the frozen asset here is the SSOT.
+mechanism below and lands in its fork prompt — the frozen asset here is the SSOT,
+and the swap is an explicit pick.
 
 ## Retired hooks — remove on re-sync
 
@@ -55,25 +56,39 @@ On any re-sync of an already-bootstrapped repo:
 2. Remove any `.claude/settings.json` hook entry whose `command` references one of
    those scripts (match by script filename) — a surgical array-element removal,
    touching no other entry.
+3. Remove any `placed[".claude/hooks/<name>.sh"]` key for those scripts from
+   `.claude/super-bootstrap-runway.json` — a guarded read-modify-write touching only
+   the `placed` map.
 
 Idempotent: a repo with none of the retired scripts and no matching settings entry is
 already clean, nothing to do.
 
-## Idempotency — content-aware (copy-on-drift)
+## Idempotency — content-aware (copy-on-drift, fork-aware)
 
 Existence alone is not enough: an upstream fix to a frozen asset — script **or**
-settings snippet — must reach repos that already have an older copy. Each frozen script
-carries a version marker on its second line — `# FROZEN <name> vN` (e.g.
-`# FROZEN commit-channel v5`); a snippet carries no marker, so its check is a
-deep-equal against the asset entry. Both present-checks compare **installed** against
-**asset** and re-place on any mismatch (missing, older, or byte-differing):
+settings snippet — must reach repos that already have an older copy. Currency compares
+**installed** against **asset** whole: a script by sha256 of its bytes, a snippet by
+deep-equal against the asset entry. Each frozen script also carries a version marker on
+its second line — `# FROZEN <name> vN` (e.g. `# FROZEN commit-channel v5`) — which
+names the version in reports and prompts; it is not the currency test, so an edit
+anywhere in the file counts as drift. A second script predicate reads the runway
+receipt's `placed` map to tell a copy that merely lags the asset (**stale**) from one
+carrying consumer edits (**fork**):
 
 ```
 scriptCurrent(name):
   installed = .claude/hooks/<name>.sh
-  exists(installed)   AND
-  marker-line of installed == marker-line of asset hooks/<name>.sh
-  # mismatch (absent | different version | edited) → re-copy the asset verbatim
+  exists(installed)   AND   sha256(installed) == sha256(asset hooks/<name>.sh)
+  # mismatch (absent | older version | edited anywhere) → resolve via scriptUntouched
+
+scriptUntouched(name):
+  installed = .claude/hooks/<name>.sh
+  placed    = .claude/super-bootstrap-runway.json → placed[".claude/hooks/<name>.sh"]
+  exists(placed)   AND   sha256(installed) == placed
+  # true  → the file sits exactly as this pipeline placed it → stale
+  # false → the file carries edits this pipeline did not place → fork
+  # no placed entry (receipt predates the field, or another manager placed the
+  #   file) → unknown, resolved as fork
 
 snippetCurrent(name):
   entry = the settings.json target-array entry whose command references <name>.sh
@@ -93,22 +108,48 @@ hooksInfraPresent():
   .gitignore contains .claude/.consult-catalog
 ```
 
-All current → skip silently (`✓ current`), no message. Any drift → re-copy the drifted
-script (verbatim, overwriting the stale copy), and/or merge the missing settings entry
-or replace the drifted one in place,
-and/or re-append `.claude/.consult-catalog` to `.gitignore`,
-report what changed, stage with the Phase 2c commit. This is copy-on-drift, not a
-migration engine — the asset is always the source of truth, the installed copy is
-replaceable. **No confirm gate** — default-on, unlike drain's `infraPresent()`
-install-confirm.
+All current → skip silently (`✓ current`), no message. A missing script installs from
+the asset. Script drift resolves by which side moved:
 
-One migration this covers by design: an installed `consult-check` pair predating
+- **Stale** (`scriptCurrent` false, `scriptUntouched` true) — the placed copy is intact
+  and only lags the asset. Re-copy the asset verbatim, silently; report
+  `⚠ drifted → updated (stale)`.
+- **Fork** (`scriptCurrent` false, and `scriptUntouched` false or no `placed` entry) —
+  the installed file carries content this pipeline did not place. Stop and ask, three
+  parts:
+  1. **Found** — the installed path, its marker line (or `no FROZEN marker`) and its
+     sha256, beside the asset's marker line.
+  2. **Expected** — that file exactly as the last sync placed it: the `placed` hash, or
+     `no placed entry — this copy came from outside this pipeline`.
+  3. **Pick** — `overwrite` re-places the asset verbatim (report `⚠ drifted → updated
+     (fork, overwritten)`); `keep` leaves the file as it stands (report
+     `⚠ drifted → kept (fork)`). Say with the pick that `keep` holds for this sync only
+     — the next sync meets the same fork and asks again; a consumer variant of a frozen
+     asset is not a supported state. The pick resolves this one script; continue with
+     the next check in `hooksInfraPresent()`.
+
+Settings snippets keep replace-in-place, silently — a `.hook.json` entry is a JSON
+registration this pipeline owns, not a consumer-editable script — and a missing
+`.claude/.consult-catalog` line re-appends to `.gitignore`. Report what changed, stage
+with the Phase 2c commit. This is copy-on-drift, not a migration engine — the asset is
+the source of truth for every copy this pipeline placed, and the fork prompt is what
+keeps an unrecognized copy from being replaced blind. Install stays default-on — no
+install confirm, unlike drain's `infraPresent()`; the fork pick is the only prompt.
+
+After copying a script, record `placed[".claude/hooks/<name>.sh"] = sha256(asset
+hooks/<name>.sh)` in `.claude/super-bootstrap-runway.json` — a guarded read-modify-write
+touching only that one `placed` key, leaving `version` / `covered` / `declined` as found;
+file absent → create it carrying `placed` alone. Phase 2c's receipt write (`SKILL.md`
+§ 2c) reads the file back and carries every `placed` entry forward.
+
+One migration this reaches by design: an installed `consult-check` pair predating
 the frozen assets — header line `# SessionStart hook — consult-check catalog
-derivation (GAP-045 build …`, no `# FROZEN … v1` marker — is superseded by the
-frozen v1 pair, whose scan covers the consumer's own `docs/**` alone; the
-guidelines trees are split out deliberately (their rows resolve two ways and
-cost most of the render budget), so a re-copy dropping those roots is the
-intended migration — accept it.
+derivation (GAP-045 build …`, no `# FROZEN … v1` marker, planted by a device-level
+manager, so no `placed` entry — arrives at the fork prompt as unknown. Carry this as
+that prompt's context: the frozen v1 pair is the intended successor, and its scan
+covers the consumer's own `docs/**` alone — the guidelines trees are split out
+deliberately (their rows resolve two ways and cost most of the render budget), so an
+`overwrite` dropping those roots is the migration landing as designed.
 
 ## Hook activation
 
