@@ -54,9 +54,10 @@ argument → `needme`; no matching row → print the fallback notice, mode
 (The script body is opaque to the permission engine — the grant to carve is the
 invocation itself, e.g. `Bash(python3 *)`.)
 
-- **Exit 0** → relay stdout verbatim. No editorial, no preface. Then spot-check
-  one rendered row against the doc it cites; a confirmed miss →
-  `/super-bootstrap:log` (a renderer defect against the spec). Done — no dispatch.
+- **Exit 0** → spot-check first: one rendered row against the doc it cites; a
+  confirmed miss → `/super-bootstrap:log` (a renderer defect against the spec).
+  Then relay stdout verbatim as the turn's closing message — no editorial, no
+  preface. Done — no dispatch.
 - **Failure** (`python3` missing, non-zero exit, empty stdout) → dispatch lane.
 
 The script renders in both wiring states. With the scale module's
@@ -115,13 +116,13 @@ Steps:
 2. Resolve the classification spec path: take the skill base directory (surfaced in the skill invocation as `Base directory for this skill: <abs path>`), append `../../shared/classify-actionable.md`. Read `assets/scaffolds.md` (sibling) and embed the chosen-mode section verbatim in the dispatch prompt. Pass the resolved absolute path as `{classify_spec_path}` — never the file contents. Ranking + render live in the `todo` agent.
 3. Build dispatch prompt per template above.
 4. `Agent` tool, `subagent_type: "todo"`, prompt = the built dispatch prompt.
-5. Agent returns rendered scaffold (or empty-state). **Relay verbatim.**
-6. **Spot-check:** sample one classified row from the reply against the doc it cites; a confirmed miss → `/super-bootstrap:log` (tier re-pinning evidence). The script lane carries its own spot-check under §Render behavior's Exit 0 clause.
+5. Agent returns rendered scaffold (or empty-state). **Spot-check first:** sample one classified row from the reply against the doc it cites; a confirmed miss → `/super-bootstrap:log` (tier re-pinning evidence). The script lane carries its own spot-check under §Render behavior's Exit 0 clause.
+6. **Relay verbatim** as the turn's closing message.
 
 ## Rules
 
 - **Read-only.** Never modifies files. Never executes git operations.
 - **Works in any repo** — `docs/work/` present (created by `/super-bootstrap:harness-bootstrap`) drives the board; absent → the skip-gate redirects to `/super-bootstrap`.
-- **Verbatim relay rule.** The executor's rendered output IS the value — script stdout and agent reply alike. Gateway adds nothing — no preface, no editorial. Sole exceptions, each printed above the board as its own line, never woven into the render: the §Arguments fallback notice, and the script's `# note:` stderr line when present (§Render behavior).
+- **Verbatim relay rule.** The executor's rendered output IS the value — script stdout and agent reply alike. Gateway adds nothing — no preface, no editorial. Sole exceptions, each printed above the board as its own line, never woven into the render: the §Arguments fallback notice, and the script's `# note:` stderr line when present (§Render behavior). The board closes the turn: every tool call the skill makes (the spot-check included) lands before it, so the rendered surface is the last thing on screen.
 - **Footer-hint convention.** Footer is the executor's render concern (see §Footer rule). Gateway relays verbatim.
 - **One classification SSOT.** `shared/classify-actionable.md` + `assets/scaffolds.md` bind both lanes; the script encodes them, the agent self-reads them. An edit to either propagates to the script (bench check: `bench/todo-board/` in the source repo) and never forks a lane-local criterion.
