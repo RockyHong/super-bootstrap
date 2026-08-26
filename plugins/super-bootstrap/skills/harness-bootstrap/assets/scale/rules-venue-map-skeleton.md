@@ -20,7 +20,7 @@ Single source for *where* a pipeline phase runs. One map, two filters — never 
 
 ## Derivation
 
-Venue is derived fresh per read — never stored. Chain: the shared classification's **stage** (by thread-state) → the item's **next phase** → that phase's venue. Classify by the item's **next** phase, never its terminal phase; modality fields govern only the phase they gate.
+Venue is derived fresh per read — never stored. Chain: the caller-supplied **stage** → the item's **next phase** → that phase's venue. `stage` is supplied by the callers that index this table — `/super-bootstrap:todo` and `/super-bootstrap:drain`, out of their classification pass (`shared/classify-actionable.md`, inside the installed super-bootstrap plugin); this rule maps a supplied stage to a venue and never derives the stage itself. Classify by the item's **next** phase, never its terminal phase; modality fields govern only the phase they gate.
 
 | Stage | Next phase | Venue |
 |---|---|---|
@@ -43,9 +43,9 @@ Downgrade an otherwise-**T** phase when the row carries the signal.
 
 ## Consumer boundary
 
-This rule never overrides `{action, intent, stage}` from the shared classification — venue is advisory run-location metadata. Mapping: T≈Cloud, U≈Discuss/Device; S and P are refinements the drain lane consumes when wired.
+This rule never overrides the `{action, intent, stage}` its callers supply — venue is advisory run-location metadata. Mapping: T≈Cloud, U≈Discuss/Device; S and P are refinements the drain lane consumes when wired.
 
 One map, two filters — never re-derived by hand:
 
-- **`/super-bootstrap:todo`** reads it **drainable vs need-me** — its Lane split owns the venue→group mapping.
-- **`/super-bootstrap:drain`** reads it **dispatch vs wall** — its admission gate owns the venue→admit mapping.
+- **`/super-bootstrap:todo`** reads it **drainable vs need-me** — the todo skill's lane split owns the venue→group mapping.
+- **`/super-bootstrap:drain`** reads it **dispatch vs wall** — the drain skill's admission gate owns the venue→admit mapping.
