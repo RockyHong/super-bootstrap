@@ -1,0 +1,8 @@
+# DEBT-094 — `claude-md-skeleton.md` § Development Workflow carries a rare-fire instruction in the always-on layer
+
+**Logged:** 2026-08-27 · **Source:** consumer sync report (v2.29.7 → v2.39.3) — the consumer's post-sync cold Tier-1 audit flagged the line; the consumer left it in place because removing it locally creates permanent drift against the pipeline-owned section
+**Problem:** [`claude-md-skeleton.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md) § Development Workflow ships "Bootstrap pins one process harness behind these laws, droppable per repo. To add another: `/super-bootstrap:resolve-plugins` — an ordinary adaptive pick, not a requirement." The sentence fires only when a user decides to add a harness — a hand-invoked moment — yet it loads into every session of every consumer as CLAUDE.md text. It fails the cut test for the ambient layer (what decision does it sharpen in an ordinary session?) and the consumer cannot drop it without a standing drift row. The dogfood `CLAUDE.md` § Development Workflow carries the same line.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` § Development Workflow · root `CLAUDE.md` § Development Workflow (dogfood mirror) · `skills/resolve-plugins/SKILL.md` description (the discoverable home for "add another harness")
+**Prior:** Cut the sentence from the skeleton and the dogfood copy; the `resolve-plugins` skill description already names the moment, and the paired-pin drop spelling lives in `harness-bootstrap`. If a pointer is wanted, one clause on the existing "Work enters by…" line, not a standalone sentence.
+**Test-feel:** doc-only
+**Blast:** local

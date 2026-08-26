@@ -1,0 +1,8 @@
+# DEBT-091 — the paired pin merges into an already-bootstrapped repo with no veto row
+
+**Logged:** 2026-08-27 · **Source:** consumer sync report (v2.29.7 → v2.39.3) — `mattpocock-skills@mattpocock` landed in `.claude/settings.json` `enabledPlugins` as part of the sync commit with no drift row to decline
+**Problem:** [`harness-bootstrap/SKILL.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md) § core pin ("Consequence on an already-bootstrapped repo") states the paired pin's keys merge in silently because pins are missing-or-present, not diff-and-approve, and calls it intended. The consumer effect is a new project-level plugin pin committed to git through a sync whose every other change went through a per-section approval row — the one change with the widest reach (a second plugin's skills become discoverable in every session) is the one the installer could not decline at the moment it landed. [`docs/decisions.md`](../decisions.md) closed "pin mattpocock/skills as a core dep" — this card does not reopen that; it asks whether the *first-time merge on an existing repo* should present a row the installer can set to `false` before the commit, given the drop spelling (`false`, never delete) already exists.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md` § core pin (paired-pin consequence paragraph) · § 2c staging list (settings.json row) · `assets/hooks-ensure-infra.md` only if the pin write moves
+**Prior:** On sync (not fresh install), a paired-pin key absent from settings.json renders as a `⊕ new` row — accept merges `true`, decline writes `false` — so the drop spelling is offered at the only moment it is cheap; fresh installs keep the unconditional seed.
+**Test-feel:** doc-only
+**Blast:** local
