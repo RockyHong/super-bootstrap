@@ -185,7 +185,7 @@ Paired pin:
 
 - **Harness-active + value `true`** → surface one drop offer in the batch — no trust block, no score, no what-breaks clause. Keep is the default.
 - **Harness-active + value `false`** → dropped on purpose. Keep the key, keep the value, never re-propose. `false` is a present key, so Phase 2a's merge skips it and the drop survives every sync.
-- **Harness-active + key absent** (repo bootstrapped before the pairing shipped) → propose the pin as the same droppable offer, never as a locked re-pin. A decline writes `false`, not a missing key.
+- **Harness-active + key absent** → propose the pin as the same droppable offer, never as a locked re-pin. A decline writes `false`, not a missing key. On the entry flow the runway's own sync row already offered this pin and wrote a value, so the key is still absent only where that row never ran — a direct `/super-bootstrap:resolve-plugins` invocation, or a `harness-bootstrap` run that did not reach its `.claude/settings.json` step. One offer per run either way.
 - **Not harness-active** → no pairing applies; treat as an ordinary adaptive pick the user may drop.
 - Trust signals are never re-fetched for the paired pin, in any branch.
 
@@ -229,7 +229,7 @@ Steps execute sequentially within a candidate. Multiple candidates may install i
 
 ### Phase 5.2: Settings.json write
 
-- Add accepted picks to `enabledPlugins`. Drop rejected picks. **When harness-active (`docs/work/` exists), never drop the core pin** (`super-bootstrap@super-bootstrap`) — see Phase 4 § Pre-resolve pins. The paired pin (`mattpocock-skills@mattpocock`) **is** droppable there — an accepted drop writes the key to `false`, never deletes it; a deleted key is silently merged back in on the next `harness-bootstrap` sync.
+- Add accepted picks to `enabledPlugins`. Drop rejected picks. **When harness-active (`docs/work/` exists), never drop the core pin** (`super-bootstrap@super-bootstrap`) — see Phase 4 § Pre-resolve pins. The paired pin (`mattpocock-skills@mattpocock`) **is** droppable there — an accepted drop writes the key to `false`, never deletes it; a deleted key returns as an approval row on the next `harness-bootstrap` sync, defaulting to accept.
 - For any plugin NOT from `claude-plugins-official`, ensure its source is in `extraKnownMarketplaces` so cloud sessions / fresh machines can resolve.
 - Example shape:
   ```json

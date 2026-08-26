@@ -355,12 +355,11 @@ tracker declaration (§4).
 
 Pairing is not hard coupling. Every sb door works with his lane absent, and a repo drops
 him by setting `"mattpocock-skills@mattpocock": false`. **The spelling is load-bearing:**
-deleting the key instead re-seeds it on the next sync, because `harness-bootstrap` §2a
-merges absent keys and skips present ones. `resolve-plugins` offers the paired pin for
+deleting the key instead brings it back on the next sync as an approval row, because
+`harness-bootstrap` §2a skips present keys whatever their value and offers absent ones. `resolve-plugins` offers the paired pin for
 drop, never re-proposes a dropped one, and never re-fetches its trust signals.
 
-The pin reaches already-bootstrapped repos too, at their next sync, and silently — pins
-carry no drift diff. Under pairing that is the intended reach, not a leak.
+The pin reaches already-bootstrapped repos too, at their next sync — via a declinable [`⊕ new` row](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md) on the sync report, defaulting to accept; decline writes `false`. Under pairing that is the intended reach, not a leak.
 
 Composition is bounded to the three mechanically available surfaces (§4): awareness
 pointers the human types, the "Other" tracker socket declaring `docs/work/` +

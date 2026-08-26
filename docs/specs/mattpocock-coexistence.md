@@ -2,7 +2,7 @@
 
 Operating posture for running [mattpocock/skills](https://github.com/mattpocock/skills) alongside super-bootstrap on the operator's own repos. The seam analysis — why composition is bounded to these surfaces, why the middle is human-typed only — lives in [`harness-architecture.md`](harness-architecture.md) §4; the coexistence decision in §6. This doc is the how-to: install, tracker recipe, lane picks, watch list.
 
-**Posture: paired, device install + per-repo enable.** The plugin installs once at device scope and sits **disabled** there; enabling is per repo. It is not an opt-in pick — super-bootstrap and mattpocock/skills ship paired, and `harness-bootstrap` §2a seeds the per-repo enable as a [**paired pin**](../techstack.md#key-dependencies): unconditional like a core dep, droppable unlike one. Pairing is not hard coupling: sb's own doors never depend on his lane, and a repo drops him by flipping the pin to `false`, no doc change. `plugins/super-bootstrap/` names him only at setup-time — the §2a pin entry with its marketplace, the tracker-recipe asset, and the first-run handoff string — and at zero runtime sites; the [§4 grep contract](harness-architecture.md#4-the-seam-runtime-orthogonal-setup-time-composed) is what holds that boundary and enumerates the sanctioned hits. This runbook and an operator repo's own CLAUDE.md may name his commands; the shipped skeleton must not (`.claude/rules/repo-boundary.md` taste-coupling).
+**Posture: paired, device install + per-repo enable.** The plugin installs once at device scope and sits **disabled** there; enabling is per repo. It is not an opt-in pick — super-bootstrap and mattpocock/skills ship paired, and `harness-bootstrap` §2a seeds the per-repo enable as a [**paired pin**](../techstack.md#key-dependencies): on a fresh install unconditional like a core dep; on a sync, offered as a declinable [`⊕ new` row](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md) (default accept), droppable either way. Pairing is not hard coupling: sb's own doors never depend on his lane, and a repo drops him by flipping the pin to `false`, no doc change. `plugins/super-bootstrap/` names him only at setup-time — the §2a pin entry with its marketplace, the tracker-recipe asset, and the first-run handoff string — and at zero runtime sites; the [§4 grep contract](harness-architecture.md#4-the-seam-runtime-orthogonal-setup-time-composed) is what holds that boundary and enumerates the sanctioned hits. This runbook and an operator repo's own CLAUDE.md may name his commands; the shipped skeleton must not (`.claude/rules/repo-boundary.md` taste-coupling).
 
 ## Install
 
@@ -13,14 +13,14 @@ Device scope, once — install, then leave it **disabled** there so every enable
 /plugin install mattpocock-skills@mattpocock
 ```
 
-Per repo, `harness-bootstrap` §2a owns the enable: it seeds `"mattpocock-skills@mattpocock": true` into `.claude/settings.json` plus the `mattpocock` → `mattpocock/skills` entry in `extraKnownMarketplaces`, on a fresh scaffold and on any re-sync of a repo that predates the pairing. Its first-run handoff names his commands and hands over the two steps a model cannot take — his user-invoked layer is model-unreachable ([§4](harness-architecture.md#4-the-seam-runtime-orthogonal-setup-time-composed)), so these are typed by hand after the runway is in place:
+Per repo, `harness-bootstrap` §2a owns the enable: it seeds `"mattpocock-skills@mattpocock": true` into `.claude/settings.json` plus the `mattpocock` → `mattpocock/skills` entry in `extraKnownMarketplaces`, on a fresh scaffold; on a sync of a repo that predates the pairing, it renders a declinable [`⊕ new` row](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md) (default accept). Its first-run handoff names his commands and hands over the two steps a model cannot take — his user-invoked layer is model-unreachable ([§4](harness-architecture.md#4-the-seam-runtime-orthogonal-setup-time-composed)), so these are typed by hand after the runway is in place:
 
 1. Type `/setup-matt-pocock-skills`.
 2. At its issue-tracker question pick **Other**, then paste the recipe (below) as the workflow description.
 
 His setup owns `docs/agents/*` — nothing pre-writes them, here or downstream. Where a prior run already wrote them (this repo included), his skill is silent on pre-existing files, so [a re-run may overwrite](harness-architecture.md#4-the-seam-runtime-orthogonal-setup-time-composed): diff before accepting.
 
-To drop him in a repo, set the pin to `false` — never delete the key. §2a merges absent keys back in on every sync; a present `false` is skipped, so the drop survives.
+To drop him in a repo, set the pin to `false` — never delete the key. §2a skips a present key whatever its value, so the drop survives; a deleted key returns on the next sync as an approval row.
 
 ## The tracker recipe
 
