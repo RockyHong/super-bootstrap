@@ -32,7 +32,8 @@ scaffolds, or the script re-runs this bench (`bash bench/todo-board/run.sh`).
   **P** probe · review-stage `Test-feel: manual` → **U** device (its intent is
   still `Cloud`, so the group can only come from the venue) · review-stage
   `Test-feel: e2e` → **S** drainable · review-stage `Stochastic: llm` with no
-  `Test-feel` → **T** drainable (the verify phase takes `Test-feel` alone) ·
+  `Test-feel` → **P** probe (the verify phase reads `Stochastic` when no
+  `Test-feel` decides it) ·
   `surface` verdict and `Actor: author` →
   decide (intent `Discuss` wins over venue) · triaged `Test-feel: manual` → **T**
   drainable (a modality field gates only its own phase, and verify is not the

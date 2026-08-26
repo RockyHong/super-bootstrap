@@ -1,6 +1,6 @@
 # To-Do — 2026-08-14
 
-Drainable: 4  →  /super-bootstrap:drain
+Drainable: 3  →  /super-bootstrap:drain
 
 ▸ Need me
 
@@ -21,7 +21,8 @@ Drainable: 4  →  /super-bootstrap:drain
 
 | # | Action | unblocks | Impact | Blast |
 | -- | -- | -- | -- | -- |
-| 1 | Triage: GAP-502 prompt rewrite changes summary quality | 0 | quick-pop | local |
+| 1 | Review: GAP-508 tone grader disagrees with the rubric on short replies | 0 | quick-pop | local |
+| 2 | Triage: GAP-502 prompt rewrite changes summary quality | 0 | quick-pop | local |
 
 flat list: /super-bootstrap:todo full · drainable detail: /super-bootstrap:todo cloud
 more: /super-bootstrap:help

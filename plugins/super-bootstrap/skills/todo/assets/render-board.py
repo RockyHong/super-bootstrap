@@ -110,9 +110,9 @@ Stage|Next phase|Venue
 `triaged`|Implement|derive — § Modality overrides over the card's Verdict block
 `aimed`|Execute|derive — § Modality overrides
 `executing`|Execute|derive — § Modality overrides
-`review`|Review|**T** — manual-verification arm → **U** / **S** per Test-feel
+`review`|Review|Test-feel present → § Modality overrides, an unlisted value → **T**; else `Stochastic: llm` → **P**; else **T**
 Signal|Effect
-`Stochastic: llm`|triage / build / test → **P**; plan-write / aim-settle / doc stay **T**
+`Stochastic: llm`|triage / build / `review` without Test-feel → **P**; plan-write / aim-settle / doc stay **T**
 visual-taste acceptance|acting phase → **U** — who accepts this as done? the user's eyes → U (never keyword matching)
 `Test-feel: e2e`|verify phase → **S**
 `Test-feel: manual`|verify phase → **U**
@@ -593,10 +593,10 @@ def venue(row):
       declares `Test-feel: manual`.
     - a modality field gates only its own phase: `Test-feel` gates verify, so a
       build phase (`triaged` / `aimed` / `executing`) is never downgraded by it.
-    - the verify phase takes `Test-feel` alone: § Derivation sends `review` to
-      **T**, naming Test-feel as its only override, so `Stochastic: llm` cannot
-      downgrade it — that signal covers the triage / build / test phases the
-      Derivation table leaves to § Modality overrides.
+    - at the verify phase `Test-feel` decides when the card carries one, so a
+      modality the overrides table does not list (`unit` / `doc-only`) stays **T**;
+      with no `Test-feel`, `Stochastic: llm` downgrades the phase to **P**, the
+      same signal the triage / build phases read from § Modality overrides.
     - a `Manually verify` row IS the review row's manual-verification arm,
       whatever fields its back-pointed card carries.
     """
@@ -608,7 +608,9 @@ def venue(row):
             return "U"
         if tf == "e2e":
             return "S"
-        return "T"
+        if tf:
+            return "T"
+        return "P" if st == "llm" else "T"
     return "P" if st == "llm" else "T"
 
 
