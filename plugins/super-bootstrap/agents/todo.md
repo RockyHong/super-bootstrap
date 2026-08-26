@@ -144,6 +144,8 @@ need-me row X, `fanout(X)` = the count of other open rows that X unblocks:
   behind the `pending unblock` footer count; fan-out is the reason to do X.)
 - **+1 per soft-coupled row X shapes** — a body row whose correct execution
   depends on X's artifact / convention (X is the upstream of the soft edge).
+- **+1 when X is an outward entry whose `Owning card:` names an open card** — X
+  externalizes that card's external wall; its result landing frees the card to resume.
 
 `fanout` is rendered as the `unblocks` column. `0` is valid and shown — not every
 need-me card unblocks downstream, but it still needs attention. Fan-out is a
