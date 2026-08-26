@@ -26,6 +26,6 @@ Spec-coupled items may replace **Watching for** / **Fires on** with a `surface-o
 
 *(empty — seeded as items are parked)*
 
-## Sweep log — {date}
+## Sweep log
 
 *(overwrite in place at each sweep — what was removed and why, no running chronicle)*

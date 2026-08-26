@@ -285,9 +285,9 @@ On `y`, place the five `assets/scale/` skeletons per Phase 2's per-artifact rule
 - `test-queue-skeleton.md` → `docs/test-queue.md`
 - `outward-skeleton.md` → `docs/outward.md`
 - `rules-venue-map-skeleton.md` → `.claude/rules/venue-map.md`
-- `card-fact-fields.md` → insert its marker-delimited block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`) into the `docs/work/README.md` header, immediately after the `## Categories` section; skip if the markers are already present.
+- `card-fact-fields.md` → insert its marker-delimited block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`) into `docs/work/README.md` directly above the `## Thread contract` heading; skip if the markers are already present.
 
-Add one summary bullet to CLAUDE.md § Rules for the seeded `venue-map.md` (existing mechanism — glob + 2–4 one-line key points). Stage the placed files with the Phase 2c commit.
+Add one summary bullet to CLAUDE.md § Rules for the seeded `venue-map.md` — its fires-on list is the rule file's own `paths:` frontmatter path values, plus 2–4 one-line key points, appended at the end of the bullet list in the form of the bullets already there (none yet → the form in `assets/claude-md-skeleton.md` § Rules). A `venue-map.md` bullet already present → leave it as written. Stage the placed files with the Phase 2c commit.
 
 On `skip`: nothing placed; a re-run re-offers while a signal holds.
 
