@@ -341,9 +341,9 @@ cost); the part that is not — omission rate — needs controlled runs this rep
 apparatus for.
 
 **Decided — the seeded runway names no harness.** The seeded `CLAUDE.md` and every
-scaffolded doc state disciplines, never skill entries; § The envelope carries only the
-install pointer (`resolve-plugins`, an ordinary adaptive pick — the rationale lives here,
-not ambient). Bootstrap does seed the paired pin below, but a pin is a settings key: no
+scaffolded doc state disciplines, never skill entries; § The envelope carries no
+install pointer — the `resolve-plugins` skill description names the process-harness case, and
+the rationale lives here, not ambient. Bootstrap does seed the paired pin below, but a pin is a settings key: no
 seeded prose stands on it, which is exactly why dropping it costs no doc change.
 
 **Decided — pairing (change B).** super-bootstrap and mattpocock/skills ship paired, on

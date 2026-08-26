@@ -14,8 +14,6 @@ Work enters by picking up a card — a `docs/work/` card file (`/super-bootstrap
 - **Verify before claiming** — evidence before "done / fixed / passing": run the check, read the output, then claim.
 - **Review received, not absorbed** — check a review claim against the code before implementing it; disagree with grounds rather than complying performatively. Judgment-grade findings: `review-intake` first (§ Dispatch).
 
-Bootstrap pins one process harness behind these laws, droppable per repo. To add another: `/super-bootstrap:resolve-plugins` — an ordinary adaptive pick, not a requirement.
-
 ### Cluster routing
 
 Recognize the card's shape, then take that row's discipline; a repo that installs a process harness maps its entries onto these shapes.

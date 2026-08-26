@@ -1,6 +1,6 @@
 ---
 name: resolve-plugins
-description: "Curate Claude Code skill / MCP / hook picks against live upstream sources and pin them in .claude/settings.json. Reads stack from docs/techstack.md, workflow signal from docs/overview.md + existing pins, then live-queries six source pools, dedupes, scores trust tier, presents diff vs pinned, writes settings.json. Standalone refresh path; also run as gated tier-2 curation by /super-bootstrap. Solo dev workflow. Requires `docs/techstack.md` (seeded by `/super-bootstrap:harness-bootstrap`)."
+description: "Curate Claude Code skill / MCP / hook picks against live upstream sources and pin them in .claude/settings.json. Adding a process harness (a paired skill set) is an ordinary pick this door handles; dropping the pre-seeded one is a one-time offer. Reads stack from docs/techstack.md, workflow signal from docs/overview.md + existing pins, then live-queries six source pools, dedupes, scores trust tier, presents diff vs pinned, writes settings.json. Standalone refresh path; also run as gated tier-2 curation by /super-bootstrap. Solo dev workflow. Requires `docs/techstack.md` (seeded by `/super-bootstrap:harness-bootstrap`)."
 tags: [plugins, curation, mcp, skills, settings, meta]
 ---
 
