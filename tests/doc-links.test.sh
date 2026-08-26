@@ -251,6 +251,121 @@ else
   ok "anchor_exists: per-heading slugify shell loop is gone"
 fi
 
+# ---------------------------------------------------------------------------
+# BUG-046 — `closure <path>` enumerates the premise-closure set: the doc surface
+# CLAUDE.md § Doc Sync defines (docs/**/*.md + root README.md +
+# plugins/*/README.md) minus consumables (docs/work/{BUG,DEBT}-*.md,
+# docs/work/TEMPLATE.md) minus the anchor itself. Registry/index docs
+# (decisions.md, parked.md, agents/*) are reachable by construction — the
+# reverse-link index never named them.
+# ---------------------------------------------------------------------------
+
+echo "== doc-links: BUG-046 — closure enumerates the doc surface minus consumables =="
+mkdir -p "$TMP/closure/docs/agents" "$TMP/closure/docs/specs" "$TMP/closure/docs/work" \
+         "$TMP/closure/plugins/foo/skills/bar"
+cat > "$TMP/closure/docs/overview.md" <<'EOF'
+# Overview
+
+## Problem
+
+Premise text.
+EOF
+cat > "$TMP/closure/docs/decisions.md" <<'EOF'
+# Decisions
+
+## Closed Forks
+
+| Fork | Because |
+|---|---|
+| Pure reverse-link gate | `overview.md` errs false-negative |
+EOF
+cat > "$TMP/closure/docs/parked.md" <<'EOF'
+# Parked
+
+- Closure map — trigger: doc count.
+EOF
+cat > "$TMP/closure/docs/agents/issue-tracker.md" <<'EOF'
+# Issue Tracker
+EOF
+cat > "$TMP/closure/docs/specs/x.md" <<'EOF'
+# Spec X
+EOF
+cat > "$TMP/closure/docs/work/README.md" <<'EOF'
+# Work threads
+EOF
+cat > "$TMP/closure/docs/work/TEMPLATE.md" <<'EOF'
+# TEMPLATE
+EOF
+cat > "$TMP/closure/docs/work/GAP-001.md" <<'EOF'
+# GAP-001
+EOF
+cat > "$TMP/closure/docs/work/BUG-001.md" <<'EOF'
+# BUG-001
+EOF
+cat > "$TMP/closure/docs/work/DEBT-001.md" <<'EOF'
+# DEBT-001
+EOF
+cat > "$TMP/closure/README.md" <<'EOF'
+# Repo
+EOF
+cat > "$TMP/closure/plugins/foo/README.md" <<'EOF'
+# Plugin foo
+EOF
+cat > "$TMP/closure/plugins/foo/skills/bar/SKILL.md" <<'EOF'
+# Skill bar
+EOF
+
+expected_closure="README.md
+docs/agents/issue-tracker.md
+docs/decisions.md
+docs/parked.md
+docs/specs/x.md
+docs/work/GAP-001.md
+docs/work/README.md
+plugins/foo/README.md"
+
+got_closure="$(cd "$TMP/closure" && bash "$LINKS" closure docs/overview.md 2>/dev/null)"
+if [ "$got_closure" = "$expected_closure" ]; then
+  ok "closure: full doc surface minus consumables minus anchor, sorted"
+else
+  bad "closure: full doc surface minus consumables minus anchor, sorted"
+  printf 'expected:\n%s\ngot:\n%s\n' "$expected_closure" "$got_closure" | sed 's/^/        /'
+fi
+
+# decisions.md mentions the anchor only as a code span — never as a link — so the
+# reverse index cannot reach it; closure must.
+if printf '%s\n' "$got_closure" | grep -qxF docs/decisions.md; then
+  ok "closure: registry doc unreachable by refs is present"
+else
+  bad "closure: registry doc unreachable by refs is present"
+fi
+if printf '%s\n' "$got_closure" | grep -qE '^docs/work/(BUG|DEBT)-001\.md$|^docs/work/TEMPLATE\.md$'; then
+  bad "closure: consumables (BUG/DEBT cards, TEMPLATE) excluded"
+else
+  ok "closure: consumables (BUG/DEBT cards, TEMPLATE) excluded"
+fi
+if printf '%s\n' "$got_closure" | grep -q 'SKILL.md'; then
+  bad "closure: non-surface files (SKILL.md) excluded"
+else
+  ok "closure: non-surface files (SKILL.md) excluded"
+fi
+
+out="$(cd "$TMP/closure" && bash "$LINKS" closure 2>&1)"; rc=$?
+if [ "$rc" -eq 1 ] && printf '%s' "$out" | grep -q 'Usage:'; then
+  ok "closure: no argument -> usage on stderr, exit 1"
+else
+  bad "closure: no argument -> usage on stderr, exit 1 (rc=$rc)"
+  printf '%s\n' "$out" | sed 's/^/        /'
+fi
+
+got_anchored="$(cd "$TMP/closure" && bash "$LINKS" closure 'docs/overview.md#problem' 2>/dev/null)"
+if [ "$got_anchored" = "$expected_closure" ]; then
+  ok "closure: anchor fragment behaves identically to the bare path"
+else
+  bad "closure: anchor fragment behaves identically to the bare path"
+  printf 'expected:\n%s\ngot:\n%s\n' "$expected_closure" "$got_anchored" | sed 's/^/        /'
+fi
+
 echo "== doc-links: BUG-045 — whole-surface check under a generous wall-clock ceiling =="
 now_ns="$(date +%s%N 2>/dev/null || true)"
 case "$now_ns" in

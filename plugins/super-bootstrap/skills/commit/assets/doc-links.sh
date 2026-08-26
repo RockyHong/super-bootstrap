@@ -6,6 +6,10 @@
 #   refs <path>[#a]    print doc-surface files that link to <path> (repo-relative);
 #                      with #a, only files whose link cites that anchor (section grain)
 #   index              print full inverted map: target[#anchor]<TAB>referrer, sorted
+#   closure <path>[#a] print the premise-closure set of <path>: the doc surface
+#                      (docs/**/*.md + README.md + plugins/*/README.md) minus
+#                      consumables (docs/work/{BUG,DEBT}-*.md, docs/work/TEMPLATE.md)
+#                      minus <path> itself, sorted; #a is ignored (whole-file grain)
 #
 # Run from repo root. docs/ may be absent (treated as empty).
 # External links (http/https/mailto) and empty targets are skipped.
@@ -27,6 +31,16 @@ MODE="${1:-}"
 collect_docs() {
     [ -d docs ] && find docs -name '*.md' -type f
     [ -f README.md ] && echo README.md
+    return 0
+}
+
+# Surface for `closure` only — the doc surface CLAUDE.md § Doc Sync defines,
+# which extends the link-scanned set with each plugin's README. `check`/`refs`/
+# `index` keep scanning `collect_docs`: link integrity and the reverse index are
+# a separate concern from closure membership.
+collect_surface() {
+    collect_docs
+    [ -d plugins ] && find plugins -mindepth 2 -maxdepth 2 -name 'README.md' -type f
     return 0
 }
 
@@ -267,13 +281,34 @@ do_index() {
     done < <(collect_docs) | sort -u
 }
 
+# Closure membership is a whole-file property — an anchor fragment on the query
+# narrows nothing, so it is stripped. Consumables are dropped by one grep and the
+# anchor by a second: two forks for the whole surface, no per-file loop.
+do_closure() {
+    local query qpath
+    query="$1"
+    case "$query" in *'#'*) query="${query%%#*}" ;; esac
+    normalize_path "$query"; qpath="$NORM"
+    if [ -z "$qpath" ]; then
+        collect_surface | grep -Ev '^docs/work/(BUG|DEBT)-[^/]*\.md$|^docs/work/TEMPLATE\.md$' \
+            | LC_ALL=C sort -u
+    else
+        collect_surface | grep -Ev '^docs/work/(BUG|DEBT)-[^/]*\.md$|^docs/work/TEMPLATE\.md$' \
+            | grep -vxF "$qpath" | LC_ALL=C sort -u
+    fi
+    return 0
+}
+
 case "$MODE" in
     check) do_check ;;
     refs)
         [ -z "${2:-}" ] && { printf 'Usage: %s refs <path>[#anchor]\n' "$0" >&2; exit 1; }
         do_refs "$2" ;;
     index) do_index ;;
+    closure)
+        [ -z "${2:-}" ] && { printf 'Usage: %s closure <path>[#anchor]\n' "$0" >&2; exit 1; }
+        do_closure "$2" ;;
     *)
-        printf 'Usage: %s check | refs <path>[#anchor] | index\n' "$0" >&2
+        printf 'Usage: %s check | refs <path>[#anchor] | index | closure <path>[#anchor]\n' "$0" >&2
         exit 1 ;;
 esac

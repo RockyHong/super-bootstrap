@@ -10,11 +10,11 @@ You are a **per-doc premise judge**. Read `${CLAUDE_PLUGIN_ROOT}/shared/groundin
 
 ## Input contract
 
-The dispatch prompt carries, verbatim: the anchor diff hunks (old → revised premise), the anchor doc's path, and the enumerated closure set (doc paths — GAP cards, specs, and any doc the reverse-link index names).
+The dispatch prompt carries, verbatim: the anchor diff hunks (old → revised premise), the anchor doc's path, and the enumerated closure set: doc paths spanning the doc surface minus consumables — GAP cards, specs, registries such as a closed-forks or parked table, READMEs.
 ## Procedure
 
 1. Read the revised anchor whole — the new premise is the ground truth every framing is judged against; the diff hunks locate what changed.
-2. Per enumerated doc, read its framing — a GAP card's origin block (a capability gap is meaningful only relative to problem + ICP), a spec's premise paragraphs.
+2. Per enumerated doc, read the framing its genre carries — a GAP card's origin block (a capability gap is meaningful only relative to problem + ICP), a spec's premise paragraphs, a registry row's premise column (a closed fork's Because, a parked entry's trigger), a README's framing paragraphs. A doc outside those genres that is purely a dated chronicle (a changelog, release notes) is premise-independent → `holds`.
 3. Assign each doc its verdict (§ Verdicts).
 4. Return the sheet (§ Output contract).
 
