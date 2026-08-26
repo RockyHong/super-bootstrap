@@ -45,6 +45,10 @@ judgment call, the encoding is the documented mechanical reading:
                     open card, else 0 — leverage signal only: an outward row's
                     Impact stays `quick-pop` (the repo moves nothing here), and its
                     Context cell renders the entry's repo tail.
+- Sheet columns   = every board table carries an `ID` column (card ID / `OUT-###` /
+                    `—` for a test-queue row) and its Action cell is the spec's
+                    action string with that ID token lifted out, cut to
+                    ACTION_WIDTH with `…` (scaffolds.md § Sheet columns).
 
 Exit codes: 0 board rendered · 2 usage · 4 substrate absent.
 stdout carries the board only. stderr carries `# sources:` diagnostics.
@@ -575,6 +579,25 @@ def prog_cell(r):
     return f"{r.progress[0]}/{r.progress[1]}" if r.progress else "—"
 
 
+ACTION_WIDTH = 60          # Action cell budget — keeps a row inside one terminal line
+ID_TOKEN_RE = re.compile(r"\b(?:BUG|DEBT|GAP|OUT)-\d+\b")
+
+
+def id_cell(r):
+    if r.card:
+        return r.card.id
+    m = ID_TOKEN_RE.search(r.action)
+    return m.group(0) if m else "—"
+
+
+def action_cell(r):
+    """The spec's action string with its ID token lifted into the ID column,
+    cut to ACTION_WIDTH — the ID column plus the card hold the rest."""
+    rid = id_cell(r)
+    s = r.action.replace(f"{rid} ", "", 1) if rid != "—" else r.action
+    return s if len(s) <= ACTION_WIDTH else s[:ACTION_WIDTH - 1] + "…"
+
+
 def context_cell(r):
     sent = r.context or re.split(
         r"(?<=\.)\s", (r.card.fields.get("Problem", "") if r.card else ""))[0].strip()
@@ -682,8 +705,8 @@ def render(mode, rows, uncat, held_count, date, wired=False):
                     continue
                 ranked = sort_rows(grp, with_fanout=True)
                 out.append(f"\n## {heading}\n\n" + table(
-                    ["#", "Action", "unblocks", "Impact", "Blast"],
-                    [[str(i + 1), r.action, str(r.fanout), r.impact, r.blast]
+                    ["#", "ID", "Action", "unblocks", "Impact", "Blast"],
+                    [[str(i + 1), id_cell(r), action_cell(r), str(r.fanout), r.impact, r.blast]
                      for i, r in enumerate(ranked)]))
         else:
             out.append("Nothing needs you right now — the board is all auto-runnable.")
@@ -703,9 +726,9 @@ def render(mode, rows, uncat, held_count, date, wired=False):
             return f"# To-Do — {date}\n\nNo active work. Ground something with /super-bootstrap:log or give me a task."
         ranked = sort_rows(body_rows, with_fanout=False)
         out.append(f"# To-Do — {date}")
-        out.append(table(["#", "Action", "Stage", "Progress", "Blocker", "Impact", "Blast"],
-                         [[str(i + 1), r.action, r.stage, prog_cell(r), r.blocker, r.impact, r.blast]
-                          for i, r in enumerate(ranked)]))
+        out.append(table(["#", "ID", "Action", "Stage", "Progress", "Blocker", "Impact", "Blast"],
+                         [[str(i + 1), id_cell(r), action_cell(r), r.stage, prog_cell(r), r.blocker,
+                           r.impact, r.blast] for i, r in enumerate(ranked)]))
         if uncat_section:
             out.append(uncat_section.strip("\n"))
         footer = []
@@ -739,8 +762,9 @@ def render(mode, rows, uncat, held_count, date, wired=False):
         out.append("Next mode: yours. " + " · ".join(f"/super-bootstrap:todo {m}" for m in others)
                    + " · /super-bootstrap:todo (full board)")
     elif mode == "discuss":
-        out.append(table(["#", "Action", "Impact", "Context"],
-                         [[str(i + 1), r.action, r.impact, context_cell(r)] for i, r in enumerate(kept)]))
+        out.append(table(["#", "ID", "Action", "Impact", "Context"],
+                         [[str(i + 1), id_cell(r), action_cell(r), r.impact, context_cell(r)]
+                          for i, r in enumerate(kept)]))
     elif mode == "harness":
         out.append("Engine surface — careful handle. Ground in git log + the repo's rules "
                    "before editing; harness edits carry a verify pass.")
@@ -748,11 +772,13 @@ def render(mode, rows, uncat, held_count, date, wired=False):
             grp = [r for r in kept if r.subgroup == sub]
             if grp:
                 out.append(f"## {sub.capitalize()}\n\n" + table(
-                    ["#", "Action", "Progress", "Impact", "Blast"],
-                    [[str(i + 1), r.action, prog_cell(r), r.impact, r.blast] for i, r in enumerate(grp)]))
+                    ["#", "ID", "Action", "Progress", "Impact", "Blast"],
+                    [[str(i + 1), id_cell(r), action_cell(r), prog_cell(r), r.impact, r.blast]
+                     for i, r in enumerate(grp)]))
     else:
-        out.append(table(["#", "Action", "Progress", "Impact", "Blast"],
-                         [[str(i + 1), r.action, prog_cell(r), r.impact, r.blast] for i, r in enumerate(kept)]))
+        out.append(table(["#", "ID", "Action", "Progress", "Impact", "Blast"],
+                         [[str(i + 1), id_cell(r), action_cell(r), prog_cell(r), r.impact, r.blast]
+                          for i, r in enumerate(kept)]))
     if uncat_section:
         out.append(uncat_section.strip("\n"))
     footer = []

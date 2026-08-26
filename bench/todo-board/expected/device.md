@@ -2,11 +2,11 @@
 
 Macro: Discuss 4 · Cloud 4 · Device 3 · Harness 1 · Full 12
 
-| # | Action | Progress | Impact | Blast |
-| -- | -- | -- | -- | -- |
-| 1 | Continue execute: GAP-105 onboarding flow revamp (2/4) | 2/4 | quick-pop | local |
-| 2 | Manually verify: Snapshot suite re-run after flake fix | — | quick-pop | local |
-| 3 | Manually verify: New-user tour on tablet | — | quick-pop | local |
+| # | ID | Action | Progress | Impact | Blast |
+| -- | -- | -- | -- | -- | -- |
+| 1 | GAP-105 | Continue execute: onboarding flow revamp (2/4) | 2/4 | quick-pop | local |
+| 2 | — | Manually verify: Snapshot suite re-run after flake fix | — | quick-pop | local |
+| 3 | — | Manually verify: New-user tour on tablet | — | quick-pop | local |
 
 ## Uncategorized
 

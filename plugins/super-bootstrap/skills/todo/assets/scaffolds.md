@@ -10,6 +10,11 @@ Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 
 Counts only — no IDs, no impact tags. Decision-is-yours; surface priors not calls. Full mode skips this header (full body IS the macro).
 
+**Sheet columns** — every board table (Uncategorized excepted) opens with these two cells so a row fits one terminal line; the card holds the rest:
+
+- **ID** — the row's handle: the owning card's ID (whether or not the action string carries it — `Deliberate:` / `Apply:` rows included), the outward entry's `OUT-###`, `—` for a test-queue row.
+- **Action** — the classification spec's `action` string with its ID token (if any) lifted into the ID column, then hard-cut so the cell is at most 60 characters, the 60th being `…` (59 kept + `…`; no word-boundary search). Shapes, e.g.: `Triage: {title}`, `Approve design: {title}`, `Start execute: {title}`, `Continue execute: {title} ({done}/{total})`, `Decide: {title} — triage verdict`, `Manually verify: {entry title}`, `Outward: {summary} — {next move} · waiting on {party}`, `Deliberate: {topic}`, `Apply: {rule} → {site}`.
+
 ### Need-me (default — bare `/super-bootstrap:todo`)
 
 Drainable rows collapse to the count line; the five need-me groups render as
@@ -25,33 +30,33 @@ Drainable: {N}  →  /super-bootstrap:drain
 
 ## Decide / approve
 
-| #  | Action                                  | unblocks | Impact       | Blast       |
-| -- | ---------------------------------------- | -------- | ------------ | ----------- |
-| 1  | {verb + what + one-line reason}         | {n}      | {tag}        | {tag}       |
+| #  | ID      | Action                                  | unblocks | Impact       | Blast       |
+| -- | ------- | ---------------------------------------- | -------- | ------------ | ----------- |
+| 1  | {ID}    | {verb + what + one-line reason}         | {n}      | {tag}        | {tag}       |
 
 ## Outward — your move
 
-| #  | Action                                  | unblocks | Impact       | Blast       |
-| -- | ---------------------------------------- | -------- | ------------ | ----------- |
-| 1  | Outward: {ID} {summary} — {next move} · waiting on {party} | {n} | quick-pop | —           |
+| #  | ID      | Action                                  | unblocks | Impact       | Blast       |
+| -- | ------- | ---------------------------------------- | -------- | ------------ | ----------- |
+| 1  | {ID}    | Outward: {summary} — {next move} · waiting on {party} | {n} | quick-pop | —           |
 
 ## Device-bound
 
-| #  | Action                                  | unblocks | Impact       | Blast       |
-| -- | ---------------------------------------- | -------- | ------------ | ----------- |
-| 1  | {verb + what + one-line reason}         | {n}      | {tag}        | {tag}       |
+| #  | ID      | Action                                  | unblocks | Impact       | Blast       |
+| -- | ------- | ---------------------------------------- | -------- | ------------ | ----------- |
+| 1  | {ID}    | {verb + what + one-line reason}         | {n}      | {tag}        | {tag}       |
 
 ## Harness
 
-| #  | Action                                  | unblocks | Impact       | Blast       |
-| -- | ---------------------------------------- | -------- | ------------ | ----------- |
-| 1  | Deliberate: {topic} / Apply: {rule}→{site} | {n} | {tag}        | {tag}       |
+| #  | ID      | Action                                  | unblocks | Impact       | Blast       |
+| -- | ------- | ---------------------------------------- | -------- | ------------ | ----------- |
+| 1  | {ID}    | Deliberate: {topic} / Apply: {rule}→{site} | {n} | {tag}        | {tag}       |
 
 ## Probe / grant
 
-| #  | Action                                  | unblocks | Impact       | Blast       |
-| -- | ---------------------------------------- | -------- | ------------ | ----------- |
-| 1  | {verb + what + one-line reason}         | {n}      | {tag}        | {tag}       |
+| #  | ID      | Action                                  | unblocks | Impact       | Blast       |
+| -- | ------- | ---------------------------------------- | -------- | ------------ | ----------- |
+| 1  | {ID}    | {verb + what + one-line reason}         | {n}      | {tag}        | {tag}       |
 
 ## Uncategorized
 
@@ -91,9 +96,9 @@ Nothing needs you right now — the board is all auto-runnable.
 
 Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 
-| #  | Action                                              | Impact       | Context                                              |
-| -- | --------------------------------------------------- | ------------ | ---------------------------------------------------- |
-| 1  | {action — one sentence}                             | {tag}        | {one-line — why open, what unblocks}                 |
+| #  | ID      | Action                                              | Impact       | Context                                              |
+| -- | ------- | --------------------------------------------------- | ------------ | ---------------------------------------------------- |
+| 1  | {ID}    | {action — one sentence}                             | {tag}        | {one-line — why open, what unblocks}                 |
 
 ## Uncategorized
 
@@ -132,9 +137,9 @@ more: /super-bootstrap:help
 
 Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 
-| #  | Action                                              | Progress | Impact       | Blast       |
-| -- | --------------------------------------------------- | -------- | ------------ | ----------- |
-| 1  | {verb + what + one-line reason}                     | {x/y|—}  | {tag}        | {tag}       |
+| #  | ID      | Action                                              | Progress | Impact       | Blast       |
+| -- | ------- | --------------------------------------------------- | -------- | ------------ | ----------- |
+| 1  | {ID}    | {verb + what + one-line reason}                     | {x/y|—}  | {tag}        | {tag}       |
 
 ## Uncategorized
 
@@ -173,9 +178,9 @@ more: /super-bootstrap:help
 
 Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 
-| #  | Action                                              | Progress | Impact       | Blast       |
-| -- | --------------------------------------------------- | -------- | ------------ | ----------- |
-| 1  | {verb + what + one-line reason}                     | {x/y|—}  | {tag}        | {tag}       |
+| #  | ID      | Action                                              | Progress | Impact       | Blast       |
+| -- | ------- | --------------------------------------------------- | -------- | ------------ | ----------- |
+| 1  | {ID}    | {verb + what + one-line reason}                     | {x/y|—}  | {tag}        | {tag}       |
 
 ## Uncategorized
 
@@ -218,15 +223,15 @@ Engine surface — careful handle. Ground in git log + the repo's rules before e
 
 ## Deliberate
 
-| #  | Action                                              | Progress | Impact       | Blast       |
-| -- | --------------------------------------------------- | -------- | ------------ | ----------- |
-| 1  | Deliberate: {topic + one-line reason}               | {x/y|—}  | {tag}        | {tag}       |
+| #  | ID      | Action                                              | Progress | Impact       | Blast       |
+| -- | ------- | --------------------------------------------------- | -------- | ------------ | ----------- |
+| 1  | {ID}    | Deliberate: {topic + one-line reason}               | {x/y|—}  | {tag}        | {tag}       |
 
 ## Apply
 
-| #  | Action                                              | Progress | Impact       | Blast       |
-| -- | --------------------------------------------------- | -------- | ------------ | ----------- |
-| 1  | Apply: {rule} → {site}                              | {x/y|—}  | {tag}        | {tag}       |
+| #  | ID      | Action                                              | Progress | Impact       | Blast       |
+| -- | ------- | --------------------------------------------------- | -------- | ------------ | ----------- |
+| 1  | {ID}    | Apply: {rule} → {site}                              | {x/y|—}  | {tag}        | {tag}       |
 
 ## Uncategorized
 
@@ -265,7 +270,7 @@ One ranked table, one row per open item, every source (cards, test queue, outwar
 Column conventions — every row fills every column; a column inapplicable to a row renders `—`:
 
 - **#** — rank position from agent §4, `1` = top. Sequential over the whole table, never restarted.
-- **Action** — the classification spec's `action` string verbatim (`Triage: {ID} {title}`, `Continue execute: {ID} {title} ({done}/{total})`, `Approve design: {ID} {title}`, `Deliberate: {topic}`, `Apply: {rule} → {site}`). It already names the ID, so Full carries no separate File column.
+- **ID** / **Action** — per § Sheet columns above.
 - **Stage** — the spec's `stage`: `raw` | `triaged` | `aimed` | `executing` | `review`.
 - **Progress** — `{x}/{y}` where the card's latest Progress block reports steps done; `—` on cards without a Plan/Progress block, test-queue rows, and outward rows.
 - **Blocker** — `user` where the row awaits a user decision — a fork to rule, or an external wait only the user can chase or drop — else `none`.
@@ -274,9 +279,9 @@ Column conventions — every row fills every column; a column inapplicable to a 
 ```
 # To-Do — {date}
 
-| #  | Action                                              | Stage    | Progress | Blocker     | Impact       | Blast       |
-| -- | --------------------------------------------------- | -------- | -------- | ----------- | ------------ | ----------- |
-| 1  | {action string}                                     | {stage}  | {x/y|—}  | {none|user} | {tag}        | {tag}       |
+| #  | ID      | Action                                              | Stage    | Progress | Blocker     | Impact       | Blast       |
+| -- | ------- | --------------------------------------------------- | -------- | -------- | ----------- | ------------ | ----------- |
+| 1  | {ID}    | {action string}                                     | {stage}  | {x/y|—}  | {none|user} | {tag}        | {tag}       |
 
 ## Uncategorized
 

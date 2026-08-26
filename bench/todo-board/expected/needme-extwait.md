@@ -6,9 +6,9 @@ Drainable: 0  →  /super-bootstrap:drain
 
 ## Decide / approve
 
-| # | Action | unblocks | Impact | Blast |
-| -- | -- | -- | -- | -- |
-| 1 | Decide: GAP-201 store listing verification outstanding — blocked on the store review team's verification reply | 0 | quick-pop | — |
+| # | ID | Action | unblocks | Impact | Blast |
+| -- | -- | -- | -- | -- | -- |
+| 1 | GAP-201 | Decide: store listing verification outstanding — blocked on… | 0 | quick-pop | — |
 
 flat list: /super-bootstrap:todo full · drainable detail: /super-bootstrap:todo cloud
 more: /super-bootstrap:help

@@ -6,9 +6,9 @@ Engine surface — careful handle. Ground in git log + the repo's rules before e
 
 ## Deliberate
 
-| # | Action | Progress | Impact | Blast |
-| -- | -- | -- | -- | -- |
-| 1 | Deliberate: codify dispatch-grade rule for probe scripts | — | impactful | repo |
+| # | ID | Action | Progress | Impact | Blast |
+| -- | -- | -- | -- | -- | -- |
+| 1 | GAP-107 | Deliberate: codify dispatch-grade rule for probe scripts | — | impactful | repo |
 
 ## Uncategorized
 
