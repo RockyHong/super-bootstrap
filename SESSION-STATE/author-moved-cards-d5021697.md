@@ -1,24 +1,24 @@
-# Carry — GAP-064: pilot sync returned WITH ISSUES; producer findings carded, migration tail still open
+# Carry — GAP-064: pilot sync issues resolved in-repo (unreleased); migration tail still open
 
 ## Anchor
 
-GAP-064 + OUT-001. Pilot (Magnetized Remake) synced 2.34.2 → 2.40.0, verdict `SYNC WITH ISSUES` — mechanism clean, issues carded here as DEBT-096 / 097 / 098. Card + OUT-001 close only when the pilot migrates its author-moved cards (its DEBT-088).
+GAP-064 + OUT-001. Pilot (Magnetized Remake) synced 2.34.2 → 2.40.0, verdict `SYNC WITH ISSUES` — mechanism clean. The three producer findings are resolved on `main` (DEBT-096 `2770607` test-queue parser + note · DEBT-098 `5479fde` declined · DEBT-097 `7ae4935` stale-vs-fork hook copy-on-drift) but **unreleased** — consumers still run 2.40.0. Card + OUT-001 close only when the pilot migrates its author-moved cards (its DEBT-088).
 
 ## Read first
 
 1. `docs/work/GAP-064.md` — last Progress block (`consumer pilot sync`).
-2. `docs/work/DEBT-096.md` · `DEBT-097.md` · `DEBT-098.md` — raw, un-triaged; pickup via `/super-bootstrap:todo` → `/super-bootstrap:triage`.
+2. `git log 2770607..7ae4935` — what shipped for the pilot's findings; `docs/work/GAP-065.md` (multi-root consult-check, the pilot's underlying need) · `DEBT-099.md` (worktree template `_comment`, deferred).
 3. `docs/outward.md` — OUT-001 (tail = delete GAP-064).
 4. Pilot (PRIVATE — read by path, never copy): `D:/Git/Games/Magnetized Remake/docs/work/DEBT-088.md`.
 
 ## State
 
-Cards + GAP-064 Progress landed as `f5c26c0`, pushed to `origin/main`. Platform finding (user-scope plugin pin overriding project-scope) → `/contribute` to claude-shape lore alongside the two from the jowagoko sync — not yet filed.
+`f5c26c0` (cards) pushed; `2770607` · `5479fde` · `7ae4935` (fixes) on `main`, push pending at close. Platform finding (user-scope plugin pin overriding project-scope) → `/contribute` to claude-shape lore alongside the two from the jowagoko sync — not yet filed.
 
 ## Next step
 
 1. Pilot repo: migrate its author-moved cards per its DEBT-088 → here: delete `docs/work/GAP-064.md` + OUT-001 via `/super-bootstrap:commit` (card-lifecycle exemption). Then this carry clears.
-2. Triage DEBT-096..098 at pickup; DEBT-098 is doc-only on a shipped skeleton (harness edit → `load-harness-principles` pre / `audit-harness-edits` post, dogfood `.claude/rules/venue-map.md` in the closure, `render-board.py` cell compare must stay equal).
+2. `/release` (v2.41.0 — parser fix + fork-aware copy-on-drift + `placed` receipt field) so the pilot's re-sync exercises the new hook path: its first sync after upgrade will raise fork prompts for its multi-root `consult-check-*` (no `placed` entry) — expected; pick `keep` until GAP-065 lands.
 3. `/contribute` the plugin-scope-resolution lore (three platform findings now).
 
 ## Watch-outs
