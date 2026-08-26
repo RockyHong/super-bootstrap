@@ -123,6 +123,12 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 {  • {one-line key rule}}
 {  • {one-line key rule}}
 
+{scale module installed — ship the block below verbatim, no substitutions:}
+
+{- **`rules/venue-map.md`** — fires on `docs/work/README.md`, `docs/test-queue.md`}
+{  • Derive a work item's venue (T / S / U / P) fresh per read from its next phase — never its terminal phase, never stored.}
+{  • One map, two filters: `/super-bootstrap:todo` reads it drainable vs need-me, `/super-bootstrap:drain` reads it dispatch vs wall.}
+
 {If rule body needs more context than its summary provides during planning, read the rule file directly before designing — `Read .claude/rules/<name>.md`.}
 
 ## Tech Stack

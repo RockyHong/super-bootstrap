@@ -137,7 +137,7 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` plugin pins (`enabledPlugins`, `extraKnownMarketplaces`)
 - `.claude/super-bootstrap-runway.json` (runway coverage receipt `{ version, covered, declined }` — presence + content checked, not diffed section-by-section; read at Phase 1, written at 2c from the sync-report rows; durable marker, no cleaner — persists for the life of the harness)
-- Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` + `docs/outward.md` header/shape sections, `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md`), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`)
+- Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` + `docs/outward.md` header/shape sections, `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md`), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`), the CLAUDE.md § Rules `venue-map.md` bullet block (drift-checked against `assets/claude-md-skeleton.md` § Rules)
 
 **Project-owned** (never touched):
 - CLAUDE.md: Tech Stack one-line, Commands, any user-added custom sections
@@ -287,7 +287,7 @@ On `y`, place the five `assets/scale/` skeletons per Phase 2's per-artifact rule
 - `rules-venue-map-skeleton.md` → `.claude/rules/venue-map.md`
 - `card-fact-fields.md` → insert its marker-delimited block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`) into `docs/work/README.md` directly above the `## Thread contract` heading; skip if the markers are already present.
 
-Add one summary bullet to CLAUDE.md § Rules for the seeded `venue-map.md` — its fires-on list is the rule file's own `paths:` frontmatter path values, plus 2–4 one-line key points, appended at the end of the bullet list in the form of the bullets already there (none yet → the form in `assets/claude-md-skeleton.md` § Rules). A `venue-map.md` bullet already present → leave it as written. Stage the placed files with the Phase 2c commit.
+Stage the placed files with the Phase 2c commit.
 
 On `skip`: nothing placed; a re-run re-offers while a signal holds.
 
@@ -316,6 +316,7 @@ On greenfield (no manifest, no source files), `overview.md` / `techstack.md` wri
 - **Missing** → fill placeholders, write.
 - **Exists, drifted in pipeline-owned section** → diff that section vs template, present to user, get approval per section, write approved.
 - **Exists, pipeline-owned section absent** → `⊕ new` row: render the template section at Block 2, get approval, insert at the skeleton-defined position relative to the surviving sections.
+- **CLAUDE.md § Rules, scale module installed** → the skeleton's shipped `venue-map.md` bullet block is this section's only template-fixed content — the remaining bullets mirror the repo's own seeded rules and stay project-owned. No `venue-map.md` bullet in the section → `⊕ new`, append the shipped block verbatim as the last bullet of the bullet list, one blank line above it. Bullet present → compare its fires-on list and key-point lines to the shipped block (the lead line keeps the section's own bullet form and any repo-local marker): same → `✓ matches`; differs → `⚠ drifted`, show the diff, write on approval.
 - **Exists, current** → mark `✓ current`. **Still show the per-section comparison briefly** (one-line per pipeline-owned section: `[Runtime] ✓ matches`, `[Framework] ✓ matches`, etc.) — asserting "current" without showing the comparison is a gap.
 - **Project-owned content** → never touched, even on drift.
 - **Legacy / unrecognized format** — if existing doc structure doesn't align with template sections (different headings, merged sections, doc was written by an older version of this skill or by hand) → surface as **legacy format detected**, propose: `(a) rewrite to current skeleton format (preserves grown sections), (b) leave as-is and accept template drift, (c) show full template-vs-current diff`. **Do not silently skip drift detection** because section names don't match — that hides real drift.
@@ -469,7 +470,7 @@ Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write fro
 - Problem / User / Current State (`overview.md` skeleton sections) → left empty at install; filled at GAP-card pickup, not by the runway
 - Bracketed conditional lines (`{- docs/parked.md — ...}`, `{- docs/test-queue.md — ...}`, `{- docs/outward.md — ...}`) — keep only if the corresponding adaptive doc is scaffolded for this repo (scale module per its 2a install gate); drop the whole line otherwise
 - **Monorepo tier** (Phase 1 § Monorepo detection) — fill CLAUDE.md's conditional monorepo block (workspace tool + the workspace-aware filtered build command) and `techstack.md` § Packages table rows (package | path | role | build command) from the Phase 1 package enumeration. Single-package repo → drop the CLAUDE.md monorepo block and the § Packages section entirely
-- CLAUDE.md § **Rules** summary bullets — fill from seeded `.claude/rules/*.md` files (one bullet per rule with glob + 2-4 one-line key points). If no rules seeded, drop the example placeholders and keep only the explanatory paragraph.
+- CLAUDE.md § **Rules** summary bullets — fill from seeded `.claude/rules/*.md` files (one bullet per rule with glob + 2-4 one-line key points). The seeded `venue-map.md` ships its own bullet block in the skeleton's § Rules — scale module installed → keep that block verbatim (unbracket, no substitutions); not installed → drop it. If no rules seeded, drop the example placeholders and keep only the explanatory paragraph.
 - Rule skeleton placeholders (`{component path glob}`, `{Framework}`, body bullets in `assets/rules-*-skeleton.md`) → fill from Phase 1 detection. Lines that don't apply get dropped during scaffold.
 
 **Bootstrap-plan task adaptation:**
