@@ -24,6 +24,9 @@ judgment call, the encoding is the documented mechanical reading:
                     arm demands a word after the phrase, so `blocked on {party}` in
                     prose about the vocabulary is a mention, not a wait; `blocked by
                     {ID}` stays the hard block below.
+- Actor override  = the origin block's `Actor:` field, values `author` / `external`
+                    (case-folded); any other value reads as absent. A fired wait
+                    override's clause is the more specific, so it keeps it.
 - Hard block      = the explicit verb forms only (`blocked by {ID}` / `depends on
                     {ID}` / `after {ID} lands`); a bare ID mention is soft signal.
 - Soft-coupling direction = the row declaring the shared path in a Design/Plan
@@ -127,7 +130,7 @@ class Card:
             b.body = "\n".join(b.body)
         self.origin = "\n".join(origin_lines)
         self.fields = {}
-        for m in re.finditer(r"\*\*(Logged|Source|Problem|Area|Prior):\*\*\s*([^\n·]*)", self.origin):
+        for m in re.finditer(r"\*\*(Logged|Source|Problem|Area|Prior|Actor):\*\*\s*([^\n·]*)", self.origin):
             self.fields[m.group(1)] = m.group(2).strip()
         self.text = text
 
@@ -279,6 +282,14 @@ def classify_card(card):
             src = m.string
             clause = re.split(r"[.\n]", src[m.start():], 1)[0].strip()
             row = Row(f"Decide: {label} — {clause}", "Discuss", row.stage, card, "Decide")
+
+    # actor override — the scale module's `Actor:` field: the whole item is the
+    # author's or an external party's move (a fired wait override already names one)
+    if row.verb != "Decide":
+        who = {"author": "author moves", "external": "external party moves"}.get(
+            card.fields.get("Actor", "").strip().lower())
+        if who:
+            row = Row(f"Decide: {label} — {who}", "Discuss", row.stage, card, "Decide")
 
     # harness pre-filter wins intent AND action whatever the verb/state
     # (spec §Harness pre-filter: Action: `Deliberate: {topic}` / `Apply: {rule} → {site}`)

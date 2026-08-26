@@ -93,6 +93,8 @@ Each card is one append-only thread: a frozen origin block, then dated `## Amend
 
 **Wait override.** A card whose origin block or latest appended block explicitly waits on a named party — the user (`needs user`, `decision required`, `route?`, `waiting on user`, an unresolved `?` directed at the user) or an external one (`blocked on {party}`, `waiting on {party}`; `blocked by {ID}` is a hard block, not a wait) → action: `"Decide: {ID} {title} — {what's open}"`, **intent: Discuss**, keeping the **stage** its thread state gives. Overrides the derived action above; an *unruled* `surface` Verdict is its most common form, a ruling whose settled aim is to wait on an external party its second.
 
+**Actor override.** A card whose origin block carries the scale module's `Actor: author` or `Actor: external` fact field — the whole item is that party's move, the repo owning only its result tail → action: `"Decide: {ID} {title} — author moves"` / `"Decide: {ID} {title} — external party moves"`, **intent: Discuss**, keeping the **stage** its thread state gives. Overrides the derived action above; where the wait override also fires, its derived clause is the more specific, so it wins.
+
 Any other file at `docs/work/` root — neither a card (`{BUG|DEBT|GAP}-###.md`) nor `README.md` / `TEMPLATE.md`: emit as `Uncategorized` with reason `"non-canonical work file; docs/work/ holds BUG/DEBT/GAP cards (feature ideas log as GAP). New cards route through /super-bootstrap:log."` — never invent classification.
 
 If `docs/work/` holds no cards, skip §a.

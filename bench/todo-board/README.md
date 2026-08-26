@@ -18,8 +18,11 @@ scaffolds, or the script re-runs this bench (`bash bench/todo-board/run.sh`).
 - `fixture-extwait/` — one card whose approved Design rules the aim to be a wait on an
   external party: the wait override's external arm — a `Decide` row naming the party,
   Drainable 0, never a `Start execute`.
-- `expected/` — goldens for all six modes plus the empty, all-blocked, and external-wait
-  states, pinned to `--date 2026-08-14`.
+- `fixture-actor/` — two origin-only cards carrying the scale module's `Actor:` fact
+  field (`external` / `author`), no wait keyword in their prose: the actor override —
+  a `Decide` row naming the mover, Drainable 0, never a `Triage`.
+- `expected/` — goldens for all six modes plus the empty, all-blocked, external-wait,
+  and actor states, pinned to `--date 2026-08-14`.
 
 One known accepted divergence from a cold agent render: the soft-coupling
 *direction* cell is mechanically normalized (the row declaring the shared path
