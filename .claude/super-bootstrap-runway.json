@@ -1,5 +1,5 @@
 {
-  "version": "2.34.2",
+  "version": "2.39.0",
   "covered": [
     "CLAUDE.md § Development Workflow",
     "CLAUDE.md § Dispatch",
@@ -30,6 +30,11 @@
     ".claude/hooks/consult-check-check.sh",
     ".claude/hooks/consult-check-sessionstart.sh",
     ".gitignore consult-catalog line",
+    "docs/parked.md",
+    "docs/test-queue.md",
+    "docs/outward.md",
+    ".claude/rules/venue-map.md",
+    "docs/work/README.md fact-fields block",
     ".claude/super-bootstrap-runway.json"
   ],
   "declined": [
@@ -38,6 +43,7 @@
     "CLAUDE.md § Doc Sync",
     "docs/techstack.md § Edit Discipline",
     "docs/work/README.md",
-    "docs/work/bootstrap.md"
+    "docs/work/bootstrap.md",
+    "docs/parked.md"
   ]
 }
