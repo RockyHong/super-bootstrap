@@ -97,9 +97,9 @@ STAGE_ORDER = {"raw": 0, "triaged": 1, "aimed": 2, "executing": 3, "review": 4}
 # divergence notice only.
 #
 # Divergence normalization = table rows alone (a line whose stripped form opens
-# with `|`), cells stripped, separator rows dropped. Prose around the tables is
-# free to be reworded without touching the lane; a table cell is what the encoding
-# would have to follow, so a table cell edit is what the notice reports.
+# with `|`), cells stripped, separator rows dropped — the table-vs-prose split the
+# skeleton states for consumers in its § Consumer boundary; a table cell is what the
+# encoding would have to follow, so a table cell edit is what the notice reports.
 VENUE_MAP_TABLES = """Venue|Meaning|Cloud-run|Drainable
 **T**|Tooling/headless — artifact via tooling alone|yes|yes, in-worktree
 **S**|Stack-bound — needs a real runner (emulator/ports/browser), no human|no|via gateway merge-probe

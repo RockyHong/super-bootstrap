@@ -49,3 +49,5 @@ One map, two filters — never re-derived by hand:
 
 - **`/super-bootstrap:todo`** reads it **drainable vs need-me** — the todo skill's lane split owns the venue→group mapping.
 - **`/super-bootstrap:drain`** reads it **dispatch vs wall** — the drain skill's admission gate owns the venue→admit mapping.
+
+The three tables above are the contract the `/super-bootstrap:todo` board script transcribes: it compares their cells after normalization, so an edited cell boards a `# note:` divergence on every `todo` run and stays outside the script lane. The prose around them is this rule's explanation — reword or localize it freely. The `harness-bootstrap` sync compares the whole file against its skeleton, so a prose edit surfaces there as a drift row to accept or decline.

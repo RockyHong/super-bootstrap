@@ -137,7 +137,7 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` plugin pins (`enabledPlugins`, `extraKnownMarketplaces`)
 - `.claude/super-bootstrap-runway.json` (runway coverage receipt `{ version, covered, declined }` — presence + content checked, not diffed section-by-section; read at Phase 1, written at 2c from the sync-report rows; durable marker, no cleaner — persists for the life of the harness)
-- Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` + `docs/outward.md` header/shape sections, `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md`), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`), the CLAUDE.md § Rules `venue-map.md` bullet block (drift-checked against `assets/claude-md-skeleton.md` § Rules)
+- Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` + `docs/outward.md` header/shape sections, `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md` — whole body, prose included), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`), the CLAUDE.md § Rules `venue-map.md` bullet block (drift-checked against `assets/claude-md-skeleton.md` § Rules)
 
 **Project-owned** (never touched):
 - CLAUDE.md: Tech Stack one-line, Commands, any user-added custom sections
