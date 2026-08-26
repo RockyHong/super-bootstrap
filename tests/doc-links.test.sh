@@ -366,6 +366,63 @@ else
   printf 'expected:\n%s\ngot:\n%s\n' "$expected_closure" "$got_anchored" | sed 's/^/        /'
 fi
 
+echo "== doc-links: DEBT-084 — check/refs/index scan plugins/*/README.md (full doc surface) =="
+mkdir -p "$TMP/plug/docs" "$TMP/plug/plugins/foo"
+cat > "$TMP/plug/docs/a.md" <<'EOF'
+# Doc A
+
+## Known
+
+Body.
+EOF
+cat > "$TMP/plug/README.md" <<'EOF'
+# Repo
+EOF
+cat > "$TMP/plug/plugins/foo/README.md" <<'EOF'
+# Plugin foo
+
+Good: [g](../../docs/a.md#known).
+Bad: [b](../../docs/nope.md).
+EOF
+
+# check exits 1 and reports exactly the broken link in the plugin README
+out_plug="$(cd "$TMP/plug" && bash "$LINKS" check 2>"$TMP/plug.err")"; rc_plug=$?
+check "plug fixture: check exits 1" [ "$rc_plug" -eq 1 ]
+expected_plug_finding="plugins/foo/README.md:4: docs/nope.md — path not found"
+if [ "$out_plug" = "$expected_plug_finding" ]; then
+  ok "plug fixture: check reports exactly the plugin-README broken link"
+else
+  bad "plug fixture: check reports exactly the plugin-README broken link"
+  printf 'expected:\n%s\ngot:\n%s\n' "$expected_plug_finding" "$out_plug" | sed 's/^/        /'
+fi
+
+# refs docs/a.md lists plugins/foo/README.md as a citer
+got_refs_plug="$(cd "$TMP/plug" && bash "$LINKS" refs docs/a.md)"
+if printf '%s\n' "$got_refs_plug" | grep -qxF "plugins/foo/README.md"; then
+  ok "plug fixture: refs docs/a.md lists plugins/foo/README.md"
+else
+  bad "plug fixture: refs docs/a.md lists plugins/foo/README.md"
+  printf 'got:\n%s\n' "$got_refs_plug" | sed 's/^/        /'
+fi
+
+# index contains docs/a.md#known<TAB>plugins/foo/README.md
+got_index_plug="$(cd "$TMP/plug" && bash "$LINKS" index)"
+expected_index_row="docs/a.md#known	plugins/foo/README.md"
+if printf '%s\n' "$got_index_plug" | grep -qxF "$expected_index_row"; then
+  ok "plug fixture: index contains docs/a.md#known<TAB>plugins/foo/README.md"
+else
+  bad "plug fixture: index contains docs/a.md#known<TAB>plugins/foo/README.md"
+  printf 'expected row:\n%s\ngot index:\n%s\n' "$expected_index_row" "$got_index_plug" | sed 's/^/        /'
+fi
+
+# construct lock: collect_docs() must not remain in the asset
+collect_docs_count="$(grep -c '^collect_docs()' "$LINKS" || true)"
+if [ "$collect_docs_count" -eq 0 ]; then
+  ok "construct lock: collect_docs() not defined in the asset (single collector)"
+else
+  bad "construct lock: collect_docs() still defined in the asset (count=$collect_docs_count)"
+fi
+
 echo "== doc-links: BUG-045 — whole-surface check under a generous wall-clock ceiling =="
 now_ns="$(date +%s%N 2>/dev/null || true)"
 case "$now_ns" in

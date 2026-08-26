@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 # doc-links.sh — markdown link checker and reverse index for a docs surface
 #
-# Modes:
-#   check              scan docs/**/*.md + README.md for broken links; exit 1 if any
+# Modes (all four scan the full doc surface: docs/**/*.md + README.md +
+#         plugins/*/README.md — the markdown-file portion of the doc surface
+#         CLAUDE.md § Doc Sync defines):
+#   check              scan the doc surface for broken links; exit 1 if any
 #   refs <path>[#a]    print doc-surface files that link to <path> (repo-relative);
 #                      with #a, only files whose link cites that anchor (section grain)
 #   index              print full inverted map: target[#anchor]<TAB>referrer, sorted
 #   closure <path>[#a] print the premise-closure set of <path>: the doc surface
-#                      (docs/**/*.md + README.md + plugins/*/README.md) minus
-#                      consumables (docs/work/{BUG,DEBT}-*.md, docs/work/TEMPLATE.md)
+#                      minus consumables (docs/work/{BUG,DEBT}-*.md, docs/work/TEMPLATE.md)
 #                      minus <path> itself, sorted; #a is ignored (whole-file grain)
 #
 # Run from repo root. docs/ may be absent (treated as empty).
@@ -28,18 +29,9 @@ set -uo pipefail
 
 MODE="${1:-}"
 
-collect_docs() {
+collect_surface() {
     [ -d docs ] && find docs -name '*.md' -type f
     [ -f README.md ] && echo README.md
-    return 0
-}
-
-# Surface for `closure` only — the doc surface CLAUDE.md § Doc Sync defines,
-# which extends the link-scanned set with each plugin's README. `check`/`refs`/
-# `index` keep scanning `collect_docs`: link integrity and the reverse index are
-# a separate concern from closure membership.
-collect_surface() {
-    collect_docs
     [ -d plugins ] && find plugins -mindepth 2 -maxdepth 2 -name 'README.md' -type f
     return 0
 }
@@ -237,7 +229,7 @@ do_check() {
                 findings=$((findings + 1))
             fi
         done < <(extract_links "$doc")
-    done < <(collect_docs)
+    done < <(collect_surface)
 
     if [ "$findings" -gt 0 ]; then
         printf '%d broken link(s)\n' "$findings" >&2
@@ -264,7 +256,7 @@ do_refs() {
                 echo "$doc"; break
             fi
         done < <(extract_links "$doc")
-    done < <(collect_docs)
+    done < <(collect_surface)
 }
 
 do_index() {
@@ -278,7 +270,7 @@ do_index() {
             [ -n "$anchor" ] && rel="$rel#$anchor"
             printf '%s\t%s\n' "$rel" "$doc"
         done < <(extract_links "$doc")
-    done < <(collect_docs) | sort -u
+    done < <(collect_surface) | sort -u
 }
 
 # Closure membership is a whole-file property — an anchor fragment on the query
