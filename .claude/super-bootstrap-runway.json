@@ -44,5 +44,8 @@
     "docs/techstack.md § Edit Discipline",
     "docs/work/README.md",
     "docs/work/bootstrap.md"
-  ]
+  ],
+  "placed": {
+    ".claude/templates/worktree-settings.local.json": "7b4d292d43114aafcda4e0a18d26646afc694cf40b776b30b80a8ffa71f0fcc9"
+  }
 }
