@@ -1,29 +1,30 @@
-# Carry — GAP-064: pilot sync issues shipped as v2.41.0; migration tail still open
+# Carry — GAP-064: v2.41.1 tagged; pilot migration tail still open
 
 ## Anchor
 
-GAP-064 + OUT-001. Pilot (Magnetized Remake) synced 2.34.2 → 2.40.0, verdict `SYNC WITH ISSUES` — mechanism clean. The three producer findings are resolved on `main` (DEBT-096 `2770607` test-queue parser + note · DEBT-098 `5479fde` declined · DEBT-097 `7ae4935` stale-vs-fork hook copy-on-drift) and released as **v2.41.0** (tag pushed). Card + OUT-001 close only when the pilot migrates its author-moved cards (its DEBT-088).
+GAP-064 + OUT-001. Pilot (Magnetized Remake) synced 2.34.2 → 2.40.0 `SYNC WITH ISSUES`; its producer findings shipped as v2.41.0, and this session's card sweep (GAP-065 closed no-change · DEBT-089 · DEBT-095 fixed · DEBT-100 logged · DEBT-099 still deferred) as **v2.41.1**. Card + OUT-001 close only when the pilot migrates its author-moved cards (its DEBT-088).
 
 ## Read first
 
 1. `docs/work/GAP-064.md` — last Progress block (`consumer pilot sync`).
-2. `git log 2770607..7ae4935` — what shipped for the pilot's findings; `docs/work/GAP-065.md` (multi-root consult-check, the pilot's underlying need) · `DEBT-099.md` (worktree template `_comment`, deferred).
-3. `docs/outward.md` — OUT-001 (tail = delete GAP-064).
-4. Pilot (PRIVATE — read by path, never copy): `D:/Git/Games/Magnetized Remake/docs/work/DEBT-088.md`.
+2. `docs/outward.md` — OUT-001 (tail = delete GAP-064).
+3. `docs/work/DEBT-099.md` (worktree template `_comment` — rides the next substantive template change; `placed` hashes exist only after a consumer runs 2.41.x drain ensure-infra) · `DEBT-100.md` (todo bench: no fixture for the substrate-absent row; unit, local).
+4. Pilot (PRIVATE — read by path, never copy): `D:/Git/Games/Magnetized Remake/docs/work/DEBT-088.md` — still present with its six cards; `outward.md` there holds one entry.
 
 ## State
 
-`f5c26c0` (cards) pushed; `2770607` · `5479fde` · `7ae4935` (fixes) + `d9f4fe8` (release v2.41.0) pushed; `main == origin/main`. Installed plugin cache still 2.40.0 → `/plugin update super-bootstrap` + restart before the pilot sync. Platform finding (user-scope plugin pin overriding project-scope) → `/contribute` to claude-shape lore alongside the two from the jowagoko sync — not yet filed.
+`bd0810d` = `chore: release v2.41.1`, tag `v2.41.1` created locally; **push pending explicit yes** (`git push origin main --tags`, 6 commits ahead of `origin/main`). Plugin cache holds up to 2.41.0; `super-bootstrap:*` skills were not loaded this session (commit door run by hand from `skills/commit/SKILL.md`) → after push: `/plugin update super-bootstrap` + restart. Pilot's `consult-check-*.sh` are byte-identical to the shipped asset (its `d206e0a`) — the fork-prompt watch-out from the prior carry is void.
 
 ## Next step
 
-1. Pilot repo: migrate its author-moved cards per its DEBT-088 → here: delete `docs/work/GAP-064.md` + OUT-001 via `/super-bootstrap:commit` (card-lifecycle exemption). Then this carry clears.
-2. `/plugin update super-bootstrap` (→ 2.41.0) + restart; pilot re-runs `/super-bootstrap:harness-bootstrap` sync — the new hook path: its first sync after upgrade will raise fork prompts for its multi-root `consult-check-*` (no `placed` entry) — expected; pick `keep` until GAP-065 lands.
-3. `/contribute` the plugin-scope-resolution lore (three platform findings now).
+1. Push (on yes) → `/plugin update super-bootstrap` (→ 2.41.1) → restart.
+2. Pilot repo: `/super-bootstrap:harness-bootstrap` sync on 2.41.1, then migrate its author-moved cards per DEBT-088 → here: delete `docs/work/GAP-064.md` + OUT-001 via `/super-bootstrap:commit` (card-lifecycle exemption). Then this carry clears.
+3. `/contribute` two lore items: (a) plugin-scope resolution (three platform findings, from the prior carry); (b) `harness-audit-pretool.sh` reads `.claude/harness-paths` from `$CLAUDE_PROJECT_DIR` — a session launched in `plugins/super-bootstrap/` never sees the repo-root file, so `plugins/*/shared/*` is ungated at commit while the Bash-tool stamp (no `CLAUDE_PROJECT_DIR`) includes it → fingerprint mismatch → false "audit stale" nudge (seen on `8a91911`). Fix shape: resolve `harness-paths` from `git rev-parse --show-toplevel`.
+4. DEBT-100 is drainable (unit, local) — next `/super-bootstrap:todo` pick.
 
 ## Watch-outs
 
 - PUBLIC repo; consumer specifics stay out of docs/tests/cards.
-- Harness commits: audit → `git add` → `harness-audit-pretool.sh --stamp` → `git commit`, three separate calls; never stage `__pycache__`.
-- `render-board.py` changes must keep `bench/todo-board/` goldens green.
+- Harness commits: audit → `git add` → `harness-audit-pretool.sh --stamp` → `git commit`, three separate calls; run the stamp from the repo root and expect the `shared/` mismatch above until (3b) lands; never stage `__pycache__`.
+- `render-board.py` changes must keep `bench/todo-board/` goldens green (`bash bench/todo-board/run.sh`, 18 cases).
 - serve-freshness: `agent-model-pretool.sh` stale → `/resolve-claude-config` when convenient (unrelated).
