@@ -114,11 +114,12 @@ Omit empty sections. Show to user for approval.
 
 ```bash
 git add {{version_file_paths}}
+git diff --cached --name-only   # must list exactly the version files — any other path is another session's staging: stop and surface it, never commit through it
 git commit -m "chore: release v{version}"
 git tag -a v{version} --cleanup=verbatim -m "<release notes>"
 ```
 
-Use annotated tag. Pass message via HEREDOC.
+Use annotated tag. Pass message via HEREDOC. A path outside the version files in the readback → stop and surface it with the pick: unstage-and-continue (`git restore --staged <foreign>`, on the user's say-so) or abort.
 
 **Step 6 — Report + offer push:**
 
@@ -163,6 +164,7 @@ Push only on explicit yes. Skip by default if silent.
 
 - Push only on explicit confirmation — offer after commit/tag, run `git push ... --tags` on yes, never force, never unannounced.
 - Working tree must be clean before proceeding — step 1 enforces this.
+- The staged set is read back before `git commit` — the clean-tree gate holds at qualify time only; a path another session stages between qualify and commit stops the release for the user's pick (unstage / abort), never rides into it.
 - Never delete or move existing tags.
 - All tags are annotated (`git tag -a`) and written with `--cleanup=verbatim` — the default strips every line starting with `#`, which would delete the release-notes headings.
 - Run `/release` with no arguments — the skill auto-detects state.
