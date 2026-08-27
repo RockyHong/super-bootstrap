@@ -82,7 +82,7 @@ Read the classification spec from the path supplied in the dispatch prompt. Appl
 
 Apply the spec's **optional-source probe discipline** to every presence-probe here — the classify sources and the venue map (`.claude/rules/venue-map.md`, §Lane split) alike.
 
-**Stale scaffold (pre-substrate repo).** If `docs/work/README.md` is absent, or is present without an ID high-water-mark line, the repo predates the card substrate (older super-bootstrap version). Emit **one** Uncategorized row for the condition (not one per card). Reason: `"docs/work/ missing its README / ID high-water line — run /super-bootstrap:harness-bootstrap to re-plant the work substrate (rebuilds the counter from git history)."` Read-only — never mint IDs or scaffold here; the re-plant write is harness-bootstrap's.
+**Stale scaffold (pre-substrate repo).** If `docs/work/README.md` is absent, or is present without an ID high-water-mark line, the repo predates the card substrate (older super-bootstrap version). Emit **one** Uncategorized row for the condition (not one per card). Reason: `"substrate missing — run /super-bootstrap:harness-bootstrap"`. Read-only — never mint IDs or scaffold here; the re-plant write is harness-bootstrap's.
 
 ### 2. Filter by mode
 

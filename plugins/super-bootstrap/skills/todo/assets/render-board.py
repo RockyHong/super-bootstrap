@@ -50,10 +50,13 @@ judgment call, the encoding is the documented mechanical reading:
                     open card, else 0 — leverage signal only: an outward row's
                     Impact stays `quick-pop` (the repo moves nothing here), and its
                     Context cell renders the entry's repo tail.
-- Sheet columns   = every board table carries an `ID` column (card ID / `OUT-###` /
-                    `—` for a test-queue row) and its Action cell is the spec's
-                    action string with that ID token lifted out, cut to
-                    ACTION_WIDTH with `…` (scaffolds.md § Sheet columns).
+- Sheet columns   = every board table but Uncategorized carries an `ID` column
+                    (card ID / `OUT-###` / `—` for a test-queue row) and its Action
+                    cell is the spec's action string with that ID token lifted
+                    out, cut to ACTION_WIDTH with `…` (scaffolds.md § Sheet
+                    columns). Uncategorized: Action is the file name (or the
+                    substrate condition label) cut the same way, its reason a
+                    pointer within the same budget.
 
 Exit codes: 0 board rendered · 2 usage · 4 substrate absent.
 stdout carries the board only. stderr carries `# sources:` diagnostics plus any
@@ -75,8 +78,7 @@ CARD_RE = re.compile(r"^(BUG|DEBT|GAP)-\d+\.md$")
 BLOCK_RE = re.compile(r"^## (Amendment|Verdict|Design|Plan|Progress)\b(.*)$")
 PATH_TOKEN_RE = re.compile(r"[\w.-]+(?:/[\w.*{}-]+)+/?|[\w-]+\.(?:md|ts|tsx|js|jsx|py|sh|json|css|rs|go)\b")
 PATH_EXT_RE = re.compile(r"\.(?:md|ts|tsx|js|jsx|py|sh|json|css|rs|go)$")
-UNCAT_REASON = ("non-canonical work file; docs/work/ holds BUG/DEBT/GAP cards "
-                "(feature ideas log as GAP). New cards route through /super-bootstrap:log.")
+UNCAT_REASON = "not a card — see docs/work/README.md § Routing"
 WAIT_RE = re.compile(r"needs user|decision required|route\?|waiting on\s+\w|blocked on\s+\w", re.I)
 OUT_HEAD_RE = re.compile(r"^(OUT-\d+) — (.+?)\s*$")
 OUT_FIELD_RE = re.compile(
@@ -617,12 +619,18 @@ def id_cell(r):
     return m.group(0) if m else "—"
 
 
+def cut(s):
+    """Hard-cut a cell to ACTION_WIDTH, the last char `…` (no word-boundary
+    search) — scaffolds.md § Sheet columns."""
+    return s if len(s) <= ACTION_WIDTH else s[:ACTION_WIDTH - 1] + "…"
+
+
 def action_cell(r):
     """The spec's action string with its ID token lifted into the ID column,
     cut to ACTION_WIDTH — the ID column plus the card hold the rest."""
     rid = id_cell(r)
     s = r.action.replace(f"{rid} ", "", 1) if rid != "—" else r.action
-    return s if len(s) <= ACTION_WIDTH else s[:ACTION_WIDTH - 1] + "…"
+    return cut(s)
 
 
 def context_cell(r):
@@ -716,7 +724,7 @@ def render(mode, rows, uncat, held_count, date, wired=False):
     if uncat:
         uncat_section = "\n\n## Uncategorized\n\n" + table(
             ["#", "Action", "Why ambiguous"],
-            [[str(i + 1), name, reason] for i, (name, reason) in enumerate(uncat)])
+            [[str(i + 1), cut(name), reason] for i, (name, reason) in enumerate(uncat)])
 
     if mode == "needme":
         drainable, grouped = partition(body_rows, wired)
@@ -840,9 +848,8 @@ def main():
     uncat, rows = [], []
     readme = os.path.join(work, "README.md")
     if not os.path.isfile(readme) or "ID high-water mark" not in read(readme):
-        uncat.append(("docs/work/ substrate", "docs/work/ missing its README / ID high-water line — run "
-                      "/super-bootstrap:harness-bootstrap to re-plant the work substrate "
-                      "(rebuilds the counter from git history)."))
+        uncat.append(("docs/work/ substrate",
+                      "substrate missing — run /super-bootstrap:harness-bootstrap"))
 
     cards = {}
     for name in sorted(os.listdir(work)):

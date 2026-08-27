@@ -19,7 +19,7 @@
 
 | # | Action | Why ambiguous |
 | -- | -- | -- |
-| 1 | notes-scratch.md | non-canonical work file; docs/work/ holds BUG/DEBT/GAP cards (feature ideas log as GAP). New cards route through /super-bootstrap:log. |
+| 1 | notes-scratch.md | not a card — see docs/work/README.md § Routing |
 
 pending unblock: 2
 filter: /super-bootstrap:todo cloud (headless) · /super-bootstrap:todo device (needs screen) · /super-bootstrap:todo discuss (decisions) · /super-bootstrap:todo harness (engine)

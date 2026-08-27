@@ -10,10 +10,12 @@ Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 
 Counts only — no IDs, no impact tags. Decision-is-yours; surface priors not calls. Full mode skips this header (full body IS the macro).
 
-**Sheet columns** — every board table (Uncategorized excepted) opens with these two cells so a row fits one terminal line; the card holds the rest:
+**Sheet columns** — every board table opens with an **Action** cell cut to the budget below, and all but Uncategorized also carry an **ID** ahead of it, so a row fits one terminal line; the card holds the rest:
 
 - **ID** — the row's handle: the owning card's ID (whether or not the action string carries it — `Deliberate:` / `Apply:` rows included), the outward entry's `OUT-###`, `—` for a test-queue row.
 - **Action** — the classification spec's `action` string with its ID token (if any) lifted into the ID column, then hard-cut so the cell is at most 60 characters, the 60th being `…` (59 kept + `…`; no word-boundary search). Shapes, e.g.: `Triage: {title}`, `Approve design: {title}`, `Start execute: {title}`, `Continue execute: {title} ({done}/{total})`, `Decide: {title} — triage verdict`, `Manually verify: {entry title}`, `Outward: {summary} — {next move} · waiting on {party}`, `Deliberate: {topic}`, `Apply: {rule} → {site}`.
+
+The Uncategorized table carries no **ID**: its **Action** is the file name — or the condition label for the substrate row — hard-cut the same way, and its **Why ambiguous** is a one-line pointer or missing-signal within the same 60-character budget (literals in `shared/classify-actionable.md` § a and the todo agent's stale-scaffold rule).
 
 ### Need-me (default — bare `/super-bootstrap:todo`)
 
@@ -62,7 +64,7 @@ Drainable: {N}  →  /super-bootstrap:drain
 
 | #  | Action                                  | Why ambiguous                          |
 | -- | ---------------------------------------- | --------------------------------------- |
-| 1  | {verb + what}                           | {one-line — what signal was missing}   |
+| 1  | {file name or condition}                | {one-line — pointer or missing signal} |
 
 {pending unblock: {n} — only if n>0}
 {footer per § Render footer-hint}
@@ -104,7 +106,7 @@ Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 
 | #  | Action                                              | Why ambiguous                                    |
 | -- | --------------------------------------------------- | ------------------------------------------------ |
-| 1  | {verb + what}                                       | {one-line — what signal was missing}             |
+| 1  | {file name or condition}                            | {one-line — pointer or missing signal}           |
 
 {pending unblock: {n} — only if n>0}
 more: /super-bootstrap:help
@@ -145,7 +147,7 @@ Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 
 | #  | Action                                              | Why ambiguous                                    |
 | -- | --------------------------------------------------- | ------------------------------------------------ |
-| 1  | {verb + what}                                       | {one-line — what signal was missing}             |
+| 1  | {file name or condition}                            | {one-line — pointer or missing signal}           |
 
 {pending unblock: {n} — only if n>0}
 more: /super-bootstrap:help
@@ -186,7 +188,7 @@ Macro: Discuss {D} · Cloud {C} · Device {V} · Harness {H} · Full {T}
 
 | #  | Action                                              | Why ambiguous                                    |
 | -- | --------------------------------------------------- | ------------------------------------------------ |
-| 1  | {verb + what}                                       | {one-line — what signal was missing}             |
+| 1  | {file name or condition}                            | {one-line — pointer or missing signal}           |
 
 {pending unblock: {n} — only if n>0}
 more: /super-bootstrap:help
@@ -237,7 +239,7 @@ Engine surface — careful handle. Ground in git log + the repo's rules before e
 
 | #  | Action                                              | Why ambiguous                                    |
 | -- | --------------------------------------------------- | ------------------------------------------------ |
-| 1  | {verb + what}                                       | {one-line — what signal was missing}             |
+| 1  | {file name or condition}                            | {one-line — pointer or missing signal}           |
 
 {pending unblock: {n} — only if n>0}
 more: /super-bootstrap:help
@@ -287,7 +289,7 @@ Column conventions — every row fills every column; a column inapplicable to a 
 
 | #  | Action                                              | Why ambiguous                                    |
 | -- | --------------------------------------------------- | ------------------------------------------------ |
-| 1  | {verb + what}                                       | {one-line — what signal was missing}             |
+| 1  | {file name or condition}                            | {one-line — pointer or missing signal}           |
 
 {pending unblock: {n} — count of rows the agent §4 Coupling gate held out as hard-blocked; only if n>0}
 {footer per § Render footer-hint}
