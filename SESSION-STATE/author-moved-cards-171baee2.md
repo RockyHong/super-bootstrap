@@ -27,4 +27,3 @@ GAP-064 + OUT-001. Pilot (Magnetized Remake) synced 2.34.2 → 2.40.0 `SYNC WITH
 - PUBLIC repo; consumer specifics stay out of docs/tests/cards.
 - Harness commits: audit → `git add` → `harness-audit-pretool.sh --stamp` → `git commit`, three separate calls; run the stamp from the repo root and expect the `shared/` mismatch above until (3b) lands; never stage `__pycache__`.
 - `render-board.py` changes must keep `bench/todo-board/` goldens green (`bash bench/todo-board/run.sh`, 18 cases).
-- serve-freshness: `agent-model-pretool.sh` stale → `/resolve-claude-config` when convenient (unrelated).
