@@ -6,3 +6,7 @@
 **Prior:** in `check`, treat a card→card link whose target matches `{BUG,DEBT,GAP}-###.md` and is absent as consumed provenance (skip, or one info line), keeping every other target strict — excluding card threads wholesale would also drop card→spec links, which should stay checked. Decide at pickup; a bench case with a card linking a deleted sibling pins it.
 **Test-feel:** unit
 **Blast:** local
+
+## Amendment — 2026-08-27 · logged beside in-flight work
+
+Adjacent, not duplicate: [DEBT-102](DEBT-102.md) declares a `dimension: history` carrier that drops such docs from the staleness scan and **keeps** them in `check` — this card is about what `check` does with a card→card link whose target ID is consumed. `doc-links.sh` is mid-edit under DEBT-101 / DEBT-102 (`refs` lane, surface collection); pick this card up after that lands and build the consumed-ID rule on the surface-collection shape they leave.
