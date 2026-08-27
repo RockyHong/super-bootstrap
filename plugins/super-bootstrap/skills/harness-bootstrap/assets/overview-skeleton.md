@@ -5,7 +5,7 @@ Default [github]; add any of: notion, linear, jira, slack, trello, clickup, othe
 external-tools: [github]
 -->
 
-> Living doc. Skeleton sections (Problem / User / Current State) start empty at scaffold and fill at GAP-card pickup. Grown sections (Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync — every commit that adds, removes, or reshapes a module triggers a sync proposal. See `CLAUDE.md` Doc Sync.
+> Living doc. Skeleton sections (Problem / User / Current State) start empty at scaffold and fill at GAP-card pickup. Grown sections (Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync — every commit that adds, removes, or reshapes a module triggers a sync proposal, admitted per § Doc Sync. See `CLAUDE.md` Doc Sync.
 
 ## Problem
 

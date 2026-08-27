@@ -68,6 +68,8 @@ Named pipeline step — every route includes it between user review and commit. 
 
 Doc surface: `docs/` (specs, overview, techstack, the [`docs/work/`](docs/work/README.md) card set) **plus behavior-narrating prose outside `docs/`: the root `README`, any plugin README the repo ships (`plugins/*/README.md`), and any manifest/description field the diff's behavior changes**. Refinements — card-lifecycle skip, premise-closure lane — live in the commit door's skill body. Coverage backstop: `/super-bootstrap:check-docs-consistency` (on-demand — the one remaining whole-surface pass).
 
+**Admission — a line earns the doc surface when it lets a reader skip opening a file:** a rule spanning surfaces no single file owns, a decision / constraint / number not derivable from the code, or an index pointer that shortens the search. Single-file mechanism stays in that file's own header or comment; a fix whose existing doc line was already right adds none.
+
 Stale candidates resolve together: report path + what looks outdated + relevant diff context; update or acknowledge still-accurate — never silently fix or skip. Every doc the gate enumerates gets an outcome marker (updated, or read-and-confirmed-unchanged): [`.claude/guidelines/work-discipline/doc-impact-mirror.md`](.claude/guidelines/work-discipline/doc-impact-mirror.md).
 
 **Write boundary** — doc-sync writes narrative docs only: `docs/`, the root `README`, and plugin READMEs (`plugins/*/README.md`). All harness — `CLAUDE.md`, `.claude/rules/`, skills, agents, plugin manifests — is **read-only within this step**: flag the drift and route the fix to its owner (a deliberate harness edit carrying its own verify pass; `/release` for manifests).
