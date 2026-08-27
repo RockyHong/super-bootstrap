@@ -17,7 +17,7 @@ GAP-064 + OUT-001. Pilot (Magnetized Remake) synced 2.34.2 → 2.40.0 `SYNC WITH
 
 ## Next step
 
-1. Push (on yes) → `/plugin update super-bootstrap` (→ 2.41.1) → restart.
+1. Restart — a fresh session confirms the `super-bootstrap:*` skills load at 2.41.1.
 2. Pilot repo: `/super-bootstrap:harness-bootstrap` sync on 2.41.1, then migrate its author-moved cards per DEBT-088 → here: delete `docs/work/GAP-064.md` + OUT-001 via `/super-bootstrap:commit` (card-lifecycle exemption). Then this carry clears.
 3. Contributed to CCM inbox (2026-08-27): `plugin-version-resolution-user-scope-loads` + `harness-audit-pretool-harness-paths-from-toplevel` — triage is CCM-side (`/digest-inbox`); until (b) lands, a commit staging `plugins/*/shared/*` from this subdir-launched session raises a false "audit stale" nudge.
 4. DEBT-100 is drainable (unit, local) — next `/super-bootstrap:todo` pick.
