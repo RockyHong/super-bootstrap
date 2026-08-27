@@ -152,7 +152,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` plugin pins (`enabledPlugins`, `extraKnownMarketplaces`) — the core pin drift-checked for presence alone, the paired pin raising an approval row when its key is absent on a sync (§ 2a)
 - `.claude/super-bootstrap-runway.json` (runway coverage receipt `{ version, covered, declined, placed }` — presence + content checked, not diffed section-by-section; read at Phase 1, written at 2c — `covered` / `declined` from the sync-report rows, `placed` from the file assets the ensure-infra procedures copied or verified current; durable marker, no cleaner — persists for the life of the harness)
-- Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` + `docs/outward.md` header/shape sections, `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md` — whole body, prose included), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`), the CLAUDE.md § Rules `venue-map.md` bullet block (drift-checked against `assets/claude-md-skeleton.md` § Rules)
+- Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `docs/outward/README.md` + `docs/outward/TEMPLATE.md` (whole files, the way `docs/work/README.md` / `docs/work/TEMPLATE.md` are), `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md` — whole body, prose included), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`), the CLAUDE.md § Rules `venue-map.md` bullet block (drift-checked against `assets/claude-md-skeleton.md` § Rules)
 
 **Project-owned** (never touched):
 - CLAUDE.md: Tech Stack one-line, Commands, any user-added custom sections
@@ -162,7 +162,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `CODING_STANDARDS.md` section content (consumer-grown via doc-sync)
 - `.claude/rules/<rule>.md` grown sections (additions the user/doc-sync added below the skeleton scaffold)
 - `.claude/rules/<rule>.md` files the user authored without a matching skeleton (treat as fully project-owned)
-- Scale-module container content — `docs/parked.md` `## Entries` + `## Sweep log` content, `docs/test-queue.md` `## Pending` / `## Failed (re-queued for fix)` rows, `docs/outward.md` `## Entries` content (consumer-filled, like card content; only the skeleton headers/shape stay pipeline-owned)
+- Scale-module container content — `docs/parked.md` `## Entries` + `## Sweep log` content, `docs/test-queue.md` `## Pending` / `## Failed (re-queued for fix)` rows, the `docs/outward/OUT-###.md` entry files (consumer-filled, like card content; only the skeleton headers/shape stay pipeline-owned)
 - Other settings in `.claude/settings.json` outside the plugin-pin keys
 
 ### 2a: Folders & core plugin pin
@@ -283,7 +283,7 @@ On `skip`: nothing placed; drain's own §Pre-flight step 0 installs on first `/s
 
 ### 2a-scale: Scale module (opt-in, earn-gated)
 
-The scale module adds work-substrate-adjacent runway — a parked-items artifact, a manual-verification queue, an outward queue (items the author or an outside party moves, the repo owning only the result tail), and a phase→venue map — for repos whose card set has outgrown simple scanning. Earn-gated: offer only when a signal shows the repo has grown into it, silent skip otherwise (no prompt spam on small repos).
+The scale module adds work-substrate-adjacent runway — a parked-items artifact, a manual-verification queue, an outward folder (one thread file per item the author or an outside party moves, the repo owning only the result tail), and a phase→venue map — for repos whose card set has outgrown simple scanning. Earn-gated: offer only when a signal shows the repo has grown into it, silent skip otherwise (no prompt spam on small repos).
 
 Signals — any one arms the offer:
 - Card files (`{BUG|DEBT|GAP}-###.md`) in `docs/work/` ≥ 10.
@@ -292,15 +292,24 @@ Signals — any one arms the offer:
 
 None hold → skip silently, place nothing. A later re-run re-offers once a signal fires.
 
+**Split before placing — `docs/outward.md` → `docs/outward/`.** Repos that took the scale module before the folder shape hold every outward item as an `### OUT-###` chunk in one flat file. Placing `docs/outward/` beside it strands those entries: `/super-bootstrap:log`'s dedup and the mover gate read the folder, and the board only carries the flat file on a legacy branch that draws a `# note:` every render. When `docs/outward.md` exists, run the split first, then continue with this step's placements:
+
+```
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/harness-bootstrap/assets/scale/split-outward.py <repo root> ${CLAUDE_PLUGIN_ROOT}/skills/harness-bootstrap/assets/scale/outward-readme-skeleton.md
+```
+
+Deterministic, no per-item judgment: it writes `docs/outward/README.md` from the skeleton with the flat file's high-water ID carried onto the high-water line, one `docs/outward/OUT-###.md` per `### OUT-###` chunk — the H1 plus the chunk's whole body, field lines and any blocks an author had already appended, verbatim — and deletes the flat file last. It refuses (exit 2, nothing written) when any target file — `docs/outward/README.md` or an `OUT-###.md` it would create — already exists: the two shapes then coexist, so stop and surface the flat file's entry list beside the folder's for the user to reconcile; never treat exit 2 as a converted repo. A repo with no `docs/outward.md` is already on the folder shape and the placements below resolve `✓ current`. The split moves a durable artifact, so it earns § Registration rule rows the same way a planting does — every consumer surface naming the flat path re-points to `docs/outward/README.md`, `CLAUDE.md` § Planning's bracket line included (pipeline-owned; § 2b's drift check carries that one).
+
 When armed, ask once:
 
-> Install the scale module? — `docs/parked.md` (deferred items with named triggers) + `docs/test-queue.md` (manual-verification queue) + `docs/outward.md` (outward items — next move + waiting-on party) + `.claude/rules/venue-map.md` (phase → run-location map, feeds `/super-bootstrap:todo` + `/super-bootstrap:drain`) + card fact-field guidance.
+> Install the scale module? — `docs/parked.md` (deferred items with named triggers) + `docs/test-queue.md` (manual-verification queue) + `docs/outward/` (outward threads — next move + waiting-on party, one file per item) + `.claude/rules/venue-map.md` (phase → run-location map, feeds `/super-bootstrap:todo` + `/super-bootstrap:drain`) + card fact-field guidance.
 > Install now? (y / skip)
 
-On `y`, place the five `assets/scale/` skeletons per Phase 2's per-artifact rule (all copy verbatim — no substitutions):
+On `y`, place the six `assets/scale/` skeletons per Phase 2's per-artifact rule (all copy verbatim — no substitutions):
 - `parked-skeleton.md` → `docs/parked.md`
 - `test-queue-skeleton.md` → `docs/test-queue.md`
-- `outward-skeleton.md` → `docs/outward.md`
+- `outward-readme-skeleton.md` → `docs/outward/README.md`
+- `outward-template-skeleton.md` → `docs/outward/TEMPLATE.md`
 - `rules-venue-map-skeleton.md` → `.claude/rules/venue-map.md`
 - `card-fact-fields.md` → insert its marker-delimited block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`) into `docs/work/README.md` directly above the `## Thread contract` heading; skip if the markers are already present.
 
@@ -486,7 +495,7 @@ Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write fro
 - `{date}` — today's date
 - Manifest detection facts (Runtime / Framework / Key Dependencies / Build & Distribution) → fill into CLAUDE.md Tech Stack one-liner AND `techstack.md` skeleton sections
 - Problem / User / Current State (`overview.md` skeleton sections) → left empty at install; filled at GAP-card pickup, not by the runway
-- Bracketed conditional lines (`{- docs/parked.md — ...}`, `{- docs/test-queue.md — ...}`, `{- docs/outward.md — ...}`) — keep only if the corresponding adaptive doc is scaffolded for this repo (scale module per its 2a install gate); drop the whole line otherwise
+- Bracketed conditional lines (`{- docs/parked.md — ...}`, `{- docs/test-queue.md — ...}`, `{- docs/outward/ — ...}`) — keep only if the corresponding adaptive doc is scaffolded for this repo (scale module per its 2a install gate); drop the whole line otherwise
 - **Monorepo tier** (Phase 1 § Monorepo detection) — fill CLAUDE.md's conditional monorepo block (workspace tool + the workspace-aware filtered build command) and `techstack.md` § Packages table rows (package | path | role | build command) from the Phase 1 package enumeration. Single-package repo → drop the CLAUDE.md monorepo block and the § Packages section entirely
 - CLAUDE.md § **Rules** summary bullets — fill from seeded `.claude/rules/*.md` files (one bullet per rule with glob + 2-4 one-line key points). The seeded `venue-map.md` ships its own bullet block in the skeleton's § Rules — scale module installed → keep that block verbatim (unbracket the three bullet lines, no substitutions); not installed → drop it; its `{scale module installed — …}` label drops either way. The `{example scaffolding — …}` label and the bracketed example bullets under it go together: replaced by the seeded rules' bullets, or dropped when no signal-seeded rule file landed (`index.md` is always-placed machinery and takes no bullet) — leaving the explanatory paragraph, the venue-map block when installed, and the unbracketed read-the-rule-file sentence, which is shipped prose.
 - Rule skeleton placeholders (`{component path glob}`, `{Framework}`, body bullets in `assets/rules-*-skeleton.md`) → fill from Phase 1 detection. Lines that don't apply get dropped during scaffold.
@@ -546,7 +555,7 @@ Per-candidate handling:
 | docs/techstack.md: Runtime          | ⚠ drifted    | updated (approved)  |
 | .claude/rules/mv3.md                | ⊕ new        | seeded (signal: MV3 manifest) |
 | .claude/settings.json: paired pin   | ⊕ new        | inserted (approved) |
-| registration: docs/outward.md → README.md docs list (illustrative — name what the greps hit) | ⊕ new | updated |
+| registration: docs/outward/ → README.md docs list (illustrative — name what the greps hit) | ⊕ new | updated |
 | registration: .claude/skills/commit/ → none | ⊘ removed | none |
 ```
 
@@ -570,7 +579,8 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/work/TEMPLATE.md` (if newly written)
 - `docs/work/bootstrap.md` (if newly written or regenerated)
 - `docs/specs/.gitkeep`
-- `docs/parked.md`, `docs/test-queue.md`, `docs/outward.md`, `.claude/rules/venue-map.md` (scale-module targets — only if installed this run at 2a-scale)
+- `docs/parked.md`, `docs/test-queue.md`, `docs/outward/README.md`, `docs/outward/TEMPLATE.md`, `.claude/rules/venue-map.md` (scale-module targets — only if installed this run at 2a-scale)
+- `docs/outward/OUT-###.md` entry files plus the removed `docs/outward.md` (only when 2a-scale ran the split)
 - `.claude/super-bootstrap-runway.json` (runway coverage receipt — written/overwritten every sync)
 - Superseded-fork deletions (adopt mode, § 2b-adopt) — staged removals of approved consumer `.claude/skills/<name>/` dirs / `.claude/agents/<name>.md` files that root artifacts now supersede
 - Consumer surfaces edited to register a placed or deleted artifact (§ Registration rule — skip when every registration row resolved `none`)

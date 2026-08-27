@@ -56,6 +56,7 @@ run_case terms-dropped terms \
   docs/work/DEBT-001.md \
   docs/work/README.md \
   docs/outward.md \
+  docs/outward/OUT-001.md \
   SESSION-STATE/park-a1b2c3d4.md \
   docs/specs/ui.md \
   docs/assets/diagram.png
@@ -93,7 +94,8 @@ run_case hits-history hits foo-baz
 # target, a backticked path and a bare path all stay out; the doc naming the
 # artifact itself hits.
 run_case hits-hub hits overview techstack
-# A card thread is frozen provenance on the hit side too — never scan scope (BUG-051).
+# A card thread and an outward thread are frozen provenance on the hit side too —
+# never scan scope (BUG-051) — while each folder's standing README.md stays in.
 run_case hits-card hits cardonly
 
 # --- anchors: nearest heading at or above each range start ---

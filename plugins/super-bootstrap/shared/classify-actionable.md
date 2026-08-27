@@ -1,6 +1,6 @@
 # Classify Actionable — shared spec
 
-Single source of truth for deriving, from the open work cards (plus the scale module's test queue and outward file when present), **each open item's `{action, intent, stage}`**. Consumed by every caller that needs the classification — `todo`'s bundled `skills/todo/assets/render-board.py` (the primary board renderer, a mechanical encoding of this spec), the `todo` subagent (fallback lane — Reads it at classify time, then ranks + renders a board), and `drain` (gateway Reads it inline, then gates on `Cloud` + spawns per stage). One criterion, many callers: no caller re-derives it.
+Single source of truth for deriving, from the open work cards (plus the scale module's test queue and outward folder when present), **each open item's `{action, intent, stage}`**. Consumed by every caller that needs the classification — `todo`'s bundled `skills/todo/assets/render-board.py` (the primary board renderer, a mechanical encoding of this spec), the `todo` subagent (fallback lane — Reads it at classify time, then ranks + renders a board), and `drain` (gateway Reads it inline, then gates on `Cloud` + spawns per stage). One criterion, many callers: no caller re-derives it.
 
 > **Callers self-read, never paraphrase — and an edit here propagates to the script.** Read this file at classify time and apply it exactly — `todo`'s skill passes the resolved absolute path into the dispatch prompt for the subagent to Read; `drain`'s gateway Reads it inline. Paraphrasing forks the taxonomy — the drift this shared home exists to prevent. The script is the one consumer that *encodes* rather than reads: editing a criterion here pulls `render-board.py` into the edit's closure, checked by the golden bench (`bench/todo-board/` in the source repo).
 
@@ -69,11 +69,11 @@ Intent is determined by action verb before content reads. Rows locked to a defin
 
 ## Thread-state derivation
 
-Three sources: the open cards at `docs/work/{BUG,DEBT,GAP}-###.md`, plus the scale module's test queue and outward file when present. Read each, derive its `{action, intent, stage}` from where its thread stands. Apply the Harness pre-filter, then the Action-verb intent map, then the content rules.
+Three sources: the open cards at `docs/work/{BUG,DEBT,GAP}-###.md`, plus the scale module's test queue and the outward threads at `docs/outward/OUT-###.md` when present. Read each, derive its `{action, intent, stage}` from where its thread stands. Apply the Harness pre-filter, then the Action-verb intent map, then the content rules.
 
 **Latest-block-leads.** Derive from the **latest** block of each type: a newer `## Plan` supersedes the older one it replaced, the latest `## Progress` reports current execution state. Earlier blocks are grounding for the read, never the lead.
 
-**Optional-source probe discipline.** `docs/work/`, the test queue, and the outward file are optional — absent until a repo reaches that stage. Probe presence by listing the concrete path (a concrete project-relative target lists reliably), not by content-reading a maybe-absent file. An absent optional source — an empty listing *or* a "does not exist" error — is an expected branch of this spec, not an anomaly to diagnose: record it empty, take its skip (§a–c), and move on immediately.
+**Optional-source probe discipline.** `docs/work/`, the test queue, and the outward folder are optional — absent until a repo reaches that stage. Probe presence by listing the concrete path — `docs/outward/OUT-*.md` for the outward folder (a concrete project-relative target lists reliably) — not by content-reading a maybe-absent file. An absent optional source — an empty listing *or* a "does not exist" error — is an expected branch of this spec, not an anomaly to diagnose: record it empty, take its skip (§a–c), and move on immediately.
 
 ### a. Cards (`docs/work/{BUG|DEBT|GAP}-###.md`)
 
@@ -112,15 +112,18 @@ Entries are `### {plain descriptive title}` headings under `## Pending` (no ID i
 
 If `docs/test-queue.md` doesn't exist, skip §b.
 
-### c. Outward (`docs/outward.md` — scale module, skip if absent)
+### c. Outward (`docs/outward/OUT-###.md` — scale module, skip if absent)
 
-Entries are `### OUT-### — {summary}` headings under `## Entries`, each carrying `**Next move:**`, `**Waiting on:**`, `**Repo tail — fires on:**`, and an optional `**Owning card:**` field.
+One entry = one file = one append-only thread (contract: `docs/outward/README.md`). The origin block is an H1 `# OUT-### — {summary}` plus the field lines `**Logged:**` / `**Source:**`, `**Next move:**`, `**Waiting on:**`, `**Repo tail — fires on:**`, and an optional `**Owning card:**`; dated `## Amendment` / `## Progress` blocks append below it. `README.md` and `TEMPLATE.md` are standing files, never entries.
 
-- **Each entry** → action: `"Outward: OUT-### {summary} — {Next move} · waiting on {Waiting on}"`, **intent: Discuss**, **stage: raw**. The author or an outside party moves it; the repo owns only its result tail.
+- **Each entry file** → action: `"Outward: OUT-### {summary} — {Next move} · waiting on {Waiting on}"`, **intent: Discuss**, **stage: raw**. The author or an outside party moves it; the repo owns only its result tail.
+- **Latest block leads** — `Next move` and `Waiting on` come from the latest appended block that restates them, falling back to the origin block's lines. `Owning card` is the origin's alone.
 - **Entry whose `Owning card:` names an open card** → the wall: that card leaves the board body until this entry closes (§a Outward-owned wall), and the entry's own row carries the leverage. An entry that merely touches a card cites it in `Repo tail — fires on:` instead.
 - **`Waiting on` reads downstream** — `todo` groups outward rows on this field's value; the grouping itself lives in `agents/todo.md` § Lane split.
 
-If `docs/outward.md` doesn't exist, skip §c.
+A repo still holding the pre-folder flat `docs/outward.md` classifies from its `### OUT-### — {summary}` chunks under `## Entries` by the same rules; the renderer names the file on its `# note:` channel, pointing at the `/super-bootstrap:harness-bootstrap` sync that splits it into the folder.
+
+If neither `docs/outward/` nor `docs/outward.md` exists, skip §c.
 
 ---
 

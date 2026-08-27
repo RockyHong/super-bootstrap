@@ -1,1 +1,2 @@
+docs/outward/README.md
 docs/work/README.md

@@ -46,8 +46,20 @@ judgment call, the encoding is the documented mechanical reading:
                     (`- **result:** pending`), the bare-label form tolerated.
                     `## Pending` content holding no `### ` entry draws a stderr
                     `# note:`, not a different board.
-- Outward entry   = `### OUT-### — {summary}` under `## Entries`; fields read by
-                    their bold labels. `unblocks` = 1 when `Owning card:` names an
+- Outward entry   = one thread file `docs/outward/OUT-###.md`. The origin block is
+                    the text before the first `## ` heading; its fields are read by
+                    their bold labels. The appended blocks are then scanned in
+                    order and the LAST `**Next move:**` / `**Waiting on:**` found
+                    anywhere after the origin supersedes it (latest block leads) —
+                    so an Amendment re-points both the action string and the
+                    your-move / waiting-on-others split. `Owning card:` is read
+                    from the origin alone: the wall is frozen at capture. A
+                    lingering flat `docs/outward.md` (`### OUT-### — {summary}`
+                    chunks under `## Entries`) still renders on the legacy branch —
+                    no thread, so the chunk's own fields are the whole entry — and
+                    draws a `# note:` naming the sync that splits it; entries from
+                    both sources merge into one row set, folder first.
+                    `unblocks` = 1 when `Owning card:` names an
                     open card, else 0 — leverage signal only: an outward row's
                     Impact stays `quick-pop` (the repo moves nothing here), and its
                     Context cell renders the entry's repo tail. That same
@@ -67,7 +79,8 @@ judgment call, the encoding is the documented mechanical reading:
 
 Exit codes: 0 board rendered · 2 usage · 4 substrate absent.
 stdout carries the board only. stderr carries `# sources:` diagnostics plus any
-`# note:` lines (venue-map divergence · unparseable `## Pending` content).
+`# note:` lines (venue-map divergence · retired `Actor:` field · unparseable
+`## Pending` content · a lingering flat `docs/outward.md`).
 """
 import argparse
 import datetime
@@ -87,7 +100,10 @@ PATH_TOKEN_RE = re.compile(r"[\w.-]+(?:/[\w.*{}-]+)+/?|[\w-]+\.(?:md|ts|tsx|js|j
 PATH_EXT_RE = re.compile(r"\.(?:md|ts|tsx|js|jsx|py|sh|json|css|rs|go)$")
 UNCAT_REASON = "not a card — see docs/work/README.md § Routing"
 WAIT_RE = re.compile(r"needs user|decision required|route\?|waiting on\s+\w|blocked on\s+\w", re.I)
-OUT_HEAD_RE = re.compile(r"^(OUT-\d+) — (.+?)\s*$")
+OUT_HEAD_RE = re.compile(r"^(OUT-\d+) — (.+?)\s*$")     # flat chunk heading, `### ` stripped
+OUT_FILE_RE = re.compile(r"^(OUT-\d+)\.md$")            # folder entry — README/TEMPLATE fall out
+OUT_H1_RE = re.compile(r"^# (OUT-\d+) — (.+?)\s*$", re.M)
+OUT_BLOCK_SPLIT_RE = re.compile(r"^## ", re.M)          # origin = the text before the first one
 OUT_FIELD_RE = re.compile(
     r"^\*\*(Next move|Waiting on|Repo tail — fires on|Owning card):\*\*\s*(.+?)\s*$", re.M)
 QUEUE_FIELD_RE = re.compile(
@@ -244,7 +260,7 @@ class Row:
         self.card = card
         self.verb = verb or action.split(":")[0]
         self.subgroup: Optional[str] = None    # Harness rows: deliberate | apply
-        self.outward = False                   # docs/outward.md entry (§c)
+        self.outward = False                   # docs/outward/ entry (§c)
         self.owning_card: Optional[str] = None  # outward rows: the open card it walls
         self.waiting_on_author = False         # outward rows: `Waiting on` names the author
         self.context: Optional[str] = None     # Context cell override (outward: repo tail)
@@ -461,8 +477,53 @@ def pending_unparseable(queue_text):
     return bool(content) and not any(l.startswith("### ") for l in content)
 
 
-def classify_outward(text, cards_by_id):
-    """Thread-state derivation §c — outward entries under `## Entries`."""
+def outward_row(oid, summary, fields, origin, cards_by_id):
+    """One outward row from an entry's resolved fields — shared by both sources."""
+    row = Row(f"Outward: {oid} {summary} — {fields.get('Next move', '—')}"
+              f" · waiting on {fields.get('Waiting on', '—')}", "Discuss", "raw", None, "Outward")
+    row.outward = True
+    row.context = fields.get("Repo tail — fires on")
+    owner = CARD_ID_RE.search(fields.get("Owning card", ""))
+    row.owning_card = owner.group(0) if owner and owner.group(0) in cards_by_id else None
+    row.fanout = 1 if row.owning_card else 0
+    row.waiting_on_author = bool(OUT_AUTHOR_RE.search(fields.get("Waiting on", "")))
+    lg = OUT_LOGGED_RE.search(origin)
+    row.recency = date_key(lg.group(1) if lg else "")
+    return row
+
+
+def classify_outward_folder(folder, cards_by_id):
+    """Thread-state derivation §c — one `docs/outward/OUT-###.md` thread per entry.
+
+    Origin block = the text before the first `## ` heading; the appended blocks
+    follow it in order and the last `**Next move:**` / `**Waiting on:**` found in
+    any of them supersedes the origin's (latest block leads). `Owning card:` — the
+    wall — is read from the origin alone. `README.md`, `TEMPLATE.md` and anything
+    else not named `OUT-###.md` are standing files, skipped silently.
+    """
+    rows = []
+    for name in sorted(os.listdir(folder)):
+        f_id = OUT_FILE_RE.match(name)
+        if not f_id:
+            continue
+        parts = OUT_BLOCK_SPLIT_RE.split(read(os.path.join(folder, name)))
+        origin = parts[0]
+        h = OUT_H1_RE.search(origin)
+        if not h or h.group(1) != f_id.group(1):
+            continue
+        fields = dict(OUT_FIELD_RE.findall(origin))
+        for block in parts[1:]:
+            for label, value in OUT_FIELD_RE.findall(block):
+                if label in ("Next move", "Waiting on"):
+                    fields[label] = value
+        rows.append(outward_row(h.group(1), h.group(2), fields, origin, cards_by_id))
+    return rows
+
+
+def classify_outward_flat(text, cards_by_id):
+    """§c legacy branch — the retired flat `docs/outward.md`: `### OUT-### —
+    {summary}` chunks under `## Entries`. One file, so no thread and no
+    latest-block lead — a chunk's own fields are the whole entry."""
     rows = []
     m = re.search(r"^## Entries\s*$", text, re.M)
     if not m:
@@ -476,18 +537,8 @@ def classify_outward(text, cards_by_id):
         h = OUT_HEAD_RE.match(head)
         if not h:
             continue
-        f = dict(OUT_FIELD_RE.findall(body))
-        row = Row(f"Outward: {h.group(1)} {h.group(2)} — {f.get('Next move', '—')}"
-                  f" · waiting on {f.get('Waiting on', '—')}", "Discuss", "raw", None, "Outward")
-        row.outward = True
-        row.context = f.get("Repo tail — fires on")
-        owner = CARD_ID_RE.search(f.get("Owning card", ""))
-        row.owning_card = owner.group(0) if owner and owner.group(0) in cards_by_id else None
-        row.fanout = 1 if row.owning_card else 0
-        row.waiting_on_author = bool(OUT_AUTHOR_RE.search(f.get("Waiting on", "")))
-        lg = OUT_LOGGED_RE.search(body)
-        row.recency = date_key(lg.group(1) if lg else "")
-        rows.append(row)
+        rows.append(outward_row(h.group(1), h.group(2),
+                                dict(OUT_FIELD_RE.findall(body)), body, cards_by_id))
     return rows
 
 
@@ -891,7 +942,7 @@ def main():
     for cid, card in cards.items():          # sorted — the listdir order above
         if RETIRED_ACTOR_RE.search(card.origin):
             print(f"# note: {cid} carries the retired Actor: field — move the item "
-                  "to docs/outward.md", file=sys.stderr)
+                  "to docs/outward/", file=sys.stderr)
 
     queue_rows, suppressed = [], set()
     queue_path = os.path.join(args.root, "docs/test-queue.md")
@@ -904,9 +955,15 @@ def main():
                   "(`### {title}` + `- **result:** pending`)", file=sys.stderr)
 
     outward_rows = []
-    outward_path = os.path.join(args.root, "docs/outward.md")
-    if os.path.isfile(outward_path):
-        outward_rows = classify_outward(read(outward_path), cards)
+    outward_dir = os.path.join(args.root, "docs/outward")
+    if os.path.isdir(outward_dir):
+        outward_rows += classify_outward_folder(outward_dir, cards)
+    outward_flat = os.path.join(args.root, "docs/outward.md")
+    if os.path.isfile(outward_flat):
+        print("# note: docs/outward.md is the retired flat form — "
+              "/super-bootstrap:harness-bootstrap splits it into docs/outward/",
+              file=sys.stderr)
+        outward_rows += classify_outward_flat(read(outward_flat), cards)
 
     for cid, card in cards.items():
         if cid in suppressed:

@@ -1,12 +1,12 @@
 ---
 name: todo
-description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the need-me board — drainable work collapses to a count, need-me work groups by venue category with a downstream fan-out signal (no MCQ, rendered immediately by a bundled zero-dispatch script; the todo agent dispatches only as the script-failure fallback). Sub-verbs slice explicitly: `/super-bootstrap:todo discuss` (decisions, design approvals), `/super-bootstrap:todo cloud` (drainable detail), `/super-bootstrap:todo device` (UI/e2e/manual), `/super-bootstrap:todo harness` (orchestration-engine rows, careful handle), `/super-bootstrap:todo full` (flat everything). Scans open cards in docs/work/, plus docs/test-queue.md and docs/outward.md when present. Bundled with super-bootstrap — works in any repo with the development pipeline."
+description: "Intent-based session opener. Bare `/super-bootstrap:todo` renders the need-me board — drainable work collapses to a count, need-me work groups by venue category with a downstream fan-out signal (no MCQ, rendered immediately by a bundled zero-dispatch script; the todo agent dispatches only as the script-failure fallback). Sub-verbs slice explicitly: `/super-bootstrap:todo discuss` (decisions, design approvals), `/super-bootstrap:todo cloud` (drainable detail), `/super-bootstrap:todo device` (UI/e2e/manual), `/super-bootstrap:todo harness` (orchestration-engine rows, careful handle), `/super-bootstrap:todo full` (flat everything). Scans open cards in docs/work/, plus docs/test-queue.md and the docs/outward/ threads when present. Bundled with super-bootstrap — works in any repo with the development pipeline."
 tags: [todo, scan, status, pipeline]
 ---
 
 # Todo — Intent-Filtered Pipeline Scanner
 
-Default render is the **need-me board** — momentum-driven, not a kanban: autonomously-drainable work collapses to one count line, and work that needs the human groups by venue category (decide / outward — your move / outward — waiting on others / device-bound / harness / probe) with a `unblocks N` fan-out signal. Bare invoke renders it immediately — no MCQ, no picker (a rendered surface the user navigates by typing a sub-verb, not a modal stop). Sub-verbs slice explicitly (deciding / drainable detail / on device Claude / touching the engine / flat everything). State reconstructed from open cards in `docs/work/` (glob: `{BUG|DEBT|GAP}-###.md`), plus `docs/test-queue.md` and `docs/outward.md` when present (the scale module's test queue and outward file). Pipeline state = card thread state (block presence drives stage classification).
+Default render is the **need-me board** — momentum-driven, not a kanban: autonomously-drainable work collapses to one count line, and work that needs the human groups by venue category (decide / outward — your move / outward — waiting on others / device-bound / harness / probe) with a `unblocks N` fan-out signal. Bare invoke renders it immediately — no MCQ, no picker (a rendered surface the user navigates by typing a sub-verb, not a modal stop). Sub-verbs slice explicitly (deciding / drainable detail / on device Claude / touching the engine / flat everything). State reconstructed from open cards in `docs/work/` (glob: `{BUG|DEBT|GAP}-###.md`), plus `docs/test-queue.md` and `docs/outward/OUT-###.md` when present (the scale module's test queue and outward folder). Pipeline state = card thread state (block presence drives stage classification).
 
 Two render lanes, one classification SSOT (`shared/classify-actionable.md`): the **script lane** (primary) runs the bundled `assets/render-board.py` — a mechanical encoding of the spec, zero model tokens, sub-second — and the **dispatch lane** (fallback) runs the `todo` agent when the script fails.
 
@@ -75,7 +75,7 @@ rendered output verbatim.
 
 Resolve modes by table lookup only — an unlisted value is unlisted, not a
 near-match. `full` renders the flat-escape board: every open row from every
-source (cards, test queue, outward file) in one ranked table, ungrouped, nothing collapsed
+source (cards, test queue, outward folder) in one ranked table, ungrouped, nothing collapsed
 to a count.
 
 ## Footer rule

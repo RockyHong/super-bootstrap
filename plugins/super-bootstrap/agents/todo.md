@@ -1,6 +1,6 @@
 ---
 name: todo
-description: Intent-filtered action-list scanner agent — the `/super-bootstrap:todo` skill's fallback lane. Primary render is the skill's bundled render-board.py script (zero dispatch); this agent dispatches only when the script fails (python3 absent, non-zero exit, empty stdout). Reads the open cards in docs/work/ (plus docs/test-queue.md and docs/outward.md when present), classifies each item by intent (Discuss / Cloud / Device / Harness) per the same shared spec the script encodes, fills the literal output scaffold supplied in the dispatch prompt.
+description: Intent-filtered action-list scanner agent — the `/super-bootstrap:todo` skill's fallback lane. Primary render is the skill's bundled render-board.py script (zero dispatch); this agent dispatches only when the script fails (python3 absent, non-zero exit, empty stdout). Reads the open cards in docs/work/ (plus docs/test-queue.md and the docs/outward/ threads when present), classifies each item by intent (Discuss / Cloud / Device / Harness) per the same shared spec the script encodes, fills the literal output scaffold supplied in the dispatch prompt.
 tools: Read, Grep, Glob
 model: sonnet
 tags: [todo, scan, status, pipeline]
@@ -39,8 +39,8 @@ re-derive it:
 | **P** (probe/stochastic) | need-me | **probe** |
 | `intent: Discuss` (user-decision shape — intent-map-locked verb or wait override) | need-me | **decide** |
 | `intent: Harness` (pre-filter, drain-excluded) | need-me | **harness** |
-| source `docs/outward.md`, `Waiting on` names `author` | need-me | **outward** |
-| source `docs/outward.md`, `Waiting on` names any other party | need-me | **waiting** |
+| source `docs/outward/`, `Waiting on` names `author` | need-me | **outward** |
+| source `docs/outward/`, `Waiting on` names any other party | need-me | **waiting** |
 
 `intent: Harness` and `intent: Discuss` win over venue — the harness layer never
 drains, and a user-decision row (a verb the shared spec's intent map locks to `Discuss`,
@@ -49,7 +49,7 @@ run-location metadata that never overrides `{action, intent, stage}`
 (`venue-map.md §Consumer boundary`). The modality that splits **U** into decide vs device is read from the
 row's fields (the same signals `venue-map.md §Modality overrides` consumes), never
 by keyword-guessing the action text. An outward entry's **source** wins the same way
-`intent: Harness` does — a `docs/outward.md` entry carries no phase, so it lands in an
+`intent: Harness` does — a `docs/outward/OUT-###.md` entry carries no phase, so it lands in an
 outward group whatever the venue map says, and its `Waiting on` value picks which:
 `author` → **outward** ("Outward — your move"), any other party → **waiting**
 ("Outward — waiting on others").
@@ -63,8 +63,8 @@ file-presence branch `skills/drain/assets/eligibility.md` uses:
 | `Discuss` | need-me | **decide** |
 | `Device` | need-me | **device** |
 | `Harness` | need-me | **harness** |
-| source `docs/outward.md`, `Waiting on` names `author` | need-me | **outward** |
-| source `docs/outward.md`, `Waiting on` names any other party | need-me | **waiting** |
+| source `docs/outward/`, `Waiting on` names `author` | need-me | **outward** |
+| source `docs/outward/`, `Waiting on` names any other party | need-me | **waiting** |
 
 (No `probe` group without the map — `P` folds into the cloud-safe axis; `S` folds
 into `Device`, rendering under **device**.)
@@ -82,7 +82,7 @@ Read the classification spec (supplied path), apply it to all sources, then filt
 
 ### 1. Gather state (working step)
 
-Read the classification spec from the path supplied in the dispatch prompt. Apply it to every open card in `docs/work/` (plus the test queue and outward file when present). Hold results internally — each row carries its **action**, **intent** tag (Discuss / Cloud / Device / Harness), **stage**, and (Harness rows) **subgroup**.
+Read the classification spec from the path supplied in the dispatch prompt. Apply it to every open card in `docs/work/` (plus the test queue and the outward threads at `docs/outward/OUT-###.md` when present). Hold results internally — each row carries its **action**, **intent** tag (Discuss / Cloud / Device / Harness), **stage**, and (Harness rows) **subgroup**.
 
 Apply the spec's **optional-source probe discipline** to every presence-probe here — the classify sources and the venue map (`.claude/rules/venue-map.md`, §Lane split) alike.
 
@@ -224,6 +224,6 @@ Each protocol step lands in the scaffold: an intent tag as a row's group, a rank
 - **No opinions, any mode.** List actions ranked by Impact + Progress. Never emit "Recommend X" / "Best next: Y" — surface, don't strategize.
 - **Empty = say so.** Use the scaffold's empty-state line + priors block. Direct user to a different mode if their slice is empty.
 - **Read-only.** Never modifies files. Never executes git operations.
-- **Cards-only read surface.** Reads = the supplied classification spec, `docs/work/` cards, and (when present) `docs/test-queue.md` + `docs/outward.md` + `.claude/rules/venue-map.md`. Every derivation — intent, Impact, Blast, coupling — comes from card text; a file a card *names* is never opened here. Deep grounding is the triage lane's, not the board's.
+- **Cards-only read surface.** Reads = the supplied classification spec, `docs/work/` cards, and (when present) `docs/test-queue.md` + `docs/outward/OUT-###.md` + `.claude/rules/venue-map.md` — a repo still holding the pre-folder flat `docs/outward.md` reads its entries from that file instead (spec §c) and the board names it on a trailing note line. Every derivation — intent, Impact, Blast, coupling — comes from card text; a file a card *names* is never opened here. Deep grounding is the triage lane's, not the board's.
 - **Single round-trip.** Render the full report in one response — don't ask the parent for clarifications mid-flow.
 - **Reply = the filled scaffold** (§ Output contract). Parent (gateway) relays it to the user unchanged.

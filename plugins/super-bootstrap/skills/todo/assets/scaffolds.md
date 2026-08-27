@@ -273,7 +273,7 @@ more: /super-bootstrap:help
 
 ### Full
 
-One ranked table, one row per open item, every source (cards, test queue, outward file) in the same table. No grouping, no aggregate lines — a source that collapses to a count is not flat.
+One ranked table, one row per open item, every source (cards, test queue, outward folder) in the same table. No grouping, no aggregate lines — a source that collapses to a count is not flat.
 
 Column conventions — every row fills every column; a column inapplicable to a row renders `—`:
 

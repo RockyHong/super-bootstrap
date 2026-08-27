@@ -60,6 +60,8 @@ for m in needme full; do
     fail=1
   fi
 done
+# The outward container in its folder form: three threads, one of them re-pointed by
+# an Amendment (latest block leads), so the group split is read off the live fields.
 for m in needme full; do
   if "$PY" "$SCRIPT" bench/todo-board/fixture-outward "$m" --date "$DATE" 2>/dev/null \
      | diff "bench/todo-board/expected/$m-outward.md" - >/dev/null; then
@@ -71,6 +73,56 @@ for m in needme full; do
     fail=1
   fi
 done
+# A lingering flat `docs/outward.md`: the legacy branch renders the same board it
+# always did AND names the sync that splits it. Golden = board + both stderr lines,
+# the same capture as the queue-table case.
+render_outward_legacy() {
+  "$PY" "$SCRIPT" bench/todo-board/fixture-outward-legacy needme --date "$DATE" 2>"$err"
+  grep -E '^# (note|sources):' "$err"
+}
+if render_outward_legacy | diff "bench/todo-board/expected/needme-outward-legacy.md" - >/dev/null; then
+  echo "PASS needme-outward-legacy"
+else
+  echo "FAIL needme-outward-legacy"
+  render_outward_legacy | diff "bench/todo-board/expected/needme-outward-legacy.md" -
+  fail=1
+fi
+# The sync-side migration (assets/scale/split-outward.py): the legacy fixture copied
+# to a temp root and split — the produced file set is the folder form, the README
+# carries the flat header's consumed ID, an entry file is byte-identical to the folder
+# fixture's, and the re-render is `# note:`-free (the retired form is gone).
+SPLIT=plugins/super-bootstrap/skills/harness-bootstrap/assets/scale/split-outward.py
+SKEL=plugins/super-bootstrap/skills/harness-bootstrap/assets/scale/outward-readme-skeleton.md
+tmp="$(mktemp -d)"
+cp -r bench/todo-board/fixture-outward-legacy/. "$tmp/"
+if [ ! -f "$SKEL" ]; then    # skeleton not shipped yet — pin the line shape it carries
+  SKEL="$tmp/readme-skeleton.md"
+  printf '# Outward\n\n**ID high-water mark:** `OUT-000` — last consumed outward ID.\n' > "$SKEL"
+fi
+split_ok=1
+"$PY" "$SPLIT" "$tmp" "$SKEL" >/dev/null 2>&1 || split_ok=0
+produced="$( (cd "$tmp/docs/outward" 2>/dev/null && ls) | LC_ALL=C sort | tr '\n' ' ')"
+hw="$(grep -m1 'ID high-water mark' "$tmp/docs/outward/README.md" 2>/dev/null \
+      | grep -o 'OUT-[0-9][0-9]*' | head -1)"
+notes="$("$PY" "$SCRIPT" "$tmp" needme --date "$DATE" 2>&1 >/dev/null | grep -c '^# note:')"
+if [ "$split_ok" = 1 ] && [ "$produced" = "OUT-001.md OUT-002.md README.md " ] \
+   && [ "$hw" = "OUT-002" ] && [ ! -f "$tmp/docs/outward.md" ] && [ "$notes" = 0 ] \
+   && diff bench/todo-board/fixture-outward/docs/outward/OUT-002.md \
+           "$tmp/docs/outward/OUT-002.md" >/dev/null; then
+  echo "PASS split-outward"
+else
+  echo "FAIL split-outward (ran $split_ok · files: $produced · high-water: $hw · notes: $notes)"
+  diff bench/todo-board/fixture-outward/docs/outward/OUT-002.md "$tmp/docs/outward/OUT-002.md"
+  fail=1
+fi
+# A flat file back beside a live folder must refuse rather than overwrite it.
+cp bench/todo-board/fixture-outward-legacy/docs/outward.md "$tmp/docs/outward.md"
+if "$PY" "$SPLIT" "$tmp" "$SKEL" >/dev/null 2>&1; then
+  echo "FAIL split-outward-refuse (split ran twice)"; fail=1
+else
+  echo "PASS split-outward-refuse"
+fi
+rm -rf "$tmp"
 # Pre-substrate repo: docs/work/README.md present but without the ID high-water
 # line. One substrate row (the agent's literal) plus the per-file row for the
 # non-card file, Drainable 0 — never the empty state.

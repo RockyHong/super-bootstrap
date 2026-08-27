@@ -12,8 +12,9 @@ to §3's mechanics re-runs this bench (`bash bench/doc-links/run.sh`).
   `dimension: history` pair — `chronicle.md` declaring it in frontmatter,
   `body-mention.md` carrying the same string as body prose · a `docs/work/` card thread
   naming a term in code shape and citing `anchors.md#beta`, the folder's standing `README.md`
-  naming the same term and citing `anchors.md#alpha`, and a `docs/outward.md` entry naming
-  the same term). Off-surface
+  naming the same term and citing `anchors.md#alpha`, and the same pair in the outward
+  folder — a `docs/outward/OUT-001.md` thread naming the term beside that folder's standing
+  `README.md` naming it too). Off-surface
   props the `terms` cases name by path: a skill, an agent, a generic-basename asset,
   a `bench/` script, a `tests/expected/` golden, a `.gd` source.
 - `fixture-history-broken/` — a second mini root holding one history-dimension doc
@@ -32,7 +33,8 @@ to §3's mechanics re-runs this bench (`bash bench/doc-links/run.sh`).
 `terms-skill` a skill path yields its directory name, not `SKILL` ·
 `terms-agent` an agent path yields its basename ·
 `terms-dropped` the whole exempt set yields nothing: `bench/`, `tests/expected/`,
-`docs/work/`, `docs/outward.md`, `SESSION-STATE/`, an image extension, a generic
+`docs/work/`, `docs/outward/OUT-###.md` and the retired flat `docs/outward.md`,
+`SESSION-STATE/`, an image extension, a generic
 basename (`README`, `run`) and a basename under four characters (`ui`) ·
 `terms-machine-state` the `.claude/` runway receipt and a `templates/` file yield nothing ·
 `terms-mixed` a mixed list yields the sorted-unique union ·
@@ -57,9 +59,9 @@ in a code span — a link target, a backticked path, a bare filename and a bare 
 `hits-history` a frontmatter `dimension: history` declaration drops the doc from the
 hit set, while the doc carrying the same string in its body still hits — the
 declaration is the carrier, not the string ·
-`hits-card` a `docs/work/` card thread and a `docs/outward.md` entry naming a term in code shape stay out of the hit
-set — frozen provenance on the hit side, the mirror of the `terms` exemption — while the folder's standing
-`README.md` naming the same term hits: the exemption keys on the card-ID pattern, not the folder. `terms-history` the same declaration on a
+`hits-card` a `docs/work/` card thread and a `docs/outward/OUT-###.md` thread naming a term in code shape stay out of the hit
+set — frozen provenance on the hit side, the mirror of the `terms` exemption — while BOTH folders' standing
+`README.md` files naming the same term hit: the exemption keys on the ID pattern, not the folder. `terms-history` the same declaration on a
 changed path yields no term — a history doc neither triggers the gate nor joins its scope.
 
 **`anchors` — hunk ranges → section slugs.**

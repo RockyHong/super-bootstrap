@@ -24,12 +24,29 @@ scaffolds, or the script re-runs this bench (`bash bench/todo-board/run.sh`).
   field is inert — both classify by their thread state (`Triage` rows, Drainable 2)
   and each draws a `# note:` naming the leftover. Its goldens append both stderr
   lines (`# note:` and `# sources:`) to the board.
-- `fixture-outward/` — one card plus a `docs/outward.md` holding two entries (one
-  with an `Owning card:` back-pointer): the outward-owned wall and the `Waiting on`
-  split — `OUT-002` (waiting on `author`) under **Outward — your move**, `OUT-001`
-  (waiting on a vendor) under **Outward — waiting on others**, and the owned card
-  held out of the body in both modes (Drainable 0, `pending unblock: 1`) while the
-  entry's own `unblocks 1` stays the leverage signal.
+- `fixture-outward/` — one card plus a `docs/outward/` folder holding three entry
+  threads beside its standing `README.md`: the outward-owned wall, the `Waiting on`
+  split and **latest block leads**. `OUT-002` (waiting on `author`, carrying an
+  `Owning card:` back-pointer) and `OUT-001` (origin waiting on the font vendor, an
+  `## Amendment` re-pointing it to `author`) render under **Outward — your move**,
+  `OUT-003` (waiting on a platform team, origin only) under **Outward — waiting on
+  others** — so `OUT-001`'s group can only come from the appended block, never the
+  origin. The owned card is held out of the body in both modes (Drainable 0,
+  `pending unblock: 1`) while the entry's own `unblocks 1` stays the leverage
+  signal, and the folder's `README.md` is skipped silently.
+- `fixture-outward-legacy/` — the same card beside a lingering flat
+  `docs/outward.md` (the retired one-file form): the legacy branch renders the board
+  byte-for-byte as the flat form always did AND names the sync that splits it. Its
+  golden appends both stderr lines (`# note:` and `# sources:`) to the board. Two
+  further cases run off this fixture. `split-outward` copies it to a temp root and
+  runs [`assets/scale/split-outward.py`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/scale/split-outward.py)
+  over it against the shipped README skeleton (a temp skeleton carrying the same
+  high-water line shape stands in while the skeleton is not on disk), pinning the
+  migration: the produced set is `README.md` + one `OUT-###.md` per chunk, the README
+  carries the flat header's consumed ID (`OUT-002`), `OUT-002.md` is byte-identical
+  to `fixture-outward/`'s, the flat file is gone and the re-render is `# note:`-free.
+  `split-outward-refuse` puts a flat file back beside the live folder: the script
+  refuses rather than overwriting.
 - `fixture-venue/` — the scale module wired: a `.claude/rules/venue-map.md`
   copied from the shipped skeleton (the compare reads its tables, so prose
   rewordings upstream leave this green), plus cards exercising the wired lane split
@@ -53,7 +70,10 @@ scaffolds, or the script re-runs this bench (`bash bench/todo-board/run.sh`).
   and says so on the `# note:` stderr channel. Its golden appends both stderr
   lines (`# note:` and `# sources:`) to the board.
 - `expected/` — goldens for all six modes plus the empty, all-blocked, external-wait,
-  retired-actor, outward, wired-map, pre-substrate, and unparseable-queue states, pinned to `--date 2026-08-14`.
+  retired-actor, outward, legacy-flat-outward, wired-map, pre-substrate, and
+  unparseable-queue states, pinned to `--date 2026-08-14`. The two `split-outward`
+  cases assert properties of a temp root instead of a golden — the split writes into
+  a copy, so there is nothing stable to byte-compare but the entry file it produces.
 
 One known accepted divergence from a cold agent render: the soft-coupling
 *direction* cell is mechanically normalized (the row declaring the shared path

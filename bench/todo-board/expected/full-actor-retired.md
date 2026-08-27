@@ -6,6 +6,6 @@
 | 2 | GAP-302 | Triage: zh_Hant line-by-line review | raw | — | none | quick-pop | local |
 
 more: /super-bootstrap:help
-# note: GAP-301 carries the retired Actor: field — move the item to docs/outward.md
-# note: GAP-302 carries the retired Actor: field — move the item to docs/outward.md
+# note: GAP-301 carries the retired Actor: field — move the item to docs/outward/
+# note: GAP-302 carries the retired Actor: field — move the item to docs/outward/
 # sources: docs/work (2 cards); test-queue (0 entries); outward (0 entries); held 0

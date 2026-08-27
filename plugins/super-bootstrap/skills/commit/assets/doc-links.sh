@@ -34,9 +34,11 @@
 # A doc whose leading YAML frontmatter declares `dimension: history` is frozen
 # provenance: `terms` yields nothing for it, `hits` and `refs` leave it out, while
 # `check` still validates its links. Card threads (`docs/work/{BUG,DEBT,GAP}-###.md`)
-# and outward entries (`docs/outward.md`) are frozen provenance by path: `terms` yields
+# and outward threads (`docs/outward/OUT-###.md`, plus the retired flat
+# `docs/outward.md`) are frozen provenance by path: `terms` yields
 # nothing for them and `hits` and `refs` leave them out; `check` alone still covers them.
-# The folder's standing files (`docs/work/README.md`, `TEMPLATE.md`) are ordinary surface.
+# Each folder's standing files (`docs/work/README.md`, `docs/outward/README.md`,
+# `TEMPLATE.md`) are ordinary surface.
 #
 # Run from repo root. docs/ may be absent (treated as empty).
 # External links (http/https/mailto) and empty targets are skipped.
@@ -424,15 +426,16 @@ do_closure() {
 # doc's hunk ranges into the section slugs `refs` narrows on. Each is mechanical and
 # total — the gate stays a gate, never a judgment call about which identifiers matter.
 
-# Frozen provenance by path — card threads and outward entries are breadcrumbs, not
-# behavior narration. Keyed on the card-ID pattern, not the folder: `docs/work/`'s
-# standing files (README.md, TEMPLATE.md) narrate and stay in. One predicate, three
+# Frozen provenance by path — card threads and outward threads are breadcrumbs, not
+# behavior narration. Keyed on the ID pattern, not the folder: each folder's standing
+# files (README.md, TEMPLATE.md) narrate and stay in. One predicate, three
 # readers: `terms` (via path_exempt), `hits`, `refs`.
 is_frozen_provenance_path() {
     case "$1" in
-        docs/outward.md|*/docs/outward.md) return 0 ;;
+        docs/outward.md|*/docs/outward.md) return 0 ;;   # the retired flat form
     esac
     [[ "$1" =~ (^|/)docs/work/(BUG|DEBT|GAP)-[0-9]+\.md$ ]] && return 0
+    [[ "$1" =~ (^|/)docs/outward/OUT-[0-9]+\.md$ ]] && return 0
     return 1
 }
 

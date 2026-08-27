@@ -9,8 +9,8 @@
 **Capture routing** — before logging, name the mover, then the action:
 
 - **Mover first** — whose hands move the next step: the repo's, the author's, or an outside party's? The repo → a card file via `/super-bootstrap:log`, and the action gates below apply.
-- The author's or an outside party's — taste sitting, line-by-line review, a portal registration, a reply to wait for → an entry in `docs/outward.md` when it exists (its header owns the admission bar), else a card whose `Problem:` line names `waiting on {party}`.
-- Mixed — the repo moves part of it → split at capture: the repo's remainder is the card, the other step an entry in `docs/outward.md`, carrying `Owning card:` when the card waits on that step.
+- The author's or an outside party's — taste sitting, line-by-line review, a portal registration, a reply to wait for → a thread in `docs/outward/` when it exists (its `README.md` owns the admission bar), else a card whose `Problem:` line names `waiting on {party}`.
+- Mixed — the repo moves part of it → split at capture: the repo's remainder is the card, the other step a thread in `docs/outward/`, carrying `Owning card:` when the card waits on that step.
 - Nameable **and** its fire-moment is now → a card file via `/super-bootstrap:log`.
 - Nameable but waits on a trigger → a `docs/parked.md` entry (its header owns the admission bar).
 - Can't name the action → drop it; it re-enters on the next pain.

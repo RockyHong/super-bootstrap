@@ -9,7 +9,7 @@ real regression.
 
 ## When it runs
 
-Only when the project keeps an open-item tracker (e.g. `docs/work/` card set — `{BUG,DEBT,GAP}-###.md` files + `README.md` high-water header — plus `docs/parked.md` / `docs/outward.md` entries where those exist); skip
+Only when the project keeps an open-item tracker (e.g. `docs/work/` card set — `{BUG,DEBT,GAP}-###.md` files + `README.md` high-water header — plus `docs/parked.md` entries and `docs/outward/OUT-###.md` threads where those exist); skip
 otherwise. Run AFTER all findings are identified and classified — the annotation
 is a layer over a finished finding set, never a gate on it. Every finding stays
 in the report regardless of tag.
