@@ -9,7 +9,6 @@ Drainable: 3  →  /super-bootstrap:drain
 | # | ID | Action | unblocks | Impact | Blast |
 | -- | -- | -- | -- | -- | -- |
 | 1 | GAP-504 | Decide: settings screen has two conflicting save buttons — … | 0 | quick-pop | — |
-| 2 | GAP-506 | Decide: credits list wants the author's own read — author m… | 0 | quick-pop | — |
 
 ## Device-bound
 

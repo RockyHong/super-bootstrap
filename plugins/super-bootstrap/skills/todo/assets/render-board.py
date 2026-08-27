@@ -24,9 +24,10 @@ judgment call, the encoding is the documented mechanical reading:
                     arm demands a word after the phrase, so `blocked on {party}` in
                     prose about the vocabulary is a mention, not a wait; `blocked by
                     {ID}` stays the hard block below.
-- Actor override  = the origin block's `Actor:` field, values `author` / `external`
-                    (case-folded); any other value reads as absent. A fired wait
-                    override's clause is the more specific, so it keeps it.
+- Retired field   = `Actor:` is retired — the mover is the container, not a field
+                    (§a "Outward-owned wall"). A card still carrying it classifies
+                    by its thread state alone and draws a `# note:` naming it, so a
+                    leftover is visible rather than silent.
 - Hard block      = the explicit verb forms only (`blocked by {ID}` / `depends on
                     {ID}` / `after {ID} lands`); a bare ID mention is soft signal.
 - Soft-coupling direction = the row declaring the shared path in a Design/Plan
@@ -49,7 +50,13 @@ judgment call, the encoding is the documented mechanical reading:
                     their bold labels. `unblocks` = 1 when `Owning card:` names an
                     open card, else 0 — leverage signal only: an outward row's
                     Impact stays `quick-pop` (the repo moves nothing here), and its
-                    Context cell renders the entry's repo tail.
+                    Context cell renders the entry's repo tail. That same
+                    `Owning card:` also walls the named card (§a "Outward-owned
+                    wall") — the hard-block path: held out of the body in every
+                    mode, counted in the footer's `pending unblock`. The group
+                    splits on `Waiting on`: the word `author` (word-boundary,
+                    case-folded) → `Outward — your move`, any other party →
+                    `Outward — waiting on others`.
 - Sheet columns   = every board table but Uncategorized carries an `ID` column
                     (card ID / `OUT-###` / `—` for a test-queue row) and its Action
                     cell is the spec's action string with that ID token lifted
@@ -87,6 +94,8 @@ QUEUE_FIELD_RE = re.compile(
     r"^[ \t]*(?:[-*+][ \t]+)?\*{0,2}(result|source)\*{0,2}:\*{0,2}[ \t]*(.+?)\s*$", re.M)
 QUEUE_PLACEHOLDER_RE = re.compile(r"^\*\(empty\b.*\)\*$")
 OUT_LOGGED_RE = re.compile(r"\*\*Logged:\*\*\s*([^\n·]*)")
+OUT_AUTHOR_RE = re.compile(r"\bauthor\b", re.I)        # `Waiting on` — the your-move arm
+RETIRED_ACTOR_RE = re.compile(r"\*\*Actor:\*\*")   # anywhere in the origin — fact fields share a line
 CARD_ID_RE = re.compile(r"(?:BUG|DEBT|GAP)-\d+")
 SEVERITY_RE = re.compile(r"\b(critical|blocking|production-down|data-loss)\b", re.I)
 APPLY_RE = re.compile(r"\b(typo|path fix|broken (?:link|path)|formatting|one-line)\b", re.I)
@@ -132,9 +141,10 @@ visual-taste acceptance|acting phase → **U** — who accepts this as done? the
 `Test-feel: e2e`|verify phase → **S**
 `Test-feel: manual`|verify phase → **U**
 """
-NEEDME_GROUPS = ("decide", "outward", "device", "harness", "probe")
+NEEDME_GROUPS = ("decide", "outward", "waiting", "device", "harness", "probe")
 GROUP_HEADINGS = {"decide": "Decide / approve", "outward": "Outward — your move",
-                  "device": "Device-bound", "harness": "Harness", "probe": "Probe / grant"}
+                  "waiting": "Outward — waiting on others", "device": "Device-bound",
+                  "harness": "Harness", "probe": "Probe / grant"}
 
 
 def map_tables(text):
@@ -207,7 +217,7 @@ class Card:
             b.body = "\n".join(b.body)
         self.origin = "\n".join(origin_lines)
         self.fields = {}
-        for m in re.finditer(r"\*\*(Logged|Source|Problem|Area|Prior|Actor|Test-feel|Stochastic):\*\*\s*([^\n·]*)", self.origin):
+        for m in re.finditer(r"\*\*(Logged|Source|Problem|Area|Prior|Test-feel|Stochastic):\*\*\s*([^\n·]*)", self.origin):
             self.fields[m.group(1)] = m.group(2).strip()
         self.text = text
 
@@ -235,6 +245,8 @@ class Row:
         self.verb = verb or action.split(":")[0]
         self.subgroup: Optional[str] = None    # Harness rows: deliberate | apply
         self.outward = False                   # docs/outward.md entry (§c)
+        self.owning_card: Optional[str] = None  # outward rows: the open card it walls
+        self.waiting_on_author = False         # outward rows: `Waiting on` names the author
         self.context: Optional[str] = None     # Context cell override (outward: repo tail)
         self.progress: Optional[Tuple[int, int]] = None
         self.modality = ("", "")               # (Test-feel, Stochastic) — venue signals
@@ -384,14 +396,6 @@ def classify_card(card):
             clause = re.split(r"[.\n]", src[m.start():], 1)[0].strip()
             row = Row(f"Decide: {label} — {clause}", "Discuss", row.stage, card, "Decide")
 
-    # actor override — the scale module's `Actor:` field: the whole item is the
-    # author's or an external party's move (a fired wait override already names one)
-    if row.verb != "Decide":
-        who = {"author": "author moves", "external": "external party moves"}.get(
-            card.fields.get("Actor", "").strip().lower())
-        if who:
-            row = Row(f"Decide: {label} — {who}", "Discuss", row.stage, card, "Decide")
-
     # harness pre-filter wins intent AND action whatever the verb/state
     # (spec §Harness pre-filter: Action: `Deliberate: {topic}` / `Apply: {rule} → {site}`)
     if is_harness(card):
@@ -478,7 +482,9 @@ def classify_outward(text, cards_by_id):
         row.outward = True
         row.context = f.get("Repo tail — fires on")
         owner = CARD_ID_RE.search(f.get("Owning card", ""))
-        row.fanout = 1 if owner and owner.group(0) in cards_by_id else 0
+        row.owning_card = owner.group(0) if owner and owner.group(0) in cards_by_id else None
+        row.fanout = 1 if row.owning_card else 0
+        row.waiting_on_author = bool(OUT_AUTHOR_RE.search(f.get("Waiting on", "")))
         lg = OUT_LOGGED_RE.search(body)
         row.recency = date_key(lg.group(1) if lg else "")
         rows.append(row)
@@ -538,6 +544,22 @@ def compute_impact(row):
         if v and re.search(r"^Execution:\s*full", v.body, re.M):
             imp = True
     row.impact = "impactful" if imp else "quick-pop"
+
+
+def wall_owned_cards(rows):
+    """§a "Outward-owned wall" — an outward entry whose `Owning card:` names an open
+    card walls that card: the hard-block path, so the card row is held out of the
+    body in every mode and counted in the footer's `pending unblock` until the entry
+    closes. The entry's own `unblocks` fanout is untouched — that stays the leverage
+    signal (§c), not a second wall. Runs before `couple()`, so a walled card is out
+    of the soft-coupling pass exactly like any other hard-blocked row."""
+    by_id = {r.card.id: r for r in rows if r.card}
+    for r in rows:
+        if not (r.outward and r.owning_card):
+            continue
+        owned = by_id.get(r.owning_card)
+        if owned is not None:
+            owned.hard_blocked = True
 
 
 def couple(rows):
@@ -672,13 +694,19 @@ def venue(row):
     return "P" if st == "llm" else "T"
 
 
+def outward_group(row):
+    """§ Lane split, outward arm: `Waiting on` naming the author is the author's own
+    move, every other party is a wait — one axis, two groups."""
+    return "outward" if row.waiting_on_author else "waiting"
+
+
 def wired_lane(row):
     """§ Lane split, venue-map-wired arm: venue → lane, with `intent: Harness`,
     `intent: Discuss`, and an outward source each winning over the venue."""
     if row.intent == "Harness":
         return "need-me", "harness"
     if row.outward:
-        return "need-me", "outward"
+        return "need-me", outward_group(row)
     if row.intent == "Discuss":
         return "need-me", "decide"
     v = venue(row)
@@ -696,7 +724,7 @@ def unwired_lane(row):
     if row.intent == "Cloud":
         return "drainable", None
     if row.outward:
-        return "need-me", "outward"
+        return "need-me", outward_group(row)
     if row.intent == "Discuss":
         return "need-me", "decide"
     if row.intent == "Device":
@@ -860,6 +888,11 @@ def main():
         else:
             uncat.append((name, UNCAT_REASON))
 
+    for cid, card in cards.items():          # sorted — the listdir order above
+        if RETIRED_ACTOR_RE.search(card.origin):
+            print(f"# note: {cid} carries the retired Actor: field — move the item "
+                  "to docs/outward.md", file=sys.stderr)
+
     queue_rows, suppressed = [], set()
     queue_path = os.path.join(args.root, "docs/test-queue.md")
     if os.path.isfile(queue_path):
@@ -882,6 +915,7 @@ def main():
     rows += queue_rows
     rows += outward_rows
 
+    wall_owned_cards(rows)
     couple(rows)
     for r in rows:
         compute_blast(r)

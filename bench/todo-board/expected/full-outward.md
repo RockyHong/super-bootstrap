@@ -4,6 +4,6 @@
 | -- | -- | -- | -- | -- | -- | -- | -- |
 | 1 | OUT-002 | Outward: Steam pairing for the leaderboard — author: send t… | raw | — | user | quick-pop | — |
 | 2 | OUT-001 | Outward: font licence answer — vendor: answer the licence r… | raw | — | user | quick-pop | — |
-| 3 | GAP-401 | Triage: leaderboard backend definitions | raw | — | none | quick-pop | local |
 
+pending unblock: 1
 more: /super-bootstrap:help

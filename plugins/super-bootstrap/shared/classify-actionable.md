@@ -94,7 +94,9 @@ Each card is one append-only thread: a frozen origin block, then dated `## Amend
 
 **Wait override.** A card whose origin block or latest appended block explicitly waits on a named party — the user (`needs user`, `decision required`, `route?`, `waiting on user`, an unresolved `?` directed at the user) or an external one (`blocked on {party}`, `waiting on {party}`; `blocked by {ID}` is a hard block, not a wait) → action: `"Decide: {ID} {title} — {what's open}"`, **intent: Discuss**, keeping the **stage** its thread state gives. Overrides the derived action above; an *unruled* `surface` Verdict is its most common form, a ruling whose settled aim is to wait on an external party its second.
 
-**Actor override.** A card whose origin block carries the scale module's `Actor: author` or `Actor: external` fact field — the whole item is that party's move, the repo owning only its result tail → action: `"Decide: {ID} {title} — author moves"` / `"Decide: {ID} {title} — external party moves"`, **intent: Discuss**, keeping the **stage** its thread state gives. Overrides the derived action above; where the wait override also fires, its derived clause is the more specific, so it wins.
+**Outward-owned wall.** A card named by an open outward entry's `Owning card:` field (§c Outward) is **hard-blocked** whatever its thread state — held out of the board body, surfaced in the footer's `pending unblock` count, and out of the drainable count, until that entry closes.
+
+**Retired `Actor:` field.** A card carrying `Actor:` classifies by its thread state alone; the renderer names it on the `# note:` stderr channel.
 
 Any other file at `docs/work/` root — neither a card (`{BUG|DEBT|GAP}-###.md`) nor `README.md` / `TEMPLATE.md`: emit as `Uncategorized` with reason `"not a card — see docs/work/README.md § Routing"` — never invent classification.
 
@@ -115,7 +117,8 @@ If `docs/test-queue.md` doesn't exist, skip §b.
 Entries are `### OUT-### — {summary}` headings under `## Entries`, each carrying `**Next move:**`, `**Waiting on:**`, `**Repo tail — fires on:**`, and an optional `**Owning card:**` field.
 
 - **Each entry** → action: `"Outward: OUT-### {summary} — {Next move} · waiting on {Waiting on}"`, **intent: Discuss**, **stage: raw**. The author or an outside party moves it; the repo owns only its result tail.
-- **Entry whose `Owning card:` names an open card** → that card keeps its own §a row. The card's repo work stays the card's; the entry is its external wall.
+- **Entry whose `Owning card:` names an open card** → the wall: that card leaves the board body until this entry closes (§a Outward-owned wall), and the entry's own row carries the leverage. An entry that merely touches a card cites it in `Repo tail — fires on:` instead.
+- **`Waiting on` reads downstream** — `todo` groups outward rows on this field's value; the grouping itself lives in `agents/todo.md` § Lane split.
 
 If `docs/outward.md` doesn't exist, skip §c.
 

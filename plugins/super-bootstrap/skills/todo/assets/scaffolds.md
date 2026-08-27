@@ -19,7 +19,7 @@ The Uncategorized table carries no **ID**: its **Action** is the file name — o
 
 ### Need-me (default — bare `/super-bootstrap:todo`)
 
-Drainable rows collapse to the count line; the five need-me groups render as
+Drainable rows collapse to the count line; the six need-me groups render as
 tables. Omit any group whose row count is zero (drop its heading too). Groups
 render in this fixed order.
 
@@ -37,6 +37,12 @@ Drainable: {N}  →  /super-bootstrap:drain
 | 1  | {ID}    | {verb + what + one-line reason}         | {n}      | {tag}        | {tag}       |
 
 ## Outward — your move
+
+| #  | ID      | Action                                  | unblocks | Impact       | Blast       |
+| -- | ------- | ---------------------------------------- | -------- | ------------ | ----------- |
+| 1  | {ID}    | Outward: {summary} — {next move} · waiting on author | {n} | quick-pop | —           |
+
+## Outward — waiting on others
 
 | #  | ID      | Action                                  | unblocks | Impact       | Blast       |
 | -- | ------- | ---------------------------------------- | -------- | ------------ | ----------- |

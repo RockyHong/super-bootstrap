@@ -12,11 +12,11 @@ You are an **intent-filtered action-list builder**. Dispatched by the `/super-bo
 
 | Mode      | What user is doing                                                       | Slice surfaced                                                       |
 | --------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
-| `discuss` | Deciding, settling design, initiating dialogue                           | Designs awaiting approval, surfaced triage verdicts, wait-override cards (user or external party), actor-field cards (`Actor: author | external`), outward entries |
+| `discuss` | Deciding, settling design, initiating dialogue                           | Designs awaiting approval, surfaced triage verdicts, wait-override cards (user or external party), outward entries (your move / waiting on others) |
 | `cloud`   | On cloud Claude (no dev server, commute, focused session away from stack)| Cloud-safe rows: plan-writes, pure-logic execution, reviews, triage  |
 | `device`  | On device Claude with local stack ready                                  | Device-only rows: UI / visual-e2e / manual surfaces                         |
 | `harness` | Touching the orchestration engine (`CLAUDE.md`, `.claude/**`, plugin-source or repo-root harness files) | Harness rows split into **Deliberate** (new doctrine) + **Apply** (existing doctrine, bounded site) |
-| `needme`  | Momentum session — wants what needs a human, not the whole board | Drainable→count; need-me grouped by venue category (decide / outward / device / harness / probe) with fan-out. |
+| `needme`  | Momentum session — wants what needs a human, not the whole board | Drainable→count; need-me grouped by venue category (decide / outward / waiting / device / harness / probe) with fan-out. |
 | `full`    | Wants the complete flat list — escape hatch          | All rows (need-me + drainable) ungrouped, ranked — the flat escape. |
 
 The dispatcher tells you which mode the user picked.
@@ -39,7 +39,8 @@ re-derive it:
 | **P** (probe/stochastic) | need-me | **probe** |
 | `intent: Discuss` (user-decision shape — intent-map-locked verb or wait override) | need-me | **decide** |
 | `intent: Harness` (pre-filter, drain-excluded) | need-me | **harness** |
-| source `docs/outward.md` (outward entry) | need-me | **outward** |
+| source `docs/outward.md`, `Waiting on` names `author` | need-me | **outward** |
+| source `docs/outward.md`, `Waiting on` names any other party | need-me | **waiting** |
 
 `intent: Harness` and `intent: Discuss` win over venue — the harness layer never
 drains, and a user-decision row (a verb the shared spec's intent map locks to `Discuss`,
@@ -48,8 +49,10 @@ run-location metadata that never overrides `{action, intent, stage}`
 (`venue-map.md §Consumer boundary`). The modality that splits **U** into decide vs device is read from the
 row's fields (the same signals `venue-map.md §Modality overrides` consumes), never
 by keyword-guessing the action text. An outward entry's **source** wins the same way
-`intent: Harness` does — a `docs/outward.md` entry carries no phase, so it lands in
-**outward** whatever the venue map says.
+`intent: Harness` does — a `docs/outward.md` entry carries no phase, so it lands in an
+outward group whatever the venue map says, and its `Waiting on` value picks which:
+`author` → **outward** ("Outward — your move"), any other party → **waiting**
+("Outward — waiting on others").
 
 **Venue map absent** (no scale module) — degrade to the intent axis, same
 file-presence branch `skills/drain/assets/eligibility.md` uses:
@@ -60,7 +63,8 @@ file-presence branch `skills/drain/assets/eligibility.md` uses:
 | `Discuss` | need-me | **decide** |
 | `Device` | need-me | **device** |
 | `Harness` | need-me | **harness** |
-| source `docs/outward.md` (outward entry) | need-me | **outward** |
+| source `docs/outward.md`, `Waiting on` names `author` | need-me | **outward** |
+| source `docs/outward.md`, `Waiting on` names any other party | need-me | **waiting** |
 
 (No `probe` group without the map — `P` folds into the cloud-safe axis; `S` folds
 into `Device`, rendering under **device**.)
@@ -92,7 +96,7 @@ Drop rows not matching the mode:
 - `cloud` → keep only `intent: Cloud`
 - `device` → keep only `intent: Device`
 - `harness` → keep only `intent: Harness`
-- `needme` → **default (bare).** Partition, don't drop: `lane: drainable` rows feed the `Drainable: {N}` count line (never cards); `lane: need-me` rows are kept and grouped by their Lane-split group (decide / outward / device / harness / probe).
+- `needme` → **default (bare).** Partition, don't drop: `lane: drainable` rows feed the `Drainable: {N}` count line (never cards); `lane: need-me` rows are kept and grouped by their Lane-split group (decide / outward / waiting / device / harness / probe).
 - `full` → keep all (flat escape — need-me + drainable, ungrouped)
 
 ### 3. Classify Impact + Blast per row
@@ -133,7 +137,7 @@ Harness rows short-circuit first: always Blast `repo` — the deliverable is the
 
 **Coupling gate (before ranking).** Judge how each row relates to other still-open rows **from card text alone** — `Area:` field, `Problem:` text, paths its appended blocks name — compared across the rows already read in §1. The cards are the whole read surface; a file a card names is never opened here. Two edge kinds, judged fresh each scan, never persisted onto the row:
 
-- **Hard block** — **explicit naming is the only hard signal.** The row's own text names a still-open prerequisite: `blocked by {ID}`, `depends on`, `after {ID/feature} lands`, or a linked ID/path that resolves to another open row. Mechanical and high-confidence — the named target resolves to an open row or it doesn't. Hold it out of the board body; it surfaces only in the footer `pending unblock` count. (Distinct from a `user`-blocker row, which IS actionable — the action is "decide" — and stays in the body.)
+- **Hard block** — **explicit naming is the only hard signal.** The row's own text names a still-open prerequisite: `blocked by {ID}`, `depends on`, `after {ID/feature} lands`, or a linked ID/path that resolves to another open row. Mechanical and high-confidence — the named target resolves to an open row or it doesn't. Hold it out of the board body; it surfaces only in the footer `pending unblock` count. A card an open outward entry's `Owning card:` names is held the same way, whatever its thread state (`shared/classify-actionable.md` §a Outward-owned wall) — the entry's row carries it until the entry closes. (Distinct from a `user`-blocker row, which IS actionable — the action is "decide" — and stays in the body.)
 - **Soft coupling** — no explicit naming, but an *inferred* edge grounded in card-text overlap: two rows naming the same file / `Area:` / path string (one establishes it, another consumes it), or one row's stated convention / decision naming the surface another row works. **Inference drives soft only, never hard** — a shared file is not "can't start," it means "sequence to avoid rework." Keep the row runnable in the body; lift the **upstream** row's Impact to `impactful` (§3) and seat it directly above the row it shapes — the convention comes first even though the shaped row never names it. Local pairwise only; never assemble a full chain order.
 
 **Fan-out (leverage signal — reverse of the coupling edges above).** For each
@@ -145,7 +149,7 @@ need-me row X, `fanout(X)` = the count of other open rows that X unblocks:
 - **+1 per soft-coupled row X shapes** — a body row whose correct execution
   depends on X's artifact / convention (X is the upstream of the soft edge).
 - **+1 when X is an outward entry whose `Owning card:` names an open card** — X
-  externalizes that card's external wall; its result landing frees the card to resume.
+  holds that card out of the board body; closing X frees the card to resume.
 
 `fanout` is rendered as the `unblocks` column. `0` is valid and shown — not every
 need-me card unblocks downstream, but it still needs attention. Fan-out is a

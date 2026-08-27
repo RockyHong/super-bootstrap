@@ -43,14 +43,20 @@ for m in needme full; do
     fail=1
   fi
 done
+# The retired `Actor:` field: both cards classify by their thread state (`Triage:`
+# rows, drainable) and each draws a `# note:` naming the leftover. Golden = board +
+# both stderr lines, the same capture as the queue-table case below.
+err=$(mktemp)
+render_actor_retired() {
+  "$PY" "$SCRIPT" bench/todo-board/fixture-actor-retired "$1" --date "$DATE" 2>"$err"
+  grep -E '^# (note|sources):' "$err"
+}
 for m in needme full; do
-  if "$PY" "$SCRIPT" bench/todo-board/fixture-actor "$m" --date "$DATE" 2>/dev/null \
-     | diff "bench/todo-board/expected/$m-actor.md" - >/dev/null; then
-    echo "PASS $m-actor"
+  if render_actor_retired "$m" | diff "bench/todo-board/expected/$m-actor-retired.md" - >/dev/null; then
+    echo "PASS $m-actor-retired"
   else
-    echo "FAIL $m-actor"
-    "$PY" "$SCRIPT" bench/todo-board/fixture-actor "$m" --date "$DATE" 2>/dev/null \
-      | diff "bench/todo-board/expected/$m-actor.md" -
+    echo "FAIL $m-actor-retired"
+    render_actor_retired "$m" | diff "bench/todo-board/expected/$m-actor-retired.md" -
     fail=1
   fi
 done
@@ -89,7 +95,6 @@ for m in needme full; do
     fail=1
   fi
 done
-err=$(mktemp)
 render_edited() {
   "$PY" "$SCRIPT" bench/todo-board/fixture-venue-edited needme --date "$DATE" 2>"$err"
   grep '^# note:' "$err"
