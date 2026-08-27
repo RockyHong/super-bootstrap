@@ -8,10 +8,15 @@ to §3's mechanics re-runs this bench (`bash bench/doc-links/run.sh`).
 - `fixture/` — a mini repo root. Doc surface: `README.md`, `plugins/x/README.md`,
   and `docs/**/*.md` (`anchors.md` — headings at pinned line numbers, one of them
   punctuated · three citers of `anchors.md`, two at one anchor each and one at both ·
-  seven `docs/specs/` bodies, each carrying exactly one match shape). Off-surface
+  seven `docs/specs/` bodies, each carrying exactly one match shape · a
+  `dimension: history` pair — `chronicle.md` declaring it in frontmatter,
+  `body-mention.md` carrying the same string as body prose). Off-surface
   props the `terms` cases name by path: a skill, an agent, a generic-basename asset,
   a `bench/` script, a `tests/expected/` golden, a `.gd` source.
-- `expected/` — one golden per case, byte-compared; every case must also exit 0.
+- `fixture-history-broken/` — a second mini root holding one history-dimension doc
+  with a dangling link, for the case that pins history docs inside link integrity.
+- `expected/` — one golden per case, byte-compared; every case must also exit 0
+  except `check-history-broken`, which pins exit 1.
 
 ## Cases
 
@@ -36,7 +41,11 @@ not inside one — the case a backtick regex gets wrong and the script's paired-
 parse gets right ·
 `hits-hyphen` a hyphenated term matches inside `` `/x:foo-bar` `` ·
 `hits-multi` several terms yield the sorted-unique union ·
-`hits-miss` an absent term yields nothing, still exit 0.
+`hits-miss` an absent term yields nothing, still exit 0 ·
+`hits-history` a frontmatter `dimension: history` declaration drops the doc from the
+hit set, while the doc carrying the same string in its body still hits — the
+declaration is the carrier, not the string. `terms-history` the same declaration on a
+changed path yields no term — a history doc neither triggers the gate nor joins its scope.
 
 **`anchors` — hunk ranges → section slugs.**
 `anchors-basic` two ranges under two different headings (one of them a `###`
@@ -51,7 +60,12 @@ GitHub does ·
 `refs-single` one anchored query, unchanged behavior · `refs-multi` two anchors of
 one doc print the union, and the citer that cites both appears once. Both goldens
 are sort-normalized: `refs` prints in doc-surface order, which is filesystem-order
-dependent, so union and uniqueness are what these pin.
+dependent, so union and uniqueness are what these pin. Both also pin the history
+exclusion, since `chronicle.md` cites `anchors.md#alpha` and stays out ·
+`refs-history` the sole citer of `docs/specs/thing.md` is that history doc, so the
+citer lane comes back empty.
 
 **`check`** — the fixture's own links all resolve, so the pre-existing mode stays
-green beside the new ones.
+green beside the new ones · `check-history-broken` a dangling link inside a
+history-dimension doc is reported and exits 1: the declaration leaves the staleness
+scope, never link integrity.

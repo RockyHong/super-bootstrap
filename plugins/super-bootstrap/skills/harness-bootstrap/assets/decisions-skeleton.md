@@ -1,3 +1,6 @@
+---
+dimension: history
+---
 # Decisions
 
 > **History-dimension doc.** Owns *closed forks / rejected directions* across every domain — tech, product, business, design. Append-only: entries are added, never edited to "now".

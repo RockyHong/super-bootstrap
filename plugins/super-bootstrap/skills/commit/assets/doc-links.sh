@@ -29,6 +29,10 @@
 #                      whole-file grain: run `refs <path>` unanchored. Output feeds
 #                      `refs <path>#<slug>` verbatim.
 #
+# A doc whose leading YAML frontmatter declares `dimension: history` is frozen
+# provenance: `terms` yields nothing for it, `hits` and `refs` leave it out, while
+# `check` still validates its links.
+#
 # Run from repo root. docs/ may be absent (treated as empty).
 # External links (http/https/mailto) and empty targets are skipped.
 # Links inside fenced code blocks (```/~~~) and inline code spans are ignored;
@@ -51,6 +55,40 @@ collect_surface() {
     [ -f README.md ] && echo README.md
     [ -d plugins ] && find plugins -mindepth 2 -maxdepth 2 -name 'README.md' -type f
     return 0
+}
+
+# Leading/trailing whitespace stripped from <s>. Result in $TRIM.
+TRIM=""
+trim() {
+    local s="$1"
+    s="${s#"${s%%[![:space:]]*}"}"
+    s="${s%"${s##*[![:space:]]}"}"
+    TRIM="$s"
+}
+
+# Does <file> declare `dimension: history` in leading YAML frontmatter? The block
+# opens with `---` on line 1 and closes at the next `---`; no block, or no such key
+# inside it, means state dimension. Pure bash — no fork per file, so the whole
+# surface can be filtered.
+is_history_doc() {
+    local file="$1" line n=0
+    [ -f "$file" ] || return 1
+    while IFS= read -r line; do
+        trim "$line"; line="$TRIM"
+        n=$((n + 1))
+        if [ "$n" -eq 1 ]; then
+            [ "$line" = "---" ] || return 1
+            continue
+        fi
+        [ "$line" = "---" ] && return 1
+        case "$line" in
+            dimension:*)
+                trim "${line#dimension:}"
+                [ "$TRIM" = "history" ] && return 0
+                ;;
+        esac
+    done < "$file"
+    return 1
 }
 
 # GitHub-style heading → anchor slug table for <file>: one awk pass over the
@@ -281,6 +319,7 @@ do_refs() {
     done
     nq="${#QPATH[@]}"
     while IFS= read -r doc; do
+        is_history_doc "$doc" && continue
         matched=0
         while IFS=$'\t' read -r lineno raw; do
             resolve_target "$doc" "$raw"
@@ -405,6 +444,7 @@ do_terms() {
     local p
     for p in "$@"; do
         path_exempt "$p" && continue
+        is_history_doc "$p" && continue
         derive_term "$p"
         [ -z "$TERM_OUT" ] && continue
         term_generic "$TERM_OUT" && continue
@@ -424,7 +464,10 @@ do_hits() {
     for f in "$@"; do terms="$terms$f
 "; done
     files=()
-    while IFS= read -r f; do files+=("$f"); done < <(collect_surface)
+    while IFS= read -r f; do
+        is_history_doc "$f" && continue
+        files+=("$f")
+    done < <(collect_surface)
     [ "${#files[@]}" -eq 0 ] && return 0
     DOCLINK_TERMS="$terms" awk '
     function isword(c) { return (c != "" && c ~ /[A-Za-z0-9_-]/) }

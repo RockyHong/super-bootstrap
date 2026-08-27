@@ -6,6 +6,7 @@ set -u
 cd "$(dirname "$0")/../.." || exit 1
 SCRIPT="$PWD/plugins/super-bootstrap/skills/commit/assets/doc-links.sh"
 FIX="$PWD/bench/doc-links/fixture"
+FIXHB="$PWD/bench/doc-links/fixture-history-broken"
 EXP="$PWD/bench/doc-links/expected"
 TMP="$(mktemp)"
 fail=0
@@ -41,6 +42,7 @@ run_case_sorted() {
 
 # --- terms: path-class filter, derivation, generic + short drop ---
 run_case terms-skill terms plugins/x/skills/foo-bar/SKILL.md
+run_case terms-history terms docs/chronicle.md docs/specs/thing.md
 run_case terms-agent terms plugins/x/agents/judge.md
 run_case terms-dropped terms \
   bench/todo-board/run.sh \
@@ -80,6 +82,9 @@ run_case hits-level hits level
 run_case hits-hyphen hits foo-bar
 run_case hits-multi hits level foo-bar
 run_case hits-miss hits zzznothing
+# A `dimension: history` frontmatter declaration drops the doc from the hit set; the
+# same string sitting in a body is prose, so the undeclared doc still hits.
+run_case hits-history hits foo-baz
 
 # --- anchors: nearest heading at or above each range start ---
 run_case anchors-basic anchors docs/anchors.md +9 +16,2
@@ -90,6 +95,8 @@ run_case anchors-noplus anchors docs/anchors.md 9
 # --- refs: single anchor unchanged, multi-anchor union ---
 run_case_sorted refs-single refs docs/anchors.md#alpha
 run_case_sorted refs-multi refs docs/anchors.md#alpha docs/anchors.md#beta
+# The only citer of specs/thing.md is the history-dimension doc, so the citer lane is empty.
+run_case refs-history refs docs/specs/thing.md
 
 # --- check: the fixture surface has no broken links ---
 ( cd "$FIX" && bash "$SCRIPT" check ) > "$TMP" 2>/dev/null
@@ -99,6 +106,18 @@ if [ "$rc" -eq 0 ] && diff "$EXP/check.txt" "$TMP" > /dev/null; then
 else
   echo "FAIL check (exit $rc)"
   diff "$EXP/check.txt" "$TMP"
+  fail=1
+fi
+
+# --- check: a history doc keeps its links in the integrity lane ---
+# Own fixture root, one history doc, one dangling link: `check` reports it and exits 1.
+( cd "$FIXHB" && bash "$SCRIPT" check ) > "$TMP" 2>/dev/null
+rc=$?
+if [ "$rc" -eq 1 ] && diff "$EXP/check-history-broken.txt" "$TMP" > /dev/null; then
+  echo "PASS check-history-broken"
+else
+  echo "FAIL check-history-broken (exit $rc)"
+  diff "$EXP/check-history-broken.txt" "$TMP"
   fail=1
 fi
 

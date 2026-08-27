@@ -20,7 +20,7 @@ The dispatch prompt supplies: the diff (`git diff` + `git diff --staged`), today
 
 4. **New-assertion residual (diff-scoped).** Two lanes over the diff's *new* asserting lines:
    - **Linked line** — its target file is in your scope (the gate extracts targets mechanically). Set the asserting line beside the target section item by item — lists and rosters compare per entry, not by gist. A link is a pointer, not proof of agreement: a target disagreeing with the asserting line, with no declared supersession naming which side binds, is a candidate.
-   - **Unlinked line** — grep the doc surface for the question it answers, targeted by the claim's own terms. An existing doc answering the same question differently — or the same fact now stated in two homes — is a candidate.
+   - **Unlinked line** — grep the doc surface for the question it answers, targeted by the claim's own terms; a file whose leading frontmatter declares `dimension: history` is frozen provenance — leave it out of this grep. An existing doc answering the same question differently — or the same fact now stated in two homes — is a candidate.
 
    Bounded by the diff's new lines, never by the surface's size.
 
