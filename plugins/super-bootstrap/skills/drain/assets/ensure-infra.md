@@ -43,7 +43,7 @@ infraPresent():
   readHookCurrent()
 ```
 
-All present and current → pass silently, proceed to Pre-flight step 1.
+All present and current → run the template's `placed` record below (a no-op once the entry holds the asset hash), then pass silently, proceed to Pre-flight step 1.
 
 A drifted **settings entry** (`readHookCurrent()` false, present) replaces in place, silently — a JSON registration this pipeline owns, not a consumer-editable file. A drifted **template** resolves by which side moved:
 
@@ -53,7 +53,7 @@ A drifted **settings entry** (`readHookCurrent()` false, present) replaces in pl
   2. **Expected** — that file exactly as the last run placed it: the `placed` hash, or `no placed entry — this copy came from outside this pipeline`.
   3. **Pick** — `overwrite` re-places the asset verbatim (report `⚠ drifted → updated (fork, overwritten)`); `keep` leaves the file as it stands (report `⚠ drifted → kept (fork)`). Say with the pick that `keep` holds for this run only — the next run meets the same fork and asks again; a consumer variant of a frozen asset is not a supported state. The pick resolves the template alone; continue with the remaining `infraPresent()` checks.
 
-Report what changed, stage it with the session's next commit. After copying the template, record `placed[".claude/templates/worktree-settings.local.json"] = sha256(asset worktree-settings.local.json)` in `.claude/super-bootstrap-runway.json` — a guarded read-modify-write touching only that one `placed` key, leaving `version` / `covered` / `declined` as found; file absent → create it carrying `placed` alone.
+Report what changed, stage it with the session's next commit. Whenever the template resolves current — copied this run, or already byte-equal to the asset — record `placed[".claude/templates/worktree-settings.local.json"] = sha256(asset worktree-settings.local.json)` in `.claude/super-bootstrap-runway.json` unless the entry already holds that hash: a guarded read-modify-write touching only that one `placed` key, leaving `version` / `covered` / `declined` as found; file absent → create it carrying `placed` alone.
 
 Any piece **absent** → surface the one-time install confirm:
 

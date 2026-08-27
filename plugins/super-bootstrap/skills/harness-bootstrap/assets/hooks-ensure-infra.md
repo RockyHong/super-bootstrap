@@ -108,8 +108,9 @@ hooksInfraPresent():
   .gitignore contains .claude/.consult-catalog
 ```
 
-All current → skip silently (`✓ current`), no message. A missing script installs from
-the asset. Script drift resolves by which side moved:
+All current → skip silently (`✓ current`), no message — the `placed` record below
+still runs. A missing script installs from the asset. Script drift resolves by which
+side moved:
 
 - **Stale** (`scriptCurrent` false, `scriptUntouched` true) — the placed copy is intact
   and only lags the asset. Re-copy the asset verbatim, silently; report
@@ -136,11 +137,14 @@ the source of truth for every copy this pipeline placed, and the fork prompt is 
 keeps an unrecognized copy from being replaced blind. Install stays default-on — no
 install confirm, unlike drain's `infraPresent()`; the fork pick is the only prompt.
 
-After copying a script, record `placed[".claude/hooks/<name>.sh"] = sha256(asset
-hooks/<name>.sh)` in `.claude/super-bootstrap-runway.json` — a guarded read-modify-write
-touching only that one `placed` key, leaving `version` / `covered` / `declined` as found;
-file absent → create it carrying `placed` alone. Phase 2c's receipt write (`SKILL.md`
-§ 2c) reads the file back and carries every `placed` entry forward.
+Whenever a script resolves current — copied this run, or already sha-equal to the asset
+— record `placed[".claude/hooks/<name>.sh"] = sha256(asset hooks/<name>.sh)` in
+`.claude/super-bootstrap-runway.json` unless the entry already holds that hash: a guarded
+read-modify-write touching only that one `placed` key, leaving `version` / `covered` /
+`declined` as found; file absent → create it carrying `placed` alone. A sha-equal copy
+is byte-identical to the asset whatever placed it, so recording it changes nothing today
+and lets the next asset bump resolve as stale instead of fork. Phase 2c's receipt write
+(`SKILL.md` § 2c) reads the file back and carries every `placed` entry forward.
 
 One migration this reaches by design: an installed `consult-check` pair predating
 the frozen assets — header line `# SessionStart hook — consult-check catalog
