@@ -1,0 +1,8 @@
+# DEBT-100 — todo bench has no fixture for the substrate-absent Uncategorized row
+
+**Logged:** 2026-08-27 · **Source:** DEBT-095 cold audit, open question 3 — the substrate reason string was edited in two places (script + agent) with no golden pinning either
+**Problem:** [`render-board.py`](../../plugins/super-bootstrap/skills/todo/assets/render-board.py) emits a one-row `## Uncategorized` entry (`docs/work/ substrate` · `substrate missing — run /super-bootstrap:harness-bootstrap`) when `docs/work/README.md` is absent or lacks its ID high-water line, and [`agents/todo.md`](../../plugins/super-bootstrap/agents/todo.md) § Stale scaffold mandates the same literal. Every `bench/todo-board/fixture*` README carries the high-water line, so the branch never renders under [`bench/todo-board/run.sh`](../../bench/todo-board/run.sh): a drift between the script's string and the agent's, or a regression in the branch itself, ships silently. The same branch also keeps appending per-file `not a card — see docs/work/README.md § Routing` rows whose pointer target is the missing README — accepted at DEBT-095 (the substrate row in the same table carries the live route), but unpinned.
+**Area:** `bench/todo-board/` (new `fixture-nosubstrate/` + `expected/needme-nosubstrate.md`, `run.sh` case list, `README.md` fixture list) · `plugins/super-bootstrap/skills/todo/assets/render-board.py` substrate branch
+**Prior:** Add a fixture whose `docs/work/` holds one non-card file and a README without the high-water line; golden asserts the substrate row plus the per-file row, Drainable 0. Decide there whether the per-file rows should collapse into the substrate row when the README is absent.
+**Test-feel:** unit
+**Blast:** local
