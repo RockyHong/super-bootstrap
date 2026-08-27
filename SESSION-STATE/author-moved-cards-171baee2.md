@@ -19,7 +19,7 @@ GAP-064 + OUT-001. Pilot (Magnetized Remake) synced 2.34.2 → 2.40.0 `SYNC WITH
 
 1. Push (on yes) → `/plugin update super-bootstrap` (→ 2.41.1) → restart.
 2. Pilot repo: `/super-bootstrap:harness-bootstrap` sync on 2.41.1, then migrate its author-moved cards per DEBT-088 → here: delete `docs/work/GAP-064.md` + OUT-001 via `/super-bootstrap:commit` (card-lifecycle exemption). Then this carry clears.
-3. `/contribute` two lore items: (a) plugin-scope resolution (three platform findings, from the prior carry); (b) `harness-audit-pretool.sh` reads `.claude/harness-paths` from `$CLAUDE_PROJECT_DIR` — a session launched in `plugins/super-bootstrap/` never sees the repo-root file, so `plugins/*/shared/*` is ungated at commit while the Bash-tool stamp (no `CLAUDE_PROJECT_DIR`) includes it → fingerprint mismatch → false "audit stale" nudge (seen on `8a91911`). Fix shape: resolve `harness-paths` from `git rev-parse --show-toplevel`.
+3. Contributed to CCM inbox (2026-08-27): `plugin-version-resolution-user-scope-loads` + `harness-audit-pretool-harness-paths-from-toplevel` — triage is CCM-side (`/digest-inbox`); until (b) lands, a commit staging `plugins/*/shared/*` from this subdir-launched session raises a false "audit stale" nudge.
 4. DEBT-100 is drainable (unit, local) — next `/super-bootstrap:todo` pick.
 
 ## Watch-outs
