@@ -26,10 +26,4 @@ Items whose next move is the author's or an outside party's — a reply to send,
 
 ## Entries
 
-### OUT-001 — consumer pilot syncs v2.39.0 and migrates its author-moved cards
-
-**Logged:** 2026-08-26 · **Source:** GAP-064 Progress (all stages shipped in-repo)
-**Next move:** author: run `/super-bootstrap:harness-bootstrap` sync in the pilot repo, confirm adopt mode left its `parked.md` / `test-queue.md` entries untouched, then migrate its cards per its own tracker card
-**Waiting on:** author
-**Repo tail — fires on:** `docs/work/GAP-064.md` — delete on a clean sync (the card's last open verify line)
-**Owning card:** GAP-064
+*(empty — seeded as outward items are logged)*
