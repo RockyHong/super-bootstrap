@@ -31,7 +31,7 @@ Items whose next move is the author's or an outside party's — a reply to send,
 **Logged:** 2026-08-10 · **Source:** release prep
 **Next move:** vendor: answer the licence request
 **Waiting on:** font vendor
-**Repo tail — fires on:** docs/business/licences.md status row + the export preset include_filter
+**Repo tail — fires on:** [licences](business/licences.md) status row + the export preset include_filter (see [the tracker](https://example.com/t) and [above](#entries))
 
 ### OUT-002 — Steam pairing for the leaderboard
 

@@ -105,13 +105,19 @@ produced="$( (cd "$tmp/docs/outward" 2>/dev/null && ls) | LC_ALL=C sort | tr '\n
 hw="$(grep -m1 'ID high-water mark' "$tmp/docs/outward/README.md" 2>/dev/null \
       | grep -o 'OUT-[0-9][0-9]*' | head -1)"
 notes="$("$PY" "$SCRIPT" "$tmp" needme --date "$DATE" 2>&1 >/dev/null | grep -c '^# note:')"
+# Relative link targets gain one `../` (the entry sits a directory deeper than the
+# flat file); http(s) / mailto / #anchor / absolute targets stay as written.
+links="$(grep -c '\](\.\./business/licences\.md)' "$tmp/docs/outward/OUT-001.md" 2>/dev/null)"
+kept="$(grep -c '(https://example\.com/t)' "$tmp/docs/outward/OUT-001.md" 2>/dev/null)"
+anchor="$(grep -c '(#entries)' "$tmp/docs/outward/OUT-001.md" 2>/dev/null)"
 if [ "$split_ok" = 1 ] && [ "$produced" = "OUT-001.md OUT-002.md README.md " ] \
    && [ "$hw" = "OUT-002" ] && [ ! -f "$tmp/docs/outward.md" ] && [ "$notes" = 0 ] \
+   && [ "$links" = 1 ] && [ "$kept" = 1 ] && [ "$anchor" = 1 ] \
    && diff bench/todo-board/fixture-outward/docs/outward/OUT-002.md \
            "$tmp/docs/outward/OUT-002.md" >/dev/null; then
   echo "PASS split-outward"
 else
-  echo "FAIL split-outward (ran $split_ok · files: $produced · high-water: $hw · notes: $notes)"
+  echo "FAIL split-outward (ran $split_ok · files: $produced · high-water: $hw · notes: $notes · links rebased: $links · kept: $kept/$anchor)"
   diff bench/todo-board/fixture-outward/docs/outward/OUT-002.md "$tmp/docs/outward/OUT-002.md"
   fail=1
 fi

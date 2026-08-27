@@ -15,7 +15,11 @@ mechanical — no per-item judgment, nothing to re-word:
   `<root>/docs/outward/OUT-###.md`: the H1 `# OUT-### — {summary}`, a blank line,
   then the chunk body verbatim (its field lines and anything appended after them),
   trailing blank lines trimmed. Nothing is re-ordered and no field is rewritten,
-  so an entry a consumer had already grown blocks on survives intact.
+  so an entry a consumer had already grown blocks on survives intact — except
+  that every relative markdown link target gains one `../`: the entry now lives
+  one directory deeper than the flat file, so `business/x.md` becomes
+  `../business/x.md` and `../assets/y` becomes `../../assets/y`. Absolute,
+  `http(s)`, `mailto:` and `#anchor` targets are left alone.
 - The flat file is deleted last, after every target has landed.
 
 Refuses (exit 2) rather than overwriting: a target that already exists means the
@@ -34,6 +38,19 @@ sys.stderr.reconfigure(encoding="utf-8", newline="\n")  # type: ignore[attr-defi
 HIGH_WATER_RE = re.compile(r"^\*\*ID high-water mark:\*\*.*$", re.M)
 OUT_ID_RE = re.compile(r"OUT-\d+")
 CHUNK_HEAD_RE = re.compile(r"^(OUT-\d+) — (.+?)\s*$")
+LINK_TARGET_RE = re.compile(r"\]\(([^)\s]+)\)")          # `](target)` — the markdown link target
+LINK_KEEP_PREFIXES = ("http://", "https://", "mailto:", "#", "/")
+
+
+def rebase_links(body):
+    """Every relative link target gains one `../` — the entry now sits one
+    directory deeper than the flat file it came from."""
+    def deeper(m):
+        target = m.group(1)
+        if target.startswith(LINK_KEEP_PREFIXES):
+            return m.group(0)
+        return "](../" + target + ")"
+    return LINK_TARGET_RE.sub(deeper, body)
 
 
 def die(msg):
@@ -65,7 +82,7 @@ def entries(flat_text):
         head, _, body = chunk.partition("\n")
         h = CHUNK_HEAD_RE.match(head)
         if h:
-            out.append((h.group(1), h.group(2), body.strip("\n")))
+            out.append((h.group(1), h.group(2), rebase_links(body.strip("\n"))))
     return out
 
 
