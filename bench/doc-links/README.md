@@ -7,7 +7,7 @@ to §3's mechanics re-runs this bench (`bash bench/doc-links/run.sh`).
 
 - `fixture/` — a mini repo root. Doc surface: `README.md`, `plugins/x/README.md`,
   and `docs/**/*.md` (`anchors.md` — headings at pinned line numbers, one of them
-  punctuated · three citers of `anchors.md`, two at one anchor each and one at both ·
+  punctuated, one a numbered CJK heading · three citers of `anchors.md`, two at one anchor each and one at both ·
   a hub doc (`overview.md`) · nine `docs/specs/` bodies, each carrying exactly one match shape · a
   `dimension: history` pair — `chronicle.md` declaring it in frontmatter,
   `body-mention.md` carrying the same string as body prose). Off-surface
@@ -63,6 +63,8 @@ nested under its parent) yield both slugs, sorted ·
 whole-file-grain signal ·
 `anchors-punct` a heading carrying parentheses and a hyphen slugs the same way
 GitHub does ·
+`anchors-cjk` a numbered CJK heading keeps its letters (`3-後台數據`), the slug GitHub
+renders — every script's letters survive, punctuation alone is stripped ·
 `anchors-noplus` the range accepts a bare line number as well as `+N`.
 
 **`refs` — the multi-anchor extension.**

@@ -40,7 +40,10 @@
 # Links inside fenced code blocks (```/~~~) and inline code spans are ignored;
 # a fence closes only on the same character with a run at least as long as its
 # opener and nothing but whitespace after it, so a nested shorter fence stays inside the block.
-# Anchor slugs: GitHub-style (lowercase, strip non-alnum except hyphens/spaces/underscores, spaces→hyphens).
+# Anchor slugs: GitHub-style — lowercase, punctuation stripped (ASCII enumerated plus
+# common unicode marks), spaces→hyphens; letters of every script survive, so a CJK
+# heading anchors as GitHub renders it. A unicode mark absent from the list stays
+# in the slug where GitHub would drop it — see SLUG_AWK.
 #
 # Fork discipline: `check` walks (anchored links × headings in each target), so
 # any per-item subprocess multiplies across the whole surface. Slug tables are
@@ -107,8 +110,36 @@ SLUG_AWK='
     s = $0
     sub(/^#*/, "", s)
     sub(/^ */, "", s)
-    s = tolower(s)
-    gsub(/[^a-z0-9 _-]/, "", s)
+    # Case-fold. tolower() folds non-ASCII letters under gawk in a UTF-8 locale
+    # (as GitHub does) and leaves them alone under a C-locale byte-mode awk — but
+    # under a Latin-1 / cp1252 ctype (Windows builds) it rewrites UTF-8 lead
+    # bytes (C3 → E3: "é" corrupts, Cyrillic and Greek likewise). Probe once with
+    # "É": folded to "é" (char-mode) or left untouched (C-locale bytes) means the
+    # library fold is safe; anything else is a corrupting ctype — fold ASCII by
+    # hand and leave every other byte as it came.
+    if (FOLD == "") {
+        t = tolower("\303\211")
+        FOLD = (t == "\303\251" || t == "\303\211") ? "lib" : "ascii"
+    }
+    if (FOLD == "lib") s = tolower(s)
+    else {
+        out = ""; n = length(s)
+        for (i = 1; i <= n; i++) {
+            c = substr(s, i, 1); p = index("ABCDEFGHIJKLMNOPQRSTUVWXYZ", c)
+            out = out (p ? substr("abcdefghijklmnopqrstuvwxyz", p, 1) : c)
+        }
+        s = out
+    }
+    # GitHub keeps the letters and digits of every script and strips punctuation;
+    # so does this. ASCII punctuation is enumerated (portable-awk dialect: no
+    # [:punct:]), and the class is ASCII-only on purpose — a multibyte letter is
+    # untouched under both byte-mode awks (mawk, one-true-awk) and char-mode
+    # gawk. Common unicode punctuation follows as a literal alternation: the
+    # byte sequences match in every awk. Marks outside that list survive into
+    # the slug (GitHub drops them) — extend the list on report, never widen the
+    # class.
+    gsub(/[]!"#$%&\047()*+,.\/:;<=>?@[\134^`{|}~\t\r]/, "", s)
+    gsub(/—|–|…|：|，|。|、|（|）|「|」|『|』|【|】|！|？|；|·|“|”|‘|’/, "", s)
     gsub(/ /, "-", s)
     print (NUMBERED == 1 ? NR "\t" : "") s
 }

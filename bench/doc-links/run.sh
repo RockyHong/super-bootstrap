@@ -99,6 +99,7 @@ run_case anchors-basic anchors docs/anchors.md +9 +16,2
 run_case anchors-top anchors docs/anchors.md +1
 run_case anchors-punct anchors docs/anchors.md +21
 run_case anchors-noplus anchors docs/anchors.md 9
+run_case anchors-cjk anchors docs/anchors.md +25
 
 # --- refs: single anchor unchanged, multi-anchor union ---
 run_case_sorted refs-single refs docs/anchors.md#alpha

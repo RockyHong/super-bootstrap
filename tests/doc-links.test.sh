@@ -199,19 +199,19 @@ else
 fi
 check "parity fixture: summary count on stderr" grep -qxF '4 broken link(s)' "$TMP/parity.err"
 
-echo "== doc-links: BUG-045 — CJK / diacritic / punctuation heading slug still resolves =="
+echo "== doc-links: BUG-045+BUG-053 — CJK / diacritic / punctuation heading slugs the GitHub way (unicode letters kept, punctuation stripped) =="
 mkdir -p "$TMP/cjk/docs"
 cat > "$TMP/cjk/docs/c.md" <<'EOF'
 # Doc C
 
 ## 測試 Café — Setup!
 
-Intradoc: [w](#-caf--setup).
+Intradoc: [w](#測試-café--setup).
 EOF
 cat > "$TMP/cjk/docs/d.md" <<'EOF'
 # Doc D
 
-Cross-file: [x](c.md#-caf--setup).
+Cross-file: [x](c.md#測試-café--setup).
 EOF
 out="$(cd "$TMP/cjk" && bash "$LINKS" check 2>&1)"; rc=$?
 if [ "$rc" -eq 0 ] && [ -z "$out" ]; then
@@ -220,6 +220,38 @@ else
   bad "CJK/diacritic heading: slug resolves intradoc + cross-file, check exits 0 (rc=$rc)"
   printf '%s\n' "$out" | sed 's/^/        /'
 fi
+
+echo "== doc-links: BUG-053 — numbered CJK heading: slug keeps the letters, check + anchors agree =="
+# `## 3. 後台數據` slugged to `3-` (ASCII-only strip class), so every CJK anchor a
+# consumer wrote per GitHub's rule reported broken on each commit. GitHub keeps
+# unicode letters: `3-後台數據`. Both readers of SLUG_AWK are asserted — `check`
+# resolving the link and `anchors` printing the slug it accepts.
+mkdir -p "$TMP/cjk2/docs"
+cat > "$TMP/cjk2/docs/e.md" <<'EOF2'
+# Doc E
+
+## 3. 後台數據
+
+Intradoc: [y](#3-後台數據).
+
+## Plain ASCII (still-fine)
+
+Control: [z](#plain-ascii-still-fine).
+EOF2
+cat > "$TMP/cjk2/docs/f.md" <<'EOF2'
+# Doc F
+
+Cross-file: [x](e.md#3-後台數據).
+EOF2
+out="$(cd "$TMP/cjk2" && bash "$LINKS" check 2>&1)"; rc=$?
+if [ "$rc" -eq 0 ] && [ -z "$out" ]; then
+  ok "numbered CJK heading: intradoc + cross-file anchor resolve, ASCII control unchanged, check exits 0"
+else
+  bad "numbered CJK heading: intradoc + cross-file anchor resolve, ASCII control unchanged, check exits 0 (rc=$rc)"
+  printf '%s\n' "$out" | sed 's/^/        /'
+fi
+slug="$(cd "$TMP/cjk2" && bash "$LINKS" anchors docs/e.md +5)"
+check "anchors prints the GitHub slug for the CJK heading (got: $slug)" [ "$slug" = "3-後台數據" ]
 
 echo "== doc-links: BUG-045 — no per-link fork in the resolve path, no per-heading slugify loop =="
 fn_body() { # fn_body <name> — print the body lines of a top-level shell function
