@@ -11,7 +11,9 @@ to §3's mechanics re-runs this bench (`bash bench/doc-links/run.sh`).
   a hub doc (`overview.md`) · nine `docs/specs/` bodies, each carrying exactly one match shape · a
   `dimension: history` pair — `chronicle.md` declaring it in frontmatter,
   `body-mention.md` carrying the same string as body prose · a `docs/work/` card thread
-  naming a term in code shape, and a `docs/outward.md` entry naming the same term). Off-surface
+  naming a term in code shape and citing `anchors.md#beta`, the folder's standing `README.md`
+  naming the same term and citing `anchors.md#alpha`, and a `docs/outward.md` entry naming
+  the same term). Off-surface
   props the `terms` cases name by path: a skill, an agent, a generic-basename asset,
   a `bench/` script, a `tests/expected/` golden, a `.gd` source.
 - `fixture-history-broken/` — a second mini root holding one history-dimension doc
@@ -56,7 +58,8 @@ in a code span — a link target, a backticked path, a bare filename and a bare 
 hit set, while the doc carrying the same string in its body still hits — the
 declaration is the carrier, not the string ·
 `hits-card` a `docs/work/` card thread and a `docs/outward.md` entry naming a term in code shape stay out of the hit
-set — frozen provenance on the hit side, the mirror of the `terms` exemption. `terms-history` the same declaration on a
+set — frozen provenance on the hit side, the mirror of the `terms` exemption — while the folder's standing
+`README.md` naming the same term hits: the exemption keys on the card-ID pattern, not the folder. `terms-history` the same declaration on a
 changed path yields no term — a history doc neither triggers the gate nor joins its scope.
 
 **`anchors` — hunk ranges → section slugs.**
@@ -77,7 +80,9 @@ are sort-normalized: `refs` prints in doc-surface order, which is filesystem-ord
 dependent, so union and uniqueness are what these pin. Both also pin the history
 exclusion, since `chronicle.md` cites `anchors.md#alpha` and stays out ·
 `refs-history` the sole citer of `docs/specs/thing.md` is that history doc, so the
-citer lane comes back empty.
+citer lane comes back empty · `refs-card` the card thread citing `anchors.md#beta` stays out
+of the citer lane while `refs-single` / `refs-multi` keep the standing `README.md` in — the
+same card-ID key as `hits-card`, on the citer side.
 
 **`check`** — the fixture's own links all resolve, so the pre-existing mode stays
 green beside the new ones · `check-history-broken` a dangling link inside a

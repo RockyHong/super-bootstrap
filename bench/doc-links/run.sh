@@ -108,6 +108,9 @@ run_case_sorted refs-single refs docs/anchors.md#alpha
 run_case_sorted refs-multi refs docs/anchors.md#alpha docs/anchors.md#beta
 # The only citer of specs/thing.md is the history-dimension doc, so the citer lane is empty.
 run_case refs-history refs docs/specs/thing.md
+# A card thread citing an anchor stays out of the citer lane; the folder's standing
+# README.md is a real citer and stays in (BUG-054).
+run_case_sorted refs-card refs docs/anchors.md#beta
 
 # --- check: the fixture surface has no broken links ---
 ( cd "$FIX" && bash "$SCRIPT" check ) > "$TMP" 2>/dev/null
