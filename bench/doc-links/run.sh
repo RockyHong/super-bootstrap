@@ -46,6 +46,8 @@ run_case_sorted() {
 run_case terms-skill terms plugins/x/skills/foo-bar/SKILL.md
 run_case terms-history terms docs/chronicle.md docs/specs/thing.md
 run_case terms-agent terms plugins/x/agents/judge.md
+# Machine-state files harness-bootstrap seeds under .claude/ narrate nothing.
+run_case terms-machine-state terms .claude/super-bootstrap-runway.json .claude/templates/worktree-settings.local.json
 run_case terms-dropped terms \
   bench/todo-board/run.sh \
   tests/expected/full.md \
@@ -87,6 +89,10 @@ run_case hits-miss hits zzznothing
 # A `dimension: history` frontmatter declaration drops the doc from the hit set; the
 # same string sitting in a body is prose, so the undeclared doc still hits.
 run_case hits-history hits foo-baz
+# Harness-seeded hub stems count only as a bare token inside a code span: a link
+# target, a backticked path and a bare path all stay out; the doc naming the
+# artifact itself hits.
+run_case hits-hub hits overview techstack
 
 # --- anchors: nearest heading at or above each range start ---
 run_case anchors-basic anchors docs/anchors.md +9 +16,2

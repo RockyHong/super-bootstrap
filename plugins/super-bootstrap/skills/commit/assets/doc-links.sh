@@ -397,6 +397,10 @@ path_exempt() {
     case "$p" in
         docs/work/*|*/docs/work/*) return 0 ;;
         docs/outward.md|*/docs/outward.md) return 0 ;;
+        # Machine state harness-bootstrap seeds under .claude/ — a coverage receipt and
+        # a settings template narrate nothing, whatever their stem.
+        .claude/super-bootstrap-runway.json|*/.claude/super-bootstrap-runway.json) return 0 ;;
+        .claude/templates/*|*/.claude/templates/*) return 0 ;;
     esac
     rest="$p"
     while [ -n "$rest" ]; do
@@ -426,6 +430,14 @@ term_generic() {
     esac
     return 1
 }
+
+# Harness-seeded hub stems — the skeleton files harness-bootstrap plants in every repo
+# (SSOT: skills/harness-bootstrap/SKILL.md § Phase 2c placement rows), cited as link
+# targets across the doc surface under the `ssot-doc-link` rule. `hits` counts one of these only as a
+# bare token inside a code span (`techstack`): a path mention (`docs/techstack.md`,
+# `](../techstack.md)`) is a citation the anchored citer lane already reaches, not a
+# narration. Hardcoded on purpose — the seeded set moves at release cadence.
+HUB_STEMS=" overview techstack decisions super-bootstrap-runway worktree-settings.local "
 
 # Path → term. A skill is named by its directory (`*/skills/<X>/SKILL.md` → `<X>`);
 # everything else — agents and rules included — by its basename minus one extension.
@@ -478,7 +490,7 @@ do_hits() {
         files+=("$f")
     done < <(collect_surface)
     [ "${#files[@]}" -eq 0 ] && return 0
-    DOCLINK_TERMS="$terms" awk '
+    DOCLINK_TERMS="$terms" DOCLINK_HUB="$HUB_STEMS" awk '
     function isword(c) { return (c != "" && c ~ /[A-Za-z0-9_-]/) }
 
     # Whole-word occurrence of needle in hay.
@@ -514,7 +526,27 @@ do_hits() {
         }
     }
 
-    BEGIN { n = split(ENVIRON["DOCLINK_TERMS"], T, "\n") }
+    # Whole-word occurrence that is NOT in a path shape: no "/" on either side and no
+    # extension following — the bare-token form a hub stem must take to count.
+    function barein(hay, needle,   p, off, L, pre, post, after) {
+        L = length(needle); off = 0
+        while (1) {
+            p = index(substr(hay, off + 1), needle)
+            if (p == 0) return 0
+            p += off
+            pre   = (p > 1) ? substr(hay, p - 1, 1) : ""
+            after = substr(hay, p + L)
+            post  = substr(after, 1, 1)
+            if (!isword(pre) && !isword(post) && pre != "/" && post != "/" && after !~ /^\.[A-Za-z0-9]+/) return 1
+            off = p
+        }
+    }
+
+    BEGIN {
+        n = split(ENVIRON["DOCLINK_TERMS"], T, "\n")
+        m = split(ENVIRON["DOCLINK_HUB"], H, " ")
+        for (j = 1; j <= m; j++) if (H[j] != "") hub[H[j]] = 1
+    }
 
     {
         if (FILENAME in hit) next
@@ -533,7 +565,9 @@ do_hits() {
         }
         for (i = 1; i <= n; i++) {
             if (T[i] == "") continue
-            if (wordin(code, T[i]) || pathin($0, T[i])) { hit[FILENAME] = 1; break }
+            if (T[i] in hub) {
+                if (barein(code, T[i])) { hit[FILENAME] = 1; break }
+            } else if (wordin(code, T[i]) || pathin($0, T[i])) { hit[FILENAME] = 1; break }
         }
     }
 

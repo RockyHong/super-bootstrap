@@ -8,7 +8,7 @@ to §3's mechanics re-runs this bench (`bash bench/doc-links/run.sh`).
 - `fixture/` — a mini repo root. Doc surface: `README.md`, `plugins/x/README.md`,
   and `docs/**/*.md` (`anchors.md` — headings at pinned line numbers, one of them
   punctuated · three citers of `anchors.md`, two at one anchor each and one at both ·
-  seven `docs/specs/` bodies, each carrying exactly one match shape · a
+  a hub doc (`overview.md`) · nine `docs/specs/` bodies, each carrying exactly one match shape · a
   `dimension: history` pair — `chronicle.md` declaring it in frontmatter,
   `body-mention.md` carrying the same string as body prose). Off-surface
   props the `terms` cases name by path: a skill, an agent, a generic-basename asset,
@@ -31,6 +31,7 @@ to §3's mechanics re-runs this bench (`bash bench/doc-links/run.sh`).
 `terms-dropped` the whole exempt set yields nothing: `bench/`, `tests/expected/`,
 `docs/work/`, `docs/outward.md`, `SESSION-STATE/`, an image extension, a generic
 basename (`README`, `run`) and a basename under four characters (`ui`) ·
+`terms-machine-state` the `.claude/` runway receipt and a `templates/` file yield nothing ·
 `terms-mixed` a mixed list yields the sorted-unique union ·
 `terms-replay-bench` / `terms-replay-skill` the acceptance fixtures replayed as
 file lists — a bench-only commit yields no term (nothing to dispatch on), a skill
@@ -47,6 +48,9 @@ parse gets right ·
 `hits-hyphen` a hyphenated term matches inside `` `/x:foo-bar` `` ·
 `hits-multi` several terms yield the sorted-unique union ·
 `hits-miss` an absent term yields nothing, still exit 0 ·
+`hits-hub` harness-seeded hub stems (`overview`, `techstack`) count only as a bare token
+in a code span — a link target, a backticked path, a bare filename and a bare path all stay out
+(`hub-path.md`) while the doc naming the artifact hits (`hub-bare.md`) ·
 `hits-history` a frontmatter `dimension: history` declaration drops the doc from the
 hit set, while the doc carrying the same string in its body still hits — the
 declaration is the carrier, not the string. `terms-history` the same declaration on a
