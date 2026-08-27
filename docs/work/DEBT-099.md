@@ -9,4 +9,8 @@
 
 ## Amendment — 2026-08-27 · consumer pilot sync report
 
-[BUG-048](BUG-048.md): `placed` is never seeded for a sha-equal copy, so no consumer carries an entry for this template regardless of drain runs. This card rides after BUG-048 lands plus one clean consumer sync — not merely after "the next substantive template change".
+BUG-048: `placed` is never seeded for a sha-equal copy, so no consumer carries an entry for this template regardless of drain runs. This card rides after BUG-048 lands plus one clean consumer sync — not merely after "the next substantive template change".
+
+## Amendment — 2026-08-27 · BUG-048 resolved
+
+`placed` now records on the verified-current branch too (`66d26f0`). Trigger for this card = the next release plus one clean consumer sync, after which every consumer carries a `placed` hash for the template.
