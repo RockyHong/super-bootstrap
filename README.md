@@ -78,7 +78,7 @@ The runway's doors are bundled skills — all namespaced `super-bootstrap:` so t
 | Door | When |
 |---|---|
 | `/super-bootstrap:triage {ID}` | Every card pickup — a cold, read-only subagent verifies the card's premise and appends a Verdict block; no code changes. |
-| `/super-bootstrap:commit` | End of every cycle — session-isolated (never `-A`), link-integrity check every commit, cold doc-sync scan only on a grep / citer / link-target hit. The `commit-channel` hook routes a worker subagent's raw `git commit` back here. |
+| `/super-bootstrap:commit` | End of every cycle — session-isolated (never `-A`; staged set read back against the session list before `git commit`), link-integrity check every commit, cold doc-sync scan only on a grep / citer / link-target hit. The `commit-channel` hook routes a worker subagent's raw `git commit` back here. |
 | `/super-bootstrap:triage-report` | When a scan report lands in `.review/` — per-finding promote / patch / dup / investigate / dismiss. |
 
 Per-skill contract = that skill's `SKILL.md` frontmatter; one-line index in the [plugin README](plugins/super-bootstrap/README.md#skill-catalog); pipeline shape in [`docs/overview.md` § Data Flow](docs/overview.md#data-flow).

@@ -1,6 +1,6 @@
 ---
 name: commit
-description: "Commit the current session's changes only, gateway-inline. Session-isolated (never -A), doc-sync-gated. The gateway runs the commit inline — it already holds the diff, session file list, and change intent; the doc-sync scan dispatches on a mechanical grep-gate hit, and the premise-closure judge on a product-anchor hit — nothing else leaves the gateway. Conventional message, commits directly, offers push on explicit confirmation. Bundled with super-bootstrap — encodes the harness commit rules."
+description: "Commit the current session's changes only, gateway-inline. Session-isolated (never -A, staged set verified against the session list), doc-sync-gated. The gateway runs the commit inline — it already holds the diff, session file list, and change intent; the doc-sync scan dispatches on a mechanical grep-gate hit, and the premise-closure judge on a product-anchor hit — nothing else leaves the gateway. Conventional message, commits directly, offers push on explicit confirmation. Bundled with super-bootstrap — encodes the harness commit rules."
 tags: [commit, git, session, doc-sync]
 ---
 
@@ -12,7 +12,7 @@ Commits the changes this Claude session produced, leaving prior uncommitted work
 
 1. **Session file list** — from this conversation, the files this session edited/wrote. This is the session-isolation ground truth; a file you don't remember touching stays off it. Stage by explicit path only.
 
-2. **Gather state** — `git status`, `git diff`, `git diff --staged`, `git log --oneline -10` (recent style).
+2. **Gather state** — `git status`, `git diff`, `git diff --staged` (a staged path outside the §1 list is another session's — early warning only; §5's readback is the gate), `git log --oneline -10` (recent style).
 
 3. **Doc-sync grep-gate** — mechanical, no judgment:
    - **Deferred mode — check first** (drain-worktree isolated commit): doc-sync belongs to the merge boundary — skip all of §3, go to §5.
@@ -32,7 +32,9 @@ Commits the changes this Claude session produced, leaving prior uncommitted work
    - **`stale-docs`** → resolve each candidate with the user (update / acknowledge-accurate / skip — never silently fix, never silently skip). Land approved doc edits (inline for bounded prose; dispatch by closure). Resolved docs join the stage list.
    - **`clean`** → proceed.
 
-5. **Message + commit** — draft a Conventional Commit (`<type>(<scope>): <subject>`, imperative ≤72 chars, body only when the why isn't in the diff, match `git log` style; one logical change per commit — a diff spanning two unrelated changes splits). `git add <explicit paths>` — never `-A` / `.`, never secrets (`.env`, keys). Commit with HEREDOC formatting; `git status` after to verify clean. Pre-commit hooks run; on failure fix the cause, never bypass. Always a new commit — amend only if asked.
+5. **Message + commit** — draft a Conventional Commit (`<type>(<scope>): <subject>`, imperative ≤72 chars, body only when the why isn't in the diff, match `git log` style; one logical change per commit — a diff spanning two unrelated changes splits). `git add <explicit paths>` — never `-A` / `.`, never secrets (`.env`, keys).
+   - **Index readback — the last action before `git commit`.** `git diff --cached --name-only` compared against the §1 session file list: the index is shared across sessions in one checkout, so a concurrent session's staged paths ride into this commit unless read back. Where a harness-audit stamp call sits between add and commit, the readback runs after the stamp — still immediately before `git commit`. Any staged path outside the session list → **stop and surface**: the foreign paths, and the pick — unstage-and-continue (`git restore --staged <foreign>`, on the user's say-so only) or abort. Never commit through it.
+   - Commit with HEREDOC formatting; after, `git show --name-only --format= HEAD` equals the session list — prior dirty state is sacred, so a clean tree is not the check. Pre-commit hooks run; on failure fix the cause, never bypass. Always a new commit — amend only if asked.
 
 6. **Push (on confirmation)** — present branch → upstream, commits ahead. Ask **"Push these now? (y / skip)"**. Push on explicit yes only (`git push <remote> <branch>`); skip on silence or decline. Never force, never unannounced.
 
@@ -48,7 +50,7 @@ Commits the changes this Claude session produced, leaving prior uncommitted work
 
 - **Gateway-inline; two dispatch paths, each on its own gate.** The gateway holds the diff, session list, and intent → mechanics stay inline (no closure a fresh container would hold). The cold doc-sync scan (grep-gate hit) and the premise-closure judge (product-anchor hit) are the steps a clean context serves.
 - **Grep-gate is mechanical.** Term extraction is path-structure only, never a judgment about which identifiers matter — a judgment gate gets omitted. Any hit dispatches; conservative by design. A pure asset/binary diff with no narrated path is the skippable class.
-- **Session-isolated.** The session list decides; prior dirty state is sacred. Explicit paths, never `-A`.
+- **Session-isolated.** The session list decides; prior dirty state is sacred. Explicit paths, never `-A` — and the staged set is read back against that list before every commit, so isolation holds at the index, not only at `git add`.
 - **Doc-sync round-trip, never bypass** — a `stale-docs` return goes through the user before commit.
 - **Whole-diff-once.** Doc-sync runs at the integration boundary, on the whole diff, once. Drain-worktree defers it to merge; an implementer never owns doc-sync — a partial-slice view gives false confidence.
 - **Push on explicit yes only** — committed work is safe locally either way.

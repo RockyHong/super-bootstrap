@@ -14,7 +14,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `triage` — read-only grounding phase for one backlog card (premise verify / aim validate / blast collect); dispatches `agents/triage.md` (Opus).
 - `triage-report` — drains `.review/` scan reports with per-finding dispositions; dispatches `agents/triage-report.md` (Sonnet).
 - `help` — on-demand index of installed user-invoke skills; inline + bundled extraction script.
-- `commit` — session-isolated, doc-sync-gated commit; a grep + citer + link-target gate dispatches `agents/doc-sync-scan.md` (Sonnet), product-anchor diffs dispatch `agents/premise-closure.md` (Sonnet).
+- `commit` — session-isolated (staged set read back against the session list), doc-sync-gated commit; a grep + citer + link-target gate dispatches `agents/doc-sync-scan.md` (Sonnet), product-anchor diffs dispatch `agents/premise-closure.md` (Sonnet).
 - `merge` — absorb feature branches; aborts + surfaces on conflict.
 - `check-docs-consistency` — cross-references project docs for drift, stale references, contradictions; timestamped report to `.review/`, report-only.
 - `drain` — parallel-worktree auto-drain of the board; spawns one isolated `claude -p` per admissible item (venue-keyed when the scale module is wired, Cloud-safe fallback otherwise; a single-item wave hands off to the normal in-session pipeline, inline items roll in-session), each halts at its user wall.
