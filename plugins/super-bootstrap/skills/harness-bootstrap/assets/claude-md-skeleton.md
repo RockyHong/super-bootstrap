@@ -111,7 +111,7 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 
 `.claude/rules/*.md` files attach to file reads via `paths:` frontmatter — full-body rule fires at the decision moment, zero ambient cost when irrelevant.
 
-{seeded by super-bootstrap based on Phase 1 stack signals — examples:}
+{example scaffolding — this label goes with the example bullets below}
 
 {- **`rules/<framework>.md`** — fires on `{framework component glob}`}
 {  • {one-line key rule}}
@@ -127,7 +127,7 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 {  • Derive a work item's venue (T / S / U / P) fresh per read from its next phase — never its terminal phase, never stored.}
 {  • One map, two filters: `/super-bootstrap:todo` reads it drainable vs need-me, `/super-bootstrap:drain` reads it dispatch vs wall.}
 
-{If rule body needs more context than its summary provides during planning, read the rule file directly before designing — `Read .claude/rules/<name>.md`.}
+If rule body needs more context than its summary provides during planning, read the rule file directly before designing — `Read .claude/rules/<name>.md`.
 
 ## Tech Stack
 
