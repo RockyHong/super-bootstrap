@@ -93,6 +93,8 @@ run_case hits-history hits foo-baz
 # target, a backticked path and a bare path all stay out; the doc naming the
 # artifact itself hits.
 run_case hits-hub hits overview techstack
+# A card thread is frozen provenance on the hit side too — never scan scope (BUG-051).
+run_case hits-card hits cardonly
 
 # --- anchors: nearest heading at or above each range start ---
 run_case anchors-basic anchors docs/anchors.md +9 +16,2

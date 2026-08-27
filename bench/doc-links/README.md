@@ -10,7 +10,8 @@ to §3's mechanics re-runs this bench (`bash bench/doc-links/run.sh`).
   punctuated, one a numbered CJK heading · three citers of `anchors.md`, two at one anchor each and one at both ·
   a hub doc (`overview.md`) · nine `docs/specs/` bodies, each carrying exactly one match shape · a
   `dimension: history` pair — `chronicle.md` declaring it in frontmatter,
-  `body-mention.md` carrying the same string as body prose). Off-surface
+  `body-mention.md` carrying the same string as body prose · a `docs/work/` card thread
+  naming a term in code shape, and a `docs/outward.md` entry naming the same term). Off-surface
   props the `terms` cases name by path: a skill, an agent, a generic-basename asset,
   a `bench/` script, a `tests/expected/` golden, a `.gd` source.
 - `fixture-history-broken/` — a second mini root holding one history-dimension doc
@@ -53,7 +54,9 @@ in a code span — a link target, a backticked path, a bare filename and a bare 
 (`hub-path.md`) while the doc naming the artifact hits (`hub-bare.md`) ·
 `hits-history` a frontmatter `dimension: history` declaration drops the doc from the
 hit set, while the doc carrying the same string in its body still hits — the
-declaration is the carrier, not the string. `terms-history` the same declaration on a
+declaration is the carrier, not the string ·
+`hits-card` a `docs/work/` card thread and a `docs/outward.md` entry naming a term in code shape stay out of the hit
+set — frozen provenance on the hit side, the mirror of the `terms` exemption. `terms-history` the same declaration on a
 changed path yields no term — a history doc neither triggers the gate nor joins its scope.
 
 **`anchors` — hunk ranges → section slugs.**

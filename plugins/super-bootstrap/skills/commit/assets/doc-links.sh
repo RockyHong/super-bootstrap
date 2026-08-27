@@ -33,7 +33,9 @@
 #
 # A doc whose leading YAML frontmatter declares `dimension: history` is frozen
 # provenance: `terms` yields nothing for it, `hits` and `refs` leave it out, while
-# `check` still validates its links.
+# `check` still validates its links. Card threads (`docs/work/`) and outward entries
+# (`docs/outward.md`) are frozen provenance by path: `terms` yields nothing for them
+# and `hits` leaves them out; `refs` and `check` still cover them.
 #
 # Run from repo root. docs/ may be absent (treated as empty).
 # External links (http/https/mailto) and empty targets are skipped.
@@ -420,14 +422,22 @@ do_closure() {
 # doc's hunk ranges into the section slugs `refs` narrows on. Each is mechanical and
 # total — the gate stays a gate, never a judgment call about which identifiers matter.
 
+# Frozen provenance by path — card threads and outward entries are breadcrumbs, not
+# behavior narration. One predicate, two readers: `terms` (via path_exempt) and `hits`.
+is_frozen_provenance_path() {
+    case "$1" in
+        docs/work/*|*/docs/work/*|docs/outward.md|*/docs/outward.md) return 0 ;;
+    esac
+    return 1
+}
+
 # Paths that narrate nothing: test scaffolding and its goldens, session ledgers,
 # caches, the gate-exempt card surface, and non-text assets. Matched on any path
 # segment, so a fixture nested anywhere is caught.
 path_exempt() {
     local p="$1" rest seg lower
+    is_frozen_provenance_path "$p" && return 0
     case "$p" in
-        docs/work/*|*/docs/work/*) return 0 ;;
-        docs/outward.md|*/docs/outward.md) return 0 ;;
         # Machine state harness-bootstrap seeds under .claude/ — a coverage receipt and
         # a settings template narrate nothing, whatever their stem.
         .claude/super-bootstrap-runway.json|*/.claude/super-bootstrap-runway.json) return 0 ;;
@@ -518,6 +528,7 @@ do_hits() {
     files=()
     while IFS= read -r f; do
         is_history_doc "$f" && continue
+        is_frozen_provenance_path "$f" && continue
         files+=("$f")
     done < <(collect_surface)
     [ "${#files[@]}" -eq 0 ] && return 0
