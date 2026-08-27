@@ -13,7 +13,7 @@ GAP-064 + OUT-001. Pilot (Magnetized Remake) synced 2.34.2 → 2.40.0 `SYNC WITH
 
 ## State
 
-`bd0810d` = `chore: release v2.41.1`, tag `v2.41.1` created locally; **push pending explicit yes** (`git push origin main --tags`, 6 commits ahead of `origin/main`). Plugin cache holds up to 2.41.0; `super-bootstrap:*` skills were not loaded this session (commit door run by hand from `skills/commit/SKILL.md`) → after push: `/plugin update super-bootstrap` + restart. Pilot's `consult-check-*.sh` are byte-identical to the shipped asset (its `d206e0a`) — the fork-prompt watch-out from the prior carry is void.
+`bd0810d` = `chore: release v2.41.1`, tag `v2.41.1` **pushed** (`main == origin/main` at `0d2f06c`; this carry-refresh commit may sit one ahead). Plugin cache holds up to 2.41.0; `super-bootstrap:*` skills were not loaded this session (commit door run by hand from `skills/commit/SKILL.md`) → after push: `/plugin update super-bootstrap` + restart. Pilot's `consult-check-*.sh` are byte-identical to the shipped asset (its `d206e0a`) — the fork-prompt watch-out from the prior carry is void.
 
 ## Next step
 
