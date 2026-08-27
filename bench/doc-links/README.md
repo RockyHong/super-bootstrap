@@ -15,8 +15,13 @@ to §3's mechanics re-runs this bench (`bash bench/doc-links/run.sh`).
   a `bench/` script, a `tests/expected/` golden, a `.gd` source.
 - `fixture-history-broken/` — a second mini root holding one history-dimension doc
   with a dangling link, for the case that pins history docs inside link integrity.
+- `fixture-consumed-card/` — a third mini root for the consumed-provenance exemption:
+  a card thread citing a deleted sibling card (the exempt class) beside two controls —
+  a card citing an absent spec, and a non-card doc citing an absent card.
+- `fixture-consumed-card-clean/` — a fourth mini root holding the exempt class alone,
+  so the silent-and-uncounted half of the exemption is pinned on its own.
 - `expected/` — one golden per case, byte-compared; every case must also exit 0
-  except `check-history-broken`, which pins exit 1.
+  except `check-history-broken` and `check-consumed-card`, which pin exit 1.
 
 ## Cases
 
@@ -68,4 +73,9 @@ citer lane comes back empty.
 **`check`** — the fixture's own links all resolve, so the pre-existing mode stays
 green beside the new ones · `check-history-broken` a dangling link inside a
 history-dimension doc is reported and exits 1: the declaration leaves the staleness
-scope, never link integrity.
+scope, never link integrity ·
+`check-consumed-card` a card thread's link to an absent card ID is skipped uncounted
+(consumed provenance), while both controls still fail and hold the exit at 1 — a card's
+link to an absent *spec*, and a non-card doc's link to an absent card, since the
+exemption needs both endpoints card-shaped ·
+`check-consumed-card-clean` the exempt class alone prints nothing and exits 0.

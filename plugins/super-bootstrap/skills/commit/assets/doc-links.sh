@@ -4,7 +4,9 @@
 # Modes (all but `terms` and `anchors` scan the full doc surface: docs/**/*.md +
 #         README.md + plugins/*/README.md — the markdown-file portion of the doc
 #         surface CLAUDE.md § Doc Sync defines):
-#   check              scan the doc surface for broken links; exit 1 if any
+#   check              scan the doc surface for broken links; exit 1 if any — except
+#                      a card thread's link to an absent card ID (both endpoints
+#                      docs/work/{BUG,DEBT,GAP}-###.md), consumed provenance, skipped
 #   refs <q>...        print doc-surface files that link to any query <q>, in surface
 #                      order, each file once. <q> is <path> or <path>#<anchor>; with
 #                      an anchor, only files whose link cites it (section grain).
@@ -287,6 +289,13 @@ do_check() {
             rel="$R_PATH"
             anchor="$R_ANCHOR"
             if [ ! -e "$rel" ]; then
+                # Consumed provenance: a card thread citing a card ID that no longer
+                # exists is a resolved sibling, not a broken path — both endpoints
+                # card-shaped, skipped uncounted. Any other target stays strict.
+                if [[ "$doc" =~ ^docs/work/(BUG|DEBT|GAP)-[0-9]+\.md$ ]] \
+                   && [[ "$rel" =~ ^docs/work/(BUG|DEBT|GAP)-[0-9]+\.md$ ]]; then
+                    continue
+                fi
                 printf '%s:%s: %s — path not found\n' "$doc" "$lineno" "$rel"
                 findings=$((findings + 1))
             elif [ -n "$anchor" ] && ! anchor_exists "$rel" "$anchor"; then

@@ -7,6 +7,8 @@ cd "$(dirname "$0")/../.." || exit 1
 SCRIPT="$PWD/plugins/super-bootstrap/skills/commit/assets/doc-links.sh"
 FIX="$PWD/bench/doc-links/fixture"
 FIXHB="$PWD/bench/doc-links/fixture-history-broken"
+FIXCC="$PWD/bench/doc-links/fixture-consumed-card"
+FIXCCC="$PWD/bench/doc-links/fixture-consumed-card-clean"
 EXP="$PWD/bench/doc-links/expected"
 TMP="$(mktemp)"
 fail=0
@@ -118,6 +120,31 @@ if [ "$rc" -eq 1 ] && diff "$EXP/check-history-broken.txt" "$TMP" > /dev/null; t
 else
   echo "FAIL check-history-broken (exit $rc)"
   diff "$EXP/check-history-broken.txt" "$TMP"
+  fail=1
+fi
+
+# --- check: a card→card link to an absent card ID is consumed provenance ---
+# Own fixture root. The exempt class (a card thread citing a deleted sibling) leaves
+# no line; both controls stay strict — a card citing an absent spec, and a non-card
+# doc citing an absent card (the exemption is source-scoped) — so exit stays 1.
+( cd "$FIXCC" && bash "$SCRIPT" check ) > "$TMP" 2>/dev/null
+rc=$?
+if [ "$rc" -eq 1 ] && diff "$EXP/check-consumed-card.txt" "$TMP" > /dev/null; then
+  echo "PASS check-consumed-card"
+else
+  echo "FAIL check-consumed-card (exit $rc)"
+  diff "$EXP/check-consumed-card.txt" "$TMP"
+  fail=1
+fi
+
+# --- check: the exempt class alone is silent, exit 0 ---
+( cd "$FIXCCC" && bash "$SCRIPT" check ) > "$TMP" 2>/dev/null
+rc=$?
+if [ "$rc" -eq 0 ] && diff "$EXP/check-consumed-card-clean.txt" "$TMP" > /dev/null; then
+  echo "PASS check-consumed-card-clean"
+else
+  echo "FAIL check-consumed-card-clean (exit $rc)"
+  diff "$EXP/check-consumed-card-clean.txt" "$TMP"
   fail=1
 fi
 
