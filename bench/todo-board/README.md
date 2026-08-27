@@ -41,12 +41,16 @@ scaffolds, or the script re-runs this bench (`bash bench/todo-board/run.sh`).
   next phase here).
 - `fixture-venue-edited/` — the same cards under a map whose Venues table differs
   from the skeleton by one cell: identical board, plus the `# note:` stderr line.
+- `fixture-nosubstrate/` — a pre-substrate repo: `docs/work/README.md` present but
+  without the ID high-water line, plus one non-card file. The board emits the single
+  substrate row (the literal `agents/todo.md` § Stale scaffold mandates) and keeps
+  the per-file `not a card` row beside it, Drainable 0 — never the empty state.
 - `fixture-queue-table/` — one card plus a `docs/test-queue.md` whose `## Pending`
   holds a markdown table instead of `### ` entries: the board parses zero entries
   and says so on the `# note:` stderr channel. Its golden appends both stderr
   lines (`# note:` and `# sources:`) to the board.
 - `expected/` — goldens for all six modes plus the empty, all-blocked, external-wait,
-  actor, outward, wired-map, and unparseable-queue states, pinned to `--date 2026-08-14`.
+  actor, outward, wired-map, pre-substrate, and unparseable-queue states, pinned to `--date 2026-08-14`.
 
 One known accepted divergence from a cold agent render: the soft-coupling
 *direction* cell is mechanically normalized (the row declaring the shared path

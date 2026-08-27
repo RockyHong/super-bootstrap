@@ -65,6 +65,18 @@ for m in needme full; do
     fail=1
   fi
 done
+# Pre-substrate repo: docs/work/README.md present but without the ID high-water
+# line. One substrate row (the agent's literal) plus the per-file row for the
+# non-card file, Drainable 0 — never the empty state.
+for m in needme full; do
+  if "$PY" "$SCRIPT" bench/todo-board/fixture-nosubstrate "$m" --date "$DATE" 2>/dev/null      | diff "bench/todo-board/expected/$m-nosubstrate.md" - >/dev/null; then
+    echo "PASS $m-nosubstrate"
+  else
+    echo "FAIL $m-nosubstrate"
+    "$PY" "$SCRIPT" bench/todo-board/fixture-nosubstrate "$m" --date "$DATE" 2>/dev/null       | diff "bench/todo-board/expected/$m-nosubstrate.md" -
+    fail=1
+  fi
+done
 # Wired venue map (scale module installed). The board renders from the script's
 # built-in encoding of the shipped skeleton; the divergent-map root additionally
 # emits a one-line stderr notice, appended to its golden (`# sources:` is not).
