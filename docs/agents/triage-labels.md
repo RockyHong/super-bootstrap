@@ -8,9 +8,9 @@ that actually exists.
 | Label in mattpocock/skills | State in our tracker | Meaning |
 | --- | --- | --- |
 | `needs-triage`    | card file present, no `## Verdict` block yet | Maintainer needs to evaluate this issue |
-| `needs-info`      | `## Verdict — surface` with no [`## Design`](../work/README.md#thread-contract) or `## Plan` after it, whose decision is a question back to the user (nearest fit; no exact counterpart) | Waiting on reporter for more information |
+| `needs-info`      | `## Verdict — surface` with no [`## Design`](../work/README.md#thread-contract) or `## Plan` after it, whose `settles by:` line names user authority — the gateway's climb left it open (nearest fit; no exact counterpart) | Waiting on reporter for more information |
 | `ready-for-agent` | `## Verdict — auto-fix` | Fully specified, ready for an AFK agent |
-| `ready-for-human` | `## Verdict — surface` with no `## Design` or `## Plan` after it — a later Design is the user's ruling, and the card has moved on | Requires human implementation |
+| `ready-for-human` | `## Verdict — surface` with no `## Design` or `## Plan` after it — a later Design is the ruling (the user's, or the gateway's climb citing its source), and the card has moved on | Requires human implementation |
 | `wontfix`         | card deleted; a direction that would otherwise be re-proposed gets a row in [`docs/decisions.md`](../decisions.md) | Will not be actioned |
 
 ## There is nothing to stamp

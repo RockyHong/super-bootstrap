@@ -8,7 +8,7 @@ Three outputs per item:
 
 - **`action`** — the one-line actionable verb-phrase (`"Triage: BUG-12 …"`, `"Continue execute: GAP-31 … (3/7)"`). The render string.
 - **`intent`** — `Discuss` | `Cloud` | `Device` | `Harness`. The runnability bucket. `Harness` rows additionally carry **`subgroup`** — `deliberate` | `apply` (§Harness pre-filter).
-- **`stage`** — where the item's thread stands: `raw` (no verdict, or a `surface` verdict awaiting the user) · `triaged` (`auto-fix` Verdict block, no plan) · `aimed` (settled-aim Design block, no step-order Plan) · `executing` (Plan block in flight) · `review` (latest Progress reports every plan step done). The entry point for stage-resuming consumers.
+- **`stage`** — where the item's thread stands: `raw` (no verdict, or a `surface` verdict pending the gateway's climb or the user's ruling) · `triaged` (`auto-fix` Verdict block, no plan) · `aimed` (settled-aim Design block, no step-order Plan) · `executing` (Plan block in flight) · `review` (latest Progress reports every plan step done). The entry point for stage-resuming consumers.
 
 `intent` is the gate; `stage` is the entry point; `action` is for human render.
 
@@ -82,7 +82,7 @@ Cards own BUG/DEBT/GAP — bugs, debt, and design gaps / unverified feature idea
 Each card is one append-only thread: a frozen origin block, then dated `## Amendment` / `## Verdict` / `## Design` / `## Plan` / `## Progress` blocks (contract: `docs/work/README.md`). Take the first rule that matches:
 
 - **No Verdict / Design / Plan block** (origin only, or Amendments only — nothing has grounded the card yet) → action: `"Triage: {ID} {title}"`, **intent: Cloud** (triage is investigate-only), **stage: raw**.
-- **Latest Verdict is `## Verdict — surface`, no Design or Plan block after it** (fork still waiting on the user) → action: `"Decide: {ID} {title} — triage verdict"`, **intent: Discuss**, **stage: raw**.
+- **Latest Verdict is `## Verdict — surface`, no Design or Plan block after it** (fork pending the gateway's climb or the user's ruling) → action: `"Decide: {ID} {title} — triage verdict"`, **intent: Discuss**, **stage: raw**.
 - **Latest Verdict is `## Verdict — auto-fix`, no Design or Plan block after it** → action: `"Implement: {ID} {title}"`, intent per cloud-safe derivation over that block's `Files` paths + its `Test Strategy` line, **stage: triaged**.
 - **`## Design` block with no approval line appended after it** → action: `"Approve design: {ID} {title}"`, **intent: Discuss**, **stage: aimed**.
 - **Approved Design, no `## Plan` block after it** → action: `"Start execute: {ID} {title}"`, **stage: aimed**, intent per cloud-safe derivation. A later `## Progress` → `"Continue execute: {ID} {title}"`, same stage and intent. `"Write plan: {ID} {title}"` (**intent: Cloud**) replaces either only when the card's latest block names a cold-executor route (a drain-wave queue, a cross-session handoff).

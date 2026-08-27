@@ -62,7 +62,7 @@ The session runs phase-to-phase and stops at the first wall; the wall's type rid
 
 | Wall | Type | Fires |
 | ---- | ---- | ----- |
-| Ground verdict is `surface`, or auto-fix with `Fix-shape` ∉ {mechanical, systematic} — design/product judgment before build | user | after ground, before plan (the pre-build wall check) |
+| Ground verdict is `surface` and the gateway's climb (`/super-bootstrap:triage` step 3) leaves it open, or auto-fix with `Fix-shape` ∉ {mechanical, systematic} — design/product judgment before build | user | after ground, before plan (the pre-build wall check) |
 | Real design surface found mid-flight — needs a spec, an unresolved decision, a fork the user owns | user | any phase |
 | Real external cost, user smoke test, or a harness-file deliverable discovered mid-flight | user | the phase itself |
 | Security finding during review — vulnerability or irreversible-action concern | user | review phase |
