@@ -6,3 +6,7 @@
 **Prior:** Fold the comment fix into the next substantive template change (or into a release where consumers already carry `placed` entries), pointing at `ensure-infra.md` § Idempotency instead of restating the rule.
 **Test-feel:** doc-only
 **Blast:** local
+
+## Amendment — 2026-08-27 · consumer pilot sync report
+
+[BUG-048](BUG-048.md): `placed` is never seeded for a sha-equal copy, so no consumer carries an entry for this template regardless of drain runs. This card rides after BUG-048 lands plus one clean consumer sync — not merely after "the next substantive template change".
