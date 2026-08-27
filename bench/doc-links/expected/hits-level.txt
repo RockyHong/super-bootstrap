@@ -1,0 +1,3 @@
+docs/specs/code.md
+docs/specs/pathy.md
+docs/specs/plainpath.md

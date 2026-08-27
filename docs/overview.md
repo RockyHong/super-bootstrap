@@ -44,7 +44,7 @@ Active development.
 `.claude-plugin/marketplace.json` — self-hosted marketplace declaration; `source` field pins the install boundary
 `docs/` — dev-workspace docs (this file, [`techstack.md`](techstack.md), [`specs/`](specs/), [`work/`](work/README.md), the scale-module containers [`parked.md`](parked.md) / [`test-queue.md`](test-queue.md) / [`outward.md`](outward.md), plus `agents/` — config the installed mattpocock/skills set reads, per [`specs/mattpocock-coexistence.md`](specs/mattpocock-coexistence.md)); never ships to users
 `tests/` — 3 shell unit tests (`commit-channel.test.sh`, `doc-links.test.sh`, `render-menu.test.sh`)
-`bench/` — 3 measured fixtures kept beside the SSOT they test: `catalog-axis/` (RED fixture + tier probe for `check-docs-consistency`'s catalog-row axis), `consult-hook/` (test surface for the shipped `consult-check` pair), `todo-board/` (golden test for the `todo` board renderer)
+`bench/` — 4 measured fixtures kept beside the SSOT they test: `catalog-axis/` (RED fixture + tier probe for `check-docs-consistency`'s catalog-row axis), `consult-hook/` (test surface for the shipped `consult-check` pair), `doc-links/` (golden test for the commit door's `doc-links.sh` gate enumeration), `todo-board/` (golden test for the `todo` board renderer)
 
 ## Data Flow
 

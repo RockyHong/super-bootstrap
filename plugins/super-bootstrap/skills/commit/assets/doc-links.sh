@@ -1,16 +1,33 @@
 #!/usr/bin/env bash
 # doc-links.sh — markdown link checker and reverse index for a docs surface
 #
-# Modes (all four scan the full doc surface: docs/**/*.md + README.md +
-#         plugins/*/README.md — the markdown-file portion of the doc surface
-#         CLAUDE.md § Doc Sync defines):
+# Modes (all but `terms` and `anchors` scan the full doc surface: docs/**/*.md +
+#         README.md + plugins/*/README.md — the markdown-file portion of the doc
+#         surface CLAUDE.md § Doc Sync defines):
 #   check              scan the doc surface for broken links; exit 1 if any
-#   refs <path>[#a]    print doc-surface files that link to <path> (repo-relative);
-#                      with #a, only files whose link cites that anchor (section grain)
+#   refs <q>...        print doc-surface files that link to any query <q>, in surface
+#                      order, each file once. <q> is <path> or <path>#<anchor>; with
+#                      an anchor, only files whose link cites it (section grain).
+#                      Several queries print the union — one call per changed doc.
 #   index              print full inverted map: target[#anchor]<TAB>referrer, sorted
 #   closure <path>[#a] print the premise-closure set of <path>: the doc surface
 #                      minus consumables (docs/work/{BUG,DEBT}-*.md, docs/work/TEMPLATE.md)
 #                      minus <path> itself, sorted; #a is ignored (whole-file grain)
+#   terms <path>...    print the grep-gate terms a changed-file list yields, sorted
+#                      unique — path-class-exempt paths, asset extensions, generic
+#                      basenames and terms under 4 characters yield none. Pure string
+#                      work: the paths need not exist. Always exit 0.
+#   hits <term>...     print doc-surface files mentioning any term in code shape —
+#                      a whole word inside an inline code span, or a path segment
+#                      (preceded by `/`, or followed by `/` or `.`+extension).
+#                      Bare prose does not hit. Sorted unique; exclusion is the
+#                      caller's (pipe through `grep -vxF`). Always exit 0.
+#   anchors <path> <r>...  print the slug of the nearest heading at or above each
+#                      hunk range's start line, sorted unique — <r> is a `git diff -U0`
+#                      post-image range (`+491`, `+19,7`, leading `+` optional).
+#                      A range above the first heading prints `(top)`, meaning
+#                      whole-file grain: run `refs <path>` unanchored. Output feeds
+#                      `refs <path>#<slug>` verbatim.
 #
 # Run from repo root. docs/ may be absent (treated as empty).
 # External links (http/https/mailto) and empty targets are skipped.
@@ -42,18 +59,28 @@ collect_surface() {
 # `printf | tr | sed | tr` pipeline performed, at one process per file instead
 # of four per heading. Portable-awk dialect: no interval expressions, no POSIX
 # character classes.
+# One transform, two readers: `check`/`refs` want slugs alone, `anchors` wants each
+# slug's line number beside it. Holding the awk body in one variable keeps the two
+# readers from drifting — an anchor `anchors` prints must be one `refs` accepts.
+SLUG_AWK='
+/^#/ {
+    s = $0
+    sub(/^#*/, "", s)
+    sub(/^ */, "", s)
+    s = tolower(s)
+    gsub(/[^a-z0-9 _-]/, "", s)
+    gsub(/ /, "-", s)
+    print (NUMBERED == 1 ? NR "\t" : "") s
+}
+'
+
 slug_lines() {
-    awk '
-    /^#/ {
-        s = $0
-        sub(/^#*/, "", s)
-        sub(/^ */, "", s)
-        s = tolower(s)
-        gsub(/[^a-z0-9 _-]/, "", s)
-        gsub(/ /, "-", s)
-        print s
-    }
-    ' "$1" 2>/dev/null
+    awk -v NUMBERED=0 "$SLUG_AWK" "$1" 2>/dev/null
+}
+
+# lineno TAB slug per heading, file order.
+slug_lines_numbered() {
+    awk -v NUMBERED=1 "$SLUG_AWK" "$1" 2>/dev/null
 }
 
 # Slug table for <file>, memoized — many anchored links resolve into the same
@@ -237,26 +264,42 @@ do_check() {
     fi
 }
 
+# Queries are held in two parallel arrays and tested inside the existing per-link
+# loop, so N queries cost one surface walk instead of N. The doc loop stays outermost:
+# each citer prints once, in surface order, whether one query matched or five — a
+# single-query call is byte-identical to the one-query-only form it replaced.
 do_refs() {
-    local query qpath qanchor
-    query="$1"
-    if [[ "$query" == *'#'* ]]; then
-        normalize_path "${query%%#*}"; qpath="$NORM"; qanchor="${query#*#}"
-    else
-        normalize_path "$query"; qpath="$NORM"; qanchor=""
-    fi
+    local -a QPATH QANCHOR
+    local query i nq doc matched rel anchor lineno raw
+    QPATH=(); QANCHOR=()
+    for query in "$@"; do
+        if [[ "$query" == *'#'* ]]; then
+            normalize_path "${query%%#*}"; QPATH+=("$NORM"); QANCHOR+=("${query#*#}")
+        else
+            normalize_path "$query"; QPATH+=("$NORM"); QANCHOR+=("")
+        fi
+    done
+    nq="${#QPATH[@]}"
     while IFS= read -r doc; do
+        matched=0
         while IFS=$'\t' read -r lineno raw; do
-            local rel anchor
             resolve_target "$doc" "$raw"
             case "$R_KIND" in external|intradoc) continue ;; esac
             rel="$R_PATH"
             anchor="$R_ANCHOR"
-            if [ "$rel" = "$qpath" ] && { [ -z "$qanchor" ] || [ "$anchor" = "$qanchor" ]; }; then
-                echo "$doc"; break
-            fi
+            i=0
+            while [ "$i" -lt "$nq" ]; do
+                if [ "$rel" = "${QPATH[$i]}" ] \
+                   && { [ -z "${QANCHOR[$i]}" ] || [ "$anchor" = "${QANCHOR[$i]}" ]; }; then
+                    matched=1; break
+                fi
+                i=$((i + 1))
+            done
+            [ "$matched" -eq 1 ] && break
         done < <(extract_links "$doc")
+        [ "$matched" -eq 1 ] && echo "$doc"
     done < <(collect_surface)
+    return 0
 }
 
 do_index() {
@@ -291,16 +334,211 @@ do_closure() {
     return 0
 }
 
+# --- grep-gate enumeration (terms / hits / anchors) ------------------------------
+#
+# The commit door's §3 gate reads these three: `terms` turns a changed-file list into
+# grep terms, `hits` turns terms into doc-surface files, `anchors` turns a changed
+# doc's hunk ranges into the section slugs `refs` narrows on. Each is mechanical and
+# total — the gate stays a gate, never a judgment call about which identifiers matter.
+
+# Paths that narrate nothing: test scaffolding and its goldens, session ledgers,
+# caches, the gate-exempt card surface, and non-text assets. Matched on any path
+# segment, so a fixture nested anywhere is caught.
+path_exempt() {
+    local p="$1" rest seg lower
+    case "$p" in
+        docs/work/*|*/docs/work/*) return 0 ;;
+        docs/outward.md|*/docs/outward.md) return 0 ;;
+    esac
+    rest="$p"
+    while [ -n "$rest" ]; do
+        seg="${rest%%/*}"
+        if [ "$seg" = "$rest" ]; then rest=""; else rest="${rest#*/}"; fi
+        case "$seg" in
+            bench|test|tests|fixtures|expected|SESSION-STATE|.temp|__pycache__) return 0 ;;
+            fixture*) return 0 ;;
+        esac
+    done
+    lower="$(printf '%s' "$p" | tr 'A-Z' 'a-z')"
+    case "$lower" in
+        *.png|*.jpg|*.jpeg|*.gif|*.svg|*.ico|*.webp|*.woff|*.woff2|*.ttf) return 0 ;;
+        *.zip|*.tar|*.gz|*.pdf|*.lock) return 0 ;;
+    esac
+    return 1
+}
+
+# Basenames that name a slot rather than a subject — they hit everywhere and mean
+# nothing. Compared case-insensitively; terms under 4 characters join them.
+term_generic() {
+    local t
+    t="$(printf '%s' "$1" | tr 'A-Z' 'a-z')"
+    [ "${#t}" -lt 4 ] && return 0
+    case " skill claude readme template backlog marketplace plugin gitignore index settings run main test tests spec config " in
+        *" $t "*) return 0 ;;
+    esac
+    return 1
+}
+
+# Path → term. A skill is named by its directory (`*/skills/<X>/SKILL.md` → `<X>`);
+# everything else — agents and rules included — by its basename minus one extension.
+# Result in $TERM_OUT.
+TERM_OUT=""
+derive_term() {
+    local p="$1" base dir parent grand
+    base="${p##*/}"
+    if [ "$base" = "SKILL.md" ]; then
+        dir="${p%/*}"
+        if [ "$dir" != "$p" ]; then
+            parent="${dir##*/}"
+            grand="${dir%/*}"
+            [ "$grand" = "$dir" ] && grand=""
+            grand="${grand##*/}"
+            if [ "$grand" = "skills" ]; then TERM_OUT="$parent"; return; fi
+        fi
+    fi
+    base="${base#.}"
+    case "$base" in *.*) base="${base%.*}" ;; esac
+    TERM_OUT="$base"
+}
+
+do_terms() {
+    local p
+    for p in "$@"; do
+        path_exempt "$p" && continue
+        derive_term "$p"
+        [ -z "$TERM_OUT" ] && continue
+        term_generic "$TERM_OUT" && continue
+        printf '%s\n' "$TERM_OUT"
+    done | LC_ALL=C sort -u
+    return 0
+}
+
+# Code-shape matching runs in awk, not grep: "inside an inline code span" needs the
+# same paired-backtick parse `extract_links` does — a regex cannot tell a span from
+# the gap between two spans, and that gap is where bare prose false-hits live. One
+# awk pass over the whole surface; terms ride the environment, so no quoting round-trip.
+do_hits() {
+    [ "$#" -eq 0 ] && return 0
+    local -a files
+    local f terms=""
+    for f in "$@"; do terms="$terms$f
+"; done
+    files=()
+    while IFS= read -r f; do files+=("$f"); done < <(collect_surface)
+    [ "${#files[@]}" -eq 0 ] && return 0
+    DOCLINK_TERMS="$terms" awk '
+    function isword(c) { return (c != "" && c ~ /[A-Za-z0-9_-]/) }
+
+    # Whole-word occurrence of needle in hay.
+    function wordin(hay, needle,   p, off, L, pre, post) {
+        L = length(needle); off = 0
+        while (1) {
+            p = index(substr(hay, off + 1), needle)
+            if (p == 0) return 0
+            p += off
+            pre  = (p > 1) ? substr(hay, p - 1, 1) : ""
+            post = substr(hay, p + L, 1)
+            if (!isword(pre) && !isword(post)) return 1
+            off = p
+        }
+    }
+
+    # Whole-word occurrence that also sits in a path shape: after a "/", before a
+    # "/", or before a "." plus an extension.
+    function pathin(hay, needle,   p, off, L, pre, post, after) {
+        L = length(needle); off = 0
+        while (1) {
+            p = index(substr(hay, off + 1), needle)
+            if (p == 0) return 0
+            p += off
+            pre   = (p > 1) ? substr(hay, p - 1, 1) : ""
+            after = substr(hay, p + L)
+            post  = substr(after, 1, 1)
+            if (!isword(pre) && !isword(post)) {
+                if (pre == "/" || post == "/") return 1
+                if (after ~ /^\.[A-Za-z0-9]+/) return 1
+            }
+            off = p
+        }
+    }
+
+    BEGIN { n = split(ENVIRON["DOCLINK_TERMS"], T, "\n") }
+
+    {
+        if (FILENAME in hit) next
+        # code spans only: matched backtick runs, same pairing rule as extract_links
+        code = " "; rest = $0
+        while (match(rest, /`+/)) {
+            delim = substr(rest, RSTART, RLENGTH)
+            tail  = substr(rest, RSTART + RLENGTH)
+            cpos  = index(tail, delim)
+            if (cpos > 0) {
+                code = code substr(tail, 1, cpos - 1) " "
+                rest = substr(tail, cpos + length(delim))
+            } else {
+                rest = ""
+            }
+        }
+        for (i = 1; i <= n; i++) {
+            if (T[i] == "") continue
+            if (wordin(code, T[i]) || pathin($0, T[i])) { hit[FILENAME] = 1; break }
+        }
+    }
+
+    END { for (f in hit) print f }
+    ' "${files[@]}" | LC_ALL=C sort -u
+    return 0
+}
+
+# Hunk range → section grain. Headings come out of the shared slug transform in file
+# order, so the last one at or above the start line is the section that hunk edited.
+do_anchors() {
+    local path="$1" tbl r start ln slug found
+    shift
+    [ -f "$path" ] || return 0
+    tbl="$(slug_lines_numbered "$path")"
+    for r in "$@"; do
+        r="${r#+}"
+        start="${r%%,*}"
+        case "$start" in ''|*[!0-9]*) continue ;; esac
+        found="(top)"
+        while IFS="$(printf '\t')" read -r ln slug; do
+            [ -z "$ln" ] && continue
+            if [ "$ln" -le "$start" ]; then found="$slug"; else break; fi
+        done <<EOF
+$tbl
+EOF
+        printf '%s\n' "$found"
+    done | LC_ALL=C sort -u
+    return 0
+}
+
+USAGE='Usage: %s check | refs <path>[#anchor]... | index | closure <path>[#anchor]
+       %s terms <changed-path>... | hits <term>... | anchors <path> <hunk-range>...
+'
+
 case "$MODE" in
     check) do_check ;;
     refs)
-        [ -z "${2:-}" ] && { printf 'Usage: %s refs <path>[#anchor]\n' "$0" >&2; exit 1; }
-        do_refs "$2" ;;
+        shift
+        [ "$#" -eq 0 ] && { printf 'Usage: %s refs <path>[#anchor]...\n' "$0" >&2; exit 1; }
+        do_refs "$@" ;;
     index) do_index ;;
     closure)
         [ -z "${2:-}" ] && { printf 'Usage: %s closure <path>[#anchor]\n' "$0" >&2; exit 1; }
         do_closure "$2" ;;
+    terms)
+        shift
+        do_terms "$@" ;;
+    hits)
+        shift
+        do_hits "$@" ;;
+    anchors)
+        shift
+        [ "$#" -lt 2 ] && { printf 'Usage: %s anchors <path> <hunk-range>...\n' "$0" >&2; exit 1; }
+        do_anchors "$@" ;;
     *)
-        printf 'Usage: %s check | refs <path>[#anchor] | index | closure <path>[#anchor]\n' "$0" >&2
+        # shellcheck disable=SC2059
+        printf "$USAGE" "$0" "$0" >&2
         exit 1 ;;
 esac

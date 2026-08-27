@@ -1,0 +1,3 @@
+docs/citer-a.md
+docs/citer-b.md
+docs/citer-both.md
