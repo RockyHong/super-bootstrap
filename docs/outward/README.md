@@ -20,7 +20,7 @@ New entries enter via `/super-bootstrap:log` (mover gate + dedup + ID assignment
 
 Every entry carries a stable `OUT-###` ID — its filename and its H1 both. IDs are monotonic and **never reused**: a resolved entry's ID stays consumed (history = `git log --grep="<id>"`), so IDs come from the high-water line below, never from the live files. IDs index and cross-reference only — no ordering, no priority.
 
-**ID high-water mark:** `OUT-001` — last consumed outward ID. `/super-bootstrap:log` assigns max+1 from this line and bumps it in the same write.
+**ID high-water mark:** `OUT-002` — last consumed outward ID. `/super-bootstrap:log` assigns max+1 from this line and bumps it in the same write.
 
 ## Thread contract
 
