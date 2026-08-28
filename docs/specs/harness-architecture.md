@@ -32,31 +32,28 @@ substrate-permanent. Harness engineering's durable work domain is the permanent 
 
 ## 2. Which slot each system occupies
 
-| Slot | superpowers | mattpocock/skills | super-bootstrap |
-| --- | --- | --- | --- |
-| Procedure / discipline | owns | owns (model-invoked) | — |
-| Alignment / elicitation | `brainstorming` | `grill-me` / `grill-with-docs` | — |
-| Shared language | — | `CONTEXT.md` + ADR | — |
-| Entry selection (routing) | **absent** | `ask-matt` (owns its own) | Cluster table — **shape recognition, not entry routing**; rows name disciplines a harness would otherwise supply |
-| Fast capture | — | — | **`/super-bootstrap:log`** |
-| Standing work state | — | defers to a real tracker | **`docs/work/` cards** (the opt-in scale module adds `docs/parked.md` / `docs/test-queue.md` / `docs/outward/` beside them) |
-| Per-feature work order | temporal specs/plans | `to-tickets` → whatever tracker setup configured | the card's `## Design` / `## Plan` blocks |
-| Propagation gate | — | — | **doc-sync** |
-| Cold-start data map | — | `CONTEXT.md` + `docs/adr/` | `overview` + `techstack` + `decisions` |
-| Awareness wiring | full-body ambient injection | static `## Agent skills` pointers in CLAUDE.md | **path-scoped rules (`paths:` frontmatter)** |
-| Parallel throughput | — | — | **drain** |
-| Product anchor (problem / user / ICP / G2M) | — | — | **`overview.md` Problem / User** |
+| Slot | superpowers | super-bootstrap |
+| --- | --- | --- |
+| Procedure / discipline | owns | — |
+| Alignment / elicitation | `brainstorming` | — |
+| Shared language | — | — |
+| Entry selection (routing) | **absent** | Cluster table — **shape recognition, not entry routing**; rows name disciplines a harness would otherwise supply |
+| Fast capture | — | **`/super-bootstrap:log`** |
+| Standing work state | — | **`docs/work/` cards** (the opt-in scale module adds `docs/parked.md` / `docs/test-queue.md` / `docs/outward/` beside them) |
+| Per-feature work order | temporal specs/plans | the card's `## Design` / `## Plan` blocks |
+| Propagation gate | — | **doc-sync** |
+| Cold-start data map | — | `overview` + `techstack` + `decisions` |
+| Awareness wiring | full-body ambient injection | **path-scoped rules (`paths:` frontmatter)** |
+| Parallel throughput | — | **drain** |
+| Product anchor (problem / user / ICP / G2M) | — | **`overview.md` Problem / User** |
 
 **Four slots are uncontested:** fast capture, propagation gate, parallel throughput,
-product anchor. Awareness wiring is contested but the mechanisms differ in kind — see §4.
+product anchor. Awareness wiring is contested but the mechanisms differ in kind — see §5.
 
-**The product-anchor slot is unbuilt on the other side, by design not oversight.**
-mattpocock's cold-doc layer is real but entirely solution-space: `CONTEXT.md` is a
-glossary and states so outright ("totally devoid of implementation details… a glossary and
-nothing else"), `docs/adr/` holds why-decided, `.out-of-scope/*.md` holds rejected
-enhancements. No ICP, no problem statement, no market. His set is addressed to the
-engineer in a codebase, so product truth is not the engineer's to own — there is nothing
-here to defer to and no coverage claim to test.
+**The product-anchor slot is unbuilt on the process-harness side, by design not
+oversight.** A process harness addresses the engineer standing in a codebase, and a
+codebase answers *solution*; product truth — ICP, problem statement, market — is not the
+engineer's to own. There is nothing there to defer to and no coverage claim to test.
 
 That absence is what the [`overview.md`](../overview.md) § User positioning answers: a
 codebase answers *solution*, so an agent judging whether to build something needs the
@@ -79,8 +76,8 @@ inseparable from it.
 | Dispatch § SDD carve-out — the "chain's executor governs" clause | Dead. The clause is gone; the bullet's commit-door mechanics are harness-agnostic and stand. |
 | § The envelope ambient-laws line (4 skill names) | Referent dead, **discipline live**: three laws stated inline. `dispatching-parallel-agents` carried nothing § Dispatch does not already own. |
 | `docs/specs/superpowers-topology.md` | Dead. The file is gone. |
-| `harness-bootstrap` § Core plugin pin — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. superpowers is pinned by nothing. The process-harness slot is filled instead by the mattpocock **paired pin** (§4) — seeded per repo, droppable, and backing no name in any pipeline-owned doc; a harness a repo adds on its own is an ordinary adaptive pick in `resolve-plugins`. |
-| The temporal work folder | **Ours**, at `docs/work/`. His artifact skills own no path — they publish to whatever tracker is configured (§4) — so there was no slot to defer to. |
+| `harness-bootstrap` § Core plugin pin — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. superpowers is pinned by nothing, and neither is any other process harness — the slot is filled by whichever one a repo takes as an ordinary adaptive pick in `resolve-plugins`. |
+| The temporal work folder | **Ours**, at `docs/work/`. No process harness owns that slot at a fixed path — artifact skills publish to whatever tracker a repo declares — so there was no slot to defer to. |
 | drain's stage machine (`raw→triage→plan→execute→review`) | **Dead as a stage chain, drain live** — the per-phase command dispatch was distillation-shaped; drain now spawns one scoped-brief session per item (anchor + breadcrumb rendered from the card thread), running drain-till-wall with typed walls (`user`\|`shape`). Stage vocabulary `aimed`/`executing` keys entry only. |
 | **log / cards / commit / doc-sync / rules** | **Unaffected.** |
 | `skills/triage/SKILL.md` + `agents/triage.md` — investigation doctrine | Referent dead, **discipline live**: the clause is stated inline, naming no harness. The pointer never resolved even where superpowers is installed — the agent's tool list carries no `Skill`. |
@@ -93,15 +90,7 @@ them would have dropped verified-load-bearing prose — [`docs/decisions.md`](..
 records a pressure test where the [route line](../../CLAUDE.md#cluster-routing) alone sent a
 runtime-symptom bug to the triage lane in 2/2 control runs.
 
-mattpocock ships `ask-matt` — a router over his own user-invoked skills — so the gap
-that forced our routing layer does not exist for him. Building one anyway would create
-a second routing authority over the same objects.
-
-His skills are additionally designed against being driven: a user-invoked skill may
-invoke model-invoked skills but never another user-invoked one, and `implement` carries
-`disable-model-invocation: true`.
-
-## 4. The seam: runtime-orthogonal, setup-time-composed
+## 4. The seam: runtime-orthogonal by construction
 
 **Runtime.** super-bootstrap names zero foreign skills **at runtime** — no shipped door
 dispatches to one, routes to one, or depends on one resolving. This is grep-verifiable,
@@ -111,41 +100,27 @@ not a policy:
 rg 'superpowers|systematic-debugging|brainstorm|writing-plans|write-plan|execute-plan|mattpocock|matt-pocock|ask-matt|grill-me|grill-with-docs|to-spec|to-tickets|wayfinder' plugins/super-bootstrap/
 ```
 
-Every hit falls in one of the two sanctioned classes below. The pattern carries
+Every hit falls in the one sanctioned class below. The pattern carries
 `brainstorm` **unstemmed** and both hyphenated command spellings deliberately: a
 `brainstorming|writing-plans` pattern is blind to `/brainstorm`, `/write-plan`, and
 `/execute-plan` — the form a live dispatch actually takes, and the form that survived the
 skeleton cut unseen. `mattpocock` and `matt-pocock` are separate alternates for the same
-reason: neither spelling matches the other, and his setup command uses the hyphenated one.
+reason: neither spelling matches the other, and mattpocock's setup command uses the
+hyphenated one.
 
-**Two hit classes are sanctioned. Neither routes anything.**
+**One hit class is sanctioned. It routes nothing.**
 
 - **Historical** — `harness-bootstrap` must keep matching pre-rename spellings it reads out
   of an already-bootstrapped repo: the `chore: scaffold|sync superpowers pipeline` commit
   strings its mature-repo detector greps, and the `docs/superpowers/` folder its Phase 2a
   migration moves to `docs/work/`. Dropping the first makes every existing consumer read as
   never-bootstrapped; dropping the second strands its old tree on disk (§8).
-- **Setup-time composition** — pairing with mattpocock/skills is deliberate (§6) and reaches
-  exactly three sites, all of them install-time:
-  1. **The [paired pin](../techstack.md#key-dependencies)** — the `enabledPlugins` entry
-     `"mattpocock-skills@mattpocock"` plus its `extraKnownMarketplaces.mattpocock` source,
-     wherever the plugin seeds or documents
-     that pair: `harness-bootstrap` §2a writes it, `resolve-plugins` handles it as its own
-     pin class (Phase 4 pre-resolve pins, Phase 5.2 write), and the plugin README states the
-     class in its skill summary. A settings key and a marketplace coordinate — no skill
-     referent, so nothing here backs a name in a consumer repo's prose.
-  2. **The tracker recipe** —
-     [`mattpocock-tracker-recipe.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/mattpocock-tracker-recipe.md),
-     the paste-able answer to the "Other" branch of his setup.
-  3. **The Phase 3 handoff message** — the first-run text naming his commands and telling
-     the operator to type `/setup-matt-pocock-skills`. Chat output, not prose written into
-     the consumer repo.
 
-  Nothing the pipeline commits into a consumer repo names a mattpocock command — not the
-  `CLAUDE.md` skeleton, not any scaffolded doc. That is what keeps dropping the pin a
-  settings edit with no doc change, and it is the property the grep guards.
+The `mattpocock|matt-pocock|ask-matt|grill-me|grill-with-docs|to-spec|to-tickets|wayfinder`
+alternates carry no sanctioned hit at all — they stay in the pattern as the standing
+regression guard for a pairing this repo once shipped and has since removed.
 
-A hit outside those two classes is a regression — the pattern catches a live command
+A hit outside that class is a regression — the pattern catches a live command
 referent whether it dispatches (a subprocess phase prompt) or only reads as prose, and
 prose that seeds through the capture funnel carries the referent into every consumer repo's
 own card set, where it outlives the cut.
@@ -156,98 +131,13 @@ naming rides the same path — skill `description:`, the runway intro, the emitt
 strings, and the pipeline-family `tags:` keyword are all harness-neutral, so a consumer
 re-bootstrapping migrates in one run.
 
-**Setup-time.** Composition happens through mattpocock's own declared socket. His
-`/setup-matt-pocock-skills` presents these issue-tracker options verbatim:
-
-> **GitHub** — issues live in the repo's GitHub Issues (uses the `gh` CLI)
-> **GitLab** — issues live in the repo's GitLab Issues (uses the [`glab`](https://gitlab.com/gitlab-org/cli) CLI)
-> **Local markdown** — issues live as files under `.scratch/<feature>/` in this repo
-> **Other** (Jira, Linear, etc.) — ask the user to describe the workflow
-
-He ships seed templates for the first three (`issue-tracker-github.md`,
-`issue-tracker-gitlab.md`, `issue-tracker-local.md`) but **none for "Other"** — that
-branch is authored fresh. So super-bootstrap can ship its own seed for that slot,
-declaring `docs/work/` + `/super-bootstrap:log` as the repo's tracker. His
-`to-spec` and `triage` then write into our home
-([lane split](../agents/triage-labels.md#the-two-triage-lanes)).
-
-**His artifact skills own no paths — they ask the repo.** Read at grade A (§7):
-`to-tickets` §5 publishes "depending on the tracker `/setup-matt-pocock-skills`
-configured", and `.scratch/<feature-slug>/issues/` is only its *local-files fallback*;
-`wayfinder` says outright that where its map and tickets "physically live is
-tracker-specific", defaulting to local markdown **only when no tracker was provided**.
-
-**The temporal work folder therefore stays ours**, as `docs/work/`. Retiring it outright
-would only have made sense if his set owned that slot at a fixed path; it does not, so
-declaring our own path through the tracker socket composes with his skills exactly as
-well as deleting the slot would. That makes the tracker declaration the actual
-composition mechanism — it is what tells his skills where to publish; the shipped recipe is
-[`mattpocock-tracker-recipe.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/mattpocock-tracker-recipe.md),
-and [`mattpocock-coexistence.md`](mattpocock-coexistence.md) is its runbook. His taxonomy
-is spec → tickets → implement, with no "plans" artifact at all, so our `## Plan` block has
-no counterpart to defer to.
-
-**Known weakness of this seam — read out, and worse than "prose, not schema".** His setup
-writes `docs/agents/issue-tracker.md`, `docs/agents/domain.md`,
-`docs/agents/triage-labels.md`, and a `## Agent skills` block into `CLAUDE.md`/`AGENTS.md`.
-It carries an in-place rule for that block alone ("update its contents in-place rather than
-appending a duplicate") and is **silent on pre-existing `docs/agents/*`** — so
-bootstrap pre-writing the file has no skip guarantee and may simply be overwritten.
-Shipping a seed template connects to nothing either: his templates load from
-`./issue-tracker-*.md` inside his own skill folder, with no cross-plugin lookup path.
-
-**The socket that does work is the "Other" branch** — it ships no template and is authored
-at setup time from a description of the workflow. So the composable artifact is a
-description supplied at the prompt, not a file his loader reads. super-bootstrap ships that
-description as a plugin asset and the operator pastes it —
-[`mattpocock-tracker-recipe.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/mattpocock-tracker-recipe.md).
-
-The seed shape it would have to match is known: `Status:`, `Type:
-research|prototype|grilling|task`, `Blocked by: NN, NN`, a `## Comments` section, the
-publish–fetch–resolve operations, and a `map.md` wayfinding file. **Our cards carry
-[none of those fields](../agents/issue-tracker.md#field-shape)** — the scale module's fact
-fields are the only plausible home.
-
-**The middle of any sandwich can only be human-typed.** Every user-invoked skill sampled
-carries `disable-model-invocation: true` — `ask-matt`, `implement`, `grill-me`, `triage`
-(4/4). His user-invoked layer is unreachable to a model, which settles three questions at
-once:
-
-- A head that auto-dispatches into his router is **impossible, not mis-shaped**. `ask-matt`
-  emits a recommendation for the human to type over the 20 commands it routes; its input is
-  a situation question, not a work item.
-- **A dispatched subagent is also a model, so drain cannot drive his lane.** The wall is the
-  flag, not `wayfinder`'s one-ticket-per-session rule — that rule holds per-agent, since
-  each [drain worktree](../overview.md#data-flow) is its own atomic session and the entry
-  session orchestrates rather than works.
-- The only bypass is pasting his skill bodies into a dispatch prompt, which is the
-  distil-foreign-doctrine direction §6 already rules out.
-
-An unnamed middle is therefore the only mechanically available shape; our end of the seam
-stays head-and-tail by construction.
-
-**What bootstrap does at this seam is install-plus-prompt, and that is a ceiling, not a
-stage.** It seeds the paired pin (§6) and hands over the two moves it cannot make: the
-handoff message tells the operator to type `/setup-matt-pocock-skills`, and the shipped
-recipe is what they paste at the "Other" branch. This section's mechanical finding is what
-bounds it — the middle is human-typed, so no amount of pairing buys model-driven routing
-into his lane.
-
-**A second socket exists for coding standards:** his `code-review` reads
-`CODING_STANDARDS.md` / `CONTRIBUTING.md`, and a documented repo standard overrides its
-built-in Fowler baseline. [§ Coding Principles](../../CLAUDE.md#coding-principles) names that
-same file, so both surfaces read one standard. Repo-level coding principles belong there
-rather than as a mandatory skill
-invocation wired into CLAUDE.md.
-
 ## 5. Awareness wiring is the strongest uncontested position
 
-Docs existing ≠ the agent attending to them. The three systems solve this differently:
+Docs existing ≠ the agent attending to them. The two systems solve this differently:
 
 | System | Mechanism | Ambient cost | Grain |
 | --- | --- | --- | --- |
 | superpowers | full skill body injected every session | highest | none (global) |
-| mattpocock | static `## Agent skills` pointer block in CLAUDE.md | low | coarse |
 | super-bootstrap | `.claude/rules/*.md` with `paths:` frontmatter — full body fires when a matching file is read | **zero when irrelevant** | **decision moment** |
 
 [Path-scoped rules](../../CLAUDE.md#rules-auto-load-on-file-match) bind to **file paths, not
@@ -343,39 +233,15 @@ apparatus for.
 **Decided — the seeded runway names no harness.** The seeded `CLAUDE.md` and every
 scaffolded doc state disciplines, never skill entries; § The envelope carries no
 install pointer — the `resolve-plugins` skill description names the process-harness case, and
-the rationale lives here, not ambient. Bootstrap does seed the paired pin below, but a pin is a settings key: no
-seeded prose stands on it, which is exactly why dropping it costs no doc change.
+the rationale lives here, not ambient. Bootstrap seeds the core self-pin and nothing
+else: no seeded prose stands on a foreign harness, which is why taking or dropping one
+costs no doc change.
 
-**Decided — pairing (change B).** super-bootstrap and mattpocock/skills ship paired, on
-separate axes rather than as a swap (the swap framing is dead — superpowers is already
-de-routed): sb keeps its slots (§2), and no sb door routes his lane. The plugin installs
-once at device scope and sits disabled there; the enable is per repo, and bootstrap
-performs it along with the wiring a fresh repo needs — the awareness prompt and the
-tracker declaration (§4).
-
-Pairing is not hard coupling. Every sb door works with his lane absent, and a repo drops
-him by setting `"mattpocock-skills@mattpocock": false`. **The spelling is load-bearing:**
-deleting the key instead brings it back on the next sync as an approval row, because
-`harness-bootstrap` §2a skips present keys whatever their value and offers absent ones. `resolve-plugins` offers the paired pin for
-drop, never re-proposes a dropped one, and never re-fetches its trust signals.
-
-The pin reaches already-bootstrapped repos too, at their next sync — via a declinable [`⊕ new` row](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md) on the sync report, defaulting to accept; decline writes `false`. Under pairing that is the intended reach, not a leak.
-
-Composition is bounded to the three mechanically available surfaces (§4): awareness
-pointers the human types, the "Other" tracker socket declaring `docs/work/` +
-`/super-bootstrap:log` as the tracker, and his model-invoked discipline layer firing on
-description-match. The sb-only fallback stays open at tag `pre-mattpocock`; its cost is
-deleting the mattpocock-coupled cards.
-
-**Decided — live adoption is the trial; interface work waits for a real hand-off.** The
-seam's shape is read out of live runs, not designed against read skill text: §4's
-head/tail contracts are mechanically constrained (the middle is human-typed only) but the
-*content* of a head hand-off — what a work item must carry for his lane to consume it —
-is unknown until his lane has consumed one. Any interface proposal authored before that
-is speculation dressed as a contract. The observation apparatus is sb's own capture
-funnel — the repo running his set logs friction as cards. A lab-isolated greenfield run
-is not required; the per-repo enable plus the `pre-mattpocock` rollback tag keep reversal
-a disable-and-card-deletion away.
+**Decided — no process harness is paired or pinned (change B, reversed).** super-bootstrap
+seeds one pin, its own. A process harness is an ordinary `/super-bootstrap:resolve-plugins`
+candidate a repo takes or leaves, on separate axes from sb's slots (§2), and no sb door
+routes one. The pairing this repo shipped and then removed on a zero-usage read-out is a
+closed fork in [`docs/decisions.md`](../decisions.md).
 
 **Resolved — drain's anchor.** drain's own doc names its ceiling: "Capacity
 ceiling = how many halts the user can resolve, not machine throughput." The
@@ -393,7 +259,7 @@ question:
 
 | Gate shape | Mechanism | Parallelizable |
 | --- | --- | --- |
-| **Elicitation** — design settling, `grilling`'s dependency-ordered questions | question N+1 does not exist until answer N | **No** — batching destroys the mechanism |
+| **Elicitation** — design settling, dependency-ordered questioning | question N+1 does not exist until answer N | **No** — batching destroys the mechanism |
 | **Verification** — approve a finished diff, land a commit | the N checks are independent | **Yes** |
 
 drain is sound over verification-shaped halts and becomes engagement-monitoring exactly
@@ -402,25 +268,16 @@ conversation the human cannot hold N of concurrently. The halt audit found no
 elicitation-shaped halt inside drain's lane — design settling walls out at admission or
 via the typed `user` wall, one-shot per item.
 
-This is also why mattpocock's set reads as gate-maximal without being ceremony: his gates
-are almost entirely elicitation (`grilling` asks one question at a time, supplies a
-recommended answer, and lets no action proceed before confirmed alignment;
-`improve-codebase-architecture` proposes only; `triage` labels `ready-for-agent` vs
-`ready-for-human` rather than assuming either). Monitoring gates — approve-each-step with
-no information flowing back — are the antipattern, and he ships nearly none.
+### Change A is complete
 
-### Change A is complete; change B is resolved
-
-super-bootstrap routes no external process harness. The §4 grep returns only the two
-sanctioned classes, and the shape check holds beside it — zero name-hits was never
+super-bootstrap routes no external process harness. The §4 grep returns only the one
+sanctioned class, and the shape check holds beside it — zero name-hits was never
 sufficient on its own, since a stage chain renamed to harness-neutral words would still
 carry the foreign decomposition. The per-slot audit confirmed that risk was real:
 the staging ceremony (Design/Plan as default gates) was distillation residue — the [thread
 contract](../work/README.md#thread-contract) now carries them as conditional context-scope
 sections, and drain's stage set re-derives from grounding-native artifacts. The seeded runway
-names no harness
-(§6 above). The tracker-recipe deliverable §4 re-aimed ships as a plugin asset —
-[`mattpocock-tracker-recipe.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/mattpocock-tracker-recipe.md).
+names no harness (§6 above).
 
 Two constraints outlive the change:
 
@@ -428,7 +285,7 @@ Two constraints outlive the change:
   (`eligibility.md` Cloud-gate fallback) in the same change — without the venue map
   `intent == Cloud` is drain's whole admission gate (the intent lane guards — `Harness`,
   `Discuss` — sit in front of it either way).
-- A hit outside §4's two sanctioned classes is a regression, whether it dispatches or only
+- A hit outside §4's one sanctioned class is a regression, whether it dispatches or only
   reads as prose.
 
 **Vacating means naming the discipline and shipping nothing.** A card whose fix reads
@@ -440,41 +297,11 @@ foreign harness to another rebuilds the coupling change A paid to remove.
 Verification grades: **A** = literal text read; **B** = model-summarized fetch, claims
 usable but not quotable; **C** = inferred, unverified.
 
-**Dimension boundary.** The External and Internal tables are a provenance index: each row
-claims something about an unversioned external artifact tracked at `main`, so the read date
-is the only bound its validity has and no other record holds it. Dates belong in those two
-tables, plus a version-bound pin where one applies. Everything else in this doc is state
-prose — it carries no dates and no card references.
-
-### External
-
-| Resource | URL | Grade | Notes |
-| --- | --- | --- | --- |
-| mattpocock/skills README | `https://raw.githubusercontent.com/mattpocock/skills/main/README.md` | A | Full text retrieved; philosophy + skill index + the user-invoked/model-invoked composition rule |
-| `setup-matt-pocock-skills` issue-tracker options | `.../skills/engineering/setup-matt-pocock-skills/SKILL.md` | **A** | Option list + CLAUDE.md block quoted verbatim (2026-07-25). Re-read for file-collision behavior (2026-07-27): writes `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, `docs/agents/triage-labels.md`, and a `## Agent skills` block into `CLAUDE.md`/`AGENTS.md`. In-place-update rule exists **for that block only**; **silent on pre-existing `docs/agents/*`**. Templates load from `./issue-tracker-{github,gitlab,local}.md`, `./triage-labels.md`, `./domain.md` inside his own skill folder — no cross-plugin lookup path |
-| `tdd` | `.../skills/engineering/tdd/SKILL.md` | B | Seam-confirmation gate, three forbidden anti-patterns, vertical-slice rule |
-| `code-review` | `.../skills/engineering/code-review/SKILL.md` | **A** | Literal text (2026-07-26). Step 4 pins no tier: "Use the `general-purpose` subagent for both." Parallel is for isolation — "so they don't pollute each other's context"; step 5 forbids reranking across axes. Sub-agent prompts paste the smell baseline in full because "the sub-agent has no other access to it" |
-| `implement` | `.../skills/engineering/implement/SKILL.md` | **A** | Literal text (2026-07-26). Nine lines, `disable-model-invocation: true`, dispatches nothing — a session-level orchestration note pointing at `/tdd` and `/code-review` |
-| `research` | `.../skills/engineering/research/SKILL.md` | **A** | Literal text (2026-07-26). "Spin up a **background agent** to do the research, so you keep working while it reads" — offload stated outright, no tier pinned. Primary sources only; findings to one Markdown file matching the repo's existing convention |
-| `to-tickets` | `.../skills/engineering/to-tickets/SKILL.md` | **A** | Literal text (2026-07-26). **Owns no path**: §5 publishes to whatever `/setup-matt-pocock-skills` configured — `.scratch/<feature-slug>/issues/<NN>-<slug>.md` is the *local-files fallback branch*, a real tracker takes native issues. Tracer-bullet vertical slices, `Blocked by:` edges, expand–contract for wide refactors |
-| `wayfinder` | `.../skills/engineering/wayfinder/SKILL.md` | **A** | Literal text (2026-07-26). "**Never resolve more than one ticket per session** — with the exception of research tickets." Research tickets are AFK, "Resolved by a `/research` **subagent**"; prototype / grilling / task are HITL and stay in-session. Physical location "is tracker-specific", defaulting to local-markdown only when none is provided |
-| `to-spec` | `.../skills/engineering/to-spec/SKILL.md` | B | Publishes to tracker; no interview; publication format unconfirmed |
-| `diagnosing-bugs` | `.../skills/engineering/diagnosing-bugs/SKILL.md` | **A** | Literal text (2026-07-26). Six phases; "**This is the skill**" is phase 1, a tight red-capable feedback loop, with "no red-capable command, no Phase 2" as a hard gate. Then 3–5 ranked falsifiable hypotheses shown to the user before testing, one-variable instrumentation with tagged debug logs, regression test at a correct seam (absence of one is itself the finding). Assumes a runtime to go red against — read-only verdict work has none |
-| `triage` | `.../skills/engineering/triage/SKILL.md` | **A** | Literal text (2026-07-27). `disable-model-invocation: true`. Two-layer labels — one category role (`bug` \| `enhancement`) + one state role (`needs-triage → needs-info → ready-for-agent \| ready-for-human \| wontfix`). **Targeted verification, not root-cause analysis**: reproduce (bugs) or read the diff (PRs), redundancy search by domain concept, prior-rejection check against `.out-of-scope/*.md`. Writes AI-labelled issue comments, agent briefs, triage notes, `.out-of-scope/` entries. `/grilling` + `/domain-modeling` invoked inline and conditionally |
-| `ask-matt` | `.../skills/engineering/ask-matt/SKILL.md` | **A** | Frontmatter read (2026-07-27): `disable-model-invocation: true`. Routes 20 user-invoked commands and **emits a recommendation for the human to type** — a recommender, not a dispatcher. Input is a situation question, not a work item |
-| `grill-me` | `.../skills/productivity/grill-me/SKILL.md` | **A** | Frontmatter read (2026-07-27): "A relentless interview to sharpen a plan or design", `disable-model-invocation: true`. Opens a `/grilling` session; lands no artifact, hands off to no downstream skill |
-| `grilling` | `.../skills/productivity/grilling/SKILL.md` | **A** | Literal text (2026-07-27). **One question at a time**, awaiting the answer before the next; a recommended answer supplied with each; factual claims verified against the environment while decision answers are queued into the decision tree; dependencies resolved sequentially. Purely conversational — no artifact, no path. Ends on shared understanding; **no action proceeds without explicit confirmation of alignment** |
-| `improve-codebase-architecture` | `.../skills/engineering/improve-codebase-architecture/SKILL.md` | **A** | Literal text (2026-07-27). `disable-model-invocation: true`. Walks commit history for hot spots, dispatches `subagent_type=Explore` to scan for architectural friction (shallow modules, poor locality, leaky seams), applies a deletion test, writes a **self-contained HTML report to a tmpdir** for the user to pick from, then hands the pick to `/grilling`. **Proposes only** — implements after confirmation during grilling |
-| `domain-modeling` / `CONTEXT.md` | `.../skills/engineering/domain-modeling/SKILL.md` | **A** | Literal text (2026-07-27). `CONTEXT.md` is **a glossary and nothing else** — "totally devoid of implementation details… not a spec, a scratch pad, or a repository for implementation decisions". **Zero product/business dimension** (no ICP, problem, market, target user). **No staleness protocol** — only a session-time check: "when the user states how something works, check whether the code agrees… surface it" |
-| `issue-tracker-local.md` seed template | `.../setup-matt-pocock-skills/issue-tracker-local.md` | B | Seed shape a tracker declaration must match: `Status:`, `Type: research\|prototype\|grilling\|task`, `Blocked by: NN, NN`, `## Comments`; publish–fetch–resolve operations; `map.md` holding Notes / Decisions-so-far / current fog |
-| `writing-great-skills` | `.../skills/productivity/writing-great-skills/SKILL.md` | **A** | Literal text (2026-07-26). Predictability as root virtue; invocation / information hierarchy / granularity / pruning / leading words / failure modes. **States no dispatch doctrine** — subagents, tiers, and offload appear nowhere in his authoring reference |
-| mattpocock `docs/` tree | `https://github.com/mattpocock/skills/tree/main/docs` | C | Only `engineering/` + `productivity/` subdirs visible; contents unread |
-| ADR on shipping as a plugin | `.agents/adr/0002-ship-as-a-claude-code-plugin.md` (in his repo) | C | Referenced by README, unread |
-
-Install paths (per his README): `npx skills@latest add mattpocock/skills` (editable
-copy) or `/plugin marketplace add mattpocock/skills` + `/plugin install
-mattpocock-skills@mattpocock` (managed bundle). Both require
-`/setup-matt-pocock-skills` once per repo.
+**Dimension boundary.** The Internal table is a provenance index: each row records a
+measurement taken on a moving artifact, so the read date is the only bound its validity has
+and no other record holds it. Dates belong in that table, plus a version-bound pin where one
+applies. Everything else in this doc is state prose — it carries no dates and no card
+references.
 
 ### Internal
 
@@ -488,72 +315,9 @@ mattpocock-skills@mattpocock` (managed bundle). Both require
 | todo dispatch-lane driver cost | `agents/todo.md` | A | ~33.5k subagent tokens / ~197 s for a 3-row board; ~34.3k / ~226 s for 4 rows. Measures the agent dispatch, since demoted to the script-failure fallback — the primary render is the bundled `render-board.py` (zero model tokens) |
 | Shipped CLAUDE.md skeleton | `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` | A | Carries the routing table into every bootstrapped repo |
 
-### His path per card shape
-
-| Card shape | His path | Method core |
-| --- | --- | --- |
-| Build / feature | `grill-me`→`grilling` → `to-spec` → `to-tickets` → `wayfinder` → `implement` (`tdd` + `code-review`) | Elicitation first, one question at a time; tickets carry `Type` + `Blocked by` edges; one ticket per session |
-| Bug fix | `diagnosing-bugs` | Six phases with "build a tight, red-capable feedback loop" as a **hard gate** — no red-capable command, no Phase 2 — then 3–5 ranked falsifiable hypotheses shown before testing |
-| Triage | `triage` | **Label state machine, not root cause.** Inbox sorting over the config-declared tracker (external-PR coverage is config-gated — off in this repo); targeted verification, redundancy search, prior-rejection check; emits agent brief or triage note |
-| Maintenance / debt | `improve-codebase-architecture` | Commit-history hot spots → `Explore` subagent scan → deletion test → throwaway HTML report for the human to pick → `/grilling`; proposes only |
-
-Three cross-cutting artifacts carry the state: `CONTEXT.md` (glossary, maintained by
-`domain-modeling`), `docs/adr/` (why-decided), `.out-of-scope/*.md` (rejected enhancements).
-The last is the counterpart of [`docs/decisions.md`](../decisions.md), narrower — it admits
-rejected enhancements only, while ours admits closed forks across every domain.
-
-**Two lanes collide by name, not by work.** His `triage` sorts an inbox; our
-`/super-bootstrap:triage` is a cold single-card grounding phase (premise verify / aim
-validate / blast collect). They coexist. The surface an external-coverage vacate of our lane
-would have to clear is therefore `diagnosing-bugs`, not his `triage` — and it does not clear
-it: a per-bullet read at grade A found zero coverage, so that direction is closed
-([`docs/decisions.md`](../decisions.md)).
-
-### Questions carried into live coexistence
-
-1. Head-contract content — what a work item must carry for his lane to consume it —
-   stays unknown until a live hand-off happens; interface work waits on it (§6).
-2. drain's wall-vs-progress ratio — unmeasured; §6's elicitation-vs-verification
-   classification is resolved (elicitation excluded at admission, remaining halts
-   batch), leaving only the ratio itself to instrument if load grows.
-3. His set's ambient token weight — measured at v1.2.3 install (2026-08-08): the repo tree
-   carries 35 `SKILL.md`, but `plugin.json` registers 25 and an explicit `skills` array is
-   an allowlist, so the loaded set is those 25 — 14 user-invoked (model-unreachable) and 11
-   model-invocable whose descriptions load ambient at ~2.3k chars ≈ 0.6k tokens. The 10
-   unregistered folders (`in-progress/`, `misc/`) never load, 4 of them model-invocable —
-   count the manifest, not the tree. The model-invocable set includes `tdd`,
-   `code-review`, `grilling`, `diagnosing-bugs`, `domain-modeling` — the
-   description-match discipline layer is wider than the 4/4 user-invoked sample above.
-### His dispatch posture — settled at grade A
-
-Dispatch is not his default; it fires at three triggers and nowhere else.
-
-- **Isolation** — `code-review` runs its two axes as parallel sub-agents "so they don't
-  pollute each other's context", and forbids reranking across them at aggregation.
-- **Offload** — `research` spins up a background agent "so you keep working while it
-  reads". The description sells it as "reading legwork delegated to a background agent".
-- **Scan** — `improve-codebase-architecture` dispatches `subagent_type=Explore` to sweep for
-  architectural friction before it has candidates to show. Still no tier pinned.
-
-Everything else stays in-session. `wayfinder` states the rule outright — **"never resolve
-more than one ticket per session — with the exception of research tickets"** — and its
-ticket taxonomy carries the same seam: `research` is AFK and subagent-resolved, while
-`prototype` / `grilling` / `task` are human-in-the-loop and never dispatched. `implement`
-is nine lines and dispatches nothing.
-
-So the posture *is* session-as-atomic-runner, with bounded reading as the sole sanctioned
-exit. It is not an isolation-specific exception.
-
-**No model tier appears anywhere in his set** — `code-review` actively specifies
-`general-purpose` for both axes, and `writing-great-skills`, his authoring reference,
-states no dispatch doctrine at all: its levers are invocation, information hierarchy,
-granularity, pruning, and leading words.
-
-That absence does not convict our tier pins. His skills delegate the model choice to the
-session because cost is not a concern his set addresses; ours pin because dispatch grade
-and cost are the same decision here. The two answer different questions, so neither is
-copied from the other — but our pins carry no written justification, and a pattern nobody
-wrote a reason for is indistinguishable from one nobody chose.
+**Our dispatch tier pins carry no written justification.** Dispatch grade and cost are the
+same decision here, which is why the pins exist at all — but a pattern nobody wrote a reason
+for is indistinguishable from one nobody chose.
 
 ## 8. Downstream migration — what adopt mode does and does not cover
 
@@ -584,6 +348,7 @@ on the owned list.
 | § Coding Principles body replaced | section retained on the owned list | Yes |
 | triage lane's doctrine clause restated inline | `plugins/super-bootstrap/**` ships with the plugin, never scaffolded into a consumer repo | N/A downstream |
 | todo lane's `brainstorm` vocabulary renamed + `/brainstorm` empty-state door repointed | same — `shared/`, `agents/`, `skills/todo/` all ship with the plugin | N/A downstream |
+| `mattpocock-skills` paired pin removed from § 2a | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** An already-bootstrapped consumer keeps the seeded key; it is inert once the plugin is uninstalled there, and clearing it is a hand-sweep |
 | `superpowers` core pin removed from § Core plugin pin | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** 2a never strips the pin from an already-bootstrapped repo, so removal there is a hand-sweep — which §6 permits, its de-routing resting on the dissolve test rather than on uninstalling anything |
 
 **The folder hole is closed rather than accepted.** The rename to `docs/work/`

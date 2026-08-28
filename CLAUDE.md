@@ -170,19 +170,3 @@ Markdown-authored Claude Code plugin + self-hosted marketplace — no language r
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)
 
 > `docs/specs/` = permanent source of truth; working design and plan live as blocks on the owning card's thread.
-
-## Agent skills
-
-Configuration read by the installed mattpocock/skills set ([coexistence runbook](docs/specs/mattpocock-coexistence.md)).
-
-### Issue tracker
-
-This repo's card tracker (§ Planning). See [`docs/agents/issue-tracker.md`](docs/agents/issue-tracker.md).
-
-### Triage labels
-
-The canonical five, mapped onto card state (`## Verdict` block). See [`docs/agents/triage-labels.md`](docs/agents/triage-labels.md).
-
-### Domain docs
-
-Single-context, retargeted at `docs/` (`overview.md` = CONTEXT role, `decisions.md` = ADR role). See [`docs/agents/domain.md`](docs/agents/domain.md).

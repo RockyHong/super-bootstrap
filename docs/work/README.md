@@ -20,7 +20,7 @@ New cards enter via `/super-bootstrap:log` (classify + dedup + ID assignment) or
 
 No phase prescription per category — triage decides [how much ceremony the work earns](../../CLAUDE.md#sizing--scale-ceremony-to-the-works-shape) at pickup.
 
-**ID high-water mark:** `BUG-054` · `DEBT-107` · `GAP-068` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved cards are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from live files.
+**ID high-water mark:** `BUG-054` · `DEBT-108` · `GAP-068` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved cards are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from live files.
 
 <!-- scale-module: fact fields -->
 
@@ -45,7 +45,7 @@ No phase prescription per category — triage decides [how much ceremony the wor
 
 **Origin block** (H1 + field lines) — frozen at capture; the breadcrumb at the top of the thread.
 
-**Five block types**, each appended at end of file, dated + sourced — context-scope sections assembled on need, [never stages a card must pass](../specs/harness-architecture.md#change-a-is-complete-change-b-is-resolved):
+**Five block types**, each appended at end of file, dated + sourced — context-scope sections assembled on need, [never stages a card must pass](../specs/harness-architecture.md#change-a-is-complete):
 
 - `## Amendment — {date} · {source}` — reframe, premise supersession, new fact, NEEDS_CONTEXT answer.
 - `## Verdict — auto-fix|surface · {date}` — triage output.

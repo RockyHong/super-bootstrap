@@ -150,7 +150,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `docs/work/README.md`, `docs/work/TEMPLATE.md`, `docs/work/bootstrap.md`
 - `.claude/rules/index.md` (rule-authoring guide)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
-- `.claude/settings.json` plugin pins (`enabledPlugins`, `extraKnownMarketplaces`) — the core pin drift-checked for presence alone, the paired pin raising an approval row when its key is absent on a sync (§ 2a)
+- `.claude/settings.json` core plugin pin (`enabledPlugins`, `extraKnownMarketplaces`) — drift-checked for presence alone (§ 2a)
 - `.claude/super-bootstrap-runway.json` (runway coverage receipt `{ version, covered, declined, placed }` — presence + content checked, not diffed section-by-section; read at Phase 1, written at 2c — `covered` / `declined` from the sync-report rows, `placed` from the file assets the ensure-infra procedures copied or verified current; durable marker, no cleaner — persists for the life of the harness)
 - Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `docs/outward/README.md` + `docs/outward/TEMPLATE.md` (whole files, the way `docs/work/README.md` / `docs/work/TEMPLATE.md` are), `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md` — whole body, prose included), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`), the CLAUDE.md § Rules `venue-map.md` bullet block (drift-checked against `assets/claude-md-skeleton.md` § Rules)
 
@@ -167,7 +167,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 
 ### 2a: Folders & core plugin pin
 
-Folders + the core plugin pin don't drift — only two states: missing or present, because the skeleton's `/super-bootstrap:*` doors and the committed `commit-channel.sh` dangle without that pin. The paired pin carries a decision moment instead (below).
+Folders + the core plugin pin don't drift — only two states: missing or present, because the skeleton's `/super-bootstrap:*` doors and the committed `commit-channel.sh` dangle without that pin.
 
 **Migrate before creating — `docs/superpowers/` → `docs/work/`.** Repos bootstrapped
 before the rename hold their temporal specs and plans under `docs/superpowers/`. Creating
@@ -212,28 +212,18 @@ Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no su
 
 It is a **core dep, not an adaptive pick** — pinned here at 2a so tier-2 curation (`/super-bootstrap:resolve-plugins`, run later by `/super-bootstrap`) layers adaptive picks on a guaranteed base. Dangling-rule risk: if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently. Pin first.
 
-A second plugin pins beside it in its own class — a **paired pin**:
-
-- `mattpocock-skills` — the process harness super-bootstrap ships paired with. Seeded like a core dep on a fresh install, offered as a sync row where a runway already stands, and **droppable per repo** either way: no runway door depends on his lane, so a repo may run without it.
-
-Keep every pipeline-owned surface free of paired-pin command names — the skeleton's route rows name disciplines, not skill entries. Dropping the paired pin then stays a settings edit: no doc change, no dangling-rule risk.
-
-**Drop spelling is load-bearing.** A repo drops the paired pin by setting its value to `false` — **never** by deleting the key. The merge rule below is what persists the drop: a present key is skipped whatever its value, while an absent key comes back on the next sync as a row to resolve.
+Keep every pipeline-owned surface free of foreign-plugin command names — the skeleton's route rows name disciplines, not skill entries. A process harness a repo adds on its own then stays a settings edit: no doc change, no dangling-rule risk.
 
 Ensure `.claude/settings.json` contains:
 
 ```json
 {
   "enabledPlugins": {
-    "super-bootstrap@super-bootstrap": true,
-    "mattpocock-skills@mattpocock": true
+    "super-bootstrap@super-bootstrap": true
   },
   "extraKnownMarketplaces": {
     "super-bootstrap": {
       "source": { "source": "github", "repo": "RockyHong/super-bootstrap" }
-    },
-    "mattpocock": {
-      "source": { "source": "github", "repo": "mattpocock/skills" }
     }
   }
 }
@@ -242,18 +232,9 @@ Ensure `.claude/settings.json` contains:
 - File missing → create with this minimal shape.
 - Key already present → skip (`✓ pinned`), whatever its value.
 - Core-pin key absent → merge it in.
-- Paired-pin key absent on a fresh install (no runway here yet) → merge it in beside the core pin.
-- Paired-pin key absent on a sync (a runway already present) → render it as an `⊕ new` row on the sync report (§ 2b) and resolve the row before writing (default: accept): accept merges `true`, decline writes `false`. One row covers both of the pin's keys — accept or decline, the `mattpocock` `extraKnownMarketplaces` entry lands, so a later re-enable resolves from the pin alone.
 - Other `.claude/settings.json` content → never touched.
 
-Both live outside the official marketplace, so their `extraKnownMarketplaces` entries are required for cloud / fresh-machine resolution. Tier-2 curation (`/super-bootstrap:resolve-plugins`) reads the two classes apart:
-
-- **The core pin** (`super-bootstrap`) is **locked** — never proposes drop, never re-prompts the user.
-- **The paired pin** (`mattpocock-skills`) is **droppable** — offered for drop, never re-proposed once dropped (`false` is a present key), trust signals never re-fetched.
-
-Adaptive picks (stack-matched skills / MCPs / hooks) layer on top when curation runs.
-
-**Consequence on an already-bootstrapped repo.** The paired pin's keys are absent there, so the next sync carries the pin as an `⊕ new` row (default accept) the installer resolves before the commit. A repo that already dropped the pin carries `false`, hits the skip branch, and stays dropped.
+The core pin lives outside the official marketplace, so its `extraKnownMarketplaces` entry is required for cloud / fresh-machine resolution. Tier-2 curation (`/super-bootstrap:resolve-plugins`) reads it as **locked** — never proposes drop, never re-prompts the user. Adaptive picks (stack-matched skills / MCPs / hooks) layer on top when curation runs.
 
 ### 2a-hooks: Harness hooks (default-on)
 
@@ -343,7 +324,7 @@ On greenfield (no manifest, no source files), `overview.md` / `techstack.md` wri
 - **Exists, drifted in pipeline-owned section** → diff that section vs template, present to user, get approval per section, write approved.
 - **Exists, pipeline-owned section absent** → `⊕ new` row: render the template section at Block 2, get approval, insert at the skeleton-defined position relative to the surviving sections.
 - **CLAUDE.md § Rules, scale module installed** → the skeleton's shipped `venue-map.md` bullet block is this section's only template-fixed content — the remaining bullets mirror the repo's own seeded rules and stay project-owned. No `venue-map.md` bullet in the section → `⊕ new`, append the shipped block verbatim as the last bullet of the bullet list, one blank line above it. Bullet present → compare its fires-on list and key-point lines to the shipped block (the lead line keeps the section's own bullet form and any repo-local marker): same → `✓ matches`; differs → `⚠ drifted`, show the diff, write on approval.
-- **`.claude/settings.json` plugin pins** → one row per pin: key present → `✓ pinned`; core-pin key absent → `⊕ new`, resolving `inserted` with no prompt; paired-pin key absent on a sync → `⊕ new` expanded at Block 2 with the pin's keys as its body, prompt `(Y/n)` — accept is the default — resolving `inserted` or `declined` per § 2a. The paired-pin prompt names both outcomes: accept loads that harness's skills into every session here, decline is durable.
+- **`.claude/settings.json` core plugin pin** → key present → `✓ pinned`; key absent → `⊕ new`, resolving `inserted` with no prompt (§ 2a).
 - **Exists, current** → mark `✓ current`. **Still show the per-section comparison briefly** (one-line per pipeline-owned section: `[Runtime] ✓ matches`, `[Framework] ✓ matches`, etc.) — asserting "current" without showing the comparison is a gap.
 - **Project-owned content** → never touched, even on drift.
 - **Legacy / unrecognized format** — if existing doc structure doesn't align with template sections (different headings, merged sections, doc was written by an older version of this skill or by hand) → surface as **legacy format detected**, propose: `(a) rewrite to current skeleton format (preserves grown sections), (b) leave as-is and accept template drift, (c) show full template-vs-current diff`. **Do not silently skip drift detection** because section names don't match — that hides real drift.
@@ -554,7 +535,6 @@ Per-candidate handling:
 | CLAUDE.md: Doc Sync                 | ✓ current    | —                   |
 | docs/techstack.md: Runtime          | ⚠ drifted    | updated (approved)  |
 | .claude/rules/mv3.md                | ⊕ new        | seeded (signal: MV3 manifest) |
-| .claude/settings.json: paired pin   | ⊕ new        | inserted (approved) |
 | registration: docs/outward/ → README.md docs list (illustrative — name what the greps hit) | ⊕ new | updated |
 | registration: .claude/skills/commit/ → none | ⊘ removed | none |
 ```
@@ -569,7 +549,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/techstack.md` (new, skeleton-section drift or insert, or post-migration absorbed content)
 - `docs/overview.md` (new, skeleton-section drift or insert)
 - `docs/decisions.md` (new, scope-header drift, post-retirement migration from techstack, or closed-history rows from legacy CLAUDE.md migration)
-- `.claude/settings.json` (core pin seeded at 2a, paired pin seeded there or resolved by its sync row; harness hooks merged at 2a-hooks; drain's `PreToolUse(Read)` guard merged at 2a-drain)
+- `.claude/settings.json` (core pin seeded at 2a; harness hooks merged at 2a-hooks; drain's `PreToolUse(Read)` guard merged at 2a-drain)
 - `.claude/hooks/commit-channel.sh`, `.claude/hooks/consult-check-{sessionstart,check}.sh` (frozen hook scripts seeded at 2a-hooks — always, default-on)
 - `.gitignore` (when any 2a step appended a line — 2a-hooks' `.claude/.consult-catalog`, 2a-drain's `.claude/worktrees/` + `.drain-status`; skip if every line was already present)
 - `.claude/templates/worktree-settings.local.json` (drain worktree settings template — only if placed or refreshed on drift this run at 2a-drain)
@@ -598,14 +578,7 @@ After committing (or reporting no changes needed), present results based on repo
 
 **First-run (just scaffolded):**
 
-> **Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. The core plugin pin (super-bootstrap) and the paired pin (mattpocock-skills) sit in `.claude/settings.json`; stack-matched skill / MCP / hook picks come when `/super-bootstrap` runs gated tier-2 curation. Everything this run installed is in the scaffold commit — `git show --stat HEAD`.
->
-> {If the paired pin landed this run (`mattpocock-skills@mattpocock` is `true`): "**The paired process harness is enabled here — two steps only you can run.**
->
-> His lane is user-invoked: a model cannot call these, you type them. Shape the work — `/grill-me`, `/grill-with-docs`, `/to-spec`, `/to-tickets`, `/wayfinder`, `/implement`. Sweep and sort — `/improve-codebase-architecture`, `/triage`. Session moves — `/handoff`, `/teach`, `/to-questionnaire`, `/wait-what`, `/ask-matt`.
->
-> 1. Type `/setup-matt-pocock-skills`. It writes his `docs/agents/*` config and a CLAUDE.md § Agent skills block; nothing here pre-wrote those files, and it is model-unreachable, so this step is yours.
-> 2. At its issue-tracker question pick **Other**, then paste the recipe at [`assets/mattpocock-tracker-recipe.md`](assets/mattpocock-tracker-recipe.md) — it declares this repo's `docs/work/` cards and `/super-bootstrap:log` as the tracker. Render it inline on request."}
+> **Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. The core plugin pin (super-bootstrap) sits in `.claude/settings.json`; stack-matched skill / MCP / hook picks come when `/super-bootstrap` runs gated tier-2 curation. Everything this run installed is in the scaffold commit — `git show --stat HEAD`.
 >
 > {If product skeletons are empty (greenfield): "`docs/overview.md` / `docs/techstack.md` are empty skeletons — `/super-bootstrap` seeds GAP cards for them and surfaces the resolve gate."}
 >

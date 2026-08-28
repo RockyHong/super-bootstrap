@@ -52,7 +52,7 @@ Re-run any time — incremental, never overwrites your edits. A re-run also reti
 | Path | Behavior |
 |---|---|
 | `CLAUDE.md` | **Layered** per-section — never overwritten. Diff shown before any write. |
-| `.claude/settings.json` | **Merged** — adds `enabledPlugins` + `extraKnownMarketplaces` for two pin classes: the core self-pin and the [paired `mattpocock-skills` pin](docs/techstack.md#key-dependencies) (drop it by setting its value to `false` — deleting the key returns it as a declinable row on the next sync); your other settings preserved. |
+| `.claude/settings.json` | **Merged** — adds `enabledPlugins` + `extraKnownMarketplaces` for the [core self-pin](docs/techstack.md#key-dependencies); your other settings preserved. |
 | `CODING_STANDARDS.md` | **Seeded** headings-only at the repo root — preamble + section headings drift-checked on re-run, section content is yours and fills via doc-sync. |
 | `docs/`, `.claude/rules/` | **Seeded** with new files from detected stack. User-grown content never touched on re-run. |
 | `.claude/hooks/` | **Installed** by default — three hook assets: `commit-channel` (PreToolUse) confines raw `git commit` to the main-session commit door — worker subagents are routed back to `/super-bootstrap:commit`, which runs commit mechanics gateway-inline, runs a bundled link-integrity check every commit, and dispatches a cold doc-sync scan on a grep, declared-citer, or link-target hit and a premise-closure judge on a product-anchor hit. The `consult-check` pair (SessionStart + UserPromptSubmit) derives a compact `docs/**` catalog once per session and injects a forced per-doc relevance evaluation at every prompt — the read boundary's activation layer. |
@@ -95,8 +95,7 @@ Not day-to-day — run when the moment calls:
 
 | Tool | Role |
 |---|---|
-| [mattpocock/skills](https://github.com/mattpocock/skills) | Paired process harness, auto-pinned in `.claude/settings.json` — and droppable per repo: set its `enabledPlugins` value to `false` and it stays dropped. Nothing scaffolded names his commands, so dropping him needs no doc change and breaks no door. |
-| [superpowers](https://github.com/obra/superpowers) | Alternative process harness — an ordinary curation candidate, not pinned. The scaffolded CLAUDE.md names disciplines (root cause before fix, settle the design, write the sequence), so any harness slots in without the harness knowing its name. |
+| [superpowers](https://github.com/obra/superpowers) | Process harness — an ordinary curation candidate, never pinned. The scaffolded CLAUDE.md names disciplines (root cause before fix, settle the design, write the sequence), so any harness slots in without the harness knowing its name. |
 | [claude-code-setup](https://claude.com/plugins/claude-code-setup) | Anthropic's plugin recommender — fast-path source if installed |
 | [Anthropic plugin marketplace](https://claude.com/plugins) | Anthropic-vetted skills, MCPs, hooks, subagents |
 | [modelcontextprotocol/registry](https://github.com/modelcontextprotocol/registry) | Official MCP discovery registry — indexes reference impls + community |

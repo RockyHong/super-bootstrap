@@ -74,7 +74,6 @@
   },
   "enabledPlugins": {
     "super-bootstrap@super-bootstrap": true,
-    "mattpocock-skills@mattpocock": true,
     "axioms@axioms-protocol": true
   },
   "extraKnownMarketplaces": {
@@ -82,12 +81,6 @@
       "source": {
         "source": "github",
         "repo": "RockyHong/super-bootstrap"
-      }
-    },
-    "mattpocock": {
-      "source": {
-        "source": "github",
-        "repo": "mattpocock/skills"
       }
     },
     "axioms-protocol": {
