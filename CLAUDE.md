@@ -124,6 +124,7 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
   • State which copy is under test (published vs in-repo dev). Route findings by provenance: this repo's own artifacts → `/super-bootstrap:log`; served or imported copies (under this repo's `.claude/` too) → `/contribute`, never a local-clone edit.
   • Taste-coupling: dogfood harness (this repo's own CLAUDE.md/rules) may wire served guidelines; shipped skeletons (`plugins/*/skills/*/assets/**`) must be self-contained — downstream ≠ author.
   • Sync direction: editing a dogfood-harness section pulls any shipped-skeleton counterpart into the edit's closure; propagate stripped of dogfood-only refs, or state it's dogfood-specific.
+  • Owned-lore home: `.claude/guidelines/work-discipline/` is served and clone-replaced whole on sync; lore this repo owns lives in `.claude/guidelines/local/`.
 - **`skill-authoring.md`** (native) — fires on `plugins/*/skills/**`
   • Skill edits route by test surface: behavior-shaping prose → RED first (micro-test floor); mechanical → audit + release checks.
 - **`venue-map.md`** (native) — fires on `docs/work/README.md`, `docs/test-queue.md`
