@@ -315,10 +315,6 @@ references.
 | todo dispatch-lane driver cost | `agents/todo.md` | A | ~33.5k subagent tokens / ~197 s for a 3-row board; ~34.3k / ~226 s for 4 rows. Measures the agent dispatch, since demoted to the script-failure fallback — the primary render is the bundled `render-board.py` (zero model tokens) |
 | Shipped CLAUDE.md skeleton | `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` | A | Carries the routing table into every bootstrapped repo |
 
-**Our dispatch tier pins carry no written justification.** Dispatch grade and cost are the
-same decision here, which is why the pins exist at all — but a pattern nobody wrote a reason
-for is indistinguishable from one nobody chose.
-
 ## 8. Downstream migration — what adopt mode does and does not cover
 
 `harness-bootstrap` § Phase 2 applies a per-artifact rule: missing → write; matches
