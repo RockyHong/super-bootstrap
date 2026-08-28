@@ -144,7 +144,7 @@ SLUG_AWK='
     # the slug (GitHub drops them) — extend the list on report, never widen the
     # class.
     gsub(/[]!"#$%&\047()*+,.\/:;<=>?@[\134^`{|}~\t\r]/, "", s)
-    gsub(/—|–|…|：|，|。|、|（|）|「|」|『|』|【|】|！|？|；|·|“|”|‘|’/, "", s)
+    gsub(/—|–|…|：|，|。|、|（|）|「|」|『|』|【|】|！|？|；|·|“|”|‘|’|×|÷|±|§|°|¶|•|→|←|↔|≠|≈|′|″/, "", s)
     gsub(/ /, "-", s)
     print (NUMBERED == 1 ? NR "\t" : "") s
 }

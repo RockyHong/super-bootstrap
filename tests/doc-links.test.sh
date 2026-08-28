@@ -253,6 +253,53 @@ fi
 slug="$(cd "$TMP/cjk2" && bash "$LINKS" anchors docs/e.md +5)"
 check "anchors prints the GitHub slug for the CJK heading (got: $slug)" [ "$slug" = "3-後台數據" ]
 
+echo "== doc-links: BUG-055 — non-ASCII punctuation/symbols GitHub strips are stripped =="
+# §/°/×/→ survived into the slug, so links written in GitHub's own anchor form
+# reported broken on every commit (four field reports: GH #57/#58/#59/#60). The
+# portable-awk dialect rules out a unicode-category class (SLUG_AWK's own header),
+# so the alternation is extended per character — every one of them locked here,
+# with a CJK control so an over-broad fix fails at the point of change.
+MARKS="× ÷ ± § ° ¶ • → ← ↔ ≠ ≈ ′ ″"
+mkdir -p "$TMP/marks/docs"
+{
+  echo "# Marks"
+  echo
+  echo "## m0 中文 z"
+  echo
+  i=0
+  for m in $MARKS; do
+    i=$((i+1))
+    printf '## m%s %s z\n\n' "$i" "$m"
+  done
+} > "$TMP/marks/docs/m.md"
+{
+  echo "# Citer"
+  echo
+  echo "See [m0](m.md#m0-中文-z)."
+  i=0
+  for m in $MARKS; do
+    i=$((i+1))
+    echo "See [m$i](m.md#m$i--z)."
+  done
+} > "$TMP/marks/docs/c.md"
+
+out="$(cd "$TMP/marks" && bash "$LINKS" check 2>&1)"; rc=$?
+if [ "$rc" -eq 0 ] && [ -z "$out" ]; then
+  ok "GitHub-form anchors over the reported mark set resolve, check exits 0"
+else
+  bad "GitHub-form anchors over the reported mark set resolve, check exits 0 (rc=$rc)"
+  printf '%s\n' "$out" | sed 's/^/        /'
+fi
+
+slug="$(cd "$TMP/marks" && bash "$LINKS" anchors docs/m.md +3)"
+check "CJK control: unicode letters kept (got: $slug)" [ "$slug" = "m0-中文-z" ]
+i=0
+for m in $MARKS; do
+  i=$((i+1))
+  slug="$(cd "$TMP/marks" && bash "$LINKS" anchors docs/m.md "+$((2*i+3))")"
+  check "mark '$m' dropped from slug (got: $slug)" [ "$slug" = "m$i--z" ]
+done
+
 echo "== doc-links: BUG-045 — no per-link fork in the resolve path, no per-heading slugify loop =="
 fn_body() { # fn_body <name> — print the body lines of a top-level shell function
   awk -v fn="$1" '
