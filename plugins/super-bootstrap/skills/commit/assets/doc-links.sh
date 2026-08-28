@@ -198,6 +198,46 @@ $2
     return 1
 }
 
+# On a check miss: a strip-list gap, or a genuinely broken link? Strip every
+# non-ASCII byte from each computed slug and compare against the anchor the
+# link asked for. Equal means the heading carries a mark GitHub drops from its
+# own anchor but SLUG_AWK does not — the link is right and the list is short,
+# so the hint names the computed slug and the reader extends the alternation
+# above (extend the list, never widen the class).
+#
+# A pure-CJK heading cannot reach here: its stripped form is empty and matches
+# nothing. A mixed CJK+ASCII heading can — `## 中文 section` slugs as
+# `中文-section`, whose ASCII residue is `-section`, so an anchor written that
+# way draws the hint though the link is wrong rather than the list short.
+# Separating those needs the unicode-category knowledge this awk dialect
+# cannot carry (docs/decisions.md), so that shape is locked as a known
+# boundary in the tests rather than discriminated here.
+#
+# One fork per miss, none on the success path: the whole table is stripped and
+# matched inside a single awk, so the per-item loop stays fork-free. The locale
+# pin is what makes the byte class portable — LC_ALL=C puts char-mode gawk into
+# byte mode too, so \200-\377 means the same under every awk this script
+# targets. The anchor arrives through ENVIRON rather than -v, which reads
+# escape sequences in the value it is handed; and the match runs to
+# end-of-input rather than exit, so the writer upstream never takes EPIPE (the
+# race the header notes).
+# Result in $SLUG_HINT: a ready-to-append parenthetical, or empty.
+SLUG_HINT=""
+slug_gap_hint() {
+    SLUG_HINT=""
+    slug_table "$1"
+    local hit
+    hit=$(printf '%s\n' "$SLUG_TABLE" | WANT="$2" LC_ALL=C awk '
+        BEGIN { want = ENVIRON["WANT"] }
+        { if (found) next
+          s = $0; gsub(/[\200-\377]/, "", s)
+          if (s == want) { print; found = 1 } }')
+    [ -n "$hit" ] || return
+    SLUG_HINT=" (heading slugs as '$hit' — SLUG_AWK's strip list is missing a mark"
+    SLUG_HINT="$SLUG_HINT GitHub drops; if the heading mixes CJK letters with ASCII, the"
+    SLUG_HINT="$SLUG_HINT link anchor may be wrong rather than the list short)"
+}
+
 # Pure-string path normaliser: resolves . and .. components. Pure bash, no awk
 # fork — it runs once per link on the whole surface. Semantics preserved exactly:
 # skip empty and "." segments, pop on ".." only when the accumulator is
@@ -317,7 +357,8 @@ do_check() {
                 intradoc)
                     anchor="$R_ANCHOR"
                     if [ -n "$anchor" ] && ! anchor_exists "$doc" "$anchor"; then
-                        printf '%s:%s: #%s — anchor not found in same file\n' "$doc" "$lineno" "$anchor"
+                        slug_gap_hint "$doc" "$anchor"
+                        printf '%s:%s: #%s — anchor not found in same file%s\n' "$doc" "$lineno" "$anchor" "$SLUG_HINT"
                         findings=$((findings + 1))
                     fi
                     continue ;;
@@ -335,7 +376,8 @@ do_check() {
                 printf '%s:%s: %s — path not found\n' "$doc" "$lineno" "$rel"
                 findings=$((findings + 1))
             elif [ -n "$anchor" ] && ! anchor_exists "$rel" "$anchor"; then
-                printf '%s:%s: %s#%s — anchor not found in target\n' "$doc" "$lineno" "$rel" "$anchor"
+                slug_gap_hint "$rel" "$anchor"
+                printf '%s:%s: %s#%s — anchor not found in target%s\n' "$doc" "$lineno" "$rel" "$anchor" "$SLUG_HINT"
                 findings=$((findings + 1))
             fi
         done < <(extract_links "$doc")

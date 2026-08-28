@@ -300,6 +300,113 @@ for m in $MARKS; do
   check "mark '$m' dropped from slug (got: $slug)" [ "$slug" = "m$i--z" ]
 done
 
+echo "== doc-links: BUG-055 follow-on — a strip-list gap names itself on the miss path =="
+# The gap class is open by construction: the strip list is an enumeration, so
+# the next unlisted mark GitHub drops repeats the same false positive. What the
+# operator could not do before was tell that false positive from a real break —
+# four field reports were the only detector. On a miss, a computed slug whose
+# non-ASCII bytes stripped equals the requested anchor is that gap, and the hint
+# names the slug to extend the list with. `†` (U+2020) stands in as unlisted.
+mkdir -p "$TMP/gap/docs"
+cat > "$TMP/gap/docs/t.md" <<'EOF'
+# T
+
+## gap † mark
+
+## plain heading
+EOF
+cat > "$TMP/gap/docs/c.md" <<'EOF'
+# Citer
+
+Gap link: [g](t.md#gap--mark).
+Real break: [r](t.md#totally-absent).
+EOF
+
+out="$(cd "$TMP/gap" && bash "$LINKS" check 2>&1)"; rc=$?
+check "strip-list gap still fails the check (rc=$rc)" [ "$rc" -ne 0 ]
+gapline="$(printf '%s\n' "$out" | grep -F 'gap--mark')"
+if printf '%s' "$gapline" | grep -qF "strip list is missing"; then
+  ok "gap link carries the strip-list hint"
+else
+  bad "gap link carries the strip-list hint (got: $gapline)"
+fi
+if printf '%s' "$gapline" | grep -qF "gap-†-mark"; then
+  ok "hint names the computed slug to extend the list with"
+else
+  bad "hint names the computed slug to extend the list with (got: $gapline)"
+fi
+realline="$(printf '%s\n' "$out" | grep -F 'totally-absent')"
+if printf '%s' "$realline" | grep -qF "strip list is missing"; then
+  bad "genuinely broken link stays unhinted (got: $realline)"
+else
+  ok "genuinely broken link stays unhinted"
+fi
+
+# CJK control: a heading whose anchor legitimately carries unicode letters must
+# never be read as a strip-list gap — stripping its letters matches no anchor.
+mkdir -p "$TMP/gapcjk/docs"
+cat > "$TMP/gapcjk/docs/t.md" <<'EOF'
+# T
+
+## 後台數據
+EOF
+cat > "$TMP/gapcjk/docs/c.md" <<'EOF'
+# Citer
+
+Typo: [x](t.md#-).
+EOF
+out="$(cd "$TMP/gapcjk" && bash "$LINKS" check 2>&1)"; rc=$?
+check "CJK broken link still fails the check (rc=$rc)" [ "$rc" -ne 0 ]
+if printf '%s' "$out" | grep -qF "strip list is missing"; then
+  bad "CJK heading never reads as a strip-list gap (got: $out)"
+else
+  ok "CJK heading never reads as a strip-list gap"
+fi
+
+# The intradoc miss takes its own slug_gap_hint call with different arguments;
+# a swapped pair there yields an empty table and no hint, which no rc-only
+# assertion would catch.
+mkdir -p "$TMP/gapself/docs"
+cat > "$TMP/gapself/docs/s.md" <<'EOF'
+# S
+
+## gap † mark
+
+Self link: [g](#gap--mark).
+EOF
+out="$(cd "$TMP/gapself" && bash "$LINKS" check 2>&1)"; rc=$?
+check "intradoc gap still fails the check (rc=$rc)" [ "$rc" -ne 0 ]
+if printf '%s' "$out" | grep -qF "same file" && printf '%s' "$out" | grep -qF "gap-†-mark"; then
+  ok "intradoc miss path carries the hint naming the computed slug"
+else
+  bad "intradoc miss path carries the hint naming the computed slug (got: $out)"
+fi
+
+# Known boundary, locked so a future change trips it: a mixed CJK+ASCII heading
+# has an ASCII residue, and an anchor written as that residue draws the hint
+# even though the link is wrong rather than the strip list short. Separating the
+# two needs the unicode-category knowledge this awk dialect cannot carry, so the
+# shape is recorded here instead of discriminated in the script.
+mkdir -p "$TMP/gapmixed/docs"
+cat > "$TMP/gapmixed/docs/t.md" <<'EOF'
+# T
+
+## 中文 section
+EOF
+cat > "$TMP/gapmixed/docs/c.md" <<'EOF'
+# Citer
+
+Wrong anchor: [x](t.md#-section).
+EOF
+out="$(cd "$TMP/gapmixed" && bash "$LINKS" check 2>&1)"; rc=$?
+check "mixed CJK heading: a wrong anchor still fails the check (rc=$rc)" [ "$rc" -ne 0 ]
+if printf '%s' "$out" | grep -qF "strip list is missing"; then
+  ok "mixed CJK residue draws the hint (known boundary, see comment above)"
+else
+  bad "mixed CJK residue draws the hint (boundary moved — update this lock and the SLUG_AWK comment) (got: $out)"
+fi
+
+
 echo "== doc-links: BUG-045 — no per-link fork in the resolve path, no per-heading slugify loop =="
 fn_body() { # fn_body <name> — print the body lines of a top-level shell function
   awk -v fn="$1" '
