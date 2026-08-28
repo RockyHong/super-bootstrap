@@ -8,7 +8,6 @@ Part of the `.claude/guidelines/` Tier 1 tree. The sibling subtrees — `axiom-p
 
 | Principle | Summary | File |
 |---|---|---|
-| Doc Impact mirror | Work-scope artifact lists adjacent docs that may need updates. Implementer mirrors or records "confirmed unchanged." Anti-drift at change-time. | [`doc-impact-mirror.md`](doc-impact-mirror.md) |
 | Trust upstream defaults | Default = upstream canonical wiring as shipped. Empirically prove canonical fails before authoring downstream overlay; date-stamp every overlay as decay debt. Applies to plugins, MCPs, SDKs, framework presets, library defaults. | [`trust-upstream-defaults.md`](trust-upstream-defaults.md) |
 | Runtime parity | Place ambient-behavior config at the level where every target runtime loads it. Name runtimes, identify their loading layers, pick the lowest-common layer. Document parity exceptions explicitly when intentionally placing in a partial-coverage layer. | [`runtime-parity.md`](runtime-parity.md) |
 | Model tiering | Unspecified `agent()` model inherits the main-loop tier; cost scales with fan-out width. Pre-launch tier audit (small retrieves / mid judges / top thinks), centrality amplifier (direction-setting steps tier to top regardless of own shape), width axis (tier pins cap unit price, fan-out constants cap volume), named-launch corollary (scriptPath via local copy; stop-first when none), resume cache-key corollary. | [`model-tiering.md`](model-tiering.md) |

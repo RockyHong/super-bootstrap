@@ -18,6 +18,8 @@ tracker prefix) is chronicle too — a durable doc records the decided behavior,
 never the card that decided it; ticket refs belong in history-dimension docs and
 temporal work-tracking files (their provenance fields), git log holds the rest.
 
+Classified history → declare it in the doc's leading YAML frontmatter, `dimension: history`.
+
 **Tripwire — the artifact is the trap.** If the doc you are about to edit ALREADY
 mixes dimensions (timestamps crawling into a state-SSOT, a chronicle leaking
 current constraints), do NOT follow its pattern. STOP and surface:

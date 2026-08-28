@@ -28,7 +28,10 @@ predicate lives here; the action lives with each.
 2. **History → git.** A hand-maintained "what happened when" prose chronicle is a
    derivative of git (maintaining it by hand edits the derivative — SSOT
    violation). Drop it. Where a rationale is genuinely expensive to reconstruct
-   from diffs, a one-line pointer to the commit beats re-prosing it.
+   from diffs, a one-line pointer to the commit beats re-prosing it. A history
+   doc the repo does keep declares `dimension: history` in its leading YAML
+   frontmatter — the commit door's doc-sync scan keys on it to leave the doc's
+   rows out of scope while still checking its links.
 3. **Binding past decision → present-tense constraint.** A decision made earlier
    that still *binds* future work is a live constraint, not a record. State it
    present-tense in the state-SSOT, stripped of when/why-decided. "Refinement is

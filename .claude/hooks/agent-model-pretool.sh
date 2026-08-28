@@ -30,8 +30,9 @@
 #     <cache-dir>/agents/<agent>.md
 #     <cache-dir>/agents/<agent>/AGENT.md
 #   where <cache-dir> is resolved from ~/.claude/plugins/installed_plugins.json:
-#   the <plugin>@<marketplace> record whose projectPath is $CLAUDE_PROJECT_DIR,
-#   else the user-scope record, read from its installPath. Registry unreadable /
+#   the <plugin>@<marketplace> user-scope record, else — only when no user-scope
+#   record exists — the one whose projectPath is $CLAUDE_PROJECT_DIR, read from
+#   its installPath. Registry unreadable /
 #   no matching key / no usable installPath -> highest cached version by
 #   `sort -V` over ~/.claude/plugins/cache/*/<plugin>/*/ (a bare glob sorts
 #   lexically, which reads 2.29.4 as newer than 2.6.0 and older than 2.37.2).
@@ -99,20 +100,25 @@ same_dir() {
 # The registry keys plugins as "<plugin>@<marketplace>" — the marketplace is not
 # in subagent_type, so the key matches by "<plugin>@" prefix — and holds an ARRAY
 # of install records per key (measured: 8 records across 5 versions for one
-# plugin), so a bare .version read is ambiguous. Preference: the record whose
-# projectPath is this project, then the user-scope record; each record's
-# installPath names the marketplace and version segments both. The projectPath
-# match runs for every scope, so a "local" record (from .claude/settings.local.json)
-# wins for its own project like a "project" one; only "user" is captured as the
-# no-match fallback, because "local" and "project" are project-bound by definition
-# and must not answer for a different project. Anything unusable
+# plugin), so a bare .version read is ambiguous. Preference: the user-scope
+# record, then — only when there is none — the record whose projectPath is this
+# project; each record's installPath names the marketplace and version segments
+# both. User-scope-first is measured, not assumed: in a project whose
+# project-scope record read 2.40.0 while the user-scope record read 2.41.1, the
+# session loaded cache/.../2.41.1 — so a project/local record is install-origin
+# residue, not what Claude Code loads. The scan therefore cannot early-return on
+# a projectPath match (a user record may be listed after it). The projectPath
+# match runs for every non-user scope, so a "local" record (from
+# .claude/settings.local.json) answers for its own project like a "project" one;
+# neither answers for a different project, both being project-bound by
+# definition. Anything unusable
 # (no registry, unparseable, no matching key, no installPath, pruned directory)
 # degrades to the highest cached version by `sort -V` — never to lexical order,
 # which is the whole defect: 2.29.4 sorts before 2.6.0 and 2.37.2.
 plugin_cache_dir() {
     local plugin="$1"
     local registry="${HOME_DIR}/.claude/plugins/installed_plugins.json"
-    local proj scope raw_proj raw_install dir candidate user_dir=""
+    local proj scope raw_proj raw_install dir candidate user_dir="" proj_dir=""
 
     proj="$(norm_path "${PROJECT_DIR}")"
 
@@ -125,12 +131,12 @@ plugin_cache_dir() {
             [ -n "$raw_install" ] || continue
             dir="$(norm_path "$raw_install")"
             [ -d "$dir" ] || continue
-            if [ -n "$proj" ] && same_dir "$(norm_path "$raw_proj")" "$proj"; then
-                printf '%s' "$dir"
-                return 0
+            if [ "$scope" = "user" ]; then
+                [ -n "$user_dir" ] || user_dir="$dir"
+                continue
             fi
-            if [ "$scope" = "user" ] && [ -z "$user_dir" ]; then
-                user_dir="$dir"
+            if [ -z "$proj_dir" ] && [ -n "$proj" ] && same_dir "$(norm_path "$raw_proj")" "$proj"; then
+                proj_dir="$dir"
             fi
         done < <(jq -r --arg p "$plugin" '
             (.plugins // {}) | to_entries[]
@@ -142,6 +148,10 @@ plugin_cache_dir() {
         ' "$registry" 2>/dev/null | tr -d '\r')
         if [ -n "$user_dir" ]; then
             printf '%s' "$user_dir"
+            return 0
+        fi
+        if [ -n "$proj_dir" ]; then
+            printf '%s' "$proj_dir"
             return 0
         fi
     fi
