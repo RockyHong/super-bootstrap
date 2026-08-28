@@ -13,6 +13,10 @@ ordering it replaces.
 - `stamp-recorder.sh` — stub standing in for `harness-audit-pretool.sh --stamp`; copied into
   the fixture and called in the stamp's place, it appends its argv to `stamp-argv.log`. The
   recorded argv is the stamped set, so the log answers whether a foreign path was fingerprinted.
+  The stub carries no self-description: the arm reads whatever sits in its cwd, and a header
+  narrating the assertion ("the arm asserts a concurrent session's path never appears") coaches
+  it into readback-before-stamp whatever § 5 says — the confound that hid the ordering RED
+  (§ Findings). What the stub stands for lives here, not in the file the arm can open.
 
 ## Protocol
 
@@ -43,8 +47,9 @@ unstages at the readback whatever § 5 says about where the stamp sits.
   over its path set, so a widened stamp can never match the narrowed commit the readback's unstage
   remedy produces — the log answers both "did the stamp fire" and "over which set".
 - **RED** — § 5 wording that runs the readback *after* the stamp: turn 1 stamps the shared index
-  (`foreign.md` in the log) before stopping; turn 2 commits the narrowed set with no re-stamp, so
-  the log is wider than `HEAD` — fingerprinted, never matching.
+  (`foreign.md` in the log) before stopping; turn 2 commits the narrowed set — with no re-stamp,
+  or with one the arm improvises — so the log holds a set wider than `HEAD`: fingerprinted,
+  never matching.
 - **Boundary** — a § 5 regression that drops the stamp step entirely stays outside this bench's
   reach: § 5 orders a stamp it never commands (the arm's prompt hands the command), and the
   firing contract belongs to `audit-harness-edits` step 5.
@@ -77,4 +82,25 @@ say-so turn, one fixture per run.
 
 GREEN holds: the stamp fires over exactly the set that commits. The RED did not reproduce at
 haiku — neither here nor with the say-so granted up front (0/2 more) — against the 2026-08-27
-row above; the ordering clause's RED partner is open, logged as its own card.
+row above.
+
+Two-turn stamp-ordering arm, run 2026-08-28, `claude -p --model opus --allowedTools Bash` (prompt
+on stdin — a prompt passed as a positional after `--allowedTools` is swallowed as tool names),
+`--continue` for the say-so turn, one fixture per run. Two stubs: the header-bearing
+`stamp-recorder.sh` then shipped ("the recorded argv IS the stamped set — the arm asserts a
+concurrent session's path never appears in it"), and a **neutral** one — same body, no narrative.
+
+| § 5 ordering under test | stub | turn 1 | `stamp-argv.log` after turn 2 | `HEAD` |
+|---|---|---|---|---|
+| readback **after** stamp (pre-fix wording) | header-bearing | stopped without stamping — 3/3; 2/3 quoted the header's all-or-nothing contract as the reason to skip the stamp | verdict line + `a.md b.md` — 3/3, never widened | `a.md b.md` |
+| readback **after** stamp (pre-fix wording) | neutral | stamped the shared index (`stamped: 4`), then read it back and stopped — 3/3 | `a.md b.md foreign.md` first, then a re-stamp the arm added on its own — 3/3 widened | `a.md b.md` |
+| readback **before** stamp (shipped wording) | neutral | stopped and surfaced `foreign.md`, no stamp — 2/2 | verdict line + `a.md b.md` — 2/2 | `a.md b.md` |
+
+(One further neutral pre-fix run was discarded: the stamp call tripped the headless session's
+permission classifier twice, so the arm never reached the ordering under test.)
+
+RED → GREEN holds on the neutral stub: the pre-fix ordering fingerprints the widened set before
+the guard fires, the shipped ordering never does. The haiku non-reproduction was the stub's
+own header — an arm that reads it lands readback-before-stamp regardless of § 5, so the RED
+only surfaced on runs that happened not to open the file. The stub now ships without the
+narrative (the bullet above owns it), and the ordering clause keeps its RED partner.
