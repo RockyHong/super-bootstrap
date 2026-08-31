@@ -58,7 +58,7 @@ Active development.
 
 **Board** — `/super-bootstrap:todo` → runs the bundled `render-board.py` (zero dispatch, gateway relays stdout) → reads `docs/work/` (plus the scale module's test queue and outward threads when present) → renders intent-filtered board; `agents/todo.md` (Sonnet) dispatches only as the script-failure fallback.
 
-**Commit** — `/super-bootstrap:commit` → gateway-inline stage + classify → [mechanical doc-sync gate](../CLAUDE.md#doc-sync-non-negotiable) (grep + citers + link-targets) → doc-surface hit dispatches `agents/doc-sync-scan.md` (Sonnet) → stale-doc report resolved → `git commit`; product-anchor hit also dispatches `agents/premise-closure.md`.
+**Commit** — `/super-bootstrap:commit` → gateway-inline stage + classify → [mechanical doc-sync gate](../CLAUDE.md#doc-sync-non-negotiable) (grep + citers + link-targets) → doc-surface hit judged warm gateway-inline (`agents/doc-sync-scan.md` (Sonnet) dispatches only past the scope ceiling) → stale candidates resolved → `git commit`; product-anchor hit dispatches `agents/premise-closure.md`.
 
 **Drain** — `/super-bootstrap:drain` → selects admissible wave → spawns one `claude -p` per item in an isolated git worktree → each runs the full envelope and writes `.drain-status`; gateway collects statuses at wave close.
 

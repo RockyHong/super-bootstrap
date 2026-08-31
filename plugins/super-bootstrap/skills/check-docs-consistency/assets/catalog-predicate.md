@@ -73,6 +73,6 @@ An omitted section levels by what it carries, not by its heading:
 Applies to authored prose catalogs wherever the project keeps them — a README's
 component or skill catalog, an overview module index, a `docs/` entry index.
 Harness MDs carry their own discipline and are not entry files here unless a
-catalog row explicitly stands in for one. The commit door's `doc-sync-scan`
+catalog row explicitly stands in for one. The commit door's doc-sync judgment
 covers the diff-touched slice of this class; this axis is the whole-surface
 carrier — the two doors do not double-claim it.
