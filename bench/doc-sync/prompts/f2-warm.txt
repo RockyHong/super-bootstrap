@@ -1,0 +1,128 @@
+You are the **gateway** that just authored this change, standing at the commit door. The doc-sync scan is your own next step and you run it here, inline, in this same turn — there is no subagent, and nothing about this scan leaves your context.
+
+You already hold everything the step needs: the diff you just produced, the intent you produced it for, and the docs you read this session. Below, in order: the **scan scope** the mechanical gate just enumerated (the citer read-set, the grep-hit files, and the link-target files), **what you were doing and what you read** while making this change, and the **diff** itself. Judgment runs over the scope and the diff, never the whole surface — whole-surface coverage is `/super-bootstrap:check-docs-consistency`'s job.
+
+## Scan
+
+1. **Read the surface owner.** Read the consumer's **CLAUDE.md § Doc Sync** — it owns the doc-surface definition and write boundary; the residual (step 4) homes against that surface. If absent, default the surface to `docs/**` plus behavior-narrating prose outside it (root `README`, plugin READMEs — `plugins/*/README.md` — where the repo ships plugins, manifest description fields the diff's behavior changes).
+
+2. **Extract what the diff asserts** — each posture, default, or contract it states, written as the question it answers ("how does X get installed?", "which door owns Y?", "what is the default for Z?"). Both added and removed lines carry claims: a removed old term is exactly what a stale doc still names; a new file is all-added lines, so every claim in it is diff content; an unchanged context line inside a hunk is a claim too.
+
+3. **Judge the scope docs.** Read every scope file whole — a declared citer of a changed doc is the highest-prior candidate class. Per diff question, set each scope doc's answer beside the diff's. Two docs answering one question differently is staleness, and the untouched doc is the stale one — its own prose reads as current until you have the diff's answer beside it. A scope doc that itself appears in the diff: judge its unchanged sections against the diff's claims — same-commit edits can contradict each other. For each candidate, record path + what looks outdated (one line) + the relevant diff hunk.
+
+4. **New-assertion residual (diff-scoped).** Two lanes over the diff's *new* asserting lines:
+   - **Linked line** — its target file is in your scope (the gate extracts targets mechanically). Set the asserting line beside the target section item by item — lists and rosters compare per entry, not by gist. A link is a pointer, not proof of agreement: a target disagreeing with the asserting line, with no declared supersession naming which side binds, is a candidate.
+   - **Unlinked line** — grep the doc surface for the question it answers, targeted by the claim's own terms; a file whose leading frontmatter declares `dimension: history` is frozen provenance — leave it out of this grep. An existing doc answering the same question differently — or the same fact now stated in two homes — is a candidate.
+
+   Bounded by the diff's new lines, never by the surface's size.
+
+5. **Judge staleness, don't just match.** A term hit is a lead, not a verdict — read the prose and decide whether the diff actually made it wrong. A doc that still describes current behavior is not stale — but "current" means current *after* this diff lands, which is what step 3 settles for claims.
+
+## Output contract
+
+Return exactly one shape:
+
+**`stale-docs`** — candidates found:
+- `candidates`: per item — `path`, `outdated` (one line), `hunk` (relevant diff excerpt)
+- `note`: "surface only — the gateway resolves each with the user, then commits"
+
+**`clean`** — the surface is consistent with the diff; nothing stale.
+
+When a candidate is too ambiguous to judge, include it under `stale-docs` with the ambiguity named in `outdated` — a false positive costs a glance; a missed stale doc ships.
+
+## Rules
+
+- **Read-only.** Never edit, stage, or commit. Surface candidates; the gateway resolves with the user.
+- **Whole-diff, scoped surface.** You receive the full integrated diff — judge it as one; never assume another pass covers part of it. The doc side stays scoped: the dispatched scope plus residual-targeted greps, never a whole-surface walk.
+- **Judge, don't grep-and-dump.** Every candidate names a concrete staleness, not a bare term match.
+- **Warm-eyes.** You hold the diff *and* the rationale. Judge the docs against the diff as written, with everything you know about what the change intended.
+
+---
+
+Today's date: 2026-08-28.
+
+## Scan scope
+
+- `docs/overview.md`
+- `docs/techstack.md`
+
+Both entered via the grep lane (term `doc-links`, mentioned in code shape). Citer lane empty — this diff changes no `docs/**` or README path. Forward-link lane: the only `.md` link targets in added lines (`](t.md#gap--mark)`, `](t.md#totally-absent)`, `](t.md#-)`, `](t.md#-section)`, `](#gap--mark)`) are heredoc fixture content naming synthetic files under a mktemp dir, not repo doc links.
+
+## What you were doing
+
+Follow-on to `BUG-055`. That card's fix taught `SLUG_AWK` to strip the unicode marks
+GitHub drops from its own heading anchors, so a link written against GitHub's anchor
+stopped reading as broken. The residual it left: when the strip list is *short* — a mark
+GitHub drops that the list does not yet name — `check` reports the link as broken with no
+way for the reader to tell a strip-list gap from a genuinely absent anchor. Both print the
+same line.
+
+So this change makes the miss path say which one it is. On an anchor miss, strip every
+non-ASCII byte from each computed slug and compare against the anchor the link asked for;
+equal means the heading carries a mark the list is missing, and the finding gets a
+parenthetical naming the computed slug so the reader can extend the alternation. Extend
+the list, never widen the class — a CJK heading cannot reach here, because its anchor
+carries those letters and its stripped form matches no anchor anyone would write.
+
+The cost question was live while you wrote it, which is why the early return is there: the
+common case is an all-ASCII surface where no miss can ever be a strip-list gap, and one
+`tr` fork on the whole table rules the per-slug loop out before it starts. The loop itself
+only runs on a surface that actually carries non-ASCII headings, and only on links that
+already failed.
+
+## What you read this session
+
+- `docs/work/BUG-055.md` — the parent card
+- `docs/work/README.md`, `docs/work/TEMPLATE.md` — card thread contract
+- `docs/decisions.md`, `docs/parked.md` — closed-fork and deferred-item checks
+- `CLAUDE.md` — the harness brief
+- `plugins/super-bootstrap/README.md`
+- `plugins/super-bootstrap/skills/commit/assets/doc-links.sh`, `tests/doc-links.test.sh` —
+  the files this change edits
+
+## The diff
+
+Two files change: `plugins/super-bootstrap/skills/commit/assets/doc-links.sh` and `tests/doc-links.test.sh`. Read both from disk — the working tree is the target.
+
+`doc-links.sh` gains one function, `slug_gap_hint`, plus a call at each of `do_check`'s two anchor-miss sites:
+
+```sh
+SLUG_HINT=""
+slug_gap_hint() {
+    SLUG_HINT=""
+    slug_table "$1"
+    local want="$2" line stripped oldifs="$IFS" oldflags="$-"
+    # One fork rules the loop out: a table whose slugs are pure ASCII can hold no
+    # dropped mark. That is every miss on an all-ASCII surface — the common case,
+    # and the one where a per-slug fork would scale with the broken-link count.
+    [ -n "$(printf '%s' "$SLUG_TABLE" | LC_ALL=C tr -d '\000-\177')" ] || return
+    IFS='
+'
+    set -f
+    for line in $SLUG_TABLE; do
+        [ -n "$line" ] || continue
+        stripped=$(printf '%s' "$line" | LC_ALL=C tr -d '\200-\377')
+        [ "$stripped" = "$want" ] || continue
+        SLUG_HINT=" (heading slugs as '$line' — SLUG_AWK's strip list is missing a mark GitHub drops)"
+        break
+    done
+    case "$oldflags" in *f*) ;; *) set +f ;; esac
+    IFS="$oldifs"
+}
+```
+
+Each miss site now calls it and appends `%s` / `"$SLUG_HINT"` to its existing `printf`. `tests/doc-links.test.sh` gains a `BUG-055 follow-on` block of ten assertions across four fixtures.
+
+## What the change claims
+
+`check`'s exit code and finding count are unchanged; the only new behavior is a parenthetical appended to an already-failing anchor finding, emitted when a computed slug's non-ASCII bytes stripped equal the anchor the link requested. It runs on the miss path only, behind an early return that costs one fork and fires on any all-ASCII slug table. No change to the slug table, its memoization, or the resolve path.
+
+Note for your judgment: `docs/techstack.md` carries a "fork-free inner loops" coding-pattern entry whose prose says helpers return through globals rather than stdout and that the script keeps subprocesses out of its per-item loops. `slug_gap_hint` returns through a global; it does fork, on the miss path only, bounded by the early return above. Judge whether that entry's stated claims are made wrong by this diff, or whether they hold as written.
+
+Verification run: `bash tests/doc-links.test.sh` → 53 passed, 0 failed; repo-wide `doc-links.sh check` → rc=0; the whole-surface wall-clock assertion passes at 2786ms against a 30s ceiling.
+
+## Your job
+
+Judge `docs/overview.md` and `docs/techstack.md` against the above — does either narrate `doc-links.sh`'s check output contract, finding format, performance characteristics, or portability constraints in a way this diff makes stale or under-specified? Then run the diff-scoped new-assertion residual over the diff's new asserting lines.
+
+Return `stale-docs` with path + line + why, or `clean`.

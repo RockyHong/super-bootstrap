@@ -1,0 +1,59 @@
+diff --git a/plugins/super-bootstrap/skills/commit/assets/doc-links.sh b/plugins/super-bootstrap/skills/commit/assets/doc-links.sh
+index 8c19679..4f174cb 100755
+--- a/plugins/super-bootstrap/skills/commit/assets/doc-links.sh
++++ b/plugins/super-bootstrap/skills/commit/assets/doc-links.sh
+@@ -198,6 +198,34 @@ $2
+     return 1
+ }
+ 
++# On a check miss: a strip-list gap, or a genuinely broken link? Strip every
++# non-ASCII byte from each computed slug and compare against the anchor the link
++# asked for. Equal means the heading carries a mark GitHub drops from its own
++# anchor but SLUG_AWK does not. Miss path only.
++# Result in $SLUG_HINT: a ready-to-append parenthetical, or empty.
++SLUG_HINT=""
++slug_gap_hint() {
++    SLUG_HINT=""
++    slug_table "$1"
++    local want="$2" line stripped oldifs="$IFS" oldflags="$-"
++    # One fork rules the loop out: a table whose slugs are pure ASCII can hold no
++    # dropped mark. That is every miss on an all-ASCII surface — the common case,
++    # and the one where a per-slug fork would scale with the broken-link count.
++    [ -n "$(printf '%s' "$SLUG_TABLE" | LC_ALL=C tr -d '\000-\177')" ] || return
++    IFS='
++'
++    set -f
++    for line in $SLUG_TABLE; do
++        [ -n "$line" ] || continue
++        stripped=$(printf '%s' "$line" | LC_ALL=C tr -d '\200-\377')
++        [ "$stripped" = "$want" ] || continue
++        SLUG_HINT=" (heading slugs as '$line' — SLUG_AWK's strip list is missing a mark GitHub drops)"
++        break
++    done
++    case "$oldflags" in *f*) ;; *) set +f ;; esac
++    IFS="$oldifs"
++}
++
+ # Pure-string path normaliser: resolves . and .. components. Pure bash, no awk
+ # fork — it runs once per link on the whole surface. Semantics preserved exactly:
+ # skip empty and "." segments, pop on ".." only when the accumulator is
+@@ -317,7 +345,8 @@ do_check() {
+                 intradoc)
+                     anchor="$R_ANCHOR"
+                     if [ -n "$anchor" ] && ! anchor_exists "$doc" "$anchor"; then
+-                        printf '%s:%s: #%s — anchor not found in same file\n' "$doc" "$lineno" "$anchor"
++                        slug_gap_hint "$doc" "$anchor"
++                        printf '%s:%s: #%s — anchor not found in same file%s\n' "$doc" "$lineno" "$anchor" "$SLUG_HINT"
+                         findings=$((findings + 1))
+                     fi
+                     continue ;;
+@@ -335,7 +364,8 @@ do_check() {
+                 printf '%s:%s: %s — path not found\n' "$doc" "$lineno" "$rel"
+                 findings=$((findings + 1))
+             elif [ -n "$anchor" ] && ! anchor_exists "$rel" "$anchor"; then
+-                printf '%s:%s: %s#%s — anchor not found in target\n' "$doc" "$lineno" "$rel" "$anchor"
++                slug_gap_hint "$rel" "$anchor"
++                printf '%s:%s: %s#%s — anchor not found in target%s\n' "$doc" "$lineno" "$rel" "$anchor" "$SLUG_HINT"
+                 findings=$((findings + 1))
+             fi
+         done < <(extract_links "$doc")

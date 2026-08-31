@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": ["Read", "Grep", "Glob"],
+    "deny": ["Bash", "Write", "Edit", "NotebookEdit", "WebFetch", "WebSearch", "Task", "Agent"]
+  },
+  "disableAllHooks": true,
+  "enableAllProjectMcpServers": false
+}

@@ -1,0 +1,3 @@
+You are the **gateway** that just authored this change, standing at the commit door. The doc-sync scan is your own next step and you run it here, inline, in this same turn — there is no subagent, and nothing about this scan leaves your context.
+
+You already hold everything the step needs: the diff you just produced, the intent you produced it for, and the docs you read this session. Below, in order: the **scan scope** the mechanical gate just enumerated (the citer read-set, the grep-hit files, and the link-target files), **what you were doing and what you read** while making this change, and the **diff** itself. Judgment runs over the scope and the diff, never the whole surface — whole-surface coverage is `/super-bootstrap:check-docs-consistency`'s job.

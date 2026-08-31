@@ -1,0 +1,40 @@
+## The diff
+
+Two files change: `plugins/super-bootstrap/skills/commit/assets/doc-links.sh` and `tests/doc-links.test.sh`. Read both from disk — the working tree is the target.
+
+`doc-links.sh` gains one function, `slug_gap_hint`, plus a call at each of `do_check`'s two anchor-miss sites:
+
+```sh
+SLUG_HINT=""
+slug_gap_hint() {
+    SLUG_HINT=""
+    slug_table "$1"
+    local want="$2" line stripped oldifs="$IFS" oldflags="$-"
+    # One fork rules the loop out: a table whose slugs are pure ASCII can hold no
+    # dropped mark. That is every miss on an all-ASCII surface — the common case,
+    # and the one where a per-slug fork would scale with the broken-link count.
+    [ -n "$(printf '%s' "$SLUG_TABLE" | LC_ALL=C tr -d '\000-\177')" ] || return
+    IFS='
+'
+    set -f
+    for line in $SLUG_TABLE; do
+        [ -n "$line" ] || continue
+        stripped=$(printf '%s' "$line" | LC_ALL=C tr -d '\200-\377')
+        [ "$stripped" = "$want" ] || continue
+        SLUG_HINT=" (heading slugs as '$line' — SLUG_AWK's strip list is missing a mark GitHub drops)"
+        break
+    done
+    case "$oldflags" in *f*) ;; *) set +f ;; esac
+    IFS="$oldifs"
+}
+```
+
+Each miss site now calls it and appends `%s` / `"$SLUG_HINT"` to its existing `printf`. `tests/doc-links.test.sh` gains a `BUG-055 follow-on` block of ten assertions across four fixtures.
+
+## What the change claims
+
+`check`'s exit code and finding count are unchanged; the only new behavior is a parenthetical appended to an already-failing anchor finding, emitted when a computed slug's non-ASCII bytes stripped equal the anchor the link requested. It runs on the miss path only, behind an early return that costs one fork and fires on any all-ASCII slug table. No change to the slug table, its memoization, or the resolve path.
+
+Note for your judgment: `docs/techstack.md` carries a "fork-free inner loops" coding-pattern entry whose prose says helpers return through globals rather than stdout and that the script keeps subprocesses out of its per-item loops. `slug_gap_hint` returns through a global; it does fork, on the miss path only, bounded by the early return above. Judge whether that entry's stated claims are made wrong by this diff, or whether they hold as written.
+
+Verification run: `bash tests/doc-links.test.sh` → 53 passed, 0 failed; repo-wide `doc-links.sh check` → rc=0; the whole-surface wall-clock assertion passes at 2786ms against a 30s ceiling.

@@ -1,0 +1,1 @@
+- **Warm-eyes.** You hold the diff *and* the rationale. Judge the docs against the diff as written, with everything you know about what the change intended.

@@ -1,0 +1,127 @@
+diff --git a/docs/specs/harness-architecture.md b/docs/specs/harness-architecture.md
+index 6f9e23f..55f4747 100644
+--- a/docs/specs/harness-architecture.md
++++ b/docs/specs/harness-architecture.md
+@@ -152,8 +152,9 @@ tracker-specific", defaulting to local markdown **only when no tracker was provi
+ **The temporal work folder therefore stays ours**, as `docs/work/`. Retiring it outright
+ would only have made sense if his set owned that slot at a fixed path; it does not, so
+ declaring our own path through the tracker socket composes with his skills exactly as
+-well as deleting the slot would. That raises `GAP-038` from nice-to-have to the actual
+-composition mechanism — the seed is what tells his skills where to publish. His taxonomy
++well as deleting the slot would. That makes the tracker declaration the actual
++composition mechanism — it is what tells his skills where to publish; the shipped
++recipe lives in [`mattpocock-coexistence.md`](mattpocock-coexistence.md). His taxonomy
+ is spec → tickets → implement, with no "plans" artifact at all, so our `## Plan` block has
+ no counterpart to defer to.
+ 
+@@ -168,8 +169,8 @@ Shipping a seed template connects to nothing either: his templates load from
+ 
+ **The socket that does work is the "Other" branch** — it ships no template and is authored
+ at setup time from the user's own description of the workflow. So the composable artifact
+-is *a description the operator supplies*, not a file we ship. `GAP-038` needs that re-aim
+-before it is executable at all.
++is *a description the operator supplies*, not a file we ship. That description is
++authored: [`mattpocock-coexistence.md`](mattpocock-coexistence.md) § The tracker recipe.
+ 
+ The seed shape it would have to match is known: `Status:`, `Type:
+ research|prototype|grilling|task`, `Blocked by: NN, NN`, a `## Comments` section, the
+@@ -196,8 +197,8 @@ stays head-and-tail by construction.
+ 
+ Change B is resolved as coexistence (§6): the runway ships bare, bootstrap recommends
+ nothing, and mattpocock enters a repo only as `resolve-plugins`' ordinary adaptive pick.
+-**`GAP-038` is executable only in re-aimed form** — its deliverable is the
+-operator-supplied "Other"-branch description above, not a shipped file.
++The operator-supplied "Other"-branch description — not a shipped file — is the
++deliverable; it lives in [`mattpocock-coexistence.md`](mattpocock-coexistence.md).
+ `plugins/super-bootstrap/` references mattpocock nowhere, so bootstrap behavior is
+ unchanged.
+ 
+@@ -371,7 +372,8 @@ carry the foreign decomposition. GAP-050's per-slot audit confirmed that risk wa
+ the staging ceremony (Design/Plan as default gates) was distillation residue — the thread
+ contract now carries them as conditional context-scope sections, and drain's stage set
+ re-derives from grounding-native artifacts (`GAP-051`). The runway declares its bare
+-posture (§6 above). `GAP-038` is unparked by change B's resolution, re-aimed per §4.
++posture (§6 above). The tracker-recipe deliverable §4 re-aimed is shipped —
++[`mattpocock-coexistence.md`](mattpocock-coexistence.md).
+ 
+ Two constraints outlive the change:
+ 
+diff --git a/docs/specs/mattpocock-coexistence.md b/docs/specs/mattpocock-coexistence.md
+new file mode 100644
+index 0000000..564a328
+--- /dev/null
++++ b/docs/specs/mattpocock-coexistence.md
+@@ -0,0 +1,57 @@
++# mattpocock Coexistence — Operator Runbook
++
++Operating posture for running [mattpocock/skills](https://github.com/mattpocock/skills) alongside super-bootstrap on the operator's own repos. The seam analysis — why composition is bounded to these surfaces, why the middle is human-typed only — lives in [`harness-architecture.md`](harness-architecture.md) §4; the coexistence decision in §6. This doc is the how-to: install, tracker recipe, lane picks, watch list.
++
++**Posture: device-level unify.** The plugin installs user-scoped once and is visible in every repo; splitting back to per-repo opt-in later is a per-repo disable, no doc change. `plugins/super-bootstrap/` still references mattpocock nowhere — the [§4 grep contract](harness-architecture.md#4-the-seam-runtime-orthogonal-setup-time-composed) is untouched, and shipped skeletons stay bare. This runbook and an operator repo's own CLAUDE.md may name his commands; the shipped skeleton must not (`.claude/rules/repo-boundary.md` taste-coupling).
++
++## Install
++
++Once per device:
++
++```
++/plugin marketplace add mattpocock/skills
++/plugin install mattpocock-skills@mattpocock
++```
++
++Once per repo (after `harness-bootstrap` has run — the log door and `docs/work/` must exist):
++
++1. Run `/setup-matt-pocock-skills`.
++2. At the issue-tracker question pick **Other**.
++3. Paste the recipe below as the workflow description.
++
++Do **not** pre-create `docs/agents/*` — his setup owns those files and carries no skip guarantee for pre-existing ones.
++
++## The tracker recipe
++
++Paste verbatim at the "Other" prompt:
++
++> Issues live as card files at `docs/work/{ID}.md`, one file per issue, ID in the form `BUG-###`, `DEBT-###`, or `GAP-###` (feature ideas are GAP). `docs/work/README.md` and `TEMPLATE.md` are contract files, not issues.
++>
++> - **Publish** a new issue by invoking `/super-bootstrap:log <observation>` — never write a card file directly; the log door assigns the ID.
++> - **Fetch** open issues by listing/reading `docs/work/*.md`. A card file present = open; there is no Status field.
++> - **Comment** by appending an `## Amendment — {date}` block to the card. Cards are append-only threads — never rewrite earlier blocks.
++> - **Resolve** by deleting the card file. Git history is the archive.
++> - Cards carry no `Type:` or `Blocked by:` fields — express type and blocking relationships in the card's prose body.
++> - Before filing an enhancement, check `docs/decisions.md` for a previously rejected direction (it is this repo's `.out-of-scope/` superset).
++
++## Lane picks per work shape
++
++The two ends stay super-bootstrap's — capture via `/super-bootstrap:log`, commits via `/super-bootstrap:commit` (doc-sync rides it). The middle is his lane, human-typed (his user-invoked layer is model-unreachable — [§4](harness-architecture.md#4-the-seam-runtime-orthogonal-setup-time-composed)). His per-shape paths are catalogued in [§7](harness-architecture.md#7-evidence-index); the sb-side chaining:
++
++| Work shape | Chain |
++|---|---|
++| Bug with a runtime | `/super-bootstrap:triage` grounds the card (verdict) → human types `/diagnosing-bugs` for the red-loop fix |
++| Bug, no runtime (docs/harness) | sb lane whole — triage verdict → implement → commit door |
++| Fuzzy feature | `/grill-me` → `/to-spec` → `/to-tickets` → `/wayfinder` → `/implement`; resulting tickets land through the recipe above |
++| Maintenance / debt sweep | `/improve-codebase-architecture` (proposes only) → picks feed `/super-bootstrap:log` |
++| Inbox / external PR sorting | his `/triage` (label state machine); per-card grounding stays `/super-bootstrap:triage` — name collision, different work |
++
++## Watch list
++
++Friction observed in live runs is logged as cards via `/super-bootstrap:log`, per [§6](harness-architecture.md#6-decided-vs-open)'s live-adoption-is-the-trial. Known open questions ([§7 carried questions](harness-architecture.md#7-evidence-index)):
++
++- Head-contract content — what a hand-off into his lane must carry; read out of the first live hand-off, interface work waits on it.
++- His model-invoked discipline layer firing inside sb-dispatched subagents (doctrine injection into build containers) — unverified.
++- His lane committing outside the commit door — worst case one missed doc-sync scan; observe, then decide whether an overlay earns its slot (trust-upstream-defaults: canonical first).
++- Field-shape breaks — where his skills actually need `Type:`/`Blocked by:` the recipe declares away.
++- His set's ambient token weight — measure at first install.
+diff --git a/docs/work/GAP-038.md b/docs/work/GAP-038.md
+deleted file mode 100644
+index f656808..0000000
+--- a/docs/work/GAP-038.md
++++ /dev/null
+@@ -1,10 +0,0 @@
+-# GAP-038 — Ship an "Other" issue-tracker seed for mattpocock/skills' `/setup-matt-pocock-skills`, declaring docs/backlog.md + /super-bootstrap:log as the tracker
+-
+-**Logged:** 2026-07-25 · **Source:** de-routing architecture review (`docs/specs/harness-architecture.md`)
+-**Problem:** `/setup-matt-pocock-skills` ships seed templates for GitHub / GitLab / Local but none for "Other" — that branch is authored fresh, yielding free-form prose his skills interpret ad hoc. Without a seed, his `to-spec` and `triage` have no declared path to write into our backlog. Accepted known weakness: the socket is prose, not schema; documented seams drift.
+-**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/` (seed asset location); new seed file for mattpocock "Other" branch
+-**Prior:** spec §4; mattpocock "Other" option + absence of seed template confirmed grade A (2026-07-25). **Not executable as titled — shipping a seed connects to nothing on its own, and two further questions ride the same decision. Read §4 before acting.** **Blocked on change B** (spec §6, open): wiring anything mattpocock-shaped into bootstrap presupposes adopting his set. Held out of the skeleton cut — do not pick this up until change B is decided.
+-
+-## Amendment — 2026-08-08 · change B resolved, re-aimed
+-
+-Change B resolved: coexistence (spec §6). Unparked, but not as titled — §4's read stands: his templates load only from his own skill folder, and a pre-written `docs/agents/*` has no skip guarantee. Deliverable re-aims to a documented operator recipe: the description supplied live at `/setup-matt-pocock-skills`' "Other" prompt, declaring `docs/work/` + `/super-bootstrap:log` as the tracker. Execution waits on the first repo that opts in; the recipe homes wherever coexistence guidance lands, never the shipped skeleton.

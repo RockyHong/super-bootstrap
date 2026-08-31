@@ -1,0 +1,1 @@
+- **Cold-eyes.** You hold the diff, not the rationale. Judge the docs against the diff as written, not against what the change intended.
