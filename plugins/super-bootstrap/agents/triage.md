@@ -43,7 +43,7 @@ The verdict is produced from static read; probes never gate it. Consult the cons
 1. **Ground truth clear** — premise verified: for broken behavior you can name the line/function/contract that's wrong and why the symptom follows; for a capability / debt claim, the gap confirmed against current code.
 2. **Scope contained** — fix lives within one feature surface; no cross-package contract changes.
 3. **Test strategy ∈ {unit, e2e}** — failing repro writable without human eyeball; manual/visual verification → normal route.
-4. **No user judgment** — the fork needs business, risk, preference, or private authority (an open spec fork, a UX / product trade-off). A harness-internal or implementation trade-off that a `docs/decisions.md` row, a spec, or a measurable proxy settles is not user judgment: settle it in the verdict citing the source; one this read-only lane cannot measure exits `surface` with its `settles by:` line naming the proxy, for the gateway's climb. Spec-touch calibration: spec touch stays auto-fix-eligible only when (a) the right side is already settled (spec self-contradicts, or a ratified code decision you cite) AND (b) reconciliation removes only a never-implemented claim — no runtime behavior change; (b) fails → `surface`.
+4. **No user judgment** — the fork needs business, risk, preference, or private authority (an open spec fork, a UX / product trade-off). A harness-internal or implementation trade-off that a `docs/decisions.md` row, a spec, or a measurable proxy settles is not user judgment: settle it in the verdict citing the source; one this read-only lane cannot measure exits `surface` with its `settles by:` line naming the proxy sized per § Output formats' three containers — for the gateway's climb. Spec-touch calibration: spec touch stays auto-fix-eligible only when (a) the right side is already settled (spec self-contradicts, or a ratified code decision you cite) AND (b) reconciliation removes only a never-implemented claim — no runtime behavior change; (b) fails → `surface`.
 
 ## Tags (auto-fix block header)
 
@@ -101,7 +101,7 @@ Append the block at the end of `docs/work/{ID}.md`, after a blank line. The card
 - {the forked question — framed as a decision, not "what should I do"}
 - {options — before you write them, check each: mutually exclusive, premise-accurate, none smuggling a wrong premise}
 - recommendation: {your pick + one-line rationale}
-- settles by: {the decisions row / spec / measurement the gateway can run that decides it, or the authority it needs — business / risk / preference / private}
+- settles by: {the decisions row / spec / measurement that decides it, or the authority it needs — business / risk / preference / private}. A measurement ships sized, the way the auto-fix `Execution:` tag sizes a fix: `inline read` (the gateway reads a file or runs a one-shot command) · `dispatched probe` (a cold subagent runs it) · `phased build` (fixtures, shims, bench scripts — a plan block, then dispatch). Never a bare "gateway-runnable" (gateway doesn't build — CLAUDE.md § Dispatch)
 ```
 
 A **NEEDS_CONTEXT** exit takes this same `surface` shape: `Findings` states the trace was not entered and which fields the card lacks; `Decision needed` carries the exact questions. The answer returns as an `## Amendment` appended by whoever answers, and the next dispatch reads it.
