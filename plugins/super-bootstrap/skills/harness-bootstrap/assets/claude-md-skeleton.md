@@ -86,7 +86,7 @@ State docs (`overview.md`, `techstack.md`, specs) hold what is **true now** — 
 
 ## Coding Principles
 
-Before writing, reviewing, or refactoring code, read `CODING_STANDARDS.md` at the repo root — a filled section governs its concern; where no section declares a concern, default judgment applies.
+Before writing, reviewing, or refactoring code, read `CODING_STANDARDS.md` at the repo root — the repo's binding conventions; a filled section governs its concern, and where no section declares a concern, default judgment applies.
 
 ## Edit Discipline — Renames, Replace-All & Stale State
 
@@ -135,7 +135,7 @@ If rule body needs more context than its summary provides during planning, read 
 
 {detected one-line summary, e.g. "Node 20 + Next 14 + Postgres + pnpm"}
 
-→ Full stack table, dependency philosophy, architecture rules, coding patterns in [`docs/techstack.md`](docs/techstack.md).
+→ Full stack table, dependency philosophy, architecture rules, observed coding patterns in [`docs/techstack.md`](docs/techstack.md).
 
 {## Monorepo — Cross-Package Build Pre-flight}
 
@@ -159,7 +159,7 @@ If rule body needs more context than its summary provides during planning, read 
 ## Planning
 
 - [`docs/overview.md`](docs/overview.md) — product context, data flow, module index.
-- [`docs/techstack.md`](docs/techstack.md) — stack, architecture rules, coding patterns.
+- [`docs/techstack.md`](docs/techstack.md) — stack, architecture rules, observed coding patterns.
 - [`docs/specs/`](docs/specs/) — feature specs, one `.md` per feature. Filename + heading is the catalog; no index.
 - [`docs/work/`](docs/work/README.md) — open cards (`BUG-###` / `DEBT-###` / `GAP-###` append-only threads), captured via `/super-bootstrap:log`, deleted on resolve; `README.md` holds the thread contract + ID high-water line.
 {- [`docs/parked.md`](docs/parked.md) — deferred items with named triggers (scale module)}

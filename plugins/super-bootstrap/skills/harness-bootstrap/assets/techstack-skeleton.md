@@ -32,7 +32,7 @@
 
 ## Coding Patterns
 
-> Grows via doc-sync as patterns crystallize. Import style, error handling convention, naming, class-vs-function bias, type usage.
+> Grows via doc-sync as patterns crystallize — **descriptive reference**: how this code is actually written, read on demand, safe to be cold. Import style, class-vs-function bias, type usage, recurring idioms. A convention that binds — imperative, obeyed at every code touch — is recorded in `CODING_STANDARDS.md`.
 
 ## Edit Discipline
 

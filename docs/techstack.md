@@ -38,7 +38,7 @@ Versioned via the `/release` skill. `plugin.json` is the single version source �
 
 ## Coding Patterns
 
-> Grows via [doc-sync](../CLAUDE.md#doc-sync-non-negotiable) as patterns crystallize. Import style, error handling convention, naming, class-vs-function bias, type usage.
+> Grows via [doc-sync](../CLAUDE.md#doc-sync-non-negotiable) as patterns crystallize — **descriptive reference**: how this code is actually written, read on demand, safe to be cold. Import style, class-vs-function bias, type usage, recurring idioms. A convention that binds — imperative, obeyed at every code touch — is recorded in [`CODING_STANDARDS.md`](../CODING_STANDARDS.md).
 
 - **POSIX-bash asset dialect** — shell code assets use POSIX `bash`; on a PowerShell-primary device, run via the Bash tool or rewrite in its idiom. → [`release/SKILL.md`](../.claude/skills/release/SKILL.md)
 - **Portable-awk asset dialect** — shipped awk programs stay in the subset every consumer `awk` accepts: no interval expressions (`{n,}` / `{n,m}`), explicit `[ \t]` over POSIX classes, `tolower()` only behind the lead-byte probe (a Latin-1 / cp1252 ctype rewrites UTF-8 lead bytes; letters of every script must survive slugging). Consumer `awk` resolves to mawk on Debian/Ubuntu (1.3.4-20200120 on 20.04/22.04) and one-true-awk on macOS (pre-2019 builds), both of which read `{3,}` as literal braces — a regex that leans on them fails silently, never with a parse error. Construct lock: [`tests/doc-links.test.sh`](../tests/doc-links.test.sh); the cross-awk behavior check runs under Docker (`debian:bullseye-slim` + `original-awk` / `mawk` / `gawk`), not in the suite. → [`commit/assets/doc-links.sh`](../plugins/super-bootstrap/skills/commit/assets/doc-links.sh)

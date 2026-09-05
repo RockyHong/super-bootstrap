@@ -208,6 +208,13 @@ behind it. `harness-bootstrap` scaffolds the file headings-only, so a concern no
 declares is left to default judgment. The ambient line is the guaranteed reader that
 carries the file to every code touch.
 
+The slot routes three ways, so a convention has one home: binding with no clean file glob →
+`CODING_STANDARDS.md`, hand-recorded when a review or commit settles it (the file is outside
+the doc-sync surface); binding within a path glob → `.claude/rules/<scope>.md`; descriptive —
+how the code is written, observed rather than mandated →
+[`docs/techstack.md` § Coding Patterns](../techstack.md#coding-patterns), reference read on
+demand, never a standard.
+
 Dispatch doctrine came through intact: of CLAUDE.md § Dispatch's bullets, only the
 "build inside a superpowers chain → that chain's executor governs" clause was coupled, and
 it is cut. The rest — closure-judged inline-vs-dispatch, per-phase build dispatch,

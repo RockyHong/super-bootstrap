@@ -160,7 +160,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `docs/techstack.md` grown sections: Architecture Rules, Coding Patterns
 - `docs/overview.md` grown sections: Module Index, Data Flow, Key Boundaries
 - `docs/decisions.md` § Closed Forks table rows (consumer-filled history)
-- `CODING_STANDARDS.md` section content (consumer-grown via doc-sync)
+- `CODING_STANDARDS.md` section content (consumer-authored by hand when a convention settles — the file sits outside the doc-sync surface)
 - `.claude/rules/<rule>.md` grown sections (additions the user/doc-sync added below the skeleton scaffold)
 - `.claude/rules/<rule>.md` files the user authored without a matching skeleton (treat as fully project-owned)
 - Scale-module container content — `docs/parked.md` `## Entries` + `## Sweep log` content, `docs/test-queue.md` `## Pending` / `## Failed (re-queued for fix)` rows, the `docs/outward/OUT-###.md` entry files (consumer-filled, like card content; only the skeleton headers/shape stay pipeline-owned)
@@ -190,7 +190,7 @@ docs/
 .claude/
   rules/         ← path-scoped rules, full-body fires on file match
     index.md     ← rule-authoring guide (path-scoped — loads when editing rules)
-CODING_STANDARDS.md ← repo coding standard (headings-only scaffold; sections fill via doc-sync)
+CODING_STANDARDS.md ← repo binding conventions (headings-only scaffold; sections hand-recorded as conventions settle)
 ```
 
 For each: create if missing, skip if present. Add `.gitkeep` in empty folders. If `docs/` or `.claude/` already exists, nest alongside. Report status per directory.
@@ -203,7 +203,7 @@ There is no `docs/specs/` index file — the folder + filename convention IS the
 
 Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no substitutions). Copy `assets/work-template-skeleton.md` to `docs/work/TEMPLATE.md` if missing (no substitutions).
 
-`CODING_STANDARDS.md` is **always** scaffolded — copy `assets/coding-standards-skeleton.md` to the repo root if missing (no substitutions). Starts headings-only; its preamble states the fill contract. Preamble + headings pipeline-owned (drift-checked); section content project-owned (grown via doc-sync).
+`CODING_STANDARDS.md` is **always** scaffolded — copy `assets/coding-standards-skeleton.md` to the repo root if missing (no substitutions). Starts headings-only; its preamble states the fill contract and the three-way routing (binding + ambient here, binding + path-scoped → `.claude/rules/<scope>.md`, descriptive → `docs/techstack.md` § Coding Patterns). Preamble + headings pipeline-owned (drift-checked); section content project-owned, hand-recorded when a review or commit settles a convention — the file sits outside the doc-sync surface.
 
 `.claude/rules/` machinery is **always** scaffolded (zero-cost when empty). `index.md` is seeded from `assets/rules-index-skeleton.md`. Individual rule bodies fill in Phase 2b based on Phase 1 signal detection.
 
@@ -311,7 +311,7 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 | `assets/decisions-skeleton.md` | `docs/decisions.md` | Always — scope header pipeline-owned (drift-checked), `## Closed Forks` table rows project-owned |
 | `assets/work-readme-skeleton.md` | `docs/work/README.md` | Always — categories, thread contract, ID high-water line |
 | `assets/work-template-skeleton.md` | `docs/work/TEMPLATE.md` | Always — copy-to-create card template |
-| `assets/coding-standards-skeleton.md` | `CODING_STANDARDS.md` (project root) | Always — preamble + headings pipeline-owned (drift-checked), section content consumer-grown |
+| `assets/coding-standards-skeleton.md` | `CODING_STANDARDS.md` (project root) | Always — preamble + headings pipeline-owned (drift-checked), section content consumer-authored by hand (outside the doc-sync surface) |
 | `assets/bootstrap-plan.md` | `.claude/bootstrap.md` | |
 | `assets/rules-index-skeleton.md` | `.claude/rules/index.md` | Always — machinery |
 | `assets/rules-frontend-skeleton.md` | `.claude/rules/<framework>.md` | Only if frontend signal fired in Phase 1 |
@@ -342,13 +342,14 @@ Migration patterns (illustrative — judge by content shape, not heading exact-m
 | Closed history — rejected alternatives, roads-not-taken, closed design rationale | `docs/decisions.md` § Closed Forks | History dimension — a state doc never holds it (same lane as § Rejected Alternatives retirement below). |
 | Still-binding architecture decisions — module boundaries, data-flow direction, layering | `docs/techstack.md` § Architecture Rules (grown section) | State — a live constraint, written present-tense, stripped of when/why-decided. |
 | Live reference — deep examples, pattern walkthroughs for browsing | `docs/techstack.md` § Coding Patterns (grown section) | On-demand reading, not enforcement. Safe to be cold. |
+| Imperative coding convention with no clean file glob — binds every code touch (naming, error handling, testing posture) | `CODING_STANDARDS.md` § matching heading | Ambient standard — the CLAUDE.md § Coding Principles line is its guaranteed reader at every code touch. |
 | MV3 / service-worker rules path-bound to `src/background/**` | `.claude/rules/mv3.md` | Path-scoped |
 | `## Project Structure` directory tree | drop | `ls` / `tree` covers it; not load-bearing for any decision |
 | Cross-cutting items inside a path-scoped list (storage-key constants, type-centralization across UI ↔ background, message-contract types) | keep in CLAUDE.md (no clean glob — every layer touches them) | Genuinely ambient |
 
-**Default-to-rules when ambiguous.** A "Coding Standards" block named like reference but written as imperatives (must / never / always) is enforcement — silent-miss in a cold file costs more than slight rule over-attach.
+**Imperatives route by glob.** A "Coding Standards" block named like reference but written as imperatives (must / never / always) is enforcement: a clean file glob → `.claude/rules/<scope>.md` (default there when the glob is arguable — silent-miss in a cold file costs more than slight rule over-attach); no clean glob, every layer touches it → `CODING_STANDARDS.md` § matching heading, carried ambient by CLAUDE.md § Coding Principles.
 
-Surface the migration plan as a single proposal. Format below pins shape — one row per legacy block, judged via the migration table above. Destinations: `.claude/rules/<scope>.md` | `docs/decisions.md` § Closed Forks | `docs/techstack.md` § Architecture Rules | `docs/techstack.md` § Coding Patterns | keep in CLAUDE.md | drop.
+Surface the migration plan as a single proposal. Format below pins shape — one row per legacy block, judged via the migration table above. Destinations: `.claude/rules/<scope>.md` | `CODING_STANDARDS.md` § <heading> | `docs/decisions.md` § Closed Forks | `docs/techstack.md` § Architecture Rules | `docs/techstack.md` § Coding Patterns | keep in CLAUDE.md | drop.
 
 ```
 {path}: legacy content detected — propose migrations:
