@@ -609,6 +609,27 @@ else
   bad "construct lock: collect_docs() still defined in the asset (count=$collect_docs_count)"
 fi
 
+echo "== doc-links: BUG-056 — .claude/ bootstrap plan is machine state, exempt from the grep gate =="
+# harness-bootstrap seeds the plan and its sync report beside the runway receipt.
+# Machine state narrates nothing, so `terms` derives no grep term from those paths —
+# bare and nested forms alike — while an ordinary doc path still yields its term.
+for mp in .claude/bootstrap.md .claude/bootstrap-sync-report.md sub/.claude/bootstrap.md sub/.claude/bootstrap-sync-report.md; do
+  got_terms="$(cd "$TMP" && bash "$LINKS" terms "$mp")"
+  if [ -z "$got_terms" ]; then
+    ok "terms: $mp yields no term (exempt machine state)"
+  else
+    bad "terms: $mp yields no term (exempt machine state)"
+    printf 'got:\n%s\n' "$got_terms" | sed 's/^/        /'
+  fi
+done
+got_terms="$(cd "$TMP" && bash "$LINKS" terms docs/techstack.md)"
+if [ "$got_terms" = "techstack" ]; then
+  ok "terms: an ordinary doc path still yields its term (exemption stays narrow)"
+else
+  bad "terms: an ordinary doc path still yields its term (exemption stays narrow)"
+  printf 'got:\n%s\n' "$got_terms" | sed 's/^/        /'
+fi
+
 echo "== doc-links: BUG-045 — whole-surface check under a generous wall-clock ceiling =="
 now_ns="$(date +%s%N 2>/dev/null || true)"
 case "$now_ns" in

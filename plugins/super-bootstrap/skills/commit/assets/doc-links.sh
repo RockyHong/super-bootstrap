@@ -488,9 +488,13 @@ path_exempt() {
     local p="$1" rest seg lower
     is_frozen_provenance_path "$p" && return 0
     case "$p" in
-        # Machine state harness-bootstrap seeds under .claude/ — a coverage receipt and
-        # a settings template narrate nothing, whatever their stem.
+        # Machine state harness-bootstrap seeds under .claude/ — a coverage receipt, the
+        # bootstrap plan with its sync report, and a settings template narrate nothing,
+        # whatever their stem. They sit outside collect_surface() too, so `check`
+        # never opens them — the plan and report carry no links.
         .claude/super-bootstrap-runway.json|*/.claude/super-bootstrap-runway.json) return 0 ;;
+        .claude/bootstrap.md|*/.claude/bootstrap.md) return 0 ;;
+        .claude/bootstrap-sync-report.md|*/.claude/bootstrap-sync-report.md) return 0 ;;
         .claude/templates/*|*/.claude/templates/*) return 0 ;;
     esac
     rest="$p"
