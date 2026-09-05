@@ -130,6 +130,8 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 - **`venue-map.md`** (native) — fires on `docs/work/README.md`, `docs/test-queue.md`
   • Derive a work item's venue (T / S / U / P) fresh per read from its next phase — never its terminal phase, never stored.
   • One map, two filters: `/super-bootstrap:todo` reads it drainable vs need-me, `/super-bootstrap:drain` reads it dispatch vs wall.
+- **`asset-dialects.md`** (native) — fires on `plugins/*/skills/**/*.sh`, `plugins/*/skills/**/*.py`
+  • Shipped shell assets: POSIX bash, portable-awk subset, fork-free inner loops; Python only for a mechanical half that outgrew shell, with a declared degrade path.
 
 First three served from the personal claude-config repo (predicates in `.claude/guidelines/work-discipline/`). Add a project-specific rule file when a path-scoped pattern emerges (e.g. a SKILL.md authoring convention), then mirror a one-line summary here.
 
