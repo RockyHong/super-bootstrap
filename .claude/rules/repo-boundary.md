@@ -1,5 +1,5 @@
 ---
-description: "Repo-boundary discipline — state which copy is under test (published vs in-repo dev); route findings by ownership, served copies under this repo's own .claude/ included (/super-bootstrap:log for native artifacts, /contribute for served or imported ones — never a local-clone edit); shipped skeletons stay self-contained while the dogfood harness may taste-couple; a dogfood edit propagates to its shipped-skeleton mirror; .claude/guidelines/ is the storehouse's tree whole — this repo's own material lives in .claude/rules/ or docs/, never under it"
+description: "Repo-boundary discipline — state which copy is under test (published vs in-repo dev); route findings by ownership, served copies under this repo's own .claude/ included (/super-bootstrap:log for native artifacts, /contribute for served or imported ones — never a local-clone edit); shipped skeletons stay self-contained while the dogfood harness may taste-couple; an edit propagates to its mirror in both lanes — dogfood prose → shipped skeleton, frozen asset → placed dogfood copy; .claude/guidelines/ is the storehouse's tree whole — this repo's own material lives in .claude/rules/ or docs/, never under it"
 paths:
   - "CLAUDE.md"
   - "plugins/**"
@@ -8,6 +8,17 @@ paths:
   - ".claude/hooks/**"
   - ".claude/skills/**"
   - ".claude/agents/**"
+  - "AGENTS.md"
+  - "CODING_STANDARDS.md"
+  - "docs/overview.md"
+  - "docs/techstack.md"
+  - "docs/decisions.md"
+  - "docs/work/README.md"
+  - "docs/work/TEMPLATE.md"
+  - "docs/parked.md"
+  - "docs/test-queue.md"
+  - "docs/outward/README.md"
+  - "docs/outward/TEMPLATE.md"
 ---
 
 # Repo Boundary — Copy Under Test, Finding Lanes, Taste-Coupling
@@ -56,11 +67,26 @@ author's served `.claude/guidelines/`:
   repo lacks (e.g. `skills/todo`). Judge a skeleton line by whether it resolves
   in a repo that has only the installed plugin, nothing of the author's.
 
-**Sync direction — a dogfood edit carries its skeleton mirror.** The dogfood
-harness is the ahead-SSOT; shipped skeletons (`plugins/*/skills/*/assets/**`, e.g.
-`harness-bootstrap/assets/claude-md-skeleton.md`) are its seed. Editing a
-dogfood-harness section pulls any shipped-skeleton counterpart into the edit's
-propagation closure. Look it up live — grep the skeleton for the same section
-heading; no static map. Counterpart exists → propagate the change, stripped of
-dogfood-only references (per self-containment above); no counterpart, or the
-change is genuinely dogfood-specific → state so and the skeleton stays.
+**Sync direction — an edit carries its mirror; author on the SSOT side.** Two
+lanes, opposite direction, one closure rule. A `harness-bootstrap` re-run verifies
+both lanes and catches up what a commit missed.
+
+- **Prose lane — dogfood ahead.** Harness prose authored here (`CLAUDE.md`
+  sections, the `docs/` surfaces in `paths:` above) seeds its shipped
+  skeleton (`plugins/*/skills/*/assets/**`, e.g.
+  `harness-bootstrap/assets/claude-md-skeleton.md`). Editing such a section pulls
+  the skeleton counterpart into the edit's propagation closure. Look it up live —
+  grep the skeleton for the same section heading; no static map. Counterpart
+  exists → propagate the change, stripped of dogfood-only references (per
+  self-containment above); no counterpart, or the change is genuinely
+  dogfood-specific → state so and the skeleton stays.
+- **Asset lane — asset ahead.** A frozen asset (`assets/hooks/*` script +
+  `.hook.json` snippet, `agents-md-skeleton.md`, `coding-standards-skeleton.md`
+  preamble, rule / scale skeleton bodies, drain templates) is authored in the
+  plugin source; its dogfood copy (`.claude/hooks/*`, the merged
+  `.claude/settings.json` entry, root `AGENTS.md` / `CODING_STANDARDS.md` shipped
+  body, `.claude/rules/venue-map.md`, `.claude/templates/*`) is a placed
+  derivative. Editing the asset pulls that copy into the closure — refresh it
+  byte-identical (deep-equal for a snippet) so the next re-run reads it
+  `✓ current`. Look it up live — grep the shipped assets for the matching
+  destination; no single static map.

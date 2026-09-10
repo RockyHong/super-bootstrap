@@ -121,10 +121,10 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 - **`config-overlay.md`** — fires on `.claude/settings.json`, `.claude/settings.local.json`, `.claude/hooks/**`, `.mcp.json`
   • Default to upstream canonical wiring as shipped; empirically prove canonical fails before authoring an overlay, and date-stamp any overlay kept as decay debt.
   • Place ambient-behavior config at the lowest layer every target runtime loads; document parity exceptions explicitly.
-- **`repo-boundary.md`** (native) — fires on `CLAUDE.md`, `plugins/**`, `.claude/{rules,guidelines,hooks,skills,agents}/**`
+- **`repo-boundary.md`** (native) — fires on `CLAUDE.md`, `AGENTS.md`, `CODING_STANDARDS.md`, `plugins/**`, `.claude/{rules,guidelines,hooks,skills,agents}/**`, and the skeleton-mirrored docs (`docs/{overview,techstack,decisions,parked,test-queue}.md`, `docs/{work,outward}/{README,TEMPLATE}.md`)
   • State which copy is under test (published vs in-repo dev). Route findings by provenance: this repo's own artifacts → `/super-bootstrap:log`; served or imported copies (under this repo's `.claude/` too) → `/contribute`, never a local-clone edit.
   • Taste-coupling: dogfood harness (this repo's own CLAUDE.md/rules) may wire served guidelines; shipped skeletons (`plugins/*/skills/*/assets/**`) must be self-contained — downstream ≠ author.
-  • Sync direction: editing a dogfood-harness section pulls any shipped-skeleton counterpart into the edit's closure; propagate stripped of dogfood-only refs, or state it's dogfood-specific.
+  • Sync direction, two lanes by SSOT side: dogfood prose ahead → editing it pulls the shipped-skeleton counterpart into the closure (propagate stripped of dogfood-only refs, or state it's dogfood-specific); frozen asset ahead → editing it pulls the placed dogfood copy into the closure (refresh byte-identical). A re-run verifies both.
   • Ownership by folder: `.claude/guidelines/` is the storehouse's tree whole (served, clone-replaced); this repo's own material lives outside it — firing rules in `.claude/rules/`, reference in `docs/`.
 - **`skill-authoring.md`** (native) — fires on `plugins/*/skills/**`
   • Skill edits route by test surface: behavior-shaping prose → RED first (micro-test floor); mechanical → audit + release checks.
