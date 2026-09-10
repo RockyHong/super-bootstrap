@@ -131,6 +131,18 @@ naming rides the same path — skill `description:`, the runway intro, the emitt
 strings, and the pipeline-family `tags:` keyword are all harness-neutral, so a consumer
 re-bootstrapping migrates in one run.
 
+**Agent runtime — the boundary below this seam.** *Runtime* above means door-execution time;
+below it sits the agent runtime itself, and that boundary is not orthogonal. The harness is
+Claude-hosted and orchestrating: agent-runtime portability is out of scope, and the ambient-prose,
+path-scoped-rule, skill, agent, hook and packaging layers stay Claude-bound as the substrate they
+run on, not as losses. `AGENTS.md` is the single runtime-neutral artifact the pipeline seeds, and
+it is an **executor contract** — the standing brief a cold build container reads — never a port of
+those layers. A foreign runtime appears only as that build container, dispatched under
+[§ Dispatch](../../CLAUDE.md#dispatch--who-holds-each-phase)'s closure rule; it orchestrates
+nothing, so no shipped door, hook or rule ever has to resolve on it. Splitting the harness into a
+runtime-neutral core plus per-runtime adapters is a closed fork in
+[`docs/decisions.md`](../decisions.md).
+
 ## 5. Awareness wiring is the strongest uncontested position
 
 Docs existing ≠ the agent attending to them. The two systems solve this differently:

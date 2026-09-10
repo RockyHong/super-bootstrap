@@ -1,6 +1,6 @@
 ---
 name: harness-bootstrap
-description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, CODING_STANDARDS.md (headings-only), skeleton docs (overview, techstack, decisions, specs/, work/), path-scoped rules, and the core plugin pin; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap; opt-in earn-gated scale module (parked + test-queue + outward containers, venue-map rule, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks and backfills skeleton sections added since bootstrap on re-run. Solo dev workflow."
+description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, AGENTS.md (foreign-executor contract), CODING_STANDARDS.md (headings-only), skeleton docs (overview, techstack, decisions, specs/, work/), path-scoped rules, and the core plugin pin; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap; opt-in earn-gated scale module (parked + test-queue + outward containers, venue-map rule, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks and backfills skeleton sections added since bootstrap on re-run. Solo dev workflow."
 tags: [harness, scaffold, setup, meta, docs]
 ---
 
@@ -167,6 +167,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `docs/decisions.md` scope header (the blockquote + `## Closed Forks` heading)
 - `CODING_STANDARDS.md` preamble + section headings (code present only; drift checked against `assets/coding-standards-skeleton.md`)
 - `docs/work/README.md`, `docs/work/TEMPLATE.md`
+- `AGENTS.md` (foreign-executor contract — always placed; whole shipped body drift-checked against `assets/agents-md-skeleton.md`)
 - `.claude/rules/index.md` (rule-authoring guide)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` core plugin pin (`enabledPlugins`, `extraKnownMarketplaces`) — drift-checked for presence alone (§ 2a)
@@ -180,6 +181,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `docs/overview.md` grown sections: Module Index, Data Flow, Key Boundaries
 - `docs/decisions.md` § Closed Forks table rows (consumer-filled history)
 - `CODING_STANDARDS.md` section content (consumer-authored by hand when a convention settles — the file sits outside the doc-sync surface)
+- `AGENTS.md` grown content (additions appended below the shipped sections)
 - `.claude/rules/<rule>.md` grown sections (additions the user/doc-sync added below the skeleton scaffold)
 - `.claude/rules/<rule>.md` files the user authored without a matching skeleton (treat as fully project-owned)
 - Scale-module container content — `docs/parked.md` `## Entries` + `## Sweep log` content, `docs/test-queue.md` `## Pending` / `## Failed (re-queued for fix)` rows, the `docs/outward/OUT-###.md` entry files (consumer-filled, like card content; only the skeleton headers/shape stay pipeline-owned)
@@ -225,6 +227,8 @@ There is no `docs/specs/` index file — the folder + filename convention IS the
 `docs/decisions.md` is **always** scaffolded — copy `assets/decisions-skeleton.md` to `docs/decisions.md` if missing (no substitutions). Starts empty (header + `## Closed Forks` table). Its scope header is pipeline-owned (drift-checked); the table rows are project-owned (never touched).
 
 Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no substitutions). Copy `assets/work-template-skeleton.md` to `docs/work/TEMPLATE.md` if missing (no substitutions).
+
+`AGENTS.md` is **always** scaffolded — copy `assets/agents-md-skeleton.md` to the repo root if missing (no substitutions). No code-presence gate: the build contract it carries binds a docs-only repo the same way. Its whole shipped body is pipeline-owned (drift-checked); anything the consumer appends below it is project-owned (never touched).
 
 `CODING_STANDARDS.md` is scaffolded **when code is present** (Phase 1 § Code presence) — copy `assets/coding-standards-skeleton.md` to the repo root if missing (no substitutions); a docs-only repo takes no file, and a later re-run that finds code raises it as `⊕ new`. Starts headings-only; its preamble states the fill contract and the three-way routing (binding + ambient here, binding + path-scoped → `.claude/rules/<scope>.md`, descriptive → `docs/techstack.md` § Coding Patterns). Preamble + headings pipeline-owned (drift-checked); section content project-owned, hand-recorded when a review or commit settles a convention — the file sits outside the doc-sync surface.
 
@@ -335,6 +339,7 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 | `assets/work-readme-skeleton.md` | `docs/work/README.md` | Always — categories, thread contract, ID high-water line |
 | `assets/work-template-skeleton.md` | `docs/work/TEMPLATE.md` | Always — copy-to-create card template |
 | `assets/coding-standards-skeleton.md` | `CODING_STANDARDS.md` (project root) | Code present only (Phase 1 § Code presence) — preamble + headings pipeline-owned (drift-checked), section content consumer-authored by hand (outside the doc-sync surface) |
+| `assets/agents-md-skeleton.md` | `AGENTS.md` (project root) | Always — foreign-executor contract; shipped body pipeline-owned (drift-checked), consumer additions below it project-owned |
 | `assets/bootstrap-plan.md` | `.claude/bootstrap.md` | |
 | `assets/rules-index-skeleton.md` | `.claude/rules/index.md` | Always — machinery |
 | `assets/rules-frontend-skeleton.md` | `.claude/rules/<framework>.md` | Only if frontend signal fired in Phase 1 |
@@ -575,6 +580,7 @@ If every row is `✓ current` and nothing changed on disk, report and skip the c
 Otherwise use `/super-bootstrap:commit` to stage:
 - `CLAUDE.md` (new, modified, or post-migration)
 - `CODING_STANDARDS.md` (new, or approved preamble / heading drift fix)
+- `AGENTS.md` (new, or approved drift fix)
 - `docs/techstack.md` (new, skeleton-section drift or insert, or post-migration absorbed content)
 - `docs/overview.md` (new, skeleton-section drift or insert)
 - `docs/decisions.md` (new, scope-header drift, post-retirement migration from techstack, or closed-history rows from legacy CLAUDE.md migration)
