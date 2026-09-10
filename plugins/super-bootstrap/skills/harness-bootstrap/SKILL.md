@@ -29,7 +29,7 @@ Reason: reading alone isn't the breach — Claude's context isn't shared. The br
 
 Detect language/runtime by manifest files at repo root (e.g. `package.json`, `tsconfig.json`, `pyproject.toml` / `requirements.txt`, `Cargo.toml`, `go.mod`, `Gemfile`, `pom.xml` / `build.gradle`, `composer.json`, `pubspec.yaml`, `CMakeLists.txt` / `Makefile`, `*.csproj` / `*.sln` — illustrative, not exhaustive). Don't read fully — skim each for runtime/version, top-level deps, scripts/build commands. Cover unlisted stacks (Bun, Deno, Zig, Elixir, Gleam, etc.) by analogy from the manifest's contents.
 
-**Code presence.** A manifest, or any source file (scripts included), sets **code present**. Neither → **docs-only repo**: the code-touch pair — CLAUDE.md § Coding Principles and `CODING_STANDARDS.md` — is not applicable, the way monorepo-only sections are on a single-package repo (§ Pipeline-owned): the drift walk skips both and the receipt's `covered` omits them. A re-run that finds code raises both as `⊕ new` (§ 2b, § 2a). A pair an earlier bootstrap placed on a docs-only repo stays as the consumer left it — the walk carries no removal path.
+**Code presence.** A manifest, or any source file (e.g. `.js` / `.ts` / `.py` / `.go` / `.rs` / `.sh` — scripts included; illustrative, judge by analogy), sets **code present**. Neither → **docs-only repo**: the code-touch pair — CLAUDE.md § Coding Principles and `CODING_STANDARDS.md` — is not applicable, the way monorepo-only sections are on a single-package repo (§ Pipeline-owned): the drift walk skips both and the receipt's `covered` omits them. A re-run that finds code raises both as `⊕ new` (§ 2b, § 2a). A pair an earlier bootstrap placed on a docs-only repo stays as the consumer left it — the walk carries no removal path.
 
 ### Quick Structure
 
@@ -70,7 +70,7 @@ Adjacent stacks (Bun + Next, Deno + Fresh, Tauri + React, etc.) infer by analogy
 
 ### Greenfield (no seed docs)
 
-The generic runway runs on greenfield. If Phase 1 detects no manifests + no source files + missing `docs/overview.md` / `docs/techstack.md`, scaffold normally and write `overview.md` / `techstack.md` as empty skeletons in Phase 2b. The entry `/super-bootstrap` seeds GAP cards against those empty skeletons and surfaces the gate.
+The generic runway runs on greenfield. If Phase 1 detects a docs-only repo (§ Code presence — no manifests + no source files) whose `docs/overview.md` / `docs/techstack.md` are also missing, scaffold normally and write `overview.md` / `techstack.md` as empty skeletons in Phase 2b. The entry `/super-bootstrap` seeds GAP cards against those empty skeletons and surfaces the gate.
 
 When `docs/overview.md` + `docs/techstack.md` already carry substantive content, manifest facts and existing content feed the Phase 2b skeletons normally.
 
@@ -192,10 +192,14 @@ docs/
 .claude/
   rules/         ← path-scoped rules, full-body fires on file match
     index.md     ← rule-authoring guide (path-scoped — loads when editing rules)
-CODING_STANDARDS.md ← repo binding conventions (code present only; headings-only scaffold; sections hand-recorded as conventions settle)
 ```
 
 For each: create if missing, skip if present. Add `.gitkeep` in empty folders. If `docs/` or `.claude/` already exists, nest alongside. Report status per directory.
+
+**Code present only** (Phase 1 § Code presence — scaffold rule below):
+```
+CODING_STANDARDS.md ← repo binding conventions (headings-only scaffold; sections hand-recorded as conventions settle)
+```
 
 There is no `docs/specs/` index file — the folder + filename convention IS the catalog. Spec files are seeded by Task 1 of the bootstrap plan, each opening with `# {Feature Name}` and a one-paragraph intro.
 
