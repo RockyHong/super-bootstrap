@@ -1,5 +1,5 @@
 {
-  "version": "2.39.0",
+  "version": "2.49.0",
   "covered": [
     "CLAUDE.md § Development Workflow",
     "CLAUDE.md § Dispatch",
@@ -16,23 +16,29 @@
     "docs/techstack.md § Key Dependencies",
     "docs/techstack.md § Build & Distribution",
     "docs/techstack.md § Edit Discipline",
+    "docs/overview.md harness-meta",
     "docs/overview.md § Problem",
     "docs/overview.md § User",
     "docs/overview.md § Current State",
     "docs/decisions.md § scope header",
     "CODING_STANDARDS.md",
+    "AGENTS.md",
     "docs/work/README.md",
     "docs/work/TEMPLATE.md",
-    "docs/work/bootstrap.md",
     ".claude/rules/index.md",
     ".claude/settings.json plugin pins",
     ".claude/hooks/commit-channel.sh",
     ".claude/hooks/consult-check-check.sh",
     ".claude/hooks/consult-check-sessionstart.sh",
+    ".claude/settings.json hook snippets",
     ".gitignore consult-catalog line",
+    ".claude/templates/worktree-settings.local.json",
+    ".claude/settings.json worktree guard",
+    ".gitignore worktrees + drain-status lines",
     "docs/parked.md",
     "docs/test-queue.md",
-    "docs/outward.md",
+    "docs/outward/README.md",
+    "docs/outward/TEMPLATE.md",
     ".claude/rules/venue-map.md",
     "docs/work/README.md fact-fields block",
     ".claude/super-bootstrap-runway.json"
@@ -43,9 +49,12 @@
     "CLAUDE.md § Doc Sync",
     "docs/techstack.md § Edit Discipline",
     "docs/work/README.md",
-    "docs/work/bootstrap.md"
+    ".claude/bootstrap.md"
   ],
   "placed": {
-    ".claude/templates/worktree-settings.local.json": "ba99597f0fa900ae4059af341af8207fc3ee206a8292448a376b2688e4805253"
+    ".claude/templates/worktree-settings.local.json": "ba99597f0fa900ae4059af341af8207fc3ee206a8292448a376b2688e4805253",
+    ".claude/hooks/commit-channel.sh": "ec9ac22a9a77f9eb4136e2294fddaff6422431be7f5627eeb2d3abe5502727cf",
+    ".claude/hooks/consult-check-sessionstart.sh": "2599182bf93c81e688b6f21922467995123809785c1897c841a0c562908ca979",
+    ".claude/hooks/consult-check-check.sh": "8e00f247056f3449be135c48f526108dd042b42447afaf16e9b95b2da1adcaf8"
   }
 }

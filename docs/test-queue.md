@@ -63,7 +63,7 @@ The only durable state here is a still-`pending` entry — `pass` discharges it,
   - [ ] same run → `.claude/bootstrap-sync-report.md` carries an `AGENTS.md` row plus its `registration:` row, and `.claude/super-bootstrap-runway.json` `covered` lists `AGENTS.md` by path
   - [ ] re-run the scratch repo unchanged → `AGENTS.md` reads `✓ current`, file byte-unchanged
   - [ ] hand-edit one shipped line in the scratch `AGENTS.md`, re-run → `⚠ drifted`, diff shown; declining lands `declined` in the receipt and leaves the file untouched
-  - [ ] re-run on this repo (code present) → `AGENTS.md` lands `⊕ new` on the first sync and `✓ current` on the second; the `CLAUDE.md` § Dispatch row surfaces `⚠ drifted` once and resolves `updated`
+  - [x] re-run on this repo (code present) → `AGENTS.md` lands `⊕ new` on the first sync and `✓ current` on the second; the `CLAUDE.md` § Dispatch row surfaces `⚠ drifted` once and resolves `updated` — this repo: `⊕ new` landed; § Dispatch read `declined` (dogfood already co-edited), so the `updated` expectation is consumer-shaped
 - **result:** pending
 - **source:** GAP-072
 - **on fail:** `/super-bootstrap:log` a bug + re-queue
