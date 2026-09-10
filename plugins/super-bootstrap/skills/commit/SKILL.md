@@ -40,7 +40,7 @@ Commits the changes this Claude session produced, leaving prior uncommitted work
    - **Where a harness-audit stamp call sits between add and commit — `git add` → readback → stamp → `git commit`.** The stamp is a set comparison: it matches only when its path set equals the commit's staged harness set. A foreign path stamped in widens that set, and the readback's own remedy (`git restore --staged <foreign>`) then narrows what commits — leaving a fingerprint that can never match, so the gate re-fires on a commit whose audit did run and §5 carries no re-stamp step. Stamp the set that commits.
    - Commit with HEREDOC formatting; after, `git show --name-only --format= HEAD` equals the session list — prior dirty state is sacred, so a clean tree is not the check. Pre-commit hooks run; on failure fix the cause, never bypass. Always a new commit — amend only if asked.
 
-6. **Push (on confirmation)** — present branch → upstream, commits ahead. Ask **"Push these now? (y / skip)"**. Push on explicit yes only (`git push <remote> <branch>`); skip on silence or decline. Never force, never unannounced.
+6. **Push (where a push surface exists)** — probe first, ask second; the probe is a fact the gateway reads itself. `git remote` prints nothing → no push surface: §7's handoff line is the next and only output. A remote but no upstream for the branch (`git rev-parse --abbrev-ref @{u}` errors) → say so in one line and ask once: **"Set upstream and push (`git push -u <remote> <branch>`)? (y / skip)"** — `<remote>` is the sole remote, or the one the user names when several exist. Remote + upstream → present branch → upstream, commits ahead; ask **"Push these now? (y / skip)"**. Push on explicit yes only; skip on silence or decline. Never force, never unannounced.
 
 7. **Cycle handoff** — one line from cycle facts (any `docs/work/{BUG,DEBT,GAP}-###.md` present; a card whose latest Plan block has steps the latest Progress doesn't report done = in-flight). Don't expand into a status table — that's `/super-bootstrap:todo`'s job:
 
@@ -57,4 +57,4 @@ Commits the changes this Claude session produced, leaving prior uncommitted work
 - **Session-isolated.** The session list decides; prior dirty state is sacred. Explicit paths, never `-A` — and the staged set is read back against that list before every commit, so isolation holds at the index, not only at `git add`.
 - **Doc-sync round-trip, never bypass** — a `stale-docs` return goes through the user before commit.
 - **Whole-diff-once.** Doc-sync runs at the integration boundary, on the whole diff, once. Drain-worktree defers it to merge; an implementer never owns doc-sync — a partial-slice view gives false confidence.
-- **Push on explicit yes only** — committed work is safe locally either way.
+- **Push asks only where a push surface exists, and only on explicit yes** — §6's probe decides whether the question fires; committed work is safe locally either way.
