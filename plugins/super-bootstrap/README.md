@@ -11,7 +11,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`; Phase 2.5 dispatches `agents/plugin-digest.md` (Haiku) for README→digest parse.
 - `todo` — intent-filtered board scanner; dispatches `agents/todo.md` (Sonnet).
 - `log` — capture front door for backlog rows; gateway-inline (classify + dedup-surface + write in the calling session, no dispatch).
-- `triage` — read-only grounding phase for one backlog card (premise verify / aim validate / blast collect); dispatches `agents/triage.md` (Opus).
+- `triage` — read-only grounding phase for one backlog card (premise verify / aim validate / blast collect); dispatches `agents/triage.md` (inherits the session model — the top tier).
 - `triage-report` — drains `.review/` scan reports with per-finding dispositions; dispatches `agents/triage-report.md` (Sonnet).
 - `help` — on-demand index of installed user-invoke skills; inline + bundled extraction script.
 - `commit` — session-isolated (staged set read back against the session list), doc-sync-gated commit; on a grep + citer + link-target gate hit the gateway judges the scope warm-inline, dispatching `agents/doc-sync-scan.md` (Sonnet) only past the scope ceiling; product-anchor diffs dispatch `agents/premise-closure.md` (Sonnet).
@@ -44,7 +44,7 @@ Each bundled skill picks inline or agent dispatch based on task shape — not a 
 
 | Reason to dispatch | Reason to inline |
 |---|---|
-| Bounded judgment Sonnet/Haiku handles → save Opus tokens | User-interactive throughout (Q&A, mid-flow approval) |
+| Bounded judgment Sonnet/Haiku handles → save top-tier tokens | User-interactive throughout (Q&A, mid-flow approval) |
 | Heavy tool output that would pollute gateway working memory | Short scope — handoff overhead > savings |
 | Restricted toolset for safety | Gateway needs same context for follow-on work |
 | Parallelism / clean restart | Session-aware (transcript memory matters) |
@@ -63,7 +63,7 @@ A single matching reason on either side decides.
 | `check-docs-consistency` | inline | Single-pass scan by default (rung 1); scale rides the opt-in § Workflow Fan-Out — a Workflow launch from the invoking context, not an Agent dispatch |
 | `todo` | inline + script asset, dispatch fallback (Sonnet) | The classification spec is a total function (every derive branch carries a stated default) → bundled `render-board.py` executes it in one tool call, zero model tokens (was ~33.5k / ~197s per board); the `todo` agent dispatches only when the script fails (`python3` absent, non-zero exit, empty stdout). Golden bench: `bench/todo-board/` in the source repo |
 | `log` | inline | Observation is already in gateway context — a dispatch transcribes it out and the report back, so net offload ≈ the dedup card-reads, which an inline Grep covers; classify is near-done at phrasing time, ID + template write are mechanical (zero closure). The one real judgment — the dup call — surfaces to the user. Bias-exclusion no longer binds capture: worth/fresh-eyes judgment lives at triage, not here |
-| `triage` | dispatch (Opus) | Grounding is the highest-judgment lane — root-cause depth for broken behavior, need/aim verification for capability and debt claims (verdict errors propagate into every downstream phase — Opus floor); read-only toolset + clean context enforce the phase identity and priors isolation |
+| `triage` | dispatch (inherit — the session model is the top tier and the cap) | Grounding is the highest-judgment lane — root-cause depth for broken behavior, need/aim verification for capability and debt claims (verdict errors propagate into every downstream phase — top-tier floor: the model the session owner runs, never a lower fixed alias); read-only toolset + clean context enforce the phase identity and priors isolation |
 | `triage-report` | dispatch (Sonnet) | Bounded per-finding disposition — Sonnet fit; gateway coverage review + `/super-bootstrap:log` dedup judge the sheet downstream; dispatch enforces bias exclusion (shell passes no priors) |
 | `help` | inline + script asset | Extraction is deterministic (JSON manifests + YAML frontmatter) → bundled `render-menu.py` does it in one tool call, zero model tokens; the sole judgment (user-invoke filter) runs gateway-inline over the emitted rows. Probed: the retired Haiku dispatch cost 52.3k tokens / 29 tool uses per bare invoke vs ~0 + the menu's own size |
 | `review-intake` *(agent, no owning skill — gateway-routed via consumer CLAUDE.md § Dispatch)* | dispatch (Sonnet) | Cold per-claim premise judge at the claim's entry moment — an inline judge defeats the fire-moment cold-container mechanism; dispatch enforces bias exclusion (no fix preferences, no dispatcher theories ride in) |

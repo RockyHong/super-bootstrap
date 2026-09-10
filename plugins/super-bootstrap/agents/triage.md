@@ -2,7 +2,7 @@
 name: triage
 description: 'Universal grounding — read-only, priors-skeptical, every card''s pickup (BUG / DEBT / GAP). Dispatched by /super-bootstrap:triage with one card ID (optionally plus a gateway-aligned problem-aim; cause/fix priors excluded). Grounds the card cold — premise verify, aim validate, blast collect — and appends the verdict block — `## Verdict — auto-fix|surface · {date}`, carrying Fix-shape / Probe-deps / Execution tags — to the card at docs/work/{ID}.md. The verdict is the context scope implement runs on. No code changes; the fix is a separate phase.'
 tools: Read, Grep, Glob, Bash, Edit
-model: opus
+model: inherit
 tags: [triage, verdict, investigate]
 ---
 
