@@ -70,7 +70,7 @@ Doc surface: `docs/` (specs, overview, techstack, the [`docs/work/`](docs/work/R
 
 **Admission — a line earns the doc surface when it lets a reader skip opening a file:** a rule spanning surfaces no single file owns, a decision / constraint / number not derivable from the code, or an index pointer that shortens the search. Single-file mechanism stays in that file's own header or comment; a fix whose existing doc line was already right adds none.
 
-Stale candidates resolve together: report path + what looks outdated + relevant diff context; update or acknowledge still-accurate — never silently fix or skip. Every doc the gate enumerates gets an outcome marker (updated, or read-and-confirmed-unchanged): [`.claude/guidelines/local/doc-impact-mirror.md`](.claude/guidelines/local/doc-impact-mirror.md).
+Stale candidates resolve together: report path + what looks outdated + relevant diff context; update or acknowledge still-accurate — never silently fix or skip. Every doc the gate enumerates gets an outcome marker (updated, or read-and-confirmed-unchanged).
 
 **Write boundary** — doc-sync writes narrative docs only: `docs/`, the root `README`, and plugin READMEs (`plugins/*/README.md`). All harness — `CLAUDE.md`, `.claude/rules/`, skills, agents, plugin manifests — is **read-only within this step**: flag the drift and route the fix to its owner (a deliberate harness edit carrying its own verify pass; `/release` for manifests).
 
@@ -124,7 +124,7 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
   • State which copy is under test (published vs in-repo dev). Route findings by provenance: this repo's own artifacts → `/super-bootstrap:log`; served or imported copies (under this repo's `.claude/` too) → `/contribute`, never a local-clone edit.
   • Taste-coupling: dogfood harness (this repo's own CLAUDE.md/rules) may wire served guidelines; shipped skeletons (`plugins/*/skills/*/assets/**`) must be self-contained — downstream ≠ author.
   • Sync direction: editing a dogfood-harness section pulls any shipped-skeleton counterpart into the edit's closure; propagate stripped of dogfood-only refs, or state it's dogfood-specific.
-  • Owned-lore home: `.claude/guidelines/work-discipline/` is served and clone-replaced whole on sync; lore this repo owns lives in `.claude/guidelines/local/`.
+  • Ownership by folder: `.claude/guidelines/` is the storehouse's tree whole (served, clone-replaced); this repo's own material lives outside it — firing rules in `.claude/rules/`, reference in `docs/`.
 - **`skill-authoring.md`** (native) — fires on `plugins/*/skills/**`
   • Skill edits route by test surface: behavior-shaping prose → RED first (micro-test floor); mechanical → audit + release checks.
 - **`venue-map.md`** (native) — fires on `docs/work/README.md`, `docs/test-queue.md`

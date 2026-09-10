@@ -1,5 +1,5 @@
 ---
-description: "Repo-boundary discipline — state which copy is under test (published vs in-repo dev); route findings by ownership, served copies under this repo's own .claude/ included (/super-bootstrap:log for native artifacts, /contribute for served or imported ones — never a local-clone edit); shipped skeletons stay self-contained while the dogfood harness may taste-couple; a dogfood edit propagates to its shipped-skeleton mirror; project-owned lore goes in .claude/guidelines/local/, not the clone-replaced work-discipline/ subtree"
+description: "Repo-boundary discipline — state which copy is under test (published vs in-repo dev); route findings by ownership, served copies under this repo's own .claude/ included (/super-bootstrap:log for native artifacts, /contribute for served or imported ones — never a local-clone edit); shipped skeletons stay self-contained while the dogfood harness may taste-couple; a dogfood edit propagates to its shipped-skeleton mirror; .claude/guidelines/ is the storehouse's tree whole — this repo's own material lives in .claude/rules/ or docs/, never under it"
 paths:
   - "CLAUDE.md"
   - "plugins/**"
@@ -37,10 +37,11 @@ lists the served classes but not every served hook, so the byte-compare is
 the hook oracle. Served and imported artifacts are read-only here —
 surface, never edit in place.
 
-**Where owned lore lives.** `.claude/guidelines/work-discipline/` is served and
-clone-replaced whole on every sync — a file this repo owns cannot survive there.
-Project-owned lore goes in [`.claude/guidelines/local/`](../guidelines/local/README.md),
-whose README states the admission rule.
+**Ownership by folder.** `.claude/guidelines/` is the storehouse's tree whole —
+served and clone-replaced on every sync, present only where claude-config-manager
+is; nothing this repo owns lives under it. This repo's own material takes its own
+homes: a firing rule in `.claude/rules/`, reference prose in `docs/`, and a fact a
+harness line already states stays on that line.
 
 **Taste-coupling layers.** Two authoring layers, opposite latitude on wiring the
 author's served `.claude/guidelines/`:
