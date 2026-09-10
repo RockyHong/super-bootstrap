@@ -104,20 +104,15 @@ Report to user:
 - Branches skipped and why
 - Final `git log --oneline --graph -10`
 
-### 8. Push (on confirmation)
+### 8. Push (where a push surface exists)
 
-After absorption, offer to push the updated base — never run it unannounced. Present:
-
-- base branch → remote, commits ahead of remote
-- which branches were folded in
-
-Ask: **"Push {base} now? (y / skip)"** Push only on explicit yes. Skip by default if the user is silent. Never force push. Branches that hit conflicts are not pushed.
+Probe first, ask second — the probe is a fact the gateway reads itself. `git remote` prints nothing → no push surface: §7's report is the next and only output. A remote but no upstream for the base (`git rev-parse --abbrev-ref @{u}` errors) → say so in one line and ask once: **"Set upstream and push {base} (`git push -u <remote> {base}`)? (y / skip)"** — `<remote>` is the sole remote, or the one the user names when several exist. Remote + upstream → present base → remote, commits ahead of remote, which branches were folded in; ask **"Push {base} now? (y / skip)"**. Push on explicit yes only; skip on silence or decline. Never force. Branches that hit conflicts are not pushed. Same push-probe shape as the commit skill's § 6.
 
 ## Rules
 
 - Run inline — no subagent dispatch.
 - Working directory is already correct; `cd` is unnecessary.
-- Push the base only on explicit confirmation — present what will push, never force, never unannounced. (See §8.)
+- Push asks only where a push surface exists, and only on explicit confirmation — §8's probe decides whether the question fires; present what will push, never force, never unannounced.
 - Never resolve conflicts inline. Surface and stop. (See Conflict Doctrine above.)
 - Never force-merge.
 - Never delete branches.
