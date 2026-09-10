@@ -1,6 +1,6 @@
 # Tech Stack
 
-> Living doc — **state dimension only** (what the stack *is* now). Skeleton sections (Runtime / Framework / Key Dependencies / Build & Distribution — **seed-once**: seeded at scaffold from detected facts, hand-edited from then on; a `harness-bootstrap` re-run checks their shape only and never rewrites the facts. Edit Discipline, fixed prose). Grown sections (Architecture Rules / Coding Patterns) start empty and grow via doc-sync — every commit that touches a relevant area triggers a sync proposal, admitted per § Doc Sync. Rejected stack directions are history, not state → [`docs/decisions.md`](decisions.md), never a section here. See `CLAUDE.md` Doc Sync.
+> Living doc — **state dimension only** (what the stack *is* now). Skeleton sections (Runtime / Framework / Key Dependencies / Build & Distribution — **seed-once**: seeded at scaffold from detected facts, hand-edited from then on; a `harness-bootstrap` re-run checks their shape only and never rewrites the facts. Edit Discipline, fixed prose). Grown sections (Architecture Rules / Coding Patterns) start empty and grow via doc-sync — every commit that touches a relevant area triggers a sync proposal, admitted per § Doc Sync. Rejected stack directions are history, not state → [`docs/decisions.md`](decisions.md), never a section here. See [`CLAUDE.md` Doc Sync](../CLAUDE.md#doc-sync-non-negotiable).
 
 ## Runtime
 
@@ -32,7 +32,7 @@
 
 ## Coding Patterns
 
-> Grows via doc-sync as patterns crystallize — **descriptive reference**: how this code is actually written, read on demand, safe to be cold. Import style, class-vs-function bias, type usage, recurring idioms. A convention that binds — imperative, obeyed at every code touch — is recorded in `CODING_STANDARDS.md`.
+> Grows via [doc-sync](../CLAUDE.md#doc-sync-non-negotiable) as patterns crystallize — **descriptive reference**: how this code is actually written, read on demand, safe to be cold. Import style, class-vs-function bias, type usage, recurring idioms. A convention that binds — imperative, obeyed at every code touch — is recorded in `CODING_STANDARDS.md`.
 
 ## Edit Discipline
 
