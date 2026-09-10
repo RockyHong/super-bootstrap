@@ -86,7 +86,7 @@ State docs (`overview.md`, `techstack.md`, specs) hold what is **true now** — 
 
 ## Coding Principles
 
-Before writing, reviewing, or refactoring code, read `CODING_STANDARDS.md` at the repo root — the repo's binding conventions; a filled section governs its concern, and where no section declares a concern, default judgment applies.
+Before writing, reviewing, or refactoring code, read `CODING_STANDARDS.md` at the repo root — the repo's binding conventions; a filled section governs its concern.
 
 ## Edit Discipline — Renames, Replace-All & Stale State
 
