@@ -84,9 +84,9 @@ State docs (`overview.md`, `techstack.md`, specs) hold what is **true now** — 
 
 **Card resolution:** if work resolves a `BUG-###` / `DEBT-###` / `GAP-###`, delete `docs/work/{ID}.md` — including a shipped feature-`GAP`, which now belongs to the product narrative (Problem / Current State / Module Index). Git history is the archive.
 
-## Coding Principles
+{## Coding Principles}
 
-Before writing, reviewing, or refactoring code, read `CODING_STANDARDS.md` at the repo root — the repo's binding conventions; a filled section governs its concern.
+{Before writing, reviewing, or refactoring code, read `CODING_STANDARDS.md` at the repo root — the repo's binding conventions; a filled section governs its concern.}
 
 ## Edit Discipline — Renames, Replace-All & Stale State
 

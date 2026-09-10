@@ -206,7 +206,9 @@ into `CODING_STANDARDS.md` never binds the file itself.
 refactoring code") and names `CODING_STANDARDS.md` as the standard — no pinned default
 behind it. `harness-bootstrap` scaffolds the file headings-only, so a concern no section
 declares is left to default judgment. The ambient line is the guaranteed reader that
-carries the file to every code touch.
+carries the file to every code touch. On a docs-only repo — no manifest, no source file — neither
+the slot nor the file is scaffolded: a code touch that never comes needs no reader; both raise
+`⊕ new` when code arrives ([Phase 1 § Code presence](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md)).
 
 The slot routes three ways, so a convention has one home: binding with no clean file glob →
 `CODING_STANDARDS.md`, hand-recorded when a review or commit settles it (the file is outside

@@ -29,6 +29,8 @@ Reason: reading alone isn't the breach — Claude's context isn't shared. The br
 
 Detect language/runtime by manifest files at repo root (e.g. `package.json`, `tsconfig.json`, `pyproject.toml` / `requirements.txt`, `Cargo.toml`, `go.mod`, `Gemfile`, `pom.xml` / `build.gradle`, `composer.json`, `pubspec.yaml`, `CMakeLists.txt` / `Makefile`, `*.csproj` / `*.sln` — illustrative, not exhaustive). Don't read fully — skim each for runtime/version, top-level deps, scripts/build commands. Cover unlisted stacks (Bun, Deno, Zig, Elixir, Gleam, etc.) by analogy from the manifest's contents.
 
+**Code presence.** A manifest, or any source file (scripts included), sets **code present**. Neither → **docs-only repo**: the code-touch pair — CLAUDE.md § Coding Principles and `CODING_STANDARDS.md` — is not applicable, the way monorepo-only sections are on a single-package repo (§ Pipeline-owned): the drift walk skips both and the receipt's `covered` omits them. A re-run that finds code raises both as `⊕ new` (§ 2b, § 2a). A pair an earlier bootstrap placed on a docs-only repo stays as the consumer left it — the walk carries no removal path.
+
 ### Quick Structure
 
 - `ls` root directory
@@ -101,7 +103,7 @@ Read `.claude/super-bootstrap-runway.json` in the target repo (the runway covera
 - **Marker stale (older) or absent** → set `version_stale`, consumed by Phase 2b to enforce the full drift check (see § 2b). Surface ONCE up front:
   - Stale: `runway stamped v{old} < plugin v{new} — full drift re-check enforced.`
   - Absent: `runway carries no version stamp — full drift re-check enforced.`
-- **Marker matches plugin version** → judge the receipt: enumerate the pipeline-owned sections applicable to this repo (§ Pipeline-owned, honoring the tier conditionals — monorepo, scale module) and set-difference against `covered`. A legacy version-only stamp carries no `covered` — its coverage is unknown, so every applicable section counts as uncovered.
+- **Marker matches plugin version** → judge the receipt: enumerate the pipeline-owned sections applicable to this repo (§ Pipeline-owned, honoring the tier conditionals — monorepo, scale module, code presence) and set-difference against `covered`. A legacy version-only stamp carries no `covered` — its coverage is unknown, so every applicable section counts as uncovered.
   - Difference empty → normal path.
   - Difference non-empty → set `version_stale` with the gap list. Surface ONCE up front: `runway stamped v{cur} but coverage gaps: {list} — full drift re-check enforced.`
 
@@ -142,11 +144,11 @@ registration: {artifact} → {surfaces, or none}
 The row resolves `updated` once every named surface is edited, before § 2c runs, in the same commit — or `none`, earned only when all four greps return nothing. An unresolved row halts § 2c like a drifted one. The 2a-hooks and 2a-drain steps sit outside this rule, scripts included: the `.claude/settings.json` and `.gitignore` entries those steps already write are their registration.
 
 **Pipeline-owned** (subject to drift check):
-- CLAUDE.md sections: Development Workflow, Dispatch, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene, Finding Triage, Rules, Git Notes, Planning, Monorepo (monorepo tier only — the conditional cross-package build block)
+- CLAUDE.md sections: Development Workflow, Dispatch, Doc Sync, Coding Principles (code present only — Phase 1 § Code presence), Edit Discipline, Context Hygiene, Finding Triage, Rules, Git Notes, Planning, Monorepo (monorepo tier only — the conditional cross-package build block)
 - `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution, Edit Discipline, Packages (monorepo tier only — the § header + column shape; table rows are consumer-grown, project-owned)
 - `docs/overview.md` skeleton sections: Problem, User, Current State
 - `docs/decisions.md` scope header (the blockquote + `## Closed Forks` heading)
-- `CODING_STANDARDS.md` preamble + section headings (drift checked against `assets/coding-standards-skeleton.md`)
+- `CODING_STANDARDS.md` preamble + section headings (code present only; drift checked against `assets/coding-standards-skeleton.md`)
 - `docs/work/README.md`, `docs/work/TEMPLATE.md`
 - `.claude/rules/index.md` (rule-authoring guide)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
@@ -190,7 +192,7 @@ docs/
 .claude/
   rules/         ← path-scoped rules, full-body fires on file match
     index.md     ← rule-authoring guide (path-scoped — loads when editing rules)
-CODING_STANDARDS.md ← repo binding conventions (headings-only scaffold; sections hand-recorded as conventions settle)
+CODING_STANDARDS.md ← repo binding conventions (code present only; headings-only scaffold; sections hand-recorded as conventions settle)
 ```
 
 For each: create if missing, skip if present. Add `.gitkeep` in empty folders. If `docs/` or `.claude/` already exists, nest alongside. Report status per directory.
@@ -203,7 +205,7 @@ There is no `docs/specs/` index file — the folder + filename convention IS the
 
 Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no substitutions). Copy `assets/work-template-skeleton.md` to `docs/work/TEMPLATE.md` if missing (no substitutions).
 
-`CODING_STANDARDS.md` is **always** scaffolded — copy `assets/coding-standards-skeleton.md` to the repo root if missing (no substitutions). Starts headings-only; its preamble states the fill contract and the three-way routing (binding + ambient here, binding + path-scoped → `.claude/rules/<scope>.md`, descriptive → `docs/techstack.md` § Coding Patterns). Preamble + headings pipeline-owned (drift-checked); section content project-owned, hand-recorded when a review or commit settles a convention — the file sits outside the doc-sync surface.
+`CODING_STANDARDS.md` is scaffolded **when code is present** (Phase 1 § Code presence) — copy `assets/coding-standards-skeleton.md` to the repo root if missing (no substitutions); a docs-only repo takes no file, and a later re-run that finds code raises it as `⊕ new`. Starts headings-only; its preamble states the fill contract and the three-way routing (binding + ambient here, binding + path-scoped → `.claude/rules/<scope>.md`, descriptive → `docs/techstack.md` § Coding Patterns). Preamble + headings pipeline-owned (drift-checked); section content project-owned, hand-recorded when a review or commit settles a convention — the file sits outside the doc-sync surface.
 
 `.claude/rules/` machinery is **always** scaffolded (zero-cost when empty). `index.md` is seeded from `assets/rules-index-skeleton.md`. Individual rule bodies fill in Phase 2b based on Phase 1 signal detection.
 
@@ -311,7 +313,7 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 | `assets/decisions-skeleton.md` | `docs/decisions.md` | Always — scope header pipeline-owned (drift-checked), `## Closed Forks` table rows project-owned |
 | `assets/work-readme-skeleton.md` | `docs/work/README.md` | Always — categories, thread contract, ID high-water line |
 | `assets/work-template-skeleton.md` | `docs/work/TEMPLATE.md` | Always — copy-to-create card template |
-| `assets/coding-standards-skeleton.md` | `CODING_STANDARDS.md` (project root) | Always — preamble + headings pipeline-owned (drift-checked), section content consumer-authored by hand (outside the doc-sync surface) |
+| `assets/coding-standards-skeleton.md` | `CODING_STANDARDS.md` (project root) | Code present only (Phase 1 § Code presence) — preamble + headings pipeline-owned (drift-checked), section content consumer-authored by hand (outside the doc-sync surface) |
 | `assets/bootstrap-plan.md` | `.claude/bootstrap.md` | |
 | `assets/rules-index-skeleton.md` | `.claude/rules/index.md` | Always — machinery |
 | `assets/rules-frontend-skeleton.md` | `.claude/rules/<framework>.md` | Only if frontend signal fired in Phase 1 |
@@ -480,6 +482,7 @@ Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write fro
 - Problem / User / Current State (`overview.md` skeleton sections) → left empty at install; filled at GAP-card pickup, not by the runway
 - Bracketed conditional lines (`{- docs/parked.md — ...}`, `{- docs/test-queue.md — ...}`, `{- docs/outward/ — ...}`) — keep only if the corresponding adaptive doc is scaffolded for this repo (scale module per its 2a install gate); drop the whole line otherwise
 - **Monorepo tier** (Phase 1 § Monorepo detection) — fill CLAUDE.md's conditional monorepo block (workspace tool + the workspace-aware filtered build command) and `techstack.md` § Packages table rows (package | path | role | build command) from the Phase 1 package enumeration. Single-package repo → drop the CLAUDE.md monorepo block and the § Packages section entirely
+- **Code presence** (Phase 1 § Code presence) — code present → unbracket CLAUDE.md's conditional § Coding Principles block verbatim; docs-only repo → drop the block entirely (`CODING_STANDARDS.md` is not scaffolded either, § 2a)
 - CLAUDE.md § **Rules** summary bullets — fill from seeded `.claude/rules/*.md` files (one bullet per rule with glob + 2-4 one-line key points). The seeded `venue-map.md` ships its own bullet block in the skeleton's § Rules — scale module installed → keep that block verbatim (unbracket the three bullet lines, no substitutions); not installed → drop it; its `{scale module installed — …}` label drops either way. The `{example scaffolding — …}` label and the bracketed example bullets under it go together: replaced by the seeded rules' bullets, or dropped when no signal-seeded rule file landed (`index.md` is always-placed machinery and takes no bullet) — leaving the explanatory paragraph, the venue-map block when installed, and the unbracketed read-the-rule-file sentence, which is shipped prose.
 - Rule skeleton placeholders (`{component path glob}`, `{Framework}`, body bullets in `assets/rules-*-skeleton.md`) → fill from Phase 1 detection. Lines that don't apply get dropped during scaffold.
 
