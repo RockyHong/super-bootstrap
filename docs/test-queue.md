@@ -62,7 +62,7 @@ The only durable state here is a still-`pending` entry — `pass` discharges it,
   - [ ] bootstrap the docs-only scratch repo → root `AGENTS.md` lands `⊕ new`, inserts on approval, byte-identical to `plugins/super-bootstrap/skills/harness-bootstrap/assets/agents-md-skeleton.md`; the same run places no `CODING_STANDARDS.md` and no `## Coding Principles` — the new asset carries no code-presence gate
   - [ ] same run → `.claude/bootstrap-sync-report.md` carries an `AGENTS.md` row plus its `registration:` row, and `.claude/super-bootstrap-runway.json` `covered` lists `AGENTS.md` by path
   - [ ] re-run the scratch repo unchanged → `AGENTS.md` reads `✓ current`, file byte-unchanged
-  - [ ] hand-edit one shipped line in the scratch `AGENTS.md`, re-run → `⚠ drifted`, diff shown; declining lands `declined` in the receipt and leaves the file untouched
+  - [ ] hand-edit one shipped line in the scratch `AGENTS.md`, re-run → `⚠ drifted`, diff shown; declining with `n — {reason}` lands `{ "section": "AGENTS.md", "reason": "{reason}" }` under `declined` in the receipt and leaves the file untouched; a further re-run prints `previously declined: {reason}` beside the row's diff before re-prompting
   - [x] re-run on this repo (code present) → `AGENTS.md` lands `⊕ new` on the first sync and `✓ current` on the second; the `CLAUDE.md` § Dispatch row surfaces `⚠ drifted` once and resolves `updated` — this repo: `⊕ new` landed; § Dispatch read `declined` (dogfood already co-edited), so the `updated` expectation is consumer-shaped
 - **result:** pending
 - **source:** GAP-072

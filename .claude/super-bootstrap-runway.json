@@ -44,12 +44,30 @@
     ".claude/super-bootstrap-runway.json"
   ],
   "declined": [
-    "CLAUDE.md § Development Workflow",
-    "CLAUDE.md § Dispatch",
-    "CLAUDE.md § Doc Sync",
-    "docs/techstack.md § Edit Discipline",
-    "docs/work/README.md",
-    ".claude/bootstrap.md"
+    {
+      "section": "CLAUDE.md § Development Workflow",
+      "reason": "dogfood-specific — names the device-served `load-harness-principles` / `audit-harness-edits` skills on the envelope's verify line, the cluster-7 route and the centrality-sizing bullet"
+    },
+    {
+      "section": "CLAUDE.md § Dispatch",
+      "reason": "dogfood-specific — wires the served `.claude/guidelines/work-discipline/dispatch-run-mode.md` and `~/.claude/guidelines/claude-shape/hook-feedback-channels.md` as the run-mode bullet's Full: pointers"
+    },
+    {
+      "section": "CLAUDE.md § Doc Sync",
+      "reason": "dogfood-specific — names the served `ssot-doc-link` rule on the guarantee line and the in-repo `/release` skill + plugin manifests on the write-boundary line"
+    },
+    {
+      "section": "docs/techstack.md § Edit Discipline",
+      "reason": "dogfood-specific — wires the served `.claude/guidelines/work-discipline/dispatch-run-mode.md` on the re-Read trigger line"
+    },
+    {
+      "section": "docs/work/README.md",
+      "reason": "dogfood-specific residual — the Design line links in-repo plugin paths (`skills/triage/SKILL.md`, `shared/classify-actionable.md`) and `docs/specs/harness-architecture.md`, the Plan line adds the session-carry-ledger trigger"
+    },
+    {
+      "section": ".claude/bootstrap.md",
+      "reason": "not regenerated — checkbox-carrying seed, § Pipeline-owned special case"
+    }
   ],
   "placed": {
     ".claude/templates/worktree-settings.local.json": "ba99597f0fa900ae4059af341af8207fc3ee206a8292448a376b2688e4805253",

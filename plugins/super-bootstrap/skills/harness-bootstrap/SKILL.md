@@ -98,7 +98,7 @@ If user answers `dry-run`, walk Phases 1–2b without writing — render the syn
 
 Rot signals catch renamed literals; they miss template drift that shifted structure without renaming a token. The runway receipt closes that gap.
 
-Read `.claude/super-bootstrap-runway.json` in the target repo (the runway coverage receipt — shape `{ "version": "x.y.z", "covered": [...], "declined": [...], "placed": { ... } }`; `covered` lists the sections the last sync read-and-compared, `declined` a subset of `covered` the user declined to update at that version — divergence accepted, not pending; `placed` maps each file asset's destination path to the sha256 of the file as this pipeline placed it, so a later sync can tell a lagging copy from a consumer-edited one). Compare its `version` to the running plugin's own version — read `version` from the plugin's `.claude-plugin/plugin.json`, located at the plugin root two directory levels above this skill's base directory (`skills/harness-bootstrap/` → `skills/` → plugin root). That is the version currently installing/syncing.
+Read `.claude/super-bootstrap-runway.json` in the target repo (the runway coverage receipt — shape `{ "version": "x.y.z", "covered": [...], "declined": [...], "placed": { ... } }`; `covered` lists the sections the last sync read-and-compared, `declined` a subset of `covered` the user declined to update at that version — divergence accepted, not pending — each entry `{ "section": "<row identity>", "reason": "<one line>" }`, a bare-string entry the section alone, reason-less; `placed` maps each file asset's destination path to the sha256 of the file as this pipeline placed it, so a later sync can tell a lagging copy from a consumer-edited one). Compare its `version` to the running plugin's own version — read `version` from the plugin's `.claude-plugin/plugin.json`, located at the plugin root two directory levels above this skill's base directory (`skills/harness-bootstrap/` → `skills/` → plugin root). That is the version currently installing/syncing.
 
 - **Marker stale (older) or absent** → set `version_stale`, consumed by Phase 2b to enforce the full drift check (see § 2b). Surface ONCE up front:
   - Stale: `runway stamped v{old} < plugin v{new} — full drift re-check enforced.`
@@ -172,7 +172,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` core plugin pin (`enabledPlugins`, `extraKnownMarketplaces`) — drift-checked for presence alone (§ 2a)
 - `.claude/bootstrap.md` (seeded plan — carries user checkbox state, so § 2b's special case governs re-run; the next session consumes it, its own Task 3 deletes it)
-- `.claude/super-bootstrap-runway.json` (runway coverage receipt `{ version, covered, declined, placed }` — presence + content checked, not diffed section-by-section; read at Phase 1, written at 2c — `covered` / `declined` from the sync-report rows, `placed` from the file assets the ensure-infra procedures copied or verified current; durable marker, no cleaner — persists for the life of the harness)
+- `.claude/super-bootstrap-runway.json` (runway coverage receipt `{ version, covered, declined, placed }` — presence + content checked, not diffed section-by-section; read at Phase 1, written at 2c — `covered` / `declined` from the sync-report rows (`declined` entries `{ section, reason }`), `placed` from the file assets the ensure-infra procedures copied or verified current; durable marker, no cleaner — persists for the life of the harness)
 - Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `docs/outward/README.md` + `docs/outward/TEMPLATE.md` (whole files, the way `docs/work/README.md` / `docs/work/TEMPLATE.md` are), `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md` — whole body, prose included), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`), the CLAUDE.md § Rules `venue-map.md` bullet block (drift-checked against `assets/claude-md-skeleton.md` § Rules)
 
 **Project-owned** (never touched):
@@ -409,7 +409,7 @@ Per-migration handling:
 
 **Never destructive without confirmation.** Show source → dest mapping, get explicit approval, only then move content.
 
-**The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `.claude/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new`), and — for drifted and `⊕ new` rows — the diff or template section, plus the resolution as it lands at Block 2 (`updated` / `inserted` / `declined`); Phase 2c derives the coverage receipt from these rows. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. For each artifact this run placed for the first time or deleted (§ Registration rule), append its `registration:` row before closing the enumeration. Overwrite any stale report from a prior run.
+**The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `.claude/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new`), and — for drifted and `⊕ new` rows — the diff or template section, plus the resolution as it lands at Block 2 (`updated` / `inserted` / `declined ({reason})`); Phase 2c derives the coverage receipt from these rows. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. For each artifact this run placed for the first time or deleted (§ Registration rule), append its `registration:` row before closing the enumeration. Overwrite any stale report from a prior run.
 
 **Version-stale enforcement.** When Phase 1 set `version_stale`, this enumeration is mandatory in full this run — every pipeline-owned section gets an actual read-and-compare row; the "sections look similar → `✓ current`" skim is forbidden. No new mechanism — the 2c gate already refuses commit on any uncovered section (see § 2c). Print the Phase 1 surfaced line once at the top of Block 1 as the reminder.
 
@@ -433,8 +433,9 @@ Block 2 (for `⚠ drifted` and `⊕ new` rows — one expansion per section):
   - {removed line}
   + {added line}
   ───────────────────────────────────────────────
+  previously declined: {reason}
 
-  Update? (y / n / show full diff)
+  Update? (y / n — {reason} / show full diff)
 ```
 
 `⊕ new` expansion (section in the current skeleton, absent from the existing file):
@@ -446,9 +447,12 @@ Block 2 (for `⚠ drifted` and `⊕ new` rows — one expansion per section):
   ───────────────────────────────────────────────
   {template section body}
   ───────────────────────────────────────────────
+  previously declined: {reason}
 
-  Insert at the skeleton's position? (y / n)
+  Insert at the skeleton's position? (y / n — {reason})
 ```
+
+The `previously declined:` line renders only when the prior receipt's `declined` carries the row's section — the whole line reads `previously declined: {reason}` from an object entry, `previously declined, no reason recorded` from a bare string; omit it otherwise. Display beside the diff: the row still takes its full read-and-compare and its own Block 2 answer. `n` takes its reason on the same line — `n — {reason}`, one line — and the report row records it as `declined ({reason})`; a bare `n` re-prompts for the reason before the row resolves.
 
 The report is the forcing function: Phase 2c refuses to commit unless it exists and carries a row for every pipeline-owned section in scope (§ 2c gate). A collapsed "skeleton sections match" with no rows fails that gate mechanically — there is no assertion to trust, so there is nothing to collapse into one. Drift approval (Block 2) protects against (a) legit template updates the user wants to review and (b) bad-actor template injection on a future re-run — you see what's about to change before it's overwritten.
 
@@ -559,7 +563,7 @@ Per-candidate handling:
 
 ### 2c: Sync report + commit
 
-**Gate — the sync report must exist and cover every pipeline-owned section, plus every artifact the § Registration rule covers, before commit.** Read `.claude/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row, and every durable artifact the § Registration rule covers must have a `registration:` row. Missing file, or any uncovered section or artifact → halt, return to 2b, produce the missing rows. A `⚠ drifted` or `⊕ new` row must also carry its Block 2 resolution (`updated` / `inserted` / `declined`), a `registration:` row its own (`updated` / `none`) — an unresolved row halts the same way. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
+**Gate — the sync report must exist and cover every pipeline-owned section, plus every artifact the § Registration rule covers, before commit.** Read `.claude/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row, and every durable artifact the § Registration rule covers must have a `registration:` row. Missing file, or any uncovered section or artifact → halt, return to 2b, produce the missing rows. A `⚠ drifted` or `⊕ new` row must also carry its Block 2 resolution (`updated` / `inserted` / `declined ({reason})`), a `registration:` row its own (`updated` / `none`) — an unresolved row, or a `declined` row carrying no reason, halts the same way. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
 
 **Sync report** — rendered from the artifact (the file is canonical; this table is its commit-time view). Always shown before commit. Fresh repos see "all new"; re-run repos see drift fixes and current items.
 
@@ -568,12 +572,13 @@ Per-candidate handling:
 |-------------------------------------|--------------|---------------------|
 | CLAUDE.md: Doc Sync                 | ✓ current    | —                   |
 | docs/techstack.md: Runtime          | ⚠ drifted    | updated (approved)  |
+| CLAUDE.md: Dispatch                 | ⚠ drifted    | declined (wires the repo's own guideline paths) |
 | .claude/rules/mv3.md                | ⊕ new        | seeded (signal: MV3 manifest) |
 | registration: docs/outward/ → README.md docs list (illustrative — name what the greps hit) | ⊕ new | updated |
 | registration: .claude/skills/commit/ → none | ⊘ removed | none |
 ```
 
-**Receipt write.** Once the sync completes, write `.claude/super-bootstrap-runway.json` = `{ "version": "{current plugin version}", "covered": [...], "declined": [...], "placed": { ... } }` — fresh install writes it new, re-run overwrites whole. `covered` is copied mechanically from the sync-report's per-section rows (the same rows the gate above just cross-checked; row identity `{file} § {Section}`, whole-file artifacts by path); `declined` is the rows resolved `declined` at Block 2 — a drift kept, or an insert declined. For those two the report is the receipt's sole source. `placed` is the ensure-infra procedures' own record — `{ "<destination path>": "<sha256 of the file as placed>" }` — which 2a-hooks / 2a-drain write into the receipt file directly as each file resolves current — copied, or already sha-equal (mechanisms: [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) § Idempotency · [`../drain/assets/ensure-infra.md`](../drain/assets/ensure-infra.md) § Idempotency); read the receipt back from disk here, after those steps ran, and carry its `placed` map forward whole — never from the Phase 1 snapshot, which predates this run's copies. This runs even when every row is `✓ current` — the receipt records "synced at this version, these sections compared," independent of whether content changed.
+**Receipt write.** Once the sync completes, write `.claude/super-bootstrap-runway.json` = `{ "version": "{current plugin version}", "covered": [...], "declined": [...], "placed": { ... } }` — fresh install writes it new, re-run overwrites whole. `covered` is copied mechanically from the sync-report's per-section rows (the same rows the gate above just cross-checked; row identity `{file} § {Section}`, whole-file artifacts by path); `declined` is the rows resolved `declined` at Block 2 — a drift kept, or an insert declined — each written `{ "section": "<row identity>", "reason": "<the row's declined reason>" }`. For those two the report is the receipt's sole source. `placed` is the ensure-infra procedures' own record — `{ "<destination path>": "<sha256 of the file as placed>" }` — which 2a-hooks / 2a-drain write into the receipt file directly as each file resolves current — copied, or already sha-equal (mechanisms: [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) § Idempotency · [`../drain/assets/ensure-infra.md`](../drain/assets/ensure-infra.md) § Idempotency); read the receipt back from disk here, after those steps ran, and carry its `placed` map forward whole — never from the Phase 1 snapshot, which predates this run's copies. This runs even when every row is `✓ current` — the receipt records "synced at this version, these sections compared," independent of whether content changed.
 
 If every row is `✓ current` and nothing changed on disk, report and skip the commit.
 
