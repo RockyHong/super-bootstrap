@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
-# FROZEN commit-channel v5 (single-channel commit guard)
-# Spawn pre-filter: the `if: "Bash(git *)"` field on the merged settings entry
-# anchors on the bare `git` command — a sub-command-anchored pattern misses git
-# global-flag forms (`git -C <dir> commit`, `git --no-pager commit`). The real
-# commit filter is the in-script regex below; non-commit git calls exit 0.
+# FROZEN commit-channel v6 (single-channel commit guard)
+# Spawn pre-filter: the merged settings entry matches `Bash|PowerShell` and carries
+# one hook element per tool — `if: "Bash(git *)"` and `if: "PowerShell(git *)"` —
+# because a foreign-tool `if` never spawns. Both anchor on the bare `git` command:
+# a sub-command-anchored pattern misses git global-flag forms (`git -C <dir> commit`,
+# `git --no-pager commit`). Either tool delivers its command as `.tool_input.command`,
+# so one script serves both lanes. The real commit filter is the in-script regex
+# below; non-commit git calls exit 0.
 #
 # Gate: `agent_type` stdin field = the running subagent's frontmatter name
 # (plugin agents may arrive namespaced, e.g. `super-bootstrap:commit`); absent
@@ -19,13 +22,17 @@ cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // empty')
 [ -z "$cmd" ] && exit 0
 
 # Match a `git commit` porcelain INVOCATION at command position (whole-command
-# start, or after ; & |), not a mention: bash `=~` anchors ^ to the whole command
-# and [:blank:] gaps keep the match on one line, so a `git commit` substring inside
-# a quoted arg / heredoc passes through untouched. Trailing boundary skips
-# commit-tree / commit-graph. The safety property is preserved: a real commit
-# invocation is always at command position, so it is still caught and routed to the
-# door; only non-commit mentions that used to false-deny now pass.
-_re='(^|[;&|])[[:blank:]]*git[[:blank:]]+([^[:space:]]+[[:blank:]]+)*commit([[:space:]]|$|;|&|\|)'
+# start, or after ; & | or a newline), not a mention: the [:blank:] gaps keep the
+# `git`…`commit` span on one line, so a `git commit` substring inside a quoted arg
+# on that same line still passes through untouched. A newline is a separator
+# because bash `=~` anchors ^ to the whole command only — without it every line
+# after the first reads as a mention, and a multi-line payload's `git commit` line
+# passes silently. The trade that buys: a heredoc body line beginning `git commit`
+# now denies — a visible, recoverable outcome (the worker reads the deny text and
+# routes to the door) in place of a silent pass. The trailing boundary
+# ([[:space:]] covers newline) skips commit-tree / commit-graph.
+_nl=$'\n'
+_re='(^|[;&|'"$_nl"'])[[:blank:]]*git[[:blank:]]+([^[:space:]]+[[:blank:]]+)*commit([[:space:]]|$|;|&|\|)'
 [[ "$cmd" =~ $_re ]] || exit 0
 
 agent=$(printf '%s' "$input" | jq -r '.agent_type // "main"')

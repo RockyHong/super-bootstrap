@@ -1,10 +1,15 @@
 {
-  "_comment": "FROZEN commit-channel PreToolUse guard (A6). hooks-ensure-infra.md MERGES this single entry into the consumer's .claude/settings.json hooks.PreToolUse array — never overwrites the file or other hooks. The `if` field anchors on the bare `git` command — a sub-command-anchored pattern misses git global-flag forms such as `git -C <dir> commit` and `git --no-pager commit` — so the script is the real filter: it narrows to real `git commit` invocations, exits 0 on everything else, and gates the rest by agent_type (main session passes; every subagent is routed to /super-bootstrap:commit). Command path is $CLAUDE_PROJECT_DIR-relative so it resolves from any cwd inside the repo.",
-  "matcher": "Bash",
+  "_comment": "FROZEN commit-channel PreToolUse guard (A6). hooks-ensure-infra.md MERGES this single entry into the consumer's .claude/settings.json hooks.PreToolUse array — never overwrites the file or other hooks. One entry covers both command tools: the matcher spans `Bash|PowerShell`, and each of the two hook elements runs the same script under its own tool's `if` — a foreign-tool `if` never spawns, so each tool needs its own element. The `if` field belongs in the hook object; one placed beside `matcher` is ignored. Both `if` fields anchor on the bare `git` command — a sub-command-anchored pattern misses git global-flag forms such as `git -C <dir> commit` and `git --no-pager commit` — so the script is the real filter: it narrows to real `git commit` invocations, exits 0 on everything else, and gates the rest by agent_type (main session passes; every subagent is routed to /super-bootstrap:commit). Command path is $CLAUDE_PROJECT_DIR-relative so it resolves from any cwd inside the repo.",
+  "matcher": "Bash|PowerShell",
   "hooks": [
     {
       "type": "command",
       "if": "Bash(git *)",
+      "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/commit-channel.sh\""
+    },
+    {
+      "type": "command",
+      "if": "PowerShell(git *)",
       "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/commit-channel.sh\""
     }
   ]

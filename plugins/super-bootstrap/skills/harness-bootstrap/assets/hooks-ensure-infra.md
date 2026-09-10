@@ -3,7 +3,8 @@
 harness-bootstrap ships three hook assets. Unlike drain's worktree infra
 (`../drain/assets/ensure-infra.md`), install runs **unconditionally** — no opt-in
 confirm. All are safe-by-default: `commit-channel`'s hook process spawns on any `git`
-call (its `if` anchors on the bare command) and denies only raw `git commit` from
+call on either command tool (its entry carries one hook element per tool, and each
+element's `if` anchors on the bare command) and denies only raw `git commit` from
 worker subagents — everything else exits 0 silently, and the main session is never
 blocked; the
 `consult-check` pair only injects a doc catalog (read activation, no gating). Each
@@ -69,7 +70,7 @@ Existence alone is not enough: an upstream fix to a frozen asset — script **or
 settings snippet — must reach repos that already have an older copy. Currency compares
 **installed** against **asset** whole: a script by sha256 of its bytes, a snippet by
 deep-equal against the asset entry. Each frozen script also carries a version marker on
-its second line — `# FROZEN <name> vN` (e.g. `# FROZEN commit-channel v5`) — which
+its second line — `# FROZEN <name> vN` (e.g. `# FROZEN commit-channel v6`) — which
 names the version in reports and prompts; it is not the currency test, so an edit
 anywhere in the file counts as drift. A second script predicate reads the runway
 receipt's `placed` map to tell a copy that merely lags the asset (**stale**) from one
