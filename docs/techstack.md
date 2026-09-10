@@ -33,6 +33,7 @@ Versioned via the `/release` skill. `plugin.json` is the single version source �
 
 - **Dispatch-shell + typed-agent split** — skills with bounded-judgment verbs route through a dispatch shell + typed agent pair; monolithic skill bodies don't own execution judgment. → [`skill-authoring.md`](../.claude/rules/skill-authoring.md)
 - **Frozen-asset versioning** — shipped assets are placed by mechanical copy/merge at release time and never regenerated, eliminating inter-repo drift. → [`ensure-infra.md`](../plugins/super-bootstrap/skills/drain/assets/ensure-infra.md)
+- **Plugin-owned hook lane** — a hook whose input is the installed plugin itself (`plugins/super-bootstrap/hooks/`, commands anchored on `${CLAUDE_PLUGIN_ROOT}`) runs from the plugin tree and updates with it; never placed, so it carries no receipt row and no drift check. → [`overview.md` § Key Boundaries](overview.md#key-boundaries)
 - **Skeleton/dogfood sync direction** — two lanes by SSOT side — dogfood prose edits carry their shipped-skeleton counterpart in the edit's closure, frozen-asset edits carry the placed dogfood copy; skeletons must be self-contained (no dogfood-only wiring). → [`repo-boundary.md`](../.claude/rules/repo-boundary.md)
 - **Gateway-inline vs dispatched lanes** — closure-judged (not diff-size-judged): build phases dispatch to clean subagents; transcription applies inline; parallel within a phase only; writer run mode keyed on path overlap. → [`CLAUDE.md` § Dispatch](../CLAUDE.md#dispatch--who-holds-each-phase)
 

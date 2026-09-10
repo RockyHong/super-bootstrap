@@ -2,7 +2,8 @@
 paths:
   - "plugins/*/skills/**/*.sh"
   - "plugins/*/skills/**/*.py"
-description: "Dialect standards for shipped code assets — POSIX bash, portable-awk subset, fork-free inner loops, Python mechanical-extraction shape. Fires on a shipped .sh / .py asset read under plugins/*/skills/."
+  - "plugins/*/hooks/**/*.sh"
+description: "Dialect standards for shipped code assets — POSIX bash, portable-awk subset, fork-free inner loops, Python mechanical-extraction shape. Fires on a shipped .sh / .py asset read under plugins/*/skills/ and on a plugin-owned hook script under plugins/*/hooks/."
 ---
 
 # Asset Dialects — Shipped Shell + Python
