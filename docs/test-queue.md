@@ -31,7 +31,16 @@ The only durable state here is a still-`pending` entry — `pass` discharges it,
 
 ## Pending
 
-*(empty — seeded as manual-verification obligations are queued)*
+### Docs-only bootstrap takes no code-touch pair; code arriving raises both as `⊕ new`
+
+- **run on:** in-repo dev copy of `harness-bootstrap` (`plugins/super-bootstrap/skills/harness-bootstrap/`) against a scratch repo holding only `README.md` + `docs/*.md`
+- **checklist:**
+  - [ ] bootstrap the docs-only scratch repo → `CLAUDE.md` has no `## Coding Principles`, no root `CODING_STANDARDS.md`, receipt `covered` lists neither
+  - [ ] add a `package.json` and re-run → both surface as `⊕ new`, insert on approval
+  - [ ] re-run on a code repo (this one) → sync output unchanged
+- **result:** pending
+- **source:** GAP-073
+- **on fail:** `/super-bootstrap:log` a bug + re-queue
 
 ## Failed (re-queued for fix)
 
