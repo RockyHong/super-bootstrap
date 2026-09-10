@@ -299,7 +299,7 @@ On `y`, place the six `assets/scale/` skeletons per Phase 2's per-artifact rule 
 - `outward-readme-skeleton.md` → `docs/outward/README.md`
 - `outward-template-skeleton.md` → `docs/outward/TEMPLATE.md`
 - `rules-venue-map-skeleton.md` → `.claude/rules/venue-map.md`
-- `card-fact-fields.md` → insert its marker-delimited block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`) into `docs/work/README.md` directly above the `## Thread contract` heading; skip if the markers are already present.
+- `card-fact-fields.md` → insert its marker-delimited block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`) into `docs/work/README.md` directly above the `## Thread contract` heading. Markers already present → the block is placed; § 2b's drift check judges its content against the asset (§ Pipeline-owned), so a re-run updates a stale block there, on approval.
 
 Stage the placed files with the Phase 2c commit.
 
