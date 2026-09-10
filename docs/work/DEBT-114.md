@@ -5,3 +5,16 @@
 **Area:** `.claude/super-bootstrap-runway.json`; `.claude/hooks/`; `.claude/settings.json` hook entries; `plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md` § Version-staleness signal
 **Prior:** Run `/super-bootstrap:harness-bootstrap` and walk its proposals; the receipt's `declined` record is what keeps the pass short.
 **Test-feel:** manual · **Blast:** repo
+
+## Amendment — 2026-09-10 · harness-bootstrap re-run, pre-approval halt
+
+**Scope sharpened — this card is one lane of two, not the whole drift.** git shows the dogfood/skeleton relationship runs in both directions, split by who places the surface:
+
+- **Placed lane (this card).** `AGENTS.md`, `.claude/hooks/*`, rule/scale skeleton bodies, settings snippets, the receipt — only a runway re-run places them, so they lag the plugin by construction. Proof: `2050816` (GAP-072) shipped `agents-md-skeleton.md` and wrote the § Dispatch prose into dogfood `CLAUDE.md` in the same commit, yet root `AGENTS.md` is still absent; the same commit queued a `docs/test-queue.md` item expecting a re-run to land it. `commit-channel.sh` only reads current because BUG-060 hand-edited it. Cadence: 5 sync runs against 40+ releases.
+- **Prose lane ([DEBT-115](DEBT-115.md)).** Hand-edited sections propagate in the implementing commit — `c8956a0`, `cec0102`, `b8659e9`, `ba1005e`, `c5d8ab2` all touch skeleton + dogfood together — so dogfood runs *ahead* there, and the one breach (`0450f4f`) left three skeletons behind.
+
+**Consequence for the golden rule:** the placed lane cannot be hand-propagated (that is the update/merge engine [`docs/decisions.md`](../decisions.md) already closed) and cannot run inside `/release` either — the runway executes against the *installed* copy per [`repo-boundary.md`](../../.claude/rules/repo-boundary.md) § Copy under test, which only carries the new version after publish + autoUpdate. So its trigger has to be a post-release ambient signal: **[GAP-076](GAP-076.md) is this lane's trigger mechanism, not a convenience** — priority argued up.
+
+**Drift walk completed, nothing written.** Full per-section enumeration sits in the untracked `.claude/bootstrap-sync-report.md` (transient; Phase 2c is its cleaner). Result: every pipeline-owned section read-and-compared under enforced `version_stale`; four `declined` rows re-confirmed dogfood-specific (served skills / served lore pointers / repo-source paths), one (`docs/work/README.md`) re-typed as mixed → its consumer-safe half became DEBT-115. Rot scan 0 migrations (6 hits all inside `docs/decisions.md` historical claim prose). 2b-adopt: no name collisions. Hooks + drain infra sha-current.
+
+**Pending, awaiting approval before any write:** (1) place root `AGENTS.md` from the asset + register it in `repo-boundary.md` `paths:`; (2) replace-in-place the two consult-check settings snippets (quoting differs from asset, behaviour identical); (3) overwrite the receipt `2.39.0 → 2.49.0` with `covered` re-derived from the report rows and `placed` extended by the three hook-script sha256s. `.claude/bootstrap.md` stays unseeded — 167 commits past `3eff71a`, Tasks 1/2 both drop.
