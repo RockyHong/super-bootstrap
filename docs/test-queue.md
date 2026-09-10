@@ -42,6 +42,19 @@ The only durable state here is a still-`pending` entry — `pass` discharges it,
 - **source:** GAP-073
 - **on fail:** `/super-bootstrap:log` a bug + re-queue
 
+### Seed-once stack facts: a re-run after code arrives advises, never rewrites
+
+- **run on:** in-repo dev copy of `harness-bootstrap` (`plugins/super-bootstrap/skills/harness-bootstrap/`) against the GAP-073 docs-only scratch shape (`README.md` + `docs/*.md` only)
+- **checklist:**
+  - [ ] bootstrap the docs-only scratch repo → `docs/techstack.md` § Runtime / Framework / Key Dependencies / Build & Distribution hold the unfilled placeholders, `CLAUDE.md` § Tech Stack reads the docs-only one-liner
+  - [ ] add a `package.json` and re-run → Phase 3 prints the stale-facts advisory naming all five sections plus the detected manifest / runtime / framework
+  - [ ] same re-run → `.claude/bootstrap-sync-report.md` carries one `facts:` row with those detected facts (the advisory's source)
+  - [ ] same re-run → those five sections are byte-unchanged on disk, and the four techstack rows read `✓ current` (never `⚠ drifted`)
+  - [ ] re-run on this code repo (facts already filled) → no advisory, and the four techstack rows read `✓ current` not `⚠ drifted`
+- **result:** pending
+- **source:** GAP-074
+- **on fail:** `/super-bootstrap:log` a bug + re-queue
+
 ## Failed (re-queued for fix)
 
 *(empty — seeded as failed entries are re-queued)*

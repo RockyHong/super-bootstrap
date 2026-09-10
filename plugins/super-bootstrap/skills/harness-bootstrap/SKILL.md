@@ -111,6 +111,23 @@ Detection only — Phase 1 reads the receipt and stops; it does not act on the f
 
 **Output of Phase 1 (version lane):** record `version_stale` (plus the old/new version strings, and the coverage-gap list when that was the trigger) for Phase 2b to consume.
 
+### Fact-staleness signal (detected facts vs last run)
+
+The version lane asks whether the receipt is old. This lane asks whether the facts it was written against still hold. The receipt records what the last sync *saw*: `covered` omits `CLAUDE.md § Coding Principles` and `CODING_STANDARDS.md` on a docs-only run (§ Code presence), so a `covered` list carrying neither says the last sync ran against a repo with no code.
+
+Set `facts_stale` when **both** hold:
+
+- the receipt exists, its `covered` is present and non-empty, and `covered` carries neither `CLAUDE.md § Coding Principles` nor `CODING_STANDARDS.md`
+- this run's § Code presence reads **code present**
+
+Every other state leaves it unset: no receipt (fresh install — the facts seed this run), a legacy version-only stamp with no `covered` (coverage unknown, nothing to compare against), a docs-only repo still docs-only, or a repo whose last run already saw code.
+
+**Bound.** The receipt records no manifest identity, so this delta keys on the code-presence transition alone. A manifest that changed, moved, or was added beside an existing one on a repo the last run already read as code-present raises nothing here.
+
+Detected here, materialized at § 2b: the flag rides the sync report, not context. When set, § 2b's enumeration appends one `facts:` row to `.claude/bootstrap-sync-report.md` — `facts: stale — last sync docs-only, code present now · manifest {file} · runtime {runtime + version} · framework {framework, or "none"}` — beside the rot rows, and Phase 3 prints its advisory from that row alone (§ Phase 3). The receipt shape and the § 2c set-difference are unchanged: the row is a print source, not a coverage claim.
+
+**Output of Phase 1 (facts lane):** record `facts_stale`, and with it the facts this run detected — manifest file name, runtime, framework (§ Manifest Detection) — for § 2b to write as the `facts:` row.
+
 ---
 
 The runway scaffolds with no product Q&A. Drift on existing files is resolved inline per-section at Phase 2b.
@@ -145,7 +162,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 
 **Pipeline-owned** (subject to drift check):
 - CLAUDE.md sections: Development Workflow, Dispatch, Doc Sync, Coding Principles (code present only — Phase 1 § Code presence), Edit Discipline, Context Hygiene, Finding Triage, Rules, Git Notes, Planning, Monorepo (monorepo tier only — the conditional cross-package build block)
-- `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution, Edit Discipline, Packages (monorepo tier only — the § header + column shape; table rows are consumer-grown, project-owned)
+- `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution (**seed-once** — mechanics at § 2b; stale facts route to the Phase 3 advisory, § Fact-staleness signal), Edit Discipline (fixed prose — body drift-checked against the template), Packages (monorepo tier only — the § header + column shape; table rows are consumer-grown, project-owned)
 - `docs/overview.md` skeleton sections: Problem, User, Current State
 - `docs/decisions.md` scope header (the blockquote + `## Closed Forks` heading)
 - `CODING_STANDARDS.md` preamble + section headings (code present only; drift checked against `assets/coding-standards-skeleton.md`)
@@ -158,7 +175,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `docs/outward/README.md` + `docs/outward/TEMPLATE.md` (whole files, the way `docs/work/README.md` / `docs/work/TEMPLATE.md` are), `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md` — whole body, prose included), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`), the CLAUDE.md § Rules `venue-map.md` bullet block (drift-checked against `assets/claude-md-skeleton.md` § Rules)
 
 **Project-owned** (never touched):
-- CLAUDE.md: Tech Stack one-line, Commands, any user-added custom sections
+- CLAUDE.md: Tech Stack one-line (**seed-once**, same classification as the `docs/techstack.md` fact sections above — filled from Phase 1 detection facts when the runway first writes CLAUDE.md, consumer-edited from then on; no re-run rewrites it), Commands, any user-added custom sections
 - `docs/techstack.md` grown sections: Architecture Rules, Coding Patterns
 - `docs/overview.md` grown sections: Module Index, Data Flow, Key Boundaries
 - `docs/decisions.md` § Closed Forks table rows (consumer-filled history)
@@ -330,6 +347,7 @@ On greenfield (no manifest, no source files), `overview.md` / `techstack.md` wri
 - **Missing** → fill placeholders, write.
 - **Exists, drifted in pipeline-owned section** → diff that section vs template, present to user, get approval per section, write approved.
 - **Exists, pipeline-owned section absent** → `⊕ new` row: render the template section at Block 2, get approval, insert at the skeleton-defined position relative to the surviving sections.
+- **Exists, seed-once section** (`docs/techstack.md` § Runtime / Framework / Key Dependencies / Build & Distribution — § Pipeline-owned) → compare **shape only**: heading present and in its skeleton position → `✓ current`, whatever facts the body carries. Heading missing → `⊕ new` per the bullet above, inserted with this run's detected facts filled in where code is present (the template's placeholder body on a docs-only repo) — that insertion is the section's first fill. The body is never diffed against the template here: a filled body and a still-unfilled placeholder both read `✓ current`, and facts that went stale route to the Phase 3 stale-facts advisory (§ Phase 3), never to a write in this walk.
 - **CLAUDE.md § Rules, scale module installed** → the skeleton's shipped `venue-map.md` bullet block is this section's only template-fixed content — the remaining bullets mirror the repo's own seeded rules and stay project-owned. No `venue-map.md` bullet in the section → `⊕ new`, append the shipped block verbatim as the last bullet of the bullet list, one blank line above it. Bullet present → compare its fires-on list and key-point lines to the shipped block (the lead line keeps the section's own bullet form and any repo-local marker): same → `✓ matches`; differs → `⚠ drifted`, show the diff, write on approval.
 - **`.claude/settings.json` core plugin pin** → key present → `✓ pinned`; key absent → `⊕ new`, resolving `inserted` with no prompt (§ 2a).
 - **Exists, current** → mark `✓ current`. **Still show the per-section comparison briefly** (one-line per pipeline-owned section: `[Runtime] ✓ matches`, `[Framework] ✓ matches`, etc.) — asserting "current" without showing the comparison is a gap.
@@ -428,6 +446,8 @@ Block 2 (for `⚠ drifted` and `⊕ new` rows — one expansion per section):
 ```
 
 The report is the forcing function: Phase 2c refuses to commit unless it exists and carries a row for every pipeline-owned section in scope (§ 2c gate). A collapsed "skeleton sections match" with no rows fails that gate mechanically — there is no assertion to trust, so there is nothing to collapse into one. Drift approval (Block 2) protects against (a) legit template updates the user wants to review and (b) bad-actor template injection on a future re-run — you see what's about to change before it's overwritten.
+
+**Facts row (re-run, when Phase 1 set `facts_stale`).** Append the `facts:` row § Fact-staleness signal specifies to the report in this same enumeration — Phase 3's only source for the stale-facts advisory: no row, no advisory.
 
 **Rot scan (mandatory pre-step on re-run).** Before Block 1 renders, read `assets/rename-map.md` and grep every pipeline-owned file in scope for each entry's `old` literal (whole-token match — avoid URL / identifier false hits). Each hit becomes a rot row appended to `bootstrap-sync-report.md` and surfaced to the user:
 
@@ -599,6 +619,21 @@ After committing (or reporting no changes needed), present results based on repo
 **Re-run / sync pass:**
 
 > **Pipeline synced.** {N items updated, M already current.}{If a commit landed: " Its full file list: `git show --stat HEAD`."}{If migration performed: " Migrated {sections moved} from CLAUDE.md to {destinations} — `CLAUDE.md` now {old line count} → {new line count} lines."}{If rule files added: " Rules: +K seeded, summary updated in CLAUDE.md § Rules."}
+
+**Stale detected facts (re-run, when `.claude/bootstrap-sync-report.md` carries a `facts:` row — written at § 2b from § Fact-staleness signal):**
+
+Read the row back and print this block once, directly under the sync line, its facts taken from the row:
+
+> **Detected stack facts are stale.** This repo carried no code at the last runway sync and carries code now. The runway seeds stack facts once, at first fill, and never rewrites them — five sections still read their docs-only values:
+>
+> - `CLAUDE.md` § Tech Stack — the one-line summary. Hand-edited: it is § Project-owned, and doc-sync's write boundary excludes `CLAUDE.md`, so no other door refreshes it.
+> - `docs/techstack.md` § Runtime · § Framework · § Key Dependencies · § Build & Distribution
+>
+> Detected this run: manifest `{manifest file}` · runtime `{runtime + version}` · framework `{framework, or "none"}`.
+>
+> Edit those five sections by hand from those facts and commit them. This run changed nothing in them.
+
+The advisory step completes when that block has printed with all five section names and the row's facts substituted in. It has no approval prompt and no on-disk effect — the runway writes none of the five.
 
 ## Principles
 
