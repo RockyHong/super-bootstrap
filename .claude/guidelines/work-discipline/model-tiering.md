@@ -13,17 +13,18 @@ to the attention its step actually needs.
 
 Before any dispatch — a multi-agent workflow's `agent()` calls or a single
 subagent — assign each call a tier by work shape. The audit always fires.
-Inheritance stays legitimate for steps that genuinely need main-loop-grade
-reasoning — name the reason per inherited call.
+Inheritance is the top tier — name the reason per inherited call.
 
 | Tier | Work shape | Examples |
 |---|---|---|
 | Small (`haiku`) | Mechanical retrieval — search, fetch, format conversion, rule-driven structured output | search-result ranking, fetch, file scanning |
 | Mid (`sonnet`) | Bounded judgment — adversarial verification, scoring, synthesis, organization | refute-vote panels, report synthesis, single-dimension review |
-| Top (`opus`) | Steps needing main-loop-grade reasoning | open-ended design decisions, cross-domain trade-off calls |
+| Top (`inherit`) | Steps needing main-loop-grade reasoning | open-ended design decisions, cross-domain trade-off calls, aesthetic judgment |
 
-Small retrieves, mid judges, top thinks. Inherit is the dispatcher's model, not a
-tier — designate when the tier must hold regardless of what the main loop runs.
+Small retrieves, mid judges, top thinks. Top is the model the session owner runs
+the gateway on and simultaneously the cap — no dispatch runs above it, the session
+model being the owner's own cost decision. Every tier below it is pinned
+explicitly: omission inherits, which lands at top.
 
 Extraction and claim-forming are judgment, not retrieval. Retrieval-tier output
 that feeds a downstream decision must be kept to raw retrieval, or gated by a
@@ -52,9 +53,9 @@ The table governs unambiguous-shape steps — they keep their shape tier. When a
 step sits *genuinely on a tier boundary* (the work shape is ambiguous), resolve
 by fuel available:
 
-- **Abundant fuel** — resolve toward the outcome: tier up and add a verify pass.
-  Rework from an under-tiered judgment dwarfs the tier saving; see Centrality
-  amplifier above.
+- **Abundant fuel** — resolve toward the outcome: tier up — to the cap, never
+  past it — and add a verify pass. Rework from an under-tiered judgment dwarfs
+  the tier saving; see Centrality amplifier above.
 - **Scarce fuel** — resolve toward conservation: hold the lower tier and flag the
   ambiguity for a human review step.
 
@@ -78,10 +79,13 @@ moment the launch returns. Post-launch audit pays latency × fan-out width at
 top-tier price, so route around the name branch when possible and stop first
 when not:
 
-- **Local tiered copy exists** (`.claude/workflows/<name>.js`) — launch via
-  `scriptPath` pointing at it. The scriptPath branch audits pre-flight; the
-  name branch never does, even when name resolution would pick the local
-  copy.
+- **Local tiered copy exists** — the launch route follows where the copy sits.
+  A project copy (`.claude/workflows/<name>.js`) launches via `scriptPath`
+  pointing at it, and the dispatcher audits tiers pre-flight. A personal copy
+  (`~/.claude/workflows/<name>.js`) launches by `name` — the model-tiering
+  guard audits that planted file at the gate instead, denying an untiered one.
+  Which copy each route reaches, and why a personal path is not a `scriptPath`
+  target: claude-shape `workflow-tool-response.md` § Saved-workflow resolution.
 - **No local copy yet** (first use of a built-in, or a plugin workflow not yet
   copied to `.claude/workflows/`) — TaskStop FIRST when the
   launch returns, then read the persisted script, pin tiers on the phases
@@ -104,17 +108,23 @@ rebinds `args` fresh, so the retiered live agents see it.
 Where the tier lives depends on the dispatch surface:
 
 - **Typed agent with frontmatter `model:`** — the agent file owns the tier.
-  Callers and skills omit the model; do not restate it at the call site.
+  Callers and skills omit the model; do not restate it at the call site. Top tier
+  pins `model: inherit`, an official frontmatter value resolving to the main
+  conversation's model; mid and small pin their alias.
 - **Static workflow script** — tiers baked inline by the author, who knows the
   fan-out shape at authoring time. This is what keeps name-launch safe once
   a tiered local copy exists (see Named-launch corollary). The inline pin is
   load-bearing, not a redundant call-site lock: workflow `agent()` inherits the
-  main-loop model on omit — it does *not* read the agent file's `model:`
-  frontmatter — and the workflow guard is a textual scan, so a typed agent run
-  inside a workflow must still carry its tier inline.
+  main-loop model on omit — top tier, and it does *not* read the agent file's
+  `model:` frontmatter — and the workflow guard is a textual scan, so a typed
+  agent run inside a workflow must still carry its tier inline. Mark a deliberate
+  omit with `// model: inherit — <why>`.
 - **Ad-hoc or built-in dispatch** — no frontmatter home; the tier is decided at
   the dispatch moment. The guard hook forces designation; this doc guides the
-  choice.
+  choice. The dispatch `model` enum carries no `inherit` (claude-shape
+  `model-roster.md` § Dispatch tiers), so a top-tier call passes the session's own
+  model alias — a lower alias on a direction-setting step is the mis-tier the
+  guard catches, a higher one breaches the cap.
 
 ## Boundary
 
@@ -123,5 +133,5 @@ Applies to: any subagent dispatch surface with per-call model selection
 every dispatch — silent inheritance routes mechanical work to the dispatcher's
 model, paying both tokens and latency. Single-agent dispatch carries no fleet
 multiplier, but the tier decision is the same: designate, and name the reason when
-the call inherits or runs at top. Consumer skills that need the tier shapes cite
+the call rides the top tier. Consumer skills that need the tier shapes cite
 this file by path — the table lives here only.

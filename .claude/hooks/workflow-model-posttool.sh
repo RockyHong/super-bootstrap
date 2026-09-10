@@ -48,7 +48,7 @@ if [ -n "$ARGS_JSON" ]; then
 else
   RESUME_STEP="resume with resumeFromRunId"
 fi
-CTX="Model-tiering self-heal: launched workflow has ${AGENT_CALLS} agent() call(s), ${MODEL_MARKS} model designation(s) — untiered calls inherit the main-loop model across the fan-out. Launch returned; agents spawning now. Retier before the bulk spawns: (1) TaskStop the run${RUN_ID:+ ($RUN_ID)}; (2) edit ${SCRIPT_PATH} — add model: (haiku|sonnet|opus) to each untiered agent(), choosing tiers per .claude/guidelines/work-discipline/model-tiering.md; (3) ${RESUME_STEP}; (4) save tiered script to .claude/workflows/${WF_NAME:-<name>}.js."
+CTX="Model-tiering self-heal: launched workflow has ${AGENT_CALLS} agent() call(s), ${MODEL_MARKS} model designation(s) — untiered calls inherit the main-loop model across the fan-out. Launch returned; agents spawning now. Retier before the bulk spawns: (1) TaskStop the run${RUN_ID:+ ($RUN_ID)}; (2) edit ${SCRIPT_PATH} — add model: (haiku|sonnet) — or the top-tier mark // model: inherit — <why> — to each untiered agent(), choosing tiers per .claude/guidelines/work-discipline/model-tiering.md; (3) ${RESUME_STEP}; (4) save tiered script to .claude/workflows/${WF_NAME:-<name>}.js."
 
 jq -n --arg c "$CTX" \
   '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $c}}'

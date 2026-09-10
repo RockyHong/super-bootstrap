@@ -1,8 +1,10 @@
 #!/bin/bash
 # PreToolUse hook (matcher: Agent) — model-designation guard.
-# Typed agents own their tier in frontmatter (model: key); callers omit model,
-# or pass it matching the pin. Ad-hoc / built-in dispatches must carry an
-# explicit model at the call site.
+# Typed agents own their tier in frontmatter (model: key); a call-site model
+# that disagrees with the pin is rewritten to the pin — dropped when the pin is
+# `inherit` (the platform lets the call-site value win, so the pin holds only if
+# this hook enforces it).
+# Ad-hoc / built-in dispatches must carry an explicit model at the call site.
 #
 # Stdin schema (PreToolUse):
 #   { ..., "tool_name": "Agent",
@@ -13,7 +15,15 @@
 #   1. subagent_type resolves to an agent file with a model: frontmatter pin:
 #        - no model param     -> allow (tier lives in frontmatter)
 #        - model param == pin -> allow
-#        - model param != pin -> deny, quoting the pin
+#        - model param != pin -> allow + updatedInput: the full tool_input with
+#          model overwritten to the pin, + additionalContext naming the rewrite.
+#          Whole object, not {model} alone — the Agent tool's updatedInput is a
+#          replace, and a partial payload drops prompt/description and fails
+#          schema validation (CC 2.1.261).
+#          Exception — pin `inherit`: the model key is DROPPED instead of set.
+#          The Agent tool's model enum is sonnet|opus|haiku|fable (claude-shape/
+#          model-roster.md), so "inherit" written there fails schema validation
+#          and hard-blocks the dispatch; with no key the frontmatter governs.
 #   2. subagent_type does not resolve to a pinned agent file (ad-hoc/built-in,
 #      e.g. general-purpose, Explore; missing/empty subagent_type counts here;
 #      a resolved-but-frontmatter-less local agent also lands here):
@@ -211,13 +221,26 @@ fi
 
 if [ -n "$PIN" ]; then
     # Branch 1: pinned typed agent — the pin is authoritative, even against an
-    # explicit model param.
+    # explicit model param. A mismatch is corrected in place rather than denied:
+    # a deny only bought a re-issue of the same call without the param.
     [ -z "$MODEL" ] && exit 0
     [ "$MODEL" = "$PIN" ] && exit 0
 
-    REASON="Model pin: ${SUBAGENT_TYPE} is pinned to ${PIN} in its frontmatter; drop the model param or match the pin."
-    jq -n --arg r "$REASON" \
-        '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "deny", permissionDecisionReason: $r}}'
+    # additionalContext carries the notice: permissionDecisionReason on allow is
+    # not Claude-visible for Agent (transcript logs it as a hook_success
+    # attachment only), while paired additionalContext lands in-band.
+    if [ "$PIN" = "inherit" ]; then
+        REASON="Model pin: ${SUBAGENT_TYPE} is pinned to inherit in its frontmatter (top tier — the session's own model); call-site model '${MODEL}' dropped so the pin governs the tier."
+        jq --arg r "$REASON" \
+            '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "allow", permissionDecisionReason: $r, additionalContext: $r, updatedInput: (.tool_input | del(.model))}}' \
+            <<< "$PAYLOAD"
+        exit 0
+    fi
+
+    REASON="Model pin: ${SUBAGENT_TYPE} is pinned to ${PIN} in its frontmatter; call-site model '${MODEL}' rewritten to the pin."
+    jq --arg p "$PIN" --arg r "$REASON" \
+        '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "allow", permissionDecisionReason: $r, additionalContext: $r, updatedInput: (.tool_input | .model = $p)}}' \
+        <<< "$PAYLOAD"
     exit 0
 fi
 
@@ -230,7 +253,7 @@ fi
 # (Git Bash only; native macOS/Linux paths are already correct).
 [ -n "$LOCAL_NO_MODEL" ] && command -v cygpath >/dev/null 2>&1 && LOCAL_NO_MODEL="$(cygpath -w "$LOCAL_NO_MODEL")"
 
-REASON="Model-designation guard: Agent dispatch missing model param.${LOCAL_NO_MODEL:+ Typed agent '$SUBAGENT_TYPE' resolved at $LOCAL_NO_MODEL with no model: frontmatter — add it there and callers can omit.} Designate a tier (haiku|sonnet|opus) per .claude/guidelines/work-discipline/model-tiering.md. Re-send with model set."
+REASON="Model-designation guard: Agent dispatch missing model param.${LOCAL_NO_MODEL:+ Typed agent '$SUBAGENT_TYPE' resolved at $LOCAL_NO_MODEL with no model: frontmatter — add it there and callers can omit.} Designate a tier (haiku | sonnet | the session's own model for top tier) per .claude/guidelines/work-discipline/model-tiering.md. Re-send with model set."
 
 jq -n --arg r "$REASON" \
     '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "deny", permissionDecisionReason: $r}}'
