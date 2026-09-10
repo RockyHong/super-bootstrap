@@ -41,7 +41,8 @@
     "docs/outward/TEMPLATE.md",
     ".claude/rules/venue-map.md",
     "docs/work/README.md fact-fields block",
-    ".claude/super-bootstrap-runway.json"
+    ".claude/super-bootstrap-runway.json",
+    ".claude/bootstrap.md"
   ],
   "declined": [
     {
@@ -66,7 +67,7 @@
     },
     {
       "section": ".claude/bootstrap.md",
-      "reason": "not regenerated — checkbox-carrying seed, § Pipeline-owned special case"
+      "reason": "not regenerated — re-seed skipped, bootstrap complete"
     }
   ],
   "placed": {
