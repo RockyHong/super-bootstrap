@@ -31,16 +31,6 @@ The only durable state here is a still-`pending` entry — `pass` discharges it,
 
 ## Pending
 
-*(empty — seeded as manual-verification obligations are queued)*
-
-## Failed (re-queued for fix)`, mark `result: fail` with a one-line note, and `/super-bootstrap:log` a bug. Re-queueing flips it back to `result: pending` and moves it back under `## Pending`.
-
-The only durable state here is a still-`pending` entry — `pass` discharges it, `fail` re-queues it.
-
----
-
-## Pending
-
 ### Docs-only bootstrap takes no code-touch pair; code arriving raises both as `⊕ new`
 
 - **run on:** in-repo dev copy of `harness-bootstrap` (`plugins/super-bootstrap/skills/harness-bootstrap/`) against a scratch repo holding only `README.md` + `docs/*.md`
