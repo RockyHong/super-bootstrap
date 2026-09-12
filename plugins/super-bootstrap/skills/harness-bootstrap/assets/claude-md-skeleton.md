@@ -61,9 +61,9 @@ The gateway orchestrates; it does not build. Inline lane = orchestration, reads,
 
 **The guarantee is retrieval-shaped:** any restated fact a reader lands on reaches its SSOT home in one hop — a markdown link on the asserting line, authored when the line is written. Structure carries the guarantee; the commit door maintains the structure rather than re-deriving the whole doc surface per commit.
 
-Named pipeline step — every route includes it between user review and commit. The commit door (`/super-bootstrap:commit`) runs gateway-inline and maintains the guarantee in three layers:
+Named pipeline step — every route includes it between user review and commit. The commit door (`/super-bootstrap:commit`) runs gateway-inline in three layers:
 
-1. **Link integrity (mechanical, every non-deferred commit)** — broken path/anchor surfaces with the commit; fix or acknowledge, never silently skip.
+1. **Mechanical integrity (every non-deferred commit)** — two whole-surface checks, both independent of the scan scope: a broken path/anchor link, and a restated agent `model:` tier that disagrees with that agent’s frontmatter. Either surfaces with the commit; fix or acknowledge, never silently skip.
 2. **Touched-truth propagation (mechanical enumeration, warm judgment)** — the commit door's mechanical lanes enumerate who narrates, cites, or is cited by what the diff changed, and the changed docs themselves; the gateway judges the enumerated scope warm-inline against the diff — holding the change intent and its session reads beside it — with the cold `doc-sync-scan` agent as the scope-overload valve; stale candidates resolve with the user before the commit lands.
 3. **New-assertion residual (diff-scoped judgment)** — the same judgment pass checks the diff's new asserting lines only: a linked line is read against its link target, an unlinked one against any existing doc answering the same question.
 

@@ -7,6 +7,17 @@
 #   check              scan the doc surface for broken links; exit 1 if any — except
 #                      a card thread's link to an absent card ID (both endpoints
 #                      docs/work/{BUG,DEBT,GAP}-###.md), consumed provenance, skipped
+#   pins               scan the doc surface for lines whose restated model tier
+#                      disagrees with the agent frontmatter they name; exit 1 if any.
+#                      One finding per line: <doc>:<lineno> TAB claimed tokens TAB
+#                      actual tier TAB source path. Keyed on a path mention inside an
+#                      inline code span — the paired-backtick parse `hits` uses, its
+#                      code-span half only, so a path segment in bare prose (which
+#                      `hits` would take via pathin) does not count here — resolved by
+#                      unique path-suffix; a line naming zero or several sources, or
+#                      carrying no tier token, is skipped, and a line carrying any
+#                      agreeing token is clean. A claim lane, so it excludes frozen
+#                      provenance the way `refs`/`hits`/`self` do.
 #   refs <q>...        print doc-surface files that link to any query <q>, in surface
 #                      order, each file once. <q> is <path> or <path>#<anchor>; with
 #                      an anchor, only files whose link cites it (section grain).
@@ -36,11 +47,13 @@
 #                      `refs <path>#<slug>` verbatim.
 #
 # A doc whose leading YAML frontmatter declares `dimension: history` is frozen
-# provenance: `terms` yields nothing for it, `hits`, `refs` and `self` leave it out,
-# while `check` still validates its links. Card threads (`docs/work/{BUG,DEBT,GAP}-###.md`)
+# provenance: `terms` yields nothing for it, `hits`, `refs`, `self` and `pins` leave it
+# out, while `check` still validates its links. Card threads (`docs/work/{BUG,DEBT,GAP}-###.md`)
 # and outward threads (`docs/outward/OUT-###.md`, plus the retired flat
 # `docs/outward.md`) are frozen provenance by path: `terms` yields
-# nothing for them and `hits`, `refs` and `self` leave them out; `check` alone still covers them.
+# nothing for them and `hits`, `refs`, `self` and `pins` leave them out; `check` alone still
+# covers them — a link must resolve whatever dimension it sits in, while a restated
+# claim inside a closed-fork row or a card thread is a past value by design.
 # Each folder's standing files (`docs/work/README.md`, `docs/outward/README.md`,
 # `TEMPLATE.md`) are ordinary surface.
 #
@@ -270,30 +283,76 @@ normalize_path() {
     NORM="$out"
 }
 
+# Word-character test — the class that decides where a token starts and ends.
+# One predicate, two readers: `hits` (whole-word and path-shape matching) and `pins`
+# (left word boundary on a tier token). Kept beside the fragments below for the same
+# reason: a boundary rule that disagrees between two lanes is a silent divergence.
+ISWORD_AWK='
+function isword(c) { return (c != "" && c ~ /[A-Za-z0-9_-]/) }
+'
+
+# Fenced-block toggle: an opener records its char + run length; a closer needs the
+# same char, a run at least as long, and nothing but whitespace after it (an info
+# string marks an opener, never a closer). No interval expressions.
+# One toggle, two readers — `extract_links` and `do_pins` — held in one variable for
+# the reason SLUG_AWK is: this nesting rule is bug-fixed history (a closer that
+# ignored opener char and run length leaked fenced links out as real targets, now
+# test-locked), so a later fix reaching one copy only re-opens that defect.
+# State rides three globals the caller resets per file. Returns 1 when the caller
+# should skip the line — a fence marker, or any line inside a block.
+FENCE_AWK='
+function fence_skip(s,   run, fchar, flen, frest) {
+    if (match(s, /^[ \t]*(`+|~+)/)) {
+        run = substr(s, RSTART, RLENGTH)
+        sub(/^[ \t]*/, "", run)
+        fchar = substr(run, 1, 1)
+        flen  = length(run)
+        frest = substr(s, RSTART + RLENGTH)
+        if (flen >= 3) {
+            if (!in_fence) {
+                in_fence = 1; fence_char = fchar; fence_len = flen
+            } else if (fchar == fence_char && flen >= fence_len && frest ~ /^[ \t]*$/) {
+                in_fence = 0; fence_char = ""; fence_len = 0
+            }
+            return 1
+        }
+    }
+    return in_fence
+}
+'
+
+# Inline code spans, matched backtick-run delimiters — the pairing rule that decides
+# what counts as code shape. One extractor, two readers — `do_hits` and `do_pins` —
+# so neither lane can drift from its sibling on where a span ends.
+# Returns the span contents joined by spaces, carrying a leading and trailing space so
+# a caller can test word boundaries without special-casing the ends; a line with no
+# span returns a single space. Note this collects what sits INSIDE the spans — the
+# opposite of the strip `extract_links` performs before link matching, which is why
+# that one stays its own loop.
+CODESPAN_AWK='
+function codespans(s,   code, rest, delim, tail, cpos) {
+    code = " "; rest = s
+    while (match(rest, /`+/)) {
+        delim = substr(rest, RSTART, RLENGTH)
+        tail  = substr(rest, RSTART + RLENGTH)
+        cpos  = index(tail, delim)
+        if (cpos > 0) {
+            code = code substr(tail, 1, cpos - 1) " "
+            rest = substr(tail, cpos + length(delim))
+        } else {
+            rest = ""
+        }
+    }
+    return code
+}
+'
+
 # Extract inline markdown links from file. Output: lineno TAB raw-target
 extract_links() {
-    awk '
+    awk "$FENCE_AWK"'
     BEGIN { in_fence = 0; fence_char = ""; fence_len = 0 }
     {
-        # fence lines: opening records the opener char + run length; a closer needs
-        # the same char, a run at least as long, and nothing but whitespace after it
-        # (an info string marks an opener, never a closer). No interval expressions.
-        if (match($0, /^[ \t]*(`+|~+)/)) {
-            run = substr($0, RSTART, RLENGTH)
-            sub(/^[ \t]*/, "", run)
-            fchar = substr(run, 1, 1)
-            flen  = length(run)
-            frest = substr($0, RSTART + RLENGTH)
-            if (flen >= 3) {
-                if (!in_fence) {
-                    in_fence = 1; fence_char = fchar; fence_len = flen
-                } else if (fchar == fence_char && flen >= fence_len && frest ~ /^[ \t]*$/) {
-                    in_fence = 0; fence_char = ""; fence_len = 0
-                }
-                next
-            }
-        }
-        if (in_fence) next
+        if (fence_skip($0)) next
         # strip inline code spans (matched backtick-run delimiters) before link matching
         line = $0; out = ""
         while (match(line, /`+/)) {
@@ -475,8 +534,8 @@ do_closure() {
 
 # Frozen provenance by path — card threads and outward threads are breadcrumbs, not
 # behavior narration. Keyed on the ID pattern, not the folder: each folder's standing
-# files (README.md, TEMPLATE.md) narrate and stay in. One predicate, four
-# readers: `terms` (via path_exempt), `hits`, `refs`, `self`.
+# files (README.md, TEMPLATE.md) narrate and stay in. One predicate, five
+# readers: `terms` (via path_exempt), `hits`, `refs`, `self`, `pins`.
 is_frozen_provenance_path() {
     case "$1" in
         docs/outward.md|*/docs/outward.md) return 0 ;;   # the retired flat form
@@ -591,9 +650,7 @@ do_hits() {
         files+=("$f")
     done < <(collect_surface)
     [ "${#files[@]}" -eq 0 ] && return 0
-    DOCLINK_TERMS="$terms" DOCLINK_HUB="$HUB_STEMS" awk '
-    function isword(c) { return (c != "" && c ~ /[A-Za-z0-9_-]/) }
-
+    DOCLINK_TERMS="$terms" DOCLINK_HUB="$HUB_STEMS" awk "$ISWORD_AWK$CODESPAN_AWK"'
     # Whole-word occurrence of needle in hay.
     function wordin(hay, needle,   p, off, L, pre, post) {
         L = length(needle); off = 0
@@ -651,19 +708,7 @@ do_hits() {
 
     {
         if (FILENAME in hit) next
-        # code spans only: matched backtick runs, same pairing rule as extract_links
-        code = " "; rest = $0
-        while (match(rest, /`+/)) {
-            delim = substr(rest, RSTART, RLENGTH)
-            tail  = substr(rest, RSTART + RLENGTH)
-            cpos  = index(tail, delim)
-            if (cpos > 0) {
-                code = code substr(tail, 1, cpos - 1) " "
-                rest = substr(tail, cpos + length(delim))
-            } else {
-                rest = ""
-            }
-        }
+        code = codespans($0)
         for (i = 1; i <= n; i++) {
             if (T[i] == "") continue
             if (T[i] in hub) {
@@ -727,13 +772,196 @@ EOF
     return 0
 }
 
-USAGE='Usage: %s check | refs <path>[#anchor]... | index | closure <path>[#anchor]
+# --- pins: restated model tiers against agent frontmatter ------------------------
+#
+# Keying on the code span rather than the markdown link is what makes the lane reach
+# anything: the claims on a real surface carry no links, so a link-keyed check scores
+# zero on exactly the class that breaks.
+# Three passes, no per-line or per-file fork: one `find` enumerates agent candidates,
+# one awk reads their frontmatter, one awk walks the doc surface minus frozen
+# provenance (a claim lane, like `refs`/`hits`/`self`). The fence toggle and the
+# code-span extractor come from the shared awk variables above.
+
+# path TAB tier for every *.md under a directory named `agents` whose leading YAML
+# frontmatter declares `model:`. Dot-directories (.git, .fixtures) and node_modules
+# are pruned — a fixture tree is not a source of truth. The prune pattern is `.?*`,
+# never `.*`: the latter matches the `.` start point itself and prunes everything.
+# Result in $MODEL_INDEX.
+MODEL_INDEX=""
+build_model_index() {
+    local -a cand
+    local f
+    cand=()
+    while IFS= read -r f; do
+        f="${f#./}"
+        [ -n "$f" ] && cand+=("$f")
+    done < <(find . -type d \( -name '.?*' -o -name node_modules \) -prune -o \
+                  -type f -name '*.md' -path '*/agents/*' -print 2>/dev/null)
+    MODEL_INDEX=""
+    [ "${#cand[@]}" -eq 0 ] && return 0
+    MODEL_INDEX="$(awk '
+        FNR == 1 { fm = ($0 ~ /^---[ \t]*$/) ? 1 : 0; seen = 0; next }
+        seen { next }
+        fm == 1 {
+            if ($0 ~ /^---[ \t]*$/) { seen = 1; next }
+            if ($0 ~ /^model:/) {
+                v = $0
+                sub(/^model:[ \t]*/, "", v)
+                sub(/[ \t]*$/, "", v)
+                gsub(/["\047]/, "", v)
+                if (v != "") print FILENAME "\t" v
+                seen = 1
+            }
+        }
+    ' "${cand[@]}" 2>/dev/null)"
+    return 0
+}
+
+# Whole-surface lane: consults no scan scope, so it needs neither the enumeration
+# to have reached the doc nor the judge to have looked. One finding per line:
+#   <doc>:<lineno> TAB <claimed tokens> TAB <actual tier> TAB <source path>
+# Exit 1 with findings, 0 clean — the `check` convention.
+do_pins() {
+    local -a files
+    local f
+    build_model_index
+    [ -z "$MODEL_INDEX" ] && return 0
+    files=()
+    while IFS= read -r f; do
+        is_history_doc "$f" && continue
+        is_frozen_provenance_path "$f" && continue
+        files+=("$f")
+    done < <(collect_surface)
+    [ "${#files[@]}" -eq 0 ] && return 0
+    DOCLINK_PINS="$MODEL_INDEX" awk "$ISWORD_AWK$FENCE_AWK$CODESPAN_AWK"'
+    # Closed tier vocabulary. Case-insensitivity is an explicit alternation:
+    # tolower() is barred outside the SLUG_AWK lead-byte probe, since a Latin-1
+    # ctype rewrites UTF-8 lead bytes.
+    function tierre(tok) {
+        if (tok == "opus")    return "[Oo][Pp][Uu][Ss]"
+        if (tok == "sonnet")  return "[Ss][Oo][Nn][Nn][Ee][Tt]"
+        if (tok == "haiku")   return "[Hh][Aa][Ii][Kk][Uu]"
+        if (tok == "fable")   return "[Ff][Aa][Bb][Ll][Ee]"
+        if (tok == "inherit") return "[Ii][Nn][Hh][Ee][Rr][Ii][Tt]"
+        return ""
+    }
+
+    # Doc side — human prose, where a tier word turns up by accident. Left boundary
+    # required, suffix continuation allowed: the token must begin at a word start and
+    # may run on into anything, so "inherits the session model" is a claim of inherit
+    # while "octopus" is not opus and "affable" is not fable. A two-sided boundary
+    # would buy the second by losing the first. Every occurrence is tested: a
+    # rejected one advances the scan, so a bad occurrence ahead of a real one cannot
+    # mask it.
+    function tierin(s, tok,   re, off, p, pre) {
+        re = tierre(tok)
+        if (re == "") return 0
+        off = 0
+        while (1) {
+            if (!match(substr(s, off + 1), re)) return 0
+            p = off + RSTART
+            pre = (p > 1) ? substr(s, p - 1, 1) : ""
+            if (!isword(pre)) return 1
+            off = p
+        }
+    }
+
+    # Source side — a frontmatter value drawn from a tiny controlled enum, never
+    # prose, so a tier word cannot appear in it by accident and the boundary buys
+    # nothing. Unanchored on purpose: the shipped model ids embed the tier mid-token
+    # (`claude-sonnet-5`, `claude-haiku-4-5-20251001`), and a hyphen is a word
+    # character, so requiring the boundary here would make every agent pinned to a
+    # full id normalise to nothing and drop out of the lane silently. Same isword()
+    # predicate as above, deliberately not applied at this call site — the asymmetry
+    # is the domain difference, not an oversight.
+    function tierpin(s, tok,   re) {
+        re = tierre(tok)
+        return (re != "" && s ~ re)
+    }
+
+    # Unique path-suffix match on a "/" boundary is the whole resolver — no
+    # doc-relative and no repo-root resolution. A mention naming zero indexed
+    # files or more than one is dropped rather than guessed at.
+    function resolve(tok,   i, cnt, hit, p, lp, lt) {
+        cnt = 0; hit = 0; lt = length(tok)
+        for (i = 1; i <= NP; i++) {
+            p = IPATH[i]; lp = length(p)
+            if (lp < lt) continue
+            if (substr(p, lp - lt + 1) != tok) continue
+            if (lp > lt && substr(p, lp - lt, 1) != "/") continue
+            cnt++; hit = i
+        }
+        return (cnt == 1) ? hit : 0
+    }
+
+    BEGIN {
+        VN = split("opus sonnet haiku fable inherit", V, " ")
+        n = split(ENVIRON["DOCLINK_PINS"], L, "\n")
+        NP = 0
+        for (i = 1; i <= n; i++) {
+            if (L[i] == "") continue
+            t = index(L[i], "\t")
+            if (t == 0) continue
+            NP++
+            IPATH[NP] = substr(L[i], 1, t - 1)
+            ITIER[NP] = substr(L[i], t + 1)
+        }
+        in_fence = 0; fence_char = ""; fence_len = 0
+        findings = 0
+    }
+
+    FNR == 1 { in_fence = 0; fence_char = ""; fence_len = 0 }
+
+    {
+        if (fence_skip($0)) next
+        code = codespans($0)
+        if (code == " ") next
+
+        gsub(/[^A-Za-z0-9_.\/-]/, " ", code)
+        mt = split(code, TOK, " ")
+        src = 0; two = 0
+        for (i = 1; i <= mt; i++) {
+            if (TOK[i] !~ /\.md$/) continue
+            r = resolve(TOK[i])
+            if (r == 0) continue
+            if (src == 0) src = r
+            else if (r != src) { two = 1; break }
+        }
+        if (two || src == 0) next
+
+        # Actual tier, normalised into the vocabulary unanchored (see tierpin), so a
+        # bare word and a full model id both resolve. A pin naming no tier in the
+        # vocabulary at all leaves nothing to compare against, and only then is the
+        # line left alone rather than guessed at.
+        act = ""
+        for (j = 1; j <= VN; j++) if (tierpin(ITIER[src], V[j])) { act = V[j]; break }
+        if (act == "") next
+
+        # Report only when NO token on the line matches. The gate runs on every
+        # commit, so a false positive costs more than a miss.
+        claimed = ""; agrees = 0
+        for (j = 1; j <= VN; j++) {
+            if (!tierin($0, V[j])) continue
+            claimed = (claimed == "") ? V[j] : claimed "," V[j]
+            if (V[j] == act) agrees = 1
+        }
+        if (claimed == "" || agrees) next
+        printf "%s:%d\t%s\t%s\t%s\n", FILENAME, FNR, claimed, act, IPATH[src]
+        findings++
+    }
+
+    END { if (findings > 0) exit 1 }
+    ' "${files[@]}"
+}
+
+USAGE='Usage: %s check | pins | refs <path>[#anchor]... | index | closure <path>[#anchor]
        %s terms <changed-path>... | hits <term>... | anchors <path> <hunk-range>...
        %s self <changed-path>...
 '
 
 case "$MODE" in
     check) do_check ;;
+    pins) do_pins ;;
     refs)
         shift
         [ "$#" -eq 0 ] && { printf 'Usage: %s refs <path>[#anchor]...\n' "$0" >&2; exit 1; }

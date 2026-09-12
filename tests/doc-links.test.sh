@@ -437,6 +437,27 @@ else
   ok "anchor_exists: per-heading slugify shell loop is gone"
 fi
 
+echo "== doc-links: anti-drift — one body per awk fragment, many readers (the SLUG_AWK precedent) =="
+# A fragment copied into a second awk program is a fix that lands in one copy only.
+# The fence toggle carries BUG-043 (a closer ignoring opener char/run length leaked
+# fenced links out as real targets), so a silent re-fork there re-opens a shipped bug.
+# Lock the body count at one and the reader count above one — the shared-variable
+# shape is what makes the second true.
+fence_bodies="$(grep -c 'fence_char = fchar; fence_len = flen' "$LINKS" || true)"
+fence_readers="$(grep -c 'fence_skip(\$0)' "$LINKS" || true)"
+check "fence toggle: exactly one body (SLUG_AWK precedent)" [ "$fence_bodies" -eq 1 ]
+check "fence toggle: read by more than one awk program (got $fence_readers)" [ "$fence_readers" -gt 1 ]
+span_bodies="$(grep -c 'code = code substr(tail, 1, cpos - 1)' "$LINKS" || true)"
+span_readers="$(grep -c 'codespans(\$0)' "$LINKS" || true)"
+check "code-span extractor: exactly one body" [ "$span_bodies" -eq 1 ]
+check "code-span extractor: read by more than one awk program (got $span_readers)" [ "$span_readers" -gt 1 ]
+# A boundary rule that disagrees between lanes is a silent divergence, so isword()
+# takes the same one-body treatment rather than a per-lane copy.
+isword_bodies="$(grep -c 'function isword(c)' "$LINKS" || true)"
+isword_readers="$(grep -c 'isword(' "$LINKS" || true)"
+check "isword: exactly one body" [ "$isword_bodies" -eq 1 ]
+check "isword: read by more than one awk program (got $((isword_readers - 1)) call sites)" [ "$isword_readers" -gt 3 ]
+
 # ---------------------------------------------------------------------------
 # BUG-046 — `closure <path>` enumerates the premise-closure set: the doc surface
 # CLAUDE.md § Doc Sync defines (docs/**/*.md + root README.md +
@@ -628,6 +649,248 @@ if [ "$got_terms" = "techstack" ]; then
 else
   bad "terms: an ordinary doc path still yields its term (exemption stays narrow)"
   printf 'got:\n%s\n' "$got_terms" | sed 's/^/        /'
+fi
+
+# ---------------------------------------------------------------------------
+# GAP-081 — `pins`: a doc line restating an agent's frontmatter `model:` tier is
+# checked against the source. Keyed on the code-shaped path mention, never on a
+# markdown link — of the 9 live lines in this lane's own scope (an agent path in a
+# code span beside a tier token, in a doc the lane does not exclude), zero carry a
+# link, so a link-keyed check scores zero on exactly this class. The wider count of
+# model-tier claims in any prose form is larger and is not this lane's denominator.
+# Resolved by unique path-suffix. Report only when NO tier token on the line matches the
+# source — the gate runs per commit, so a false positive costs more than a miss.
+# ---------------------------------------------------------------------------
+
+echo "== doc-links: GAP-081 — pins compares a restated model tier against agent frontmatter =="
+mkdir -p "$TMP/pins/plugins/p/agents" "$TMP/pins/plugins/q/agents" \
+         "$TMP/pins/.hidden/agents" "$TMP/pins/docs"
+mk_agent() { # mk_agent <path> [tier]  — tier omitted writes frontmatter without `model:`
+  {
+    echo '---'
+    echo "description: fixture agent"
+    [ "$#" -ge 2 ] && echo "model: $2"
+    echo '---'
+    echo
+    echo '# Agent body'
+  } > "$1"
+}
+mk_agent "$TMP/pins/plugins/p/agents/alpha.md" sonnet
+mk_agent "$TMP/pins/plugins/p/agents/beta.md" opus
+mk_agent "$TMP/pins/plugins/p/agents/gamma.md" inherit
+mk_agent "$TMP/pins/plugins/p/agents/delta.md" haiku
+mk_agent "$TMP/pins/plugins/p/agents/dup.md" haiku
+mk_agent "$TMP/pins/plugins/q/agents/dup.md" opus
+mk_agent "$TMP/pins/plugins/p/agents/nomodel.md"
+mk_agent "$TMP/pins/.hidden/agents/ghost.md" fable
+
+cat > "$TMP/pins/docs/a.md" <<'EOFP'
+# Pins Fixture
+
+## Claims
+
+Stale: `agents/alpha.md` (Opus, clean context).
+Fresh: `agents/beta.md` (Opus control).
+Inherit prose: `agents/gamma.md` inherits the session model.
+Two mentions: `agents/alpha.md` hands to `agents/beta.md` (Haiku).
+No frontmatter pin: `agents/nomodel.md` (Haiku).
+Ambiguous suffix: `agents/dup.md` (Sonnet).
+Dot-dir source: `agents/ghost.md` (Opus).
+No tier token: `agents/alpha.md` renders the board.
+Bare prose agents/delta.md (Sonnet) outside code shape.
+Both wrong: `agents/delta.md` was Opus, now Sonnet.
+
+```
+Fenced: `agents/alpha.md` (Opus).
+```
+
+Clean tail: `agents/delta.md` (Haiku).
+EOFP
+
+expected_pins="$(printf 'docs/a.md:5\topus\tsonnet\tplugins/p/agents/alpha.md\ndocs/a.md:14\topus,sonnet\thaiku\tplugins/p/agents/delta.md')"
+got_pins="$(cd "$TMP/pins" && bash "$LINKS" pins 2>"$TMP/pins.err")"; rc_pins=$?
+check "pins fixture: exit 1 with findings" [ "$rc_pins" -eq 1 ]
+if [ "$got_pins" = "$expected_pins" ]; then
+  ok "pins: exact findings — mismatch reported, agreeing/ambiguous/unresolvable/fenced lines silent"
+else
+  bad "pins: exact findings — mismatch reported, agreeing/ambiguous/unresolvable/fenced lines silent"
+  printf 'expected:\n%s\ngot:\n%s\n' "$expected_pins" "$got_pins" | sed 's/^/        /'
+fi
+
+# Per-case assertions, so a shape regression names itself rather than only moving the blob.
+pins_has() { printf '%s\n' "$got_pins" | grep -q "^docs/a\.md:$1	"; }
+check "pins: disagreeing tier reported with claimed + actual + source" pins_has 5
+check "pins: multi-token claim renders comma-separated" pins_has 14
+for ln in 6 7 8 9 10 11 12 13 17 20; do
+  if pins_has "$ln"; then bad "pins: line $ln stays silent"; else ok "pins: line $ln stays silent"; fi
+done
+
+# Clean surface: silent, exit 0.
+mkdir -p "$TMP/pinsok/plugins/p/agents" "$TMP/pinsok/docs"
+mk_agent "$TMP/pinsok/plugins/p/agents/alpha.md" sonnet
+cat > "$TMP/pinsok/docs/a.md" <<'EOFP'
+# Clean
+
+Board: `agents/alpha.md` (Sonnet) renders it.
+EOFP
+out="$(cd "$TMP/pinsok" && bash "$LINKS" pins 2>&1)"; rc=$?
+if [ "$rc" -eq 0 ] && [ -z "$out" ]; then
+  ok "pins: clean surface is silent and exits 0"
+else
+  bad "pins: clean surface is silent and exits 0 (rc=$rc)"
+  printf '%s\n' "$out" | sed 's/^/        /'
+fi
+
+# A surface with no agent source at all must not fail the gate.
+mkdir -p "$TMP/pinsnone/docs"
+cat > "$TMP/pinsnone/docs/a.md" <<'EOFP'
+# No agents here
+
+Text: `agents/alpha.md` (Opus).
+EOFP
+out="$(cd "$TMP/pinsnone" && bash "$LINKS" pins 2>&1)"; rc=$?
+if [ "$rc" -eq 0 ] && [ -z "$out" ]; then
+  ok "pins: no indexed agent source -> silent, exit 0"
+else
+  bad "pins: no indexed agent source -> silent, exit 0 (rc=$rc)"
+  printf '%s\n' "$out" | sed 's/^/        /'
+fi
+
+echo "== doc-links: GAP-081 — pins skips frozen provenance (history dimension + card/outward threads) =="
+# A claim lane, not a link lane: a closed-fork row narrating "was pinned to Opus" and a
+# card thread quoting the tier at capture time both restate past values legitimately, so
+# on a per-commit gate they are standing false positives. The four other claim lanes
+# (`refs`, `terms`, `hits`, `self`) already exclude both classes; only `check` keeps them,
+# because a link must resolve whatever dimension it sits in. Each folder's standing
+# README narrates a contract rather than a thread, and stays in.
+mkdir -p "$TMP/pinsprov/plugins/p/agents" "$TMP/pinsprov/docs/work" "$TMP/pinsprov/docs/outward"
+mk_agent "$TMP/pinsprov/plugins/p/agents/alpha.md" sonnet
+cat > "$TMP/pinsprov/docs/normal.md" <<'EOFP'
+# Normal
+
+Claim: `agents/alpha.md` (Opus).
+EOFP
+cat > "$TMP/pinsprov/docs/work/README.md" <<'EOFP'
+# Work threads
+
+Contract: `agents/alpha.md` (Opus).
+EOFP
+cat > "$TMP/pinsprov/docs/hist.md" <<'EOFP'
+---
+dimension: history
+---
+
+# Closed forks
+
+Was: `agents/alpha.md` (Opus).
+EOFP
+cat > "$TMP/pinsprov/docs/work/GAP-001.md" <<'EOFP'
+# GAP-001
+
+At capture: `agents/alpha.md` (Opus).
+EOFP
+cat > "$TMP/pinsprov/docs/outward/OUT-001.md" <<'EOFP'
+# OUT-001
+
+As filed: `agents/alpha.md` (Opus).
+EOFP
+
+expected_prov="$(printf 'docs/normal.md:3\topus\tsonnet\tplugins/p/agents/alpha.md\ndocs/work/README.md:3\topus\tsonnet\tplugins/p/agents/alpha.md')"
+got_prov="$(cd "$TMP/pinsprov" && bash "$LINKS" pins 2>&1 | LC_ALL=C sort)"; rc_prov=$?
+check "pins provenance fixture: exit 1 (the two in-scope docs still report)" [ "$rc_prov" -eq 1 ]
+if [ "$got_prov" = "$expected_prov" ]; then
+  ok "pins: reports docs/-normal + folder README, silent on history dimension + card/outward threads"
+else
+  bad "pins: reports docs/-normal + folder README, silent on history dimension + card/outward threads"
+  printf 'expected:\n%s\ngot:\n%s\n' "$expected_prov" "$got_prov" | sed 's/^/        /'
+fi
+prov_silent() { ! printf '%s\n' "$got_prov" | grep -q "^$1:"; }
+check "pins: dimension: history doc excluded" prov_silent 'docs/hist\.md'
+check "pins: docs/work/{GAP}-###.md thread excluded" prov_silent 'docs/work/GAP-001\.md'
+check "pins: docs/outward/OUT-###.md thread excluded" prov_silent 'docs/outward/OUT-001\.md'
+prov_reports() { printf '%s\n' "$got_prov" | grep -q "^$1:"; }
+check "pins: ordinary docs/ file still reports" prov_reports 'docs/normal\.md'
+check "pins: standing folder README still reports (contract, not thread)" prov_reports 'docs/work/README\.md'
+
+# The exclusion is the four-lane predicate pair, not a second copy of either rule.
+pins_pred="$(fn_body do_pins | grep -cE 'is_history_doc|is_frozen_provenance_path' || true)"
+check "pins reuses is_history_doc + is_frozen_provenance_path (no second predicate)" [ "$pins_pred" -eq 2 ]
+
+echo "== doc-links: GAP-081 — pins tier tokens need a left word boundary, suffix continuation allowed =="
+# An unanchored substring test reads "octopus" as opus and "affable" as fable — both
+# reproduced on the live surface, both reporting, on a lane whose whole asymmetry is
+# that a false positive costs more than a miss. A two-sided word boundary would fix
+# that and break the prose form the lane deliberately accepts ("inherits the session
+# model" counts as inherit), so the rule is one-sided: the token must begin at a word
+# start and may be followed by anything. Every occurrence counts — a rejected one
+# advances the scan rather than ending it.
+mkdir -p "$TMP/pinsword/plugins/p/agents" "$TMP/pinsword/docs"
+mk_agent "$TMP/pinsword/plugins/p/agents/todo.md" sonnet
+mk_agent "$TMP/pinsword/plugins/p/agents/gamma.md" inherit
+# The shipped model ids embed the tier mid-token and a hyphen is a word character, so
+# a boundary applied to the frontmatter value would drop this agent out of the lane
+# silently. Ordinary config, not an exotic one — the source side stays unanchored.
+mk_agent "$TMP/pinsword/plugins/p/agents/full.md" claude-sonnet-5
+cat > "$TMP/pinsword/docs/a.md" <<'EOFP'
+# Boundary
+
+Octopus: `agents/todo.md` renderer is an octopus of special cases.
+Affable: `agents/todo.md` board is affable about missing rows.
+Control: `agents/todo.md` (Opus) is genuinely wrong.
+Inherit prose: `agents/gamma.md` inherits the session model.
+Mixed: `agents/todo.md` is an octopus, and Sonnet is right.
+Retry: `agents/todo.md` is an octopus and a magnum opus.
+Full id wrong: `agents/full.md` (Opus) misreads the pin.
+Full id right: `agents/full.md` (Sonnet) matches the pin.
+EOFP
+
+expected_word="$(printf 'docs/a.md:5\topus\tsonnet\tplugins/p/agents/todo.md\ndocs/a.md:8\topus\tsonnet\tplugins/p/agents/todo.md\ndocs/a.md:9\topus\tsonnet\tplugins/p/agents/full.md')"
+got_word="$(cd "$TMP/pinsword" && bash "$LINKS" pins 2>&1)"; rc_word=$?
+if [ "$got_word" = "$expected_word" ]; then
+  ok "pins: incidental substrings rejected, real claims + retry-after-reject still reported"
+else
+  bad "pins: incidental substrings rejected, real claims + retry-after-reject still reported"
+  printf 'expected:\n%s\ngot:\n%s\n' "$expected_word" "$got_word" | sed 's/^/        /'
+fi
+word_silent() { ! printf '%s\n' "$got_word" | grep -q "^docs/a\.md:$1	"; }
+word_reports() { printf '%s\n' "$got_word" | grep -q "^docs/a\.md:$1	"; }
+check "pins: 'octopus' is not a claim of opus" word_silent 3
+check "pins: 'affable' is not a claim of fable" word_silent 4
+check "pins: positive control — a genuine (Opus) on a one-source line still reports" word_reports 5
+check "pins: 'inherits the session model' still counts as inherit (prose form kept)" word_silent 6
+check "pins: an agreeing token clears a line that also holds an incidental substring" word_silent 7
+check "pins: a rejected occurrence advances the scan — later 'magnum opus' still reports" word_reports 8
+check "pins: agent pinned to a full model id stays visible — wrong claim reports" word_reports 9
+check "pins: agent pinned to a full model id — agreeing claim is silent" word_silent 10
+check "pins boundary fixture: exit 1" [ "$rc_word" -eq 1 ]
+
+echo "== doc-links: GAP-081 — pins construct locks (dialect + registration) =="
+# Code lines only — a comment naming the barred call is documentation, not a use.
+pins_tolower="$( { fn_body do_pins; fn_body build_model_index; } | grep -vE '^[ \t]*#' | grep -n 'tolower(' || true)"
+if [ -z "$pins_tolower" ]; then
+  ok "pins lane: no tolower() (Latin-1 ctype rewrites UTF-8 lead bytes; explicit [Oo][Pp]… instead)"
+else
+  bad "pins lane: no tolower()"
+  printf '%s\n' "$pins_tolower" | sed 's/^/        /'
+fi
+assoc_hits="$(grep -n 'declare -A' "$LINKS" || true)"
+if [ -z "$assoc_hits" ]; then
+  ok "asset: no declare -A (bash 3.2 has no associative arrays)"
+else
+  bad "asset: no declare -A"
+  printf '%s\n' "$assoc_hits" | sed 's/^/        /'
+fi
+usage_out="$(cd "$TMP" && bash "$LINKS" nosuchmode 2>&1)"; rc=$?
+if [ "$rc" -eq 1 ] && printf '%s' "$usage_out" | grep -q 'pins'; then
+  ok "usage string registers the pins mode"
+else
+  bad "usage string registers the pins mode (rc=$rc)"
+  printf '%s\n' "$usage_out" | sed 's/^/        /'
+fi
+if grep -q '^#.*   pins  ' "$LINKS" || grep -qE '^#   pins ' "$LINKS"; then
+  ok "header comment registers the pins mode"
+else
+  bad "header comment registers the pins mode"
 fi
 
 echo "== doc-links: BUG-045 — whole-surface check under a generous wall-clock ceiling =="
