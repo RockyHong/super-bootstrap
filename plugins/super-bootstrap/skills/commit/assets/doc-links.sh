@@ -24,6 +24,10 @@
 #                      (preceded by `/`, or followed by `/` or `.`+extension).
 #                      Bare prose does not hit. Sorted unique; exclusion is the
 #                      caller's (pipe through `grep -vxF`). Always exit 0.
+#   self <path>...     print the changed paths that are doc-surface files in their
+#                      own right, sorted unique — a changed doc is its own scope doc.
+#                      A path the diff deleted, one off the surface, and frozen
+#                      provenance all print nothing. Always exit 0.
 #   anchors <path> <r>...  print the slug of the nearest heading at or above each
 #                      hunk range's start line, sorted unique — <r> is a `git diff -U0`
 #                      post-image range (`+491`, `+19,7`, leading `+` optional).
@@ -32,11 +36,11 @@
 #                      `refs <path>#<slug>` verbatim.
 #
 # A doc whose leading YAML frontmatter declares `dimension: history` is frozen
-# provenance: `terms` yields nothing for it, `hits` and `refs` leave it out, while
-# `check` still validates its links. Card threads (`docs/work/{BUG,DEBT,GAP}-###.md`)
+# provenance: `terms` yields nothing for it, `hits`, `refs` and `self` leave it out,
+# while `check` still validates its links. Card threads (`docs/work/{BUG,DEBT,GAP}-###.md`)
 # and outward threads (`docs/outward/OUT-###.md`, plus the retired flat
 # `docs/outward.md`) are frozen provenance by path: `terms` yields
-# nothing for them and `hits` and `refs` leave them out; `check` alone still covers them.
+# nothing for them and `hits`, `refs` and `self` leave them out; `check` alone still covers them.
 # Each folder's standing files (`docs/work/README.md`, `docs/outward/README.md`,
 # `TEMPLATE.md`) are ordinary surface.
 #
@@ -461,17 +465,18 @@ do_closure() {
     return 0
 }
 
-# --- grep-gate enumeration (terms / hits / anchors) ------------------------------
+# --- grep-gate enumeration (terms / hits / anchors / self) -----------------------
 #
-# The commit door's §3 gate reads these three: `terms` turns a changed-file list into
+# The commit door's §3 gate reads these four: `terms` turns a changed-file list into
 # grep terms, `hits` turns terms into doc-surface files, `anchors` turns a changed
-# doc's hunk ranges into the section slugs `refs` narrows on. Each is mechanical and
-# total — the gate stays a gate, never a judgment call about which identifiers matter.
+# doc's hunk ranges into the section slugs `refs` narrows on, and `self` keeps each
+# changed doc in scope as its own scope doc. Each is mechanical and total — the gate
+# stays a gate, never a judgment call about which identifiers matter.
 
 # Frozen provenance by path — card threads and outward threads are breadcrumbs, not
 # behavior narration. Keyed on the ID pattern, not the folder: each folder's standing
-# files (README.md, TEMPLATE.md) narrate and stay in. One predicate, three
-# readers: `terms` (via path_exempt), `hits`, `refs`.
+# files (README.md, TEMPLATE.md) narrate and stay in. One predicate, four
+# readers: `terms` (via path_exempt), `hits`, `refs`, `self`.
 is_frozen_provenance_path() {
     case "$1" in
         docs/outward.md|*/docs/outward.md) return 0 ;;   # the retired flat form
@@ -672,6 +677,33 @@ do_hits() {
     return 0
 }
 
+# Changed path → scope doc. Surface membership is decided by `collect_surface` itself,
+# buffered once and matched with a quoted `case`, so the boundary cannot drift from the
+# one the other lanes walk and a path the diff deleted drops out by construction (the
+# walk lists what is in the tree). Frozen provenance is the same pair of predicates the
+# `hits` and `refs` lanes apply. One fork for the whole call, none inside the loop.
+do_self() {
+    local surface p
+    [ "$#" -eq 0 ] && return 0
+    surface="
+$(collect_surface)
+"
+    for p in "$@"; do
+        normalize_path "$p"; p="$NORM"
+        [ -z "$p" ] && continue
+        case "$surface" in
+            *"
+$p
+"*) ;;
+            *) continue ;;
+        esac
+        is_frozen_provenance_path "$p" && continue
+        is_history_doc "$p" && continue
+        printf '%s\n' "$p"
+    done | LC_ALL=C sort -u
+    return 0
+}
+
 # Hunk range → section grain. Headings come out of the shared slug transform in file
 # order, so the last one at or above the start line is the section that hunk edited.
 do_anchors() {
@@ -697,6 +729,7 @@ EOF
 
 USAGE='Usage: %s check | refs <path>[#anchor]... | index | closure <path>[#anchor]
        %s terms <changed-path>... | hits <term>... | anchors <path> <hunk-range>...
+       %s self <changed-path>...
 '
 
 case "$MODE" in
@@ -715,12 +748,15 @@ case "$MODE" in
     hits)
         shift
         do_hits "$@" ;;
+    self)
+        shift
+        do_self "$@" ;;
     anchors)
         shift
         [ "$#" -lt 2 ] && { printf 'Usage: %s anchors <path> <hunk-range>...\n' "$0" >&2; exit 1; }
         do_anchors "$@" ;;
     *)
         # shellcheck disable=SC2059
-        printf "$USAGE" "$0" "$0" >&2
+        printf "$USAGE" "$0" "$0" "$0" >&2
         exit 1 ;;
 esac

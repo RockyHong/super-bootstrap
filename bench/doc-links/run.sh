@@ -98,6 +98,23 @@ run_case hits-hub hits overview techstack
 # never scan scope (BUG-051) — while each folder's standing README.md stays in.
 run_case hits-card hits cardonly
 
+# --- self: changed paths → the scope docs among them ---
+# Every arm in one call: an included docs/** doc, the root README.md and a
+# plugins/*/README.md · a card thread and an outward thread out, each folder's standing
+# README.md in · a `dimension: history` doc out · an off-surface path out · a path the
+# diff deleted out.
+run_case self-mixed self \
+  docs/anchors.md \
+  README.md \
+  plugins/x/README.md \
+  docs/work/BUG-001.md \
+  docs/work/README.md \
+  docs/outward/OUT-001.md \
+  docs/outward/README.md \
+  docs/chronicle.md \
+  scripts/level.gd \
+  docs/deleted.md
+
 # --- anchors: nearest heading at or above each range start ---
 run_case anchors-basic anchors docs/anchors.md +9 +16,2
 run_case anchors-top anchors docs/anchors.md +1

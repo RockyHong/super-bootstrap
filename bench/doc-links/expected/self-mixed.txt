@@ -1,0 +1,5 @@
+README.md
+docs/anchors.md
+docs/outward/README.md
+docs/work/README.md
+plugins/x/README.md

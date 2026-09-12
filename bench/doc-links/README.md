@@ -64,6 +64,14 @@ set — frozen provenance on the hit side, the mirror of the `terms` exemption �
 `README.md` files naming the same term hit: the exemption keys on the ID pattern, not the folder. `terms-history` the same declaration on a
 changed path yields no term — a history doc neither triggers the gate nor joins its scope.
 
+**`self` — changed paths → the scope docs among them.**
+`self-mixed` one call over every arm: a `docs/**` doc, the root `README.md` and a
+`plugins/*/README.md` come back; a `docs/work/` card thread and a
+`docs/outward/OUT-001.md` thread stay out while both folders' standing `README.md`
+files stay in (the same ID-pattern key as `hits-card` / `refs-card`, on the self side);
+a `dimension: history` doc stays out; an off-surface path (`scripts/level.gd`) and a
+path the diff deleted (`docs/deleted.md`, absent from the fixture) yield nothing.
+
 **`anchors` — hunk ranges → section slugs.**
 `anchors-basic` two ranges under two different headings (one of them a `###`
 nested under its parent) yield both slugs, sorted ·
