@@ -8,6 +8,7 @@ Thumbs.db
 .test/
 .briefing/
 .audit/
+.review/
 .tldr/
 .temp/
 .superpowers/
