@@ -89,7 +89,7 @@ Per-skill contract = that skill's `SKILL.md` frontmatter; one-line index in the 
 Not day-to-day — run when the moment calls:
 
 - `/super-bootstrap:check-docs-consistency` — whole-surface doc drift scan, timestamped report to `.review/`, report-only; the commit door's scoped scan covers the everyday case. User-only by design.
-- `/super-bootstrap:resolve-plugins` — standalone refresh of the curated skill / MCP / hook pins (the same curation `/super-bootstrap` runs as tier 2).
+- `/super-bootstrap:resolve-plugins` — standalone refresh of the curated skill / MCP / hook pins (the same curation `/super-bootstrap` runs as tier 2). Reads your stack from `docs/techstack.md` and stops with a pointer to `/super-bootstrap:harness-bootstrap` when that file isn't there yet.
 - `/super-bootstrap:release-init` — one-shot scaffolder. Detects project type (unity / tauri / node / ios-native / android-native / generic) and generates a tailored `/release` skill at `.claude/skills/release/SKILL.md` (project-level skill, bare invocation since it lives in the user's repo, not under this plugin's namespace). Run only on repos that ship versioned releases.
 
 ## Sources

@@ -8,8 +8,8 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 
 - `super-bootstrap` — public entry, thin orchestrator; dispatches the runway, seeds greenfield GAP cards, gates tier-2 curation.
 - `harness-bootstrap` — installs/syncs the generic runway (CLAUDE.md, AGENTS.md (foreign-executor contract), CODING_STANDARDS.md (headings-only), skeleton docs, rules, the core pin); monorepo tier fans rule globs + build pre-flight out per package; adopt mode retires a consumer's superseded fork skills/agents (runtime name-collision map, per-deletion confirm) and backfills skeleton sections added since bootstrap (approval-gated `⊕ new` insert); opt-in, earn-gated scale module adds `docs/parked.md` + `docs/test-queue.md` + `docs/outward/` containers, a venue-map rule, and backlog fact fields for repos whose backlog has outgrown one flat list.
-- `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`; Phase 2.5 dispatches `agents/plugin-digest.md` (Haiku) for README→digest parse.
-- `todo` — intent-filtered board scanner; dispatches `agents/todo.md` (Sonnet).
+- `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`; requires `docs/techstack.md` (seeded by `/super-bootstrap:harness-bootstrap`) and fails loud without it; Phase 2.5 dispatches `agents/plugin-digest.md` (Haiku) for README→digest parse.
+- `todo` — intent-filtered board scanner; renders inline via the bundled `render-board.py` (zero dispatch), with `agents/todo.md` (Sonnet) as the script-failure fallback; sub-verbs `discuss` / `cloud` / `device` / `harness` / `full`.
 - `log` — capture front door for backlog rows; gateway-inline (classify + dedup-surface + write in the calling session, no dispatch).
 - `triage` — read-only grounding phase for one backlog card (premise verify / aim validate / blast collect); dispatches `agents/triage.md` (inherits the session model — the top tier).
 - `triage-report` — drains `.review/` scan reports with per-finding dispositions; dispatches `agents/triage-report.md` (Sonnet).
@@ -17,7 +17,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `commit` — session-isolated (staged set read back against the session list), doc-sync-gated commit; on a grep + citer + link-target gate hit the gateway judges the scope warm-inline, dispatching `agents/doc-sync-scan.md` (Sonnet) only past the scope ceiling; product-anchor diffs dispatch `agents/premise-closure.md` (Sonnet).
 - `merge` — absorb feature branches; aborts + surfaces on conflict.
 - `check-docs-consistency` — cross-references project docs for drift, stale references, contradictions; timestamped report to `.review/`, report-only.
-- `drain` — parallel-worktree auto-drain of the board; spawns one isolated `claude -p` per admissible item (venue-keyed when the scale module is wired, Cloud-safe fallback otherwise; a single-item wave hands off to the normal in-session pipeline, inline items roll in-session), each halts at its user wall.
+- `drain` — parallel-worktree auto-drain of the board; spawns one isolated `claude -p` per admissible item (venue-keyed when the scale module is wired, Cloud-safe fallback otherwise; a single-item wave hands off to the normal in-session pipeline, inline items roll in-session), each halts at its user wall. One wave per invocation, manual only; merge is never automatic — it delegates to `/super-bootstrap:merge`.
 - `release-init` — one-shot; generates a project-level `/release` skill.
 
 ## Naming convention

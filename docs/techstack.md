@@ -14,7 +14,7 @@ Claude Code plugin architecture. A root `.claude-plugin/marketplace.json` declar
 
 - **[super-bootstrap](https://github.com/RockyHong/super-bootstrap)** (self-pin) — core pin: the scaffolded CLAUDE.md routes every door through `/super-bootstrap:*` and the committed `commit-channel.sh` names `/super-bootstrap:commit`, so the project pin must resolve them on any boundary without the authoring device's user-scope settings (fresh clone, cloud session).
 - **No process harness is a dependency, and none is pinned.** The scaffolded CLAUDE.md's route rows name disciplines, not process-harness skill entries, so any process harness ([superpowers](https://github.com/obra/superpowers) or another) is an ordinary `/super-bootstrap:resolve-plugins` candidate the user may take or drop. Rationale + cut map: [`docs/specs/harness-architecture.md`](specs/harness-architecture.md).
-- Discovery sources for `/super-bootstrap:resolve-plugins`: Anthropic plugin marketplace, MCP registry, everything-claude-code, awesome-claude-skills, VoltAgent/awesome-agent-skills (see [README § Sources](../README.md#sources)).
+- Discovery sources for `/super-bootstrap:resolve-plugins` — what each source is and the role it plays in the set: [README § Sources](../README.md#sources). The pool the door issues live queries against is [`resolve-plugins/SKILL.md` § Phase 2](../plugins/super-bootstrap/skills/resolve-plugins/SKILL.md#phase-2-live-query-source-pool).
 
 ## Build & Distribution
 

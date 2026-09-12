@@ -45,7 +45,7 @@ Active development.
 `.claude-plugin/marketplace.json` — self-hosted marketplace declaration; `source` field pins the install boundary
 `docs/` — dev-workspace docs (this file, [`techstack.md`](techstack.md), [`specs/`](specs/), [`work/`](work/README.md), the scale-module containers [`parked.md`](parked.md) / [`test-queue.md`](test-queue.md) / [`outward/`](outward/README.md)); never ships to users
 `tests/` — 4 shell unit tests (`commit-channel.test.sh`, `doc-links.test.sh`, `render-menu.test.sh`, `runway-version.test.sh`)
-`bench/` — 8 measured fixtures kept beside the SSOT they test: `catalog-axis/` (RED fixture + tier probe for `check-docs-consistency`'s catalog-row axis), `commit-guard/` (test surface for the commit door's index readback and stamp ordering), `commit-push/` (test surface for the commit door's push probe — no remote / remote without upstream / upstream), `consult-hook/` (test surface for the shipped `consult-check` pair), `doc-links/` (golden test for the commit door's `doc-links.sh` gate enumeration), `merge-push/` (test surface for the merge door's push probe — no remote / remote without upstream / upstream), `scale-fact-fields/` (micro-test for `harness-bootstrap` § 2a-scale's marker-present vs drift precedence), `todo-board/` (golden test for the `todo` board renderer)
+`bench/` — 9 measured fixtures kept beside the SSOT they test: `catalog-axis/` (RED fixture + tier probe for `check-docs-consistency`'s catalog-row axis), `commit-guard/` (test surface for the commit door's index readback and stamp ordering), `commit-push/` (test surface for the commit door's push probe — no remote / remote without upstream / upstream), `consult-hook/` (test surface for the shipped `consult-check` pair), `doc-links/` (golden test for the commit door's `doc-links.sh` gate enumeration), `doc-sync/` (container read-out for the commit door's doc-sync judgment — cold dispatch vs warm gateway-inline, diff and scan scope held fixed), `merge-push/` (test surface for the merge door's push probe — no remote / remote without upstream / upstream), `scale-fact-fields/` (micro-test for `harness-bootstrap` § 2a-scale's marker-present vs drift precedence), `todo-board/` (golden test for the `todo` board renderer)
 
 ## Data Flow
 
@@ -55,7 +55,7 @@ Active development.
 
 **Capture** — `/super-bootstrap:log <observation>` → gateway-inline classify + dedup-surface → card written to `docs/work/{ID}.md`.
 
-**Triage** — `/super-bootstrap:triage {ID}` → dispatches `agents/triage.md` (Opus, clean context) → reads card + live tree → appends `## Verdict` block to `docs/work/{ID}.md`.
+**Triage** — `/super-bootstrap:triage {ID}` → dispatches `agents/triage.md` (inherits the session model — the top tier; clean context) → reads card + live tree → appends `## Verdict` block to `docs/work/{ID}.md`.
 
 **Board** — `/super-bootstrap:todo` → runs the bundled `render-board.py` (zero dispatch, gateway relays stdout) → reads `docs/work/` (plus the scale module's test queue and outward threads when present) → renders intent-filtered board; `agents/todo.md` (Sonnet) dispatches only as the script-failure fallback.
 
