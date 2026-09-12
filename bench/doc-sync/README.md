@@ -139,7 +139,12 @@ claim. They are not caveats to discover after the numbers land.
    untested hybrid in the card's origin Prior than to true gateway-inline.
    Authoring replay — where the arm makes the edits itself — buys the second half
    but trades away the fixed diff, so it is the escalation if this round shows no
-   separation, not a substitute for it.
+   separation, not a substitute for it. **Escalation closed 2026-09-13 without
+   running** — declined at the successor card's route: the failure class it would
+   characterize has one observed instance across 530 doc-touching commits, and
+   replay buys only *induced* commitment, so neither arm could discharge the
+   residual. See [`docs/decisions.md`](../../docs/decisions.md) § Closed Forks,
+   newest row.
 
 2. **Fixture 2's narration is fixed.** The original evidence varied gateway
    narration alongside the code revision — Run A and Run B differed in prose
