@@ -1,6 +1,6 @@
 # AGENTS.md
 
-> Standing contract for an agent runtime executing a **build task** in this repo. The task arrives from an orchestrator that holds routing, verification, doc-sync and commits; this file states what it expects back and what stays outside your reach. Sections below are the shipped contract — anything this repo appends under them is binding too.
+> Standing contract for an agent runtime executing a **build task** in this repo. Routing, verification, doc-sync and commits sit with whoever dispatched it — an orchestrator, or the human who started you directly; this file states what that caller expects back and what stays outside your reach. Sections below are the shipped contract — anything this repo appends under them is binding too.
 
 ## Ground before building
 
@@ -28,3 +28,9 @@ Read the files your task names before changing them. Where the task's premise co
 - Narrative docs — `docs/` and the root `README` — belong to the orchestrator's doc-sync step unless the prompt names one as a target. Otherwise report what your change makes stale and leave the edit to the orchestrator.
 - Work-tracking surfaces: the `docs/work/` card set, and any session-state ledger at the repo root — route to the orchestrator.
 - Branch, merge and release decisions — route to the orchestrator.
+
+## No orchestrator in this run
+
+Check before reporting: did this task arrive from an orchestrator, or straight from a human? Straight from a human — that human is the receiver, and every boundary above holds as written.
+
+Hand the work back rather than dropping it. Close the report with each step you left unrun, named concretely: what stands uncommitted, which docs the change makes stale, which work-tracking entry is owed, and every question or contradiction the sections above route upward. Report it built only beside that list.
