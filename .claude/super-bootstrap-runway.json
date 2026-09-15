@@ -1,5 +1,5 @@
 {
-  "version": "2.50.2",
+  "version": "2.51.0",
   "covered": [
     "CLAUDE.md § Development Workflow",
     "CLAUDE.md § Dispatch",
@@ -55,7 +55,7 @@
     },
     {
       "section": "CLAUDE.md § Doc Sync",
-      "reason": "dogfood-specific — names the served `ssot-doc-link` rule on the guarantee line and the in-repo `/release` skill + plugin manifests on the write-boundary line"
+      "reason": "dogfood-specific — names the served `ssot-doc-link` rule on the guarantee line, links layer 2's mechanical lanes to the in-repo `plugins/super-bootstrap/skills/commit/SKILL.md`, and names the in-repo `/release` skill + plugin manifests on the write-boundary line"
     },
     {
       "section": "docs/techstack.md § Edit Discipline",
