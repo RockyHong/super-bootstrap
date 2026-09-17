@@ -29,12 +29,20 @@
 #   terms <path>...    print the grep-gate terms a changed-file list yields, sorted
 #                      unique — path-class-exempt paths, asset extensions, generic
 #                      basenames and terms under 4 characters yield none. Pure string
-#                      work: the paths need not exist. Always exit 0.
+#                      work: the paths need not exist. A Godot text asset (`.tscn`,
+#                      `.tres`, any case) keeps its extension on the term
+#                      (`levels/Ending.tscn` → `Ending.tscn`) — the origin marker
+#                      `hits` reads. Always exit 0.
 #   hits <term>...     print doc-surface files mentioning any term in code shape —
 #                      a whole word inside an inline code span, or a path segment
 #                      (preceded by `/`, or followed by `/` or `.`+extension).
-#                      Bare prose does not hit. Sorted unique; exclusion is the
-#                      caller's (pipe through `grep -vxF`). Always exit 0.
+#                      Bare prose does not hit. Two shape-by-origin exceptions: a hub
+#                      stem (HUB_STEMS) counts only as a bare token in a code span, and
+#                      an extension-marked asset term (`Ending.tscn`) counts only as
+#                      its stem in a path segment (`levels/Ending.tscn`, `Ending.tscn`)
+#                      — a backticked bare `Ending` is domain vocabulary, not narration.
+#                      Sorted unique; exclusion is the caller's (pipe through
+#                      `grep -vxF`). Always exit 0.
 #   self <path>...     print the changed paths that are doc-surface files in their
 #                      own right, sorted unique — a changed doc is its own scope doc.
 #                      A path the diff deleted, one off the surface, and frozen
@@ -628,6 +636,11 @@ do_terms() {
         derive_term "$p"
         [ -z "$TERM_OUT" ] && continue
         term_generic "$TERM_OUT" && continue
+        # Godot text asset → keep the extension: the marker `hits` reads its
+        # path-shape-only rule from (see do_hits).
+        case "$p" in
+            *.[tT][sS][cC][nN]|*.[tT][rR][eE][sS]) TERM_OUT="$TERM_OUT.${p##*.}" ;;
+        esac
         printf '%s\n' "$TERM_OUT"
     done | LC_ALL=C sort -u
     return 0
@@ -704,6 +717,12 @@ do_hits() {
         n = split(ENVIRON["DOCLINK_TERMS"], T, "\n")
         m = split(ENVIRON["DOCLINK_HUB"], H, " ")
         for (j = 1; j <= m; j++) if (H[j] != "") hub[H[j]] = 1
+        # An extension-marked term (`Ending.tscn`) names a Godot text asset: match its
+        # stem path-shaped only.
+        for (i = 1; i <= n; i++)
+            if (T[i] ~ /\.([Tt][Ss][Cc][Nn]|[Tt][Rr][Ee][Ss])$/) {
+                T[i] = substr(T[i], 1, length(T[i]) - 5); asset[i] = 1
+            }
     }
 
     {
@@ -711,7 +730,9 @@ do_hits() {
         code = codespans($0)
         for (i = 1; i <= n; i++) {
             if (T[i] == "") continue
-            if (T[i] in hub) {
+            if (i in asset) {
+                if (pathin($0, T[i])) { hit[FILENAME] = 1; break }
+            } else if (T[i] in hub) {
                 if (barein(code, T[i])) { hit[FILENAME] = 1; break }
             } else if (wordin(code, T[i]) || pathin($0, T[i])) { hit[FILENAME] = 1; break }
         }

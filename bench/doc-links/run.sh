@@ -66,6 +66,9 @@ run_case terms-mixed terms \
   plugins/x/skills/foo-bar/SKILL.md \
   README.md \
   bench/todo-board/run.sh
+# A Godot text asset (.tscn / .tres, any case) keeps its extension — the marker `hits`
+# reads its path-shape-only rule from; any other path yields its bare basename.
+run_case terms-asset terms levels/Ending.tscn res/Loot.TRES scripts/Player.gd
 
 # Replay: the acceptance fixtures, as file lists. A bench-only commit yields no term;
 # a skill commit yields the skill name plus its asset basename.
@@ -97,6 +100,12 @@ run_case hits-hub hits overview techstack
 # A card thread and an outward thread are frozen provenance on the hit side too —
 # never scan scope (BUG-051) — while each folder's standing README.md stays in.
 run_case hits-card hits cardonly
+# A Godot text-asset term counts only on a path-shaped mention — the inverse of the
+# hub stems: the backticked bare `Ending` / `Loot` stay out, the path mentions hit.
+# A non-asset term still hits on the backticked bare word.
+run_case hits-asset-tscn hits Ending.tscn
+run_case hits-asset-tres hits Loot.tres
+run_case hits-asset-code hits Player
 
 # --- self: changed paths → the scope docs among them ---
 # Every arm in one call: an included docs/** doc, the root README.md and a

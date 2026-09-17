@@ -8,7 +8,7 @@ to §3's mechanics re-runs this bench (`bash bench/doc-links/run.sh`).
 - `fixture/` — a mini repo root. Doc surface: `README.md`, `plugins/x/README.md`,
   and `docs/**/*.md` (`anchors.md` — headings at pinned line numbers, one of them
   punctuated, one a numbered CJK heading · three citers of `anchors.md`, two at one anchor each and one at both ·
-  a hub doc (`overview.md`) · nine `docs/specs/` bodies, each carrying exactly one match shape · a
+  a hub doc (`overview.md`) · nine `docs/specs/` bodies, each carrying exactly one match shape, plus three asset-term bodies (`asset-*.md`) · a
   `dimension: history` pair — `chronicle.md` declaring it in frontmatter,
   `body-mention.md` carrying the same string as body prose · a `docs/work/` card thread
   naming a term in code shape and citing `anchors.md#beta`, the folder's standing `README.md`
@@ -38,6 +38,9 @@ to §3's mechanics re-runs this bench (`bash bench/doc-links/run.sh`).
 basename (`README`, `run`) and a basename under four characters (`ui`) ·
 `terms-machine-state` the `.claude/` runway receipt and a `templates/` file yield nothing ·
 `terms-mixed` a mixed list yields the sorted-unique union ·
+`terms-asset` a Godot text asset (`.tscn`, `.tres`, any case) keeps its extension on the
+term (`Ending.tscn`, `Loot.TRES`) — the origin marker `hits` reads — while a `.gd` path
+yields its bare basename (`Player`) ·
 `terms-replay-bench` / `terms-replay-skill` the acceptance fixtures replayed as
 file lists — a bench-only commit yields no term (nothing to dispatch on), a skill
 commit yields the skill name plus its asset basename.
@@ -56,6 +59,10 @@ parse gets right ·
 `hits-hub` harness-seeded hub stems (`overview`, `techstack`) count only as a bare token
 in a code span — a link target, a backticked path, a bare filename and a bare path all stay out
 (`hub-path.md`) while the doc naming the artifact hits (`hub-bare.md`) ·
+`hits-asset-tscn` / `hits-asset-tres` the inverse for an extension-marked asset term: only
+the path mention hits (`asset-scene-path.md` — `` `levels/Ending.tscn` ``; `asset-res-path.md` —
+a bare `res/Loot.tres`), while the backticked bare `Ending` / `Loot` in `asset-bare.md` stays
+out · `hits-asset-code` a non-asset term (`Player`) still hits that same backticked bare word ·
 `hits-history` a frontmatter `dimension: history` declaration drops the doc from the
 hit set, while the doc carrying the same string in its body still hits — the
 declaration is the carrier, not the string ·

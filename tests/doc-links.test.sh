@@ -651,6 +651,53 @@ else
   printf 'got:\n%s\n' "$got_terms" | sed 's/^/        /'
 fi
 
+
+echo "== doc-links: BUG-062 — a Godot text-asset term counts only on a path-shaped mention =="
+# A scene/resource basename doubles as domain vocabulary ("the win loaded `Ending`"),
+# so a term derived from a `.tscn` / `.tres` path hits only where a doc names the file
+# by path (`levels/Ending.tscn`, `Ending.tscn`), never on a bare backticked word — the
+# inverse of the hub-stem rule. `terms` keeps the extension on such a term; that marked
+# form is the channel `hits` reads the origin from. Other terms match as before.
+mkdir -p "$TMP/asset/docs/specs"
+printf '# Bare\n\nThe original win loaded `Ending` after the boss; drops roll from `Loot`.\n' > "$TMP/asset/docs/specs/bare.md"
+printf '# Scene path\n\nThe knob lives in `levels/Ending.tscn`.\n' > "$TMP/asset/docs/specs/scene-path.md"
+printf '# Scene file\n\nOpen Ending.tscn in the editor.\n' > "$TMP/asset/docs/specs/scene-file.md"
+printf '# Resource path\n\nTable sits in res/Loot.tres.\n' > "$TMP/asset/docs/specs/res-path.md"
+printf '# Code\n\nThe `Player` class owns input.\n' > "$TMP/asset/docs/specs/code.md"
+
+got_terms="$(cd "$TMP/asset" && bash "$LINKS" terms levels/Ending.tscn res/Loot.TRES scripts/Player.gd)"
+expected_terms="$(printf 'Ending.tscn\nLoot.TRES\nPlayer')"
+if [ "$got_terms" = "$expected_terms" ]; then
+  ok "terms: .tscn/.tres paths yield the extension-marked term (case-insensitive), a .gd path its bare basename"
+else
+  bad "terms: .tscn/.tres paths yield the extension-marked term (case-insensitive), a .gd path its bare basename"
+  printf 'expected:\n%s\ngot:\n%s\n' "$expected_terms" "$got_terms" | sed 's/^/        /'
+fi
+
+got_hits="$(cd "$TMP/asset" && bash "$LINKS" hits $(bash "$LINKS" terms levels/Ending.tscn))"
+expected_hits="$(printf 'docs/specs/scene-file.md\ndocs/specs/scene-path.md')"
+if [ "$got_hits" = "$expected_hits" ]; then
+  ok "hits: .tscn term hits path mentions (levels/Ending.tscn, Ending.tscn), not a backticked bare Ending"
+else
+  bad "hits: .tscn term hits path mentions (levels/Ending.tscn, Ending.tscn), not a backticked bare Ending"
+  printf 'expected:\n%s\ngot:\n%s\n' "$expected_hits" "$got_hits" | sed 's/^/        /'
+fi
+
+got_hits="$(cd "$TMP/asset" && bash "$LINKS" hits $(bash "$LINKS" terms res/Loot.tres))"
+if [ "$got_hits" = "docs/specs/res-path.md" ]; then
+  ok "hits: .tres term hits the path mention res/Loot.tres, not a backticked bare Loot"
+else
+  bad "hits: .tres term hits the path mention res/Loot.tres, not a backticked bare Loot"
+  printf 'got:\n%s\n' "$got_hits" | sed 's/^/        /'
+fi
+
+got_hits="$(cd "$TMP/asset" && bash "$LINKS" hits $(bash "$LINKS" terms scripts/Player.gd))"
+if [ "$got_hits" = "docs/specs/code.md" ]; then
+  ok "hits: a non-asset (.gd) term still hits on a backticked bare word (regression guard)"
+else
+  bad "hits: a non-asset (.gd) term still hits on a backticked bare word (regression guard)"
+  printf 'got:\n%s\n' "$got_hits" | sed 's/^/        /'
+fi
 # ---------------------------------------------------------------------------
 # GAP-081 — `pins`: a doc line restating an agent's frontmatter `model:` tier is
 # checked against the source. Keyed on the code-shaped path mention, never on a

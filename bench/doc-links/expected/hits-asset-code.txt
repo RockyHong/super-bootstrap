@@ -1,0 +1,1 @@
+docs/specs/asset-bare.md
