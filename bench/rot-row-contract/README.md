@@ -14,8 +14,10 @@ Arms run headless (`claude -p --model haiku`, no tools) with the prompt on stdin
 arm. Control = the pre-fix wording, arm = the shipped wording; every other excerpt in the prompt is
 held identical across arms, so the clause under test is the only variable.
 
-Three scenarios were tried, one per clause carrying a candidate behavioral cut. Only the third
-discriminates; the other two are reported below as non-results rather than dropped.
+Three scenarios were tried for the rot-row clauses, one per clause carrying a candidate
+behavioral cut. Only the third discriminates; the other two are reported below as non-results
+rather than dropped. A later card re-ran the same § 2c receipt paragraph on a different axis
+under this protocol — § GAP-084 at the foot of this file.
 
 - **Scenario A — § 2c gate** (the strongest a-priori candidate). A sync report whose per-section
   rows are all `✓ matches` and whose one rot row carries no resolution, handed to a model asked
@@ -140,3 +142,71 @@ silently into the tables, since a trial's evidence belongs to the text it was ru
   Block 2. Scenario B was a non-result either way, and its cause was the control generalizing from
   Block 2 — which this rewording now states outright, so the shipped text is if anything further
   from a RED than the benched arm was.
+
+## GAP-084 — § 2c receipt determinacy (second run, same paragraph)
+
+`GAP-084` put the *same* § 2c receipt-write paragraph under test on a
+different axis: not whether a rot decline reaches `declined`, but whether a cold author can derive
+the whole `covered` / `declined` pair from the paragraph alone — row-class membership, element
+shape, and the report-row → row-identity transcode. Run under Scenario C's protocol, so it is
+recorded here rather than in a new bench directory.
+
+### Scenario D — row-class membership + identity transcode
+
+Run 2026-09-21, `claude -p --model haiku`, no tools (`--disallowedTools` covering the full default
+set), three trials per arm, cwd a neutral empty directory outside this repo (§ decontamination:
+in-repo runs read the answer off CLAUDE.md and the commit log). CC 2.1.278.
+
+Prompt: Phase 1's receipt-shape sentence (unchanged, both arms) + § 2c's **Sync report** lead,
+illustrative table, and receipt-write prose (the arm variable) + one synthetic completed sync report
+for the run under test, exercising all four row classes at once — a section row resolved
+`declined (…)`, a section row `✓ current`, a whole-file artifact row (`AGENTS.md`) resolved
+`updated`, a `registration:` row resolved `updated`, and a rot row resolved `migrated`. Output: the
+exact `covered` and `declined` values, plus a per-entry rationale.
+
+Control = the shipped-at-`0612a0c` paragraph, byte-exact. Arm = the paragraph split by concern
+(`covered` / `declined` / `placed`), with the transcode named, `covered`'s element shape stated, the
+`registration:` exclusion stated, the version source cross-referenced to Phase 1, and a worked
+receipt example rendered from the illustrative table beside it.
+
+Expected `covered` = the two section identities, the `AGENTS.md` path, the rot identity — four
+strings, no registration entry.
+
+| Arm | Trial | `registration:` row in `covered` | rot row in `covered` | section identity | whole-file identity |
+|---|---|---|---|---|---|
+| Control | 1 | **yes** — `registration: docs/outward/ → README.md docs list` | yes | `CLAUDE.md § Doc Sync` | `AGENTS.md` |
+| Control | 2 | **yes** — same string | yes | correct | correct |
+| Control | 3 | **yes** — same string | yes | correct | correct |
+| Arm v1 | 1 | no | yes | correct | correct |
+| Arm v1 | 2 | no | yes | correct | correct |
+| Arm v1 | 3 | no | **dropped** | correct | correct |
+| Arm v2 (shipped) | 1 | no | yes | correct | correct |
+| Arm v2 | 2 | no | yes | correct | correct |
+| Arm v2 | 3 | no | yes | correct | correct |
+
+**Verdict: RED → GREEN on row-class membership.** The control admitted a `registration:` identity to
+`covered` 3/3, verbatim off the report row and with a rationale line asserting it belongs — the
+silence the card read two ways resolves, at this model, uniformly the wrong way. The shipped arm
+excludes it 3/3, and trial 2's rationale states the rule back ("registration 列：報告專用，不計入
+covered/declined").
+
+**The worked example's omissions are read as rules — measured, not inferred.** Arm v1's example
+rendered the illustrative table, which carries no rot row, and its lead-in listed only what the
+example *did* contain. Trial 3 then dropped the rot row from `covered` entirely — the same
+omission-as-rule failure the card's verdict predicted for `registration:`, landing instead on the
+class the example happened not to show. Two changes shipped as arm v2: the `covered` clause names
+all three admitted row classes positively ("its per-section rows, its whole-file artifact rows, and
+its rot rows") instead of glossing them, and the example's lead-in states outright that the report it
+renders has no rot row to carry. 3/3 after.
+
+**Off-axis, honestly: the section-identity spelling did not go red here.** The card's strongest
+argument for the example is the transcode — the report renders `CLAUDE.md: Doc Sync`, the identity
+is `CLAUDE.md § Doc Sync` — and the off-axis note above records a trial emitting the bare filename.
+Under this prompt shape the control spelled every section identity correctly 3/3, so the fix ships
+on the registration axis plus the standing observation, not on a reproduced spelling failure. The
+difference from the earlier note is prompt shape: Scenario D hands the model the run's own report as
+a table, where Scenario C's report was narrower. The transcode clause is retained as determinacy the
+paragraph owed either way — the example is what carries it — and its behavioral claim stays
+unproven at this model.
+
+The shipped § 2c text is byte-identical to the arm v2 excerpt above (trailing blank line aside).

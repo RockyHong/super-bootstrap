@@ -172,7 +172,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` core plugin pin (`enabledPlugins`, `extraKnownMarketplaces`) — drift-checked for presence alone (§ 2a)
 - `.claude/bootstrap.md` (seeded plan — carries user checkbox state, so § 2b's special case governs re-run; the next session consumes it, its own Task 3 deletes it)
-- `.claude/super-bootstrap-runway.json` (runway coverage receipt `{ version, covered, declined, placed }` — presence + content checked, not diffed section-by-section; read at Phase 1, written at 2c — `covered` / `declined` from the sync-report rows (`declined` entries `{ section, reason }`), `placed` from the file assets the ensure-infra procedures copied or verified current; durable marker, no cleaner — persists for the life of the harness)
+- `.claude/super-bootstrap-runway.json` (runway coverage receipt `{ version, covered, declined, placed }` — presence + content checked, not diffed section-by-section; read at Phase 1, written at 2c — `covered` / `declined` from the sync-report's section, whole-file and rot rows (§ 2c owns the transcode; `declined` entries `{ section, reason }`), `placed` from the file assets the ensure-infra procedures copied or verified current; durable marker, no cleaner — persists for the life of the harness)
 - Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `docs/outward/README.md` + `docs/outward/TEMPLATE.md` (whole files, the way `docs/work/README.md` / `docs/work/TEMPLATE.md` are), `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md` — whole body, prose included), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`), the CLAUDE.md § Rules `venue-map.md` bullet block (drift-checked against `assets/claude-md-skeleton.md` § Rules)
 
 **Project-owned** (never touched):
@@ -588,7 +588,31 @@ Per-candidate handling:
 | registration: .claude/skills/commit/ → none | ⊘ removed | none |
 ```
 
-**Receipt write.** Once the sync completes, write `.claude/super-bootstrap-runway.json` = `{ "version": "{current plugin version}", "covered": [...], "declined": [...], "placed": { ... } }` — fresh install writes it new, re-run overwrites whole. `covered` is copied mechanically from the sync-report's per-section rows and its rot rows (the same rows the gate above just cross-checked; row identity `{file} § {Section}`, whole-file artifacts by path, a rot row `{file} § rot:{old}` — keyed by the stale literal, never the line, since line numbers shift between runs); `declined` is the rows resolved `declined` — a drift kept or an insert declined at Block 2, a re-seed skipped at the missing-on-mature advisory, a rot row left alone at the § 2b rot scan — each written `{ "section": "<row identity>", "reason": "<the row's declined reason>" }`. For those three the report is the receipt's sole source, and every declined row reaching `declined` through `covered` keeps `declined` a subset of it. `placed` is the ensure-infra procedures' own record — `{ "<destination path>": "<sha256 of the file as placed>" }` — which 2a-hooks / 2a-drain write into the receipt file directly as each file resolves current — copied, or already sha-equal (mechanisms: [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) § Idempotency · [`../drain/assets/ensure-infra.md`](../drain/assets/ensure-infra.md) § Idempotency); read the receipt back from disk here, after those steps ran, and carry its `placed` map forward whole — never from the Phase 1 snapshot, which predates this run's copies. This runs even when every row is `✓ current` — the receipt records "synced at this version, these sections compared," independent of whether content changed.
+**Receipt for that report** — its four section and whole-file rows transcoded to row identities, its two `registration:` rows report-only, no rot row in this one to carry:
+
+```json
+{
+  "version": "{current plugin version}",
+  "covered": [
+    "CLAUDE.md § Doc Sync",
+    "docs/techstack.md § Runtime",
+    "CLAUDE.md § Dispatch",
+    ".claude/rules/mv3.md"
+  ],
+  "declined": [
+    { "section": "CLAUDE.md § Dispatch", "reason": "wires the repo's own guideline paths" }
+  ],
+  "placed": { ".claude/hooks/commit-channel.sh": "<sha256 of the file as placed>" }
+}
+```
+
+**Receipt write.** Once the sync completes, write `.claude/super-bootstrap-runway.json` = `{ "version": "{current plugin version}", "covered": [...], "declined": [...], "placed": { ... } }` — fresh install writes it new, re-run overwrites whole. Take `version` from the plugin version Phase 1 already read for its staleness compare — § Version-staleness signal names the file and how to locate it. This runs even when every row is `✓ current` — the receipt records "synced at this version, these sections compared," independent of whether content changed.
+
+**`covered`** is an array of bare row-identity strings — one string per sync-report row across all three row classes the gate above just cross-checked: its per-section rows, its whole-file artifact rows, and its rot rows. Each identity is *transcoded* from its report row rather than copied verbatim: the report renders a section row `{file}: {Section}` and the identity is `{file} § {Section}`; a whole-file artifact is its repo-relative path alone; a rot row is `{file} § rot:{old}` — keyed by the stale literal, never the line, since line numbers shift between runs. A `registration:` row stays report-only: `covered`'s two readers are Phase 1's set-difference over pipeline-owned sections and its `facts_stale` membership test, a registration identity answers neither. The receipt carries no registration field at all — `placed` is a different set, scoped to the 2a-hooks / 2a-drain assets § Registration rule exempts — so the gate re-derives that coverage from § Registration rule every run rather than reading it back. The § 2c gate's coverage set is deliberately the wider one — it reaches every artifact the § Registration rule covers, `covered` reaches the three row classes above.
+
+**`declined`** is the rows resolved `declined` — a drift kept or an insert declined at Block 2, a re-seed skipped at the missing-on-mature advisory, a rot row left alone at the § 2b rot scan — each written `{ "section": "<row identity>", "reason": "<the row's declined reason>" }`, carrying the row's own `covered` identity string and the parenthetical of `declined ({reason})` as the reason. For those three the report is the receipt's sole source, and every declined row reaching `declined` through `covered` keeps `declined` a subset of it.
+
+**`placed`** is the ensure-infra procedures' own record — `{ "<destination path>": "<sha256 of the file as placed>" }` — which 2a-hooks / 2a-drain write into the receipt file directly as each file resolves current — copied, or already sha-equal (mechanisms: [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) § Idempotency · [`../drain/assets/ensure-infra.md`](../drain/assets/ensure-infra.md) § Idempotency). Read the receipt back from disk here, after those steps ran, and carry its `placed` map forward whole — never from the Phase 1 snapshot, which predates this run's copies.
 
 If every row is `✓ current` and nothing changed on disk, report and skip the commit.
 
