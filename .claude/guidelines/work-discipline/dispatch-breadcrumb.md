@@ -11,3 +11,5 @@ entry doc is the minimum unit of that responsibility.
   pull; inline only what the agent cannot discover from it.
 - **Cheaper tiers under-read most** — the colder the dispatched tier, the more
   a missing breadcrumb costs. Never assume a subagent infers the reading list.
+
+Family catalog: [`index.md`](index.md).

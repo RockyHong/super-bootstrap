@@ -19,6 +19,4 @@ race, structural whenever writer and caller share paths.
   session on a long build buys nothing when the session isn't editing the
   build's paths.
 
-Siblings: [`dispatch-breadcrumb.md`](dispatch-breadcrumb.md) — what a brief
-carries; [`dispatch-brief-shape.md`](dispatch-brief-shape.md) — how much; this
-file — when the dispatch runs relative to the caller's own work.
+Family catalog: [`index.md`](index.md).

@@ -16,5 +16,4 @@ size — narrow briefs complete arbitrarily long tool-call runs.
   author inline when the dispatcher already holds the full frame. A third
   resume re-buys the same stall.
 
-Sibling: [`dispatch-breadcrumb.md`](dispatch-breadcrumb.md) — what a brief
-carries (the scope's entry doc); this file — how much a brief carries.
+Family catalog: [`index.md`](index.md).
