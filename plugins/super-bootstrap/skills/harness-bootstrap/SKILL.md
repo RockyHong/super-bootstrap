@@ -78,7 +78,7 @@ When `docs/overview.md` + `docs/techstack.md` already carry substantive content,
 
 Catches "harness installed but carries renamed-away literals" — re-run is the right entry, flag before Phase 2b churns through migrations.
 
-Trigger: any pipeline-owned file (`CLAUDE.md`, `docs/overview.md`, `docs/techstack.md`, `.claude/bootstrap.md`, `.claude/rules/*.md`) contains a literal listed as `old` in `assets/rename-map.md`. Whole-token match; one hit is enough.
+Trigger: any pipeline-owned file (§ Pipeline-owned, minus the files § 2b's rot scan skips — one scope, so `rot_hits[]` agrees with what 2b re-greps) contains a literal listed as `old` in `assets/rename-map.md`. Whole-token match; one hit is enough.
 
 When the trigger fires, surface ONCE up front (single message, not a redirect — re-run is the correct entry point):
 
@@ -92,7 +92,7 @@ Continue? (y / dry-run report only)
 
 If user answers `dry-run`, walk Phases 1–2b without writing — render the sync report (per-section listing + rename-map migration rows) inline without persisting `.claude/bootstrap-sync-report.md`, then exit. Otherwise proceed normally; Phase 2b's rot scan (see § 2b) handles the actual migrations.
 
-**Output of Phase 1 (rot lane):** record `rot_hits[]` so Phase 2b can re-use the scan instead of grepping twice.
+**Output of Phase 1 (rot lane):** record `rot_hits[]` — the affected-files list the trigger message renders. § 2b re-derives the full scan itself for its row-writing pass; the two agree by sharing one scope, not by sharing one grep.
 
 ### Version-staleness signal (harnessed-but-stale)
 
@@ -458,7 +458,7 @@ The report is the forcing function: Phase 2c refuses to commit unless it exists 
 
 **Facts row (re-run, when Phase 1 set `facts_stale`).** Append the `facts:` row § Fact-staleness signal specifies to the report in this same enumeration — Phase 3's only source for the stale-facts advisory: no row, no advisory.
 
-**Rot scan (mandatory pre-step on re-run).** Before Block 1 renders, read `assets/rename-map.md` and grep every pipeline-owned file in scope for each entry's `old` literal (whole-token match — avoid URL / identifier false hits). Each hit becomes a rot row appended to `bootstrap-sync-report.md` and surfaced to the user:
+**Rot scan (mandatory pre-step on re-run).** Before Block 1 renders, read `assets/rename-map.md` and grep every pipeline-owned file in scope for each entry's `old` literal (whole-token match — avoid URL / identifier false hits), skipping any file whose leading frontmatter declares `dimension: history` — frozen provenance preserves old literals by construction, so a hit there is undeclinable-once and re-fires every sync (the same predicate the commit door's doc-sync gate carries). The skip is this lane only: those files' pipeline-owned sections stay in the per-section drift check. Each hit becomes a rot row appended to `bootstrap-sync-report.md` and surfaced to the user:
 
 ```
 {file path}:{line} — stale literal `{old}` → propose `{new}`
