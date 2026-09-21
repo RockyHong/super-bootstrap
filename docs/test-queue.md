@@ -57,6 +57,22 @@ The only durable state here is a still-`pending` entry — `pass` discharges it,
 - **source:** GAP-072
 - **on fail:** `/super-bootstrap:log` a bug + re-queue
 
+### A declined rot row is remembered across runs — both `previously declined:` lanes in one walk
+
+- **run on:** in-repo dev copy of [`harness-bootstrap`](../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md), against a scratch repo carrying a pipeline-owned file with a stale rename-map literal
+- **checklist:**
+  - [ ] plant a stale `old` literal in a pipeline-owned file, re-run → § 2b surfaces a rot row; answering a bare `n` re-prompts for the reason before the row resolves
+  - [ ] answer `n — {reason}` → the sync report's rot row reads `declined ({reason})`, and § 2c's gate does not halt (the row is resolved)
+  - [ ] leave a second rot row unanswered → § 2c halts on it, the way an unresolved drifted section does
+  - [ ] same run → `.claude/super-bootstrap-runway.json` `declined` carries `{ "section": "{file} § rot:{old}", "reason": "{reason}" }`, that identity also appears in `covered`, and `declined` stays a subset of `covered`
+  - [ ] re-run unchanged → the rot row surfaces again with `previously declined: {reason}` beside it, and still takes its own answer rather than auto-resolving
+  - [ ] a second hit of the same literal in the same file → shares the one memory line (the key is the literal, not the line) and still prompts independently
+  - [ ] the section lane's own tail, unverified since `GAP-072` — hand-edit a shipped line, decline with `n — {reason}`, re-run → `previously declined: {reason}` renders beside that row's diff too
+- **result:** pending — the render exists in two lanes and has never been observed firing in either. The receipt inputs are confirmed present and correctly shaped on the section lane; what is unverified is the render itself, which is why both lanes ride one walk.
+- **source:** GAP-083
+- **on fail:** `/super-bootstrap:log` a bug + re-queue
+
+
 ## Failed (re-queued for fix)
 
 *(empty — seeded as failed entries are re-queued)*
