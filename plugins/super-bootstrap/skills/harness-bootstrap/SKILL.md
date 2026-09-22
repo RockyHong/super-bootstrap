@@ -458,13 +458,20 @@ The report is the forcing function: Phase 2c refuses to commit unless it exists 
 
 **Facts row (re-run, when Phase 1 set `facts_stale`).** Append the `facts:` row § Fact-staleness signal specifies to the report in this same enumeration — Phase 3's only source for the stale-facts advisory: no row, no advisory.
 
-**Rot scan (mandatory pre-step on re-run).** Before Block 1 renders, read `assets/rename-map.md` and grep every pipeline-owned file in scope for each entry's `old` literal (whole-token match — avoid URL / identifier false hits), skipping any file whose leading frontmatter declares `dimension: history` — frozen provenance preserves old literals by construction, so a hit there is undeclinable-once and re-fires every sync (the same predicate the commit door's doc-sync gate carries). The skip is this lane only: those files' pipeline-owned sections stay in the per-section drift check. One rot row covers one `old` literal in one file, listing every line it hits that § Scan guidance judged migratable, and is appended to `bootstrap-sync-report.md` and surfaced to the user:
+**Rot scan (mandatory pre-step on re-run).** Before Block 1 renders, read `assets/rename-map.md` and grep every pipeline-owned file in scope for each entry's `old` literal (whole-token match — avoid URL / identifier false hits), skipping any file whose leading frontmatter declares `dimension: history` — frozen provenance preserves old literals by construction, so a hit there is undeclinable-once and re-fires every sync (the same predicate the commit door's doc-sync gate carries). The skip is this lane only: those files' pipeline-owned sections stay in the per-section drift check. One rot row covers one `old` literal in one file, listing every line it hits that § Scan guidance judged migratable, and is appended to `bootstrap-sync-report.md` and surfaced to the user. **State the swept set beside the row count** — how many `old` literals were read out of the map and how many files were swept. A scan that swept **zero literals** is an instrument failure, recorded as **no rot scan**, never as a clean: zero rot rows is also what a healthy repo produces, so the report line cannot tell the two apart unless it carries the swept set. The row shape:
 
 ```
 {file path} — stale literal `{old}` → propose `{new}`
   Lines: {line}, {line}, …
   Reason: {map entry reason}
   previously declined: {reason}
+```
+
+The scan's own outcome line, beside the rows:
+
+```
+rot scan: {N} literals read, {M} files swept, {K} rows
+rot scan: no rot scan — {N} literals read, {M} files swept
 ```
 
 **One row, one answer, one identity.** The row's identity is `{file} § rot:{old}` — the literal as a bare token, no backticks — and the row takes a single answer covering all its lines, so that identity can never carry two outcomes at once. Grouping is safe — § Scan guidance already resolves the referent per line before a row exists. A second `old` form in the same file is its own row with its own identity: that section's "surface each independently" is about forms, not lines.
@@ -573,7 +580,7 @@ Per-candidate handling:
 
 ### 2c: Sync report + commit
 
-**Gate — the sync report must exist and cover every pipeline-owned section, plus every artifact the § Registration rule covers, before commit.** Read `.claude/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row, and every durable artifact the § Registration rule covers must have a `registration:` row. Missing file, or any uncovered section or artifact → halt, return to 2b, produce the missing rows. A `⚠ drifted`, `⊕ new`, or `⊘ missing` row must also carry its resolution (`updated` / `inserted` / `declined ({reason})`), a rot row its own (`migrated` / `declined ({reason})`), a `registration:` row its own (`updated` / `none`) — an unresolved row, or a `declined` row carrying no reason, halts the same way. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
+**Gate — the sync report must exist and cover every pipeline-owned section, plus every artifact the § Registration rule covers, before commit.** Read `.claude/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row, and every durable artifact the § Registration rule covers must have a `registration:` row. Missing file, or any uncovered section or artifact → halt, return to 2b, produce the missing rows. A `⚠ drifted`, `⊕ new`, or `⊘ missing` row must also carry its resolution (`updated` / `inserted` / `declined ({reason})`), a rot row its own (`migrated` / `declined ({reason})`), a `registration:` row its own (`updated` / `none`) — an unresolved row, or a `declined` row carrying no reason, halts the same way. A rot outcome line reading `no rot scan` halts too — the scan swept no literals, so its zero rows are not a clean; return to 2b, re-run the rot scan with a working literal list. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
 
 **Sync report** — rendered from the artifact (the file is canonical; this table is its commit-time view). Always shown before commit. Fresh repos see "all new"; re-run repos see drift fixes and current items.
 
