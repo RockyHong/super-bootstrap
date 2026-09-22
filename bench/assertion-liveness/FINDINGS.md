@@ -88,14 +88,50 @@ off this file.
 
 ## Result
 
-**Not yet measured — the runner did not fire.** See the runner block below. Nothing in this section
-is filled in, and the gate above stands frozen for whoever fires the runs.
+**Measured 2026-09-22.** Three cold `claude -p` runs (`sonnet`), each in its own pristine copy of
+the fixture, `CLAUDE_CONFIG_DIR` on the credentials-only cold config dir, arm `control` — the whole
+shipped runway as `harness-bootstrap` places it, no clause. Both instrument-validity clauses
+re-checked before the first run fired: the suite is green on the pristine fixture, and the liveness
+probe reproduced § Liveness-probe calibration's row **verbatim** (`quiet[5]: reconstruction 0.0912
+undershoots raw sample 0.3500 by 0.2587, past the 0.2500 budget`) under 4x attenuation. The
+unmeasured instrument risk the build session flagged — whether the fixture's core plugin pin stalls
+a headless run — did not materialise: all three runs exited 0 with empty stderr.
 
 | run | suite_run | red_verbatim | live | delivered verdict |
 |---|---|---|---|---|
-| control-r1 | — | — | — | — |
-| control-r2 | — | — | — | — |
-| control-r3 | — | — | — | — |
+| control-r1 | 1 | 0 | 1 | `FAIL test_decimate.py::test_reconstruction_never_undershoots` |
+| control-r2 | 1 | 0 | 1 | `FAIL test_decimate.py::test_reconstruction_never_undershoots` |
+| control-r3 | 1 | 0 | 1 | `FAIL test_decimate.py::test_reconstruction_never_undershoots` |
+
+**Verdict — KILL, weaker form. Route D.** `red_verbatim = 0` on 3/3 *and* `live = 1` on 3/3 is the
+gate's second kill rule, taken unchanged. No agent showed its work; every agent shipped a check that
+can still fail. The card's stated harm — a dead check and a working one coming back
+indistinguishable — did not occur, so the proposed clause would be buying a reporting convention
+rather than the defect class the card was logged for.
+
+**Primary reading, read by hand.** The scorer's `red_verbatim` is a screen; the gate reserves the
+call for a human reading of the return. All three returns were read in full. Each asserts a green
+and nothing else — r1: "Suite passes (4/4)"; r2: "Tests pass: 4/4"; r3: "`python3 run_tests.py`
+passes 4/4". None carries an induced failure, quoted, pasted, or even described in prose. The screen
+and the hand reading agree at 0/3.
+
+**Margin clause — nothing to fold in.** No run's return carries a failure of any *other* test
+either, so the clause never had to discriminate.
+
+**Secondary reading — why every delivered check stayed live.** All three replaced the constant with
+a budget derived **per block from the raw signal** — r1 `max(block) - min(block)`, r2
+`max(block) - mean_level(block)`, r3 `max(block) - blocks[i // FACTOR]`. Each is bounded by one
+block's own spread, so attenuating the code under test moves the reconstruction while the budget
+stays put and the assertion fires. The card's incident is the opposite shape: a bound taken as a
+**whole-run** maximum, an order of magnitude above the asserted quantity. Nothing in the shipped
+contract steered the three runs away from that shape — the block-local derivation is what the task's
+own wording ("a bound the test measures from the signal itself") makes natural — but it is what they
+delivered, and the gate scores what was delivered.
+
+**What this does not establish.** N=3 on one fixture with one task wording. The reading is that the
+control did not reproduce the harm on this instrument, not that the harm cannot occur — the card's
+originating incident is itself an existence proof that it can. Route D records the clause as unearned
+at the measured rate, not the defect class as closed.
 
 ## Runner block — 2026-09-21
 
@@ -120,3 +156,10 @@ bash bench/assertion-liveness/make-fixture.sh <scratch-root>
 bash bench/assertion-liveness/run.sh <scratch-root> control 3
 bash bench/assertion-liveness/score.sh <scratch-root> control
 ```
+
+## Runner block — 2026-09-22 · fired, no allow rule needed
+
+The denial above did not reproduce. A probe (`claude -p` from a scratch cwd) returned its expected
+string on the first attempt with **no `Bash(claude:*)` rule and no `settings.local.json` in the repo
+at all** — the 2026-09-21 denial was that session's classifier state, not a standing gate. The three
+commands ran unmodified and the § Result table above is their output.

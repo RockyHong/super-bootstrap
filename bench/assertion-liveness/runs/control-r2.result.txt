@@ -1,0 +1,3 @@
+No doc references — nothing to sync. Suite is green.
+
+Fixed by deriving the undershoot budget per-sample from its own block's peak-minus-mean spread (the actual worst case a held average can produce), instead of a constant tuned to the 'loud' case. Tests pass: 4/4.

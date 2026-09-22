@@ -125,12 +125,14 @@ the consult-hook fixture this one depends on **no device plant**: `make-fixture.
 `~/.claude/CLAUDE.md`, no rules, no plugins, no skills, no device hooks reach the control agent; the
 three hooks it does meet are the repo-local runway pair-plus-one every consumer carries.
 
-**Open risk, unmeasured.** The placed `.claude/settings.json` carries the core plugin pin
-(§ 2a) — `super-bootstrap@super-bootstrap` plus its `extraKnownMarketplaces` entry — because that is
-what bootstrap writes and dropping it would weaken the arm again. Whether a headless run under the
-credentials-only `CLAUDE_CONFIG_DIR` resolves, silently skips, or stalls on that marketplace is not
-something this bench has measured. First run tells; a stall there is an instrument failure to report
-as **no measurement**, per the FINDINGS runner clause, not a reason to quietly strip the pin.
+**Core plugin pin — measured, no stall.** The placed `.claude/settings.json` carries the core plugin
+pin (§ 2a) — `super-bootstrap@super-bootstrap` plus its `extraKnownMarketplaces` entry — because that
+is what bootstrap writes and dropping it would weaken the arm. Whether a headless run under the
+credentials-only `CLAUDE_CONFIG_DIR` would resolve, skip, or **stall** on that marketplace was open
+until the control arm fired: all three runs exited 0 with empty stderr, so the pin costs the
+instrument nothing and stays in. Had it stalled, the disposition was fixed in advance — an instrument
+failure reported as **no measurement** per the FINDINGS runner clause, never a reason to quietly
+strip the pin.
 
 ## The two readings
 

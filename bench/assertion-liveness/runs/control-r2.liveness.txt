@@ -1,0 +1,18 @@
+PASS test_decimate.py::test_decimate_block_count
+FAIL test_decimate.py::test_mean_level_survives_round_trip
+Traceback (most recent call last):
+  File "C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\22929181-61c1-48af-b57b-ec4f7303c8ac\scratchpad\gap085\runs\control-r2.probe\run_tests.py", line 41, in main
+    fn()
+  File "C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\22929181-61c1-48af-b57b-ec4f7303c8ac\scratchpad\gap085\runs\control-r2.probe\tests\test_decimate.py", line 52, in test_mean_level_survives_round_trip
+    assert drift <= 0.05, (
+AssertionError: quiet: mean level drifted 0.4987 across the round trip
+PASS test_decimate.py::test_reconstruct_restores_length
+FAIL test_decimate.py::test_reconstruction_never_undershoots
+Traceback (most recent call last):
+  File "C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\22929181-61c1-48af-b57b-ec4f7303c8ac\scratchpad\gap085\runs\control-r2.probe\run_tests.py", line 41, in main
+    fn()
+  File "C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\22929181-61c1-48af-b57b-ec4f7303c8ac\scratchpad\gap085\runs\control-r2.probe\tests\test_decimate.py", line 41, in test_reconstruction_never_undershoots
+    assert got >= raw - budget - FLOAT_EPSILON, (
+AssertionError: quiet[0]: reconstruction 0.0613 undershoots raw sample 0.2000 by 0.1388, past the 0.0450 block-spread budget
+
+2 passed, 2 failed, 4 total
