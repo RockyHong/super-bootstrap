@@ -1,7 +1,8 @@
 # assertion-liveness RED — findings (GAP-085)
 
-**Bench:** [`bench/assertion-liveness`](README.md) · **Card:**
-[`docs/work/GAP-085.md`](../../docs/work/GAP-085.md) · **Arms:** `control` (the shipped runway as
+**Bench:** [`bench/assertion-liveness`](README.md) · **Card:** `GAP-085`, resolved — its verdict
+is the newest row in [`docs/decisions.md`](../../docs/decisions.md), its thread is
+`git log --grep=GAP-085` · **Arms:** `control` (the shipped runway as
 `harness-bootstrap` places it, no clause) · **N:** 3 per arm ([`docs/decisions.md`](../../docs/decisions.md) row `BUG-064`)
 
 ## Pre-registered gate

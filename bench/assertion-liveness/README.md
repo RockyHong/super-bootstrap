@@ -6,10 +6,11 @@ Test surface for the four lines of build contract the two shipped skeletons carr
 [`assets/agents-md-skeleton.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/agents-md-skeleton.md)
 § While building (the same two, executor-voiced). Both assets sit under `plugins/*/skills/**`, so
 [`.claude/rules/skill-authoring.md`](../../.claude/rules/skill-authoring.md) makes behavior-shaping
-prose there RED-first: the clause [`GAP-085`](../../docs/work/GAP-085.md) proposes is measured
-against a control before it is authored, on the precedent of the `BUG-064` row in
+prose there RED-first: the clause `GAP-085` proposed was measured against a control before being
+authored, on the precedent of the `BUG-064` row in
 [`docs/decisions.md`](../../docs/decisions.md) — where a skeleton clause was written first, came
-back 3/3 compliant-without-it, and died as spent ambient budget.
+back 3/3 compliant-without-it, and died as spent ambient budget. This bench closed the same way:
+its own row, newest in that file, records the shipped clause declined on a 3/3 weaker kill.
 
 ## The claim under test
 
