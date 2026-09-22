@@ -1,5 +1,5 @@
 {
-  "version": "2.51.1",
+  "version": "2.52.0",
   "covered": [
     "CLAUDE.md § Development Workflow",
     "CLAUDE.md § Dispatch",
@@ -51,7 +51,7 @@
     },
     {
       "section": "CLAUDE.md § Dispatch",
-      "reason": "dogfood-specific — wires the served `.claude/guidelines/work-discipline/dispatch-run-mode.md` and `~/.claude/guidelines/claude-shape/hook-feedback-channels.md` as the run-mode bullet's Full: pointers"
+      "reason": "dogfood-specific — wires the served `.claude/guidelines/work-discipline/dispatch-run-mode.md`, `~/.claude/guidelines/claude-shape/hook-feedback-channels.md` and `.claude/guidelines/work-discipline/dispatch-brief-demands.md` as the run-mode and Build bullets' Full: pointers"
     },
     {
       "section": "CLAUDE.md § Doc Sync",
