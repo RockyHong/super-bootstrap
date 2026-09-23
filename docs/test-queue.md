@@ -35,7 +35,7 @@ The only durable state here is a still-`pending` entry — `pass` discharges it,
 
 - **run on:** in-repo dev copy of `harness-bootstrap` (`plugins/super-bootstrap/skills/harness-bootstrap/`) against the GAP-073 docs-only scratch shape (`README.md` + `docs/*.md` only)
 - **checklist:**
-  - [x] bootstrap the docs-only scratch repo → `docs/techstack.md` § Runtime / Framework / Key Dependencies / Build & Distribution hold the unfilled placeholders, `CLAUDE.md` § Tech Stack reads the docs-only one-liner
+  - [x] bootstrap the docs-only scratch repo → `docs/techstack.md` § Runtime / Framework / Key Dependencies / Build & Distribution hold the unfilled placeholders, `CLAUDE.md` § Tech Stack and § Commands keep the skeleton placeholder body verbatim ([§ 2b Placeholders docs-only rule](../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md#2b-pipeline-docs))
   - [ ] add a `package.json` and re-run → Phase 3 prints the stale-facts advisory naming all five sections plus the detected manifest / runtime / framework
   - [x] same re-run → `.claude/bootstrap-sync-report.md` carries one `facts:` row with those detected facts (the advisory's source)
   - [x] same re-run → those five sections are byte-unchanged on disk, and the four techstack rows read `✓ current` (never `⚠ drifted`)
