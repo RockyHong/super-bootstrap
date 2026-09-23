@@ -458,7 +458,7 @@ The report is the forcing function: Phase 2c refuses to commit unless it exists 
 
 **Facts row (re-run, when Phase 1 set `facts_stale`).** Append the `facts:` row § Fact-staleness signal specifies to the report in this same enumeration — Phase 3's only source for the stale-facts advisory: no row, no advisory.
 
-**Rot scan (mandatory pre-step on re-run).** Before Block 1 renders, read `assets/rename-map.md` and grep every pipeline-owned file in scope for each entry's `old` literal (whole-token match — avoid URL / identifier false hits), skipping any file whose leading frontmatter declares `dimension: history` — frozen provenance preserves old literals by construction, so a hit there is undeclinable-once and re-fires every sync (the same predicate the commit door's doc-sync gate carries). The skip is this lane only: those files' pipeline-owned sections stay in the per-section drift check. One rot row covers one `old` literal in one file, listing every line it hits that § Scan guidance judged migratable, and is appended to `bootstrap-sync-report.md` and surfaced to the user. **State the swept set beside the row count** — how many `old` literals were read out of the map and how many files were swept. A scan that swept **zero literals** is an instrument failure, recorded as **no rot scan**, never as a clean: zero rot rows is also what a healthy repo produces, so the report line cannot tell the two apart unless it carries the swept set. The row shape:
+**Rot scan (mandatory pre-step on re-run; none on a fresh install).** A fresh install — no bootstrap-shaped commit yet — runs no scan and writes no rot outcome line. On re-run, before Block 1 renders, read `assets/rename-map.md` and grep every pipeline-owned file in scope for each entry's `old` literal (whole-token match — avoid URL / identifier false hits), skipping any file whose leading frontmatter declares `dimension: history` — frozen provenance preserves old literals by construction, so a hit there is undeclinable-once and re-fires every sync (the same predicate the commit door's doc-sync gate carries). The skip is this lane only: those files' pipeline-owned sections stay in the per-section drift check. One rot row covers one `old` literal in one file, listing every line it hits that § Scan guidance judged migratable, and is appended to `bootstrap-sync-report.md` and surfaced to the user. **State the swept set beside the row count** — how many `old` literals were read out of the map and how many files were swept. A scan that swept **zero literals** is an instrument failure, recorded as **no rot scan**, never as a clean: zero rot rows is also what a healthy repo produces, so the report line cannot tell the two apart unless it carries the swept set. The row shape:
 
 ```
 {file path} — stale literal `{old}` → propose `{new}`
@@ -467,7 +467,7 @@ The report is the forcing function: Phase 2c refuses to commit unless it exists 
   previously declined: {reason}
 ```
 
-The scan's own outcome line, beside the rows:
+The scan's own outcome line, beside the rows — one of these two forms, re-run only:
 
 ```
 rot scan: {N} literals read, {M} files swept, {K} rows
@@ -530,8 +530,9 @@ Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write fro
 - `{date}` — today's date
 - Manifest detection facts (Runtime / Framework / Key Dependencies / Build & Distribution) → fill into CLAUDE.md Tech Stack one-liner AND `techstack.md` skeleton sections; detected scripts / Makefile / Cargo commands → fill CLAUDE.md § Commands
 - **Docs-only repo** (Phase 1 § Code presence) — no facts to fill: `techstack.md`'s seed-once sections, CLAUDE.md's § Tech Stack one-liner (`{detected one-line summary…}`), and its § Commands block body (`{detected from scripts/Makefile/Cargo…}`) all keep the skeleton placeholder body verbatim — one rule for both docs
-- Problem / User / Current State (`overview.md` skeleton sections) → left empty at install; filled at GAP-card pickup, not by the runway
+- Problem / User / Current State (`overview.md` skeleton sections) → keep the skeleton placeholder body verbatim at install, on every repo — the docs-only rule above, unconditioned; filled at GAP-card pickup, not by the runway
 - Bracketed conditional lines (`{- docs/parked.md — ...}`, `{- docs/test-queue.md — ...}`, `{- docs/outward/ — ...}`) — keep only if the corresponding adaptive doc is scaffolded for this repo (scale module per its 2a install gate); drop the whole line otherwise
+- `{If code present: "…"}{If docs-only: "…"}` (the `bootstrap-plan.md` Context line) — resolve per Phase 1 § Code presence: keep the matching branch's quoted text, drop the bracket and the other branch entirely
 - **Monorepo tier** (Phase 1 § Monorepo detection) — fill CLAUDE.md's conditional monorepo block (workspace tool + the workspace-aware filtered build command) and `techstack.md` § Packages table rows (package | path | role | build command) from the Phase 1 package enumeration. Single-package repo → drop the CLAUDE.md monorepo block and the § Packages section entirely
 - **Code presence** (Phase 1 § Code presence) — code present → unbracket CLAUDE.md's conditional § Coding Principles block verbatim; docs-only repo → drop the block entirely (`CODING_STANDARDS.md` is not scaffolded either, § 2a)
 - CLAUDE.md § **Rules** summary bullets — fill from seeded `.claude/rules/*.md` files (one bullet per rule with glob + 2-4 one-line key points). The seeded `venue-map.md` ships its own bullet block in the skeleton's § Rules — scale module installed → keep that block verbatim (unbracket the three bullet lines, no substitutions); not installed → drop it; its `{scale module installed — …}` label drops either way. The `{example scaffolding — …}` label and the bracketed example bullets under it go together: replaced by the seeded rules' bullets, or dropped when no signal-seeded rule file landed (`index.md` is always-placed machinery and takes no bullet) — leaving the explanatory paragraph, the venue-map block when installed, and the unbracketed read-the-rule-file sentence, which is shipped prose.
@@ -542,10 +543,12 @@ Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write fro
 The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed cards` / `Task 3: Cleanup`. Adapt at write time:
 
 - No source-code features yet (greenfield / fresh scaffold, Module Index empty) → drop Task 1 — specs document built features; none exist to seed
+- No source code yet (the same greenfield premise) → drop Task 2 too — nothing to scan or test-review, and the entry's greenfield branch ([`setup/SKILL.md`](../setup/SKILL.md) § Greenfield branch) owns the GAP-card seeding
 - Re-run with `docs/specs/` already populated → drop Task 1
 - Re-run with card files already present in `docs/work/` → drop Task 2
 - Add tasks for any project-specific needs surfaced during Phase 1 detection
 - Task 3 (Cleanup) always retained — includes deleting `.claude/bootstrap.md` and `.claude/bootstrap-sync-report.md` if a prior session left it
+- Task numbers are identities — drop a task, never renumber the rest (Task 3 stays `Task 3`)
 
 If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that's fine, signals bootstrap is essentially complete.
 
@@ -581,7 +584,7 @@ Per-candidate handling:
 
 ### 2c: Sync report + commit
 
-**Gate — the sync report must exist and cover every pipeline-owned section, plus every artifact the § Registration rule covers, before commit.** Read `.claude/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row, and every durable artifact the § Registration rule covers must have a `registration:` row. Missing file, or any uncovered section or artifact → halt, return to 2b, produce the missing rows. A `⚠ drifted`, `⊕ new`, or `⊘ missing` row must also carry its resolution (`updated` / `inserted` / `declined ({reason})`), a rot row its own (`migrated` / `declined ({reason})`), a `registration:` row its own (`updated` / `none`) — an unresolved row, or a `declined` row carrying no reason, halts the same way. A rot outcome line reading `no rot scan` halts too — the scan swept no literals, so its zero rows are not a clean; return to 2b, re-run the rot scan with a working literal list. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
+**Gate — the sync report must exist and cover every pipeline-owned section, plus every artifact the § Registration rule covers, before commit.** Read `.claude/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row, and every durable artifact the § Registration rule covers must have a `registration:` row. Missing file, or any uncovered section or artifact → halt, return to 2b, produce the missing rows. A `⚠ drifted`, `⊕ new`, or `⊘ missing` row must also carry its resolution (`updated` / `inserted` / `declined ({reason})`), a rot row its own (`migrated` / `declined ({reason})`), a `registration:` row its own (`updated` / `none`) — an unresolved row, or a `declined` row carrying no reason, halts the same way. A rot outcome line present and reading `no rot scan` halts too — the scan swept no literals, so its zero rows are not a clean; return to 2b, re-run the rot scan with a working literal list. A fresh install carries no rot line, and the gate reads none. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
 
 **Sync report** — rendered from the artifact (the file is canonical; this table is its commit-time view). Always shown before commit. Fresh repos see "all new"; re-run repos see drift fixes and current items.
 

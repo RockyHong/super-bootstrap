@@ -1,6 +1,6 @@
 ---
 name: setup
-description: "Public entry for the super-bootstrap pipeline — thin orchestrator. Git-inits if absent, then dispatches /super-bootstrap:harness-bootstrap to install or sync the generic runway (always; the runway self-detects fresh-vs-sync). Checks whether seed docs are substantive: greenfield seeds three GAP cards (overview, techstack, tech-curation) from a pinned asset and stops at the resolve gate; substantive seed docs run gated tier-2 tech curation (resolve-plugins + release-init). Zero product prework. Solo dev workflow."
+description: "Public entry for the super-bootstrap pipeline — thin orchestrator. Git-inits if absent, then dispatches /super-bootstrap:harness-bootstrap to install or sync the generic runway (always; the runway self-detects fresh-vs-sync). Checks whether seed docs are substantive: greenfield seeds three GAP cards (overview, techstack, tech-curation) from a pinned asset, commits them, and stops at the resolve gate; substantive seed docs run gated tier-2 tech curation (resolve-plugins + release-init). Zero product prework. Solo dev workflow."
 tags: [bootstrap, orchestrator, detect, gate, curation, meta]
 ---
 
@@ -39,7 +39,9 @@ The runway returned with empty product skeletons. Seed three GAP cards from the 
 
 **Seed by hand-copy** — the sanctioned transcription path of [`/super-bootstrap:log`](../log/SKILL.md) (hand-copying `docs/work/TEMPLATE.md` with the high-water bump is the same door): write each missing fenced body verbatim as `docs/work/{ID}.md`, filling only `{ID}` and `{date}`. IDs = the next GAP IDs from `docs/work/README.md`'s high-water line, in the asset's order, with the line bumped in the same write. No re-phrasing, no Mover / dedup gates — the bodies are fixed; the pickup-routing hint rides in each `Problem:` line, not a `Prior:` route — triage owns the method.
 
-**Resolve gate — stop here.** After seeding, surface the dogfood handoff and stop. Nothing to curate yet:
+**Commit the seed** — a card written → land the new `docs/work/{ID}.md` files and the `docs/work/README.md` bump through `/super-bootstrap:commit` (card-lifecycle — no doc-sync gate) before the gate renders; all three already present → nothing written, nothing to commit. The tree is clean when the resolve gate renders.
+
+**Resolve gate — stop here.** After seeding, surface the dogfood handoff and stop. Nothing to curate yet — render the block verbatim, no additions; the two command literals stay untranslated:
 
 ```
 Generic harness installed. Three GAP cards seeded (overview, techstack, tech-curation).
@@ -61,7 +63,7 @@ The gate between the runway and tier-2 is the substantive check: substantive pro
 
 ## Disclosure (post-hoc)
 
-Invoking the command is consent — there is no upfront proceed gate. Each dispatched step that writes commits its own work (runway §2c, resolve-plugins, release-init, the seed-card clear above), so when the done-summary renders the working tree is clean and the commits are the inventory. The summary carries one heads-up line. `{N}` is derived, never left as a placeholder: record `git rev-parse HEAD` before the runway dispatch (empty on a fresh init), then at disclosure `git rev-list --count {that}..HEAD` — `git rev-list --count HEAD` when there was no prior commit:
+Invoking the command is consent — there is no upfront proceed gate. Each dispatched step that writes commits its own work (runway §2c, the greenfield seed commit, resolve-plugins, release-init, the seed-card clear above), so when the done-summary renders the working tree is clean and the commits are the inventory. The summary carries one heads-up line. `{N}` is derived, never left as a placeholder: record `git rev-parse HEAD` before the runway dispatch (empty on a fresh init), then at disclosure `git rev-list --count {that}..HEAD` — `git rev-list --count HEAD` when there was no prior commit:
 
 ```
 {Initialized git repo. }Wrote/changed: {N} commit{s} this run — review with `git log --stat -{N}`.

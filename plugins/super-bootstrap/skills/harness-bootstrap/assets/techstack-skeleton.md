@@ -8,7 +8,7 @@
 
 ## Framework
 
-{detected — e.g. Next.js 14, FastAPI, Axum, Echo. Drop the section if no framework.}
+{detected — e.g. Next.js 14, FastAPI, Axum, Echo; "none" when no framework is detected — the section always stays.}
 
 ## Key Dependencies
 

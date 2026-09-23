@@ -2,7 +2,7 @@
 
 **Goal:** Final adaptive seeding + cleanup for {project name}
 
-**Context:** Pipeline scaffolded on {date}. CLAUDE.md is live. `docs/techstack.md` and `docs/overview.md` are seeded skeletons — `techstack.md` Runtime / Framework / Key Dependencies / Build & Dist carry detected manifest facts; `overview.md` Problem / User / Current State start empty and fill at GAP-card pickup; grown sections (Architecture Rules / Coding Patterns / Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync as code lands. The core plugin pin (super-bootstrap) sits in `.claude/settings.json`; stack-matched skill / MCP / hook curation runs as gated tier-2 via `/super-bootstrap:setup` once the seed docs are substantive.
+**Context:** Pipeline scaffolded on {date}. CLAUDE.md is live. `docs/techstack.md` and `docs/overview.md` are seeded skeletons — {If code present: "`techstack.md` Runtime / Framework / Key Dependencies / Build & Dist carry detected manifest facts"}{If docs-only: "`techstack.md` Runtime / Framework / Key Dependencies / Build & Dist keep their placeholder bodies until the stack is settled"}; `overview.md` Problem / User / Current State carry their placeholder bodies and fill at GAP-card pickup; grown sections (Architecture Rules / Coding Patterns / Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync as code lands. The core plugin pin (super-bootstrap) sits in `.claude/settings.json`; stack-matched skill / MCP / hook curation runs as gated tier-2 via `/super-bootstrap:setup` once the seed docs are substantive.
 
 These tasks complete optional adaptive seeding (only the ones whose docs the runway scaffolded) and final bootstrap cleanup.
 
@@ -32,6 +32,8 @@ Walk the project once and seed any obvious deferred items already visible in cod
 
 If no obvious items exist, nothing to commit — the substrate is ready when the first `/super-bootstrap:log` capture lands. The card set grows organically as reviews surface things.
 
+**Hard precondition — source code must exist.** A fresh / greenfield scaffold has no source to scan and no tests to review, and its GAP cards are seeded by `/super-bootstrap:setup`'s greenfield branch: Task 2 does not apply and is dropped at write time. Task numbers are identities — a dropped task leaves the remaining numbers unchanged.
+
 ### Task 3: Cleanup
 
 - [ ] **Delete this file** (`.claude/bootstrap.md`) and `.claude/bootstrap-sync-report.md` if present — bootstrap is complete
@@ -40,4 +42,4 @@ If no obvious items exist, nothing to commit — the substrate is ready when the
 
 ---
 
-**Note on re-runs:** if `/super-bootstrap:harness-bootstrap` is run again later, this file gets regenerated. If `docs/specs/` is already populated (Task 1) or card files are already present in `docs/work/` (Task 2), those tasks are dropped — only Task 3 (cleanup) remains. Most refresh value on re-runs comes from gated tier-2 curation (skill/MCP picks against live sources, run by `/super-bootstrap:setup` once seed docs are substantive), not from this plan. (Re-runs come via `/super-bootstrap:setup`, which always dispatches the runway, or via `/super-bootstrap:harness-bootstrap` directly for a runway-only sync.)
+**Note on re-runs:** if `/super-bootstrap:harness-bootstrap` is run again later, this file gets regenerated. If `docs/specs/` is already populated (Task 1) or card files are already present in `docs/work/` (Task 2), those tasks are dropped — a greenfield scaffold drops both at first write (preconditions above) — and only Task 3 (cleanup) remains. Most refresh value on re-runs comes from gated tier-2 curation (skill/MCP picks against live sources, run by `/super-bootstrap:setup` once seed docs are substantive), not from this plan. (Re-runs come via `/super-bootstrap:setup`, which always dispatches the runway, or via `/super-bootstrap:harness-bootstrap` directly for a runway-only sync.)
