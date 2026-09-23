@@ -22,7 +22,7 @@ In Claude Code:
 ## Use
 
 ```
-/super-bootstrap
+/super-bootstrap:setup
 ```
 
 One command per repo. Auto-routes:
@@ -36,7 +36,7 @@ Picks are matched to your stack and labeled by trust signal (Anthropic-vetted / 
 
 ```mermaid
 flowchart TD
-    entry(["/super-bootstrap"])
+    entry(["/super-bootstrap:setup"])
     entry --> runway["install / sync runway<br/>CLAUDE.md + skeleton docs + rules"]
     runway --> gate{"seed docs<br/>substantive?"}
     gate -->|yes| curate["curate skills / MCPs / hooks"]
@@ -62,7 +62,7 @@ Re-run any time — incremental, never overwrites your edits; when the installed
 
 ## Day to day
 
-The runway's doors are bundled skills — all namespaced `super-bootstrap:` so the plugin manager disambiguates collisions; only the `/super-bootstrap` entry stays bare (plugin-name == skill-name special case). Work enters as a card in `docs/work/` ([`BUG` / `DEBT` / `GAP`](docs/work/README.md#categories)) and runs one envelope — ground → implement → verify → doc-sync → commit — with only the phases the card's shape needs. Most doors Claude reaches on its own; you type three daily, two when the moment calls.
+The runway's doors are bundled skills — all namespaced `super-bootstrap:`, entry included: `/super-bootstrap:setup`. Work enters as a card in `docs/work/` ([`BUG` / `DEBT` / `GAP`](docs/work/README.md#categories)) and runs one envelope — ground → implement → verify → doc-sync → commit — with only the phases the card's shape needs. Most doors Claude reaches on its own; you type three daily, two when the moment calls.
 
 **You type**
 
@@ -89,7 +89,7 @@ Per-skill contract = that skill's `SKILL.md` frontmatter; one-line index in the 
 Not day-to-day — run when the moment calls:
 
 - `/super-bootstrap:check-docs-consistency` — whole-surface doc drift scan, timestamped report to `.review/`, report-only; the commit door's scoped scan covers the everyday case. User-only by design.
-- `/super-bootstrap:resolve-plugins` — standalone refresh of the curated skill / MCP / hook pins (the same curation `/super-bootstrap` runs as tier 2). Reads your stack from `docs/techstack.md` and stops with a pointer to `/super-bootstrap:harness-bootstrap` when that file isn't there yet.
+- `/super-bootstrap:resolve-plugins` — standalone refresh of the curated skill / MCP / hook pins (the same curation `/super-bootstrap:setup` runs as tier 2). Reads your stack from `docs/techstack.md` and stops with a pointer to `/super-bootstrap:harness-bootstrap` when that file isn't there yet.
 - `/super-bootstrap:release-init` — one-shot scaffolder. Detects project type (unity / tauri / node / ios-native / android-native / generic) and generates a tailored `/release` skill at `.claude/skills/release/SKILL.md` (project-level skill, bare invocation since it lives in the user's repo, not under this plugin's namespace). Run only on repos that ship versioned releases.
 
 ## Sources

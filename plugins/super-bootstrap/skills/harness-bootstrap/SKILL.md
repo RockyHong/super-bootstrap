@@ -1,6 +1,6 @@
 ---
 name: harness-bootstrap
-description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, AGENTS.md (foreign-executor contract), CODING_STANDARDS.md (headings-only), skeleton docs (overview, techstack, decisions, specs/, work/), path-scoped rules, and the core plugin pin; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap; opt-in earn-gated scale module (parked + test-queue + outward containers, venue-map rule, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks and backfills skeleton sections added since bootstrap on re-run. Solo dev workflow."
+description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, AGENTS.md (foreign-executor contract), CODING_STANDARDS.md (headings-only), skeleton docs (overview, techstack, decisions, specs/, work/), path-scoped rules, and the core plugin pin; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap:setup; opt-in earn-gated scale module (parked + test-queue + outward containers, venue-map rule, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks and backfills skeleton sections added since bootstrap on re-run. Solo dev workflow."
 tags: [harness, scaffold, setup, meta, docs]
 ---
 
@@ -70,7 +70,7 @@ Adjacent stacks (Bun + Next, Deno + Fresh, Tauri + React, etc.) infer by analogy
 
 ### Greenfield (no seed docs)
 
-The generic runway runs on greenfield. If Phase 1 detects a docs-only repo (§ Code presence — no manifests + no source files) whose `docs/overview.md` / `docs/techstack.md` are also missing, scaffold normally and write `overview.md` / `techstack.md` as empty skeletons in Phase 2b. The entry `/super-bootstrap` seeds GAP cards against those empty skeletons and surfaces the gate.
+The generic runway runs on greenfield. If Phase 1 detects a docs-only repo (§ Code presence — no manifests + no source files) whose `docs/overview.md` / `docs/techstack.md` are also missing, scaffold normally and write `overview.md` / `techstack.md` as empty skeletons in Phase 2b. The entry `/super-bootstrap:setup` seeds GAP cards against those empty skeletons and surfaces the gate.
 
 When `docs/overview.md` + `docs/techstack.md` already carry substantive content, manifest facts and existing content feed the Phase 2b skeletons normally.
 
@@ -238,7 +238,7 @@ Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no su
 
 - `super-bootstrap` — the skeleton routes every door through `/super-bootstrap:*`, and the committed `commit-channel.sh` deny text routes workers to `/super-bootstrap:commit`. All of it must resolve from the project pin alone on any boundary where the authoring device's user-scope settings don't apply (fresh clone, second machine, cloud session) — the committed hook fires there regardless of plugin state.
 
-It is a **core dep, not an adaptive pick** — pinned here at 2a so tier-2 curation (`/super-bootstrap:resolve-plugins`, run later by `/super-bootstrap`) layers adaptive picks on a guaranteed base. Dangling-rule risk: if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently. Pin first.
+It is a **core dep, not an adaptive pick** — pinned here at 2a so tier-2 curation (`/super-bootstrap:resolve-plugins`, run later by `/super-bootstrap:setup`) layers adaptive picks on a guaranteed base. Dangling-rule risk: if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently. Pin first.
 
 Keep every pipeline-owned surface free of foreign-plugin command names — the skeleton's route rows name disciplines, not skill entries. A process harness a repo adds on its own then stays a settings edit: no doc change, no dangling-rule risk.
 
@@ -345,7 +345,7 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 | `assets/rules-frontend-skeleton.md` | `.claude/rules/<framework>.md` | Only if frontend signal fired in Phase 1 |
 | `assets/rules-mv3-skeleton.md` | `.claude/rules/mv3.md` | Only if MV3 signal fired in Phase 1 |
 
-On greenfield (no manifest, no source files), `overview.md` / `techstack.md` write as unfilled skeletons — manifest-derived facts fill only when code is present. The empty skeleton is intentional: it is the unsolved-product state the entry `/super-bootstrap` detects to seed GAP cards.
+On greenfield (no manifest, no source files), `overview.md` / `techstack.md` write as unfilled skeletons — manifest-derived facts fill only when code is present. The empty skeleton is intentional: it is the unsolved-product state the entry `/super-bootstrap:setup` detects to seed GAP cards.
 
 **Per-doc handling:**
 
@@ -548,7 +548,7 @@ The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed cards` / `Task 3: 
 
 If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that's fine, signals bootstrap is essentially complete.
 
-Tech curation (skill / MCP / hook picks) is gated tier-2 — orchestrated by `/super-bootstrap` after `overview.md` / `techstack.md` are substantive, not during this runway install.
+Tech curation (skill / MCP / hook picks) is gated tier-2 — orchestrated by `/super-bootstrap:setup` after `overview.md` / `techstack.md` are substantive, not during this runway install.
 
 ### 2b-adopt: Superseded-fork adoption (migration, silent-skip)
 
@@ -659,9 +659,9 @@ After committing (or reporting no changes needed), present results based on repo
 
 **First-run (just scaffolded):**
 
-> **Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. The core plugin pin (super-bootstrap) sits in `.claude/settings.json`; stack-matched skill / MCP / hook picks come when `/super-bootstrap` runs gated tier-2 curation. Everything this run installed is in the scaffold commit — `git show --stat HEAD`.
+> **Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. The core plugin pin (super-bootstrap) sits in `.claude/settings.json`; stack-matched skill / MCP / hook picks come when `/super-bootstrap:setup` runs gated tier-2 curation. Everything this run installed is in the scaffold commit — `git show --stat HEAD`.
 >
-> {If product skeletons are empty (greenfield): "`docs/overview.md` / `docs/techstack.md` are empty skeletons — `/super-bootstrap` seeds GAP cards for them and surfaces the resolve gate."}
+> {If product skeletons are empty (greenfield): "`docs/overview.md` / `docs/techstack.md` are empty skeletons — `/super-bootstrap:setup` seeds GAP cards for them and surfaces the resolve gate."}
 >
 > {If any rule files were seeded: "Path-scoped rules seeded in `.claude/rules/` ({list seeded rules}). They auto-load on file match — full ammo at the decision moment, summary mirrored in CLAUDE.md § Rules. Add more rule files when path-scoped patterns emerge."}
 >

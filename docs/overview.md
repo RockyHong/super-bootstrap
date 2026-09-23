@@ -9,7 +9,7 @@ external-tools: [github]
 
 ## Problem
 
-Per-project Claude Code setup is a repeated grind: write `CLAUDE.md`, pick skills/MCPs/hooks, pin config, establish a workflow. super-bootstrap collapses that into one command (`/super-bootstrap`) that inspects a repo and installs a development pipeline — CLAUDE.md, skeleton docs, path-scoped rules, curated skill/MCP/hook picks — plus a **phase-gated workflow** so every session runs only the pipeline phases the work actually needs (workflow, not just a toolbelt). The harness names disciplines rather than skill entries, so no process-harness plugin is a dependency ([`docs/specs/harness-architecture.md`](specs/harness-architecture.md)) — the only pin it seeds is its own core self-pin. Greenfield repos get three seed GAP cards (overview, techstack, tech curation) whose pickup settles the product shape — no upfront product Q&A; repos with code get scanned and scaffolded. It also bundles the companion skills that run the pipeline day-to-day: commit, todo, log, triage, triage-report, help, merge, drain, check-docs-consistency, and optional release-init.
+Per-project Claude Code setup is a repeated grind: write `CLAUDE.md`, pick skills/MCPs/hooks, pin config, establish a workflow. super-bootstrap collapses that into one command (`/super-bootstrap:setup`) that inspects a repo and installs a development pipeline — CLAUDE.md, skeleton docs, path-scoped rules, curated skill/MCP/hook picks — plus a **phase-gated workflow** so every session runs only the pipeline phases the work actually needs (workflow, not just a toolbelt). The harness names disciplines rather than skill entries, so no process-harness plugin is a dependency ([`docs/specs/harness-architecture.md`](specs/harness-architecture.md)) — the only pin it seeds is its own core self-pin. Greenfield repos get three seed GAP cards (overview, techstack, tech curation) whose pickup settles the product shape — no upfront product Q&A; repos with code get scanned and scaffolded. It also bundles the companion skills that run the pipeline day-to-day: commit, todo, log, triage, triage-report, help, merge, drain, check-docs-consistency, and optional release-init.
 
 ## User
 
@@ -51,7 +51,7 @@ Active development.
 
 > Grows via doc-sync as entry points and pipelines crystallize. Inputs → transforms → outputs through the code.
 
-**Setup** — `/super-bootstrap` → `harness-bootstrap` installs/syncs runway (CLAUDE.md, skeleton docs, rules, hooks) → seed-doc gate → filled: `resolve-plugins` curates picks, writes `.claude/settings.json`; empty: seeds 3 GAP cards, holds at resolve gate (mermaid entry-point diagram in root README).
+**Setup** — `/super-bootstrap:setup` → `harness-bootstrap` installs/syncs runway (CLAUDE.md, skeleton docs, rules, hooks) → seed-doc gate → filled: `resolve-plugins` curates picks, writes `.claude/settings.json`; empty: seeds 3 GAP cards, holds at resolve gate (mermaid entry-point diagram in root README).
 
 **Capture** — `/super-bootstrap:log <observation>` → gateway-inline classify + dedup-surface → card written to `docs/work/{ID}.md`.
 

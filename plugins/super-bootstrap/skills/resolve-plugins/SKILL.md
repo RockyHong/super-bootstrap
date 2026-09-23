@@ -1,16 +1,16 @@
 ---
 name: resolve-plugins
-description: "Curate Claude Code skill / MCP / hook picks against live upstream sources and pin them in .claude/settings.json. Adding a process harness (a paired skill set) is an ordinary pick this door handles. Reads stack from docs/techstack.md, workflow signal from docs/overview.md + existing pins, then live-queries six source pools, dedupes, scores trust tier, presents diff vs pinned, writes settings.json. Standalone refresh path; also run as gated tier-2 curation by /super-bootstrap. Solo dev workflow. Requires `docs/techstack.md` (seeded by `/super-bootstrap:harness-bootstrap`)."
+description: "Curate Claude Code skill / MCP / hook picks against live upstream sources and pin them in .claude/settings.json. Adding a process harness (a paired skill set) is an ordinary pick this door handles. Reads stack from docs/techstack.md, workflow signal from docs/overview.md + existing pins, then live-queries six source pools, dedupes, scores trust tier, presents diff vs pinned, writes settings.json. Standalone refresh path; also run as gated tier-2 curation by /super-bootstrap:setup. Solo dev workflow. Requires `docs/techstack.md` (seeded by `/super-bootstrap:harness-bootstrap`)."
 tags: [plugins, curation, mcp, skills, settings, meta]
 ---
 
 # Resolve Plugins — Curate & Pin
 
-Curate Claude Code skill / MCP / hook picks against live upstream sources and write them to `.claude/settings.json`. Designed for two callers: standalone refresh (`/super-bootstrap:resolve-plugins`) and gated tier-2 curation (run by `/super-bootstrap` once seed docs are substantive).
+Curate Claude Code skill / MCP / hook picks against live upstream sources and write them to `.claude/settings.json`. Designed for two callers: standalone refresh (`/super-bootstrap:resolve-plugins`) and gated tier-2 curation (run by `/super-bootstrap:setup` once seed docs are substantive).
 
 ## When to Use
 
-Caller: standalone refresh (`/super-bootstrap:resolve-plugins`) or gated tier-2 curation (run by `/super-bootstrap` once seed docs are substantive). Same execution path.
+Caller: standalone refresh (`/super-bootstrap:resolve-plugins`) or gated tier-2 curation (run by `/super-bootstrap:setup` once seed docs are substantive). Same execution path.
 
 ---
 

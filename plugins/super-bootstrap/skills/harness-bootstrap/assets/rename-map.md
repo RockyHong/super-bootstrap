@@ -15,7 +15,7 @@ remains that any installed project still carries the `old` form.
 
 ## Slash commands
 
-**Canonical form:** every bundled skill is invoked as `/super-bootstrap:<skill>`; the entry `/super-bootstrap` is the one bare exception (plugin name == skill name). Per-skill table: [`plugins/super-bootstrap/README.md` § Naming convention](../../../README.md#naming-convention).
+**Canonical form:** every bundled skill is invoked as `/super-bootstrap:<skill>`, entry included — `/super-bootstrap:setup`. Per-skill table: [`plugins/super-bootstrap/README.md` § Naming convention](../../../README.md#naming-convention).
 
 **Coverage rule:** a row exists for every bare form of a bundled skill that could plausibly sit in a downstream pipeline-owned file — whether or not this plugin ever shipped that form, since a repo can carry a bare literal it coined itself. A bundled skill with no row therefore reads as deliberate. The `sb-` prefix is retired, so only skills that existed under it carry an `/sb-*` row.
 
@@ -33,6 +33,7 @@ Bare-form migrations (when literal appears in pipeline-owned files):
 - `/resolve-plugins` → `/super-bootstrap:resolve-plugins`
 - `/release-init` → `/super-bootstrap:release-init`
 - `/check-docs-consistency` → `/super-bootstrap:check-docs-consistency`
+- `/super-bootstrap` → `/super-bootstrap:setup` — entry renamed; plugin-name == skill-name doubled in the menu
 
 Legacy `sb-*` prefix migrations:
 
@@ -41,13 +42,13 @@ Legacy `sb-*` prefix migrations:
 - `/sb-merge` → `/super-bootstrap:merge`
 - `/sb-help` → `/super-bootstrap:help`
 - `/sb-harness-bootstrap` → `/super-bootstrap:harness-bootstrap`
-- `/sb-super-bootstrap` → `/super-bootstrap` — entry keeps plugin name only
+- `/sb-super-bootstrap` → `/super-bootstrap:setup` — entry renamed to setup
 - `/sb-resolve-plugins` → `/super-bootstrap:resolve-plugins`
 - `/sb-release-init` → `/super-bootstrap:release-init`
 
 Pre-rename plugin-name migrations:
 
-- `/sp-bootstrap` → `/super-bootstrap` — entry keeps plugin name only
+- `/sp-bootstrap` → `/super-bootstrap:setup` — entry renamed to setup
 
 ## Plugin names
 

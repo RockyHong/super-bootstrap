@@ -6,7 +6,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 
 > Index only — what exists, one line each. **Canonical per-skill contract = that skill's `SKILL.md` frontmatter `description:`.** Edit behavior there; this list follows.
 
-- `super-bootstrap` — public entry, thin orchestrator; dispatches the runway, seeds greenfield GAP cards, gates tier-2 curation.
+- `setup` — public entry, thin orchestrator; dispatches the runway, seeds greenfield GAP cards, gates tier-2 curation.
 - `harness-bootstrap` — installs/syncs the generic runway (CLAUDE.md, AGENTS.md (foreign-executor contract), CODING_STANDARDS.md (headings-only), skeleton docs, rules, the core pin); monorepo tier fans rule globs + build pre-flight out per package; adopt mode retires a consumer's superseded fork skills/agents (runtime name-collision map, per-deletion confirm) and backfills skeleton sections added since bootstrap (approval-gated `⊕ new` insert); opt-in, earn-gated scale module adds `docs/parked.md` + `docs/test-queue.md` + `docs/outward/` containers, a venue-map rule, and backlog fact fields for repos whose backlog has outgrown one flat list.
 - `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`; requires `docs/techstack.md` (seeded by `/super-bootstrap:harness-bootstrap`) and fails loud without it; Phase 2.5 dispatches `agents/plugin-digest.md` (Haiku) for README→digest parse.
 - `todo` — intent-filtered board scanner; renders inline via the bundled `render-board.py` (zero dispatch), with `agents/todo.md` (Sonnet) as the script-failure fallback; sub-verbs `discuss` / `cloud` / `device` / `harness` / `full`.
@@ -24,7 +24,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 
 **Skill identifiers (file frontmatter `name:`, manifest, dispatch IDs)** stay bare — no `sb-*` prefix. The plugin manager namespaces to `super-bootstrap:<skill>` already; an extra prefix is double-tagging.
 
-**User-facing invocation form** is always the namespaced `/super-bootstrap:<skill>` — *except* the entry skill `/super-bootstrap`, which stays bare (it's the install pitch and Claude Code special-cases the plugin-name == skill-name case). Reasons to namespace everything else:
+**User-facing invocation form** is always the namespaced `/super-bootstrap:<skill>`, entry included — `/super-bootstrap:setup`. Claude Code's loader also resolves a bare `/<skill>` when no other installed command claims that name (a generic loader fallback, not a plugin-name contract), so `/setup` may work too, but docs and prose always cite the namespaced form. Reasons to namespace:
 
 - `/help` collides with Claude Code's built-in `/help` (bare form is shadowed, never resolves to ours)
 - `/commit`, `/todo`, `/merge` are generic enough that other plugins may ship the same bare name; dropdown autocomplete already surfaces the namespaced form, so docs matching that form avoid mental drift
@@ -32,9 +32,11 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 
 | Shape | Skill name (bare) | Invocation form |
 |---|---|---|
-| Public entry | `super-bootstrap` | `/super-bootstrap` |
+| Public entry | `setup` | `/super-bootstrap:setup` |
 | Lifecycle / one-shot | `harness-bootstrap`, `resolve-plugins`, `release-init`, `check-docs-consistency` | `/super-bootstrap:<name>` |
 | High-freq in-flight ops | `commit`, `todo`, `merge`, `drain`, `help`, `log`, `triage`, `triage-report` | `/super-bootstrap:<name>` |
+
+> The pre-rename entry `/super-bootstrap` no longer resolves — use `/super-bootstrap:setup`.
 
 **When adding a new skill:** pick the shortest bare name that reads cleanly cold. Reference it as `/super-bootstrap:<name>` everywhere a user might type it (SKILL.md prose, rendered footers, agent menus, READMEs).
 
@@ -53,7 +55,7 @@ A single matching reason on either side decides.
 
 | Skill | Mode | Rationale |
 |---|---|---|
-| `super-bootstrap` | inline | Orchestrator — owns the user thread + dispatch sequencing across runway / log / curation |
+| `setup` | inline | Orchestrator — owns the user thread + dispatch sequencing across runway / log / curation |
 | `harness-bootstrap` | inline | Phased scaffolding with mid-flow user steering |
 | `resolve-plugins` | inline + dispatch (Haiku, Phase 2.5 only) | 6-pool live queries + user-interactive diff confirm stay inline (gateway owns the thread); Phase 2.5 README-parse→digest split to `agents/plugin-digest.md` — mechanical extraction, Haiku-safe because Phase 3's trust-tier scoring + earn-right gate already judge the digest downstream |
 | `commit` | inline + conditional dispatch (Sonnet — doc-sync scan past the scope ceiling, premise-closure on product-anchor hit) | Gateway holds the diff, session file list, change intent, and session reads → mechanics (classify, message-gen, stage, commit) and the doc-sync judgment run inline; the cold doc-sync scan dispatches only when the enumerated scope outgrows the inline ceiling, the per-doc premise judge on its product-anchor gate. Push confirm + cycle handoff stay gateway-side |
@@ -74,8 +76,8 @@ When adding a new skill: update this table. This table is the only home for inli
 
 When skills overlap in concern, one is canonical and others delegate:
 
-- **Plugin curation logic** (source pool list, trust tiers, dedupe, settings.json write) — lives ONLY in `resolve-plugins/SKILL.md`. `/super-bootstrap` invokes it as gated tier-2 curation.
-- **Greenfield product-seeding** (GAP-card seeding + resolve gate) — lives ONLY in `super-bootstrap/SKILL.md`. `harness-bootstrap` runs the runway on greenfield directly (no redirect); product content fills at GAP-card pickup.
+- **Plugin curation logic** (source pool list, trust tiers, dedupe, settings.json write) — lives ONLY in `resolve-plugins/SKILL.md`. `/super-bootstrap:setup` invokes it as gated tier-2 curation.
+- **Greenfield product-seeding** (GAP-card seeding + resolve gate) — lives ONLY in `setup/SKILL.md`. `harness-bootstrap` runs the runway on greenfield directly (no redirect); product content fills at GAP-card pickup.
 - **Files-as-contract handoff** — skills communicate via committed docs (`docs/overview.md`, `docs/techstack.md`, `.claude/settings.json`), not in-memory state. Lets each skill run standalone.
 - **Cold-judge grounding discipline** (judge cold / claim-under-test / one-verdict-per-item / coverage line / write boundary) — lives ONLY in `shared/grounding-discipline.md`. The four grounding doors (`agents/triage.md`, `agents/triage-report.md`, `agents/review-intake.md`, `agents/premise-closure.md`) self-read it at dispatch via `${CLAUDE_PLUGIN_ROOT}`; each door MD carries door-native concerns only (entry surface, procedure, verdict vocabulary, output payload, tier).
 - **Item classification** (cloud-safe criterion, action-verb intent map, per-source `{action, intent, stage}` derivation) — lives ONLY in `shared/classify-actionable.md`. Both `todo` (ranks + renders) and `drain` (gates + spawns) embed it verbatim at dispatch; neither restates it. Downstream of classification — ranking/render (todo), wave-select/spawn (drain) — stays in each skill's own home.

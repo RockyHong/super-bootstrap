@@ -2,7 +2,7 @@
 
 **Goal:** Final adaptive seeding + cleanup for {project name}
 
-**Context:** Pipeline scaffolded on {date}. CLAUDE.md is live. `docs/techstack.md` and `docs/overview.md` are seeded skeletons — `techstack.md` Runtime / Framework / Key Dependencies / Build & Dist carry detected manifest facts; `overview.md` Problem / User / Current State start empty and fill at GAP-card pickup; grown sections (Architecture Rules / Coding Patterns / Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync as code lands. The core plugin pin (super-bootstrap) sits in `.claude/settings.json`; stack-matched skill / MCP / hook curation runs as gated tier-2 via `/super-bootstrap` once the seed docs are substantive.
+**Context:** Pipeline scaffolded on {date}. CLAUDE.md is live. `docs/techstack.md` and `docs/overview.md` are seeded skeletons — `techstack.md` Runtime / Framework / Key Dependencies / Build & Dist carry detected manifest facts; `overview.md` Problem / User / Current State start empty and fill at GAP-card pickup; grown sections (Architecture Rules / Coding Patterns / Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync as code lands. The core plugin pin (super-bootstrap) sits in `.claude/settings.json`; stack-matched skill / MCP / hook curation runs as gated tier-2 via `/super-bootstrap:setup` once the seed docs are substantive.
 
 These tasks complete optional adaptive seeding (only the ones whose docs the runway scaffolded) and final bootstrap cleanup.
 
@@ -40,4 +40,4 @@ If no obvious items exist, nothing to commit — the substrate is ready when the
 
 ---
 
-**Note on re-runs:** if `/super-bootstrap:harness-bootstrap` is run again later, this file gets regenerated. If `docs/specs/` is already populated (Task 1) or card files are already present in `docs/work/` (Task 2), those tasks are dropped — only Task 3 (cleanup) remains. Most refresh value on re-runs comes from gated tier-2 curation (skill/MCP picks against live sources, run by `/super-bootstrap` once seed docs are substantive), not from this plan. (Re-runs come via `/super-bootstrap`, which always dispatches the runway, or via `/super-bootstrap:harness-bootstrap` directly for a runway-only sync.)
+**Note on re-runs:** if `/super-bootstrap:harness-bootstrap` is run again later, this file gets regenerated. If `docs/specs/` is already populated (Task 1) or card files are already present in `docs/work/` (Task 2), those tasks are dropped — only Task 3 (cleanup) remains. Most refresh value on re-runs comes from gated tier-2 curation (skill/MCP picks against live sources, run by `/super-bootstrap:setup` once seed docs are substantive), not from this plan. (Re-runs come via `/super-bootstrap:setup`, which always dispatches the runway, or via `/super-bootstrap:harness-bootstrap` directly for a runway-only sync.)

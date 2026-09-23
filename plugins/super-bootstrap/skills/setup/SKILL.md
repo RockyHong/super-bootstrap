@@ -1,5 +1,5 @@
 ---
-name: super-bootstrap
+name: setup
 description: "Public entry for the super-bootstrap pipeline — thin orchestrator. Git-inits if absent, then dispatches /super-bootstrap:harness-bootstrap to install or sync the generic runway (always; the runway self-detects fresh-vs-sync). Checks whether seed docs are substantive: greenfield seeds three GAP cards (overview, techstack, tech-curation) via /super-bootstrap:log and stops at the resolve gate; substantive seed docs run gated tier-2 tech curation (resolve-plugins + release-init). Zero product prework. Solo dev workflow."
 tags: [bootstrap, orchestrator, detect, gate, curation, meta]
 ---
@@ -37,11 +37,11 @@ The runway returned with empty product skeletons. Seed three GAP cards through t
 
 **Idempotency guard (run first).** Check `docs/work/` for card files (`GAP-###.md`) matching the overview, techstack, and tech-curation summaries. If all three are already present (match on the H1 heading text — IDs are minted by `/super-bootstrap:log`), skip seeding and log "GAP cards already seeded." Re-run stays safe.
 
-**Seed via [`/super-bootstrap:log`](../log/SKILL.md)** — one invocation, all three observations batched, passing Source context `/super-bootstrap bootstrap` in the dispatch:
+**Seed via [`/super-bootstrap:log`](../log/SKILL.md)** — one invocation, all three observations batched, passing Source context `/super-bootstrap:setup bootstrap` in the dispatch:
 
 - `pin down product overview — docs/overview.md is an unfilled skeleton; resolve at pickup by settling the framing with the user (no source code) or by reverse-engineering it from the code (code present, undocumented)`
 - `decide techstack — docs/techstack.md lacks product + architecture context (manifest facts auto-filled where a manifest exists); blocked on the overview card`
-- `run tech curation — re-run /super-bootstrap once docs/overview.md + docs/techstack.md are filled; blocked on the overview + techstack cards above`
+- `run tech curation — re-run /super-bootstrap:setup once docs/overview.md + docs/techstack.md are filled; blocked on the overview + techstack cards above`
 
 Each classifies GAP; the funnel mints IDs, dedups, and fills Area (`docs/overview.md` / `docs/techstack.md`). The pickup-routing hint rides in the observation text, not a `Prior:` route — triage owns the method.
 
@@ -50,7 +50,7 @@ Each classifies GAP; the funnel mints IDs, dedups, and fills Area (`docs/overvie
 ```
 Generic harness installed. Three GAP cards seeded (overview, techstack, tech-curation).
 Resolve overview + techstack via /super-bootstrap:todo — settle the framing with the user (no code), or reverse-engineer it from the code (code present).
-Once both are filled, re-run /super-bootstrap for tech curation — the tech-curation card tracks that step.
+Once both are filled, re-run /super-bootstrap:setup for tech curation — the tech-curation card tracks that step.
 ```
 
 ## Substantive branch — gated tier-2 tech curation (substantive)

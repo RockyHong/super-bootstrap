@@ -34,7 +34,7 @@ loads no file content, fires no `docs/**` path-scoped rule):
 
 - **`docs/work/` absent** (Glob returns nothing) → repo has the pipeline
   available but no runway installed. Print, no render:
-  > "No runway installed. Run `/super-bootstrap` to set up the pipeline."
+  > "No runway installed. Run `/super-bootstrap:setup` to set up the pipeline."
 - **`docs/work/` present** → render via the script lane; its exit code routes
   the fallback. The empty/non-empty determination lives in the executor: it
   reads the card files and renders either the empty-state (`No active work…`)
@@ -124,7 +124,7 @@ Steps:
 ## Rules
 
 - **Read-only.** Never modifies files. Never executes git operations.
-- **Works in any repo** — `docs/work/` present (created by `/super-bootstrap:harness-bootstrap`) drives the board; absent → the skip-gate redirects to `/super-bootstrap`.
+- **Works in any repo** — `docs/work/` present (created by `/super-bootstrap:harness-bootstrap`) drives the board; absent → the skip-gate redirects to `/super-bootstrap:setup`.
 - **Verbatim relay rule.** The executor's rendered output IS the value — script stdout and agent reply alike. Gateway adds nothing — no preface, no editorial. Sole exceptions, each printed above the board as its own line, never woven into the render: the §Arguments fallback notice, and the script's `# note:` stderr line(s) when present (§Render behavior). The board closes the turn: every tool call the skill makes (the spot-check included) lands before it, so the rendered surface is the last thing on screen.
 - **Footer-hint convention.** Footer is the executor's render concern (see §Footer rule). Gateway relays verbatim.
 - **One classification SSOT.** `shared/classify-actionable.md` + `assets/scaffolds.md` bind both lanes; the script encodes them, the agent self-reads them. An edit to either propagates to the script (bench check: `bench/todo-board/` in the source repo) and never forks a lane-local criterion.
