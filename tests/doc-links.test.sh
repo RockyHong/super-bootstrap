@@ -940,6 +940,57 @@ else
   bad "header comment registers the pins mode"
 fi
 
+echo "== doc-links: BUG-071 — anchors honours the hunk range end (whole-file add / multi-section hunk) =="
+# do_anchors kept only the range start, so a whole-file add's `+1,N` range let a
+# line-1 H1 claim the range instead of printing `(top)`, and a hunk spanning
+# several sections reported only the first section's slug. Range end now decides:
+# a range covering the doc's first heading prints `(top)`; otherwise the union of
+# every heading inside the range plus the section the start line sits in.
+mkdir -p "$TMP/anch71/docs"
+cat > "$TMP/anch71/docs/new.md" <<'EOF'
+# Title
+
+## Section A
+
+Body.
+EOF
+slug="$(cd "$TMP/anch71" && bash "$LINKS" anchors docs/new.md +1,5)"
+check "whole-file add, H1 on line 1, +1,N -> (top) (got: $slug)" [ "$slug" = "(top)" ]
+
+cat > "$TMP/anch71/docs/preamble.md" <<'EOF'
+Preamble line 1
+
+more preamble
+# Title
+
+## Section A
+EOF
+slug="$(cd "$TMP/anch71" && bash "$LINKS" anchors docs/preamble.md +1,6)"
+check "whole-file add, H1 on line 4, +1,N -> (top) (got: $slug)" [ "$slug" = "(top)" ]
+
+cat > "$TMP/anch71/docs/multi.md" <<'EOF'
+# Title
+
+## Section A
+
+Body A
+
+## Section B
+
+Body B
+EOF
+slugs="$(cd "$TMP/anch71" && bash "$LINKS" anchors docs/multi.md +4,6)"
+expected_multi="$(printf 'section-a\nsection-b')"
+check "mid-file hunk spanning two sections emits both slugs, not the first heading (got: $slugs)" [ "$slugs" = "$expected_multi" ]
+
+slug="$(cd "$TMP/anch71" && bash "$LINKS" anchors docs/multi.md +5)"
+check "existing mid-file single-line range still resolves its own section (got: $slug)" [ "$slug" = "section-a" ]
+
+# Pure deletion under a heading: `git diff -U0` emits `+c,0` with c = the heading
+# line itself, so the range must resolve to that heading, not its parent.
+slug="$(cd "$TMP/anch71" && bash "$LINKS" anchors docs/multi.md +3,0)"
+check "pure-deletion range +3,0 on the heading line resolves that section, not the parent (got: $slug)" [ "$slug" = "section-a" ]
+
 echo "== doc-links: BUG-045 — whole-surface check under a generous wall-clock ceiling =="
 now_ns="$(date +%s%N 2>/dev/null || true)"
 case "$now_ns" in

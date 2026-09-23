@@ -47,12 +47,17 @@
 #                      own right, sorted unique — a changed doc is its own scope doc.
 #                      A path the diff deleted, one off the surface, and frozen
 #                      provenance all print nothing. Always exit 0.
-#   anchors <path> <r>...  print the slug of the nearest heading at or above each
-#                      hunk range's start line, sorted unique — <r> is a `git diff -U0`
-#                      post-image range (`+491`, `+19,7`, leading `+` optional).
-#                      A range above the first heading prints `(top)`, meaning
-#                      whole-file grain: run `refs <path>` unanchored. Output feeds
-#                      `refs <path>#<slug>` verbatim.
+#   anchors <path> <r>...  print the section slug(s) each hunk range touches, sorted
+#                      unique — <r> is a `git diff -U0` post-image range (`+491`,
+#                      `+19,7`, leading `+` optional; no length or `,0` — a pure
+#                      deletion — means the one line the range names). A
+#                      range covering the doc's first heading prints `(top)`,
+#                      meaning whole-file grain: run `refs <path>` unanchored.
+#                      Otherwise the range prints the union of every heading whose
+#                      own line falls inside the range plus the section the start
+#                      line sits in (its nearest heading at or above) — a hunk
+#                      spanning several sections prints one slug per section.
+#                      Output feeds `refs <path>#<slug>` verbatim.
 #
 # A doc whose leading YAML frontmatter declares `dimension: history` is frozen
 # provenance: `terms` yields nothing for it, `hits`, `refs`, `self` and `pins` leave it
@@ -771,9 +776,13 @@ $p
 }
 
 # Hunk range → section grain. Headings come out of the shared slug transform in file
-# order, so the last one at or above the start line is the section that hunk edited.
+# order. A range that covers the doc's first heading is whole-file grain — `(top)` —
+# whatever else it touches; otherwise it is the union of every heading whose own
+# line falls inside [start, end] plus the section the start line sits in (the last
+# heading at or above start), so a hunk spanning several sections names them all
+# instead of only the first.
 do_anchors() {
-    local path="$1" tbl r start ln slug found
+    local path="$1" tbl r start len end ln slug found first_ln hits
     shift
     [ -f "$path" ] || return 0
     tbl="$(slug_lines_numbered "$path")"
@@ -781,14 +790,35 @@ do_anchors() {
         r="${r#+}"
         start="${r%%,*}"
         case "$start" in ''|*[!0-9]*) continue ;; esac
+        case "$r" in
+            *,*) len="${r#*,}" ;;
+            *) len=1 ;;
+        esac
+        case "$len" in ''|*[!0-9]*|0) len=1 ;; esac
+        # A pure-deletion hunk (`+c,0`) names the line the deletion attaches to —
+        # the range is that one line, the same as a one-line edit there.
+        end=$((start + len - 1))
         found="(top)"
+        first_ln=""
+        hits=""
         while IFS="$(printf '\t')" read -r ln slug; do
             [ -z "$ln" ] && continue
-            if [ "$ln" -le "$start" ]; then found="$slug"; else break; fi
+            [ -z "$first_ln" ] && first_ln="$ln"
+            [ "$ln" -gt "$end" ] && break
+            [ "$ln" -le "$start" ] && found="$slug"
+            if [ "$ln" -ge "$start" ] && [ "$ln" -le "$end" ]; then
+                hits="$hits$slug
+"
+            fi
         done <<EOF
 $tbl
 EOF
-        printf '%s\n' "$found"
+        if [ -n "$first_ln" ] && [ "$first_ln" -ge "$start" ] && [ "$first_ln" -le "$end" ]; then
+            printf '%s\n' "(top)"
+        else
+            printf '%s\n' "$found"
+            [ -n "$hits" ] && printf '%s' "$hits"
+        fi
     done | LC_ALL=C sort -u
     return 0
 }
