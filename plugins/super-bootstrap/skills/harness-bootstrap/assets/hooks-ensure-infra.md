@@ -70,7 +70,7 @@ Existence alone is not enough: an upstream fix to a frozen asset — script **or
 settings snippet — must reach repos that already have an older copy. Currency compares
 **installed** against **asset** whole: a script by sha256 of its bytes, a snippet by
 deep-equal against the asset entry. Each frozen script also carries a version marker on
-its second line — `# FROZEN <name> vN` (e.g. `# FROZEN commit-channel v6`) — which
+its second line — `# FROZEN <name> vN` (e.g. `# FROZEN commit-channel v7`) — which
 names the version in reports and prompts; it is not the currency test, so an edit
 anywhere in the file counts as drift. A second script predicate reads the runway
 receipt's `placed` map to tell a copy that merely lags the asset (**stale**) from one

@@ -72,7 +72,7 @@
   ],
   "placed": {
     ".claude/templates/worktree-settings.local.json": "ba99597f0fa900ae4059af341af8207fc3ee206a8292448a376b2688e4805253",
-    ".claude/hooks/commit-channel.sh": "ec9ac22a9a77f9eb4136e2294fddaff6422431be7f5627eeb2d3abe5502727cf",
+    ".claude/hooks/commit-channel.sh": "893b7c0b522e426df28cd40dadf0a3a78e47d3b6f7186da1b8799b691bade4e9",
     ".claude/hooks/consult-check-sessionstart.sh": "2599182bf93c81e688b6f21922467995123809785c1897c841a0c562908ca979",
     ".claude/hooks/consult-check-check.sh": "8e00f247056f3449be135c48f526108dd042b42447afaf16e9b95b2da1adcaf8"
   }

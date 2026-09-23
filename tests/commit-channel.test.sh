@@ -66,6 +66,34 @@ echo "== commit-channel: heredoc body line is the accepted B1 trade =="
 out=$(run_channel "cat > f <<'EOF'${NL}git $C -m x${NL}EOF" "some-worker")
 check "heredoc body line beginning git commit -> denied (B1 trade: a visible false-deny that routes to the door beats a silent pass)" denied "$out"
 
+echo "== commit-channel: BUG-072 — chained/piped read-only lines that later mention commit must pass =="
+out=$(run_channel "git -C /x log --oneline -20 | grep -i -E \"bypass|wrong $C|main session\"" "some-worker")
+check "BUG-072: piped git log | grep mentioning commit -> allowed (read-only, not an invocation)" allowed "$out"
+
+out=$(run_channel "git log --oneline -4 && echo \"--- files in HEAD $C ---\" && git show --stat HEAD" "some-worker")
+check "BUG-072: chained git log && echo mentioning commit && git show -> allowed" allowed "$out"
+
+out=$(run_channel "git show x; echo \"=== $C msg ===\"; git log -1 x" "some-worker")
+check "BUG-072: semicolon-chained git show; echo mentioning commit; git log -> allowed" allowed "$out"
+
+echo "== commit-channel: BUG-072 guards — real chained/global-flag invocations still deny =="
+out=$(run_channel "git -C /x $C -m x" "some-worker")
+check "BUG-072 guard: git -C <dir> commit -m x -> denied" denied "$out"
+
+out=$(run_channel "git --no-pager $C -m x" "some-worker")
+check "BUG-072 guard: git --no-pager commit -m x -> denied" denied "$out"
+
+out=$(run_channel "git add -A && git $C -m x" "some-worker")
+check "BUG-072 guard: git add -A && git commit -m x -> denied" denied "$out"
+
+out=$(run_channel "git add -A; git $C -m x" "some-worker")
+check "BUG-072 guard: git add -A; git commit -m x -> denied" denied "$out"
+
+# Accepted residual, locked so a later widening is a deliberate change: a flag
+# value carrying `;` `&` `|` stops the walker before `commit` — silent pass.
+out=$(run_channel "git -c \"x;y\" $C -m x" "some-worker")
+check "BUG-072 accepted residual: git -c \"x;y\" commit -m x -> allowed (exotic global-flag value, not walked)" allowed "$out"
+
 echo "== commit-channel: settings snippet covers both command tools =="
 snippet_matcher=$(jq -r '.matcher' "$ASSETS/commit-channel.hook.json")
 check "snippet matcher spans both command tools" [ "$snippet_matcher" = "Bash|PowerShell" ]

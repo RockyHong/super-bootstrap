@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# FROZEN commit-channel v6 (single-channel commit guard)
+# FROZEN commit-channel v7 (single-channel commit guard)
 # Spawn pre-filter: the merged settings entry matches `Bash|PowerShell` and carries
 # one hook element per tool — `if: "Bash(git *)"` and `if: "PowerShell(git *)"` —
 # because a foreign-tool `if` never spawns. Both anchor on the bare `git` command:
@@ -30,9 +30,16 @@ cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // empty')
 # passes silently. The trade that buys: a heredoc body line beginning `git commit`
 # now denies — a visible, recoverable outcome (the worker reads the deny text and
 # routes to the door) in place of a silent pass. The trailing boundary
-# ([[:space:]] covers newline) skips commit-tree / commit-graph.
+# ([[:space:]] covers newline) skips commit-tree / commit-graph. The global-flag
+# walker stops at `; & |` (the same three characters the leading separator
+# alternation treats as boundaries), so it never reaches past a chain or pipe
+# into a later `commit` mention on the same line — a git-anchored read-only line
+# that later mentions "commit" (in a grep pattern, an echo label, …) is not an
+# invocation and passes. Accepted residual of that stop: a real invocation whose
+# global-flag value carries one of the three characters (`git -c "x;y" commit`)
+# is not walked and passes silently — an exotic form no run has produced.
 _nl=$'\n'
-_re='(^|[;&|'"$_nl"'])[[:blank:]]*git[[:blank:]]+([^[:space:]]+[[:blank:]]+)*commit([[:space:]]|$|;|&|\|)'
+_re='(^|[;&|'"$_nl"'])[[:blank:]]*git[[:blank:]]+([^[:space:];&|]+[[:blank:]]+)*commit([[:space:]]|$|;|&|\|)'
 [[ "$cmd" =~ $_re ]] || exit 0
 
 agent=$(printf '%s' "$input" | jq -r '.agent_type // "main"')
