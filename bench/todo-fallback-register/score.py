@@ -30,6 +30,10 @@ SHAPE (each 0/1):
   footer    the lines after the last table equal the golden's
   shape     = sum of the six
 
+WIDTH (outside shape, so shape stays comparable with the DEBT-118 runs):
+  cut       k/n board Action cells at most 60 characters (scaffolds.md § Sheet columns:
+            hard-cut to 60, the 60th being `…`); BUG-074 — the rule rides the preamble
+
 SPEC READ:
   spec      1 when reads.txt shows a Read of classify-actionable.md
   spec_n    how many times it was Read (the agent says once)
@@ -45,7 +49,7 @@ mode, golden_p, board_p = args[:3]
 reads_p = args[3] if len(args) > 3 else None
 
 COLS = ["rows", "drain", "pending", "title", "heads", "cols", "invented", "reco",
-        "footer", "shape", "spec", "spec_n", "misses"]
+        "footer", "shape", "cut", "spec", "spec_n", "misses"]
 
 
 def load(p):
@@ -178,6 +182,8 @@ reco = 0 if re.search(r"(?im)recommend|best next|suggest|start with|next up|\bI'
                       b_text) else 1
 footer = 1 if b_tail == g_tail else 0
 shape = title + heads + cols + invented + reco + footer
+acts = [col(h, r, "Action") for _, _, h, r in b_rows]
+cut = "%d/%d" % (sum(1 for a in acts if len(a) <= 60), len(acts))
 
 spec = spec_n = 0
 if reads_p and os.path.exists(reads_p):
@@ -186,7 +192,7 @@ if reads_p and os.path.exists(reads_p):
     spec = 1 if spec_n else 0
 
 vals = ["%d/%d" % (agree, len(g_rows)), drain, pending, title, heads, cols, invented, reco,
-        footer, "%d/6" % shape, spec, spec_n, ",".join(misses) or "-"]
+        footer, "%d/6" % shape, cut, spec, spec_n, ",".join(misses) or "-"]
 if header:
     print("\t".join(COLS))
 print("\t".join(str(v) for v in vals))

@@ -1,0 +1,21 @@
+# model: claude-sonnet-5
+Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/f5e01fe9-9e12-4afc-90b3-8669e11790b1/scratchpad/fx074/plugin/shared/classify-actionable.md
+Glob	docs/**/*.md
+Glob	.claude/rules/venue-map.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\README.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\test-queue.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\BUG-101.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\GAP-102.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\BUG-103.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\GAP-104.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\GAP-105.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\DEBT-106.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\GAP-107.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\BUG-108.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\GAP-109.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\BUG-110.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\BUG-111.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\BUG-112.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\BUG-113.md
+Read	C:\Users\User\AppData\Local\Temp\claude\D--Git-super-bootstrap\f5e01fe9-9e12-4afc-90b3-8669e11790b1\scratchpad\fx074\repo\docs\work\notes-scratch.md
+Glob	docs/outward*

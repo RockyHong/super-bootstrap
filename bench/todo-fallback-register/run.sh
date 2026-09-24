@@ -9,9 +9,12 @@
 #
 # Usage: bash run.sh <fixture-root> <arm> <mode> [N]
 # Env:   MODEL (default sonnet — the agent's pinned tier)
+#        LABEL (default <arm>) — the run tag's first field, so one arm can be captured
+#              before and after an edit without overwriting (no `-` in it: score.sh
+#              reads the mode as the tag's second field)
 #
 # Outputs, per rep:
-#   <fixture-root>/runs/<arm>-<mode>-r<n>.jsonl        full stream-json transcript
+#   <fixture-root>/runs/<label>-<mode>-r<n>.jsonl        full stream-json transcript
 #   bench/todo-fallback-register/runs/<tag>.board.md   the run's final reply (the board)
 #   bench/todo-fallback-register/runs/<tag>.reads.txt  every Read/Grep/Glob call, in order
 set -u
@@ -20,6 +23,7 @@ ARM="${2:?arm}"
 MODE="${3:?mode}"
 N="${4:-3}"
 MODEL="${MODEL:-sonnet}"
+LABEL="${LABEL:-$ARM}"
 SRC="$(cd "$(dirname "$0")" && pwd)"
 PY=$(command -v python3 || command -v python)
 win() { if command -v cygpath >/dev/null 2>&1; then cygpath -m "$1"; else printf '%s' "$1"; fi; }
@@ -30,7 +34,7 @@ mkdir -p "$FX/runs" "$SRC/runs"
 
 n=1
 while [ "$n" -le "$N" ]; do
-  tag="$ARM-$MODE-r$n"
+  tag="$LABEL-$MODE-r$n"
   out="$FX/runs/$tag.jsonl"
   if [ -s "$out" ]; then echo "[skip] $tag"; n=$((n + 1)); continue; fi
   echo "[$tag] model=$MODEL"

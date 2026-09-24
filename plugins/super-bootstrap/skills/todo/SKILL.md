@@ -86,7 +86,7 @@ Footer is computed by the rendering executor (script or agent) — it counts tot
 
 The fallback protocol lives in the `todo` agent (`agents/todo.md`, `model: sonnet`, read-only tools). It runs only when §Render behavior routes here (script failure).
 
-When dispatching the agent, the prompt **must embed the scaffold** literal for the chosen mode, and supply the **classification spec path** for the agent to self-read. The agent fills bracketed slots per spec and applies the spec's criteria as written. Without the scaffold literal, the render drifts toward generic shapes; without the spec path and the apply-as-written line, classification drifts toward generic criteria.
+When dispatching the agent, the prompt **must embed the scaffold** literal for the chosen mode, preceded by the `assets/scaffolds.md` preamble that binds every mode (macro header, § Sheet columns), and supply the **classification spec path** for the agent to self-read. The agent fills bracketed slots per spec and applies the spec's criteria as written. Without the scaffold literal, the render drifts toward generic shapes; without the spec path and the apply-as-written line, classification drifts toward generic criteria.
 
 **Dispatch prompt template:**
 
@@ -101,7 +101,7 @@ Before classifying, Read this path once: {classify_spec_path}. It is the classif
 
 --- SCAFFOLD ---
 
-{scaffold for chosen mode from assets/scaffolds.md, copied verbatim}
+{assets/scaffolds.md preamble + chosen-mode section, copied verbatim}
 
 ---
 
@@ -115,7 +115,7 @@ Your reply is one part — the scaffold above with its slots filled. It opens wi
 Steps:
 
 1. Reached from §Render behavior with the mode already resolved (skip-gate passed, script lane failed).
-2. Resolve the classification spec path: take the skill base directory (surfaced in the skill invocation as `Base directory for this skill: <abs path>`), append `../../shared/classify-actionable.md`. Read `assets/scaffolds.md` (sibling) and embed the chosen-mode section verbatim in the dispatch prompt. Pass the resolved absolute path as `{classify_spec_path}` — never the file contents. Ranking + render live in the `todo` agent.
+2. Resolve the classification spec path: take the skill base directory (surfaced in the skill invocation as `Base directory for this skill: <abs path>`), append `../../shared/classify-actionable.md`. Read `assets/scaffolds.md` (sibling) and embed, verbatim in the dispatch prompt, its preamble (everything above the first `### ` mode heading) followed by the chosen-mode section — the agent has no path to that file, so a column or width rule outside the embedded text never reaches it. Pass the resolved absolute path as `{classify_spec_path}` — never the file contents. Ranking + render live in the `todo` agent.
 3. Build dispatch prompt per template above.
 4. `Agent` tool, `subagent_type: "todo"`, prompt = the built dispatch prompt.
 5. Agent returns rendered scaffold (or empty-state). **Spot-check first:** sample one classified row from the reply against the doc it cites; a confirmed miss → `/super-bootstrap:log` (tier re-pinning evidence). The script lane carries its own spot-check under §Render behavior's Exit 0 clause.
@@ -127,4 +127,4 @@ Steps:
 - **Works in any repo** — `docs/work/` present (created by `/super-bootstrap:harness-bootstrap`) drives the board; absent → the skip-gate redirects to `/super-bootstrap:setup`.
 - **Verbatim relay rule.** The executor's rendered output IS the value — script stdout and agent reply alike. Gateway adds nothing — no preface, no editorial. Sole exceptions, each printed above the board as its own line, never woven into the render: the §Arguments fallback notice, and the script's `# note:` stderr line(s) when present (§Render behavior). The board closes the turn: every tool call the skill makes (the spot-check included) lands before it, so the rendered surface is the last thing on screen.
 - **Footer-hint convention.** Footer is the executor's render concern (see §Footer rule). Gateway relays verbatim.
-- **One classification SSOT.** `shared/classify-actionable.md` + `assets/scaffolds.md` bind both lanes; the script encodes them, the agent self-reads them. An edit to either propagates to the script (bench check: `bench/todo-board/` in the source repo) and never forks a lane-local criterion.
+- **One classification SSOT.** `shared/classify-actionable.md` + `assets/scaffolds.md` bind both lanes; the script encodes them; the agent self-reads the classification spec and receives the scaffold pre-embedded in its dispatch prompt (it holds no path to `assets/scaffolds.md`). An edit to either propagates to the script (bench check: `bench/todo-board/` in the source repo) and never forks a lane-local criterion.

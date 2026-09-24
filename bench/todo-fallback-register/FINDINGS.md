@@ -93,3 +93,26 @@ were right every time. The scorer counts the slip twice — `rows` (item key los
 only the chosen-mode section of `assets/scaffolds.md`, while the `—`-for-test-queue rule lives in
 that file's preamble (§ Sheet columns), which never reaches the agent; the embedded Full section
 even says "per § Sheet columns above". 1/3 vs 2/3 at N=3 is noise around the same gap.
+
+## BUG-074 — scaffolds.md preamble in the fallback dispatch
+
+**Arm:** `live` (working-tree text) · **Reader:** `claude-sonnet-5` on all 10 runs · `pre074` /
+`pre074b` = the shipped text before the edit (chosen-mode section only), `post074` = after
+(preamble + chosen-mode section). New reading `cut` (bite case `uncut-action`: 8/9 on control 9/9).
+
+    run	rows	drain	pending	title	heads	cols	invented	reco	footer	shape	cut	spec	spec_n	misses
+    pre074-needme-r1	9/9	1	1	1	1	1	1	1	1	6/6	1/9	1	1	-
+    pre074-needme-r2	9/9	1	1	1	1	1	1	1	1	6/6	1/9	1	1	-
+    pre074-needme-r3	9/9	1	1	1	1	1	1	1	1	6/6	1/9	1	1	-
+    pre074b-needme-r1	9/9	1	1	1	1	1	1	1	1	6/6	1/9	1	1	-
+    pre074b-needme-r2	9/9	1	1	1	1	1	1	1	1	6/6	1/9	1	1	-
+    pre074b-needme-r3	9/9	1	1	1	1	1	1	1	1	6/6	1/9	1	1	-
+    post074-needme-r1	9/9	1	1	1	1	1	1	1	1	6/6	9/9	1	1	-
+    post074-needme-r2	9/9	1	1	1	1	1	1	1	1	6/6	9/9	1	1	-
+    post074-needme-r3	9/9	1	1	1	1	1	1	1	1	6/6	9/9	1	1	-
+    post074-full-r1	13/13	1	1	1	1	1	1	1	1	6/6	13/13	1	1	-
+
+Before: the snapshot test-queue row rendered `—` in 6/6 runs — the ID slip seen under the
+DEBT-118 arms (3/6) did not recur on the shipped text — but the Action width cut failed in 6/6
+(1/9 cells within 60), the same missing preamble. After: `—` in 3/3 needme runs and the full run;
+every Action cell within 60 in all four runs; `rows` / `shape` unchanged at ceiling.

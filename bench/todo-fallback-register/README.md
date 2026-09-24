@@ -15,6 +15,9 @@ The arm is the briefing text; nothing under `plugins/` is edited.
 - `arms/current/` — `git show HEAD:` copies of `SKILL.md` and `agents/todo.md` (as `agent-todo.md`).
 - `arms/proposed/` — produced by [`make-arms.py`](make-arms.py): the card's six replacements
   applied verbatim to the current copies; each old string must occur exactly once or it aborts.
+- `live` — not frozen: [`make-fixture.sh`](make-fixture.sh) copies the working-tree `SKILL.md` and
+  `agents/todo.md` into the scratch tree. It is the regression arm for the shipped dispatch
+  (`BUG-074`); run it before and after an edit under two `LABEL`s.
 
 ## Oracle
 
@@ -31,7 +34,9 @@ intent buckets as groups) and `full` (the flat board — per-row Stage and Block
 shipped spec under `plugin/shared/`, a credentials-only `CLAUDE_CONFIG_DIR`, and per arm an
 `agents.json` (the arm's agent body as the `todo` agent) plus one dispatch prompt per mode, built by
 [`build-dispatch.py`](build-dispatch.py) exactly as SKILL.md Steps 2-3 say — the arm's own template,
-the resolved mode, the absolute spec path, the chosen-mode section of `assets/scaffolds.md` verbatim.
+the resolved mode, the absolute spec path, and whatever that arm's scaffold slot names from
+`assets/scaffolds.md` verbatim — the chosen-mode section alone (`current` / `proposed`, the
+pre-`BUG-074` slot) or the file's preamble plus that section (the shipped slot).
 The two arms' prompts may differ only on the three M1 lines (asserted).
 
 [`run.sh`](run.sh) runs the agent as the session agent — `claude -p --model sonnet --agents
@@ -45,7 +50,8 @@ session's agent prompt and the dispatch prompt is the user turn — the same two
 [`score.py`](score.py) (definitions in its docstring), one TSV row per run via
 [`score.sh`](score.sh): `rows` (action verb + intent bucket + stage agreement per golden row),
 `drain` / `pending` (the drained-row and hard-block counts), `shape` (title, headings, columns, no
-invented rows, no recommendation, footer — k/6), `spec` / `spec_n` (the spec was Read, how often).
+invented rows, no recommendation, footer — k/6), `cut` (Action cells within the 60-char budget,
+outside `shape`), `spec` / `spec_n` (the spec was Read, how often).
 [`bite.sh`](bite.sh) proves each assertion fails on an induced bad board.
 
 ## Use
@@ -57,6 +63,9 @@ bash bench/todo-fallback-register/bite.sh "$FX"
 for a in current proposed; do for m in needme full; do
   bash bench/todo-fallback-register/run.sh "$FX" $a $m 3; done; done
 bash bench/todo-fallback-register/score.sh "$FX"
+# regression arm, before/after an edit to the shipped text (LABEL = the run tag's first field):
+LABEL=before bash bench/todo-fallback-register/run.sh "$FX" live needme 3
+# ...edit, re-run make-fixture.sh (rebuilds the live arm), then LABEL=after
 ```
 
 `runs/` keeps each run's board and its tool-call log (`# model:` line first); transcripts stay in

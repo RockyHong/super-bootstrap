@@ -11,6 +11,8 @@
 #                                     edits the briefing, never the spec)
 #   <target-dir>/coldcfg              CLAUDE_CONFIG_DIR: credentials + empty settings only
 #   <target-dir>/arm-<arm>/           agents.json + prompt-<mode>.txt per arm (build-dispatch.py)
+#   <target-dir>/arm-live/            the same, built from the working-tree SKILL.md + agents/todo.md
+#                                     (the shipped dispatch — the regression arm; BUG-074)
 #   <target-dir>/golden/<mode>.md     render-board.py's board for the same fixture + mode,
 #                                     re-rendered at the run's date (the goldens in
 #                                     bench/todo-board/expected/ are pinned to 2026-08-14;
@@ -27,7 +29,7 @@ DATE="${DATE:-$(date +%Y-%m-%d)}"
 
 win() { if command -v cygpath >/dev/null 2>&1; then cygpath -m "$1"; else printf '%s' "$1"; fi; }
 
-rm -rf "$FX/repo" "$FX/plugin" "$FX/coldcfg" "$FX/golden" "$FX"/arm-*
+rm -rf "$FX/repo" "$FX/plugin" "$FX/coldcfg" "$FX/golden" "$FX"/arm-* "$FX/src-live"
 mkdir -p "$FX/repo" "$FX/plugin/shared" "$FX/coldcfg" "$FX/golden"
 
 cp -r "$ROOT/bench/todo-board/fixture/." "$FX/repo/"
@@ -45,6 +47,12 @@ for m in $MODES; do
   d="$(diff "$FX/arm-current/prompt-$m.txt" "$FX/arm-proposed/prompt-$m.txt" | grep -c '^[<>]' || true)"
   [ "$d" = 6 ] || { echo "FATAL: $m prompts differ on $d lines, expected 6 (3 M1 lines per side)" >&2; exit 1; }
 done
+# live arm: the working-tree text as shipped, no A/B pairing
+mkdir -p "$FX/src-live"
+cp "$PLUG/skills/todo/SKILL.md" "$FX/src-live/SKILL.md"
+cp "$PLUG/agents/todo.md" "$FX/src-live/agent-todo.md"
+"$PY" "$SRC/build-dispatch.py" "$FX/src-live" "$PLUG/skills/todo/assets/scaffolds.md" \
+  "$SPEC" "$FX/arm-live" $MODES
 
 # goldens: the script lane's board for the same fixture, at the run's date
 for m in $MODES; do

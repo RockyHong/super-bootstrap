@@ -42,5 +42,6 @@ case_ invented-row     invented full   's/^| 12 | BUG-112 .*/&\n| 13 | BUG-999 |
 case_ duplicated-row   invented full   's/^| 12 | BUG-112 .*/&\n&/'
 case_ recommendation   reco     needme 's/^more: \/super-bootstrap:help$/Recommend starting with GAP-104.\n&/'
 case_ lost-footer      footer   needme '/^flat list:/d'
+case_ uncut-action     cut      needme 's/| Approve design: settings import wizard |/| Approve design: settings import wizard, its parser convention shapes BUG-101 |/'
 case_ spec-not-read    spec     needme 's/^$/&/' "$T/noread.txt"
 rm -rf "$T"
