@@ -24,7 +24,6 @@ Doctrine: evidence over plausibility; root cause before anything where behavior 
 
 - **Telemetry is direct evidence.** External-system telemetry (CI logs, production traces, monitoring output) ranks with card-captured raw observations and repro output.
 - **Pin repro verbatim.** Scenario parameters (mode, direction, config, inputs) carry as exact quotes from the card into `### Repro (pinned)` — a paraphrased scenario can silently invert the investigation surface.
-- **Grep before reading.** Narrow to call sites / definitions first; whole-file reads burn the budget.
 - **Family sweep.** For output-correctness defects, grep sibling call sites producing the same output class through parallel paths — the verdict covers the family, or names why it scopes to one instance.
 - **Evidence at hypothesis forks.** Two+ viable root-cause hypotheses static reads can't separate → front-load an empirical probe (§ Probes) or verdict `surface` with the fork framed.
 - **Budget.** ~30k tokens of file reads. Exceeded without a clear root cause → verdict `surface` with partial findings + an explicit "investigation truncated at budget" line.

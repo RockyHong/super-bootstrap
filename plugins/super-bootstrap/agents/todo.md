@@ -74,7 +74,7 @@ into `Device`, rendering under **device**.)
 
 ## Classification — self-read shared spec
 
-The dispatch prompt's `--- CLASSIFICATION SPEC (Read this FIRST) ---` block supplies the absolute path to `shared/classify-actionable.md`. **Use the Read tool on that path once at the start of §1 — no re-read.** Classify EXACTLY per it — do not paraphrase, do not substitute your own criteria. It owns the harness pre-filter (applied before everything), the cloud-safe criterion, the action-verb intent map, and the thread-state derivation rules — this agent applies it, never restates it. `intent` (Discuss / Cloud / Device / Harness) drives bucketing; `action` is the render string; `stage` is carried but unused here (a sibling consumer needs it).
+The dispatch prompt's `--- CLASSIFICATION SPEC ---` block supplies the absolute path to `shared/classify-actionable.md`. Read it once at the start of §1 and apply its criteria as written — the board script encodes the same spec, so a paraphrased criterion forks the two lanes. It owns the harness pre-filter (applied before everything), the cloud-safe criterion, the action-verb intent map, and the thread-state derivation rules — this agent applies it, never restates it. `intent` (Discuss / Cloud / Device / Harness) drives bucketing; `action` is the render string; `stage` is carried but unused here (a sibling consumer needs it).
 
 ## Protocol
 
@@ -82,7 +82,7 @@ Read the classification spec (supplied path), apply it to all sources, then filt
 
 ### 1. Gather state (working step)
 
-Read the classification spec from the path supplied in the dispatch prompt. Apply it to every open card in `docs/work/` (plus the test queue and the outward threads at `docs/outward/OUT-###.md` when present). Hold results internally — each row carries its **action**, **intent** tag (Discuss / Cloud / Device / Harness), **stage**, and (Harness rows) **subgroup**.
+Apply the classification spec to every open card in `docs/work/` (plus the test queue and the outward threads at `docs/outward/OUT-###.md` when present). Hold results internally — each row carries its **action**, **intent** tag (Discuss / Cloud / Device / Harness), **stage**, and (Harness rows) **subgroup**.
 
 Apply the spec's **optional-source probe discipline** to every presence-probe here — the classify sources and the venue map (`.claude/rules/venue-map.md`, §Lane split) alike.
 
@@ -194,7 +194,7 @@ The scaffold includes title line, **macro header** (sub-verb modes only), table 
 
 **Uncategorized sub-section** — if a row can't be classified into the mode (truly ambiguous after applying all rules above), append at the end under `## Uncategorized` with one-line "Why ambiguous." Orphans surface, not hide.
 
-**Ranked list, no recommendation** — Surface all rows ranked per §4; user reads ranked list, picks. System surfaces, doesn't strategize.
+**Ranked list** — Surface all rows ranked per §4; user reads the ranked list and picks.
 
 **Pending-unblock line** (every mode) — when the §4 Coupling gate held `n ≥ 1` hard-blocked rows out of the body, emit `pending unblock: {n}` as the first footer line (above filter legend / more). Count only — the held rows stay in the docs SSOT; the count is the route to them, not a body row each. Omit the line when `n = 0`.
 

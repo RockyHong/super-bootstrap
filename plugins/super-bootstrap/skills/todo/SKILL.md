@@ -86,18 +86,18 @@ Footer is computed by the rendering executor (script or agent) — it counts tot
 
 The fallback protocol lives in the `todo` agent (`agents/todo.md`, `model: sonnet`, read-only tools). It runs only when §Render behavior routes here (script failure).
 
-When dispatching the agent, the prompt **must embed the scaffold** literal for the chosen mode, and supply the **classification spec path** for the agent to self-read. Agent fills bracketed slots per spec; cannot reach for alternative templates or paraphrase the criteria. Without the scaffold literal, prior training pulls render toward generic shapes. Without the explicit path + "classify EXACTLY" instruction, training pulls classification toward generic criteria.
+When dispatching the agent, the prompt **must embed the scaffold** literal for the chosen mode, and supply the **classification spec path** for the agent to self-read. The agent fills bracketed slots per spec and applies the spec's criteria as written. Without the scaffold literal, the render drifts toward generic shapes; without the spec path and the apply-as-written line, classification drifts toward generic criteria.
 
 **Dispatch prompt template:**
 
 ```
 mode: {needme | discuss | cloud | device | harness | full}
 
-Classify every open item per this spec, then render EXACTLY the scaffold below. Fill bracketed slots from your gathered + filtered + ranked rows per agent protocol. Do NOT change shape, do NOT swap to an alternative template, do NOT merge or split groups the scaffold separates. Omit a group's table only if its row count is zero (omit the sub-heading too).
+Classify every open item per the spec below, then render the scaffold below as-is: fill its bracketed slots from your gathered, filtered, and ranked rows per the agent protocol, keeping its shape and its group split — the gateway relays your reply verbatim, so the scaffold is the board. Omit a group's table (and its sub-heading) only when its row count is zero.
 
---- CLASSIFICATION SPEC (Read this FIRST) ---
+--- CLASSIFICATION SPEC ---
 
-Before classifying, use the Read tool on this exact path: {classify_spec_path}. It is the classification SSOT. Classify EXACTLY per it — do not paraphrase, do not substitute your own criteria.
+Before classifying, Read this path once: {classify_spec_path}. It is the classification SSOT, also encoded by the board script — apply its criteria as written, since a paraphrased criterion forks the board between the two lanes.
 
 --- SCAFFOLD ---
 
