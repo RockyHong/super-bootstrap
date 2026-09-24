@@ -149,9 +149,9 @@ and lets the next asset bump resolve as stale instead of fork. Phase 2c's receip
 
 One migration this reaches by design: an installed `consult-check` pair predating
 the frozen assets — header line `# SessionStart hook — consult-check catalog
-derivation (GAP-045 build …`, no `# FROZEN … v1` marker, planted by a device-level
+derivation (GAP-045 build …`, no `# FROZEN …` marker, planted by a device-level
 manager, so no `placed` entry — arrives at the fork prompt as unknown. Carry this as
-that prompt's context: the frozen v1 pair is the intended successor, and its scan
+that prompt's context: the frozen pair is the intended successor, and its scan
 covers the consumer's own `docs/**` alone — the guidelines trees are split out
 deliberately (their rows resolve two ways and cost most of the render budget), so an
 `overwrite` dropping those roots is the migration landing as designed.

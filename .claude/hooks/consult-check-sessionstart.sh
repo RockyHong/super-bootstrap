@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# FROZEN consult-check-sessionstart v1
+# FROZEN consult-check-sessionstart v2
 # SessionStart hook — consult-check catalog derivation (grouped render).
 # Derives the compact doc catalog that consult-check-check.sh injects, once per
 # session boundary (startup|resume|clear|compact — default matcher), so the
@@ -12,7 +12,7 @@
 # same substrate). A repo that renames its temporal home declares it in
 # .claude/consult-exclude — one find -path glob per line (e.g. */drafts/*),
 # # comments allowed — instead of this list accreting per-repo names.
-# Undeclared temporal dirs stay listed, the forced YES/NO judges them.
+# Undeclared temporal dirs stay listed; the forced relevance judgment weighs them.
 #
 # Device/personal lore trees are deliberately NOT sourced. Lore reaches
 # readers through its own doors — path-scoped rules and the harness-edit

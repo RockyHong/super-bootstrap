@@ -6,8 +6,9 @@ super-bootstrap is the SSOT of the hook pair; this directory is the bench that
 selected its shape — any edit to the frozen forced-eval sentence or the catalog
 contract re-runs here first.
 
-- `FINDINGS-gap045.md` — the forced-eval build: arms, pre-registered gates, the
-  measured sentence the check hook injects verbatim.
+- [`FINDINGS-gap045.md`](FINDINGS-gap045.md) — the forced-eval build: arms, pre-registered gates, and
+  (§ No-stated-output revision, arm `forcedeval-v2`) the measured judge-then-Read
+  sentence the check hook injects verbatim, gated on sonnet + opus.
 - `FINDINGS.md` + `arm-{baseline,pointer,prodbundle,v1,v2-oracle}.json` — the
   earlier arm sweep whose failures ground the check hook's header constraints
   (ignorable-pointer, map routing, TN pre-classifier).

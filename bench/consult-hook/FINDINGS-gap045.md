@@ -25,7 +25,7 @@ Baseline pooled: consult 12/18 (67%, stable 6/9 both reps), quality 56/60, TN 12
 
 ## Mechanism finding
 
-The active ingredient is the **forced evaluation moment**, not the information content: pointer (same docs listed, no forced YES/NO) is skippable and missed twice; forced-eval never missed across 36 consult cells (both variants × 2 reps). Reconfirms the Anthropic 55→100 lineage on our substrate, at a different task (docs vs skills).
+The active ingredient is the **forced evaluation moment**, not the information content: pointer (same docs listed, no forced YES/NO) is skippable and missed twice; forced-eval never missed across 36 consult cells (both variants × 2 reps). Reconfirms the Anthropic 55→100 lineage on our substrate, at a different task (docs vs skills). The *stated* per-doc YES/NO is not part of the ingredient: a judge-then-Read sentence with no output demand held recall/TN on both tiers (§ No-stated-output revision below).
 
 ## Caveats — carry these with the verdict
 
@@ -52,6 +52,21 @@ Productionized as `templates/consult-check-{sessionstart,check}.sh`, project-ser
 **Source-scope revision (2026-08-10, GAP-123).** The derivation's source set narrowed from three trees to one: project `docs/**/*.md` only, dropping project `.claude/guidelines/**` and the device plant `~/.claude/guidelines/**` (with them, the stem-dedup pass and the per-tree hint table). Motivation is measured composition, the same disease GAP-052 caught at per-line granularity and fixed only at the render layer: across the seven consumer trees on the author's device the plant was a **fixed 943 chars in every catalog, 62–72% of the render**, against 49–200 chars of the project docs the bundle exists to surface (`claude-tldr`: 943 vs 49). Lore's reach never depended on this listing — `/load-harness-principles` enumerates axiom + claude-shape through their `index.md` catalogs, and each *wired* `work-discipline` principle has its own path-scoped carrier — four are cold-ref-by-design with no wire, three of which lost their de-facto ambient reach here (parked as GAP-124). Post-change catalogs render 49–585 chars, so the 1700-char cap no longer binds anywhere.
 
 **The 5-probe prodbundle spot-check was deliberately NOT re-run.** Probe A3 keys on a lore doc and would now score as a regression, but the arm cannot measure this change: its fixture's baseline is *no wire at all*, while the wires this revision relies on (`/load-harness-principles`, `/audit-harness-edits`, the `harness-author` + `harness-audit` hooks, the `harness-editing` + `lore-editing` rules) do not exist in it. Re-running would score a configuration that no longer ships. The re-run condition below still holds for a change to the **injector** or the forced-eval sentences — neither was touched.
+
+**No-stated-output revision (2026-09-24, DEBT-119) — sentence re-measured on both tiers; v2 earned.** The v1 sentence demanded a per-doc YES/NO enumeration in the reply that the hook header already called cosmetic (recall is the metric). Candidate arm `forcedeval-v2` (`forcedeval-v2-inject.sh` + `arm-forcedeval-v2.json`) is `forcedeval-compact` with only the sentence swapped: "Before answering, judge which docs below bear on this prompt, and Read each one that does before composing your answer. If none does, answer directly." The evaluation moment and the Read instruction are kept. The stated-output demand is dropped. Both arms ran the same 15 probes ×2 replicates on sonnet (`claude-sonnet-5`) and opus (`claude-opus-5-5`), 120 runs total. Each arm×tier had its own fresh `make-fixture.sh` fixture with the per-run hermetic reset. Pre-registered pass gate: v2 reaches 18/18 recall and 12/12 TN on sonnet across both reps, with no opus regression vs v1.
+
+| Tier | Arm | r1 recall (keyed) | r1 TN | r2 recall (keyed) | r2 TN | Pooled recall / TN | Mean run time |
+|---|---|---|---|---|---|---|---|
+| sonnet | v1 (forcedeval-compact) | 9/9 | 6/6 | 9/9 | 6/6 | 18/18 / 12/12 | 9.0s |
+| sonnet | **v2** | 9/9 | 6/6 | 9/9 | 6/6 | **18/18 / 12/12** | 7.9s |
+| opus | v1 (forcedeval-compact) | 9/9 | 6/6 | 9/9 | 6/6 | 18/18 / 12/12 | 15.8s |
+| opus | **v2** | 9/9 | 6/6 | 9/9 | 6/6 | **18/18 / 12/12** | 12.3s |
+
+Consult recall and keyed-doc hit were identical in every cell. Of the answers that print a `YES`/`NO` token, v1 produced 6/30 on sonnet and 2/30 on opus, and v2 produced 0/60. v1 compliance with its own stated-output demand was already sparse, which confirms the header's "cosmetic" reading. v2 ran faster on both tiers, and the gap is widest on opus (−22%). The v1-vs-v2 comparison is same-date and same-device-hook-set. It is not comparable to the 2026-07-05 numbers in absolute terms: the device plant grew from 28 to 40 catalog rows (injected block ~1.8k chars), and device hooks now include model-reminder, serve-freshness, ccm-version (SessionStart), harness-author, harness-audit, ask-threshold, force-push (PreToolUse), edit-stale (PostToolBatch), and the local :48901 relay on every event.
+
+**Scorer defect found and fixed in this run.** On a Read-only count, opus v1 scored 11/18. It had read the keyed docs via `Bash cat` in 8 of its 30 runs (v2 on opus: 1 of 30). `score-gap045.sh` now counts a Read *or* shell call naming the doc. With that fix, all four cells are perfect. A consumer of this harness (for example `docs/parked.md`'s stage-2 read-out) should key on doc-access events of any tool, not the Read tool alone.
+
+Not measured this round: answer quality (no blind judge). The gate was recall + TN only, and the answers under both arms read the keyed doc on every consult probe. `run-gap045.sh` now takes `MODEL` (default sonnet) and `RUNS_DIR` (runs land in `<RUNS_DIR>/<model>/`), and its paths are fixed for the post-migration `bench/consult-hook/` layout. The raw runs of this round were kept outside the repo, as with earlier rounds.
 
 ## Annex lift (research annex is temporal — still-load-bearing evidence moved here at cleanup)
 
