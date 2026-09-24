@@ -69,7 +69,11 @@ scaffolds, or the script re-runs this bench (`bash bench/todo-board/run.sh`).
   holds a markdown table instead of `### ` entries: the board parses zero entries
   and says so on the `# note:` stderr channel. Its golden appends both stderr
   lines (`# note:` and `# sources:`) to the board.
-- `expected/` — goldens for all six modes plus the empty, all-blocked, external-wait,
+- `expected/` — goldens for all six board modes plus the `rows` mode
+  (drain's classification input: TSV `id source action intent stage held`, over
+  `fixture/`, `fixture-allblocked/` for `held: blocked`, `fixture-outward/` for
+  `held: outward` with the outward entries omitted, and `fixture-empty/` for the
+  header-only empty state), plus the empty, all-blocked, external-wait,
   retired-actor, outward, legacy-flat-outward, wired-map, pre-substrate, and
   unparseable-queue states, pinned to `--date 2026-08-14`. The two `split-outward`
   cases assert properties of a temp root instead of a golden — the split writes into

@@ -32,6 +32,22 @@ else
   "$PY" "$SCRIPT" bench/todo-board/fixture-allblocked needme --date "$DATE" 2>/dev/null     | diff "bench/todo-board/expected/needme-allblocked.md" -
   fail=1
 fi
+# Machine-readable rows (drain's classification input): one TSV row per card /
+# test-queue entry / non-card file, unranked, with the `held` reason. Outward
+# entries are omitted — their wall rides the owned card's `held`.
+for pair in fixture:rows fixture-allblocked:rows-allblocked \
+            fixture-outward:rows-outward fixture-empty:rows-empty; do
+  fx="${pair%%:*}"; golden="${pair#*:}"
+  if "$PY" "$SCRIPT" "bench/todo-board/$fx" rows --date "$DATE" 2>/dev/null \
+     | diff "bench/todo-board/expected/$golden.md" - >/dev/null; then
+    echo "PASS $golden"
+  else
+    echo "FAIL $golden"
+    "$PY" "$SCRIPT" "bench/todo-board/$fx" rows --date "$DATE" 2>/dev/null \
+      | diff "bench/todo-board/expected/$golden.md" -
+    fail=1
+  fi
+done
 for m in needme full; do
   if "$PY" "$SCRIPT" bench/todo-board/fixture-extwait "$m" --date "$DATE" 2>/dev/null \
      | diff "bench/todo-board/expected/$m-extwait.md" - >/dev/null; then

@@ -3,7 +3,8 @@
 
 Usage: python render-board.py <project-root> <mode> [--date YYYY-MM-DD]
 
-Modes: needme | full | discuss | cloud | device | harness.
+Modes: needme | full | discuss | cloud | device | harness — board renders.
+       rows — machine-readable classification for /super-bootstrap:drain (below).
 
 Executes shared/classify-actionable.md plus the todo agent's rank/render protocol
 (agents/todo.md, assets/scaffolds.md) mechanically. Those three files are the SSOT —
@@ -77,8 +78,26 @@ judgment call, the encoding is the documented mechanical reading:
                     substrate condition label) cut the same way, its reason a
                     pointer within the same budget.
 
+Rows mode         = TSV on stdout, a header line then one row per open card, per
+                    pending test-queue entry, and per non-card file in docs/work/,
+                    unranked (card file order, then queue, then non-card files):
+                    `id  source  action  intent  stage  held`.
+                    id     = card ID · `—` for a test-queue entry · the file name
+                             for a non-card file.
+                    source = card | test-queue | uncategorized.
+                    action / intent / stage = the spec's three outputs, action
+                             uncut; `—` on an uncategorized row.
+                    held   = no | blocked (an explicit `blocked by` / `depends on`
+                             / `after … lands` names an open card) | outward (an
+                             open outward entry's `Owning card:` walls it; wins
+                             over blocked).
+                    Outward entries are omitted — their wall rides the owned
+                    card's `held`. No venue column: drain reads the placed venue
+                    map itself. An empty board is the header alone, never empty
+                    stdout.
+
 Exit codes: 0 board rendered · 2 usage · 4 substrate absent.
-stdout carries the board only. stderr carries `# sources:` diagnostics plus any
+stdout carries the board (or the rows) only. stderr carries `# sources:` diagnostics plus any
 `# note:` lines (venue-map divergence · retired `Actor:` field · unparseable
 `## Pending` content · a lingering flat `docs/outward.md`).
 """
@@ -270,6 +289,7 @@ class Row:
         self.blast = "local"
         self.fanout = 0
         self.hard_blocked = False
+        self.held_by: Optional[str] = None     # outward | blocked — the rows-mode `held` reason
         self.soft_upstream_of = []             # rows this row shapes
         self.blast_paths = []
         self.recency = "0000-00-00"
@@ -611,6 +631,7 @@ def wall_owned_cards(rows):
         owned = by_id.get(r.owning_card)
         if owned is not None:
             owned.hard_blocked = True
+            owned.held_by = "outward"
 
 
 def couple(rows):
@@ -626,6 +647,7 @@ def couple(rows):
             target = by_id.get(bid)
             if target and target is not r:
                 r.hard_blocked = True
+                r.held_by = r.held_by or "blocked"
                 target.fanout += 1
     for a in rows:
         if not a.card or a.hard_blocked:
@@ -903,12 +925,28 @@ def render(mode, rows, uncat, held_count, date, wired=False):
     return "\n\n".join(out)
 
 
+def render_rows(rows, uncat):
+    """Rows mode — drain's classification input (header docstring § Rows mode)."""
+    def line(*cells):
+        return "\t".join(c.replace("\t", " ") for c in cells)
+    out = [line("id", "source", "action", "intent", "stage", "held")]
+    for r in rows:
+        if r.outward:
+            continue
+        out.append(line(id_cell(r), "card" if r.card else "test-queue",
+                        r.action, r.intent, r.stage, r.held_by or "no"))
+    for name, reason in uncat:
+        if reason == UNCAT_REASON:
+            out.append(line(name, "uncategorized", "—", "—", "—", "no"))
+    return "\n".join(out)
+
+
 # ---------- main ----------
 
 def main():
     ap = argparse.ArgumentParser(add_help=False)
     ap.add_argument("root")
-    ap.add_argument("mode", choices=["needme", "full", "discuss", "cloud", "device", "harness"])
+    ap.add_argument("mode", choices=["needme", "full", "discuss", "cloud", "device", "harness", "rows"])
     ap.add_argument("--date", default=datetime.date.today().isoformat())
     try:
         args = ap.parse_args()
@@ -980,7 +1018,10 @@ def main():
         compute_impact(r)
     held = sum(1 for r in rows if r.hard_blocked)
 
-    print(render(args.mode, rows, uncat, held, args.date, wired))
+    if args.mode == "rows":
+        print(render_rows(rows, uncat))
+    else:
+        print(render(args.mode, rows, uncat, held, args.date, wired))
     print(f"# sources: docs/work ({len(cards)} cards); test-queue ({len(queue_rows)} entries); "
           f"outward ({len(outward_rows)} entries); held {held}", file=sys.stderr)
 

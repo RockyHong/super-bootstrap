@@ -1,8 +1,8 @@
 # Classify Actionable — shared spec
 
-Single source of truth for deriving, from the open work cards (plus the scale module's test queue and outward folder when present), **each open item's `{action, intent, stage}`**. Consumed by every caller that needs the classification — `todo`'s bundled `skills/todo/assets/render-board.py` (the primary board renderer, a mechanical encoding of this spec), the `todo` subagent (fallback lane — Reads it at classify time, then ranks + renders a board), and `drain` (gateway Reads it inline, then gates on `Cloud` + spawns per stage). One criterion, many callers: no caller re-derives it.
+Single source of truth for deriving, from the open work cards (plus the scale module's test queue and outward folder when present), **each open item's `{action, intent, stage}`**. Consumed by every caller that needs the classification — `todo`'s bundled `skills/todo/assets/render-board.py` (the primary board renderer, a mechanical encoding of this spec), the `todo` subagent (fallback lane — Reads it at classify time, then ranks + renders a board), and `drain` (consumes the same script's `rows` mode, Reading this spec inline only when the script fails; then gates + spawns per stage). One criterion, many callers: no caller re-derives it.
 
-> **Callers self-read, never paraphrase — and an edit here propagates to the script.** Read this file at classify time and apply it exactly — `todo`'s skill passes the resolved absolute path into the dispatch prompt for the subagent to Read; `drain`'s gateway Reads it inline. Paraphrasing forks the taxonomy — the drift this shared home exists to prevent. The script is the one consumer that *encodes* rather than reads: editing a criterion here pulls `render-board.py` into the edit's closure, checked by the golden bench (`bench/todo-board/` in the source repo).
+> **Callers self-read, never paraphrase — and an edit here propagates to the script.** Read this file at classify time and apply it exactly — `todo`'s skill passes the resolved absolute path into the dispatch prompt for the subagent to Read; `drain`'s gateway Reads it inline on its fallback lane (`skills/drain/SKILL.md` §Shape step 2). Paraphrasing forks the taxonomy — the drift this shared home exists to prevent. The script is the one consumer that *encodes* rather than reads — `todo`'s board and `drain`'s `rows` input both run off it: editing a criterion here pulls `render-board.py` into the edit's closure, checked by the golden bench (`bench/todo-board/` in the source repo).
 
 Three outputs per item:
 
@@ -132,6 +132,6 @@ If neither `docs/outward/` nor `docs/outward.md` exists, skip §c.
 This spec stops at `{action, intent, stage}`. What each caller does next is **its own** concern, not shared here:
 
 - **`todo`** — Impact/Blast tags, coupling gate, harness Deliberate/Apply grouping, within-mode ranking, scaffold render. Lives in `skills/todo/assets/render-board.py` (primary, mechanical encoding) and `agents/todo.md` (dispatch-lane fallback).
-- **`drain`** — intent lane guards (`Harness` and `Discuss` never admit), then the admission gate (next-phase venue when the scale module is wired, `Cloud` otherwise), relation-analysis (file-overlap parallelism), wave selection, worktree spawn, stage-keyed phase entry. Lives in `skills/drain/`.
+- **`drain`** — classification input per `skills/drain/SKILL.md` §Shape step 2, then intent lane guards (`Harness` and `Discuss` never admit), then the admission gate (next-phase venue when the scale module is wired, `Cloud` otherwise), relation-analysis (file-overlap parallelism), wave selection, worktree spawn, stage-keyed phase entry. Lives in `skills/drain/`.
 
 Edit the classification here; edit each caller's downstream in its own home.
