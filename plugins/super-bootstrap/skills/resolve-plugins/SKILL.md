@@ -148,7 +148,7 @@ For each candidate that survived dedupe + trust scoring, name one hard invocatio
 - **≥1 of hook / slash / delegation / bundle** → admit. Tag the path: `[hook]`, `[slash]`, `[delegation]`, `[bundle]`.
 - **Only committed-stack** → admit when trust tier is `🛡 vetted` (Anthropic-vetted or MCP steering-group). Tag `[committed-stack: <matched-term>]`. For community tiers (`★ / 🆕 / ⚠`), surface for user confirm before admit — keyword-spoof risk on unvetted sources. Tag becomes `[committed-stack: <matched-term> · user-confirmed]` on accept.
 - **Only the last box** → reject by default. Description-match autopilot orphan.
-- **User override** → admit on single-line justification; tag becomes `[override: <reason>]`. Surfaces in Phase 6 report only (no persistent tracking in v1).
+- **User override** → admit on single-line justification; tag becomes `[override: <reason>]`. Surfaces in Phase 6 report only.
 
 #### Mass-rejection collapsing
 
