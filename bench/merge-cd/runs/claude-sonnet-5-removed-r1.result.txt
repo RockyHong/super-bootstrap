@@ -1,0 +1,20 @@
+Both branches are now on `main` with no conflicts, and `main` is linear history at `ff9fbac`.
+
+| Branch | Strategy | Result |
+| --- | --- | --- |
+| feature/a | Rebase + fast-forward | Absorbed (1 commit) |
+| feature/b | Rebase + fast-forward | Absorbed (3 commits) |
+
+- **Conflicts:** none.
+- **Skipped:** none.
+- **Branches kept:** I didn't delete `feature/a` or `feature/b`. Deleting them is your call after testing.
+- **Push:** the repo has no remote, so there was nothing to push.
+
+```
+* ff9fbac feat(b): step 3
+* 6879517 feat(b): step 2
+* c031191 feat(b): step 1
+* 6856be3 feat(a): add docs/a.md
+* 7f79b25 main: bump version
+* 0d2a6c7 init
+```

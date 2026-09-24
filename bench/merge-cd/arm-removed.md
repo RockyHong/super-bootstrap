@@ -1,8 +1,3 @@
----
-name: merge
-description: 'Absorb one or more feature branches into the base branch. Recommends merge vs rebase per branch. On conflict, aborts that branch + surfaces the file list + stops. Resolution out of scope; routes to the harness-named conflict-resolution agent or the user.'
-tags: [merge, git, branch]
----
 
 # merge — Branch Absorption
 

@@ -1,0 +1,19 @@
+Both branches are now in `main` with no conflicts, and I didn't skip any.
+
+| Branch | Strategy | Result |
+|---|---|---|
+| feature/a | Rebase + fast-forward | Absorbed as `a4404fd` |
+| feature/b | Rebase + fast-forward | Absorbed as `810146e`, `929dbe1`, `c31bd29` |
+
+`main` history is now in a straight line:
+```
+* c31bd29 feat(b): step 3
+* 929dbe1 feat(b): step 2
+* 810146e feat(b): step 1
+* a4404fd feat(a): add docs/a.md
+* 7f79b25 main: bump version
+* 0d2a6c7 init
+```
+
+- **Push:** there's nowhere to push because the repo has no remote.
+- **Branches:** I kept `feature/a` and `feature/b`. You can delete them once you've tested `main`.

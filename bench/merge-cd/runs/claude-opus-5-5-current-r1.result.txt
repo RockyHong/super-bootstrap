@@ -1,0 +1,22 @@
+Both branches were rebased onto `main` and fast-forwarded in, with no conflicts.
+
+**Absorbed:**
+- `feature/a`: 1 commit (`docs/a.md`), now `b374a5f`
+- `feature/b`: 3 commits (`lib/b.txt`), now `8cb1a35`, `63a54a1`, `bdc7b73`
+
+**Conflicts / skipped:** none.
+
+```
+* bdc7b73 feat(b): step 3
+* 63a54a1 feat(b): step 2
+* 8cb1a35 feat(b): step 1
+* b374a5f feat(a): add docs/a.md
+* 7f79b25 main: bump version
+* 0d2a6c7 init
+```
+
+History is now a straight line and the working tree is clean. I kept both feature branches; deleting them after testing is up to you. The repo has no git remote, so there was nothing to push.
+
+These services need to be connected before their tools work, but this merge didn't need any of them:
+- Notion: set it up in your claude.ai connector settings.
+- The brand-voice, marketing and product-management plugin servers: set them up with `claude mcp` or `/mcp` in an interactive session.

@@ -1,0 +1,19 @@
+Both branches are now in `main`. I rebased each onto `main` and fast-forwarded, with no conflicts, and the working tree is clean.
+
+| Branch | Strategy | Result |
+|---|---|---|
+| feature/a | Rebase + fast-forward | 1 commit added (`7352257`) |
+| feature/b | Rebase + fast-forward | 3 commits added (`a5f6cc9`, `87d9d12`, `dd4a77d`) |
+
+No branches were skipped.
+
+```
+* dd4a77d feat(b): step 3
+* 87d9d12 feat(b): step 2
+* a5f6cc9 feat(b): step 1
+* 7352257 feat(a): add docs/a.md
+* 7f79b25 main: bump version
+* 0d2a6c7 init
+```
+
+Nothing was pushed because the repo has no remote. I left `feature/a` and `feature/b` in place; deleting them after testing is your call.

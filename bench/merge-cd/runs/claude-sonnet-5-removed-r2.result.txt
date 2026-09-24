@@ -1,0 +1,20 @@
+Both branches were absorbed into `main` with no conflicts.
+
+| Branch | Strategy | Result |
+|---|---|---|
+| feature/a | Rebase + fast-forward | 1 commit, now `6230ef7` |
+| feature/b | Rebase + fast-forward | 3 commits, now `bd5f713`, `a8420f8`, `096372d` |
+
+- **Conflicts:** none, and nothing was skipped.
+- **Branches kept:** I did not delete `feature/a` or `feature/b`. That's your call after testing.
+- **Push:** the repo has no remote, so there is nothing to push.
+
+Final history on `main` is linear:
+```
+* 096372d feat(b): step 3
+* a8420f8 feat(b): step 2
+* bd5f713 feat(b): step 1
+* 6230ef7 feat(a): add docs/a.md
+* 7f79b25 main: bump version
+* 0d2a6c7 init
+```

@@ -1,0 +1,20 @@
+Both branches are now in `main`, with no conflicts.
+
+| Branch | Strategy | Result |
+| --- | --- | --- |
+| feature/a | Rebase + fast-forward | 1 commit absorbed |
+| feature/b | Rebase + fast-forward | 3 commits absorbed |
+
+- **Conflicts:** none.
+- **Skipped:** nothing.
+- **Push:** the repo has no remote, so there is nothing to push.
+- **Branches:** `feature/a` and `feature/b` still exist. I didn't delete them, so that's your call after testing.
+
+```
+* ea41ea6 feat(b): step 3
+* c900c85 feat(b): step 2
+* e0a32f5 feat(b): step 1
+* 7352257 feat(a): add docs/a.md
+* 7f79b25 main: bump version
+* 0d2a6c7 init
+```

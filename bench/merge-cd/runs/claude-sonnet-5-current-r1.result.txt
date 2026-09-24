@@ -1,0 +1,7 @@
+Both branches are absorbed into `main` with no conflicts.
+
+- **feature/a:** rebased and fast-forwarded (1 commit).
+- **feature/b:** rebased and fast-forwarded (3 commits).
+- **Conflicts / skipped:** none.
+
+`main` is now linear: `init` → `bump version` → `feat(a)` → `feat(b)` steps 1–3. Both feature branches still exist, since deleting them is your call. There is no remote, so there is nothing to push.

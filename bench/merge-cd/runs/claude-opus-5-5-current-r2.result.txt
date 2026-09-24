@@ -1,0 +1,20 @@
+Both branches are now in `main`, which has a straight history.
+
+**Merged without conflicts:**
+- **feature/a**: rebased onto `main`, then `main` fast-forwarded to it. Commit `e4ac8c8`.
+- **feature/b**: rebased onto the updated `main`, then `main` fast-forwarded to it. Commits `14546e7`, `193011c`, `898e489`.
+
+**Conflicts:** none. **Skipped:** none.
+
+```
+* 898e489 feat(b): step 3
+* 193011c feat(b): step 2
+* 14546e7 feat(b): step 1
+* e4ac8c8 feat(a): add docs/a.md
+* 7f79b25 main: bump version
+* 0d2a6c7 init
+```
+
+**Push:** the repo has no remote, so nothing was pushed.
+
+Both branches still exist. Deleting them is your call once you've tested.

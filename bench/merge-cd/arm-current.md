@@ -1,8 +1,3 @@
----
-name: merge
-description: 'Absorb one or more feature branches into the base branch. Recommends merge vs rebase per branch. On conflict, aborts that branch + surfaces the file list + stops. Resolution out of scope; routes to the harness-named conflict-resolution agent or the user.'
-tags: [merge, git, branch]
----
 
 # merge — Branch Absorption
 
@@ -111,6 +106,7 @@ Probe first, ask second — the probe is a fact the gateway reads itself. `git r
 ## Rules
 
 - Run inline — no subagent dispatch.
+- Working directory is already correct; `cd` is unnecessary.
 - Push asks only where a push surface exists, and only on explicit confirmation — §8's probe decides whether the question fires; present what will push, never force, never unannounced.
 - Never resolve conflicts inline. Surface and stop. (See Conflict Doctrine above.)
 - Never force-merge.

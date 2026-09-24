@@ -1,0 +1,8 @@
+seq	tool	command
+1	Bash	git branch --show-current; git status --short; git branch -v; git log --oneline --graph --all --decorate -20; git remote
+2	Bash	for b in feature/a feature/b; do echo "== $b"; git log --oneline main..$b; echo "-- behind"; git log --oneline $b..main; git diff --stat main...$b; done
+3	Bash	git log --oneline main..feature/a; echo -- behind; git log --oneline feature/a..main; git diff --stat main...feature/a; echo ==== b; git log --oneline main..feature/b; echo -- behind; git log --oneline feature/b..main; git diff --stat main...feature/b
+4	Bash	git rebase main feature/a && git checkout main && git merge feature/a --ff-only
+5	Bash	git rebase main feature/b && git checkout main && git merge feature/b --ff-only
+6	Bash	git remote
+7	Bash	git log --oneline --graph -10

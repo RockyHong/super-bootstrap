@@ -1,0 +1,19 @@
+I merged both branches into `main` with rebase + fast-forward, and neither had conflicts.
+
+| Branch | Strategy | Result |
+|---|---|---|
+| feature/a | Rebase + fast-forward | Merged (1 commit, `docs/a.md`) |
+| feature/b | Rebase + fast-forward | Merged (3 commits, `lib/b.txt`) |
+
+`main` now has a straight-line history:
+```
+* d6557b7 feat(b): step 3
+* 525141d feat(b): step 2
+* 8779dea feat(b): step 1
+* dc72f45 feat(a): add docs/a.md
+* 7f79b25 main: bump version
+* 0d2a6c7 init
+```
+
+- **Not pushed:** the repo has no remote.
+- **Branches kept:** `feature/a` and `feature/b` still exist and now match what's on `main`. Deleting them after testing is your call.

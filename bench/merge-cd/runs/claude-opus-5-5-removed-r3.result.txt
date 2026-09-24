@@ -1,0 +1,15 @@
+Both branches are now in `main`, with no conflicts.
+
+- **feature/a**: rebased onto `main` and fast-forwarded. Its one commit is now `d746292`.
+- **feature/b**: rebased onto `main` and fast-forwarded. Its three commits are now `817370f` → `9661f11`.
+
+```
+* 9661f11 feat(b): step 3
+* a2bbb6f feat(b): step 2
+* 817370f feat(b): step 1
+* d746292 feat(a): add docs/a.md
+* 7f79b25 main: bump version
+* 0d2a6c7 init
+```
+
+The history is linear and the working tree is clean. Both feature branches still exist; delete them yourself once you've tested. The repo has no remote configured, so nothing was pushed.

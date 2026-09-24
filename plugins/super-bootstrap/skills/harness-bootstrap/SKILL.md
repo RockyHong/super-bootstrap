@@ -43,13 +43,13 @@ Check the repo root for a **workspace manifest** — the marker that one root ho
 
 On monorepo tier, enumerate packages from the workspace globs (`apps/*`, `packages/*`, etc. — read the actual globs from the manifest, don't assume the layout). Each resolved directory with its own manifest is a package; record `{ name, path, role, build command }` per package for the Phase 2b `techstack.md` § Packages table rows (§ 2b) and the CLAUDE.md monorepo block.
 
-Rule-signal detection (below) then **fans out per package** instead of scanning root-only: the frontend-component-dir signal is checked inside each package, and a fired signal seeds its rule file with a package-scoped path glob (`apps/*/src/components/**`) rather than a root glob (`src/components/**`). One path-scoped rule carries the whole boundary — no nested CLAUDE.md needed.
+Rule-signal detection (below) then fans out per package — one path-scoped rule carries the whole boundary, no nested CLAUDE.md needed.
 
 No workspace manifest → single-package repo; skip, everything stays root-scoped.
 
 ### Existing CLAUDE.md
 
-If it exists, read it. The pipeline may already be partially or fully present — note what's already there. **Also note legacy-skeleton blocks** (Coding Standards code-block walls, framework-specific patterns under pipeline-owned headings, large Project Structure trees) — these become migration candidates in Phase 2b. Default route for enforcement-shaped content (imperatives, "must / never / always") is `.claude/rules/<scope>.md`; only browsable reference goes to `docs/techstack.md` grown sections. See Phase 2b migration table.
+If it exists, read it. The pipeline may already be partially or fully present — note what's already there. **Also note legacy-skeleton blocks** (Coding Standards code-block walls, framework-specific patterns under pipeline-owned headings, large Project Structure trees) — these become migration candidates, routed by the Phase 2b migration table.
 
 ### Rule-signal detection
 
@@ -98,7 +98,7 @@ If user answers `dry-run`, walk Phases 1–2b without writing — render the syn
 
 Rot signals catch renamed literals; they miss template drift that shifted structure without renaming a token. The runway receipt closes that gap.
 
-Read `.claude/super-bootstrap-runway.json` in the target repo (the runway coverage receipt — shape `{ "version": "x.y.z", "covered": [...], "declined": [...], "placed": { ... } }`; `covered` lists the sections the last sync read-and-compared, `declined` a subset of `covered` the user declined to update or re-seed at that version — divergence accepted, not pending — each entry `{ "section": "<row identity>", "reason": "<one line>" }`, a bare-string entry the section alone, reason-less; `placed` maps each file asset's destination path to the sha256 of the file as this pipeline placed it, so a later sync can tell a lagging copy from a consumer-edited one). Compare its `version` to the running plugin's own version — read `version` from the plugin's `.claude-plugin/plugin.json`, located at the plugin root two directory levels above this skill's base directory (`skills/harness-bootstrap/` → `skills/` → plugin root). That is the version currently installing/syncing.
+Read `.claude/super-bootstrap-runway.json` in the target repo (the runway coverage receipt — Phase 1 reads `version` and `covered`, the list of row identities the last sync read-and-compared; `declined` / `placed` semantics: § 2c Receipt write). Compare its `version` to the running plugin's own version — read `version` from the plugin's `.claude-plugin/plugin.json`, located at the plugin root two directory levels above this skill's base directory (`skills/harness-bootstrap/` → `skills/` → plugin root). That is the version currently installing/syncing.
 
 - **Marker stale (older) or absent** → set `version_stale`, consumed by Phase 2b to enforce the full drift check (see § 2b). Surface ONCE up front:
   - Stale: `runway stamped v{old} < plugin v{new} — full drift re-check enforced.`
@@ -172,7 +172,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` core plugin pin (`enabledPlugins`, `extraKnownMarketplaces`) — drift-checked for presence alone (§ 2a)
 - `.claude/bootstrap.md` (seeded plan — carries user checkbox state, so § 2b's special case governs re-run; the next session consumes it, its own Task 3 deletes it)
-- `.claude/super-bootstrap-runway.json` (runway coverage receipt `{ version, covered, declined, placed }` — presence + content checked, not diffed section-by-section; read at Phase 1, written at 2c — `covered` / `declined` from the sync-report's section, whole-file and rot rows (§ 2c owns the transcode; `declined` entries `{ section, reason }`), `placed` from the file assets the ensure-infra procedures copied or verified current; durable marker, no cleaner — persists for the life of the harness)
+- `.claude/super-bootstrap-runway.json` (runway coverage receipt — not diffed section-by-section; read at Phase 1 § Version-staleness signal, written at § 2c Receipt write; durable, no cleaner)
 - Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `docs/outward/README.md` + `docs/outward/TEMPLATE.md` (whole files, the way `docs/work/README.md` / `docs/work/TEMPLATE.md` are), `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md` — whole body, prose included), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`), the CLAUDE.md § Rules `venue-map.md` bullet block (drift-checked against `assets/claude-md-skeleton.md` § Rules)
 
 **Project-owned** (never touched):
@@ -189,7 +189,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 
 ### 2a: Folders & core plugin pin
 
-Folders + the core plugin pin don't drift — only two states: missing or present, because the skeleton's `/super-bootstrap:*` doors and the committed `commit-channel.sh` dangle without that pin.
+Folders + the core plugin pin don't drift — only two states: missing or present.
 
 **Migrate before creating — `docs/superpowers/` → `docs/work/`.** Repos bootstrapped
 before the rename hold their temporal specs and plans under `docs/superpowers/`. Creating
@@ -204,7 +204,7 @@ destination — report those paths rather than resolving them.
 ```
 docs/
   decisions.md   ← closed forks / rejected directions (history dimension — always scaffolded, starts empty)
-  specs/         ← feature specs, one .md per feature (empty + .gitkeep; files seeded by Task 1 of bootstrap-plan)
+  specs/         ← feature specs, one .md per feature, no index file (empty + .gitkeep; files seeded by Task 1 of bootstrap-plan)
   work/
     README.md    ← work-unit workspace header: contract, categories, ID high-water line
     TEMPLATE.md  ← copy-to-create card template
@@ -220,27 +220,17 @@ For each: create if missing, skip if present. Add `.gitkeep` in empty folders. I
 CODING_STANDARDS.md ← repo binding conventions (headings-only scaffold; sections hand-recorded as conventions settle)
 ```
 
-There is no `docs/specs/` index file — the folder + filename convention IS the catalog. Spec files are seeded by Task 1 of the bootstrap plan, each opening with `# {Feature Name}` and a one-paragraph intro.
-
-`docs/specs/` is **always** scaffolded (empty folder + `.gitkeep`), matching `overview.md` / `techstack.md` / `decisions.md`. Spec **files** are seeded only when source-code features exist to document (Task 1 of the bootstrap plan) — the empty folder carries no speculative content.
-
-`docs/decisions.md` is **always** scaffolded — copy `assets/decisions-skeleton.md` to `docs/decisions.md` if missing (no substitutions). Starts empty (header + `## Closed Forks` table). Its scope header is pipeline-owned (drift-checked); the table rows are project-owned (never touched).
+`docs/decisions.md` is **always** scaffolded — copy `assets/decisions-skeleton.md` to `docs/decisions.md` if missing (no substitutions). Starts empty (header + `## Closed Forks` table).
 
 Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no substitutions). Copy `assets/work-template-skeleton.md` to `docs/work/TEMPLATE.md` if missing (no substitutions).
 
-`AGENTS.md` is **always** scaffolded — copy `assets/agents-md-skeleton.md` to the repo root if missing (no substitutions). No code-presence gate: the build contract it carries binds a docs-only repo the same way. Its whole shipped body is pipeline-owned (drift-checked); anything the consumer appends below it is project-owned (never touched).
+`AGENTS.md` is **always** scaffolded — copy `assets/agents-md-skeleton.md` to the repo root if missing (no substitutions). No code-presence gate: the build contract it carries binds a docs-only repo the same way.
 
-`CODING_STANDARDS.md` is scaffolded **when code is present** (Phase 1 § Code presence) — copy `assets/coding-standards-skeleton.md` to the repo root if missing (no substitutions); a docs-only repo takes no file, and a later re-run that finds code raises it as `⊕ new`. Starts headings-only; its preamble states the fill contract and the three-way routing (binding + ambient here, binding + path-scoped → `.claude/rules/<scope>.md`, descriptive → `docs/techstack.md` § Coding Patterns). Preamble + headings pipeline-owned (drift-checked); section content project-owned, hand-recorded when a review or commit settles a convention — the file sits outside the doc-sync surface.
+`CODING_STANDARDS.md` is scaffolded **when code is present** (Phase 1 § Code presence) — copy `assets/coding-standards-skeleton.md` to the repo root if missing (no substitutions); a docs-only repo takes no file, and a later re-run that finds code raises it as `⊕ new`. Starts headings-only; its preamble states the fill contract and the three-way routing (binding + ambient here, binding + path-scoped → `.claude/rules/<scope>.md`, descriptive → `docs/techstack.md` § Coding Patterns).
 
 `.claude/rules/` machinery is **always** scaffolded (zero-cost when empty). `index.md` is seeded from `assets/rules-index-skeleton.md`. Individual rule bodies fill in Phase 2b based on Phase 1 signal detection.
 
-**Core plugin pin (pre-resolve).** The harness CLAUDE.md skeleton names one plugin by its own wiring:
-
-- `super-bootstrap` — the skeleton routes every door through `/super-bootstrap:*`, and the committed `commit-channel.sh` deny text routes workers to `/super-bootstrap:commit`. All of it must resolve from the project pin alone on any boundary where the authoring device's user-scope settings don't apply (fresh clone, second machine, cloud session) — the committed hook fires there regardless of plugin state.
-
-It is a **core dep, not an adaptive pick** — pinned here at 2a so tier-2 curation (`/super-bootstrap:resolve-plugins`, run later by `/super-bootstrap:setup`) layers adaptive picks on a guaranteed base. Dangling-rule risk: if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently. Pin first.
-
-Keep every pipeline-owned surface free of foreign-plugin command names — the skeleton's route rows name disciplines, not skill entries. A process harness a repo adds on its own then stays a settings edit: no doc change, no dangling-rule risk.
+**Core plugin pin (pre-resolve).** A core dep, not an adaptive pick: the skeleton routes every door through `/super-bootstrap:*` and the committed `commit-channel.sh` deny text routes workers to `/super-bootstrap:commit`, so both dangle unless the project pin alone resolves `super-bootstrap` wherever user-scope settings don't apply (fresh clone, second machine, cloud session). The pin lives outside the official marketplace, so its `extraKnownMarketplaces` entry is required. Pin first — tier-2 curation layers adaptive picks on top later.
 
 Ensure `.claude/settings.json` contains:
 
@@ -262,22 +252,19 @@ Ensure `.claude/settings.json` contains:
 - Core-pin key absent → merge it in.
 - Other `.claude/settings.json` content → never touched.
 
-The core pin lives outside the official marketplace, so its `extraKnownMarketplaces` entry is required for cloud / fresh-machine resolution. Tier-2 curation (`/super-bootstrap:resolve-plugins`) reads it as **locked** — never proposes drop, never re-prompts the user. Adaptive picks (stack-matched skills / MCPs / hooks) layer on top when curation runs.
-
 ### 2a-hooks: Harness hooks (default-on)
 
 Three hook assets ship as frozen files and install **unconditionally** — no
-opt-in confirm, unlike drain's worktree infra (§2a-drain below); all are
-safe-by-default (rationale + full procedure:
+opt-in confirm (rationale + full procedure:
 [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md)).
 
 | # | Asset | Fires on | Effect |
 | - | - | - | - |
-| 1 | `commit-channel` (PreToolUse) | `Bash(git *)` and `PowerShell(git *)` — one hook element per command tool, each a bare-command pre-filter; the script narrows to real `git commit` | Deny raw `git commit` from worker subagents — deny text routes the worker back to `/super-bootstrap:commit`; main session and separate-process workers pass. The commit door runs mechanics and the doc-sync judgment gateway-inline, runs two bundled whole-surface checks every commit — link integrity, and restated agent model pins against their frontmatter — and dispatches a cold `doc-sync-scan` only past the scope ceiling — no separate gate hook |
+| 1 | `commit-channel` (PreToolUse) | `Bash(git *)` and `PowerShell(git *)` — one hook element per command tool, each a bare-command pre-filter; the script narrows to real `git commit` | Deny raw `git commit` from worker subagents — deny text routes the worker back to `/super-bootstrap:commit`; main session and separate-process workers pass |
 | 2 | `consult-check-sessionstart` (SessionStart) | `startup\|resume\|clear\|compact` | Derives the compact `docs/**` catalog into the gitignored `.claude/.consult-catalog` cache, once per session boundary |
 | 3 | `consult-check-check` (UserPromptSubmit) | every prompt | Injects the catalog + a forced relevance evaluation (judge which docs bear on the prompt, Read each that does; no stated verdict) — the read boundary's activation layer: the right project docs get read at the prompt moment (pure cache read; installs as a pair with #2) |
 
-Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) — copies the scripts to `.claude/hooks/` and merges each settings snippet into `.claude/settings.json` (`hooks.PreToolUse[]`: commit-channel; `hooks.SessionStart[]` + `hooks.UserPromptSubmit[]`: the consult-check pair). Content-aware (copy-on-drift — a drifted script the consumer never touched is re-placed from the asset silently, so an upstream fix reaches existing repos, while a consumer-edited one stops for an overwrite/keep pick; settings snippets replace in place; mechanism in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) § Idempotency), silent when already current; stage the placed files with the Phase 2c commit. Same asset-copy + guarded-merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3) — one pattern, reused here rather than re-derived.
+Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md); stage the placed files with the Phase 2c commit.
 
 ### 2a-drain: Drain infra (opt-in, earn-gated)
 
@@ -286,7 +273,7 @@ Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-in
 > Install `/super-bootstrap:drain` worktree infra? — worktree settings template + `PreToolUse(Read)` guard + `.claude/worktrees/` gitignore. Most dev repos: yes. Skill / plugin / docs repos: skip (drain self-installs on first use anyway).
 > Install now? (y / skip)
 
-On `y`: execute the procedure in [`../drain/assets/ensure-infra.md`](../drain/assets/ensure-infra.md) — the same idempotent three-piece install drain self-runs on first invocation. One install home; harness-bootstrap delegates to it, never carries its own copy. Stage the placed files with the Phase 2c commit.
+On `y`: execute the procedure in [`../drain/assets/ensure-infra.md`](../drain/assets/ensure-infra.md) — the same idempotent three-piece install drain self-runs on first invocation. Stage the placed files with the Phase 2c commit.
 
 On `skip`: nothing placed; drain's own §Pre-flight step 0 installs on first `/super-bootstrap:drain`.
 
@@ -299,7 +286,7 @@ Signals — any one arms the offer:
 - Drain worktree infra installed (`.claude/worktrees/` gitignore present — the module's venue map feeds drain's dispatch-vs-wall filter).
 - User asked for it.
 
-None hold → skip silently, place nothing. A later re-run re-offers once a signal fires.
+None hold → skip silently, place nothing.
 
 **Split before placing — `docs/outward.md` → `docs/outward/`.** Repos that took the scale module before the folder shape hold every outward item as an `### OUT-###` chunk in one flat file. Placing `docs/outward/` beside it strands those entries: `/super-bootstrap:log`'s dedup and the mover gate read the folder, and the board only carries the flat file on a legacy branch that draws a `# note:` every render. When `docs/outward.md` exists, run the split first, then continue with this step's placements:
 
@@ -307,7 +294,7 @@ None hold → skip silently, place nothing. A later re-run re-offers once a sign
 python3 ${CLAUDE_PLUGIN_ROOT}/skills/harness-bootstrap/assets/scale/split-outward.py <repo root> ${CLAUDE_PLUGIN_ROOT}/skills/harness-bootstrap/assets/scale/outward-readme-skeleton.md
 ```
 
-Deterministic, no per-item judgment: it writes `docs/outward/README.md` from the skeleton with the flat file's high-water ID carried onto the high-water line, one `docs/outward/OUT-###.md` per `### OUT-###` chunk — the H1 plus the chunk's whole body, field lines and any blocks an author had already appended, verbatim except that every relative link target gains one `../` (the entry now sits a directory deeper; http(s), mailto:, #anchor and absolute / targets stay as written) — and deletes the flat file last. It refuses (exit 2, nothing written) when any target file — `docs/outward/README.md` or an `OUT-###.md` it would create — already exists: the two shapes then coexist, so stop and surface the flat file's entry list beside the folder's for the user to reconcile; never treat exit 2 as a converted repo. A repo with no `docs/outward.md` is already on the folder shape and the placements below resolve `✓ current`. The split moves a durable artifact, so it earns § Registration rule rows the same way a planting does — every consumer surface naming the flat path re-points to `docs/outward/README.md`, `CLAUDE.md` § Planning's bracket line included (pipeline-owned; § 2b's drift check carries that one).
+Deterministic, no per-item judgment (output shape: the script's docstring). It refuses (exit 2, nothing written) when any target file — `docs/outward/README.md` or an `OUT-###.md` it would create — already exists: the two shapes then coexist, so stop and surface the flat file's entry list beside the folder's for the user to reconcile; never treat exit 2 as a converted repo. A repo with no `docs/outward.md` is already on the folder shape and the placements below resolve `✓ current`. The split moves a durable artifact, so it earns § Registration rule rows the same way a planting does — every consumer surface naming the flat path re-points to `docs/outward/README.md`, `CLAUDE.md` § Planning's bracket line included (pipeline-owned; § 2b's drift check carries that one).
 
 When armed, ask once:
 
@@ -334,18 +321,16 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 |---|---|---|
 | `assets/claude-md-skeleton.md` | `CLAUDE.md` (project root) | Includes Rules summary section — fill bullets from seeded rule files |
 | `assets/techstack-skeleton.md` | `docs/techstack.md` | Grown sections absorb migrated CLAUDE.md state-dimension content (Architecture Rules: still-binding decisions; Coding Patterns: examples) |
-| `assets/overview-skeleton.md` | `docs/overview.md` | `<!-- harness-meta -->` block at top: seed `external-tools:` as a YAML list defaulting to `[github]`. Read by `/super-bootstrap:resolve-plugins` (tier-2 curation) as the external-tools source. Update manually or via the entry skill when the tool list changes. Treat as pipeline-owned for drift checks. |
-| `assets/decisions-skeleton.md` | `docs/decisions.md` | Always — scope header pipeline-owned (drift-checked), `## Closed Forks` table rows project-owned |
+| `assets/overview-skeleton.md` | `docs/overview.md` | `<!-- harness-meta -->` block at top: seed `external-tools:` as a YAML list defaulting to `[github]`. Read by `/super-bootstrap:resolve-plugins` (tier-2 curation) as the external-tools source. |
+| `assets/decisions-skeleton.md` | `docs/decisions.md` | Always |
 | `assets/work-readme-skeleton.md` | `docs/work/README.md` | Always — categories, thread contract, ID high-water line |
 | `assets/work-template-skeleton.md` | `docs/work/TEMPLATE.md` | Always — copy-to-create card template |
-| `assets/coding-standards-skeleton.md` | `CODING_STANDARDS.md` (project root) | Code present only (Phase 1 § Code presence) — preamble + headings pipeline-owned (drift-checked), section content consumer-authored by hand (outside the doc-sync surface) |
-| `assets/agents-md-skeleton.md` | `AGENTS.md` (project root) | Always — foreign-executor contract; shipped body pipeline-owned (drift-checked), consumer additions below it project-owned |
+| `assets/coding-standards-skeleton.md` | `CODING_STANDARDS.md` (project root) | Code present only (Phase 1 § Code presence) |
+| `assets/agents-md-skeleton.md` | `AGENTS.md` (project root) | Always — foreign-executor contract |
 | `assets/bootstrap-plan.md` | `.claude/bootstrap.md` | |
 | `assets/rules-index-skeleton.md` | `.claude/rules/index.md` | Always — machinery |
 | `assets/rules-frontend-skeleton.md` | `.claude/rules/<framework>.md` | Only if frontend signal fired in Phase 1 |
 | `assets/rules-mv3-skeleton.md` | `.claude/rules/mv3.md` | Only if MV3 signal fired in Phase 1 |
-
-On greenfield (no manifest, no source files), `overview.md` / `techstack.md` write as unfilled skeletons — manifest-derived facts fill only when code is present. The empty skeleton is intentional: it is the unsolved-product state the entry `/super-bootstrap:setup` detects to seed GAP cards.
 
 **Per-doc handling:**
 
@@ -376,9 +361,9 @@ Migration patterns (illustrative — judge by content shape, not heading exact-m
 | `## Project Structure` directory tree | drop | `ls` / `tree` covers it; not load-bearing for any decision |
 | Cross-cutting items inside a path-scoped list (storage-key constants, type-centralization across UI ↔ background, message-contract types) | keep in CLAUDE.md (no clean glob — every layer touches them) | Genuinely ambient |
 
-**Imperatives route by glob.** A "Coding Standards" block named like reference but written as imperatives (must / never / always) is enforcement: a clean file glob → `.claude/rules/<scope>.md` (default there when the glob is arguable — silent-miss in a cold file costs more than slight rule over-attach); no clean glob, every layer touches it → `CODING_STANDARDS.md` § matching heading, carried ambient by CLAUDE.md § Coding Principles.
+A block named like reference but written as imperatives is enforcement — route it by the table's two imperative rows; an arguable glob defaults to the rule file (§ Principles, Default-to-rules).
 
-Surface the migration plan as a single proposal. Format below pins shape — one row per legacy block, judged via the migration table above. Destinations: `.claude/rules/<scope>.md` | `CODING_STANDARDS.md` § <heading> | `docs/decisions.md` § Closed Forks | `docs/techstack.md` § Architecture Rules | `docs/techstack.md` § Coding Patterns | keep in CLAUDE.md | drop.
+Surface the migration plan as a single proposal. Format below pins shape — one row per legacy block, destination from the migration table above.
 
 ```
 {path}: legacy content detected — propose migrations:
@@ -404,8 +389,6 @@ Per-migration handling:
 - **User approves** → write content into destination with proper format conversion (rule files get `paths:` frontmatter; techstack grown sections get conventional headings; `docs/decisions.md` gets one `Domain | Rejected direction | Because | Ref` row per closed fork — same conversion as § Rejected Alternatives retirement below). Remove from CLAUDE.md. Add summary bullet to CLAUDE.md § Rules for any rule-file destination.
 - **User rejects** → leave content in CLAUDE.md, mark section project-owned for future runs (no further drift attempts on that section).
 - **User selects per-section** → walk one at a time.
-
-**This migration runs once per legacy section.** After successful migration, the section is gone from CLAUDE.md and lives in its right home; future re-runs see clean structure and skip migration logic.
 
 **Never destructive without confirmation.** Show source → dest mapping, get explicit approval, only then move content.
 
@@ -476,13 +459,13 @@ rot scan: no rot scan — {N} literals read, {M} files swept
 
 **One row, one answer, one identity.** The row's identity is `{file} § rot:{old}` — the literal as a bare token, no backticks — and the row takes a single answer covering all its lines, so that identity can never carry two outcomes at once. Grouping is safe — § Scan guidance already resolves the referent per line before a row exists. A second `old` form in the same file is its own row with its own identity: that section's "surface each independently" is about forms, not lines.
 
-The line list is display only. The identity omits it because line numbers shift between runs, so a line-bearing key could never match across them; the `previously declined:` line then renders on the same rule Block 2 states, read against this row's identity in place of a section. The line is advisory: the row still takes its own read and its own answer.
+The line list is display only — the identity omits it (§ 2c `covered`); the `previously declined:` line then renders on the same rule Block 2 states, read against this row's identity in place of a section. The line is advisory: the row still takes its own read and its own answer.
 
-Acceptance takes legacy migration's three-way shape — `y / n — {reason} / per-row` — and Block 2's reason-capture rule, which legacy migration has none of — same mechanic, read against this row. A rot row carries a resolution in the report the way every other row class does — `migrated`, or `declined ({reason})` carrying that reason — so § 2c's gate halts on an unresolved rot row and § 2c's receipt write derives it into `covered`, a declined one into `declined`. Keep the two reasons apart: the row's `Reason:` is the rename-map entry's reason for the *entry*; the `declined ({reason})` reason is this consumer's reason for leaving *this* literal alone in *this* file.
+Acceptance takes legacy migration's three-way shape — `y / n — {reason} / per-row` — and Block 2's reason-capture rule, which legacy migration has none of — same mechanic, read against this row. A rot row resolves `migrated` or `declined ({reason})` — § 2c gates and records it like every other row. Keep the two reasons apart: the row's `Reason:` is the rename-map entry's reason for the *entry*; the `declined ({reason})` reason is this consumer's reason for leaving *this* literal alone in *this* file.
 
-The rot scan runs even when every per-section diff is `✓ current` — a stale slash command literal inside a current-shaped doc is invisible to per-section diff (template hasn't drifted; only the literal inside it has). Together, per-section diff + rot scan cover both axes of drift: section shape AND inline literals.
+The rot scan runs even when every per-section diff is `✓ current` — a stale slash command literal inside a current-shaped doc is invisible to per-section diff (template hasn't drifted; only the literal inside it has).
 
-**README ID re-plant (re-run, if `docs/work/README.md` predates the ID high-water line).** A README from an older substrate version may be missing the ID high-water-mark line. harness-bootstrap is the sole write owner for retroactive ID assignment — `/super-bootstrap:todo` flags it read-only, `/super-bootstrap:log` defers here. Detect: `docs/work/README.md` exists and lacks the `**ID high-water mark:**` line. When detected, surface:
+**README ID re-plant (re-run, if `docs/work/README.md` predates the ID high-water line).** Detect: `docs/work/README.md` exists and lacks the `**ID high-water mark:**` line. When detected, surface:
 
 ```
 docs/work/README.md predates the ID high-water line — missing high-water mark.
@@ -502,13 +485,13 @@ Propose: move its entries to docs/decisions.md § Closed Forks (domain: tech), r
 Migrate? (y / n / show entries)
 ```
 
-On `y`: append each entry as a `tech`-domain row in `docs/decisions.md` (preserve the claim verbatim, add a commit-pointer Ref where one is obvious), then delete the section from `techstack.md`. On `n`: leave it, mark project-owned (no further drift attempts). Never destructive without confirmation.
+On `y`: append each entry as a `tech`-domain row in `docs/decisions.md` (preserve the claim verbatim, add a commit-pointer Ref where one is obvious), then delete the section from `techstack.md`. On `n`: leave it, mark project-owned (no further drift attempts).
 
 **Special case — `.claude/bootstrap.md`** carries user state (checkbox progress from prior session). A legacy `docs/work/bootstrap.md` from a pre-relocation run moves home first — `git mv docs/work/bootstrap.md .claude/bootstrap.md`, checkbox state intact — and the prompt below then runs against the moved file. If `.claude/bootstrap.md` already exists beside the legacy file, keep the `.claude/` copy and report the stray legacy path rather than resolving it. Don't auto-merge. Prompt: **Keep existing** (default) / **Reset from template** / **Merge** (rare, task-by-task).
 
 **Special case — `bootstrap.md` missing on mature repo.** When the file is **missing** AND the repo has ≥5 commits past the most recent bootstrap-shaped commit, don't silently re-template — the file was almost certainly Task-3-cleanup-deleted by a prior session, and re-templating resurfaces completed work as fresh tasks. Surface an advisory instead:
 
-**Bootstrap-shaped commit — match every spelling.** The emitted strings are §2c's; repos bootstrapped before the rename carry `chore: scaffold superpowers pipeline` / `chore: sync superpowers pipeline`, and `chore: complete pipeline bootstrap` counts too. Detection reads history, so the pre-rename spellings stay matchable permanently.
+**Bootstrap-shaped commit — match every spelling.** The emitted strings are §2c's; repos bootstrapped before the rename carry `chore: scaffold superpowers pipeline` / `chore: sync superpowers pipeline`, and `chore: complete pipeline bootstrap` counts too.
 
 ```
 .claude/bootstrap.md is missing.
@@ -542,27 +525,17 @@ Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write fro
 
 The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed cards` / `Task 3: Cleanup`. Adapt at write time:
 
-- No source-code features yet (greenfield / fresh scaffold, Module Index empty) → drop Task 1 — specs document built features; none exist to seed
-- No source code yet (the same greenfield premise) → drop Task 2 too — nothing to scan or test-review, and the entry's greenfield branch ([`setup/SKILL.md`](../setup/SKILL.md) § Greenfield branch) owns the GAP-card seeding
-- Re-run with `docs/specs/` already populated → drop Task 1
-- Re-run with card files already present in `docs/work/` → drop Task 2
+- Drop tasks per each task's stated precondition and the re-run note in `assets/bootstrap-plan.md`
 - Add tasks for any project-specific needs surfaced during Phase 1 detection
-- Task 3 (Cleanup) always retained — includes deleting `.claude/bootstrap.md` and `.claude/bootstrap-sync-report.md` if a prior session left it
-- Task numbers are identities — drop a task, never renumber the rest (Task 3 stays `Task 3`)
-
-If both Task 1 and Task 2 drop, the plan becomes Task 3 (cleanup) only — that's fine, signals bootstrap is essentially complete.
-
-Tech curation (skill / MCP / hook picks) is gated tier-2 — orchestrated by `/super-bootstrap:setup` after `overview.md` / `techstack.md` are substantive, not during this runway install.
+- Task 3 (Cleanup) always retained
 
 ### 2b-adopt: Superseded-fork adoption (migration, silent-skip)
 
-Migration machinery for repos that **forked the harness before this plugin existed** — they carry their own copies of skills/agents the plugin now ships as root artifacts (a local `commit` / `merge` / `log` / `todo` / `drain` skill + agent that the installed plugin supersedes). On re-run, offer to delete the superseded forks so the single root copy takes over. Repos with no such collision see nothing — silent skip, like § 2a-scale.
+Migration machinery for repos that **forked the harness before this plugin existed** — they carry their own copies of skills/agents the plugin now ships as root artifacts (a local `commit` / `merge` / `log` / `todo` / `drain` skill + agent that the installed plugin supersedes). On re-run, offer to delete the superseded forks so the single root copy takes over.
 
-**Superseded-artifact map — derived at runtime, never hardcoded.** Enumerate the plugin's own shipped skills and agents from the install: the plugin's `skills/<name>/` directory names + `agents/<name>.md` basenames, read at the plugin root two directory levels above this skill's base dir (same anchor as the Phase 1 receipt read). That listing IS the map — it tracks the plugin as its skill/agent set grows, so no static list drifts.
+**Superseded-artifact map — derived at runtime, never hardcoded.** Enumerate the plugin's own shipped skills and agents from the install: the plugin's `skills/<name>/` directory names + `agents/<name>.md` basenames, read at the plugin root two directory levels above this skill's base dir (same anchor as the Phase 1 receipt read). That listing IS the map.
 
-**Collision detection.** In the consumer repo, scan `.claude/skills/<name>/` directories and `.claude/agents/<name>.md` files. A consumer artifact whose **name** matches a shipped skill/agent name is a superseded-fork candidate — the installed root copy supersedes it. Name-non-colliding consumer skills/agents are **project delta** — never touched, never listed, never surfaced.
-
-None collide → place nothing, surface nothing.
+**Collision detection.** In the consumer repo, scan `.claude/skills/<name>/` directories and `.claude/agents/<name>.md` files. A consumer artifact whose **name** matches a shipped skill/agent name is a superseded-fork candidate — the installed root copy supersedes it. Name-non-colliding consumer skills/agents are **project delta** — never touched, never listed, never surfaced. None collide → silent skip: place nothing, surface nothing.
 
 When candidates exist, surface the full list with a per-deletion confirm — each row maps the consumer path to the root artifact that supersedes it:
 
@@ -619,9 +592,9 @@ Per-candidate handling:
 
 **Receipt write.** Once the sync completes, write `.claude/super-bootstrap-runway.json` = `{ "version": "{current plugin version}", "covered": [...], "declined": [...], "placed": { ... } }` — fresh install writes it new, re-run overwrites whole. Take `version` from the plugin version Phase 1 already read for its staleness compare — § Version-staleness signal names the file and how to locate it. This runs even when every row is `✓ current` — the receipt records "synced at this version, these sections compared," independent of whether content changed.
 
-**`covered`** is an array of bare row-identity strings — one string per sync-report row across all three row classes the gate above just cross-checked: its per-section rows, its whole-file artifact rows, and its rot rows. Each identity is *transcoded* from its report row rather than copied verbatim: the report renders a section row `{file}: {Section}` and the identity is `{file} § {Section}`; a whole-file artifact is its repo-relative path alone; a rot row is `{file} § rot:{old}` — keyed by the stale literal, never the line, since line numbers shift between runs. A `registration:` row stays report-only: `covered`'s two readers are Phase 1's set-difference over pipeline-owned sections and its `facts_stale` membership test, a registration identity answers neither. The receipt carries no registration field at all — `placed` is a different set, scoped to the 2a-hooks / 2a-drain assets § Registration rule exempts — so the gate re-derives that coverage from § Registration rule every run rather than reading it back. The § 2c gate's coverage set is deliberately the wider one — it reaches every artifact the § Registration rule covers, `covered` reaches the three row classes above.
+**`covered`** is an array of bare row-identity strings — one string per sync-report row across all three row classes the gate above just cross-checked: its per-section rows, its whole-file artifact rows, and its rot rows. Each identity is *transcoded* from its report row rather than copied verbatim: the report renders a section row `{file}: {Section}` and the identity is `{file} § {Section}`; a whole-file artifact is its repo-relative path alone; a rot row is `{file} § rot:{old}` — keyed by the stale literal, never the line, since line numbers shift between runs. `registration:` rows stay report-only.
 
-**`declined`** is the rows resolved `declined` — a drift kept or an insert declined at Block 2, a re-seed skipped at the missing-on-mature advisory, a rot row left alone at the § 2b rot scan — each written `{ "section": "<row identity>", "reason": "<the row's declined reason>" }`, carrying the row's own `covered` identity string and the parenthetical of `declined ({reason})` as the reason. For those three the report is the receipt's sole source, and every declined row reaching `declined` through `covered` keeps `declined` a subset of it.
+**`declined`** is the rows resolved `declined` — a drift kept or an insert declined at Block 2, a re-seed skipped at the missing-on-mature advisory, a rot row left alone at the § 2b rot scan — each written `{ "section": "<row identity>", "reason": "<the row's declined reason>" }`, carrying the row's own `covered` identity string and the parenthetical of `declined ({reason})` as the reason — so `declined` stays a subset of `covered`, and marks divergence accepted, not pending.
 
 **`placed`** is the ensure-infra procedures' own record — `{ "<destination path>": "<sha256 of the file as placed>" }` — which 2a-hooks / 2a-drain write into the receipt file directly as each file resolves current — copied, or already sha-equal (mechanisms: [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) § Idempotency · [`../drain/assets/ensure-infra.md`](../drain/assets/ensure-infra.md) § Idempotency). Read the receipt back from disk here, after those steps ran, and carry its `placed` map forward whole — never from the Phase 1 snapshot, which predates this run's copies.
 
@@ -651,7 +624,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - Consumer surfaces edited to register a placed or deleted artifact (§ Registration rule — skip when every registration row resolved `none`)
 - Any other adaptive files / folders created
 
-Commit message: `chore: scaffold harness pipeline` on fresh repos, `chore: sync harness pipeline` when only drift fixes shipped, `refactor: migrate CLAUDE.md to rules layer + sync pipeline` when re-run performed legacy migration. These strings double as the mature-repo detector above — keep them in step with its match list.
+Commit message: `chore: scaffold harness pipeline` on fresh repos, `chore: sync harness pipeline` when only drift fixes shipped, `refactor: migrate CLAUDE.md to rules layer + sync pipeline` when re-run performed legacy migration. These strings double as the mature-repo detector above.
 
 **Clean the run artifact.** `bootstrap-sync-report.md` is a transient diagnostic — never staged. After the commit lands (or after reporting no-changes) and the Phase 3 handoff block has rendered, delete it: its consumer is this phase, so this phase is its cleaner. (Task 3 cleanup removes it too, as a safety net if a session broke between 2b and here.)
 
