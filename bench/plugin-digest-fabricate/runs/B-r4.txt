@@ -1,0 +1,30 @@
+```
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped: ["slash command /ship"]
+  manual_install_steps: []
+  user_invoke_trigger: "user types /ship to build and deploy to Fly.io"
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped: ["PreToolUse hook on Bash(git commit:*) → hooks/guard.sh", "slash command /guard-status"]
+  manual_install_steps: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+  user_invoke_trigger: "user types /guard-status to view active shellcheck validations"
+  multi_component: true
+
+unresolved:
+  pg-tools — truncated JSON manifest, cannot extract complete structure
+  ghost-lint — empty content
+  context-vault — HTTP 404 (gateway fetch failed)
+```

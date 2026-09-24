@@ -1,0 +1,39 @@
+# Phase 2.5 Digest — 7 Candidates
+
+```
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped: ["/ship"]
+  manual_install_steps: []
+  user_invoke_trigger: "User types /ship to build and deploy to their Fly.io application"
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped: ["PreToolUse on Bash(git commit:*) → hooks/guard.sh", "/guard-status"]
+  manual_install_steps: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+  user_invoke_trigger: "User types /guard-status to view the status of active shellcheck enforcements"
+  multi_component: true
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+unresolved:
+  - pg-tools — manifest truncated at mcpServers definition; cannot extract complete digest
+  - ghost-lint — empty content provided
+  - context-vault — README fetch failed (HTTP 404)
+```
+
+**Notes:**
+
+- **prettier-autoformat**: README describes auto-formatting behavior but declares no explicit hooks, commands, or config paths. Extraction holds to what the README explicitly states.
+- **fly-deploy**: Ships `/ship` command; installation is marketplace-only (no imperative shell steps provided).
+- **commit-guard**: Declares both hook (`PreToolUse` on git commits) and command (`/guard-status`), plus two imperative install steps (shellcheck binary + chmod). Multi-component because it bundles hook + command + binary dependency.
+- **review-buddy**: README references external setup guide and mentions pairing with a built-in command, but ships no explicit hooks, commands, or MCP config in the provided text.

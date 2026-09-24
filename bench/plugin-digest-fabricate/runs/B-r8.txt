@@ -1,0 +1,35 @@
+# Phase 2.5 Digest
+
+**prettier-autoformat:**
+- `hard_paths_shipped`: []
+- `manual_install_steps`: []
+- `user_invoke_trigger`: ""
+- `multi_component`: false
+
+**fly-deploy:**
+- `hard_paths_shipped`: []
+- `manual_install_steps`: []
+- `user_invoke_trigger`: "user types /ship when they want to deploy to Fly.io"
+- `multi_component`: false
+
+**review-buddy:**
+- `hard_paths_shipped`: []
+- `manual_install_steps`: []
+- `user_invoke_trigger`: ""
+- `multi_component`: false
+
+**commit-guard:**
+- `hard_paths_shipped`: 
+  - "hook: PreToolUse on Bash(git commit:*) → hooks/guard.sh"
+  - "command: /guard-status"
+- `manual_install_steps`:
+  - "brew install shellcheck"
+  - "chmod +x .claude/hooks/guard.sh"
+- `user_invoke_trigger`: "user types /guard-status when they want to see which checks are active"
+- `multi_component`: true
+
+## Unresolved
+
+- **pg-tools** — Incomplete/truncated JSON manifest (args array cut off mid-value)
+- **ghost-lint** — Empty inline content provided
+- **context-vault** — README fetch failed (HTTP 404); marketplace description alone is insufficient for authoritative digest per fabrication rule

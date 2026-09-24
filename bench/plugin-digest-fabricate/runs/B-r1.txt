@@ -1,0 +1,35 @@
+## Digest extraction — Phase 2.5
+
+Processing 7 candidates; 3 unresolved due to missing/failed sources.
+
+```yaml
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped: ["/ship"]
+  manual_install_steps: []
+  user_invoke_trigger: "user types /ship to deploy to Fly.io"
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped: ["PreToolUse event on Bash(git commit:*) → hooks/guard.sh", "/guard-status"]
+  manual_install_steps: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+  user_invoke_trigger: "user types /guard-status to check which guards are active"
+  multi_component: true
+```
+
+### Unresolved
+
+- **pg-tools** — manifest JSON truncated mid-argument (incomplete `mcpServers` config)
+- **ghost-lint** — no content provided
+- **context-vault** — HTTP 404 (README fetch failed by gateway)

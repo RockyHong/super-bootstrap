@@ -1,0 +1,94 @@
+resolve-plugins Phase 2.5 — digest this batch of 7 candidates. Content is inline below (already fetched by the gateway).
+
+=== candidate: prettier-autoformat ===
+# prettier-autoformat
+
+Keeps your codebase tidy: every time Claude writes or edits a file, it gets formatted with Prettier automatically. Zero config for most JS/TS projects.
+
+## Why
+
+Claude sometimes leaves inconsistent formatting behind. This plugin fixes that without you having to remember to run the formatter.
+
+## License
+
+MIT
+
+=== end prettier-autoformat ===
+
+=== candidate: fly-deploy ===
+# fly-deploy
+
+Ship to Fly.io from inside Claude Code.
+
+## Usage
+
+After installing, type `/ship` and Claude will build your image and deploy it to your Fly app.
+
+## Requirements
+
+You'll need the Fly CLI available and to be signed in to your Fly account before the first deploy. A `fly.toml` must exist at the repo root.
+
+## Installation
+
+Install it like any other plugin from the marketplace.
+
+=== end fly-deploy ===
+
+=== candidate: pg-tools ===
+{
+  "name": "pg-tools",
+  "version": "0.3.1",
+  "description": "Postgres helpers for Claude: schema browsing, query explain, migration linting.",
+  "mcpServers": {
+    "pg": {
+      "command": "npx",
+      "args": ["-y", "@pg-tools/mcp-serv
+
+=== end pg-tools ===
+
+=== candidate: ghost-lint ===
+
+=== end ghost-lint ===
+
+=== candidate: context-vault ===
+(README fetch failed: HTTP 404 — gateway marked this candidate unresolved.)
+Marketplace listing description: "context-vault — persistent memory for Claude Code sessions via a SessionStart hook and a local MCP server."
+
+=== end context-vault ===
+
+=== candidate: review-buddy ===
+# review-buddy
+
+A second pair of eyes for your PRs. Pairs nicely with the built-in `/review` command.
+
+## Setup
+
+See [the setup guide](docs/SETUP.md) — it covers the API key and the optional GitHub App.
+
+## Configuration
+
+Set `REVIEW_BUDDY_KEY` in your environment.
+
+=== end review-buddy ===
+
+=== candidate: commit-guard ===
+# commit-guard
+
+Blocks commits that fail shellcheck on staged hook scripts.
+
+## Hooks
+
+- `PreToolUse` on `Bash(git commit:*)` — runs `hooks/guard.sh`
+
+## Commands
+
+- `/guard-status` — show which checks are active
+
+## Installation
+
+```bash
+brew install shellcheck
+chmod +x .claude/hooks/guard.sh
+```
+
+=== end commit-guard ===

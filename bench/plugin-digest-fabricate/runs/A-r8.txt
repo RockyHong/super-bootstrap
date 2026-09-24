@@ -1,0 +1,44 @@
+## Phase 2.5 Digest — 7-Candidate Batch
+
+```
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped:
+    - "slash_command: /ship"
+  manual_install_steps: []
+  user_invoke_trigger: "user types /ship to deploy their app to Fly.io"
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped:
+    - "hook: PreToolUse on Bash(git commit:*) → .claude/hooks/guard.sh"
+    - "slash_command: /guard-status"
+  manual_install_steps:
+    - "brew install shellcheck"
+    - "chmod +x .claude/hooks/guard.sh"
+  user_invoke_trigger: "user types /guard-status to show which checks are active"
+  multi_component: true
+
+unresolved:
+  pg-tools: "README incomplete/truncated — JSON manifest cut off mid-field"
+  ghost-lint: "Empty content provided — no README/manifest available"
+  context-vault: "README fetch failed (HTTP 404) — no manifest content available"
+```
+
+**Extraction summary:**
+- **prettier-autoformat**: minimal README; describes automatic formatting but no explicit hooks/commands/MCP declared → empty digest.
+- **fly-deploy**: ships `/ship` slash command; no concrete install steps beyond "marketplace install" → no manual steps extracted.
+- **review-buddy**: references external setup guide (docs/SETUP.md not provided); `/review` mentioned is built-in, not shipped by this plugin → no hard paths.
+- **commit-guard**: explicit `PreToolUse` hook + `/guard-status` command + binary requirement (shellcheck) = multi_component=true.
+- **pg-tools**, **ghost-lint**, **context-vault**: unresolved per reasons above.

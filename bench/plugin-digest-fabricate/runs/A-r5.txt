@@ -1,0 +1,47 @@
+Processing batch of 7 candidates — extracting digests:
+
+---
+
+```
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped: ["/ship slash command"]
+  manual_install_steps: []
+  user_invoke_trigger: "user types /ship when ready to deploy their image to Fly.io"
+  multi_component: false
+
+pg-tools:
+  hard_paths_shipped: ["MCP server pg"]
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped: ["PreToolUse hook on Bash(git commit:*) → hooks/guard.sh", "/guard-status slash command"]
+  manual_install_steps: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+  user_invoke_trigger: "user types /guard-status to view which shellcheck guards are active"
+  multi_component: true
+
+unresolved:
+  ghost-lint — empty content (no README provided)
+  context-vault — README fetch failed (HTTP 404, gateway pre-marked unresolved)
+```
+
+**Notes:**
+
+- **prettier-autoformat**: describes auto-formatting on file writes but no explicit hook, command, or MCP declaration in README; no extraction possible without fabrication.
+- **fly-deploy**: `/ship` command stated in Usage section; no formal Installation steps (just "install from marketplace").
+- **pg-tools**: JSON config truncated mid-mcpServers, but MCP server "pg" is clearly declared.
+- **review-buddy**: only configuration requirement (env var); no shipped hooks, commands, or MCP.
+- **commit-guard**: cleanest structure — explicit `## Hooks` and `## Commands` blocks with step-wise Installation.

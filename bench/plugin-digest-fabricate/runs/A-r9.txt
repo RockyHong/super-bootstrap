@@ -1,0 +1,30 @@
+```
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped: ["command: /ship"]
+  manual_install_steps: []
+  user_invoke_trigger: "User types /ship to build and deploy their Fly app"
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped: ["hook: PreToolUse on Bash(git commit:*) → .claude/hooks/guard.sh", "command: /guard-status"]
+  manual_install_steps: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+  user_invoke_trigger: "User types /guard-status to check which shellcheck restrictions are active"
+  multi_component: true
+
+unresolved:
+  pg-tools — JSON truncated mid-field; mcpServers key visible but args incomplete
+  ghost-lint — Content empty
+  context-vault — README fetch failed (HTTP 404, gateway marked unresolved)
+```

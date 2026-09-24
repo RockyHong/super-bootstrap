@@ -1,0 +1,30 @@
+```
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped: ["Command: /ship"]
+  manual_install_steps: []
+  user_invoke_trigger: "user types /ship to deploy to Fly.io"
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped: ["Hook: PreToolUse on Bash(git commit:*) → .claude/hooks/guard.sh", "Command: /guard-status"]
+  manual_install_steps: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+  user_invoke_trigger: "user types /guard-status when they want to check which checks are active"
+  multi_component: true
+
+unresolved:
+  pg-tools — incomplete/truncated manifest JSON (cuts off mid-args value), cannot extract structure
+  ghost-lint — empty content
+  context-vault — HTTP 404 (gateway marked unresolved; marketplace description mentions SessionStart hook + MCP server but README not available for verification)
+```

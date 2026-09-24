@@ -1,0 +1,35 @@
+Looking at this batch of 7 candidates, I'll process each in order and extract the digests where possible.
+
+---
+
+**prettier-autoformat:**
+- `hard_paths_shipped`: [] (no explicit hooks, commands, frontmatter, or MCP config in content)
+- `manual_install_steps`: [] (no Installation/Setup section)
+- `user_invoke_trigger`: ""
+- `multi_component`: false
+
+**fly-deploy:**
+- `hard_paths_shipped`: ["/ship"]
+- `manual_install_steps`: [] (Installation section is placeholder text, not imperative steps)
+- `user_invoke_trigger`: "user types /ship to build and deploy to Fly.io"
+- `multi_component`: false
+
+**review-buddy:**
+- `hard_paths_shipped`: [] (no hooks, commands, or MCP; the `/review` mentioned is built-in, not shipped by this plugin)
+- `manual_install_steps`: [] (Setup details are in external docs/SETUP.md; no explicit shell commands in provided content)
+- `user_invoke_trigger`: ""
+- `multi_component`: false
+
+**commit-guard:**
+- `hard_paths_shipped`: ["/guard-status", "hooks/guard.sh (PreToolUse on Bash(git commit:*))"]
+- `manual_install_steps`: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+- `user_invoke_trigger`: "user types /guard-status to see which commit checks are active"
+- `multi_component`: true (ships hook + command skill)
+
+---
+
+**Unresolved:**
+
+- **pg-tools** — content truncated mid-JSON (cuts off at `"args": ["-y", "@pg-tools/mcp-serv…`)
+- **ghost-lint** — no content provided
+- **context-vault** — README fetch failed (HTTP 404, as marked by gateway)

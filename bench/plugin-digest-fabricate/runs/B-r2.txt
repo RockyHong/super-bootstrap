@@ -1,0 +1,30 @@
+```
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped: ["/ship"]
+  manual_install_steps: []
+  user_invoke_trigger: "User types /ship to deploy their app to Fly.io."
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped: ["PreToolUse on Bash(git commit:*) runs .claude/hooks/guard.sh", "/guard-status"]
+  manual_install_steps: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+  user_invoke_trigger: "User types /guard-status to check which shellcheck validations are currently active."
+  multi_component: true
+
+unresolved:
+  pg-tools — Manifest JSON truncated mid-parse.
+  ghost-lint — No README or manifest content provided.
+  context-vault — README fetch failed (HTTP 404).
+```

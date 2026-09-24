@@ -1,0 +1,36 @@
+# Phase 2.5 Digest — 7 Candidates
+
+```
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped: ["/ship"]
+  manual_install_steps: []
+  user_invoke_trigger: "User types /ship when they want to build and deploy to Fly.io"
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped: ["PreToolUse on Bash(git commit:*) runs .claude/hooks/guard.sh", "/guard-status"]
+  manual_install_steps: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+  user_invoke_trigger: "User types /guard-status when they want to check which shellcheck guards are active"
+  multi_component: true
+
+unresolved:
+  pg-tools — Truncated JSON; mcpServers declared but incomplete (gateway truncation)
+  ghost-lint — No content provided
+  context-vault — HTTP 404 (README fetch failed at gateway)
+```
+
+---
+
+**Summary**: 4 candidates resolved (prettier-autoformat, fly-deploy, review-buddy, commit-guard); 3 unresolved due to network/content faults or truncation. commit-guard is the only multi-component candidate (hook + slash command).

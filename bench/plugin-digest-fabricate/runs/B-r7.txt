@@ -1,0 +1,30 @@
+```
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: "User types /ship when they want to build and deploy their app to Fly.io"
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped: ["PreToolUse hook on Bash(git commit:*) → .claude/hooks/guard.sh", "/guard-status slash command"]
+  manual_install_steps: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+  user_invoke_trigger: "User types /guard-status when they want to check which shellcheck guards are active"
+  multi_component: true
+
+unresolved:
+  pg-tools — JSON manifest truncated mid-parse; mcpServers.pg visible but full structure unreadable
+  ghost-lint — No content provided
+  context-vault — README fetch failed (HTTP 404); marketplace description alone insufficient for reliable extraction
+```

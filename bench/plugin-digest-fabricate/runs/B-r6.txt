@@ -1,0 +1,35 @@
+```yaml
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped:
+    - "Slash command: /ship"
+  manual_install_steps: []
+  user_invoke_trigger: "user types /ship to build and deploy to Fly"
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped:
+    - "Hook: PreToolUse on Bash(git commit:*) → runs .claude/hooks/guard.sh"
+    - "Slash command: /guard-status"
+  manual_install_steps:
+    - "brew install shellcheck"
+    - "chmod +x .claude/hooks/guard.sh"
+  user_invoke_trigger: "user types /guard-status to view active checks"
+  multi_component: true
+
+unresolved:
+  pg-tools — "Content truncated mid-JSON; mcpServers entry incomplete, installation steps not visible."
+  ghost-lint — "Empty candidate; no README or manifest content provided."
+  context-vault — "README fetch failed (HTTP 404); only marketplace description available, insufficient for full digest."
+```

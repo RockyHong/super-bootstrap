@@ -1,0 +1,35 @@
+Processing 7 candidates for digest extraction. Reading truncated/incomplete sources and checking all fields.
+
+**prettier-autoformat:**
+- `hard_paths_shipped:` [] (no hooks, commands, or MCP server declared)
+- `manual_install_steps:` [] (no installation section)
+- `user_invoke_trigger:` "" (no slash command)
+- `multi_component:` false
+
+**fly-deploy:**
+- `hard_paths_shipped:` ["/ship"]
+- `manual_install_steps:` [] (marketplace-only install, no manual steps provided)
+- `user_invoke_trigger:` "user types /ship when ready to build and deploy their Fly app"
+- `multi_component:` false
+
+**pg-tools:**
+- `hard_paths_shipped:` ["mcpServers.pg (npx @pg-tools/mcp-serv*)"]
+- `manual_install_steps:` [] (content truncated mid-manifest)
+- `user_invoke_trigger:` "" (no slash command visible)
+- `multi_component:` true
+
+**review-buddy:**
+- `hard_paths_shipped:` [] (references built-in `/review`, ships no commands)
+- `manual_install_steps:` [] (setup delegated to external docs/SETUP.md, no inline steps)
+- `user_invoke_trigger:` "" (no slash command shipped)
+- `multi_component:` false
+
+**commit-guard:**
+- `hard_paths_shipped:` ["PreToolUse:Bash(git commit:*)->hooks/guard.sh", "/guard-status"]
+- `manual_install_steps:` ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+- `user_invoke_trigger:` "user types /guard-status when they want to check which commit guards are active"
+- `multi_component:` true
+
+**unresolved:**
+- `ghost-lint` — README/manifest content is empty or missing.
+- `context-vault` — HTTP 404 fetch failure by gateway; partial marketplace description hints at SessionStart hook + MCP server but insufficient for full digest extraction.

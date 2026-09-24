@@ -1,0 +1,37 @@
+## Digest Extraction Results
+
+```
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped: ["/ship"]
+  manual_install_steps: []
+  user_invoke_trigger: "user types /ship to build image and deploy to Fly.io"
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: ["Set REVIEW_BUDDY_KEY environment variable"]
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped: ["PreToolUse: Bash(git commit:*) → .claude/hooks/guard.sh", "/guard-status"]
+  manual_install_steps: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+  user_invoke_trigger: "user types /guard-status to display active checks"
+  multi_component: true
+```
+
+### Unresolved Candidates
+
+- **pg-tools** — manifest truncated mid-JSON (args array incomplete; cannot parse mcpServers fully)
+- **ghost-lint** — empty content
+- **context-vault** — HTTP 404 (gateway pre-marked); marketplace listing only; no README source
+
+---
+
+**Phase 3 handoff ready.** No fabrications; gaps and truncations flagged per protocol.

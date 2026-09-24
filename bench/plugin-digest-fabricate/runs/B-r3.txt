@@ -1,0 +1,35 @@
+Looking at the 7 candidates provided, I'll extract the digest fields for each.
+
+**prettier-autoformat:**
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+**fly-deploy:**
+  hard_paths_shipped: ["Command: /ship"]
+  manual_install_steps: []
+  user_invoke_trigger: "user types /ship when ready to deploy to Fly.io"
+  multi_component: false
+
+**pg-tools:**
+  hard_paths_shipped: ["MCP server: pg"]
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+**review-buddy:**
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+**commit-guard:**
+  hard_paths_shipped: ["Hook: PreToolUse on Bash(git commit:*) → hooks/guard.sh", "Command: /guard-status"]
+  manual_install_steps: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+  user_invoke_trigger: "user types /guard-status when checking which shellcheck validations are active"
+  multi_component: true
+
+**Unresolved:**
+  - **ghost-lint** — empty README/manifest content
+  - **context-vault** — README fetch failed (HTTP 404); pre-marked unresolved by gateway

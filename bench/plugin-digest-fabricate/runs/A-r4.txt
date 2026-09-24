@@ -1,0 +1,37 @@
+Batch digest complete — 7 candidates processed, 3 unresolved.
+
+```yaml
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped:
+    - "command: /ship"
+  manual_install_steps: []
+  user_invoke_trigger: "User types /ship to deploy to Fly.io"
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped:
+    - "hook: PreToolUse on Bash(git commit:*) → .claude/hooks/guard.sh"
+    - "command: /guard-status"
+  manual_install_steps:
+    - "brew install shellcheck"
+    - "chmod +x .claude/hooks/guard.sh"
+  user_invoke_trigger: "User types /guard-status to show which checks are active"
+  multi_component: true
+
+unresolved:
+  pg-tools: "Manifest truncated (mcpServers field incomplete)"
+  ghost-lint: "Empty README content"
+  context-vault: "HTTP 404 fetch failure"
+```

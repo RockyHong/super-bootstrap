@@ -1,0 +1,33 @@
+## Digest Batch
+
+### prettier-autoformat
+- `hard_paths_shipped: []`
+- `manual_install_steps: []`
+- `user_invoke_trigger: ""`
+- `multi_component: false`
+
+### fly-deploy
+- `hard_paths_shipped: ["/ship"]`
+- `manual_install_steps: []`
+- `user_invoke_trigger: "User types /ship when they want to deploy to Fly.io"`
+- `multi_component: false`
+
+### review-buddy
+- `hard_paths_shipped: []`
+- `manual_install_steps: ["Set REVIEW_BUDDY_KEY in your environment"]`
+- `user_invoke_trigger: ""`
+- `multi_component: false`
+
+### commit-guard
+- `hard_paths_shipped: ["hook: PreToolUse on Bash(git commit:*) → hooks/guard.sh", "command: /guard-status"]`
+- `manual_install_steps: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]`
+- `user_invoke_trigger: "User types /guard-status when they want to see which guards are active"`
+- `multi_component: true`
+
+---
+
+### Unresolved
+
+- **pg-tools** — Incomplete JSON manifest (cut off mid-field; `mcpServers.pg.args` array terminates mid-value)
+- **ghost-lint** — Empty content provided
+- **context-vault** — README fetch failed (HTTP 404, pre-flagged by gateway)

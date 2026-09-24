@@ -1,0 +1,42 @@
+## Digest Extraction — 7 Candidates
+
+```
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped: ["command:/ship"]
+  manual_install_steps: []
+  user_invoke_trigger: "User types /ship to deploy the built image to their Fly app."
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped: ["hook:PreToolUse@Bash(git commit:*)->hooks/guard.sh", "command:/guard-status"]
+  manual_install_steps: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+  user_invoke_trigger: "User types /guard-status to display active shellcheck validations."
+  multi_component: true
+
+unresolved:
+  pg-tools — content truncated mid-JSON; mcpServers config incomplete
+  ghost-lint — content empty
+  context-vault — HTTP 404 fetch failed; content unavailable
+```
+
+### Notes
+
+- **prettier-autoformat**: README declares no explicit hooks or commands; automated behavior is not tied to a documented entry point.
+- **fly-deploy**: `/ship` command documented in Usage prose (no dedicated `## Commands` section, but invocation is explicit).
+- **review-buddy**: Pairs with built-in `/review` but ships no commands of its own; setup guide referenced but not inlined.
+- **commit-guard**: Two components (hook + slash command); manual steps verbatim from `## Installation` block.
+- **pg-tools**: Manifest fragment ends mid-string in `mcpServers` config; cannot safely reconstruct full structure.
+- **ghost-lint**: No content provided.
+- **context-vault**: Gateway pre-flagged as unresolved (HTTP 404); marketplace hint of hook + MCP server present but not extracted from unverified source.

@@ -1,0 +1,34 @@
+```
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: "Automatically formats code when Claude writes or edits a file (passive)"
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped: ["/ship command"]
+  manual_install_steps: []
+  user_invoke_trigger: "User types /ship to deploy the app to Fly.io"
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: "User invokes via built-in /review command (external SETUP.md referenced, exact trigger unspecified)"
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped: 
+    - "PreToolUse hook: event Bash(git commit:*) → runs .claude/hooks/guard.sh"
+    - "/guard-status command"
+  manual_install_steps:
+    - "brew install shellcheck"
+    - "chmod +x .claude/hooks/guard.sh"
+  user_invoke_trigger: "User types /guard-status to view active checks; PreToolUse hook blocks non-compliant commits on git commit"
+  multi_component: true
+
+unresolved:
+  pg-tools — Truncated JSON manifest (mcpServers definition cuts off mid-stream)
+  ghost-lint — Empty source (no README or manifest content provided)
+  context-vault — README fetch failed (HTTP 404); only sparse marketplace description available (mentions SessionStart hook + local MCP server, insufficient for full extraction)
+```

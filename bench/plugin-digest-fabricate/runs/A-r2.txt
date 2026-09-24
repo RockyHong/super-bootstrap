@@ -1,0 +1,42 @@
+**Phase 2.5 Digest Results**
+
+```
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped: ["/ship slash command"]
+  manual_install_steps: []
+  user_invoke_trigger: "User types /ship when ready to deploy their app to Fly.io"
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped: ["PreToolUse hook on Bash(git commit:*) → runs hooks/guard.sh", "/guard-status slash command"]
+  manual_install_steps: ["brew install shellcheck", "chmod +x .claude/hooks/guard.sh"]
+  user_invoke_trigger: "User types /guard-status when they want to check which shellcheck guards are active"
+  multi_component: true
+
+unresolved:
+  pg-tools — manifest truncated mid-JSON, cannot parse mcpServers config
+  ghost-lint — empty content provided
+  context-vault — README fetch failed (HTTP 404)
+```
+
+---
+
+**Notes per candidate:**
+
+- **prettier-autoformat**: README documents motivation but no declarative sections (Hooks, Commands, Installation). No paths or steps extracted; behavior inferred but not documented.
+- **fly-deploy**: `/ship` command is declared; installation section refers to marketplace generic flow, not executable steps. Requirements section mentions Fly CLI but doesn't bundle or install it.
+- **review-buddy**: Refers to external `docs/SETUP.md` (not provided); configuration via env var only. No hooks, MCP, or slash commands shipped by this plugin itself.
+- **commit-guard**: Well-structured; hook trigger, command, and two manual steps cleanly documented. Bundles hook + command + external binary requirement → multi_component.
+- **pg-tools, ghost-lint, context-vault**: Unresolved as specified above.

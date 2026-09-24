@@ -1,0 +1,44 @@
+**Digest batch — 7 candidates:**
+
+```
+prettier-autoformat:
+  hard_paths_shipped: []
+  manual_install_steps: []
+  user_invoke_trigger: ""
+  multi_component: false
+
+fly-deploy:
+  hard_paths_shipped: ["slash_command: /ship"]
+  manual_install_steps: []
+  user_invoke_trigger: "User types /ship when ready to deploy to Fly.io"
+  multi_component: false
+
+review-buddy:
+  hard_paths_shipped: []
+  manual_install_steps: ["Set REVIEW_BUDDY_KEY in your environment"]
+  user_invoke_trigger: ""
+  multi_component: false
+
+commit-guard:
+  hard_paths_shipped:
+    - "Hook: PreToolUse on Bash(git commit:*) → hooks/guard.sh"
+    - "slash_command: /guard-status"
+  manual_install_steps:
+    - "brew install shellcheck"
+    - "chmod +x .claude/hooks/guard.sh"
+  user_invoke_trigger: "User types /guard-status to view active checks"
+  multi_component: true
+
+unresolved:
+  pg-tools — source truncated mid-JSON manifest (mcpServers key incomplete, cannot reliably extract fields)
+  ghost-lint — source empty/missing
+  context-vault — gateway pre-marked fetch failed (HTTP 404); only marketplace listing available, insufficient for digest
+```
+
+**Notes:**
+- **prettier-autoformat**: README describes functionality (auto-format on edit) but declares no hooks, commands, or MCP config explicitly.
+- **fly-deploy**: No manual CLI steps in README (marketplace install only). `fly.toml` and Fly CLI are prerequisites, not plugin installation steps.
+- **review-buddy**: References external setup guide (`docs/SETUP.md`) not provided; extracted only visible configuration step.
+- **commit-guard**: Full declarations: one hook event + file glob, one slash command, ordered install steps.
+
+Return this digest to Phase 3 gateway unmodified.
