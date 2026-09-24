@@ -112,9 +112,10 @@ hooksInfraPresent():
   .gitignore contains .claude/.consult-catalog
 ```
 
-All current → skip silently (`✓ current`), no message — the `placed` record below
-still runs. A missing script installs from the asset, silently; report `⊕ new →
-seeded`. Script drift resolves by which side moved:
+"Silently" and "no message" here mean no prompt: every check still writes its
+sync-report row (row set: `SKILL.md` § 2a-hooks). All current → no prompt, each row
+`✓ current`; the `placed` record below still runs. A missing script installs from the
+asset, silently; report `⊕ new → seeded`. Script drift resolves by which side moved:
 
 - **Stale** (`scriptCurrent` false, `scriptUntouched` true) — the placed copy is intact
   and only lags the asset. Re-copy the asset verbatim, silently; report
@@ -135,10 +136,10 @@ seeded`. Script drift resolves by which side moved:
 
 Settings snippets keep replace-in-place, silently — a `.hook.json` entry is a JSON
 registration this pipeline owns, not a consumer-editable script — and a missing
-`.claude/.consult-catalog` line re-appends to `.gitignore`. Report what changed, stage
-with the Phase 2c commit. This is copy-on-drift, not a migration engine — the asset is
-the source of truth for every copy this pipeline placed, and the fork prompt is what
-keeps an unrecognized copy from being replaced blind. Install stays default-on — no
+`.claude/.consult-catalog` line re-appends to `.gitignore`. Report each check as its
+`SKILL.md` § 2a-hooks row, stage with the Phase 2c commit. This is copy-on-drift, not a
+migration engine — the asset is the source of truth for every copy this pipeline
+placed, and the fork prompt is what keeps an unrecognized copy from being replaced blind. Install stays default-on — no
 install confirm, unlike drain's `infraPresent()`; the fork pick is the only prompt.
 
 Whenever a script resolves current — copied this run, or already sha-equal to the asset

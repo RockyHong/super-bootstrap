@@ -266,6 +266,14 @@ opt-in confirm (rationale + full procedure:
 
 Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md); stage the placed files with the Phase 2c commit.
 
+**Report rows.** Each check writes one row to `.claude/bootstrap-sync-report.md` — `✓ current` included — its verdict → resolution as the procedure words it; an absent snippet or `.gitignore` line takes `⊕ new → seeded`, a replaced snippet `⚠ drifted → updated`:
+
+- one row per script, identity its destination path — `.claude/hooks/commit-channel.sh`, `.claude/hooks/consult-check-sessionstart.sh`, `.claude/hooks/consult-check-check.sh`
+- one combined row for the three settings snippets — `.claude/settings.json hook snippets`, verdict the most-changed across them (`⚠ drifted` over `⊕ new` over `✓ current`)
+- one row for the `.gitignore` line — `.gitignore consult-catalog line`
+
+§ 2c transcodes these rows into `covered` like whole-file rows; they sit outside the § 2c gate's required coverage set.
+
 ### 2a-drain: Drain infra (opt-in, earn-gated)
 
 `/super-bootstrap:drain` (parallel-worktree auto-drain) needs three committed infra pieces. Most active-dev repos use drain; skill / plugin / docs-only repos usually don't. Earn-gated on code: a docs-only repo (Phase 1 § Code presence) skips silently, places nothing, and adds no sync-report row — the way § 2a-scale skips; drain self-installs on first use, and a later re-run that finds code asks. Code present → ask once:
@@ -273,7 +281,9 @@ Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-in
 > Install `/super-bootstrap:drain` worktree infra? — worktree settings template + `PreToolUse(Read)` guard + `.claude/worktrees/` gitignore. Most dev repos: yes. Skill / plugin / docs repos: skip (drain self-installs on first use anyway).
 > Install now? (y / skip)
 
-On `y`: execute the procedure in [`../drain/assets/ensure-infra.md`](../drain/assets/ensure-infra.md) — the same idempotent three-piece install drain self-runs on first invocation. Stage the placed files with the Phase 2c commit.
+Drain infra present and current (the asset's `infraPresent()` — all four pieces) → no ask; run the procedure below to write its rows, all `✓ current`. Any piece absent or stale → ask as above.
+
+On `y`: execute the procedure in [`../drain/assets/ensure-infra.md`](../drain/assets/ensure-infra.md) — the same idempotent three-piece install drain self-runs on first invocation; this `y` stands in for its install confirm. Stage the placed files with the Phase 2c commit. Report rows as § 2a-hooks writes them — every check, `✓ current` included, where the drain asset's "pass silently" means no prompt — outside the § 2c gate's required coverage set; row identities: `.claude/templates/worktree-settings.local.json` (the template), `.claude/settings.json worktree guard` (the Read guard, one combined row), `.gitignore worktrees + drain-status lines` (both lines, one row).
 
 On `skip`: nothing placed; drain's own §Pre-flight step 0 installs on first `/super-bootstrap:drain`.
 
@@ -558,7 +568,7 @@ Per-candidate handling:
 
 ### 2c: Sync report + commit
 
-**Gate — the sync report must exist and cover every pipeline-owned section, plus every artifact the § Registration rule covers, before commit.** Read `.claude/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row, and every durable artifact the § Registration rule covers must have a `registration:` row. Missing file, or any uncovered section or artifact → halt, return to 2b, produce the missing rows. A `⚠ drifted`, `⊕ new`, or `⊘ missing` row must also carry its resolution (`updated` / `inserted` / `seeded` / `declined ({reason})`), a rot row its own (`migrated` / `declined ({reason})`), a `registration:` row its own (`updated` / `none`) — an unresolved row, or a `declined` row carrying no reason, halts the same way. A rot outcome line present and reading `no rot scan` halts too — the scan swept no literals, so its zero rows are not a clean; return to 2b, re-run the rot scan with a working literal list. A fresh install carries no rot line, and the gate reads none. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
+**Gate — the sync report must exist and cover every pipeline-owned section, plus every artifact the § Registration rule covers, before commit.** Read `.claude/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row, and every durable artifact the § Registration rule covers must have a `registration:` row. Missing file, or any uncovered section or artifact → halt, return to 2b, produce the missing rows. A `⚠ drifted`, `⊕ new`, or `⊘ missing` row must also carry its resolution (`updated` / `inserted` / `seeded` / `declined ({reason})`), a rot row its own (`migrated` / `declined ({reason})`), a `registration:` row its own (`updated` / `none`), a § 2a-hooks / § 2a-drain row also `kept (fork)` — a fork kept at the overwrite/keep prompt, which stays out of `declined` (`updated (stale)` / `updated (fork, overwritten)` count as `updated`) — an unresolved row, or a `declined` row carrying no reason, halts the same way. A rot outcome line present and reading `no rot scan` halts too — the scan swept no literals, so its zero rows are not a clean; return to 2b, re-run the rot scan with a working literal list. A fresh install carries no rot line, and the gate reads none. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
 
 **Sync report** — rendered from the artifact (the file is canonical; this table is its commit-time view). Always shown once the gate above passes, before the commit. A re-run renders the table below — drift fixes and current items. A fresh install renders one coverage line in the table's place — `{N} sections placed, all ⊕ new` — while the report file keeps its per-row verdicts (`⊕ new | seeded`); the table stays the re-run surface.
 
@@ -593,7 +603,7 @@ Per-candidate handling:
 
 **Receipt write.** Once the sync completes, write `.claude/super-bootstrap-runway.json` = `{ "version": "{current plugin version}", "covered": [...], "declined": [...], "placed": { ... } }` — fresh install writes it new, re-run overwrites whole. Take `version` from the plugin version Phase 1 already read for its staleness compare — § Version-staleness signal names the file and how to locate it. This runs even when every row is `✓ current` — the receipt records "synced at this version, these sections compared," independent of whether content changed.
 
-**`covered`** is an array of bare row-identity strings — one string per sync-report row across all three row classes the gate above just cross-checked: its per-section rows, its whole-file artifact rows, and its rot rows. Each identity is *transcoded* from its report row rather than copied verbatim: the report renders a section row `{file}: {Section}` and the identity is `{file} § {Section}`; a whole-file artifact is its repo-relative path alone; a rot row is `{file} § rot:{old}` — keyed by the stale literal, never the line, since line numbers shift between runs. `registration:` rows stay report-only.
+**`covered`** is an array of bare row-identity strings — one string per sync-report row across all three row classes: its per-section rows, its whole-file artifact rows (the § 2a-hooks / § 2a-drain rows included, identity as those steps name it), and its rot rows. Each identity is *transcoded* from its report row rather than copied verbatim: the report renders a section row `{file}: {Section}` and the identity is `{file} § {Section}`; a whole-file artifact is its repo-relative path alone; a rot row is `{file} § rot:{old}` — keyed by the stale literal, never the line, since line numbers shift between runs. `registration:` rows stay report-only.
 
 **`declined`** is the rows resolved `declined` — a drift kept or an insert declined at Block 2, a re-seed skipped at the missing-on-mature advisory, a rot row left alone at the § 2b rot scan — each written `{ "section": "<row identity>", "reason": "<the row's declined reason>" }`, carrying the row's own `covered` identity string and the parenthetical of `declined ({reason})` as the reason — so `declined` stays a subset of `covered`, and marks divergence accepted, not pending.
 
