@@ -29,7 +29,8 @@ templateUntouched():
   exists(placed)   AND   sha256(installed) == placed
   # true  → the file sits exactly as this pipeline placed it → stale
   # false → the file carries edits this pipeline did not place → fork
-  # no placed entry (receipt absent or predating the field) → unknown, resolved as fork
+  # no placed entry (receipt absent or predating the field) → unknown, resolved as fork —
+  # installed file present only; an absent file never reaches this predicate
 
 readHookCurrent():
   entry = the settings.json hooks.PreToolUse entry whose command greps ".claude/worktrees/"

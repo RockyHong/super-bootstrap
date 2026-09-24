@@ -62,7 +62,7 @@ Phase 1 also flags which `.claude/rules/*.md` files Phase 2b should seed. Signal
 
 On **monorepo tier** (§ Monorepo detection), each signal is evaluated **per package**, not root-only, and a fired signal's seeded glob is package-scoped (`apps/*/src/components/**`) so one rule file spans every package that shares the pattern.
 
-**ECC-first seed source for language-scoped rules.** Before scaffolding from local `assets/rules-*-skeleton.md`, check ECC (`gh api repos/affaan-m/everything-claude-code/contents/rules`) for a matching language/framework rule. If ECC ships one, propose seeding from ECC (with attribution comment + license note) — defer to specialists. Local skeletons are the fallback. Cross-cutting / project-specific rules (e.g. MV3, custom service-worker patterns) stay on local skeletons.
+**ECC-first seed source for language-scoped rules.** Before scaffolding from local `assets/rules-*-skeleton.md`, check ECC (`gh api repos/affaan-m/everything-claude-code/contents/rules`) for a matching language/framework rule. If ECC ships one, propose seeding from ECC (with attribution comment + license note) — defer to specialists. Local skeletons are the fallback. Cross-cutting / project-specific rules (e.g. MV3, custom service-worker patterns) stay on local skeletons. Skeleton seeding only — a rule file § 2b's legacy migration writes carries the consumer's own content and takes no ECC check.
 
 Adjacent stacks (Bun + Next, Deno + Fresh, Tauri + React, etc.) infer by analogy. Unknown stacks → skip rule-seeding for that signal; user can add later.
 
@@ -145,7 +145,7 @@ Walk each pipeline artifact in order: folders → pipeline docs → sync report 
 - Exists, pipeline-owned section absent → `⊕ new` — show the template section, get approval, insert
 - Project-owned content → never touch, even on drift
 
-**Registration rule** (2a / 2a-scale / 2b plantings, 2b-adopt deletions): a durable artifact this run places for the first time or deletes earns its own sync-report row — status `⊕ new` for a planting, `⊘ removed` for a deletion:
+**Registration rule** (2a / 2a-scale / 2b plantings, 2a-scale / 2b-adopt deletions): a durable artifact this run places for the first time or deletes earns its own sync-report row — status `⊕ new` for a planting, `⊘ removed` for a deletion:
 
 ```
 registration: {artifact} → {surfaces, or none}
@@ -166,14 +166,14 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `docs/overview.md` skeleton sections: Problem, User, Current State; the `<!-- harness-meta -->` block — row identity `docs/overview.md harness-meta` (a marker block is not a heading — no `§`, the same spelling the fact-fields block takes) — compared **shape only**: marker comment present + `external-tools:` key present → `✓ current`, whatever the list holds (values are consumer-owned — § 2b asset table; the same rule the seed-once sections take at § 2b Per-doc handling)
 - `docs/decisions.md` scope header (the blockquote + `## Closed Forks` heading)
 - `CODING_STANDARDS.md` preamble + section headings (code present only; drift checked against `assets/coding-standards-skeleton.md`)
-- `docs/work/README.md`, `docs/work/TEMPLATE.md`
+- `docs/work/README.md`, `docs/work/TEMPLATE.md` — the `**ID high-water mark:**` line (here, and in the scale module's `docs/outward/README.md` + `docs/parked.md`) compared **shape only**: line present in its skeleton position → `✓ matches`, whatever IDs it carries (values are consumer-owned, the way `harness-meta`'s are) — never a drift row, never an offer to reset the counter
 - `AGENTS.md` (foreign-executor contract — always placed; whole shipped body drift-checked against `assets/agents-md-skeleton.md`)
 - `.claude/rules/index.md` (rule-authoring guide)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` core plugin pin (`enabledPlugins`, `extraKnownMarketplaces`) — drift-checked for presence alone (§ 2a)
 - `.claude/bootstrap.md` (seeded plan — carries user checkbox state, so § 2b's special case governs re-run; the next session consumes it, its own Task 3 deletes it)
 - `.claude/super-bootstrap-runway.json` (runway coverage receipt — not diffed section-by-section; read at Phase 1 § Version-staleness signal, written at § 2c Receipt write; durable, no cleaner)
-- Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `docs/outward/README.md` + `docs/outward/TEMPLATE.md` (whole files, the way `docs/work/README.md` / `docs/work/TEMPLATE.md` are), `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md` — whole body, prose included), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`), the CLAUDE.md § Rules `venue-map.md` bullet block (drift-checked against `assets/claude-md-skeleton.md` § Rules)
+- Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `docs/outward/README.md` + `docs/outward/TEMPLATE.md` (whole files, the way `docs/work/README.md` / `docs/work/TEMPLATE.md` are — high-water line shape only, above), `.claude/rules/venue-map.md` skeleton body (drift-checked against `assets/scale/rules-venue-map-skeleton.md` — whole body, prose included), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`), the CLAUDE.md § Rules `venue-map.md` bullet block (drift-checked against `assets/claude-md-skeleton.md` § Rules)
 
 **Project-owned** (never touched):
 - CLAUDE.md: Tech Stack one-line (**seed-once**, same classification as the `docs/techstack.md` fact sections above — filled from Phase 1 detection facts when the runway first writes CLAUDE.md — the skeleton placeholder kept verbatim on a docs-only repo (§ 2b Placeholders) — consumer-edited from then on; no re-run rewrites it), Commands, any user-added custom sections
@@ -286,15 +286,15 @@ Signals — any one arms the offer:
 - Drain worktree infra installed (`.claude/worktrees/` gitignore present — the module's venue map feeds drain's dispatch-vs-wall filter).
 - User asked for it.
 
-None hold → skip silently, place nothing.
+None hold → skip the offer silently, place nothing. Already installed (`docs/parked.md` present) → no offer either; § 2b's drift check owns the members, a missing one resolving `Missing → write`.
 
-**Split before placing — `docs/outward.md` → `docs/outward/`.** Repos that took the scale module before the folder shape hold every outward item as an `### OUT-###` chunk in one flat file. Placing `docs/outward/` beside it strands those entries: `/super-bootstrap:log`'s dedup and the mover gate read the folder, and the board only carries the flat file on a legacy branch that draws a `# note:` every render. When `docs/outward.md` exists, run the split first, then continue with this step's placements:
+**Split before placing — `docs/outward.md` → `docs/outward/`.** Repos that took the scale module before the folder shape hold every outward item as an `### OUT-###` chunk in one flat file. Placing `docs/outward/` beside it strands those entries: `/super-bootstrap:log`'s dedup and the mover gate read the folder, and the board only carries the flat file on a legacy branch that draws a `# note:` every render. When `docs/outward.md` exists — keyed on that file alone, whatever the signals or install state — run the split first, then continue with this step's placements:
 
 ```
 python3 ${CLAUDE_PLUGIN_ROOT}/skills/harness-bootstrap/assets/scale/split-outward.py <repo root> ${CLAUDE_PLUGIN_ROOT}/skills/harness-bootstrap/assets/scale/outward-readme-skeleton.md
 ```
 
-Deterministic, no per-item judgment (output shape: the script's docstring). It refuses (exit 2, nothing written) when any target file — `docs/outward/README.md` or an `OUT-###.md` it would create — already exists: the two shapes then coexist, so stop and surface the flat file's entry list beside the folder's for the user to reconcile; never treat exit 2 as a converted repo. A repo with no `docs/outward.md` is already on the folder shape and the placements below resolve `✓ current`. The split moves a durable artifact, so it earns § Registration rule rows the same way a planting does — every consumer surface naming the flat path re-points to `docs/outward/README.md`, `CLAUDE.md` § Planning's bracket line included (pipeline-owned; § 2b's drift check carries that one).
+Deterministic, no per-item judgment (output shape: the script's docstring). It refuses (exit 2, nothing written) when any target file — `docs/outward/README.md` or an `OUT-###.md` it would create — already exists: the two shapes then coexist, so stop this sub-step — surface the flat file's entry list beside the folder's for the user to reconcile, write no split registration rows, and continue the sync; never treat exit 2 as a converted repo. A repo with no `docs/outward.md` is already on the folder shape and the placements below resolve `✓ current`. The split writes `docs/outward/README.md` from template, so its row takes `⊕ new`, resolution `seeded`, and neither the placement below nor § 2b's walk re-verdicts it this run. The split moves a durable artifact, so it earns two § Registration rule rows — `registration: docs/outward.md → {surfaces}` (`⊘ removed`) and `registration: docs/outward/ → {surfaces}` (`⊕ new`), folder-grain, not one per `OUT-###.md` — and every consumer surface naming the flat path re-points to `docs/outward/README.md`, `CLAUDE.md` § Planning's bracket line included (pipeline-owned; § 2b's drift check carries that one).
 
 When armed, ask once:
 
@@ -377,7 +377,7 @@ Surface the migration plan as a single proposal. Format below pins shape — one
 Apply migrations? (y / n / select-per-section)
 ```
 
-Concrete fill-in (one example, not a template — judge by analogy for the actual repo):
+Concrete fill-in (one example, not a template — judge by analogy for the actual repo; here no Phase 1 signal seeded the component glob):
 
 ```
   [Coding Standards: Components/Tailwind (enforcement, frontend-scoped)]
@@ -387,6 +387,7 @@ Concrete fill-in (one example, not a template — judge by analogy for the actua
 
 Per-migration handling:
 - **User approves** → write content into destination with proper format conversion (rule files get `paths:` frontmatter; techstack grown sections get conventional headings; `docs/decisions.md` gets one `Domain | Rejected direction | Because | Ref` row per closed fork — same conversion as § Rejected Alternatives retirement below). Remove from CLAUDE.md. Add summary bullet to CLAUDE.md § Rules for any rule-file destination.
+- **Rule-file destination** — content on a glob a Phase 1 signal seeded lands in that seeded `rules/<framework>.md` (content matching a skeleton heading fills that slot; the rest goes below the scaffold as grown content); a new `rules/<scope>.md` only for a scope no signal seeded. The destination takes its class's report row, no migration-specific verb: a signal-seeded file new this run → `⊕ new | seeded`; an existing rule file → none for the grown content; a migration-only file (no matching skeleton — the `components.md` case) is project-owned → no section row, not even `⊕ new`. A rule file this migration places for the first time earns its own `registration:` row (§ Registration rule — the § Rules bullet does not satisfy it).
 - **User rejects** → leave content in CLAUDE.md, mark section project-owned for future runs (no further drift attempts on that section).
 - **User selects per-section** → walk one at a time.
 
@@ -506,7 +507,7 @@ Options:
 
 Whichever option lands, append the `.claude/bootstrap.md` row to the sync report — verdict `⊘ missing`; resolution `declined (not regenerated — re-seed skipped, bootstrap complete)` on (a), `inserted` on (b) / (c) — so § 2c copies the row into `covered`, and on (a) into `declined` with that reason, the same way as every other row.
 
-Fresh repos (no bootstrap-shaped commit yet) keep current behavior — write from template, no advisory.
+Outside the advisory — a fresh repo (no bootstrap-shaped commit yet), or a missing file with fewer than 5 commits past the last one — write from template, no advisory; the row takes `⊕ new`, resolution `seeded`.
 
 **Placeholders:**
 - `{Project Name}` — repo name

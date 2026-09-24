@@ -50,7 +50,8 @@ Five hooks are retired — delete them from any already-bootstrapped repo on re-
 - `docsync-stamp` (formerly a PostToolUse hook) — retired earlier when its
   token-write folded into `docsync-scan`.
 
-On any re-sync of an already-bootstrapped repo:
+On any re-sync of an already-bootstrapped repo — one carrying a bootstrap-shaped
+commit, every spelling (`SKILL.md` § 2b); none → skip this loop:
 
 1. For each of `entry-nudge.sh`, `harness-grounding.sh`, `docsync-gate.sh`, `docsync-scan.sh`, `docsync-stamp.sh` — if the
    file exists at `.claude/hooks/<name>.sh`, delete it.
@@ -80,7 +81,8 @@ carrying consumer edits (**fork**):
 scriptCurrent(name):
   installed = .claude/hooks/<name>.sh
   exists(installed)   AND   sha256(installed) == sha256(asset hooks/<name>.sh)
-  # mismatch (absent | older version | edited anywhere) → resolve via scriptUntouched
+  # absent → install lane (copy the asset); differing (older version | edited
+  #   anywhere) → resolve via scriptUntouched
 
 scriptUntouched(name):
   installed = .claude/hooks/<name>.sh
@@ -89,7 +91,8 @@ scriptUntouched(name):
   # true  → the file sits exactly as this pipeline placed it → stale
   # false → the file carries edits this pipeline did not place → fork
   # no placed entry (receipt predates the field, or another manager placed the
-  #   file) → unknown, resolved as fork
+  #   file) → unknown, resolved as fork — installed file present only; an absent
+  #   file never reaches this predicate
 
 snippetCurrent(name):
   entry = the settings.json target-array entry whose command references <name>.sh
@@ -110,8 +113,8 @@ hooksInfraPresent():
 ```
 
 All current → skip silently (`✓ current`), no message — the `placed` record below
-still runs. A missing script installs from the asset. Script drift resolves by which
-side moved:
+still runs. A missing script installs from the asset, silently; report `⊕ new →
+seeded`. Script drift resolves by which side moved:
 
 - **Stale** (`scriptCurrent` false, `scriptUntouched` true) — the placed copy is intact
   and only lags the asset. Re-copy the asset verbatim, silently; report
