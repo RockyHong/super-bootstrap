@@ -1,0 +1,17 @@
+**DONE_WITH_CONCERNS** — BUG-001 verdict is **auto-fix**, appended to `docs/work/BUG-001.md`. Nothing was run; the verdict comes from reading the code.
+
+**Cause:** in `StatementEngine.run()`, `tally/engine.py:89-90` does two steps in the wrong order. It builds the statements (`_emit_period()`) and only then settles the last held refund (`_rollover(None)`). Refunds wait one event before posting, so a refund on the last line of a batch gets added to a new, empty statement that is never output. It is still recorded in the replay ledger, though.
+
+That explains all the evidence on the card:
+- **Only the last line fails.** A refund earlier in the batch is settled while its statement is still open, so it posts.
+- **The re-send was skipped.** The log line `skipped as replay of R-88120` shows R-88120 itself was recorded in the ledger. Only `_apply_refund` writes there, so R-88120 was applied but never shown on a statement.
+
+**Card's cause theory ruled out:** it blamed the duplicate check's key (account, amount, date). That doesn't explain why position matters, and the log line contradicts it. The key only allowed the second failure, when the re-send R-88120-b matched the leftover ledger entry.
+
+**Fix:** swap lines 89 and 90, and add a unit test for a refund as the last event. The change stays inside `engine.py` and its test, with no doc impact. Tags: mechanical fix, inline execution, unit test. The dispute-override check needs a next event, and there is none after the last line either way, so the swap doesn't change it.
+
+**Concern — fixing the account needs a separate ops step:** the code fix won't repair account A-7731. If the production refund ledger keeps entries across runs, it still holds a false entry for R-88120. Ops need to remove it (`RefundLedger.forget`) and/or correct the August statement. I couldn't tell from this repo whether that ledger persists; `cli.py` creates it in memory.
+
+My first append attempt failed to parse and wrote nothing. The Edit-tool append is the only change to the card, and no other file was touched.
+
+The MCP servers listed as needing authentication weren't used for this task.

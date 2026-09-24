@@ -1,0 +1,15 @@
+**DONE** — verdict is **auto-fix**, appended to `docs/work/BUG-001.md`.
+
+**Cause:** in `tally/engine.py:89-90`, `run()` calls `_emit_period()` before `_rollover(None)`, so it closes the period's statements before settling the last refund.
+- Refunds wait one step in `_held` and only post when the next event arrives. A refund that is the last event gets posted after `_emit_period()` has already cleared the open statements. It lands on a new statement that is never returned, and the carried balance was already written without it.
+- `_apply_refund` still records that refund in the replay ledger. So the re-sent `R-88120-b` is correctly skipped as a replay of a refund that never posted.
+- Moving the refund earlier in the batch works because the next event posts it while the statements are still open.
+
+**Fix:** swap the two calls. The `_rollover` docstring already says the trailing refund should be settled this way. Add a unit regression test for a refund that is the last event in a batch. Tags: `systematic` / `inline` / Probe-deps `none` / Test `unit`. No doc impact.
+
+**Checks:**
+- **Earlier refund elsewhere in the batch:** `_held` is the only place the engine delays posting, so only a batch's last refund is affected.
+- **Duplicates and past decisions:** no overlapping card (BUG-002 is unrelated), and `docs/decisions.md` has no closed forks.
+- **Excluded:** I did not use the card's Prior (`is_duplicate` key shape) as evidence. That key is a deliberate design choice, and it only explains why `R-88120-b` was skipped, not why the refund was lost.
+
+**Concern:** the code fix does not repair production data. A-7731's refund store still holds a false `R-88120` record, and the August statement and balance lack the 12.34 credit. Any past batch that ended in a refund is likely affected the same way. The verdict marks this as an ops follow-up for the gateway to route, outside the code diff.

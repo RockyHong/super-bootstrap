@@ -1,0 +1,3 @@
+CUT: L005, L019, L030, L041, L060, L076, L086, L087, L097, L098, L116, L128, L143, L152, L161
+STOP: Every remaining line is a specific, enforceable fact or command; some belong in path-scoped `.claude/rules/` files, but this pass only allows deletion and cannot relocate them, so cutting them would lose the rule entirely.
+KEPT: 154

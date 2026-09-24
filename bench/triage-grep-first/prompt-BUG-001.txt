@@ -1,0 +1,3 @@
+Triage card BUG-001 (docs/work/BUG-001.md). Today's date: 2026-09-24.
+
+Problem-aim (gateway-aligned): a refund that is the final event of a nightly batch is absent from every statement, while the same refund placed earlier in the batch posts correctly.

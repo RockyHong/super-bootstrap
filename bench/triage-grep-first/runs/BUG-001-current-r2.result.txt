@@ -1,0 +1,19 @@
+**Status: DONE_WITH_CONCERNS.** BUG-001 is an **auto-fix**: a two-line order swap in `run()` in `tally/engine.py`, fixed and tested inline with a unit test. The verdict is appended to `docs/work/BUG-001.md`. The concern is account A-7731's data, which the code fix won't repair (see below).
+
+**Root cause.** A refund doesn't post when it arrives. It waits one step so the next event can be checked for a dispute. At the end of a batch, `run()` does two things in the wrong order (`engine.py:89-90`):
+1. It emits the statements first. This saves the balances and clears the set of open statements.
+2. Only then does it settle the refund still waiting at the end of the batch.
+
+So the last refund lands on a new statement that is never emitted. It is missing from every statement and the balance stays 12.34 too high. A refund earlier in the batch posts normally because the next event settles it first, which is why moving `R-88120` up three lines fixed it in staging. The engine's own docstring (`:332-333`) says the trailing refund should be settled, so the current order contradicts it.
+
+**The card's lead only explains the second symptom.** I set it aside and checked it against the code. The re-send `R-88120-b` was skipped because the lost refund was still recorded in the replay ledger (`:352`). A re-send with the same account, amount and posted date then counts as a replay (`refunds.py:27-31`). Matching on those three fields instead of the refund id is intentional, so it isn't the bug. Once the order is fixed, a refund is only recorded when it actually posts.
+
+**Other checks:**
+- No other open card overlaps (BUG-002 is money formatting).
+- `docs/decisions.md` has no entries, so this doesn't reopen a closed decision.
+- No docs need changing.
+- The waiting refund is the only thing the engine settles late, so no similar code path has the same bug.
+- There's no `docs/techstack.md`, so no probes ran.
+- `run()` has one caller (`cli.py`), and it is unaffected.
+
+**Concern: A-7731's data.** The saved replay ledger still marks `R-88120` as applied, and the August statement and carried balance are 12.34 too high. Ops needs to fix this separately, either by clearing that ledger entry and re-sending the refund, or by posting a correcting `adjustment`. It's a call on production data, so it stays out of the code fix.

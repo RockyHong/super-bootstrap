@@ -1,0 +1,13 @@
+**DONE**: verdict is **auto-fix**, appended to `docs/work/BUG-002.md`. I didn't run the tests; the conclusion comes from reading the code.
+
+**Which output does it:** the dunning letters (past-due notices sent by email and post). The wrong amount shows up in all three stages: reminder, second notice and final notice.
+
+**Why:** at `tally/reports/dunning.py:45` the currency and locale are passed to `fmt_money` in the wrong order: `fmt_money(account.past_due_cents, account.locale, account.currency)`. So the formatter gets "en_GB" as the currency. That isn't a known currency, so it falls back to printing the code with a space: `en_GB `. It also gets "GBP" as the locale, which isn't a known locale, so it uses the US separators. Those happen to match UK ones, so the digits look normal. Result: `en_GB 312.40`, exactly what the customer's screenshot shows.
+
+**The card's guess is wrong:** GBP is still in `money.SYMBOLS` (`money.py:16`), and an existing test (`tests/test_money.py:11`) checks that it formats as `£312.40`. The formatter itself is fine.
+
+**Other places checked:** I looked at every `fmt_money` call. All the other customer-facing callers pass the arguments in the right order (email notifications, the portal API, and the PDF, JSON and CSV statement exports). That includes the late-fee line in the same letter, one line below the bug. The ops summary, aging report and CLI output leave out the locale, but they can't produce this symptom. Line 45 is the only instance.
+
+**Fix:** swap the two arguments back on line 45, or pass them by name so this can't happen again. Add a new unit test, `tests/test_dunning.py`: a GBP/en_GB account with 31240 past due at 15 days should produce a letter containing `£312.40`. No docs need changing, and no earlier decisions or open cards overlap.
+
+The heredoc append failed with a parser error and left the card unchanged, so I appended the verdict with Edit instead.

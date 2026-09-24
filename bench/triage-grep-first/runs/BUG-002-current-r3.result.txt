@@ -1,0 +1,12 @@
+**DONE.** BUG-002 gets an **auto-fix** verdict (mechanical, runs inline, unit test). The block is appended to `docs/work/BUG-002.md`.
+
+- **Which output:** the dunning letters (past-due notices sent by email and post). The bad line is `tally/reports/dunning.py:45`, which calls `fmt_money(account.past_due_cents, account.locale, account.currency)`. That swaps the currency and locale arguments.
+- **Why it prints `en_GB 312.40`:** `SYMBOLS.get("en_GB")` finds no symbol, so the code falls back to printing the value as a prefix: `"en_GB "`. `SEPARATORS.get("GBP")` also finds nothing and uses the US separators, giving `312.40`. Together that is exactly `en_GB 312.40`, as in the screenshot.
+- **The card's guess was wrong.** `"GBP": "£"` is still at `money.py:16`, and `test_money.py:11` already checks that `£312.40` renders correctly. I treated the guess as something to test and set it aside once it failed.
+- **Checked the other callers:** `dunning.py:45` is the only one with swapped arguments. Line 46 (the late fee) and every caller in `notify`, the API handlers and the json/pdf/csv exports pass the arguments in the right order.
+- **Wider than the card says:** every dunning letter shows a locale code in place of the symbol, including US accounts (`en_US 312.40`). So this isn't only a UK problem.
+- **Fix:** swap the two arguments on line 45. Add a new `tests/test_dunning.py` with a failing case for GBP/en_GB, plus one for EUR/de_DE that also checks separators and the late fee. No docs need changing.
+
+I wasn't allowed to run Python to confirm the output, so the verdict rests on reading the code. The trace is plain dictionary lookups, so that doesn't weaken it. No other open card overlaps this one, and `decisions.md` has no rows.
+
+Several MCP connectors (Notion, Slack, Linear, Figma and others) need authorization through claude.ai connector settings or `/mcp` before they'll work. None were needed here.

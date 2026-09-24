@@ -1,0 +1,20 @@
+**DONE: BUG-002 can be auto-fixed.** The verdict is appended to `docs/work/BUG-002.md`.
+
+**Which surface:** dunning letters, the past-due notices sent by email and post. The bad text is in the `{amount}` field, which all three letter stages use.
+
+**Why:** `tally/reports/dunning.py:45` passes the arguments to `fmt_money` in the wrong order: `fmt_money(account.past_due_cents, account.locale, account.currency)`. The function expects `(cents, currency, locale)`. So:
+- `"en_GB"` lands in the currency slot. It isn't in `SYMBOLS`, so the formatter falls back to printing the code plus a space.
+- `"GBP"` lands in the locale slot. It isn't in `SEPARATORS`, so it falls back to en_US separators.
+- Together that gives `en_GB 312.40`, exactly what the customer saw. The `{fee}` field on line 46 has the right order.
+
+**The card's Prior is wrong.** It says GBP dropped out of `SYMBOLS`, but `money.py:16` still has `"GBP": "£"` and `test_money.py:11` checks that GBP renders as `£312.40`. I treated the Prior as a claim to test, not as evidence.
+
+**More letters are affected than the one report suggests.** The swap breaks the amount in every dunning letter, not just GBP ones. A US account's letter would read `en_US 1,234.56`, and a German euro account's would read `de_DE 1,234.56` instead of `€1.234,56`.
+
+**Other callers:** I checked every place that calls `fmt_money`. Line 45 is the only one with the arguments swapped. The aging report, the ops summary and the CLI skip the locale, but they still show the right symbol, so they fall outside this card.
+
+**Fix:** swap the two arguments on line 45 and add a new `tests/test_dunning.py` that fails before the fix. It's tagged mechanical, done inline, tested with a unit test. No docs need to change and no probes were configured. `tally/` belongs to this repo, so the fix lands here.
+
+**Optional follow-up:** making `locale` keyword-only would stop this kind of mix-up at call time. That changes the function for 20+ callers, so I left it out of this fix; it could be a separate DEBT card.
+
+**Tool note:** my first attempt to append the verdict through a shell heredoc failed with a parser error and wrote nothing. The append then went through the Edit tool, and the card's original lines are unchanged.

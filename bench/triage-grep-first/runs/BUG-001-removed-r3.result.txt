@@ -1,0 +1,17 @@
+**DONE_WITH_CONCERNS.** BUG-001 is ready for **auto-fix**. I appended the verdict block to `docs/work/BUG-001.md` and made no other edits. The verdict is mechanical, runs inline, and is tested with a unit test.
+
+**Root cause:** in `run()` (`tally/engine.py:89-90`), `_emit_period()` runs before `_rollover(None)`.
+- Every refund waits one step in `_held` before it posts.
+- A refund that is the batch's last event is only settled after the statements have been emitted and `_open` has been cleared.
+- `_apply_refund` then puts it on a new statement that is never emitted, so the refund posts nowhere.
+- It still records the refund in the ledger. That is why the re-send `R-88120-b` was skipped with the exact logged line "skipped as replay of R-88120".
+
+**Fix:** swap those two lines, and add a regression test: a charge of 1000 followed by a trailing refund of 400 must close at 600. No other code has the same problem, since `_held` is the only state the engine settles after the loop. No docs need to change.
+
+**Card's Prior is wrong as the main cause.** The shape-based ledger key does cause the `-b` skip, but that is downstream. It can't explain the original loss, because moving the refund up in the batch makes it post. I left that theory out of the verdict except as a side note.
+
+**Concerns:**
+1. **Customer A-7731 stays wrong after the fix.** Production's ledger already marks `R-88120` as applied. Ops needs a separate step: clear that ledger entry and re-deliver the refund, or post a manual credit. The August statement may also need reissuing. Any account whose refund was the last event of an earlier batch may be in the same state.
+2. **Separate risk, not this bug.** Two genuinely different refunds with the same account, amount and date would collide under the current ledger key. That would need its own card if it matters.
+
+No probes ran because the repo has no `docs/techstack.md` probe table.

@@ -1,0 +1,16 @@
+**DONE.** Verdict: **auto-fix**. I appended the block to `docs/work/BUG-002.md`. It is the only file changed and has one verdict block. My first try to append through the shell failed on a parse error before anything was written, so I added the block with a file edit instead.
+
+**Which output:** dunning letters, the past-due notices sent by email and post. The amount in all three letter types (`reminder`, `second_notice`, `final_notice`) is affected.
+
+**Why:** `tally/reports/dunning.py:45` calls `fmt_money(account.past_due_cents, account.locale, account.currency)`. The function expects `(cents, currency, locale)`, so locale and currency are swapped:
+- `"en_GB"` is looked up as a currency. It has no symbol, so the code falls back to printing it as a prefix: `"en_GB "`.
+- `"GBP"` is looked up as a locale. It isn't one, so the default `en_US` separators are used.
+- The result is `en_GB 312.40`, an exact match for the screenshot.
+
+**The card's prior is wrong:** `money.py:16` still has `"GBP": "£"`, and `test_money.py:11` checks that `fmt_money(31240, "GBP", "en_GB")` gives `£312.40`. The formatter itself is fine; I did not use the prior in reaching the verdict.
+
+**Reach:** the bug affects every account that gets a dunning letter, not just GBP. The amount always shows the locale code in front and US separators. The late fee on the next line (`dunning.py:46`) is formatted correctly, so a `second_notice` shows a wrong amount next to a correct fee.
+
+**Other callers:** I checked every other `fmt_money` call in the customer-facing outputs (email notices, portal API, CSV/JSON/PDF exports). All pass the arguments in the right order. The CLI and the ops summary and aging reports leave out the locale, so they can't print a locale code. Line 45 is the only swapped call.
+
+**Fix:** swap the two arguments back on line 45, and add a new unit test, `tests/test_dunning.py`, that fails on current code. No doc changes needed. Tags: `mechanical`, `inline`, no probes. There is no `docs/techstack.md` probes table, `docs/decisions.md` has no closed forks, and no open card overlaps this one.

@@ -1,0 +1,3 @@
+CUT: L004, L005, L014, L015, L023, L033, L034, L041, L042, L051, L052, L060, L061, L068, L069, L078, L086, L087, L088, L089, L090, L091, L092
+STOP: Every remaining line is a concrete command, invariant, or gotcha that affects a specific decision, so deleting any of them would drop real precision; moving path-scoped rules into `.claude/rules/` needs rewriting, which this deletion-only pass can't do.
+KEPT: 69

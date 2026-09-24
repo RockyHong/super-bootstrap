@@ -1,0 +1,115 @@
+You are executing the `harness-bootstrap` skill on a repo. The skill's Principles section governs your judgment on harness shape:
+
+--- PRINCIPLES ---
+## Principles
+
+- **Layer by decision-moment** — every rule has a moment-of-need: ambient (CLAUDE.md, every turn) for workflow + always-true safety; path-scoped (`.claude/rules/`, fires on file match) for full-body precision when relevant; on-demand (`docs/techstack.md`, `docs/specs/`) for reference Claude reads when intent surfaces. Skills are for thinking modes / structured processes — **not** a rule-storage layer.
+- **Precision per always-on byte** — every CLAUDE.md line answers "what decision does this sharpen, at what moment?" Length is downstream of that. The Anthropic / community ~120-line target is a smoke alarm on bloat, not a hard cap. Sweet-spot session quality (~80k context = 100% recall) requires the orchestrator brief stays lean enough that opening file reads + workflow + actual task fit.
+- **Default-to-rules when ambiguous** — enforcement-shaped content (imperatives: must / never / always) goes to `.claude/rules/<scope>.md` even when the heading sounds like reference. Silent-miss in a cold file costs more than slight over-attach.
+- **Subagent dispatch protects orchestrator focus** — verbose work (10+ file reads, noisy test runs, parallel-safe chunks, fresh-eye review) belongs in a subagent's clean window. Orchestrator's attention budget is too valuable to spend on tool churn.
+- **Mandatory checks ride a forcing function, not prose** — a step the model is merely told to "always run" collapses into a confident assertion on re-runs where the surface looks done. Encode it produce-then-judge: enumerate to a file first, then gate the downstream phase on that file's coverage (a Read + set-difference, not a self-attestation). This skill applies it at the drift check (2b → 2c); new mandatory steps take the same shape.
+--- END PRINCIPLES ---
+
+The user says: "Our CLAUDE.md feels bloated. Tighten it — cut what doesn't earn its place."
+
+Below is the repo's current CLAUDE.md. Each line is prefixed with an ID (`L001|`); the ID is not part of the file.
+
+--- CLAUDE.md ---
+L001| # tilecache
+L002|
+L003| Python 3.12 CLI that pre-renders map tiles from a PostGIS database into an S3-compatible bucket, with resumable jobs.
+L004| Welcome to tilecache! We're so glad you're here and can't wait to see what you build.
+L005| This project was started on a rainy weekend and has grown a lot since then.
+L006|
+L007| ## Commands
+L008|
+L009| - `uv sync` — install; `uv.lock` is committed and authoritative.
+L010| - `uv run pytest -q` — unit suite; `-m pg` adds the PostGIS tests (needs `docker compose up postgis`).
+L011| - `uv run tilecache render --bbox <w,s,e,n> --zoom 0-14 --dry-run` — prints the tile count and ETA without rendering.
+L012| - `uv run ruff check . && uv run mypy src` — both gate CI.
+L013| - `uv run tilecache resume <job-id>` — restarts a job from its last checkpoint row.
+L014| - Running commands is how you interact with the tool.
+L015| - Feel free to explore the commands and have fun with them.
+L016|
+L017| ## Layout
+L018|
+L019| - `src/tilecache/cli.py` — Typer entry; argument parsing only.
+L020| - `src/tilecache/render/` — Mapnik bindings; the only module allowed to import `mapnik`.
+L021| - `src/tilecache/store/` — S3 writer; all uploads go through `store.put_tile()`.
+L022| - `src/tilecache/jobs.py` — job table + checkpointing.
+L023| - The layout is designed to be intuitive and easy to understand.
+L024|
+L025| ## Rules
+L026|
+L027| - Tile coordinates are XYZ (Google scheme) everywhere; TMS y-flip happens only in `store/tms.py` for the one legacy bucket.
+L028| - Zoom levels above 16 are refused at the CLI; the style sheets are not tuned past 16 and render garbage.
+L029| - Every render writes a checkpoint row every 500 tiles; a crash resumes from the last row, so a checkpoint must be committed before its tiles count as done.
+L030| - Empty tiles (all-transparent) are not uploaded; `store.put_tile()` checks the 334-byte canonical empty PNG hash.
+L031| - Styles live in `styles/*.xml`; a style change bumps `STYLE_VERSION` in `render/version.py` so the cache key changes.
+L032| - The S3 key is `{style_version}/{z}/{x}/{y}.png`; never change the shape — the CDN routes on it.
+L033| - Rules are important because they help keep everything consistent.
+L034| - Please try your best to follow them whenever possible.
+L035|
+L036| ## Testing
+L037|
+L038| - Render tests compare against golden PNGs in `tests/golden/` with a per-pixel tolerance of 2; regenerate with `--update-golden` only after eyeballing the diff images in `tests/_diff/`.
+L039| - PostGIS tests load `tests/data/sample.sql` (one city extract); never point tests at a real database.
+L040| - S3 is `moto` in unit tests; the `-m s3live` marker hits MinIO from compose.
+L041| - Tests help catch bugs before they reach users.
+L042| - We believe that a well-tested codebase is a happy codebase.
+L043|
+L044| ## Gotchas
+L045|
+L046| - Mapnik is not fork-safe; the render pool uses `spawn`, never `fork` — `fork` segfaults at random on Linux.
+L047| - PostGIS `ST_AsMVT` is not used; we render raster only — don't add vector output without a card.
+L048| - `boto3` clients are not thread-safe across the pool; each worker builds its own in `store.client()`.
+L049| - Web Mercator bbox inputs are EPSG:4326 degrees at the CLI and converted once in `cli.py`; internal code is EPSG:3857 metres.
+L050| - The legacy bucket `tiles-v1` is TMS and read-only; writes to it raise by design.
+L051| - Software can be tricky sometimes, and that's okay.
+L052| - Don't worry if you run into problems — everyone does!
+L053|
+L054| ## Workflow
+L055|
+L056| - Conventional commits; `feat(render):`, `fix(store):` etc.
+L057| - One PR per logical change; a style change and a code change go in separate PRs because the style PR needs a cartographer review.
+L058| - Releases are `uv run bump-my-version bump <part>`; the tag triggers the PyPI publish.
+L059| - CHANGELOG entries are generated from commit messages — write the subject for a user.
+L060| - Teamwork makes the dream work.
+L061| - Communication is important in any project, big or small.
+L062|
+L063| ## Dependencies
+L064|
+L065| - Mapnik 3.1 from the system package (`python3-mapnik`), not pip; the Docker image pins it.
+L066| - PostGIS 3.4; `ST_TileEnvelope` needs 3.0+.
+L067| - `pyproj` ≥ 3.6 for the always_xy transformer default.
+L068| - Dependencies are libraries that other people wrote to help us.
+L069| - We are grateful to the open-source community for their amazing work.
+L070|
+L071| ## Configuration
+L072|
+L073| - Config is `tilecache.toml` in the cwd, overridable per key by `TILECACHE_*` env vars; env wins.
+L074| - `TILECACHE_BUCKET` has no default — a missing bucket fails fast rather than writing to a guessed one.
+L075| - `render.workers` defaults to CPU count minus one; above 12 the PostGIS connection pool (max 16) starves.
+L076| - Credentials come from the standard AWS chain; never put keys in `tilecache.toml`, it is committed in some deployments.
+L077| - `--profile` selects a named config block; CI uses `ci`, which points at MinIO.
+L078| - Configuration lets you customize the tool to your needs.
+L079|
+L080| ## Performance
+L081|
+L082| - A full z0–14 render of the sample city is ~22k tiles and must stay under 6 min on CI; `uv run pytest -m perf` checks it.
+L083| - Metatiles are 8×8; render one metatile and slice, never render tiles individually (8× slower).
+L084| - Uploads are batched 64 per `put_objects` call; S3 rate-limits single-tile PUTs above ~3,500/s per prefix.
+L085| - PostGIS queries use the `geom_3857` column with its GiST index; querying `geom` (4326) forces a transform per row.
+L086| - Fast software makes everyone happy.
+L087|
+L088| ## Notes
+L089|
+L090| - This file is a living document and will change over time.
+L091| - If something here is unclear, that's probably our fault, not yours.
+L092| - Happy coding!
+--- END CLAUDE.md ---
+
+This pass is deletion-only: you may delete whole lines but not rewrite any line. Answer in exactly three lines, nothing else:
+LINE 1 — `CUT:` followed by the comma-separated IDs of every line you delete (or `CUT: none`).
+LINE 2 — `STOP:` one sentence on why you stopped cutting where you did.
+LINE 3 — `KEPT:` the number of lines the file has after your cuts.

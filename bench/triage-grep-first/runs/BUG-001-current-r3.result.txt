@@ -1,0 +1,21 @@
+**DONE_WITH_CONCERNS**: verdict is **auto-fix**, appended to `docs/work/BUG-001.md`. The code bug is confirmed and contained. The concern is the production data it already damaged, which the code fix won't repair.
+
+**Root cause:** in `tally/engine.py:89-90`, `run()` builds and emits the period's statements (`_emit_period()`) before it settles the last held refund (`_rollover(None)`). Every refund waits one step in case the next event is a dispute that cancels it. A refund in the middle of a batch is settled by the next event, before the statements are emitted. That's why moving `R-88120` up three lines made it post.
+
+A refund that is the last event is settled only after the statements have been emitted and cleared:
+- `_apply_refund` creates a new statement and adds the refund to it, but that statement is never emitted. The balance was already saved with the refund missing, so it stays 12.34 too high.
+- The same call also records the refund in the refund ledger, so the ledger holds a refund that never posted. The re-sent `R-88120-b` then matched it and was skipped as a replay.
+
+**The card's prior theory is wrong about the cause.** It said `is_duplicate()` was swallowing the refund. The staging replay rules that out: `is_duplicate` gives the same answer wherever the refund sits in the batch, yet moving it changed the outcome. It explains only the `R-88120-b` skip, and there it worked as designed, matching the leftover ledger entry.
+
+**Fix:** swap the two calls, so `self._rollover(None)` runs before `self._emit_period()`. Add a unit test where a refund is the last event in the batch.
+- **Tags:** Fix-shape `mechanical`; Execution `inline`; Probe-deps `none` (the repo has no `docs/techstack.md`).
+- **Docs:** no changes needed.
+- **Aim:** still holds. `decisions.md` has no closed forks, and no open card overlaps (`BUG-002` is money formatting). Every file involved belongs to this repo.
+
+**Concerns (ops, not the implement phase):**
+- Account A-7731 is still 12.34 too high.
+- The production ledger's leftover `R-88120` entry will keep blocking re-sends. After the fix ships, ops needs to remove it (`RefundLedger.forget(R-88120)` on the stored ledger) and re-post the refund, or make a manual adjustment.
+- Earlier batches that ended in a refund have the same defect. Checking old batch files whose last line is a refund would show how many accounts are affected.
+
+My first attempt to append the verdict with a Bash heredoc failed with a parser error and wrote nothing. `git status` confirmed that before I appended with Edit. No other files were touched.

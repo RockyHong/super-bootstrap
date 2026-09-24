@@ -1,0 +1,15 @@
+seq	tool	target	offset	limit	result_chars
+1	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/plugin/shared/grounding-discipline.md			2109
+2	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r1/docs/work/BUG-002.md			647
+3	Bash	cd "C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r1" && git status --short && git log --oneline -5 && find . -path ./.git -prune -o -type f -print			627
+4	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r1/tally/money.py			3205
+5	Grep	fmt_money|SYMBOLS|locale			5347
+6	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r1/tally/reports/dunning.py			1711
+7	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r1/docs/decisions.md			1998
+8	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r1/docs/work/BUG-001.md			933
+9	Grep	dunning|render_letter|techstack|Probes			289
+10	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r1/README.md			550
+11	Grep	letter\(|letters\(|past_due_cents|days_past_due			1319
+12	Bash	cd "C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r1" && cat >> docs/work/BUG-002.md <<'EOF'  ## Verdict — auto-fix · 2026-09-24  **Fix-shape:** mechanical **Probe-deps:** none **Execution:** inline — depth: one call site has its positional args swapped, no judgment needed · closure: a single private call ins			49
+13	Bash	cd "C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r1" && git status --short && wc -l docs/work/BUG-002.md			22
+14	Edit	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r1/docs/work/BUG-002.md			265

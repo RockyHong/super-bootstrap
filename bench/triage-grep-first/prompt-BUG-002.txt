@@ -1,0 +1,3 @@
+Triage card BUG-002 (docs/work/BUG-002.md). Today's date: 2026-09-24.
+
+Problem-aim (gateway-aligned): some customer-facing output renders a GBP amount for an en_GB account as `en_GB 312.40` instead of `£312.40`; which surface produces it, and why.

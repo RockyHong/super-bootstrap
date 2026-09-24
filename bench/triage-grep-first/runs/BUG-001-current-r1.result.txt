@@ -1,0 +1,19 @@
+**Status: DONE.** Verdict is **auto-fix**, appended to `docs/work/BUG-001.md`. Tags: Fix-shape `mechanical` · Probe-deps `none` · Execution `inline` · Test Strategy `unit`.
+
+**The card's suggested cause is wrong.** I set it aside and checked it against the code. The replay key in `is_duplicate()` explains only why the re-sent refund was skipped the next night. The actual cause is in `tally/engine.py`:
+
+- **Refunds wait one step.** Every refund sits in `_held` until the next event arrives, in case a dispute follows and cancels it.
+- **The batch-end order is wrong.** At the end of a batch, `run()` calls `_emit_period()` (line 89) before `_rollover(None)` (line 90).
+  - `_emit_period()` sends out the statements and clears `_open`.
+  - Only then is the trailing refund applied. It lands in a new statement that is never sent out and never updates the carried balance.
+  - That is why the refund was on no statement and the closing balance was 12.34 too high.
+- **The re-send was skipped as a side effect.** `_apply_refund` still records the lost refund in the replay ledger. So `R-88120-b`, which has the same account, amount and date, was treated as a replay of `R-88120`. The ledger did what it was designed to do; it had been told `R-88120` was applied when it wasn't.
+- **Why the staging test passed.** With the refund moved three lines up, a following event settled it before the statements were sent out.
+
+**Fix:** swap lines 89 and 90, and add a unit test with a refund as the last event of a batch. Disputes are unaffected, because the cancel check is already skipped at batch end. No other code path posts a deferred event, so this is the only instance. No docs need changing.
+
+**Two things the code fix won't cover:**
+- **Production data needs a manual repair.** The replay ledger still says `R-88120` was applied, and A-7731's August statement and balance are 12.34 too high. Fixing it means removing that ledger record and re-posting the refund or making an adjustment. That's an ops/business step, not part of the code fix.
+- **The replay key has a separate weakness.** Two genuinely different refunds on one account with the same amount and date would also be treated as a replay. That's worth its own card, not this fix.
+
+I wrote nothing except the verdict block. My first attempt to append it through a Bash heredoc failed to parse and changed nothing (`git status` was clean); I appended it with Edit instead.

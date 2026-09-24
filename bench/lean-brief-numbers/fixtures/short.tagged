@@ -1,0 +1,92 @@
+H|# tilecache
+B|
+S|Python 3.12 CLI that pre-renders map tiles from a PostGIS database into an S3-compatible bucket, with resumable jobs.
+F|Welcome to tilecache! We're so glad you're here and can't wait to see what you build.
+F|This project was started on a rainy weekend and has grown a lot since then.
+B|
+H|## Commands
+B|
+S|- `uv sync` — install; `uv.lock` is committed and authoritative.
+S|- `uv run pytest -q` — unit suite; `-m pg` adds the PostGIS tests (needs `docker compose up postgis`).
+S|- `uv run tilecache render --bbox <w,s,e,n> --zoom 0-14 --dry-run` — prints the tile count and ETA without rendering.
+S|- `uv run ruff check . && uv run mypy src` — both gate CI.
+S|- `uv run tilecache resume <job-id>` — restarts a job from its last checkpoint row.
+F|- Running commands is how you interact with the tool.
+F|- Feel free to explore the commands and have fun with them.
+B|
+H|## Layout
+B|
+S|- `src/tilecache/cli.py` — Typer entry; argument parsing only.
+S|- `src/tilecache/render/` — Mapnik bindings; the only module allowed to import `mapnik`.
+S|- `src/tilecache/store/` — S3 writer; all uploads go through `store.put_tile()`.
+S|- `src/tilecache/jobs.py` — job table + checkpointing.
+F|- The layout is designed to be intuitive and easy to understand.
+B|
+H|## Rules
+B|
+S|- Tile coordinates are XYZ (Google scheme) everywhere; TMS y-flip happens only in `store/tms.py` for the one legacy bucket.
+S|- Zoom levels above 16 are refused at the CLI; the style sheets are not tuned past 16 and render garbage.
+S|- Every render writes a checkpoint row every 500 tiles; a crash resumes from the last row, so a checkpoint must be committed before its tiles count as done.
+S|- Empty tiles (all-transparent) are not uploaded; `store.put_tile()` checks the 334-byte canonical empty PNG hash.
+S|- Styles live in `styles/*.xml`; a style change bumps `STYLE_VERSION` in `render/version.py` so the cache key changes.
+S|- The S3 key is `{style_version}/{z}/{x}/{y}.png`; never change the shape — the CDN routes on it.
+F|- Rules are important because they help keep everything consistent.
+F|- Please try your best to follow them whenever possible.
+B|
+H|## Testing
+B|
+S|- Render tests compare against golden PNGs in `tests/golden/` with a per-pixel tolerance of 2; regenerate with `--update-golden` only after eyeballing the diff images in `tests/_diff/`.
+S|- PostGIS tests load `tests/data/sample.sql` (one city extract); never point tests at a real database.
+S|- S3 is `moto` in unit tests; the `-m s3live` marker hits MinIO from compose.
+F|- Tests help catch bugs before they reach users.
+F|- We believe that a well-tested codebase is a happy codebase.
+B|
+H|## Gotchas
+B|
+S|- Mapnik is not fork-safe; the render pool uses `spawn`, never `fork` — `fork` segfaults at random on Linux.
+S|- PostGIS `ST_AsMVT` is not used; we render raster only — don't add vector output without a card.
+S|- `boto3` clients are not thread-safe across the pool; each worker builds its own in `store.client()`.
+S|- Web Mercator bbox inputs are EPSG:4326 degrees at the CLI and converted once in `cli.py`; internal code is EPSG:3857 metres.
+S|- The legacy bucket `tiles-v1` is TMS and read-only; writes to it raise by design.
+F|- Software can be tricky sometimes, and that's okay.
+F|- Don't worry if you run into problems — everyone does!
+B|
+H|## Workflow
+B|
+S|- Conventional commits; `feat(render):`, `fix(store):` etc.
+S|- One PR per logical change; a style change and a code change go in separate PRs because the style PR needs a cartographer review.
+S|- Releases are `uv run bump-my-version bump <part>`; the tag triggers the PyPI publish.
+S|- CHANGELOG entries are generated from commit messages — write the subject for a user.
+F|- Teamwork makes the dream work.
+F|- Communication is important in any project, big or small.
+B|
+H|## Dependencies
+B|
+S|- Mapnik 3.1 from the system package (`python3-mapnik`), not pip; the Docker image pins it.
+S|- PostGIS 3.4; `ST_TileEnvelope` needs 3.0+.
+S|- `pyproj` ≥ 3.6 for the always_xy transformer default.
+F|- Dependencies are libraries that other people wrote to help us.
+F|- We are grateful to the open-source community for their amazing work.
+B|
+H|## Configuration
+B|
+S|- Config is `tilecache.toml` in the cwd, overridable per key by `TILECACHE_*` env vars; env wins.
+S|- `TILECACHE_BUCKET` has no default — a missing bucket fails fast rather than writing to a guessed one.
+S|- `render.workers` defaults to CPU count minus one; above 12 the PostGIS connection pool (max 16) starves.
+S|- Credentials come from the standard AWS chain; never put keys in `tilecache.toml`, it is committed in some deployments.
+S|- `--profile` selects a named config block; CI uses `ci`, which points at MinIO.
+F|- Configuration lets you customize the tool to your needs.
+B|
+H|## Performance
+B|
+S|- A full z0–14 render of the sample city is ~22k tiles and must stay under 6 min on CI; `uv run pytest -m perf` checks it.
+S|- Metatiles are 8×8; render one metatile and slice, never render tiles individually (8× slower).
+S|- Uploads are batched 64 per `put_objects` call; S3 rate-limits single-tile PUTs above ~3,500/s per prefix.
+S|- PostGIS queries use the `geom_3857` column with its GiST index; querying `geom` (4326) forces a transform per row.
+F|- Fast software makes everyone happy.
+B|
+H|## Notes
+B|
+F|- This file is a living document and will change over time.
+F|- If something here is unclear, that's probably our fault, not yours.
+F|- Happy coding!

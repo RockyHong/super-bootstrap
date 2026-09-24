@@ -1,0 +1,11 @@
+**DONE** — BUG-002 triaged as **auto-fix**. Block appended to `docs/work/BUG-002.md`.
+
+- **Where it comes from:** the dunning letter, i.e. the past-due notices sent by email and post. At `tally/reports/dunning.py:45` the call is `fmt_money(account.past_due_cents, account.locale, account.currency)`: locale and currency are swapped. That makes currency `"en_GB"`, which has no symbol, so the code prints `"en_GB "` in front. Locale becomes `"GBP"`, which isn't a known locale, so it uses US separators. The result is exactly `en_GB 312.40`. It affects all three letter stages, but only the `{amount}` field; the `fee` call on line 46 has the right order.
+- **The card's theory is wrong:** GBP is still in `money.SYMBOLS` (`money.py:16`), and an existing test (`tests/test_money.py:11`) checks that `fmt_money` gives `£312.40`. If the symbol were missing, the output would read `GBP 312.40`, not `en_GB 312.40`. I set the card's theory aside as unproven and checked it against the code.
+- **Other callers:** every other `fmt_money` call site passes its arguments in the right order, so the bug is in this one place only.
+- **Card checks:** no open card overlaps this one (BUG-001 is about refunds), and `decisions.md` has no closed decisions it would reopen.
+- **Tags:** Fix-shape `mechanical` · Probe-deps `none` (the repo has no `techstack.md`) · Execution `inline` · Test Strategy `unit`. The fix is to swap the two arguments back (passing them by name would stop this recurring) and add a new failing test in `tests/test_dunning.py`.
+
+My first attempt to append the block through the shell failed with a parser error and wrote nothing; I then added it with the Edit tool. That block is my only write.
+
+Also: several MCP connectors need authorization before they can be used (claude.ai Notion, plus the brand-voice, marketing and product-management plugin servers). Connect them in claude.ai connector settings, or via `/mcp` in an interactive session.

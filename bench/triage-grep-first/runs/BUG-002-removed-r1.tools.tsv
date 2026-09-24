@@ -1,0 +1,14 @@
+seq	tool	target	offset	limit	result_chars
+1	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/plugin/shared/grounding-discipline.md			2109
+2	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-removed-r1/docs/work/BUG-002.md			647
+3	Bash	cd "C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-removed-r1" && git status --short && git log --oneline | head -20 && find . -path ./.git -prune -o -type f -print			627
+4	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-removed-r1/tally/money.py			3205
+5	Grep	fmt_money|format_amount|SYMBOLS|locale|currency			8057
+6	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-removed-r1/tally/reports/dunning.py			1711
+7	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-removed-r1/docs/decisions.md			1998
+8	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-removed-r1/docs/work/BUG-001.md			933
+9	Grep	dunning|Probes|test			1276
+10	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-removed-r1/tally/accounts.py			1344
+11	Bash	cd "C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-removed-r1" && cat >> docs/work/BUG-002.md <<'EOF'  ## Verdict — auto-fix · 2026-09-24  **Fix-shape:** mechanical **Probe-deps:** none **Execution:** inline — depth: fix is a positional-argument swap back to the `fmt_money(cents, currency, locale)` contract, no judgme			49
+12	Bash	cd "C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-removed-r1" && wc -l docs/work/BUG-002.md && git status --short			22
+13	Edit	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-removed-r1/docs/work/BUG-002.md			265

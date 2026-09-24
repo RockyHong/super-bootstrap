@@ -1,0 +1,192 @@
+You are executing the `harness-bootstrap` skill on a repo. The skill's Principles section governs your judgment on harness shape:
+
+--- PRINCIPLES ---
+## Principles
+
+- **Layer by decision-moment** — every rule has a moment-of-need: ambient (CLAUDE.md, every turn) for workflow + always-true safety; path-scoped (`.claude/rules/`, fires on file match) for full-body precision when relevant; on-demand (`docs/techstack.md`, `docs/specs/`) for reference Claude reads when intent surfaces. Skills are for thinking modes / structured processes — **not** a rule-storage layer.
+- **Precision per always-on byte** — every CLAUDE.md line answers "what decision does this sharpen, at what moment?" Length is downstream of that. The Anthropic / community ~120-line target is a smoke alarm on bloat, not a hard cap. Sweet-spot session quality (~80k context = 100% recall) requires the orchestrator brief stays lean enough that opening file reads + workflow + actual task fit.
+- **Default-to-rules when ambiguous** — enforcement-shaped content (imperatives: must / never / always) goes to `.claude/rules/<scope>.md` even when the heading sounds like reference. Silent-miss in a cold file costs more than slight over-attach.
+- **Subagent dispatch protects orchestrator focus** — verbose work (10+ file reads, noisy test runs, parallel-safe chunks, fresh-eye review) belongs in a subagent's clean window. Orchestrator's attention budget is too valuable to spend on tool churn.
+- **Mandatory checks ride a forcing function, not prose** — a step the model is merely told to "always run" collapses into a confident assertion on re-runs where the surface looks done. Encode it produce-then-judge: enumerate to a file first, then gate the downstream phase on that file's coverage (a Read + set-difference, not a self-attestation). This skill applies it at the drift check (2b → 2c); new mandatory steps take the same shape.
+--- END PRINCIPLES ---
+
+The user says: "Our CLAUDE.md feels bloated. Tighten it — cut what doesn't earn its place."
+
+Below is the repo's current CLAUDE.md. Each line is prefixed with an ID (`L001|`); the ID is not part of the file.
+
+--- CLAUDE.md ---
+L001| # ledgerline
+L002|
+L003| Payments reconciliation service: ingests bank statement files (CAMT.053, BAI2, MT940), matches them against ledger entries, and pushes unmatched items to the ops exception queue.
+L004| Money is integer minor units (`bigint` cents) end to end — never a JS `number`, never a float column.
+L005| We are a passionate team that cares deeply about quality, craftsmanship, and doing things the right way.
+L006|
+L007| ## Commands
+L008|
+L009| - `pnpm install --frozen-lockfile` — the lockfile is authoritative; a plain `pnpm install` rewrites it and CI rejects the diff.
+L010| - `pnpm dev` — API on :4010, worker in the same process; needs `docker compose up db redis` first.
+L011| - `pnpm test` — unit suite, no network, no DB (<20 s).
+L012| - `pnpm test:int` — integration suite against the compose Postgres; truncates every table between files.
+L013| - `pnpm test:int -- --grep <name>` — single integration test; the `--` is required or pnpm eats the flag.
+L014| - `pnpm lint && pnpm typecheck` — both gate CI; typecheck is `tsc -b` across all three packages.
+L015| - `pnpm prisma migrate dev --name <slug>` — new migration; slug is snake_case and describes the change, not the ticket.
+L016| - `pnpm prisma generate` — rerun after any `schema.prisma` edit or the client types go stale silently.
+L017| - `pnpm fixtures:load` — seeds two tenants, one ledger each, 400 entries; integration tests assume it ran.
+L018| - `pnpm replay <statement-file>` — runs one statement file through the matcher locally and prints the match table.
+L019| - Commands are the way you run things in this project, so it helps to know them.
+L020|
+L021| ## Layout
+L022|
+L023| - `packages/api/` — Fastify HTTP layer; routes only validate and delegate, no business logic.
+L024| - `packages/core/` — matcher, parsers, ledger domain; pure, no I/O imports allowed (enforced by `eslint-plugin-boundaries`).
+L025| - `packages/worker/` — BullMQ consumers; one queue per statement format.
+L026| - `packages/core/src/parsers/` — one parser per format; each exports `parse(buf): StatementLine[]` and nothing else.
+L027| - `packages/core/src/match/` — matching passes, run in the order listed in `passes.ts`; order is load-bearing.
+L028| - `prisma/` — schema + migrations; the only place table shape is defined.
+L029| - `ops/` — runbooks the on-call reads; edit only with an ops reviewer.
+L030| - Folders help keep the code organized and easy to navigate.
+L031|
+L032| ## Matching invariants
+L033|
+L034| - A ledger entry matches at most one statement line; the unique index `match_entry_uniq` enforces it — never catch its violation and retry.
+L035| - Match passes run exact → reference → amount+date window → fuzzy; a later pass never revisits a line an earlier pass matched.
+L036| - The amount+date window is ±2 business days using the tenant's bank calendar, not UTC calendar days.
+L037| - Fuzzy pass confidence below 0.92 goes to the exception queue, never auto-matched; the threshold is contractual with two tenants.
+L038| - Reversals (negative lines with `RVSL` code) unmatch their original before matching themselves.
+L039| - Partial matches are not a state; a line is matched, unmatched, or excepted.
+L040| - Currency mismatch between line and entry is always an exception, even when amounts agree.
+L041| - Matching is the heart of the product, so it is important to get it right.
+L042|
+L043| ## Parsers
+L044|
+L045| - CAMT.053: namespaces vary by bank (`camt.053.001.02` through `.08`); dispatch on namespace, never on filename.
+L046| - BAI2: record `16` continuation lines (`88`) must be folded before field split, or references truncate.
+L047| - MT940: `:86:` narrative is bank-specific free text — extract references only through the per-bank regex table in `mt940/banks.ts`.
+L048| - Every parser rejects the whole file on one malformed line; partial ingestion corrupted balances in the past.
+L049| - Parser fixtures live next to the parser as `*.fixture.<ext>` and are real anonymised bank files — never hand-write one.
+L050| - Adding a bank = a row in the bank table + a fixture + a replay snapshot; no parser code change unless the format itself differs.
+L051|
+L052| ## Database
+L053|
+L054| - Postgres 16; every table carries `tenant_id` and every query filters on it — RLS is on in prod, off in tests, so a missing filter passes tests and fails prod.
+L055| - Migrations are forward-only; never edit a merged migration, add a new one.
+L056| - A migration that rewrites a table over 1M rows needs a batched backfill script in `prisma/backfills/`, not an inline `UPDATE`.
+L057| - `ledger_entries` is append-only; corrections are new rows with `corrects_id`, never an `UPDATE`.
+L058| - Timestamps are `timestamptz`; business dates are `date` in the tenant's timezone — never derive one from the other with `::date`.
+L059| - Prisma `$transaction` default timeout (5 s) is too short for statement ingest; pass `{ timeout: 60_000 }` explicitly.
+L060| - Databases store data, and ours is no exception.
+L061|
+L062| ## Queues
+L063|
+L064| - One BullMQ queue per format: `ingest:camt`, `ingest:bai2`, `ingest:mt940`; the worker concurrency per queue is 4.
+L065| - Jobs must be idempotent on `statement_hash`; a redelivered job re-reads the stored file, never the upload path.
+L066| - Failed jobs retry 5× with exponential backoff, then land in `ingest:dead`; the ops dashboard reads that queue.
+L067| - Never enqueue from inside a DB transaction — enqueue after commit via `afterCommit()` or the job races the row.
+L068|
+L069| ## API
+L070|
+L071| - Routes are versioned under `/v2`; `/v1` is frozen and served by a compatibility shim in `api/src/v1/` — do not add to it.
+L072| - Request/response schemas are TypeBox in `api/src/schemas/`; the OpenAPI doc is generated from them (`pnpm openapi`), never hand-edited.
+L073| - Every mutating route requires an `Idempotency-Key` header; the middleware stores responses for 24 h.
+L074| - Error bodies follow RFC 9457 problem+json; add new `type` URIs to `api/src/errors.ts`.
+L075| - Auth is tenant-scoped JWT from the gateway; the API never issues tokens.
+L076| - A good API makes the developer experience delightful for everyone who uses it.
+L077|
+L078| ## Testing
+L079|
+L080| - Unit tests sit beside the code as `*.test.ts`; integration tests live in `test/int/`.
+L081| - Matcher changes need a replay snapshot update: `pnpm replay:snap` rewrites `test/replay/__snapshots__`; review the diff line by line.
+L082| - Integration tests use `withTenant()` from `test/helpers`; raw Prisma calls in tests skip the tenant filter and hide RLS bugs.
+L083| - Clock-dependent code takes a `Clock` parameter; tests use `fixedClock('2024-03-15')` — never `vi.useFakeTimers()` with BullMQ, it deadlocks the worker.
+L084| - Property tests for parsers use `fast-check` with the seed printed on failure; paste the seed into the test when you fix it.
+L085| - Coverage gate is 85 % on `packages/core` only; API and worker are not gated.
+L086| - Testing is a great way to make sure things work as expected.
+L087| - Remember that tests are your friend, not your enemy!
+L088|
+L089| ## Coding conventions
+L090|
+L091| - TypeScript strict, `noUncheckedIndexedAccess` on; no `any` outside `*.d.ts` shims.
+L092| - Result types (`Ok`/`Err` from `core/src/result.ts`) for expected failures; throw only for bugs.
+L093| - Amount arithmetic only through `core/src/money.ts` helpers — they carry currency and refuse cross-currency ops.
+L094| - No default exports; named exports keep the barrel files greppable.
+L095| - Logging via `log.child({ tenantId, statementId })`; never log raw statement lines, they carry account numbers.
+L096| - Feature flags are read once per request from `flags.for(tenant)`; never cache a flag across requests.
+L097| - Write code that you would be proud to show your friends and family.
+L098| - Clean code is better than messy code.
+L099|
+L100| ## Security and compliance
+L101|
+L102| - Account numbers (IBAN, BBAN) are PII: store only the last 4 plus a keyed hash (`pii.hashAccount`); never in logs, errors, or test snapshots.
+L103| - Uploaded statement files go to the encrypted bucket via `storage.put`; never write them to local disk outside `os.tmpdir()`.
+L104| - Data retention is 7 years for ledger rows, 18 months for raw statement files — the purge job in `worker/src/purge.ts` enforces it.
+L105| - Any new third-party dependency touching statement data needs a DPA check; note it on the card before adding.
+L106| - SOC 2 evidence: every prod config change goes through a PR, never a console edit.
+L107|
+L108| ## Workflow
+L109|
+L110| - Branch per card: `feat/<card-id>-<slug>`, `fix/<card-id>-<slug>`.
+L111| - Conventional commits; the scope is the package (`feat(core): …`).
+L112| - Squash-merge only; the PR title becomes the commit, so write it as one.
+L113| - A change to matching behaviour needs an ops reviewer on the PR in addition to an engineer.
+L114| - Run `pnpm replay:all` before any matcher PR — it replays 1,200 anonymised statements and fails on any match-count drift.
+L115| - Deploys are automatic from `main` to staging; prod is a manual promote in the deploy dashboard after the staging soak (2 h).
+L116| - Collaboration is key to our success, so be kind and supportive to each other.
+L117|
+L118| ## Gotchas
+L119|
+L120| - `bigint` does not JSON-serialize; responses go through `serializeMoney()` or Fastify throws at runtime, not at typecheck.
+L121| - Postgres `numeric` from raw SQL comes back as a string in `pg`; parse through `money.fromDb()`.
+L122| - BullMQ `removeOnComplete: true` drops the job before the ops dashboard sees it; use `{ age: 86400 }`.
+L123| - Bank calendars are loaded at boot; a new holiday file needs a worker restart, not just a deploy of the file.
+L124| - Fastify schema validation strips unknown fields silently; a missing field in the TypeBox schema means the handler never sees it.
+L125| - `prisma migrate dev` resets the dev DB on drift without asking in non-interactive shells — pass `--create-only` when scripting.
+L126| - Tenant timezone lives on `tenants.tz`, not in the JWT; the JWT `tz` claim is the user's browser and is wrong for business dates.
+L127| - The staging bank sandbox (Nordbank) returns MT940 with CRLF inside `:86:`; the parser normalises it — don't "fix" the fixture.
+L128| - As the saying goes, an ounce of prevention is worth a pound of cure.
+L129|
+L130| ## Dependencies
+L131|
+L132| - Node 20 LTS pinned in `.nvmrc`; Node 22 breaks the `pg-native` build on the CI image.
+L133| - pnpm 9 via corepack; `packageManager` in the root `package.json` is the pin.
+L134| - Prisma 5.x only — 6.x changes `$transaction` semantics the ingest path relies on; upgrading is a card, not a drive-by.
+L135| - BullMQ 5 with Redis 7; Redis 6 lacks the `LMPOP` the worker uses.
+L136| - `decimal.js` is banned; money goes through `money.ts` on `bigint`.
+L137|
+L138| ## Observability
+L139|
+L140| - Metrics: `match_rate{tenant,format}` and `exception_queue_depth` are paged on; do not rename them without updating `ops/alerts.yaml`.
+L141| - Traces: every job starts a span named `ingest.<format>`; the matcher adds one child span per pass.
+L142| - Sentry release is the git SHA; source maps upload in the deploy step, so local builds show minified traces.
+L143| - Observability is really important in modern software engineering.
+L144|
+L145| ## Docs
+L146|
+L147| - `docs/matching.md` — the pass order and thresholds with the reasoning per tenant contract; read before touching `match/`.
+L148| - `docs/formats/` — one page per statement format with the bank quirks table.
+L149| - `ops/runbooks/` — on-call procedures; link from alert annotations.
+L150| - ADRs in `docs/adr/`; a decision that closes a design fork gets one.
+L151| - If you change behaviour a doc narrates, update the doc in the same PR.
+L152| - Documentation is something everyone should read at some point in their career.
+L153|
+L154| ## Environment
+L155|
+L156| - Config is `env.ts` (zod-parsed at boot); a missing var crashes boot by design — add new vars there and to `.env.example` together.
+L157| - `DATABASE_URL` for tests points at database `ledgerline_test`; the int suite refuses to run against any other name.
+L158| - `BANK_CALENDAR_DIR` defaults to `./calendars`; CI mounts the prod calendars read-only there.
+L159| - `MATCH_FUZZY_ENABLED=false` in staging for tenant `acme` until their contract amendment lands.
+L160| - Local S3 is MinIO from compose on :9000; `storage.put` picks it up from `S3_ENDPOINT`.
+L161| - Environment variables are a common way to configure applications.
+L162|
+L163| ## Performance
+L164|
+L165| - A 50k-line statement must ingest in under 90 s on the prod worker size; `pnpm bench:ingest` checks it against a stored baseline.
+L166| - The matcher loads candidate entries per value-date window in one query; never query per statement line (N+1 took ingest to 40 min once).
+L167| - Index `ledger_entries (tenant_id, value_date, amount)` backs the window pass; a query that doesn't lead with `tenant_id` skips it.
+L168| - Batch inserts via `createMany` in chunks of 1,000; larger chunks hit the Postgres parameter limit (65,535).
+L169| - Redis memory is capped at 2 GB in prod; job payloads carry the statement id, never the file body.
+--- END CLAUDE.md ---
+
+This pass is deletion-only: you may delete whole lines but not rewrite any line. Answer in exactly three lines, nothing else:
+LINE 1 — `CUT:` followed by the comma-separated IDs of every line you delete (or `CUT: none`).
+LINE 2 — `STOP:` one sentence on why you stopped cutting where you did.
+LINE 3 — `KEPT:` the number of lines the file has after your cuts.

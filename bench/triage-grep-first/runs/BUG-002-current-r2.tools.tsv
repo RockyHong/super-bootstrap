@@ -1,0 +1,13 @@
+seq	tool	target	offset	limit	result_chars
+1	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/plugin/shared/grounding-discipline.md			2109
+2	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r2/docs/work/BUG-002.md			647
+3	Bash	cd "C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r2" && git status --short && git log --oneline | head -20 && find . -path ./.git -prune -o -type f -print			627
+4	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r2/tally/money.py			3205
+5	Grep	fmt_money|format_money|locale|SYMBOLS			5347
+6	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r2/tally/reports/dunning.py			1711
+7	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r2/docs/decisions.md			1998
+8	Read	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r2/docs/work/BUG-001.md			933
+9	Grep	dunning|letter			375
+10	Bash	cd "C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r2" && cat >> docs/work/BUG-002.md <<'EOF'  ## Verdict — auto-fix · 2026-09-24  **Fix-shape:** mechanical **Probe-deps:** none **Execution:** inline — depth: swap two positional args at one call site to match the existing `fmt_money(cents, currency, locale)` s			49
+11	Bash	cd "C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r2" && wc -l docs/work/BUG-002.md && git status --short			22
+12	Edit	C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/4804b0df-7eb8-4a24-8a81-3d5d7d874b4b/scratchpad/tgf/runs/BUG-002-current-r2/docs/work/BUG-002.md			265

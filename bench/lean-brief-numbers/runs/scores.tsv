@@ -1,0 +1,38 @@
+run	task	fluff_cut	signal_cut	struct_cut	kept	kept_claim	num_ref	FORMAT	FLUFF	SIGNAL	NUMBER
+current-a-r1	a	15/15	0	0	154	154	0	PASS	PASS	PASS	PASS
+current-a-r2	a	15/15	0	0	154	154	0	PASS	PASS	PASS	PASS
+current-a-r3	a	15/15	0	0	154	154	0	PASS	PASS	PASS	PASS
+current-b-r1	b	20/20	0	3	69	69	0	PASS	PASS	PASS	PASS
+current-b-r2	b	20/20	0	3	69	69	0	PASS	PASS	PASS	PASS
+current-b-r3	b	20/20	0	3	69	69	0	PASS	PASS	PASS	PASS
+no-principle-a-r1	a	15/15	0	0	154	154	0	PASS	PASS	PASS	PASS
+no-principle-a-r2	a	15/15	0	0	154	154	0	PASS	PASS	PASS	PASS
+no-principle-a-r3	a	15/15	0	0	154	154	0	PASS	PASS	PASS	PASS
+no-principle-b-r1	b	20/20	0	3	69	69	0	PASS	PASS	PASS	PASS
+no-principle-b-r2	b	20/20	0	3	69	69	0	PASS	PASS	PASS	PASS
+no-principle-b-r3	b	20/20	0	3	69	69	0	PASS	PASS	PASS	PASS
+proposed-a-r1	a	15/15	0	0	154	154	0	PASS	PASS	PASS	PASS
+proposed-a-r2	a	15/15	0	0	154	154	0	PASS	PASS	PASS	PASS
+proposed-a-r3	a	15/15	0	0	154	154	0	PASS	PASS	PASS	PASS
+proposed-b-r1	b	20/20	0	3	69	69	0	PASS	PASS	PASS	PASS
+proposed-b-r2	b	20/20	0	3	69	69	0	PASS	PASS	PASS	PASS
+proposed-b-r3	b	20/20	0	3	69	69	0	PASS	PASS	PASS	PASS
+
+current-a-r1: STOP = Every remaining line is a specific command, invariant, or gotcha that prevents a real mistake, so deleting it would lose information; shrinking the file further means moving path-scoped sections into `.claude/rules/`, and a deletion-only pass can't do that.
+current-a-r2: STOP = Every remaining line sharpens a concrete decision (a command flag, invariant, gotcha, or safety rule), so deleting it would lose enforcement; the remaining bloat should be relocated to path-scoped `.claude/rules/` files, which is a move this deletion-only pass can't do.
+current-a-r3: STOP = Every remaining line carries a specific, non-obvious rule, command, or gotcha, and much of it should move to `.claude/rules/` or `docs/` rather than be cut, which a deletion-only pass can't do without losing it.
+current-b-r1: STOP = Every remaining line is a concrete command, invariant, or gotcha that affects a specific decision, so deleting any of them would drop real precision; moving path-scoped rules into `.claude/rules/` needs rewriting, which this deletion-only pass can't do.
+current-b-r2: STOP = Every remaining line is a concrete command, invariant, or gotcha that sharpens a real decision; relocating the path-specific ones to `.claude/rules/` needs rewrites, which this deletion-only pass doesn't allow.
+current-b-r3: STOP = Every remaining line carries a concrete fact or constraint that sharpens a decision (a command, a boundary, an invariant, a number); some could later move to path-scoped rules, but that needs a move, and this pass only allows deletions.
+no-principle-a-r1: STOP = Every remaining line is a specific, load-bearing fact or rule (many belong in path-scoped `.claude/rules/` files, but relocating them is a move rather than a deletion, so it is out of scope for this pass).
+no-principle-a-r2: STOP = Every remaining line is a specific command, invariant, or gotcha whose loss would cause a silent miss; some belong in path-scoped `.claude/rules/` files, but moving them is a rewrite this deletion-only pass can't do.
+no-principle-a-r3: STOP = Every remaining line is a specific, enforceable fact or command; some belong in path-scoped `.claude/rules/` files, but this pass only allows deletion and cannot relocate them, so cutting them would lose the rule entirely.
+no-principle-b-r1: STOP = Every remaining line is a concrete command, path, invariant, or constraint whose silent loss would cause a real mistake, and moving them to path-scoped rules would need relocation, which this deletion-only pass doesn't allow.
+no-principle-b-r2: STOP = Every remaining line is a concrete command, invariant, or gotcha, and in a deletion-only pass cutting one would lose it outright rather than move it to `.claude/rules/` or `docs/`, so relocating those is a separate rewrite pass.
+no-principle-b-r3: STOP = Every remaining line carries a specific command, path, constraint or rationale that would be lost outright, and in a deletion-only pass it cannot be moved to `.claude/rules/` or `docs/`.
+proposed-a-r1: STOP = Every remaining line is a specific, enforcement-shaped fact tied to a decision moment; the bulk is better moved into path-scoped `.claude/rules/` files, but that is relocation rather than deletion, and cutting those lines here would silently lose the rules.
+proposed-a-r2: STOP = Every remaining line is a specific, non-obvious fact or constraint whose loss would cause a silent miss, so further trimming means moving path-scoped sections into `.claude/rules/` rather than deleting them, which a deletion-only pass can't do.
+proposed-a-r3: STOP = Every remaining line is a specific command, invariant, or gotcha that sharpens a real decision, so deleting more would lose content; slimming further means moving path-scoped sections into `.claude/rules/`, which a deletion-only pass can't do.
+proposed-b-r1: STOP = Every remaining line carries a concrete command, invariant, or failure mode that sharpens a real decision, and some could later move to `.claude/rules/`, but this deletion-only pass can't relocate content, so cutting further would lose it.
+proposed-b-r2: STOP = Every remaining line carries a concrete command, invariant, or failure mode that changes a decision, and deleting any of them would lose that rule rather than relocate it; relocation to path-scoped rules needs a rewrite pass, not this deletion-only one.
+proposed-b-r3: STOP = Every remaining line carries a concrete command, path, invariant, or failure mode that sharpens a real decision; some could move to path-scoped rules, but relocating them needs rewriting, which a deletion-only pass can't do.
