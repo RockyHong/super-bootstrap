@@ -49,7 +49,7 @@ What's available to you:
 
 (That's everything you can see and do. You don't have documentation, help, or anything beyond this.)
 
-Narrate your reasoning as you move through this:
+Talk through what's happening as you move through this:
 - What you notice
 - What you think it means
 - What you try

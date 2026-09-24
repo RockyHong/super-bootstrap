@@ -30,6 +30,16 @@ Extraction and claim-forming are judgment, not retrieval. Retrieval-tier output
 that feeds a downstream decision must be kept to raw retrieval, or gated by a
 verify pass at mid tier.
 
+## Effort axis
+
+Tier sets the ceiling; effort sets the spend within it. Where the dispatch
+surface exposes effort, sweep it before tiering a step down — the most capable
+model at lower effort often matches a lower tier's output, and one model keeps
+one cache namespace (prompt caches are model-scoped). Tiering down pays for
+bulk: many independent pieces, or intermediates the deciding model doesn't need
+to see. One dependent chain that fits a single context gains nothing from a
+lower-tier split.
+
 ## Centrality amplifier
 
 The table tiers by the step's own reasoning shape. A second axis multiplies it:

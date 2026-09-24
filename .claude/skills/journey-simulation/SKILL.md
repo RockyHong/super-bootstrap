@@ -180,7 +180,7 @@ These words / phrases trigger meta-awareness or performance frame:
 - situation-as-fact: "you arrived from", "you came here because"
 - task: "you want to ___"
 - sandbox: "you see ___", "you can ___", "available now"
-- standard-agent expectation: "narrate your reasoning as you work" (this is normal agent behavior, not test-frame)
+- standard-agent expectation: "talk through what's happening as you go" (this is normal agent behavior, not test-frame)
 
 ## Rationalization table — most-misapplied
 
