@@ -26,6 +26,19 @@ READINGS (counted, not asserted):
             result chars / 4 — catches file reads done through Bash `cat`,
             which Read-only counting misses) / whole_target (1 if the cause
             file was Read without offset/limit)
+  Bash-floor readings (DEBT-121), counted per Bash call — a call lands in
+  every class it matches:
+    b_write   a write through Bash: heredoc (`<<`), output redirect (`>` /
+              `>>` to a file; `2>`, `>&N` and `/dev/null` excluded), or a
+              writing verb (tee, `sed -i`, cp, mv, rm, touch, mkdir)
+    b_interp  an interpreter / shell call (python*, node, ruby, perl, php,
+              deno, bun, bash, sh, zsh, pwsh, powershell, cmd)
+    b_read    a file read or search through Bash: cat, sed, head, tail,
+              find, grep/egrep/rg, awk, wc, nl, less, more — as a command's
+              own verb, not as a pipe filter (`git log | head` is not a read)
+  The heredoc body is cut before classifying (its text is data, not
+  commands). A per-arm summary follows the rows: runs with >=1 call per
+  class, plus assertion totals.
 
 Usage: python3 score.py <runs-dir> [fixture-dir]
 """
@@ -99,6 +112,95 @@ def read_tools(path):
     return rows
 
 
+WRITE_VERBS = {"tee", "cp", "mv", "rm", "touch", "mkdir"}
+INTERP_VERBS = {"python", "python3", "py", "node", "ruby", "perl", "php", "deno", "bun",
+                "bash", "sh", "zsh", "pwsh", "powershell", "cmd"}
+READ_VERBS = {"cat", "sed", "head", "tail", "find", "grep", "egrep", "rg", "awk", "wc", "nl",
+              "less", "more"}
+REDIRECT_RE = re.compile(r"(?<![0-9&<>])>>?(?!&)\s*(\S+)")
+ASSIGN_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=\S*$")
+
+
+def shell_segments(cmd):
+    """Split a command line on && || ; | outside quotes.
+
+    Returns [(segment_text_with_quotes_blanked, after_pipe)]. The command is
+    cut at the first heredoc marker's body: `cat >> f <<'EOF' ...` keeps
+    `cat >> f <<'EOF'` and drops the body."""
+    out, cur, q, i, after_pipe = [], [], None, 0, False
+    n = len(cmd)
+    while i < n:
+        c = cmd[i]
+        if q:
+            if c == q:
+                q = None
+                cur.append(c)
+            else:
+                cur.append("_")  # blank quoted content: operators inside quotes are data
+            i += 1
+            continue
+        if c in "'\"":
+            q = c
+            cur.append(c)
+            i += 1
+            continue
+        if cmd.startswith("<<", i) and not cmd.startswith("<<<", i):
+            cur.append("<<HEREDOC")
+            out.append(("".join(cur), after_pipe))
+            return out
+        two = cmd[i:i + 2]
+        if two in ("&&", "||"):
+            out.append(("".join(cur), after_pipe))
+            cur, after_pipe = [], False
+            i += 2
+            continue
+        if c == ";":
+            out.append(("".join(cur), after_pipe))
+            cur, after_pipe = [], False
+            i += 1
+            continue
+        if c == "|":
+            out.append(("".join(cur), after_pipe))
+            cur, after_pipe = [], True
+            i += 1
+            continue
+        cur.append(c)
+        i += 1
+    out.append(("".join(cur), after_pipe))
+    return out
+
+
+def verb_of(seg):
+    words = seg.split()
+    while words and ASSIGN_RE.match(words[0]):
+        words = words[1:]
+    if not words:
+        return "", []
+    v = words[0].strip("'\"").replace("\\", "/").rsplit("/", 1)[-1].lower()
+    if v.endswith(".exe"):
+        v = v[:-4]
+    return v, words[1:]
+
+
+def bash_classes(cmd):
+    """(write, interp, read) booleans for one Bash command line."""
+    w = i = r = False
+    for seg, after_pipe in shell_segments(cmd):
+        seg_w = "<<HEREDOC" in seg
+        for m in REDIRECT_RE.finditer(seg):
+            if not m.group(1).startswith("/dev/null"):
+                seg_w = True
+        v, args = verb_of(seg)
+        if v in WRITE_VERBS or (v == "sed" and any(a.startswith("-i") for a in args)):
+            seg_w = True
+        if v.startswith("python") or v in INTERP_VERBS:
+            i = True
+        if v in READ_VERBS and not after_pipe and not seg_w:
+            r = True
+        w = w or seg_w
+    return w, i, r
+
+
 def score(tag, card_text, origin, tools):
     card = tag.split("-")[0] + "-" + tag.split("-")[1]
     fails = []
@@ -144,19 +246,26 @@ def score(tag, card_text, origin, tools):
     read_tok = sum(t["chars"] for t in reads) // 4
     intake_tok = sum(t["chars"] for t in tools) // 4
     whole = int(any(t["target"].endswith(rub["target"]) and not (t["offset"] or t["limit"]) for t in reads))
+    classes = [bash_classes(t["target"]) for t in tools if t["tool"] == "Bash"]
+    b_write = sum(c[0] for c in classes)
+    b_interp = sum(c[1] for c in classes)
+    b_read = sum(c[2] for c in classes)
 
     row = [tag, kind or "-", int(ok_origin), int(ok_one), int(ok_shape), int(ok_cause), decoy, budget,
-           len(tools), len(reads), len(greps), len(partial), read_tok, intake_tok, whole]
+           len(tools), len(reads), len(greps), len(partial), read_tok, intake_tok, whole,
+           len(classes), b_write, b_interp, b_read]
     return row, fails
 
 
 COLS = ["run", "kind", "origin", "one_block", "shape", "cause", "decoy", "budget",
-        "tools", "reads", "greps", "partial", "read_tok", "intake_tok", "whole_target"]
+        "tools", "reads", "greps", "partial", "read_tok", "intake_tok", "whole_target",
+        "bash", "b_write", "b_interp", "b_read"]
 
 
 def main(runs_dir, fixture_dir):
     print("\t".join(COLS))
     all_fails = []
+    arms = {}
     for name in sorted(os.listdir(runs_dir)):
         if not name.endswith(".card.md"):
             continue
@@ -168,8 +277,19 @@ def main(runs_dir, fixture_dir):
         row, fails = score(tag, text, origin, tools)
         print("\t".join(str(x) for x in row))
         all_fails += [f"FAIL {tag} {f}" for f in fails]
+        arm = re.sub(r"-r\d+$", "", tag.split("-", 2)[2])
+        arms.setdefault(arm, []).append(dict(zip(COLS, row)))
     for f in all_fails:
         print(f)
+    print("\t".join(["arm", "runs", "cause", "contract_fails", "runs_b_write", "runs_b_interp",
+                     "runs_b_read", "calls_b_write", "calls_b_interp", "calls_b_read"]))
+    for arm, rs in sorted(arms.items()):
+        contract = sum((1 - r["origin"]) + (1 - r["one_block"]) + (1 - r["shape"]) for r in rs)
+        print("\t".join(str(x) for x in [
+            "ARM " + arm, len(rs), sum(r["cause"] for r in rs), contract,
+            sum(r["b_write"] > 0 for r in rs), sum(r["b_interp"] > 0 for r in rs),
+            sum(r["b_read"] > 0 for r in rs),
+            sum(r["b_write"] for r in rs), sum(r["b_interp"] for r in rs), sum(r["b_read"] for r in rs)]))
 
 
 if __name__ == "__main__":

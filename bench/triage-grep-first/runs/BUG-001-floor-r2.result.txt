@@ -1,0 +1,20 @@
+**DONE_WITH_CONCERNS.** BUG-001 is an auto-fix: a one-line reorder in `tally/engine.py`. The verdict is appended to `docs/work/BUG-001.md`. The concern is a data cleanup the code fix won't do (below).
+
+**Root cause:** at the end of `run()`, the engine closes out the period's statements before it posts the last held refund. `_emit_period()` sits at `engine.py:89`, one line before `_rollover(None)` at `:90`.
+
+- Every refund waits one step in `_held`. A refund that isn't last gets posted when the next event arrives, which is why it works once moved up.
+- A refund that is last gets posted by `_rollover(None)`. By then `_emit_period()` has already copied the statements out and emptied `_open`, so the refund lands on a fresh statement that is never returned. The closing balance stays 12.34 too high.
+- The same code (`_apply_refund`) still records the refund in the replay ledger. So when support re-sent it as `R-88120-b`, the ledger correctly flagged it as a replay of `R-88120`, even though that refund never posted.
+
+**Card's Prior set aside:** the `is_duplicate` theory only explains why `R-88120-b` was skipped, and that skip follows from the ledger entry above. It can't explain why `R-88120` itself was lost, or why its position in the batch matters. The ledger keys refunds by (account, amount, posted_on) on purpose, because processors don't echo the refund id back.
+
+**Tags:**
+- Fix-shape: mechanical.
+- Execution: inline.
+- Test: unit — a batch that ends in a refund should show the refund line and the right closing balance. Current tests miss this because `test_refund_mid_batch_posts` has a charge after its refund.
+
+The closing sweep is the only place a refund posts after the statements are closed out, so the fix covers every case. No overlapping open card, and `docs/decisions.md` has no closed forks. The repo has no `docs/techstack.md`, so no probes ran.
+
+**Concern — production data cleanup (needs production authority):** the production refund ledger still marks `(A-7731, 1234, posted_on)` as applied under `R-88120`. Even after the code fix ships, a re-sent refund will be skipped until that entry is cleared (e.g. with `RefundLedger.forget`). Any other account whose refund was the last event of a past batch was hit the same way; finding them means scanning past batch files and ledger data.
+
+**Separate note:** several MCP servers (Notion and a number of plugin connectors) need authorization in claude.ai connector settings or via `/mcp`. They weren't needed for this triage.

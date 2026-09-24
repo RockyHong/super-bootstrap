@@ -1,0 +1,20 @@
+**DONE_WITH_CONCERNS**: the verdict for BUG-001 is **auto-fix**, and I appended it to `docs/work/BUG-001.md`. The concerns are two issues that sit outside the code fix (listed at the end).
+
+**Cause:** the card's guess is wrong: `is_duplicate()` is not what drops the refund. The bug is two lines in the wrong order in `tally/engine.py:89-90`:
+- Every refund waits one step before it posts, because a dispute on the same charge arriving next cancels it.
+- A refund that is the last event gets posted by `_rollover(None)` after the loop. But `_emit_period()` runs just before that, and it hands out the statements and then empties the list of open ones.
+- So the last refund is written onto a new statement that nothing ever sends out, and the next run throws it away. That explains why moving `R-88120` three lines up in staging fixed it.
+- The refund is still recorded in the refund ledger as applied (`engine.py:352`). So the next night, the resent `R-88120-b` matched that record and was skipped as a replay. The duplicate check worked as designed; the ledger entry itself was false.
+
+**Fix:** swap the two lines so `self._rollover(None)` runs before `self._emit_period()`. It's one file, and `tally/cli.py` (the only caller) is unaffected.
+
+- **Tags:** mechanical fix; no probes (there's no `docs/techstack.md`); run inline.
+- **Tests:** unit tests in `tests/test_engine.py`: a refund as the last event must post, and a later resend is skipped only if the original really posted.
+- **Other paths:** held refunds are the only thing the engine settles after the loop, so this covers every case.
+- **Docs:** none need changing. No closed forks in `docs/decisions.md`, and BUG-002 is unrelated.
+
+**Concerns:**
+1. **Account A-7731 still needs a manual repost.** The saved refund ledger probably still marks `R-88120` as applied. Even after the fix ships, ops has to clear that entry (e.g. with `RefundLedger.forget`) and re-send the refund.
+2. **The duplicate check can merge two real refunds.** Its key is (account, amount, posted_on), so two genuine refunds of the same amount on the same day would be treated as one. A code comment says this is deliberate, and this bug doesn't depend on it. It needs its own card if anyone wants it changed.
+
+Several MCP servers (Notion and the brand-voice, marketing and product-management plugin connectors) need authorization before they can be used. Connect claude.ai ones in its connector settings, others via `/mcp` in an interactive session. None were needed here.

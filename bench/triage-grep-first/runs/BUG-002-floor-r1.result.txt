@@ -1,0 +1,9 @@
+**DONE:** the verdict is **auto-fix**, added to the end of `docs/work/BUG-002.md`.
+
+- **Which output:** dunning letters, the past-due notices sent by email and post. The wrong text is in the past-due amount, which appears in all three letter stages.
+- **Why:** `tally/reports/dunning.py:45` passes the currency and the locale in the wrong order: `fmt_money(account.past_due_cents, account.locale, account.currency)`. So `"en_GB"` is looked up as a currency, isn't in `SYMBOLS`, and gets printed as a text prefix. `"GBP"` is looked up as a locale and falls back to en_US separators. The result is exactly `en_GB 312.40`.
+- **The card's prior is false:** `GBP: "£"` is still in `money.SYMBOLS` (`money.py:16`), and `test_money.py:11` checks `£312.40`. I tested the prior against the code and set it aside.
+- **Other callers:** every other customer-facing call passes currency then locale (`notify`, `api/handlers`, the pdf, json and csv exports), and so does the late-fee line right below (`dunning.py:46`). Only this one call is wrong. Separately, three internal reports (`cli`, `aging`, `summary`) leave out the locale, so they always use en_US separators. They still show the currency symbol and aren't customer-facing, so I noted them and left them out of scope.
+- **Fix size:** mechanical, one line, done inline, verified by a unit test in a new `tests/test_dunning.py`. No doc changes, no closed decisions affected, and no other open card overlaps.
+
+No `docs/techstack.md` exists, so there were no probes to run and the verdict comes from reading the code.

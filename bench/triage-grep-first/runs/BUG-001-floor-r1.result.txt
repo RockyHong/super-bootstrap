@@ -1,0 +1,11 @@
+**Status: DONE_WITH_CONCERNS.** Verdict is `auto-fix`, and it's appended to `docs/work/BUG-001.md`.
+
+**Cause:** In `StatementEngine.run()` (`tally/engine.py:89-90`), the statements are sent out before the last held refund is settled. Every refund waits one step so a following dispute can cancel it. When the refund is the last event in the batch, it gets settled after the statements have already gone out. It then lands on a new statement that is never emitted, which is why A-7731's closing balance is 12.34 too high. The refund is still recorded in the refund ledger as applied.
+
+**Why the card's Prior is wrong:** `is_duplicate()` did not drop `R-88120`. The `R-88120-b` skip is a side effect: the ledger records a refund that never posted, so the re-send is correctly treated as a replay. Keying replays on account, amount and date is a documented design choice (`refunds.py:21-22`), and it's out of scope here. I left the Prior out of my judgment.
+
+**Fix:** run `_rollover(None)` before `_emit_period()`, and add a unit test where a refund is the last event in the batch. It's `mechanical` and `inline`: one function, no change for callers, no doc impact. No other code path adds statement lines after the statements are sent. No overlapping open card (BUG-002 is about money formatting), and `decisions.md` has no closed forks.
+
+**Concern:** the code fix doesn't repair data that's already stored. In production, the refund ledger still marks `R-88120` as applied, so re-sends stay blocked, and A-7731's August statement stays 12.34 high. Unblocking it takes an ops action: remove that ledger entry (`RefundLedger.forget()`) or post a manual adjustment. The fix won't do that.
+
+No probes were run because the repo has no `docs/techstack.md`.

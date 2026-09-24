@@ -1,0 +1,19 @@
+**DONE_WITH_CONCERNS** — verdict is `auto-fix`. The block is appended to `docs/work/BUG-001.md`. The concern is an ops cleanup step that the code fix doesn't cover.
+
+**Cause:** in `tally/engine.py:89-90`, `run()` calls `self._emit_period()` before `self._rollover(None)`. A refund is held back until the next event arrives. When it is the last event in the batch, it only gets posted after the statements have already been sent out and cleared. It lands on a statement that is never returned and is dropped on the next run. That is why moving `R-88120` three lines up made it post.
+
+**Fix:** swap those two lines and add a unit test with the refund as the last event. The `_rollover` docstring already describes that order. I sized it `mechanical` / `inline` / unit test; no docs change.
+
+**The card's guess about `is_duplicate` is wrong as the root cause.** `_apply_refund` records the refund in the refund ledger even though the refund never reaches a returned statement. That entry is what made the re-sent `R-88120-b` count as a replay. The ledger worked as designed; it was fed a refund that was never posted. I left the replay key alone because `refunds.py:21-22` gives a reason for it (processors don't always send the refund id back).
+
+**Concern:** after the fix, the stored ledger still has `R-88120` marked as applied, so re-sending the A-7731 refund would be skipped again. Ops needs to clear that entry with `RefundLedger.forget` or post a manual adjustment. Any other account whose refund was last in a past batch has the same problem. The verdict describes how to find them.
+
+**Other checks:**
+- `docs/decisions.md` has no closed decisions.
+- The only other open card, BUG-002, is about currency symbols.
+- There's no `docs/techstack.md`, so I ran no probes and judged from reading the code.
+- Nothing arrived with the dispatch besides the card, so there were no outside views to set aside.
+
+I didn't change any source code.
+
+Several MCP servers (Notion, Atlassian, Linear, Slack, etc.) need authorizing before they can be used, through their claude.ai connector settings or `/mcp`. None were needed here.

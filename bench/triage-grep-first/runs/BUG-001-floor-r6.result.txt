@@ -1,0 +1,18 @@
+**Status: DONE_WITH_CONCERNS.** BUG-001 is an auto-fix: a two-line swap in `tally/engine.py`. I appended the verdict block to `docs/work/BUG-001.md`; nothing else was written.
+
+**Root cause.** The last two calls in `StatementEngine.run()` are in the wrong order (`engine.py:89-90`). `_emit_period()` ships the statements and clears `_open` before `_rollover(None)` settles the batch's last held refund. That refund then posts onto a new statement that is never returned and gets wiped at the start of the next `run()`. Its amount is never added to the balances either, so both the closing balance and next month's opening balance come out 12.34 too high.
+
+A refund earlier in the batch gets settled by the next event's rollover while its statement is still open. That's why ops' staging replay with the refund moved up worked. The `_rollover` docstring already says the call after the loop is there to settle the trailing refund, so the intended behavior is clear.
+
+**The card's prior (a bad ledger key) is not the cause.** The ledger only explains the second symptom. `_apply_refund` records `R-88120` in the ledger even though it never reached a statement. The re-send `R-88120-b` has the same (account, amount, posted_on) key, so it was correctly skipped as a replay. That key is deliberate, because processors don't always send our refund id back. `refunds.py` stays unchanged.
+
+**Fix scope:**
+- **Code:** swap `engine.py:89-90`.
+- **Test:** add a unit test with the refund as the batch's last event; expected closing 600 and the carried balance 600.
+- **Callers and docs:** `run()` has one production caller (`cli.py:19`), no other code path defers settlement, and no docs change.
+
+**Tags:** Fix-shape `mechanical`, Execution `inline`, Probe-deps `none`. There's no `docs/techstack.md`, so no probes were run.
+
+**Concern: customer A-7731 still needs a separate ops fix.** The code fix alone won't restore the 12.34 USD. The persistent refund ledger already holds `R-88120`'s key, so a fresh re-send will still be skipped as a replay after the fix. Getting the refund onto a statement needs a separate data or ops step: remove the entry with `RefundLedger.forget()` and re-post, or make a manual adjustment. That decision is yours to route.
+
+The claude.ai Notion connector and several plugin MCP servers need authorization before their tools work. Connect them in the claude.ai connector settings, or via `/mcp` in an interactive session. None were needed for this triage.

@@ -1,0 +1,17 @@
+**Status: DONE_WITH_CONCERNS.** Verdict is **auto-fix**, appended to `docs/work/BUG-001.md`. I found the cause by reading the code; I didn't run a test. The only file I changed is that card.
+
+**Root cause:** the last two calls in `StatementEngine.run()` run in the wrong order (`tally/engine.py:89-90`).
+
+1. `self._emit_period()` runs first. It hands the finished statements out and then clears the open ones.
+2. `self._rollover(None)` runs after it. This is the step that posts a refund left waiting at the end of the batch. By now the real statements are gone, so the refund lands on a new blank statement that never gets returned. The balance is never updated either.
+3. The same step still records the refund in the persistent duplicate-check ledger (`engine.py:352`). So the next night, `R-88120-b` has the same account, amount and date, and gets skipped as a "replay of R-88120". That matches the job-log line on the card.
+
+This also explains the staging test: with the refund three lines up, a later event posts it before the statements go out. The `_rollover` docstring already says the trailing refund should be posted "once more after the loop", so the code breaks its own stated rule.
+
+**Card's guess about the duplicate check, set aside:** the key `(account, amount, posted_on)` is deliberate — the code comment says processors don't always send the refund ID back. The collision is with a record of R-88120 itself, which never actually posted. Switching the key to the refund ID would weaken duplicate protection and would still lose the original refund.
+
+**Fix:** swap the two calls so the trailing refund posts before statements go out. Add a unit test with a refund as the last event, plus a two-batch test showing a real duplicate is still skipped. Tags: mechanical, `inline`, unit tests. Nothing else calls this code except `cli.py`, and no docs need to change.
+
+**Concern — data fix needed beyond the code:** the production duplicate-check ledger likely holds a false entry for every trailing refund from past batches; A-7731 / R-88120 is the known one. The code fix doesn't clear these. Someone who owns the nightly job needs to find those refunds, clear or re-post them, and correct the affected statements, including A-7731's August one. The verdict records this outside the code fix.
+
+There was no `docs/techstack.md`, so there were no probes to run. There is no overlapping open card: BUG-002 is about currency formatting.

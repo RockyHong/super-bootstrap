@@ -1,0 +1,25 @@
+**Status: DONE.** Verdict: **auto-fix**, appended to `docs/work/BUG-002.md`. I made no other changes.
+
+**Which surface:** dunning letters, the past-due notices sent by email and post. Every other surface formats this amount correctly.
+
+**Why:** at `tally/reports/dunning.py:45`, the call that formats the past-due amount passes the locale and currency in each other's places:
+`fmt_money(account.past_due_cents, account.locale, account.currency)`
+The function expects `(cents, currency, locale)`.
+- `"en_GB"` isn't a known currency code, so `money.py:83` falls back to printing it as the prefix: `"en_GB "`.
+- `"GBP"` isn't a known locale, so the number uses the default en_US separators.
+- The result is `en_GB 312.40`, which matches the screenshot exactly.
+
+This amount appears in all three letter stages. The late-fee line right below it (line 46) has the correct order.
+
+**The card's Prior is wrong:** GBP is still in `SYMBOLS` (`money.py:16`), and an existing test already checks that `fmt_money(31240, "GBP", "en_GB")` returns `£312.40`.
+
+**Other checks:**
+- **Other callers:** every other `fmt_money` call has the arguments in the right order (API handlers, CSV/JSON/PDF exports, email notifications, the fee line).
+- **Not in scope:** the CLI and the internal aging and ops-summary reports leave out the locale. That's a different problem, only affects number separators, and none of those reach customers.
+- **Aim:** no overlapping open card (BUG-001 is about refund posting), and `docs/decisions.md` has no closed forks.
+
+**Fix:** swap the two arguments back on line 45, and add `tests/test_dunning.py` with a check that a GBP/en_GB letter shows `£312.40`. There is no dunning test today. Tags: mechanical fix, inline execution, unit test, no doc changes.
+
+**Excluded from judgment:** the card's Prior (a cause theory). It was tested and shown false.
+
+**Probes:** none run — this repo has no `docs/techstack.md`, so there is no `§ Probes` table.

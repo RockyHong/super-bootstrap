@@ -1,0 +1,17 @@
+**DONE — auto-fix.** I added the verdict block to the end of `docs/work/BUG-001.md`; it's the only change I made. The trace is from reading the code; I didn't run the repro or the test suite.
+
+**Root cause:** in `tally/engine.py:89-90`, `run()` calls `_emit_period()` before `_rollover(None)`.
+- Every refund waits one event before it posts. A refund that is last in the batch is still waiting when the statements go out and the balances are saved. That's why A-7731's closing balance is 12.34 too high.
+- The late `_rollover(None)` then puts the refund on a new statement that never goes out, and the next run discards it.
+- That same late call still marks `R-88120` as applied in the replay ledger. So when `R-88120-b` was re-sent, the ledger was right to skip it as a replay, which is the log line in the card.
+- A refund earlier in the batch posts before the statements go out, which matches the staging replay.
+
+**Card's prior not used:** the card blames `is_duplicate`'s replay key. That isn't the cause. The original `R-88120` was not a duplicate and passed that check; only the re-send was blocked, and only because of the false "applied" record. Whether the key is too broad is a separate question.
+
+**Fix:** swap the two calls so `_rollover(None)` runs first. That is the order the `_rollover` docstring already states. Add one unit test to `tests/test_engine.py` where a refund is the last event.
+- **Tags:** Fix-shape `mechanical` · Execution `inline` · Probe-deps `none` (there's no `docs/techstack.md`).
+- **Blast radius:** only the refund path posts after the event loop, so this covers every case. `run()` returns the same shape to `cli.py` and other callers. No doc changes, no overlapping card (BUG-002 is unrelated), and no closed decision in `docs/decisions.md`.
+
+**Concern — needs its own item:** the code fix won't repair existing data. A-7731's August statement and balance, and the ledger entry saying `R-88120` was applied, have to be corrected separately. Any earlier batch that ended with a refund has the same problem. This needs its own ops item.
+
+**Unavailable connector:** the claude.ai Notion connector needs authorization in claude.ai connector settings before it can be used. This triage didn't need it.

@@ -1,0 +1,17 @@
+**DONE** — the verdict is **auto-fix**, appended to `docs/work/BUG-002.md`.
+
+**Which surface:** the dunning letter, the past-due notice sent by email and post. It lives in `tally/reports/dunning.py`.
+
+**Why:** line 45 passes the account's locale and currency to `fmt_money` in the wrong order. The function expects `(cents, currency, locale)`. With the two swapped:
+- it looks up a symbol for `"en_GB"`, finds none, and prints the code `"en_GB "` as the prefix;
+- it looks up separators for `"GBP"`, finds none, and falls back to en_US.
+
+The result is exactly `en_GB 312.40`. Only accounts 15 or more days past due get a letter, which would explain why there's only one report so far.
+
+**The card's Prior is wrong.** GBP is still in `SYMBOLS` (`money.py:16`), and an existing test checks that it renders as `£312.40`. I treated the Prior as a theory to test and gave it no weight.
+
+**Other call sites:** I checked every place that calls `fmt_money`. Line 45 is the only one with the arguments swapped; the `{fee}` line in the same function is correct. The notification emails, portal API, PDF, JSON and CSV exports all pass the right order.
+
+**Fix route:** swap the two arguments back on line 45 (keyword arguments would stop it recurring). Add a new unit test, `tests/test_dunning.py`, that fails before the fix. Tags: mechanical, `Execution: inline`, `Probe-deps: none` — the repo has no `docs/techstack.md`, so I ran no probes.
+
+**Other checks:** no other open card overlaps this one (BUG-001 is unrelated), `docs/decisions.md` has no closed forks, and no docs need to change.

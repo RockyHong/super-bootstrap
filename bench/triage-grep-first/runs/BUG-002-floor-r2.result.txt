@@ -1,0 +1,16 @@
+**DONE:** BUG-002 gets an auto-fix verdict; the block is appended to `docs/work/BUG-002.md`. Tags: mechanical fix, runs inline, no probes needed, covered by a unit test.
+
+**Surface:** dunning letters, the past-due notices sent to customers by email and post. The `{amount}` line of all three letter stages is affected: reminder, second notice and final notice.
+
+**Why:** `tally/reports/dunning.py:45` calls `fmt_money(account.past_due_cents, account.locale, account.currency)`, with currency and locale in each other's slots. So `fmt_money` gets `"en_GB"` as the currency, finds no symbol for it, and falls back to printing the code: `"en_GB "` + `312.40`. The separators still look normal because the lookup on `"GBP"` falls back to en_US ones. The late-fee line at `:46` passes the arguments in the right order, which is why only the amount is wrong.
+
+**The card's Prior is false:** GBP is still in `SYMBOLS` (`tally/money.py:16`), and `tests/test_money.py:11` already checks that `fmt_money(31240, "GBP", "en_GB")` returns `£312.40`. I treated the Prior as a claim to test, not as the starting point, and read the code directly.
+
+**Other callers:** every other `fmt_money` call passes currency and locale in the right order, so the fix is only needed at `dunning.py:45`.
+
+**Fix route:**
+- Swap the two arguments at `dunning.py:45`; using keyword arguments would stop it happening again.
+- Add `tests/test_dunning.py`: a GBP / `en_GB` account with 312.40 past due, asserting the letter shows `£312.40` and no `en_GB`.
+- No docs need changing.
+
+The Notion and plugin connectors listed at session start need authorizing before they can be used. None were needed for this triage.

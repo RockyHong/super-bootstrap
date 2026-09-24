@@ -18,6 +18,14 @@ exactly the one bullet.
 
 - `current` — [`arm-current.md`](arm-current.md), the body as shipped.
 - `removed` — [`arm-removed.md`](arm-removed.md), the same body minus that bullet.
+- `floor` — [`arm-floor.md`](arm-floor.md) (`DEBT-121` option A): `arm-removed.md` with the
+  command-list Bash floor sentence (`Bash stays read-only (git status/diff/log, ls).`) restated per
+  action — verdict append through Edit, reads through Read/Grep/Glob, Bash for git inspection,
+  `ls` and the `§ Probes` commands.
+
+M4 shipped the bullet's removal, so `current` / `removed` are frozen snapshots; `make-arms.sh`
+regenerates them only while the agent still carries the bullet, and derives `floor` from
+`arm-removed.md`, asserting a one-line difference.
 
 ## Fixture
 
@@ -52,7 +60,13 @@ recorded.
 `cause` (true root cause named — card-specific rubric). Readings: `decoy`, `budget`
 (`truncated at budget` exit), tool / Read / Grep / partial-Read counts, `read_tok` (Read result
 chars / 4), `intake_tok` (all tool-result chars / 4 — also counts files read through Bash `cat`),
-`whole_target` (the cause file Read without offset/limit). [`bite.sh`](bite.sh) proves
+`whole_target` (the cause file Read without offset/limit), and the Bash-floor readings per Bash call —
+`b_write` (heredoc, file redirect, tee / `sed -i` / cp / mv / rm / touch / mkdir), `b_interp`
+(python / node / shell interpreters), `b_read` (cat / sed / head / tail / find / grep / awk / wc as a
+command's own verb, not a pipe filter) — with a per-arm summary of runs holding ≥1 call per class.
+`PERM=<mode>` on `run.sh` swaps the permission mode (default `acceptEdits`) and tags runs
+`<card>-<arm>-<mode>-r<n>`; `PERM=auto` is the mode that injects the runtime auto-mode Bash reminder.
+[`bite.sh`](bite.sh) proves
 each assertion fails on an induced bad verdict ([`bite/`](bite/)).
 
 Evidence lands in [`runs/`](runs/) (`<card>-<arm>-r<n>.card.md` / `.result.txt` / `.tools.tsv`);
@@ -62,6 +76,7 @@ transcripts stay in the scratch tree. Results: [`FINDINGS.md`](FINDINGS.md).
 bash make-arms.sh
 bash make-fixture.sh <scratch>
 for c in BUG-001 BUG-002; do for a in current removed; do bash run.sh <scratch> $a $c 3; done; done
+for c in BUG-001 BUG-002; do bash run.sh <scratch> floor $c 6; PERM=auto bash run.sh <scratch> floor $c 3; done
 python3 score.py runs
 bash bite.sh
 ```

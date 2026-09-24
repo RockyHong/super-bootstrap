@@ -1,0 +1,15 @@
+**DONE** — I appended an `auto-fix` verdict to `docs/work/BUG-002.md`. I only read code; nothing was run.
+
+**Which surface produces it:** dunning letters, the past-due notices sent by email and post. It affects the past-due amount in all three stages (reminder, second notice, final notice).
+
+**Why:** `tally/reports/dunning.py:45` passes locale and currency to `fmt_money` in the wrong order: `fmt_money(account.past_due_cents, account.locale, account.currency)`. The function expects `(cents, currency, locale)`. As a result:
+- It looks up `"en_GB"` as a currency, finds no symbol, and falls back to printing that text plus a space.
+- It looks up `"GBP"` as a locale, doesn't find it, and falls back to en_US separators.
+
+So 31240 cents comes out as `en_GB 312.40`, exactly what's in the screenshot. The late-fee amount on the next line has the right order and shows `£35.00`.
+
+**The card's guess is wrong:** GBP is still in `money.SYMBOLS` (`money.py:16`), and an existing test already checks that `fmt_money(31240, "GBP", "en_GB")` gives `£312.40`. I didn't treat the guess as evidence.
+
+**Other callers:** I checked every `fmt_money` call. `dunning.py:45` is the only one with the arguments swapped. Three internal reports (`cli.py`, `aging.py`, `summary.py`) leave out the locale, so they always use en_US separators. That doesn't cause this symptom, so I left it out of scope; it's worth a separate card if those reports reach customers.
+
+**The fix:** swap the two arguments on that line (or pass them by name so it can't recur), plus a new unit test with a GBP / en_GB account. It's a small, single-file change that can be done inline, and no docs need updating. This repo has no probe table, and no other open card or closed decision overlaps with this one.

@@ -1,0 +1,13 @@
+**Status: DONE_WITH_CONCERNS.** The verdict for BUG-001 is **auto-fix**, and the block is appended to `docs/work/BUG-001.md`. I found the cause by reading the code; I didn't run a repro or the tests.
+
+**Cause:** in `tally/engine.py`, `run()` finishes the statements before it settles the last pending refund. Lines 89–90 call `_emit_period()` first and `_rollover(None)` second. Each refund waits one step in `_held` before it posts. A refund on the batch's last line is still waiting when the statements are finished and the list of open statements is cleared. It then posts onto a new statement that is never output, so it appears on no statement and the balance is too high by its amount.
+
+That wrong post still marks the refund as applied in the refund ledger. So the ledger then treats `R-88120-b` as a repeat of `R-88120`, which explains the "skipped as replay" log line.
+
+**Fix:** call `_rollover(None)` before `_emit_period()`, which is the order `_rollover`'s own docstring describes. Add a unit test with a refund as the last event. Tags: `mechanical`, `inline`, `Probe-deps: none`, `Test Strategy: unit`.
+
+**Card's theory about the ledger key:** I set it aside as the cause. The (account, amount, posted_on) key is intentional (refunds.py:21–22), and moving the refund three lines up fixed it without touching the key. No other open card overlaps this one: BUG-002 is currency formatting. `docs/decisions.md` has no closed forks. No `docs/techstack.md` exists, so no probes applied.
+
+**Concerns:**
+- **A-7731 stays wrong after the fix.** The saved refund ledger still records `R-88120` as applied, and the August statement has already gone out. Someone in ops needs to decide how to correct it: clear the ledger entry (`RefundLedger.forget`) or make a manual adjustment, plus decide whether to reissue the statement.
+- **Separate possible issue.** The same ledger key would also block a genuinely different refund with the same amount and date. That's a deliberate trade-off in `refunds.py`, so it belongs on its own card if you want it revisited.

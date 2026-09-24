@@ -1,0 +1,15 @@
+**DONE_WITH_CONCERNS.** The verdict is auto-fix, appended to `docs/work/BUG-001.md`.
+
+**Root cause:** `StatementEngine.run()` (`tally/engine.py:89-90`) finishes the statements before it posts the last held refund:
+- Every refund is held back one step and only posts when the next event arrives. Mid-batch that works, which is why the staging replay posted it correctly.
+- The last refund in a batch has no next event, so it is supposed to post after the loop. Instead, `_emit_period()` runs first: it ships the statements and clears the open set.
+- Only then does `_rollover(None)` post the refund, onto a new empty statement that never ships. It also records the refund in the persistent replay ledger.
+- The fix is to swap those two calls. The `_rollover` docstring already says it should run first.
+
+**Card's prior ruled out as the cause:** `R-88120-b` was skipped because the ledger matched it against `R-88120` itself, which was recorded but never posted. It did not collide with some earlier refund. The (account, amount, posted_on) key is a deliberate choice explained in `refunds.py:21-22` and has nothing to do with the first night's loss. I did not use the prior when judging.
+
+**Aim:** Still true against current code. BUG-002 doesn't overlap, and `docs/decisions.md` has no rows.
+
+**Scope:** I checked for the same problem elsewhere: the held-refund list is the only state the engine settles late, so this is the only instance. The fix touches `tally/engine.py:89-90` plus a unit test where the refund is the last event of the batch. No docs need changing. The repo has no `docs/techstack.md`, so I ran no probes.
+
+**Concern:** Fixing the code won't give A-7731 its 12.34 back. The production ledger still has an entry for `R-88120`, so a re-send of the same refund will still be skipped. Someone has to remove that entry (`RefundLedger.forget`) and re-send, or post a manual adjustment. Someone also has to decide how to correct the August statement that already went out. Both are owner decisions and need their own route, separate from this fix.

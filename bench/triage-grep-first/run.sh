@@ -14,9 +14,14 @@
 # CLAUDE_CONFIG_DIR is the credentials-only cold dir make-fixture.sh built.
 #
 # Usage: bash run.sh <fixture-root> <arm> <card> [N]
-#   arm   current | removed
+#   arm   current | removed | floor
 #   card  BUG-001 | BUG-002
 #   N     default 3
+# Env:
+#   MODEL  default opus
+#   PERM   permission mode, default acceptEdits. Any other mode tags the run
+#          <card>-<arm>-<perm>-r<n> (e.g. PERM=auto -> BUG-001-floor-auto-r1),
+#          so a mode set scores beside the default set without colliding.
 #
 # Outputs, per rep:
 #   <fixture-root>/runs/<card>-<arm>-r<n>/        the run's repo, as left
@@ -30,6 +35,9 @@ ARM="${2:?arm}"
 CARD="${3:?card}"
 N="${4:-3}"
 MODEL="${MODEL:-opus}"
+PERM="${PERM:-acceptEdits}"
+LABEL="$ARM"
+[ "$PERM" = "acceptEdits" ] || LABEL="$ARM-$PERM"
 SRC="$(cd "$(dirname "$0")" && pwd)"
 
 [ -d "$FXROOT/repo" ] || { echo "no fixture at $FXROOT/repo — run make-fixture.sh first" >&2; exit 1; }
@@ -49,7 +57,7 @@ mkdir -p "$FXROOT/runs" "$SRC/runs"
 
 n=1
 while [ "$n" -le "$N" ]; do
-  tag="$CARD-$ARM-r$n"
+  tag="$CARD-$LABEL-r$n"
   rundir="$FXROOT/runs/$tag"
   out="$FXROOT/runs/$tag.jsonl"
   if [ -s "$out" ]; then
@@ -59,14 +67,14 @@ while [ "$n" -le "$N" ]; do
   fi
   rm -rf "$rundir"
   cp -r "$FXROOT/repo" "$rundir"
-  echo "[$tag] model=$MODEL"
+  echo "[$tag] model=$MODEL perm=$PERM"
   (
     cd "$rundir" || exit 1
     CLAUDE_CONFIG_DIR="$CFG" claude \
       --model "$MODEL" \
       --system-prompt "$SYSTEM" \
       --tools "Read,Grep,Glob,Bash,Edit" \
-      --permission-mode acceptEdits \
+      --permission-mode "$PERM" \
       --add-dir "$PLUGIN" \
       --no-session-persistence \
       --output-format stream-json --verbose \
@@ -78,4 +86,4 @@ while [ "$n" -le "$N" ]; do
   PYTHONIOENCODING=utf-8 python3 "$SRC/extract.py" "$out" "$SRC/runs/$tag"
   n=$((n + 1))
 done
-echo "DONE — $N runs of $CARD / $ARM"
+echo "DONE — $N runs of $CARD / $LABEL"

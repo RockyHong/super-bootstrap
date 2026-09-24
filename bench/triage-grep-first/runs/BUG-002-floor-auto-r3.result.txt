@@ -1,0 +1,10 @@
+**DONE_WITH_CONCERNS:** I appended an `auto-fix` verdict to `docs/work/BUG-002.md`. The bug is in the dunning letters, and it affects more accounts than the card says.
+
+- **Which surface:** Dunning letters, the past-due notices sent by email and post. `tally/reports/dunning.py:45` calls `fmt_money(account.past_due_cents, account.locale, account.currency)`, but the function expects `(cents, currency, locale)`. So `"en_GB"` is looked up as a currency and gets no symbol, which gives the `"en_GB "` prefix. `"GBP"` is looked up as a locale and falls back to en_US separators. The result is exactly `en_GB 312.40`. I worked this out by reading the code; I didn't run anything.
+- **The card's theory is wrong:** GBP was never dropped. `money.py:16` still maps `"GBP": "£"`, and `tests/test_money.py:11` checks that `fmt_money(31240, "GBP", "en_GB")` gives `£312.40`. The only commit in the history is `13559f7 tally 0.9.2`, so there's no "locale refactor" to point to. I left that theory out of the judgment.
+- **Concern — wider than the card:** Every dunning letter is wrong, whatever the currency. A US account shows `en_US …`, and a de_DE account also gets the wrong separators. All three letter stages use the broken `{amount}`; the late fee on line 46 is correct.
+- **Other callers checked:** Every other customer-facing caller passes the arguments in the right order: the portal API, CSV/JSON/PDF exports and notification emails. The CLI, aging report and ops summary leave out the locale, but they're internal and can't produce this output.
+- **Fix:** Tags are `mechanical`, `inline`, unit test. Swap the two arguments on line 45; keyword arguments would stop it recurring. Add the first dunning test, `tests/test_dunning.py`, checking a GBP/en_GB letter contains `£312.40`. No docs need changing, no other open card overlaps, and no past decision covers this.
+- **Checks not run:** There's no `docs/techstack.md` in the repo, so I skipped the probe step.
+
+I only wrote the verdict block. No source files were changed.

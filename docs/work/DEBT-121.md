@@ -1,6 +1,0 @@
-# DEBT-121 — triage agent's Bash floor is prose-only; runs breach it for writes
-
-**Logged:** 2026-09-24 · **Source:** split from BUG-073's triage verdict (option A — its README:68 wording half stays on BUG-073); evidence from `bench/triage-grep-first` + a live repro this session
-**Problem:** `agents/triage.md` body states a read-only Bash floor (`git status/diff/log`, `ls`), but frontmatter (`:4`) grants `Read, Grep, Glob, Bash, Edit` and nothing but prose polices it. `bench/triage-grep-first`: 9/12 Opus runs tried a `cat >> card <<EOF` heredoc for the verdict append, 1 read via `cat`/`sed`/`find`, 1 tried python — the rejections came from the bench's own Bash allow-list, which production does not carry. Live repro 2026-09-24: the BUG-073 triage dispatch appended its verdict via a Bash heredoc. Unverified hypothesis: the runtime auto-mode reminder ("do much of your work through Bash … heredocs") pulls against the floor.
-**Area:** `plugins/super-bootstrap/agents/triage.md` (frontmatter `tools:` + body Bash floor), `bench/triage-grep-first/`
-**Prior:** Open fork — whether a subagent `tools:` frontmatter can restrict Bash to command patterns (docs lookup) vs a prose fix probed on the bench; most breaches stayed in-intent (reads + the one sanctioned append), only the python attempt exceeded it.

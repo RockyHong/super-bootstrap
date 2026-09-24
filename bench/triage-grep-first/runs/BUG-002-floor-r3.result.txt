@@ -1,0 +1,17 @@
+**Status: DONE.** BUG-002 is ready for auto-fix: the fix is mechanical, runs inline, and gets a unit test. The verdict block is appended to `docs/work/BUG-002.md`.
+
+**Where it comes from:** the dunning letter's `{amount}` field. At `tally/reports/dunning.py:45`, the call to `fmt_money` passes locale and currency in the wrong order: `(cents, account.locale, account.currency)`. The function expects `(cents, currency, locale)`.
+- The currency slot receives `"en_GB"`, which has no symbol in `SYMBOLS`. So the formatter falls back to printing the code: `"en_GB "`.
+- The locale slot receives `"GBP"`, which isn't a known locale, so the separators fall back to en_US.
+- The result is exactly `en_GB 312.40`.
+
+The line below it (`dunning.py:46`, the fee) has the right order. So a second-notice letter shows the broken amount next to a correct `£35.00`.
+
+**The card's guess about the cause is wrong.** GBP is still in `SYMBOLS` (`money.py:16`), and an existing test checks for `£312.40` (`test_money.py:11`). I tested that guess against the code instead of relying on it.
+
+**Checked for the same mistake elsewhere:** every other customer-facing call to `fmt_money` passes the arguments in the right order. That covers the portal API handlers, email notifications, and the CSV, JSON and PDF exports. The swap exists only at `dunning.py:45`. It breaks letters for every non-USD account, not just UK ones.
+
+**Separate issue, not part of this fix:** the CLI and the aging and summary reports don't pass a locale at all, and aging and summary default the currency to USD. These are internal operator outputs and can't produce this symptom.
+
+- **No overlap:** the only other card (BUG-001) is about refunds and doesn't overlap, and `docs/decisions.md` has no closed decisions.
+- **No probes run:** the repo has no `docs/techstack.md`, so there were no probes to run.

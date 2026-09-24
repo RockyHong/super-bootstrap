@@ -1,0 +1,11 @@
+**DONE**: the verdict is **auto-fix**, and the block is appended to `docs/work/BUG-002.md`.
+
+- **Which output:** the dunning letter, the past-due notice customers get by email and post. The bad amount comes from `tally/reports/dunning.py:45`.
+- **Why:** that line calls `fmt_money(account.past_due_cents, account.locale, account.currency)` with the locale and currency swapped. The function expects `(cents, currency, locale)`.
+  - Passing `"en_GB"` as the currency finds no symbol, so it falls back to printing `"en_GB "` in front of the number.
+  - Passing `"GBP"` as the locale falls back to the US number format, which looks the same as the UK one here. That's why the amount itself looks normal.
+  - The result is exactly `en_GB 312.40`, matching the screenshot. This affects the `{amount}` in all three letter stages. The late fee on line 46 is called correctly, so a second notice shows `£35.00` next to the broken amount.
+- **The card's own guess is wrong:** GBP is still in `money.SYMBOLS` (`money.py:16`), and `tests/test_money.py:11` already checks that GBP formats as `£312.40`. I treated that guess as a hypothesis to test and didn't let it steer the fix.
+- **Other places checked:** every other call that passes both currency and locale has them in the right order, so this is the only broken spot. BUG-001 is about something else, and `docs/decisions.md` has no rejected approaches that this would repeat.
+- **Fix route:** `Fix-shape: mechanical`, `Execution: inline`, test strategy: unit. The fix puts the two arguments back in order and adds a new failing test, `tests/test_dunning.py`, built on a GBP/en_GB account. No docs need to change.
+- There's no `docs/techstack.md`, so this repo has no automated checks to run for this; the verdict comes from reading the code.
