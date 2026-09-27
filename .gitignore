@@ -30,3 +30,6 @@ Thumbs.db
 # one-off carve-out, discarded when the work that needed it finishes.
 .claude/settings.local.json
 __pycache__/
+
+# consult-hook bench — raw run transcripts (MBs of JSONL; scored tables live in FINDINGS)
+bench/consult-hook/runs-*/

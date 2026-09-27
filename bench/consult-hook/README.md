@@ -14,6 +14,12 @@ contract re-runs here first.
   (ignorable-pointer, map routing, TN pre-classifier).
 - `*-inject.sh`, `run*.sh`, `score-gap045.sh`, `probes*.jsonl`, `doc-map.tsv`,
   `make-fixture.sh`, `bench-decontamination.md` — arms, harnesses, probes, fixture.
+- `run-multiturn.py`, `scripts-multiturn.jsonl`, `score-multiturn.sh`,
+  `forcedeval-v2-once-inject.sh` + `arm-forcedeval-v2-once.json` — the multi-turn
+  extension: one headless session per script, turn-indexed scoring, and the
+  once-per-session arm that isolates injection frequency (design, gate and
+  the three-tier read-out: [`FINDINGS-gap045.md`](FINDINGS-gap045.md) § Per-prompt vs
+  once-only revision).
 
 Raw run transcripts (`runs/`, `runs-gap045/`, ~3.5 MB of JSONL) were not
 migrated — they remain in the claude-config-manager repo's git history, where
