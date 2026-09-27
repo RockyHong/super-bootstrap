@@ -33,7 +33,7 @@ Skip skills whose row in `plugins/super-bootstrap/README.md` § "Inline vs Dispa
 
 Bounded-judgment verb(s) found, no agent dispatch, **and** no documented inline rationale → warn, one line, don't block:
 
-> ⚠ dispatch-shell check: {file} — bounded-judgment verb(s) ({verbs}) with no agent dispatch. Consider splitting into dispatch-shell + typed agent (see `skills/todo` + `agents/todo.md`).
+> ⚠ dispatch-shell check: {file} — bounded-judgment verb(s) ({verbs}) with no agent dispatch. Consider splitting into dispatch-shell + typed agent (see `skills/triage` + `agents/triage.md`).
 
 List every matching file on one line if more than one hits. Never halts the release — this is a nudge surfaced in the release report, not a qualify gate.
 

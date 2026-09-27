@@ -2,7 +2,7 @@
 
 ## Development Workflow
 
-Work enters by picking up a card — a `docs/work/` card file (`/super-bootstrap:todo` pickup or a prose ID) — or grounding a new one via `/super-bootstrap:log`. The card is the grounding artifact (root-cause claim for a bug, problem statement for a feature) and the unit/anchor/boundary/SSOT of the change. Fresh work and resumed work use the same door.
+Work enters by picking up a card — a `docs/work/` card file (`/super-bootstrap:needs-me` pickup or a prose ID) — or grounding a new one via `/super-bootstrap:log`. The card is the grounding artifact (root-cause claim for a bug, problem statement for a feature) and the unit/anchor/boundary/SSOT of the change. Fresh work and resumed work use the same door.
 
 ### The envelope
 
@@ -52,7 +52,7 @@ The gateway orchestrates; it does not build. Inline lane = orchestration, reads,
 - **A foreign cold executor is a build container, not an orchestrator** — a separate-process agent runtime (`codex exec -C <dir> --sandbox workspace-write`, or equivalent) is a valid build dispatch under the same closure rule; brief it like any cold implementer and let it read the repo's `AGENTS.md` for the standing contract. Its return is a message, not a diff — `git diff` and re-Read every touched file before verify.
 - **Transcription is not a build** — when the exact content is already in hand (a plan supplies verbatim old/new text, or the gateway already holds the final text) with no runtime to derive against, applying it carries zero closure: inline it, even mid-dispatch-regime. Reserve dispatch for content a container must derive: reads, integration, judgment.
 - **Review findings are claims, not instructions** — a judgment-grade review finding routes through the cold `review-intake` judge before any implementer sees it: claims pass numbered + verbatim with their cited surfaces (pointer-less ones marked `(no surface citation)`), minus fix preferences and dispatcher theories; per-claim `confirmed | falsified | needs-evidence` + a coverage line return to the gateway. Confirmed → dispatch at fix grade; falsified → stops at the gateway; needs-evidence → run or delegate the named check. A transcription-grade patch skips intake only when the gateway itself verified the cited text.
-- **Subagent commits route through the commit door** — a dispatched implementer implements + tests + reports (built + file list); the gateway commits via `/super-bootstrap:commit`. A fix→re-review loop scales to fix grade — a transcription-grade fix (shape fully supplied) → dispatcher verifies against the diff, no re-review dispatch; a judgment-grade fix (shape left to the implementer) → re-review dispatches. For free per-implementer commits, use the drain-worktree path — isolated commits, doc-sync deferred to the merge boundary.
+- **Subagent commits route through the commit door** — a dispatched implementer implements + tests + reports (built + file list); the gateway commits via `/super-bootstrap:commit`. A fix→re-review loop scales to fix grade — a transcription-grade fix (shape fully supplied) → dispatcher verifies against the diff, no re-review dispatch; a judgment-grade fix (shape left to the implementer) → re-review dispatches. For free per-implementer commits, use the autorun-worktree path — isolated commits, doc-sync deferred to the merge boundary.
 - **Doc-sync** (envelope step) → gateway-inline, judgment included — the gateway judges the mechanically enumerated scope warm in its own context; the cold `doc-sync-scan` agent dispatches only when the scope outgrows the commit door's inline ceiling (mechanism: § Doc Sync); resolving writes land inline or dispatched by closure.
 - **Parallel within a phase, not across it** — N build sub-goals or N doc surfaces fan out together; build → doc-sync stays ordered (doc-sync needs the finished diff).
 - **Writer run mode keys on path overlap, not writer class** — a backgrounded file-writing subagent returns behind the caller's read-tracker: the session's next Edit on a shared path carries a pre-write `old_string` the writer may have removed. A writer touching paths the session will keep editing dispatches foreground (`run_in_background: false`); a writer touching only paths the session is done with — new files included — backgrounds cleanly, and long build-class dispatches with no overlap stay background. Narrow exception: under a paired PreToolUse(Write) context-injector hook that is **not subagent-gated** — it still emits when the payload carries `agent_type` — a backgrounded subagent's new-file Write can stall before writing (platform defect); with such a hook wired, new-file writers dispatch foreground. Conformance is read off the wired hook in `settings.json`: a gated or unpaired injector leaves background dispatch free.
@@ -123,12 +123,6 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 {- **`rules/mv3.md`** — fires on `src/background/**`, `src/content/**`}
 {  • {one-line key rule}}
 {  • {one-line key rule}}
-
-{scale module installed — ship the block below verbatim, no substitutions:}
-
-{- **`rules/venue-map.md`** — fires on `docs/work/README.md`, `docs/test-queue.md`}
-{  • Derive a work item's venue (T / S / U / P) fresh per read from its next phase — never its terminal phase, never stored.}
-{  • One map, two filters: `/super-bootstrap:todo` reads it drainable vs need-me, `/super-bootstrap:drain` reads it dispatch vs wall.}
 
 If rule body needs more context than its summary provides during planning, read the rule file directly before designing — `Read .claude/rules/<name>.md`.
 

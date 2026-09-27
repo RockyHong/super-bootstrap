@@ -45,7 +45,7 @@ The runway returned with empty product skeletons. Seed three GAP cards from the 
 
 ```
 Generic harness installed. Three GAP cards seeded (overview, techstack, tech-curation).
-Resolve overview + techstack via /super-bootstrap:todo — settle the framing with the user (no code), or reverse-engineer it from the code (code present).
+Resolve overview + techstack via /super-bootstrap:needs-me — settle the framing with the user (no code), or reverse-engineer it from the code (code present).
 Once both are filled, re-run /super-bootstrap:setup for tech curation — the tech-curation card tracks that step.
 ```
 

@@ -2,8 +2,6 @@
 
 **Optional card fields** — add to a card's origin block only when known at capture; an absent field means "derive at pickup", never "no". They sharpen routing without gating the log.
 
-- **Test-feel:** `unit | e2e | manual | doc-only` — how the fix wants to be verified. Feeds venue derivation (`.claude/rules/venue-map.md`).
-- **Stochastic:** `llm` — present only when diagnosis or verification depends on live-LLM behavior. Feeds venue derivation (`.claude/rules/venue-map.md`).
 - **Blast:** `local | pkg | cross-pkg | repo` — how far the change reaches. Feeds pickup sizing.
 
 **Capture routing** — before logging, name the mover, then the action:

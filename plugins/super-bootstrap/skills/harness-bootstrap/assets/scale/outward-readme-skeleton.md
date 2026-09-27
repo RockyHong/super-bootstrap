@@ -33,7 +33,7 @@ Every entry carries a stable `OUT-###` ID — its filename and its H1 both. IDs 
 **Next move:** {who does what next — "author: send the revised deck" / "vendor: answer the licence request"}
 **Waiting on:** {the outside party — or `author` when the next move is the author's own}
 **Repo tail — fires on:** {the doc / card / preset that changes when the result lands}
-**Owning card:** {BUG|DEBT|GAP}-###   ← optional; the card that waits on this entry — the board holds it until the entry closes; an entry that only touches a card cites it in `Repo tail — fires on:` instead
+**Owning card:** {BUG|DEBT|GAP}-###   ← optional; the card that waits on this entry — autorun holds it out until the entry closes; an entry that only touches a card cites it in `Repo tail — fires on:` instead
 ```
 
 **Appended blocks** — each at end of file, dated + sourced, from the same block vocabulary `docs/work/README.md` § Thread contract states for cards:
@@ -43,10 +43,10 @@ Every entry carries a stable `OUT-###` ID — its filename and its H1 both. IDs 
 
 **Mutation authority:** any session or agent appends (end-of-file only, dated + sourced); existing content stays as written.
 
-**Latest block leads:** a block restating `**Next move:**` / `**Waiting on:**` supersedes the origin's lines for every reader — board, log dedup, drain wall. `Owning card:` is the origin's alone — the wall is frozen at capture, never re-pointed by a block. Top-to-bottom reads as the item's evolution; the origin stays as grounding.
+**Latest block leads:** a block restating `**Next move:**` / `**Waiting on:**` supersedes the origin's lines for every reader — needs-me, log dedup, autorun. `Owning card:` is the origin's alone — the wall is frozen at capture, never re-pointed by a block. Top-to-bottom reads as the item's evolution; the origin stays as grounding.
 
 **Resolve:** the resolving session deletes the entry file when the tail fires — the repo edit lands, or a card opens for it; the deleting commit's message carries the why. Git history is the archive. Deletion dead-ends every markdown link that pointed at the file, so the same change drops those links to plain `` `OUT-###` `` spans — only a live entry earns a link.
 
 ## Consumer note
 
-`/super-bootstrap:todo` renders entries in two need-me groups, split on `Waiting on` — **Outward — your move** when it names `author`, **Outward — waiting on others** for any other party. Next move and waiting-on party stay visible, never folded into the drainable count; `/super-bootstrap:drain` never reads this folder.
+`/super-bootstrap:needs-me` reads every entry as work that needs a human — the author's move when `Waiting on` names `author`, a wait on others otherwise; next move and waiting-on party ride the recommendation line. `/super-bootstrap:autorun` never reads this folder, and a card an entry's `Owning card:` names stays out of autorun until the entry closes.

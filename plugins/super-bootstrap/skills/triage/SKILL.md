@@ -1,6 +1,6 @@
 ---
 name: triage
-description: 'Read-only grounding phase for a card — every card''s pickup. `/super-bootstrap:triage {ID}` dispatches the `triage` subagent (inherit — the session owner's model) to ground the card cold — premise verify, aim validate, blast collect — and append a Verdict block — `## Verdict — auto-fix · {date}` (Fix-shape / Probe-deps / Execution tags) or `## Verdict — surface · {date}` (a fork the gateway climbs before any user hand-off) — to `docs/work/{ID}.md`. No code changes — the fix is a separate phase. Use at raw-card pickup (todo board `Triage:` rows) or when the user asks to triage/investigate a BUG/DEBT/GAP item.'
+description: 'Read-only grounding phase for a card — every card''s pickup. `/super-bootstrap:triage {ID}` dispatches the `triage` subagent (inherit — the session owner's model) to ground the card cold — premise verify, aim validate, blast collect — and append a Verdict block — `## Verdict — auto-fix · {date}` (Fix-shape / Probe-deps / Execution tags) or `## Verdict — surface · {date}` (a fork the gateway climbs before any user hand-off) — to `docs/work/{ID}.md`. No code changes — the fix is a separate phase. Use at raw-card pickup (a card with no Verdict block) or when the user asks to triage/investigate a BUG/DEBT/GAP item.'
 tags: [triage, verdict, card, pipeline]
 ---
 
@@ -32,5 +32,5 @@ Grounding pickup lane for a card. The thinking runs in the `triage` subagent (`a
 - **Check the verdict aim.** The gateway holds the aligned problem-aim; a verdict that re-aims the problem gets surfaced to the user, not absorbed (CLAUDE.md § Framing + Route).
 - **Weigh the verdict's grounding.** A verdict resting on design-prose deduction over direct evidence is unproven — surface it for re-grounding, not adoption and not a competing gateway theory.
 - **One card per dispatch.** A batch fans out — each dispatch's write set is its own `docs/work/{ID}.md` (`agents/triage.md` § Phase identity), so concurrent grounding keeps verdicts per-card atomic. The gateway's absorb of each verdict (step 3) stays serial.
-- **Verdict block is the state.** No status fields anywhere — a Verdict block's kind (auto-fix / surface) IS the stage signal (`shared/classify-actionable.md` reads it for the todo board and drain).
+- **Verdict block is the state.** No status fields anywhere — a Verdict block's presence says the card is grounded, its kind (auto-fix / surface) says whether a fork is still open — `/super-bootstrap:needs-me` reads an unruled `surface` as needing the user; `/super-bootstrap:autorun` grounds an ungrounded card itself.
 - **Cleaner:** the session resolving the card deletes the card file (doc-sync temporal cleanup).

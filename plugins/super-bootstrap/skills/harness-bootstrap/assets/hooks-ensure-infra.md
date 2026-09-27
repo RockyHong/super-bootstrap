@@ -1,7 +1,7 @@
 # Hooks ensure-infra — content-aware default-on hook install
 
-harness-bootstrap ships three hook assets. Unlike drain's worktree infra
-(`../drain/assets/ensure-infra.md`), install runs **unconditionally** — no opt-in
+harness-bootstrap ships three hook assets. Unlike autorun's worktree infra
+(`../autorun/assets/ensure-infra.md`), install runs **unconditionally** — no opt-in
 confirm. All are safe-by-default: `commit-channel`'s hook process spawns on any `git`
 call on either command tool (its entry carries one hook element per tool, and each
 element's `if` anchors on the bare command) and denies only raw `git commit` from
@@ -20,7 +20,7 @@ copy / merge — never regeneration, so there is no drift between repos. Run as
 | 2 | `hooks/consult-check-sessionstart.sh` | `.claude/hooks/consult-check-sessionstart.sh` | `hooks/consult-check-sessionstart.hook.json` | `.claude/settings.json` → `hooks.SessionStart[]` |
 | 3 | `hooks/consult-check-check.sh` | `.claude/hooks/consult-check-check.sh` | `hooks/consult-check-check.hook.json` | `.claude/settings.json` → `hooks.UserPromptSubmit[]` |
 
-Copy each script with Bash `cp` (plain file copy — invoked via `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/<name>.sh"`, so no executable bit is required). Merge each `.hook.json` entry into `.claude/settings.json`'s target array via a guarded read-modify-write that touches only that array — the same merge mechanism as drain's `read-hook.json` (`../drain/assets/ensure-infra.md` step 3), reused rather than re-derived.
+Copy each script with Bash `cp` (plain file copy — invoked via `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/<name>.sh"`, so no executable bit is required). Merge each `.hook.json` entry into `.claude/settings.json`'s target array via a guarded read-modify-write that touches only that array — the same merge mechanism as autorun's `read-hook.json` (`../autorun/assets/ensure-infra.md` step 3), reused rather than re-derived.
 
 The consult pair installs together — the SessionStart deriver writes the
 `.claude/.consult-catalog` cache the UserPromptSubmit injector reads; one without the
@@ -140,7 +140,7 @@ registration this pipeline owns, not a consumer-editable script — and a missin
 `SKILL.md` § 2a-hooks row, stage with the Phase 2c commit. This is copy-on-drift, not a
 migration engine — the asset is the source of truth for every copy this pipeline
 placed, and the fork prompt is what keeps an unrecognized copy from being replaced blind. Install stays default-on — no
-install confirm, unlike drain's `infraPresent()`; the fork pick is the only prompt.
+install confirm, unlike autorun's `infraPresent()`; the fork pick is the only prompt.
 
 Whenever a script resolves current — copied this run, or already sha-equal to the asset
 — record `placed[".claude/hooks/<name>.sh"] = sha256(asset hooks/<name>.sh)` in

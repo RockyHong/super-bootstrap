@@ -46,8 +46,8 @@ home = os.path.expanduser("~")
 CAT_MAP = {  # tag -> coarse category (mirrors SKILL.md's grouping contract)
     "git": "git", "commit": "git", "merge": "git", "release": "git",
     "docs": "docs", "sync": "docs", "scaffold": "docs", "consistency": "docs",
-    "pipeline": "pipeline", "todo": "pipeline", "triage": "pipeline", "cards": "pipeline",
-    "log": "pipeline", "help": "pipeline", "drain": "pipeline",
+    "pipeline": "pipeline", "needs-me": "pipeline", "pickup": "pipeline", "triage": "pipeline", "cards": "pipeline",
+    "log": "pipeline", "help": "pipeline", "autorun": "pipeline", "unattended": "pipeline",
     "meta": "meta", "bootstrap": "meta", "harness": "meta", "resolve": "meta",
     "audit": "meta", "axioms": "meta", "canon": "meta",
     "dev": "dev", "debug": "dev", "test": "dev",

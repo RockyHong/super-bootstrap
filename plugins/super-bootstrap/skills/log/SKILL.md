@@ -1,12 +1,12 @@
 ---
 name: log
-description: 'Capture front door. Logs 1..N observations as card files at docs/work/{ID}.md (BUG / DEBT / GAP), gateway-inline — no dispatch. Use when the user says "log this", "track that", "note this down", or types `/super-bootstrap:log <observation>` — and when Claude needs to file its own findings (out-of-scope findings from a review, audit, or returned subagent report). A suspected duplicate is surfaced for the user''s pick (amend / new card / drop), never auto-resolved. Captures raw — the real/worth/now call is triage''s at `/super-bootstrap:todo` pickup. Does NOT triage (that is the `/super-bootstrap:todo` triage lane). Feature ideas log as GAP.'
+description: 'Capture front door. Logs 1..N observations as card files at docs/work/{ID}.md (BUG / DEBT / GAP), gateway-inline — no dispatch. Use when the user says "log this", "track that", "note this down", or types `/super-bootstrap:log <observation>` — and when Claude needs to file its own findings (out-of-scope findings from a review, audit, or returned subagent report). A suspected duplicate is surfaced for the user''s pick (amend / new card / drop), never auto-resolved. Captures raw — the real/worth/now call is triage''s at pickup (`/super-bootstrap:triage`). Does NOT triage. Feature ideas log as GAP.'
 tags: [log, capture, cards, pipeline]
 ---
 
 # Log — Capture Front Door
 
-Muscle-memory capture, run **gateway-inline** in the calling session — no dispatch. Takes one observation or a batch, classifies each into **BUG / DEBT / GAP**, checks against open cards, and writes each clear entry as `docs/work/{ID}.md` in `docs/work/TEMPLATE.md`'s shape. Capture is unconditional about worth (bugs, debt, design gaps, unverified ideas all land); the real/worth/now call runs at `/super-bootstrap:todo` triage on pickup.
+Muscle-memory capture, run **gateway-inline** in the calling session — no dispatch. Takes one observation or a batch, classifies each into **BUG / DEBT / GAP**, checks against open cards, and writes each clear entry as `docs/work/{ID}.md` in `docs/work/TEMPLATE.md`'s shape. Capture is unconditional about worth (bugs, debt, design gaps, unverified ideas all land); the real/worth/now call runs at `/super-bootstrap:triage` on pickup.
 
 All new cards route through this door — user-initiated and Claude-initiated captures alike. Hand-copying `docs/work/TEMPLATE.md` with the same high-water bump is the same door, by hand.
 

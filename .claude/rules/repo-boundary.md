@@ -64,7 +64,7 @@ author's served `.claude/guidelines/`:
 - **Shipped skeletons** — `plugins/*/skills/*/assets/**`, seeded into downstream
   repos. MUST be self-contained: downstream ≠ author, so no wire to
   `.claude/guidelines/` and no reference to a plugin-internal path a consumer
-  repo lacks (e.g. `skills/todo`). Judge a skeleton line by whether it resolves
+  repo lacks (e.g. `skills/needs-me`). Judge a skeleton line by whether it resolves
   in a repo that has only the installed plugin, nothing of the author's.
 
 **Sync direction — an edit carries its mirror; author on the SSOT side.** Two
@@ -82,10 +82,10 @@ both lanes and catches up what a commit missed.
   dogfood-specific → state so and the skeleton stays.
 - **Asset lane — asset ahead.** A frozen asset (`assets/hooks/*` script +
   `.hook.json` snippet, `agents-md-skeleton.md`, `coding-standards-skeleton.md`
-  preamble, rule / scale skeleton bodies, drain templates) is authored in the
+  preamble, rule / scale skeleton bodies, autorun templates) is authored in the
   plugin source; its dogfood copy (`.claude/hooks/*`, the merged
   `.claude/settings.json` entry, root `AGENTS.md` / `CODING_STANDARDS.md` shipped
-  body, `.claude/rules/venue-map.md`, `.claude/templates/*`) is a placed
+  body, `.claude/templates/*`) is a placed
   derivative. Editing the asset pulls that copy into the closure — refresh it
   byte-identical (deep-equal for a snippet) so the next re-run reads it
   `✓ current`. Look it up live — grep the shipped assets for the matching

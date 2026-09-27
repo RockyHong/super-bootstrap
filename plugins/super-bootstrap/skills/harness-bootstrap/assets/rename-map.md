@@ -22,11 +22,13 @@ remains that any installed project still carries the `old` form.
 Bare-form migrations (when literal appears in pipeline-owned files):
 
 - `/commit` → `/super-bootstrap:commit`
-- `/todo` → `/super-bootstrap:todo`
+- `/todo` → `/super-bootstrap:needs-me` — renamed: the door recommends what needs the user, it renders no to-do board
+- `/super-bootstrap:todo` → `/super-bootstrap:needs-me`
 - `/merge` → `/super-bootstrap:merge`
 - `/help` → `/super-bootstrap:help`
 - `/log` → `/super-bootstrap:log`
-- `/drain` → `/super-bootstrap:drain`
+- `/drain` → `/super-bootstrap:autorun` — renamed: it runs the cards that need no user, it no longer drains a board to a wall
+- `/super-bootstrap:drain` → `/super-bootstrap:autorun`
 - `/triage` → `/super-bootstrap:triage`
 - `/triage-report` → `/super-bootstrap:triage-report`
 - `/harness-bootstrap` → `/super-bootstrap:harness-bootstrap`
@@ -38,7 +40,7 @@ Bare-form migrations (when literal appears in pipeline-owned files):
 Legacy `sb-*` prefix migrations:
 
 - `/sb-commit` → `/super-bootstrap:commit`
-- `/sb-todo` → `/super-bootstrap:todo`
+- `/sb-todo` → `/super-bootstrap:needs-me`
 - `/sb-merge` → `/super-bootstrap:merge`
 - `/sb-help` → `/super-bootstrap:help`
 - `/sb-harness-bootstrap` → `/super-bootstrap:harness-bootstrap`
@@ -62,6 +64,12 @@ Destinations a pipeline-owned file writes to or points at. A kept legacy plan ca
 
 - `docs/work/bootstrap.md` → `.claude/bootstrap.md` — plan relocated out of the card substrate to `.claude/` machine state
 - `docs/work/bootstrap-sync-report.md` → `.claude/bootstrap-sync-report.md` — run artifact follows the plan home
+
+## Retired files
+
+Placed files whose skeleton no longer ships — the rot scan proposes deletion (`⊘ removed`) rather than a rename.
+
+- `.claude/rules/venue-map.md` — the phase → venue map; `/super-bootstrap:autorun` admits by the one judgment in the plugin's `shared/user-wall.md` instead. Drop the CLAUDE.md § Rules bullet with it.
 
 ## Skeleton headings / structure
 

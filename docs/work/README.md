@@ -20,14 +20,12 @@ New cards enter via `/super-bootstrap:log` (classify + dedup + ID assignment) or
 
 No phase prescription per category — triage decides [how much ceremony the work earns](../../CLAUDE.md#sizing--scale-ceremony-to-the-works-shape) at pickup.
 
-**ID high-water mark:** `BUG-074` · `DEBT-122` · `GAP-094` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved cards are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from live files.
+**ID high-water mark:** `BUG-074` · `DEBT-122` · `GAP-095` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved cards are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from live files.
 
 <!-- scale-module: fact fields -->
 
 **Optional card fields** — add to a card's origin block only when known at capture; an absent field means "derive at pickup", never "no". They sharpen routing without gating the log.
 
-- **Test-feel:** `unit | e2e | manual | doc-only` — how the fix wants to be verified. Feeds venue derivation (`.claude/rules/venue-map.md`).
-- **Stochastic:** `llm` — present only when diagnosis or verification depends on live-LLM behavior. Feeds venue derivation (`.claude/rules/venue-map.md`).
 - **Blast:** `local | pkg | cross-pkg | repo` — how far the change reaches. Feeds pickup sizing.
 
 **Capture routing** — before logging, name the mover, then the action:
@@ -49,8 +47,8 @@ No phase prescription per category — triage decides [how much ceremony the wor
 
 - `## Amendment — {date} · {source}` — reframe, premise supersession, new fact, NEEDS_CONTEXT answer.
 - `## Verdict — auto-fix|surface · {date}` — triage output.
-- `## Design — {date}` — settled-aim section; lands when [a genuine fork](../../CLAUDE.md#framing--route--state-dont-gate) put the aim to the user — at route time (taste gate), or as a `## Verdict — surface` the user then rules — the chosen option, settled; approval = one appended line. A `surface` fork the gateway's climb settles ([`skills/triage/SKILL.md`](../../plugins/super-bootstrap/skills/triage/SKILL.md) step 3) lands the same block naming the settling source instead of a ruling. A ruling whose settled aim is to wait names the awaited party — `blocked on {party}` — so [the board's wait override](../../plugins/super-bootstrap/shared/classify-actionable.md) holds the card as a Decide row rather than executable.
-- `## Plan — {date}` — step-order section; lands only when a cold executor runs the work (drain worktree, cross-session handoff, scope past the session-carry ledger); step sequence only — no checkboxes, no status marks. Revision = new Plan block that takes over; old stays in the chain.
+- `## Design — {date}` — settled-aim section; lands when [a genuine fork](../../CLAUDE.md#framing--route--state-dont-gate) put the aim to the user — at route time (taste gate), or as a `## Verdict — surface` the user then rules — the chosen option, settled; approval = one appended line. A `surface` fork the gateway's climb settles ([`skills/triage/SKILL.md`](../../plugins/super-bootstrap/skills/triage/SKILL.md) step 3) lands the same block naming the settling source instead of a ruling. A ruling whose settled aim is to wait names the awaited party — `blocked on {party}` — so `/super-bootstrap:needs-me` reads the card as waiting on that party and `/super-bootstrap:autorun` leaves it alone.
+- `## Plan — {date}` — step-order section; lands only when a cold executor runs the work (autorun worktree, cross-session handoff, scope past the session-carry ledger); step sequence only — no checkboxes, no status marks. Revision = new Plan block that takes over; old stays in the chain.
 - `## Progress — {date}` — durable milestone or interruption state; the cross-session handoff surface.
 
 **Mutation authority:** any session or agent appends (end-of-file only, dated + sourced); a changed understanding appends a new block that takes over the lead. Existing content is never edited.

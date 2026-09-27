@@ -44,7 +44,7 @@ substrate-permanent. Harness engineering's durable work domain is the permanent 
 | Propagation gate | — | **doc-sync** |
 | Cold-start data map | — | `overview` + `techstack` + `decisions` |
 | Awareness wiring | full-body ambient injection | **path-scoped rules (`paths:` frontmatter)** |
-| Parallel throughput | — | **drain** |
+| Parallel throughput | — | **autorun** |
 | Product anchor (problem / user / ICP / G2M) | — | **`overview.md` Problem / User** |
 
 **Four slots are uncontested:** fast capture, propagation gate, parallel throughput,
@@ -78,7 +78,7 @@ inseparable from it.
 | `docs/specs/superpowers-topology.md` | Dead. The file is gone. |
 | `harness-bootstrap` § Core plugin pin — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. superpowers is pinned by nothing, and neither is any other process harness — the slot is filled by whichever one a repo takes as an ordinary adaptive pick in `resolve-plugins`. |
 | The temporal work folder | **Ours**, at `docs/work/`. No process harness owns that slot at a fixed path — artifact skills publish to whatever tracker a repo declares — so there was no slot to defer to. |
-| drain's stage machine (`raw→triage→plan→execute→review`) | **Dead as a stage chain, drain live** — the per-phase command dispatch was distillation-shaped; drain now spawns one scoped-brief session per item (anchor + breadcrumb rendered from the card thread), running drain-till-wall with typed walls (`user`\|`shape`). Stage vocabulary `aimed`/`executing` keys entry only. |
+| drain's stage machine (`raw→triage→plan→execute→review`) | **Dead, with its classification.** The stage chain, the intent axis, the venue map and the board renderer are gone; `autorun` (drain's successor) spawns one session per admitted card that runs the whole card to done, admission being the one judgment in `shared/user-wall.md`. |
 | **log / cards / commit / doc-sync / rules** | **Unaffected.** |
 | `skills/triage/SKILL.md` + `agents/triage.md` — investigation doctrine | Referent dead, **discipline live**: the clause is stated inline, naming no harness. The pointer never resolved even where superpowers is installed — the agent's tool list carries no `Skill`. |
 
@@ -266,16 +266,15 @@ candidate a repo takes or leaves, on separate axes from sb's slots (§2), and no
 routes one. The pairing this repo shipped and then removed on a zero-usage read-out is a
 closed fork in [`docs/decisions.md`](../decisions.md).
 
-**Resolved — drain's anchor.** drain's own doc names its ceiling: "Capacity
-ceiling = how many halts the user can resolve, not machine throughput." The
-classification below settles the shape question without measurement: dependency-ordered
-elicitation never enters drain — the `Discuss` intent excludes it at admission — and
-every halt drain actually produces (surface verdict, pre-build wall check, merge gate)
-is a one-shot framed decision the user can batch. `intent == Cloud` was a proxy for
-"verification-shaped": the gate was sound and mis-named. Admission now scores the next
-phase only and the session runs drain-till-wall with typed walls (`user`|`shape`). The
-wall-vs-progress *ratio* stays unmeasured — cheap to instrument if batch-review load
-grows.
+**Resolved — autorun's anchor.** The unattended lane's ceiling is how many walls the
+user can resolve, not machine throughput. The classification below settles the shape
+question without measurement: dependency-ordered elicitation never enters `autorun` —
+admission is the one judgment in `shared/user-wall.md`, and a card whose next step needs
+the user is `needs-me`'s to recommend — and every wall autorun produces is a one-shot
+framed decision the user answers, parks, or drops from one sheet. The earlier
+`intent == Cloud` gate and the venue map were proxies for that judgment; the model now
+makes it directly. The wall-vs-progress *ratio* stays unmeasured — cheap to instrument
+if the sheet grows.
 
 *The classification.* Human gates split by whether the human's answer changes the next
 question:
@@ -285,11 +284,10 @@ question:
 | **Elicitation** — design settling, dependency-ordered questioning | question N+1 does not exist until answer N | **No** — batching destroys the mechanism |
 | **Verification** — approve a finished diff, land a commit | the N checks are independent | **Yes** |
 
-drain is sound over verification-shaped halts and becomes engagement-monitoring exactly
-where it fans out elicitation-shaped work, because each halt then costs a design
-conversation the human cannot hold N of concurrently. The halt audit found no
-elicitation-shaped halt inside drain's lane — design settling walls out at admission or
-via the typed `user` wall, one-shot per item.
+autorun is sound over verification-shaped halts and becomes engagement-monitoring exactly
+where it fans out elicitation-shaped work, because each wall then costs a design
+conversation the human cannot hold N of concurrently. Design settling walls out at
+admission (`needs-me` owns it) or as a one-line WALL the sheet parks by default.
 
 ### Change A is complete
 
@@ -299,15 +297,14 @@ sufficient on its own, since a stage chain renamed to harness-neutral words woul
 carry the foreign decomposition. The per-slot audit confirmed that risk was real:
 the staging ceremony (Design/Plan as default gates) was distillation residue — the [thread
 contract](../work/README.md#thread-contract) now carries them as conditional context-scope
-sections, and drain's stage set re-derives from grounding-native artifacts. The seeded runway
+sections, and the unattended lane reads no stage at all. The seeded runway
 names no harness (§6 above).
 
 Two constraints outlive the change:
 
-- Retiring the cloud-safe derivation must replace drain's admission predicate
-  (`eligibility.md` Cloud-gate fallback) in the same change — without the venue map
-  `intent == Cloud` is drain's whole admission gate (the intent lane guards — `Harness`,
-  `Discuss` — sit in front of it either way).
+- `autorun`'s admission is the one judgment in `shared/user-wall.md`; the cloud-safe
+  derivation and the venue map that once stood in for it are gone, so a change to what
+  counts as needing the user lands there and nowhere else.
 - A hit outside §4's one sanctioned class is a regression, whether it dispatches or only
   reads as prose.
 
@@ -332,10 +329,9 @@ references.
 | --- | --- | --- | --- |
 | superpowers install | `~/.claude/plugins/cache/claude-plugins-official/superpowers/6.2.0/` | A | 89 files / 1,105 KB; largest: `writing-skills` 104.9 KB, `brainstorming` 73.8 KB, `subagent-driven-development` 49.1 KB, `systematic-debugging` 39.8 KB |
 | `using-superpowers` ambient injection | `<superpowers>/skills/using-superpowers/SKILL.md` | A | 3.0 KB, injected in full every session |
-| super-bootstrap plugin source | `plugins/super-bootstrap/` | A | 55 files / 319 KB; `harness-bootstrap` 93.8 KB, `drain` 53 KB (SKILL 12.6 KB + 10 assets) |
+| super-bootstrap plugin source | `plugins/super-bootstrap/` | A | 55 files / 319 KB; `harness-bootstrap` 93.8 KB, `drain` 53 KB (SKILL 12.6 KB + 10 assets) — `drain` since replaced by `autorun` (SKILL + 5 assets) and the board renderer deleted |
 | Ambient description weight | all 13 shipped `SKILL.md` frontmatter | A | 6,456 chars ≈ 1.6k tokens, present in every session |
 | Foreign-name coupling | `plugins/super-bootstrap/**` | A | 85 occurrences / 19 files; skeleton holds 15 |
-| todo dispatch-lane driver cost | `agents/todo.md` | A | ~33.5k subagent tokens / ~197 s for a 3-row board; ~34.3k / ~226 s for 4 rows. Measures the agent dispatch, since demoted to the script-failure fallback — the primary render is the bundled `render-board.py` (zero model tokens) |
 | Shipped CLAUDE.md skeleton | `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` | A | Carries the routing table into every bootstrapped repo |
 
 ## 8. Downstream migration — what adopt mode does and does not cover
@@ -366,7 +362,6 @@ on the owned list.
 | Topology doc deleted | repo-local; the shipped skeleton never referenced it (zero grep hits) | N/A downstream |
 | § Coding Principles body replaced | section retained on the owned list | Yes |
 | triage lane's doctrine clause restated inline | `plugins/super-bootstrap/**` ships with the plugin, never scaffolded into a consumer repo | N/A downstream |
-| todo lane's `brainstorm` vocabulary renamed + `/brainstorm` empty-state door repointed | same — `shared/`, `agents/`, `skills/todo/` all ship with the plugin | N/A downstream |
 | `mattpocock-skills` paired pin removed from § 2a | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** An already-bootstrapped consumer keeps the seeded key; it is inert once the plugin is uninstalled there, and clearing it is a hand-sweep |
 | `superpowers` core pin removed from § Core plugin pin | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** 2a never strips the pin from an already-bootstrapped repo, so removal there is a hand-sweep — which §6 permits, its de-routing resting on the dissolve test rather than on uninstalling anything |
 

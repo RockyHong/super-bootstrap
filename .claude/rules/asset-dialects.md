@@ -24,4 +24,4 @@ A shipped shell asset that walks a whole doc surface keeps subprocesses out of i
 
 ## Python mechanical-extraction assets
 
-Where a skill's mechanical half (parse + classify + render, zero judgment) outgrows shell, ship it as a Python 3 script invoked via `python3 "${CLAUDE_PLUGIN_ROOT}/…"`, UTF-8/LF output, stdout = the product and stderr = diagnostics, with a declared degrade path when `python3` is absent. Reference assets: [`help/assets/render-menu.py`](../../plugins/super-bootstrap/skills/help/assets/render-menu.py), [`todo/assets/render-board.py`](../../plugins/super-bootstrap/skills/todo/assets/render-board.py).
+Where a skill's mechanical half (parse + classify + render, zero judgment) outgrows shell, ship it as a Python 3 script invoked via `python3 "${CLAUDE_PLUGIN_ROOT}/…"`, UTF-8/LF output, stdout = the product and stderr = diagnostics, with a declared degrade path when `python3` is absent. Reference asset: [`help/assets/render-menu.py`](../../plugins/super-bootstrap/skills/help/assets/render-menu.py).

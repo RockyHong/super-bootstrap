@@ -30,6 +30,6 @@ When the user invokes `/super-bootstrap:help [category]`:
 
 ## Rules
 
-- **No active reminders.** Discovery is pull-only — the user invokes; nothing fires ambiently. Footer-hint convention on other surfaces (e.g. `/super-bootstrap:todo` ends with `more: /super-bootstrap:help`) is the only push.
+- **No active reminders.** Discovery is pull-only — the user invokes; nothing fires ambiently.
 - **Namespaced invocation.** Always `/super-bootstrap:help` — bare `/help` is Claude Code's built-in. Footer hints elsewhere in this plugin must use the namespaced form too.
 - **Script over-reports by design.** The user-invoke filter is the gateway's judgment at render time; never push it down into the script.

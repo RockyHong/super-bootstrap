@@ -37,7 +37,7 @@ If no obvious items exist, nothing to commit — the substrate is ready when the
 ### Task 3: Cleanup
 
 - [ ] **Delete this file** (`.claude/bootstrap.md`) and `.claude/bootstrap-sync-report.md` if present — bootstrap is complete
-- [ ] **Verify `/super-bootstrap:todo` shows no active work** (unless the user has started real project work)
+- [ ] **Verify `/super-bootstrap:needs-me` shows no active work** (unless the user has started real project work)
 - [ ] **Commit**: `chore: complete pipeline bootstrap`
 
 ---

@@ -45,7 +45,7 @@ flowchart TD
     curate --> done["harness live<br/>start building"]
 ```
 
-Re-run any time — incremental, never overwrites your edits; when the installed plugin has moved past the version your runway was last synced at, every session opens with a one-line advisory naming the re-run ([`runway-version`](plugins/super-bootstrap/hooks/runway-version.sh), a plugin-owned SessionStart hook — nothing placed in your repo). A re-run also retires consumer fork skills/agents the plugin now supersedes (per-deletion confirm) and backfills runway sections added since the last sync; stack facts (the `CLAUDE.md` Tech Stack line, `docs/techstack.md`'s Runtime / Framework / Key Dependencies / Build & Distribution) are seeded once — a re-run after code first arrives flags them stale for a hand refresh, never rewrites them. A workspace manifest (`pnpm-workspace.yaml`, `turbo.json`, …) switches on the monorepo tier — rules and build pre-flight fan out per package. Repos whose card set outgrows one flat list can opt into the scale module (`docs/parked.md` + `docs/test-queue.md` + `docs/outward/` + a venue-map rule) — offered only once earned, never by default.
+Re-run any time — incremental, never overwrites your edits; when the installed plugin has moved past the version your runway was last synced at, every session opens with a one-line advisory naming the re-run ([`runway-version`](plugins/super-bootstrap/hooks/runway-version.sh), a plugin-owned SessionStart hook — nothing placed in your repo). A re-run also retires consumer fork skills/agents the plugin now supersedes (per-deletion confirm) and backfills runway sections added since the last sync; stack facts (the `CLAUDE.md` Tech Stack line, `docs/techstack.md`'s Runtime / Framework / Key Dependencies / Build & Distribution) are seeded once — a re-run after code first arrives flags them stale for a hand refresh, never rewrites them. A workspace manifest (`pnpm-workspace.yaml`, `turbo.json`, …) switches on the monorepo tier — rules and build pre-flight fan out per package. Repos whose card set outgrows one flat list can opt into the scale module (`docs/parked.md` + `docs/test-queue.md` + `docs/outward/`) — offered only once earned, never by default.
 
 ## How files are handled
 
@@ -69,9 +69,9 @@ The runway's doors are bundled skills — all namespaced `super-bootstrap:`, ent
 | Door | Role |
 |---|---|
 | `/super-bootstrap:log <observation>` | Capture — writes a card; feature ideas log as `GAP` beside defects. Suspected duplicates surface for your pick, never auto-merge. |
-| `/super-bootstrap:todo` | Board — need-me work grouped by venue, drainable work collapsed to a count; rendered by a bundled script, zero model dispatch. Session opener. |
+| `/super-bootstrap:needs-me` | What deserves your attention — cuts the open work into lenses that exist in your repo right now, asks which, recommends up to five items with why they need you. Session opener for design / decision work. |
 | `/super-bootstrap:help` | Index of installed user-invoke skills, grouped by category. |
-| `/super-bootstrap:drain` | When the board holds a wave — one isolated git worktree + headless `claude -p` per admissible card, each running to its first user wall and halting. User-only by design. |
+| `/super-bootstrap:autorun` | Runs the cards that need no one — one isolated git worktree + headless `claude -p` per card, each running the whole card to done; walls come back as one sheet with resolve / park / drop. User-only by design. |
 | `/super-bootstrap:merge` | When feature branches are ready — absorbs them; aborts + surfaces the file list on conflict. |
 
 **Claude runs** — reached by the pipeline, not typed (typing them works; you rarely need to)

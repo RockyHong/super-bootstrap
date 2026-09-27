@@ -21,9 +21,9 @@ Thumbs.db
 # claude-config-manager — consult-check hook per-session cache (regenerated, local-only)
 .claude/.consult-catalog
 
-# drain — worktree isolation (frozen infra)
+# autorun — worktree isolation (frozen infra)
 .claude/worktrees/
-.drain-status
+.autorun-status
 
 # local settings — never repo state. Committed settings.json is the only durable
 # source, so device behavior stays identical everywhere; anything here is a
