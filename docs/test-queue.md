@@ -73,6 +73,18 @@ The only durable state here is a still-`pending` entry — `pass` discharges it,
 - **on fail:** `/super-bootstrap:log` a bug + re-queue
 
 
+### Session boundary pair: park-close → session-continue → done-close round trip
+
+- **run on:** an sb-harnessed repo with the in-repo dev copy of [`session-close`](../plugins/super-bootstrap/skills/session-close/SKILL.md) / [`session-continue`](../plugins/super-bootstrap/skills/session-continue/SKILL.md) loaded (or the released plugin), device `~/.claude/skills/session-{close,continue}` out of the way
+- **checklist:**
+  - [ ] mid-card break → `/super-bootstrap:session-close` → one confirm-pick; nothing written before it; on confirm the card gains a `## Progress` block (done step, next step, watch-outs), `SESSION-STATE/<label>-<id>.md` holds only the non-card delta or a pointer stub, and the commit lands through `/super-bootstrap:commit` with no second push prompt and no §7 handoff line
+  - [ ] fresh session → `/super-bootstrap:needs-me` prints the `carries in flight` line; `/super-bootstrap:session-continue` finds the carry, renames it to the new session id, leads with the card's latest block, confirms before acting
+  - [ ] finish the card → `/super-bootstrap:session-close` done-close deletes the claimed carry in the close commit
+  - [ ] `/super-bootstrap:harness-bootstrap` on a scratch repo → its CLAUDE.md § Context Hygiene names the session-carry ledger
+- **result:** pending
+- **source:** GAP-096
+- **on fail:** `/super-bootstrap:log` a bug + re-queue
+
 ## Failed (re-queued for fix)
 
 *(empty — seeded as failed entries are re-queued)*

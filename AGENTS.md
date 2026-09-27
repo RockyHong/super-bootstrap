@@ -26,7 +26,7 @@ Read the files your task names before changing them. Where the task's premise co
 ## Not yours
 
 - Narrative docs — `docs/` and the root `README` — belong to the orchestrator's doc-sync step unless the prompt names one as a target. Otherwise report what your change makes stale and leave the edit to the orchestrator.
-- Work-tracking surfaces: the `docs/work/` card set, and any session-state ledger at the repo root — route to the orchestrator.
+- Work-tracking surfaces: the `docs/work/` card set, and the `SESSION-STATE/` session-carry ledger at the repo root — route to the orchestrator.
 - Branch, merge and release decisions — route to the orchestrator.
 
 ## No orchestrator in this run

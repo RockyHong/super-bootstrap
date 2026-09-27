@@ -99,7 +99,7 @@ Banned-terms list + pre-flight checklist + recovery protocol + stale-state predi
 
 ## Context Hygiene
 
-Subagent-first is the default container for build phases (§ Dispatch); context weight is an additional dispatch trigger, not the only one. Compact while warm, clear on topic shift. Park mid-implementation state to the card's `## Progress` block before `/clear`.
+Subagent-first is the default container for build phases (§ Dispatch); context weight is an additional dispatch trigger, not the only one. Compact while warm, clear on topic shift. Park mid-implementation state to the card's `## Progress` block before `/clear`. Volatile state no card owns rides the session-carry ledger, owned by `/super-bootstrap:session-close` (write/clear) and `/super-bootstrap:session-continue` (read/claim).
 
 ## Finding Triage — Log vs Fix Now
 

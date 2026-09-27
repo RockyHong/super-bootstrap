@@ -10,6 +10,8 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `harness-bootstrap` — installs/syncs the generic runway (CLAUDE.md, AGENTS.md (foreign-executor contract), CODING_STANDARDS.md (headings-only), skeleton docs, rules, the core pin); monorepo tier fans rule globs + build pre-flight out per package; adopt mode retires a consumer's superseded fork skills/agents (runtime name-collision map, per-deletion confirm) and backfills skeleton sections added since bootstrap (approval-gated `⊕ new` insert); opt-in, earn-gated scale module adds `docs/parked.md` + `docs/test-queue.md` + `docs/outward/` containers and backlog fact fields for repos whose backlog has outgrown one flat list.
 - `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`; requires `docs/techstack.md` (seeded by `/super-bootstrap:harness-bootstrap`) and fails loud without it; Phase 2.5 dispatches `agents/plugin-digest.md` (Haiku) for README→digest parse.
 - `needs-me` — session opener for the work that needs the user: scans open cards / test queue / outward / parked at origin-block grain, cuts what is open into three or four live lenses for one `AskUserQuestion` (free focus slot), recommends ≤ 5 items in the chosen lens with why-you; a prose argument is the focus. Read-only, inline, no script, no agent.
+- `session-close` — session-boundary gate: done-close clears this session's carry, park-close appends the card-anchored remainder as a `## Progress` block and writes only the rest to the root `SESSION-STATE/` ledger; every closeout move (commit through `/super-bootstrap:commit`, push, card resolve, prune, merge, log) runs through one confirm-pick. Owns the ledger convention.
+- `session-continue` — mirror of `session-close`: reads the carry ledger, claims the picked carry by rename, follows its pointer into the card's latest block, confirms the next step; no carry → hands off to `needs-me`.
 - `log` — capture front door for backlog rows; gateway-inline (classify + dedup-surface + write in the calling session, no dispatch).
 - `triage` — read-only grounding phase for one backlog card (premise verify / aim validate / blast collect); dispatches `agents/triage.md` (inherits the session model — the top tier).
 - `triage-report` — drains `.review/` scan reports with per-finding dispositions; dispatches `agents/triage-report.md` (Sonnet).
@@ -34,7 +36,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 |---|---|---|
 | Public entry | `setup` | `/super-bootstrap:setup` |
 | Lifecycle / one-shot | `harness-bootstrap`, `resolve-plugins`, `release-init`, `check-docs-consistency` | `/super-bootstrap:<name>` |
-| High-freq in-flight ops | `commit`, `needs-me`, `merge`, `autorun`, `help`, `log`, `triage`, `triage-report` | `/super-bootstrap:<name>` |
+| High-freq in-flight ops | `commit`, `needs-me`, `session-close`, `session-continue`, `merge`, `autorun`, `help`, `log`, `triage`, `triage-report` | `/super-bootstrap:<name>` |
 
 > The pre-rename entry `/super-bootstrap` no longer resolves — use `/super-bootstrap:setup`.
 
@@ -64,6 +66,8 @@ A single matching reason on either side decides.
 | `release-init` | inline | Detection + Q&A + file generation throughout |
 | `check-docs-consistency` | inline | Single-pass scan by default (rung 1); scale rides the opt-in § Workflow Fan-Out — a Workflow launch from the invoking context, not an Agent dispatch |
 | `needs-me` | inline | The scan is an origin-block read the gateway does in seconds, and the lens cut + recommendation is judgment against the repo's product anchor — a dispatch would only carry that context out and the answer back |
+| `session-close` | inline | Session-aware — reads live session state (the session's diff, what is in motion, its own carry) and owns the user thread through one confirm-pick; routes the commit through the `commit` door rather than dispatching |
+| `session-continue` | inline | Session-aware — the reconstructed picture must land in the gateway that resumes the work; a dispatch would carry the orientation out and back |
 | `log` | inline | Observation is already in gateway context — a dispatch transcribes it out and the report back, so net offload ≈ the dedup card-reads, which an inline Grep covers; classify is near-done at phrasing time, ID + template write are mechanical (zero closure). The one real judgment — the dup call — surfaces to the user. Bias-exclusion no longer binds capture: worth/fresh-eyes judgment lives at triage, not here |
 | `triage` | dispatch (inherit — the session model is the top tier and the cap) | Grounding is the highest-judgment lane — root-cause depth for broken behavior, need/aim verification for capability and debt claims (verdict errors propagate into every downstream phase — top-tier floor: the model the session owner runs, never a lower fixed alias); clean context enforces priors isolation; the read-only phase identity is policed by the agent body, not the grant (`agents/triage.md` frontmatter `tools:` — Edit rides it for the verdict append) |
 | `triage-report` | dispatch (Sonnet) | Bounded per-finding disposition — Sonnet fit; gateway coverage review + `/super-bootstrap:log` dedup judge the sheet downstream; dispatch enforces bias exclusion (shell passes no priors) |

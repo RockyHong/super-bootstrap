@@ -62,7 +62,7 @@ Re-run any time — incremental, never overwrites your edits; when the installed
 
 ## Day to day
 
-The runway's doors are bundled skills — all namespaced `super-bootstrap:`, entry included: `/super-bootstrap:setup`. Work enters as a card in `docs/work/` ([`BUG` / `DEBT` / `GAP`](docs/work/README.md#categories)) and runs one envelope — ground → implement → verify → doc-sync → commit — with only the phases the card's shape needs. Most doors Claude reaches on its own; you type three daily, two when the moment calls.
+The runway's doors are bundled skills — all namespaced `super-bootstrap:`, entry included: `/super-bootstrap:setup`. Work enters as a card in `docs/work/` ([`BUG` / `DEBT` / `GAP`](docs/work/README.md#categories)) and runs one envelope — ground → implement → verify → doc-sync → commit — with only the phases the card's shape needs. Most doors Claude reaches on its own; you type five daily, two when the moment calls.
 
 **You type**
 
@@ -70,6 +70,8 @@ The runway's doors are bundled skills — all namespaced `super-bootstrap:`, ent
 |---|---|
 | `/super-bootstrap:log <observation>` | Capture — writes a card; feature ideas log as `GAP` beside defects. Suspected duplicates surface for your pick, never auto-merge. |
 | `/super-bootstrap:needs-me` | What deserves your attention — cuts the open work into lenses that exist in your repo right now, asks which, recommends up to five items with why they need you. Session opener for design / decision work. |
+| `/super-bootstrap:session-close` | At a session boundary — done-close clears your carry; park-close appends a `## Progress` block to the card and writes only the rest to the `SESSION-STATE/` ledger. Every closeout move (commit through the commit door, push, card resolve, prune) runs through one confirm-pick. |
+| `/super-bootstrap:session-continue` | Session opener for resuming — reads the `SESSION-STATE/` ledger, claims the carry you pick, reads its card's latest block, confirms the next step. No carry → hands off to `needs-me`. |
 | `/super-bootstrap:help` | Index of installed user-invoke skills, grouped by category. |
 | `/super-bootstrap:autorun` | Runs the cards that need no one — one isolated git worktree + headless `claude -p` per card, each running the whole card to done; walls come back as one sheet with resolve / park / drop. User-only by design. |
 | `/super-bootstrap:merge` | When feature branches are ready — absorbs them; aborts + surfaces the file list on conflict. |

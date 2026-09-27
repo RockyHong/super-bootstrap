@@ -9,7 +9,7 @@ external-tools: [github]
 
 ## Problem
 
-Per-project Claude Code setup is a repeated grind: write `CLAUDE.md`, pick skills/MCPs/hooks, pin config, establish a workflow. super-bootstrap collapses that into one command (`/super-bootstrap:setup`) that inspects a repo and installs a development pipeline — CLAUDE.md, skeleton docs, path-scoped rules, curated skill/MCP/hook picks — plus a **phase-gated workflow** so every session runs only the pipeline phases the work actually needs (workflow, not just a toolbelt). The harness names disciplines rather than skill entries, so no process-harness plugin is a dependency ([`docs/specs/harness-architecture.md`](specs/harness-architecture.md)) — the only pin it seeds is its own core self-pin. Greenfield repos get three seed GAP cards (overview, techstack, tech curation) whose pickup settles the product shape — no upfront product Q&A; repos with code get scanned and scaffolded. It also bundles the companion skills that run the pipeline day-to-day: commit, needs-me, log, triage, triage-report, help, merge, autorun, check-docs-consistency, and optional release-init.
+Per-project Claude Code setup is a repeated grind: write `CLAUDE.md`, pick skills/MCPs/hooks, pin config, establish a workflow. super-bootstrap collapses that into one command (`/super-bootstrap:setup`) that inspects a repo and installs a development pipeline — CLAUDE.md, skeleton docs, path-scoped rules, curated skill/MCP/hook picks — plus a **phase-gated workflow** so every session runs only the pipeline phases the work actually needs (workflow, not just a toolbelt). The harness names disciplines rather than skill entries, so no process-harness plugin is a dependency ([`docs/specs/harness-architecture.md`](specs/harness-architecture.md)) — the only pin it seeds is its own core self-pin. Greenfield repos get three seed GAP cards (overview, techstack, tech curation) whose pickup settles the product shape — no upfront product Q&A; repos with code get scanned and scaffolded. It also bundles the companion skills that run the pipeline day-to-day: commit, needs-me, session-close, session-continue, log, triage, triage-report, help, merge, autorun, check-docs-consistency, and optional release-init.
 
 ## User
 
@@ -36,7 +36,7 @@ Active development.
 > Grows via doc-sync as modules are added or refactored. One-line description per significant file or directory.
 
 `plugins/super-bootstrap/` — install subtree; the only tree that ships to users (see [Key Boundaries](#key-boundaries))
-- `skills/` — 13 bundled skills; per-skill contract in each `SKILL.md`; full catalog → [`plugins/super-bootstrap/README.md § Skill catalog`](../plugins/super-bootstrap/README.md#skill-catalog)
+- `skills/` — 15 bundled skills; per-skill contract in each `SKILL.md`; full catalog → [`plugins/super-bootstrap/README.md § Skill catalog`](../plugins/super-bootstrap/README.md#skill-catalog)
 - `agents/` — 6 dispatched subagents: `doc-sync-scan`, `plugin-digest`, `premise-closure`, `review-intake`, `triage-report`, `triage`; each runs cold-context and read-only
 - `shared/` — 2 cross-skill specs: [`user-wall.md`](../plugins/super-bootstrap/shared/user-wall.md) (the one needs-the-user judgment `needs-me` + `autorun` share), [`grounding-discipline.md`](../plugins/super-bootstrap/shared/grounding-discipline.md) (cold-judge rules SSOT for 4 grounding agents)
 - `hooks/` — 1 plugin-owned hook: [`hooks.json`](../plugins/super-bootstrap/hooks/hooks.json) (SessionStart manifest) + [`runway-version.sh`](../plugins/super-bootstrap/hooks/runway-version.sh) (receipt-vs-installed-plugin version advisory); runs from the installed plugin tree, never placed ([Key Boundaries](#key-boundaries))
@@ -58,6 +58,8 @@ Active development.
 **Triage** — `/super-bootstrap:triage {ID}` → dispatches `agents/triage.md` (inherits the session model — the top tier; clean context) → reads card + live tree → appends `## Verdict` block to `docs/work/{ID}.md`.
 
 **Needs-me** — `/super-bootstrap:needs-me` → gateway reads every open card's origin block (plus the scale module's test queue, outward threads and parked items when present) → sorts by [`shared/user-wall.md`](../plugins/super-bootstrap/shared/user-wall.md) → one `AskUserQuestion` over lenses cut from what is open → ≤ 5 recommendations in the chosen lens; reply with an ID = pickup.
+
+**Session boundary** — [`/super-bootstrap:session-close`](../plugins/super-bootstrap/skills/session-close/SKILL.md) → one confirm-pick over every closeout move → park appends `## Progress` to the card + writes the volatile rest to `SESSION-STATE/<label>-<id>.md` → commit through `/super-bootstrap:commit`; [`/super-bootstrap:session-continue`](../plugins/super-bootstrap/skills/session-continue/SKILL.md) → reads every carry → claims the picked one by rename → resumes from its card's latest block, or hands off to needs-me.
 
 **Commit** — `/super-bootstrap:commit` → gateway-inline stage + classify → [mechanical doc-sync gate](../CLAUDE.md#doc-sync-non-negotiable) → doc-surface hit judged warm gateway-inline (`agents/doc-sync-scan.md` (Sonnet) dispatches only past the scope ceiling) → stale candidates resolved → `git commit`; product-anchor hit dispatches `agents/premise-closure.md`.
 
