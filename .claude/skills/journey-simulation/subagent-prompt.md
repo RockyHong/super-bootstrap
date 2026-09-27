@@ -106,12 +106,11 @@ When the gateway invokes the Agent tool with this prompt:
 ```
 Agent(
   description="<persona-slug walkthrough>",
-  subagent_type="general-purpose",
-  prompt=<filled template above>,
-  tools=["Write"]
+  subagent_type="walkthrough-narrator",
+  prompt=<filled template above>
 )
 ```
 
-`tools=["Write"]` is **mandatory**. Read / Grep / Bash / WebSearch / WebFetch all forbidden — they leak codebase access (mechanism violation) and create lookup-thinking primes that distort behavior. Default tool args (`tools` field omitted, `tools=null`) = forbidden too — caller sees the full toolkit and the mechanism breaks the same way.
+`subagent_type="walkthrough-narrator"` is **mandatory**. That agent's frontmatter restricts it to Write and pins `model: sonnet`; the Agent call takes no tool list, so the type is the only isolation mechanism. Read / Grep / Bash / WebSearch / WebFetch would leak codebase access (mechanism violation) and create lookup-thinking primes that distort behavior — any other type, `general-purpose` included, hands the subagent exactly that toolkit. Agent not registered → stop and route the caller to `/resolve-claude-config`, never fall back.
 
-The mandatory `Tools: ["Write"]` line in SKILL.md Phase 3's confirmation-checkpoint output template exists so the gateway has to type it before caller approval. If that line is absent from the checkpoint, the dispatch is not approved.
+The mandatory `Agent: walkthrough-narrator` line in SKILL.md Phase 3's confirmation-checkpoint output template exists so the gateway has to type it before caller approval. If that line is absent from the checkpoint, the dispatch is not approved.

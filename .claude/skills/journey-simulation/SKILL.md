@@ -2,6 +2,7 @@
 name: journey-simulation
 description: Use when caller wants to observe how a stranger encounters a flow, artifact, or sandbox — triggers like "simulate a user journey", "test our onboarding / checkout / signup", "will my ICP convert", "how does a cold reader experience this README", "first-time user test", "cognitive walkthrough", or any request to evaluate friction from a non-builder perspective.
 tags: [simulate, audit, ux, mid-development]
+agents: [walkthrough-narrator]
 ---
 
 # journey-simulation
@@ -70,7 +71,9 @@ If caller cannot answer all five → return to Phase 0. Under-specified sandbox 
 
 ## Phase 3 — Dispatch
 
-**Tool isolation enforced.** Pass `tools: ["Write"]` only when calling the Agent tool. Subagent has NO Read / Grep / Bash / WebSearch / WebFetch. Default tool args (no `tools` field, or `tools=null`) = forbidden, same as listing extra tools. If subagent wants to "look something up", that itself is signal (missing affordance / unmet expectation) — captured in narration.
+**Tool isolation enforced by the agent type.** Dispatch with `subagent_type="walkthrough-narrator"` — the registered agent this skill declares. Its frontmatter (`tools: Write`, `model: sonnet`) is the isolation: the subagent has NO Read / Grep / Bash / WebSearch / WebFetch. The Agent call takes no tool list, so any other type (`general-purpose` included) hands the subagent the full toolkit. If subagent wants to "look something up", that itself is signal (missing affordance / unmet expectation) — captured in narration.
+
+**Dispatch shape and the agent-not-registered stop** — `subagent-prompt.md` § Dispatch call shape.
 
 **Identity-as-fact briefing.** Use the template in `subagent-prompt.md` (this directory). Fill placeholders from Phase 1 inputs.
 
@@ -84,13 +87,12 @@ Dispatching {N} subagent(s):
    Pre-context: {channel + posture}
    Drive: {goal or trigger}
    Sandbox: {state count} states, entry = {first state}
-   Tools: ["Write"]
-   Model: sonnet
+   Agent: walkthrough-narrator (tools: Write · model: sonnet, from its frontmatter)
 
 Output: docs/walkthroughs/{batch-folder}/
 Go?
 ```
-The `Tools: ["Write"]` and `Model: sonnet` lines are mandatory and must appear verbatim — pass both `tools: ["Write"]` and `model: "sonnet"` on the Agent call (persona walkthrough → mid tier per `.claude/guidelines/work-discipline/model-tiering.md`). If either line is missing or different, caller should refuse confirmation. Wait for caller confirmation before invoking Agent tool.
+The `Agent: walkthrough-narrator` line is mandatory and must appear verbatim — it names the only dispatch type allowed. Tools and model come from that agent's frontmatter, so the Agent call carries no `model=` (if one is passed, it must be `sonnet`). If the line is missing or names another type, caller should refuse confirmation. Wait for caller confirmation before invoking Agent tool.
 
 ## Phase 4 — Multi-runner default
 
@@ -199,9 +201,8 @@ If any of these appear, **stop and return to Phase 0**:
 - `{output_file_path}` substitution contains "simulation", "simulations", "journey-simulation", or other Layer 3 forbidden vocab
 - Subagent prompt mentions caller's hypothesis or success criterion
 - Subagent prompt asks for scores / ratings / rankings / recommendations
-- Agent tool invoked without an explicit `tools=["Write"]` argument (default / null / extra tools all forbidden)
-- Agent tool invoked without an explicit `model="sonnet"` argument (raw ad-hoc dispatch has no frontmatter tier home → trips the model-designation guard)
-- Confirmation checkpoint shown to caller without the verbatim `Tools: ["Write"]` and `Model: sonnet` lines
+- Agent tool invoked with any `subagent_type` other than `walkthrough-narrator` (`general-purpose` fallback included)
+- Confirmation checkpoint shown to caller without the verbatim `Agent: walkthrough-narrator` line
 - Phase 0 skipped because "caller's request was clear"
 - Phase 0 step 6 collapsed to single-stage (only curated shown, stripped not shown)
 - Single runner dispatched for a generalization claim **without** caller-acknowledged anecdote-reframe
@@ -213,3 +214,4 @@ If any of these appear, **stop and return to Phase 0**:
 ## See also
 
 - `subagent-prompt.md` (this directory) — Layer 3 sealed template for Agent dispatch
+- `walkthrough-narrator` agent (declared in this skill's frontmatter) — the Write-only dispatch type

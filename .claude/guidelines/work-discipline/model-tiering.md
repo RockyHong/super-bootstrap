@@ -1,7 +1,7 @@
 # Model Tiering
 
 In a multi-agent fan-out, an `agent()` call without a `model` override inherits the
-main-loop model — typically the most expensive tier. The cost of leaving a call
+main-loop model — the session's top tier under the cap rule. The cost of leaving a call
 unspecified scales with fan-out width: one mis-tiered agent is a rounding error;
 the same omission across a 100-agent sweep multiplies it by the fleet and can kill
 the run on usage limits mid-flight.
