@@ -19,7 +19,7 @@ Pick → run → sheet. The gateway orchestrates; each admitted card is one work
 
 ## Pick
 
-Read every open card thread (`docs/work/{BUG,DEBT,GAP}-###.md`, latest block leads). Admit a card when its next step needs no user — the test is `${CLAUDE_PLUGIN_ROOT}/shared/user-wall.md`, read at pick time — and none of these hold:
+Read every open card thread (`docs/work/{BUG,DEBT,GAP}-###.md` — the cold-reader read set, `docs/work/README.md` § Thread contract). Admit a card when its next step needs no user — the test is `${CLAUDE_PLUGIN_ROOT}/shared/user-wall.md`, read at pick time — and none of these hold:
 
 - claimed (an `autorun-{id}` worktree exists) or already on an unmerged branch (`git branch --no-merged {base}`);
 - the deliverable is a harness file (`CLAUDE.md`, `.claude/**`, plugin-source skills / agents / rules) — a worktree cannot audit the harness it runs under; route to `/super-bootstrap:needs-me`;
@@ -44,7 +44,7 @@ Per admitted card or group — `assets/parallel-worktrees.md` § Warm (claim = `
 **Brief** — rendered fresh from files at spawn, five parts:
 
 1. `assets/worktree-boundary.md`, verbatim.
-2. The card path(s) — "read the whole thread first; the latest block leads."
+2. The card path(s) — "read the cold-reader read set `docs/work/README.md` § Thread contract names — the origin, the latest block of each type, and the Amendments after them."
 3. **Work order** — run the card whole under this repo's `CLAUDE.md` envelope: ground it if no Verdict block grounds it yet (`/super-bootstrap:triage {ID}`), build, verify, then commit on this branch via `/super-bootstrap:commit` (deferred mode — doc-sync belongs to the merge). A group runs its cards in the listed order, one commit each. Resolve the card as the envelope says (delete the card file in the resolving commit).
 4. **Stop conditions** — `${CLAUDE_PLUGIN_ROOT}/shared/user-wall.md` verbatim: the moment finishing needs one of those, land what is done (block appended, commit made), write the status, stop. Missing context the tree does not hold → `BLOCKED`, never a guess.
 5. **Status contract** — one line at `.autorun-status` in the worktree root, written atomically (temp file + rename), uncommitted:

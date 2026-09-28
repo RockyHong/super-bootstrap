@@ -30,18 +30,18 @@ No phase prescription per category — triage decides [how much ceremony the wor
 
 - `## Amendment — {date} · {source}` — reframe, premise supersession, new fact, NEEDS_CONTEXT answer.
 - `## Verdict — auto-fix|surface · {date}` — triage output.
-- `## Design — {date}` — settled-aim section; lands when [a genuine fork](../../CLAUDE.md#framing--route--state-dont-gate) put the aim to the user — at route time (taste gate), or as a `## Verdict — surface` the user then rules — the chosen option, settled; approval = one appended line. A `surface` fork the gateway's climb settles (`/super-bootstrap:triage` step 3) lands the same block naming the settling source instead of a ruling. A ruling whose settled aim is to wait names the awaited party — `blocked on {party}` — so `/super-bootstrap:needs-me` reads the card as waiting on that party and `/super-bootstrap:autorun` leaves it alone.
+- `## Design — {date}` — settled-aim section; lands when [a genuine fork](../../CLAUDE.md#framing--route--state-dont-gate) put the aim to the user — at route time (taste gate), or as a `## Verdict — surface` the user then rules — the chosen option, settled; approval = one appended line. Revision = new Design block that takes over; old stays in the chain. A `surface` fork the gateway's climb settles (`/super-bootstrap:triage` step 3) lands the same block naming the settling source instead of a ruling. A ruling whose settled aim is to wait names the awaited party — `blocked on {party}` — so `/super-bootstrap:needs-me` reads the card as waiting on that party and `/super-bootstrap:autorun` leaves it alone.
 - `## Plan — {date}` — step-order section; lands only when a cold executor runs the work (autorun worktree, cross-session handoff); step sequence only — no checkboxes, no status marks. Revision = new Plan block that takes over; old stays in the chain.
 - `## Progress — {date}` — durable milestone or interruption state; the cross-session handoff surface.
 
-**Mutation authority:** any session or agent appends (end-of-file only, dated + sourced); a changed understanding appends a new block that takes over the lead. Existing content is never edited.
+**Mutation authority:** any session or agent appends (end-of-file only, dated + sourced); a changed understanding appends a new block that takes over its type's lead. Existing content is never edited.
 
-**Read contract:** top-to-bottom = the evolution path; the latest block leads current understanding; origin stays as grounding.
+**Read contract:** the latest block of each type leads that type — Verdict → grounded scope, Design → aim, Plan → steps, Progress → state; an Amendment applies to the blocks above it; origin stays as grounding. A brief that sends a cold reader to a card names this read set: the origin, the latest Verdict, Design, Plan and Progress the card holds, and every Amendment after the earliest of those — a card holding none of them reads every Amendment after the origin. Top-to-bottom = the evolution path, read whole when the task is tracing how the card evolved.
 
 **Live tracking:** in-session execution state belongs to the platform's native task list; durable progress lands as a Progress block.
 
 **Resolve:** the resolving session deletes the card file — work completed and direction dropped both resolve; the deleting commit's message carries the why. Git history is the archive.
 
-**Aim switch:** a thread cuts by aim, not by phase. Same aim, changed understanding → append (the new block takes over the lead). The problem itself superseded → resolve this card with the counter-diagnosis and open a successor card whose origin cites the predecessor ID — the breadcrumb survives in the pointer + git.
+**Aim switch:** a thread cuts by aim, not by phase. Same aim, changed understanding → append (the new block takes over its type's lead). The problem itself superseded → resolve this card with the counter-diagnosis and open a successor card whose origin cites the predecessor ID — the breadcrumb survives in the pointer + git.
 
 **Conflict:** keep either side whole or regenerate from its blocks; never hand-merge block content.

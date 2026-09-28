@@ -30,7 +30,7 @@ A prose argument (`/super-bootstrap:needs-me 只看 product`, `不碰 business`)
 
 ## Recommend
 
-Deep-read the candidates in the chosen lens — the whole thread, not the origin. Print at most five lines, leverage first (what its resolution unblocks, then how close it sits to the product anchor):
+Deep-read the candidates in the chosen lens — past the origin, through the cold-reader read set `docs/work/README.md` § Thread contract names. Print at most five lines, leverage first (what its resolution unblocks, then how close it sits to the product anchor):
 
 ```
 {ID}  {title}  — {why you, ≤ 8 words}

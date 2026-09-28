@@ -1,6 +1,6 @@
 ---
 name: session-continue
-description: "Use at session start to resume in-flight work — reads the root SESSION-STATE/ carry ledger and orients. Carries present → pick one (surface the list when several sessions are in flight), follow its Read first into the card it names and read the card's latest block as the lead, reconstruct where work stopped + the next step, confirm before diving in. None, or the picked carry pointing at gone targets → report no in-flight carry and hand off to /super-bootstrap:needs-me. Claims the picked carry — renames it to this session's id so whoever resumes the work also owns closing it; unpicked carries and every carry body stay untouched. No argument; reads current session state. Mirror of /super-bootstrap:session-close."
+description: "Use at session start to resume in-flight work — reads the root SESSION-STATE/ carry ledger and orients. Carries present → pick one (surface the list when several sessions are in flight), follow its Read first into the card it names and read the latest block of each type as the lead, reconstruct where work stopped + the next step, confirm before diving in. None, or the picked carry pointing at gone targets → report no in-flight carry and hand off to /super-bootstrap:needs-me. Claims the picked carry — renames it to this session's id so whoever resumes the work also owns closing it; unpicked carries and every carry body stay untouched. No argument; reads current session state. Mirror of /super-bootstrap:session-close."
 tags: [session, resume, carry, ledger, session-opener]
 ---
 
@@ -36,7 +36,7 @@ Exactly one live carry → take it. Several → surface the list (label, anchor,
 The carry holds the volatile delta + pointers; the card holds the durable state. Reconstruct the picked carry:
 
 - Parse the convention's slots.
-- **Follow Read first** — open each card it names (`docs/work/{ID}.md`) and read the thread's latest block (a `## Progress`, `## Plan`, or `## Design`) as the lead: done step, next step, binding watch-outs. Then any other doc it names. The picture is the card's current truth, not the carry's echo.
+- **Follow Read first** — open each card it names (`docs/work/{ID}.md`) and read the cold-reader read set `docs/work/README.md` § Thread contract names as the lead, the latest `## Progress` as the resume point (done step, next step, binding watch-outs). Then any other doc it names. The picture is the card's current truth, not the carry's echo.
 - **Test each pointer** — a card ID or doc path that no longer resolves is a gone target (a deleted card = resolved). Any load-bearing pointer gone → that carry is stale; say why, then offer the remaining carries, or drop to **cold-orient** when none is left.
 
 ### 3. Cold-orient — no carry
@@ -57,7 +57,7 @@ Surface the reconstructed picture: where work stopped, the next step, the watch-
 
 - **Claim on pick, bodies read-only.** The rename that claims the taken carry is this skill's one write — bodies stay as authored (rewrite is session-close's park, delete its done-close), and untaken carries stay as found.
 - **Orient, don't dive.** Reconstruct the picture and confirm the next step; the user launches the work.
-- **Card leads, carry trails.** Read the card's latest block before trusting the carry's State; where they disagree, the card wins.
+- **Card leads, carry trails.** Read the card's per-type lead blocks before trusting the carry's State; where they disagree, the card wins.
 - **Stale carry falls back.** A load-bearing pointer to a gone target invalidates **that** carry — offer the siblings, or cold-orient when none remain. Name the gone pointer; never resume onto a dangling reference.
 - **One dead carry leaves the rest alive.** Staleness, emptiness, and conflict markers are per-carry verdicts, never grounds to discard the ledger.
 - **Inline procedure.** No argument, no subagent, no model pin.
