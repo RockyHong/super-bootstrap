@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 # FROZEN consult-check-sessionstart v2
+# A planted copy is frozen — edit the plugin-source asset, never it.
 # SessionStart hook — consult-check catalog derivation (grouped render).
 # Derives the compact doc catalog that consult-check-check.sh injects, once per
 # session boundary (startup|resume|clear|compact — default matcher), so the
 # per-prompt injector stays a pure read. Staleness tolerance = one session.
 #
-# Source (curated-signal constraint — bench + findings: repo-root
-# bench/consult-hook/) — project docs/**/*.md, recursive, with superpowers/ +
-# work/ excluded (specs|plans|cards are work-tracking, not consult targets —
-# pipeline convention, not name guessing; work/ is the post-rename home of the
-# same substrate). A repo that renames its temporal home declares it in
+# Source (curated-signal constraint — bench + findings: bench/consult-hook/ in
+# the super-bootstrap plugin-source repo) — project docs/**/*.md, recursive,
+# with superpowers/ + work/ excluded (specs|plans|cards are work-tracking,
+# not consult targets — pipeline convention, not name guessing; work/ is the
+# post-rename home of the same substrate). A repo that renames its temporal
+# home declares it in
 # .claude/consult-exclude — one find -path glob per line (e.g. */drafts/*),
 # # comments allowed — instead of this list accreting per-repo names.
 # Undeclared temporal dirs stay listed; the forced relevance judgment weighs them.

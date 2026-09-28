@@ -3,7 +3,8 @@
 # UserPromptSubmit hook — forced-eval consult check.
 # Injects the compact doc catalog + a forced judge-then-Read evaluation before
 # every prompt. The forced-eval sentence is verbatim from the measured arm
-# (forcedeval-v2; bench + findings: repo-root bench/consult-hook/); the
+# (forcedeval-v2; bench + findings: bench/consult-hook/ in the super-bootstrap
+# plugin-source repo, github.com/RockyHong/super-bootstrap); the
 # path-resolution tail is adapted for the grouped catalog.
 #
 # The forced-evaluation moment is the active ingredient — do NOT soften this
@@ -14,7 +15,8 @@
 # The sentence demands no stated output: v1's per-doc YES/NO enumeration was
 # measured as not load-bearing (v2 held recall + TN on sonnet and opus), so
 # success is the Read of each relevant doc, never a restated verdict. Recall
-# is the success metric; any edit to the sentence re-runs the bench first.
+# is the success metric; any edit to the sentence re-runs that upstream bench
+# first. A planted copy is frozen — edit the plugin-source asset, never it.
 #
 # Catalog is derived once per session by consult-check-sessionstart.sh; this
 # script fires on every prompt and must stay a pure read. Missing/empty cache
