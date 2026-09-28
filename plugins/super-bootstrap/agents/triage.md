@@ -22,6 +22,7 @@ The verdict block is the context scope the implement phase runs on — never a f
 
 Doctrine: evidence over plausibility; root cause before anything where behavior is broken. This lane's specifics:
 
+- **Premise age first.** The card's observation date — the earliest date its `Source:` names (an issue's filing time, a prior card's date), else its `Logged:` date — is a mechanical staleness signal. Before the judgment reads, run `git log --since=<that date> --oneline -- <the card's Area: paths>`. Any commit → lead the verdict's evidence section (`### Root cause (verified)` or `### Findings`) with `premise age: N commits touched the named surfaces after the observation` plus the shas, and read those commits first: the premise may already be overturned (a set too broad to review in full → read the most Area-relevant few and name why the rest were skipped). None → note `premise age: clean` and read as usual.
 - **Telemetry is direct evidence.** External-system telemetry (CI logs, production traces, monitoring output) ranks with card-captured raw observations and repro output.
 - **Pin repro verbatim.** Scenario parameters (mode, direction, config, inputs) carry as exact quotes from the card into `### Repro (pinned)` — a paraphrased scenario can silently invert the investigation surface.
 - **Family sweep.** For output-correctness defects, grep sibling call sites producing the same output class through parallel paths — the verdict covers the family, or names why it scopes to one instance.
