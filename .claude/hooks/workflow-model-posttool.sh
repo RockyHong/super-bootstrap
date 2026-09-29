@@ -3,8 +3,8 @@
 # Fires right after a Workflow launch returns (task id + persisted script path).
 # Reads the resolved script, counts agent() calls vs model: designations, and on
 # shortfall surfaces a TaskStop/retier/resume recipe via additionalContext.
-# PostToolUse cannot block or auto-interrupt — this is an early-interrupt prompt
-# to the main loop while the fan-out is still spawning.
+# PostToolUse can't undo the already-spawned async fan-out — this is an
+# early-interrupt prompt to the main loop while the fan-out is still spawning.
 #
 # Stdin schema (PostToolUse), tool_response verified against a real payload (CC 2.1.169):
 #   { ..., "tool_name": "Workflow", "tool_input": {...},

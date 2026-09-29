@@ -12,6 +12,11 @@ size — narrow briefs complete arbitrarily long tool-call runs.
 - **Pass shared decisions as literals in the brief** — vocabulary maps, enums,
   design verdicts. Parallel agents re-deriving a shared decision diverge; a
   literal costs nothing and pins them.
+- **A delta brief continues; a full brief restarts.** When the container that
+  built an artifact is still addressable, the next round's brief names the
+  files, the rule that changed, and the check that decides — the container
+  already holds the rest. Re-sending the full read set turns the continuation
+  into a cold rebuild at a new dispatch's cost.
 - **Two stalls on one brief = re-shape the dispatch** — split the brief, or
   author inline when the dispatcher already holds the full frame. A third
   resume re-buys the same stall.

@@ -93,7 +93,7 @@ if [ -z "$SCRIPT" ]; then
             exit 0
         fi
 
-        NUDGE="Model-tiering guard: named workflow '${NAME}' resolves its script at launch — untiered agent() calls inherit the main-loop model across the fan-out. On launch return: (1) TaskStop FIRST — fan-out burns at top tier while you read; (2) read the persisted script (path in tool result), tier the phases still ahead; (3) resume with resumeFromRunId; (4) save tiered script to .claude/workflows/${NAME}.js so future launches go via scriptPath and audit pre-flight. Ref: .claude/guidelines/work-discipline/model-tiering.md"
+        NUDGE="Model-tiering guard: named workflow '${NAME}' resolves its script at launch — untiered agent() calls inherit the main-loop model across the fan-out. On launch return: (1) TaskStop FIRST — fan-out burns at top tier while you read; (2) read the persisted script (path in tool result), tier every untiered agent() call in the phases still ahead; (3) resume with resumeFromRunId; (4) save tiered script to .claude/workflows/${NAME}.js so future launches go via scriptPath and audit pre-flight. Ref: .claude/guidelines/work-discipline/model-tiering.md"
         jq -n --arg c "$NUDGE" \
             '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "defer", additionalContext: $c}}'
     fi

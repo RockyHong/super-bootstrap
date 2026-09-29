@@ -45,7 +45,7 @@
 #   its installPath. Registry unreadable /
 #   no matching key / no usable installPath -> highest cached version by
 #   `sort -V` over ~/.claude/plugins/cache/*/<plugin>/*/ (a bare glob sorts
-#   lexically, which reads 2.29.4 as newer than 2.6.0 and older than 2.37.2).
+#   lexically, which reads 2.29.4 as older than both 2.6.0 and 2.37.2).
 #
 # Frontmatter parse: first `model:` line inside the leading `---` block only.
 #
