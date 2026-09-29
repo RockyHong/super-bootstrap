@@ -1,5 +1,5 @@
 {
-  "version": "3.1.0",
+  "version": "4.3.0",
   "covered": [
     "CLAUDE.md § Development Workflow",
     "CLAUDE.md § Dispatch",
@@ -46,23 +46,23 @@
   "declined": [
     {
       "section": "CLAUDE.md § Development Workflow",
-      "reason": "dogfood-specific — names the device-served `load-harness-principles` / `audit-harness-edits` skills on the envelope's verify line, the cluster-7 route and the centrality-sizing bullet"
+      "reason": "earn-right held — dogfood verify is the device-served `audit-harness-edits` / `load-harness-principles` pair (envelope verify line, cluster-7 route, centrality bullet's `cold audit`); the skeleton cannot name them (decisions.md cluster-7 row)"
     },
     {
       "section": "CLAUDE.md § Dispatch",
-      "reason": "dogfood-specific — wires the served `.claude/guidelines/work-discipline/dispatch-run-mode.md`, `~/.claude/guidelines/claude-shape/hook-feedback-channels.md` and `.claude/guidelines/work-discipline/dispatch-brief-demands.md` as the run-mode and Build bullets' Full: pointers"
+      "reason": "earn-right held — Build bullet's bite-check + `dispatch-brief-demands.md` (decisions.md assertion-liveness row) and run-mode bullet's `dispatch-run-mode.md` / `hook-feedback-channels.md` pointers (decisions.md writer-run-mode row) wire served guidelines the skeleton cannot carry"
     },
     {
       "section": "CLAUDE.md § Doc Sync",
-      "reason": "dogfood-specific — names the served `ssot-doc-link` rule on the guarantee line, links layer 2's mechanical lanes to the in-repo `plugins/super-bootstrap/skills/commit/SKILL.md`, and names the in-repo `/release` skill + plugin manifests on the write-boundary line"
+      "reason": "earn-right held — names the served `ssot-doc-link` rule, links layer 2 to the in-repo `plugins/super-bootstrap/skills/commit/SKILL.md`, and names this repo's `/release` door for plugin manifests"
     },
     {
       "section": "docs/techstack.md § Edit Discipline",
-      "reason": "dogfood-specific — wires the served `.claude/guidelines/work-discipline/dispatch-run-mode.md` on the re-Read trigger line"
+      "reason": "earn-right held — re-Read trigger line links the served `dispatch-run-mode.md` prevention half"
     },
     {
       "section": "docs/work/README.md",
-      "reason": "dogfood-specific residual — in-repo links on the Five-block-types intro (`specs/harness-architecture.md#change-a-is-complete`) and the Design line (`skills/triage/SKILL.md`, `docs/specs/harness-architecture.md`), the Plan line adds the session-carry-ledger trigger"
+      "reason": "earn-right held for the in-repo SSOT links (Five-block-types intro → `harness-architecture.md#change-a-is-complete`, Design line → `skills/triage/SKILL.md`); the Plan line's `scope past the session-carry ledger` clause lost its dogfood-only ground — propagation tracked in DEBT-124"
     },
     {
       "section": ".claude/bootstrap.md",
@@ -72,7 +72,7 @@
   "placed": {
     ".claude/templates/worktree-settings.local.json": "660433a9abcdcb1748f6e094923cf41fb654133540d4c9b1ba571d74f46d87a3",
     ".claude/hooks/commit-channel.sh": "893b7c0b522e426df28cd40dadf0a3a78e47d3b6f7186da1b8799b691bade4e9",
-    ".claude/hooks/consult-check-sessionstart.sh": "75f4f6226a5afaa09b17656102321fddf7a7a74767bd2992babeb69ecfe97dc9",
-    ".claude/hooks/consult-check-check.sh": "d699897f781b9c0bf2fc3885643c2348ee8e7bbe8d538e591165d6dd29cc2f26"
+    ".claude/hooks/consult-check-sessionstart.sh": "f37df2036984468c5d36b8087d40a7c3d79f2a0b07c1b9d844b508eebe1a6a66",
+    ".claude/hooks/consult-check-check.sh": "80ae1598bc9abe9ba52a6906cc38abc7c9a023a1dfae41dd10c4853becaa1a5a"
   }
 }
