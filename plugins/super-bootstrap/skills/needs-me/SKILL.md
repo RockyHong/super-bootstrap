@@ -24,7 +24,7 @@ Sort every item by the test in `${CLAUDE_PLUGIN_ROOT}/shared/user-wall.md`: **ne
 
 ## Lenses — cut live, never fixed
 
-Partition the needs-you set into three or four lenses that exist in *this* repo today, one concern each, named by what the user would sit down to do. Illustrations only — never a menu to copy: *decisions that unblock parked autorun work* · *product-anchor / taste items worth a long session* · *verify on device* · *outward — your move*. Each option carries a count and one line. Ask once with `AskUserQuestion`; its built-in Other slot takes a focus in prose. Empty needs-you set → skip the question, print the one-line close below.
+Partition the needs-you set into three or four lenses that exist in *this* repo today, one concern each, named by what the user would sit down to do. Illustrations only — never a menu to copy: *decisions that unblock parked autorun work* · *product-anchor / taste items worth a long session* · *verify on device* · *outward — your move*. Each option carries a count and one line. Ask once with `AskUserQuestion`; its built-in Other slot takes a focus in prose. Empty needs-you set → skip the question and print `Nothing needs you right now.`, then § Recommend's two count lines (the `{M}` line only when any).
 
 A prose argument (`/super-bootstrap:needs-me 只看 product`, `不碰 business`) is the focus — apply it, skip the question.
 
