@@ -1,6 +1,0 @@
-# DEBT-124 — work-readme skeleton Plan line lacks the session-carry-ledger trigger the dogfood carries
-
-**Logged:** 2026-09-29 · **Source:** harness-bootstrap v3.1.0 → v4.3.0 re-sync, earn-right pass over the dogfood `docs/work/README.md` drift
-**Problem:** The dogfood [`docs/work/README.md`](README.md) § Thread contract Plan line lists a third cold-executor trigger — `scope past the session-carry ledger` — that the shipped `plugins/super-bootstrap/skills/harness-bootstrap/assets/work-readme-skeleton.md` omits. `f10dd83` left it out of the skeleton as a dogfood-only term; that ground has lapsed — the ledger now ships (`session-close` / `session-continue` skills; `claude-md-skeleton.md` § Context Hygiene and `agents-md-skeleton.md` § Not yours both name it). The divergence no longer earns its keep, so every re-sync carries it as an unearned decline.
-**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/assets/work-readme-skeleton.md` § Thread contract (Plan line); `docs/work/README.md`; `.claude/super-bootstrap-runway.json` `declined` reason for `docs/work/README.md`
-**Prior:** propagate the clause into the skeleton per `repo-boundary.md` prose lane (dogfood ahead → propagate); skeleton prose is behavior-shaping, so `skill-authoring.md` routes it RED-first, then release.
