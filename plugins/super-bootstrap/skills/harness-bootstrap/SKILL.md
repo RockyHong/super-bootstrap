@@ -171,7 +171,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `.claude/rules/index.md` (rule-authoring guide)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` core plugin pin (`enabledPlugins`, `extraKnownMarketplaces`) — drift-checked for presence alone (§ 2a)
-- `.claude/bootstrap.md` (seeded plan — carries user checkbox state, so § 2b's special case governs re-run; the next session consumes it, its own Task 3 deletes it)
+- `.claude/bootstrap.md` (seeded plan — written only when a seeding task survives adaptation; carries user checkbox state, so § 2b's special case governs re-run; the next session consumes it, its own Task 3 deletes it; a re-run deletes an existing cleanup-only plan)
 - `.claude/super-bootstrap-runway.json` (runway coverage receipt — not diffed section-by-section; read at Phase 1 § Version-staleness signal, written at § 2c Receipt write; durable, no cleaner)
 - Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `docs/outward/README.md` + `docs/outward/TEMPLATE.md` (whole files, the way `docs/work/README.md` / `docs/work/TEMPLATE.md` are — high-water line shape only, above), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`)
 
@@ -496,9 +496,9 @@ Migrate? (y / n / show entries)
 
 On `y`: append each entry as a `tech`-domain row in `docs/decisions.md` (preserve the claim verbatim, add a commit-pointer Ref where one is obvious), then delete the section from `techstack.md`. On `n`: leave it, mark project-owned (no further drift attempts).
 
-**Special case — `.claude/bootstrap.md`** carries user state (checkbox progress from prior session). A legacy `docs/work/bootstrap.md` from a pre-relocation run moves home first — `git mv docs/work/bootstrap.md .claude/bootstrap.md`, checkbox state intact — and the prompt below then runs against the moved file. If `.claude/bootstrap.md` already exists beside the legacy file, keep the `.claude/` copy and report the stray legacy path rather than resolving it. Don't auto-merge. Prompt: **Keep existing** (default) / **Reset from template** / **Merge** (rare, task-by-task).
+**Special case — `.claude/bootstrap.md`** carries user state (checkbox progress from prior session). A legacy `docs/work/bootstrap.md` from a pre-relocation run moves home first — `git mv docs/work/bootstrap.md .claude/bootstrap.md`, checkbox state intact — and the prompt below then runs against the moved file. If `.claude/bootstrap.md` already exists beside the legacy file, keep the `.claude/` copy and report the stray legacy path rather than resolving it. An existing tracked plan holding no added task, where neither Task 1 nor Task 2 has an unchecked box, holds no seeding work: delete it in this run's sync commit, no prompt (git keeps the prior copy) — its row takes `⊘ removed`, resolution `updated`. Any other existing plan — don't auto-merge. Prompt: **Keep existing** (default) / **Reset from template** / **Merge** (rare, task-by-task).
 
-**Special case — `bootstrap.md` missing on mature repo.** When the file is **missing** AND the repo has ≥5 commits past the most recent bootstrap-shaped commit, don't silently re-template — the file was almost certainly Task-3-cleanup-deleted by a prior session, and re-templating resurfaces completed work as fresh tasks. Surface an advisory instead:
+**Special case — `bootstrap.md` missing on mature repo.** When the file is **missing** AND the repo has ≥5 commits past the most recent bootstrap-shaped commit, don't silently re-template — the file was almost certainly Task-3-cleanup-deleted by a prior session, and re-templating resurfaces completed work as fresh tasks. Adapt the plan first (§ Bootstrap-plan task adaptation): the advisory fires only when a re-seed would carry an active seeding task. Surface it instead of re-templating:
 
 **Bootstrap-shaped commit — match every spelling.** The emitted strings are §2c's; repos bootstrapped before the rename carry `chore: scaffold superpowers pipeline` / `chore: sync superpowers pipeline`, and `chore: complete pipeline bootstrap` counts too.
 
@@ -510,12 +510,11 @@ File was likely cleanup-deleted (Task 3 of prior bootstrap).
 Options:
   (a) skip re-seed (bootstrap complete)        ← default
   (b) re-seed (Tasks 1/2 still applicable)
-  (c) re-seed cleanup-only (Task 3 stub for next session)
 ```
 
-Whichever option lands, append the `.claude/bootstrap.md` row to the sync report — verdict `⊘ missing`; resolution `declined (not regenerated — re-seed skipped, bootstrap complete)` on (a), `inserted` on (b) / (c) — so § 2c copies the row into `covered`, and on (a) into `declined` with that reason, the same way as every other row.
+Whichever option lands, append the `.claude/bootstrap.md` row to the sync report — verdict `⊘ missing`; resolution `declined (not regenerated — re-seed skipped, bootstrap complete)` on (a), `inserted` on (b) — so § 2c copies the row into `covered`, and on (a) into `declined` with that reason, the same way as every other row.
 
-Outside the advisory — a fresh repo (no bootstrap-shaped commit yet), or a missing file with fewer than 5 commits past the last one — write from template, no advisory; the row takes `⊕ new`, resolution `seeded`.
+Outside the advisory — a fresh repo (no bootstrap-shaped commit yet), or a missing file with fewer than 5 commits past the last one — write from template when a seeding task survives adaptation, no advisory; the row takes `⊕ new`, resolution `seeded`. Wherever adaptation leaves no seeding task — fresh, below the threshold, or mature — write no file and surface no advisory; the row takes `⊘ missing`, resolution `declined (not written — no seeding task applies)`, and § 2c copies it into `covered` and `declined` like the (a) row.
 
 **Placeholders:**
 - `{Project Name}` — repo name
@@ -536,7 +535,7 @@ The slim plan is `Task 1: Seed feature specs` / `Task 2: Seed cards` / `Task 3: 
 
 - Drop tasks per each task's stated precondition and the re-run note in `assets/bootstrap-plan.md`
 - Add tasks for any project-specific needs surfaced during Phase 1 detection
-- Task 3 (Cleanup) always retained
+- Task 3 (Cleanup) is retained as the tail of a plan with a seeding task active (Task 1, Task 2, or one added above); none active → no `.claude/bootstrap.md` is written
 
 ### 2b-adopt: Superseded-fork adoption (migration, silent-skip)
 
@@ -566,9 +565,9 @@ Per-candidate handling:
 
 ### 2c: Sync report + commit
 
-**Gate — the sync report must exist and cover every pipeline-owned section, plus every artifact the § Registration rule covers, before commit.** Read `.claude/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row, and every durable artifact the § Registration rule covers must have a `registration:` row. Missing file, or any uncovered section or artifact → halt, return to 2b, produce the missing rows. A `⚠ drifted`, `⊕ new`, or `⊘ missing` row must also carry its resolution (`updated` / `inserted` / `seeded` / `declined ({reason})`), a rot row its own (`migrated` / `declined ({reason})`), a `registration:` row its own (`updated` / `none`), a § 2a-hooks / § 2a-autorun row also `kept (fork)` — a fork kept at the overwrite/keep prompt, which stays out of `declined` (`updated (stale)` / `updated (fork, overwritten)` count as `updated`) — an unresolved row, or a `declined` row carrying no reason, halts the same way. A rot outcome line present and reading `no rot scan` halts too — the scan swept no literals, so its zero rows are not a clean; return to 2b, re-run the rot scan with a working literal list. A fresh install carries no rot line, and the gate reads none. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
+**Gate — the sync report must exist and cover every pipeline-owned section, plus every artifact the § Registration rule covers, before commit.** Read `.claude/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row, and every durable artifact the § Registration rule covers must have a `registration:` row. Missing file, or any uncovered section or artifact → halt, return to 2b, produce the missing rows. A `⚠ drifted`, `⊕ new`, `⊘ missing`, or `⊘ removed` row must also carry its resolution (`updated` / `inserted` / `seeded` / `declined ({reason})`), a rot row its own (`migrated` / `declined ({reason})`), a `registration:` row its own (`updated` / `none`), a § 2a-hooks / § 2a-autorun row also `kept (fork)` — a fork kept at the overwrite/keep prompt, which stays out of `declined` (`updated (stale)` / `updated (fork, overwritten)` count as `updated`) — an unresolved row, or a `declined` row carrying no reason, halts the same way. A rot outcome line present and reading `no rot scan` halts too — the scan swept no literals, so its zero rows are not a clean; return to 2b, re-run the rot scan with a working literal list. A fresh install carries no rot line, and the gate reads none. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
 
-**Sync report** — rendered from the artifact (the file is canonical; this table is its commit-time view). Always shown once the gate above passes, before the commit. A re-run renders the table below — drift fixes and current items. A fresh install renders one coverage line in the table's place — `{N} sections placed, all ⊕ new` — while the report file keeps its per-row verdicts (`⊕ new | seeded`); the table stays the re-run surface.
+**Sync report** — rendered from the artifact (the file is canonical; this table is its commit-time view). Always shown once the gate above passes, before the commit. A re-run renders the table below — drift fixes and current items. A fresh install renders one coverage line in the table's place — `{N} sections placed, all ⊕ new`, plus ` · .claude/bootstrap.md not written (no seeding task applies)` when its row reads that way — while the report file keeps its per-row verdicts (`⊕ new | seeded`, and the plan's `⊘ missing` row when it was not written); the table stays the re-run surface.
 
 ```
 | Artifact                            | Status       | Action              |
@@ -603,7 +602,7 @@ Per-candidate handling:
 
 **`covered`** is an array of bare row-identity strings — one string per sync-report row across all three row classes: its per-section rows, its whole-file artifact rows (the § 2a-hooks / § 2a-autorun rows included, identity as those steps name it), and its rot rows. Each identity is *transcoded* from its report row rather than copied verbatim: the report renders a section row `{file}: {Section}` and the identity is `{file} § {Section}`; a whole-file artifact is its repo-relative path alone; a rot row is `{file} § rot:{old}` — keyed by the stale literal, never the line, since line numbers shift between runs. `registration:` rows stay report-only.
 
-**`declined`** is the rows resolved `declined` — a drift kept or an insert declined at Block 2, a re-seed skipped at the missing-on-mature advisory, a rot row left alone at the § 2b rot scan — each written `{ "section": "<row identity>", "reason": "<the row's declined reason>" }`, carrying the row's own `covered` identity string and the parenthetical of `declined ({reason})` as the reason — so `declined` stays a subset of `covered`, and marks divergence accepted, not pending.
+**`declined`** is the rows resolved `declined` — a drift kept or an insert declined at Block 2, a re-seed skipped at the missing-on-mature advisory, a plan not written because no seeding task applies, a rot row left alone at the § 2b rot scan — each written `{ "section": "<row identity>", "reason": "<the row's declined reason>" }`, carrying the row's own `covered` identity string and the parenthetical of `declined ({reason})` as the reason — so `declined` stays a subset of `covered`, and marks divergence accepted, not pending.
 
 **`placed`** is the ensure-infra procedures' own record — `{ "<destination path>": "<sha256 of the file as placed>" }` — which 2a-hooks / 2a-autorun write into the receipt file directly as each file resolves current — copied, or already sha-equal (mechanisms: [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) § Idempotency · [`../autorun/assets/ensure-infra.md`](../autorun/assets/ensure-infra.md) § Idempotency). Read the receipt back from disk here, after those steps ran, and carry its `placed` map forward whole — never from the Phase 1 snapshot, which predates this run's copies.
 
@@ -624,7 +623,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)
 - `docs/work/README.md` (if newly written, re-planted, or fact-fields block inserted this run at 2a-scale)
 - `docs/work/TEMPLATE.md` (if newly written)
-- `.claude/bootstrap.md` (if newly written or regenerated)
+- `.claude/bootstrap.md` (if newly written or regenerated, or its deletion when a cleanup-only plan was removed at § 2b)
 - `docs/specs/.gitkeep`
 - `docs/parked.md`, `docs/test-queue.md`, `docs/outward/README.md`, `docs/outward/TEMPLATE.md` (scale-module targets — only if installed this run at 2a-scale)
 - `docs/outward/OUT-###.md` entry files plus the removed `docs/outward.md` (only when 2a-scale ran the split)
@@ -635,7 +634,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 
 Commit message: `chore: scaffold harness pipeline` on fresh repos, `chore: sync harness pipeline` when only drift fixes shipped, `refactor: migrate CLAUDE.md to rules layer + sync pipeline` when re-run performed legacy migration. These strings double as the mature-repo detector above.
 
-**Clean the run artifact.** `bootstrap-sync-report.md` is a transient diagnostic — never staged. After the commit lands (or after reporting no-changes) and the Phase 3 handoff block has rendered, delete it: its consumer is this phase, so this phase is its cleaner. (Task 3 cleanup removes it too, as a safety net if a session broke between 2b and here.)
+**Clean the run artifact.** `bootstrap-sync-report.md` is a transient diagnostic — never staged. After the commit lands (or after reporting no-changes) and the Phase 3 handoff block has rendered, delete it: its consumer is this phase, so this phase is its cleaner. A report orphaned by a session that broke between 2b and here is overwritten by the next run's § 2b enumeration.
 
 ---
 
@@ -652,8 +651,7 @@ After committing (or reporting no changes needed), present results based on repo
 
 {If any rule files were seeded: "Path-scoped rules seeded in `.claude/rules/` ({list seeded rules}). They auto-load on file match — full ammo at the decision moment, summary mirrored in CLAUDE.md § Rules. Add more rule files when path-scoped patterns emerge."}
 
-{If the plan has Task 1 / Task 2 active: "Optional adaptive seeding queued in `.claude/bootstrap.md` (specs / cards). Next session: `/clear`, then open it."}
-{If the plan is cleanup-only: "Bootstrap essentially complete — `.claude/bootstrap.md` holds the cleanup task; the next session runs it and deletes the file."}
+{If `.claude/bootstrap.md` was written: "Optional adaptive seeding queued in `.claude/bootstrap.md` (specs / cards). Next session: `/clear`, then open it."}
 ```
 
 **Re-run / sync pass** — assembled per run from the fragments below, not rendered verbatim:

@@ -36,10 +36,10 @@ If no obvious items exist, nothing to commit — the substrate is ready when the
 
 ### Task 3: Cleanup
 
-- [ ] **Delete this file** (`.claude/bootstrap.md`) and `.claude/bootstrap-sync-report.md` if present — bootstrap is complete
+- [ ] **Delete this file** (`.claude/bootstrap.md`) — bootstrap is complete
 - [ ] **Verify `/super-bootstrap:needs-me` shows no active work** (unless the user has started real project work)
 - [ ] **Commit**: `chore: complete pipeline bootstrap`
 
 ---
 
-**Note on re-runs:** if `/super-bootstrap:harness-bootstrap` is run again later, this file gets regenerated. If `docs/specs/` is already populated (Task 1) or card files are already present in `docs/work/` (Task 2), those tasks are dropped — a greenfield scaffold drops both at first write (preconditions above) — and only Task 3 (cleanup) remains. Most refresh value on re-runs comes from gated tier-2 curation (skill/MCP picks against live sources, run by `/super-bootstrap:setup` once seed docs are substantive), not from this plan. (Re-runs come via `/super-bootstrap:setup`, which always dispatches the runway, or via `/super-bootstrap:harness-bootstrap` directly for a runway-only sync.)
+**Note on re-runs:** if `/super-bootstrap:harness-bootstrap` is run again later, this file gets regenerated. If `docs/specs/` is already populated (Task 1) or card files are already present in `docs/work/` (Task 2), those tasks are dropped — a greenfield scaffold drops both at first write (preconditions above). With both dropped no plan is written. Most refresh value on re-runs comes from gated tier-2 curation (skill/MCP picks against live sources, run by `/super-bootstrap:setup` once seed docs are substantive), not from this plan. (Re-runs come via `/super-bootstrap:setup`, which always dispatches the runway, or via `/super-bootstrap:harness-bootstrap` directly for a runway-only sync.)

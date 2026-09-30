@@ -18,7 +18,7 @@ Otherwise read, inline, cheap:
 - `docs/test-queue.md` § Pending entries, `docs/outward/OUT-*.md` origin + latest block, `docs/parked.md` entries — each only when the file exists;
 - `docs/overview.md` Problem / User — the product anchor the ranking leans on.
 
-Root `SESSION-STATE/` holds carry files → print `{N} carries in flight → /super-bootstrap:session-continue` before the lens question; the carries themselves stay unread.
+Root `SESSION-STATE/` holds carry files → print `{N} carries in flight → /super-bootstrap:session-continue` before the lens question; the carries themselves stay unread. `.claude/bootstrap.md` exists → print `bootstrap plan pending → open .claude/bootstrap.md` before the lens question; the file stays unread. Both pointer lines print whether or not the lens question runs.
 
 Sort every item by the test in `${CLAUDE_PLUGIN_ROOT}/shared/user-wall.md`: **needs you** or **runs without you**. Only the first set goes further.
 
