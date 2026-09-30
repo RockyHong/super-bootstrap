@@ -56,9 +56,9 @@ manifest** (single-package tier), **scale module unarmed** (0 cards, no drain in
 signals do not fire, and the tests-dir signal only "flags `rules/tests.md` for body-fill via
 doc-sync" — it ships no skeleton asset, so scaffold writes no rule file (§ Rule-signal detection).
 Planting a test-scoped rule here would also pre-install candidate arm **C** from the card's Verdict
-into the control. No `.claude/bootstrap.md` / `.claude/bootstrap-sync-report.md`: both are temporal
-bootstrap-session artifacts that the plan's own Task 3 deletes, so a consumer at ordinary work time
-does not hold them. No scale module, no drain worktree infra (gates above).
+into the control. No `.claude/bootstrap.md` / `.claude/bootstrap-sync-report.md`: both are transient:
+the runway deletes the sync report at run end and converts a legacy plan to cards, so a consumer at
+ordinary work time does not hold them. No scale module, no drain worktree infra (gates above).
 
 **Brace classification.** The skeleton's `{…}` are three different things, and the fill pass treats
 them as three. **True placeholders** are substituted — `{Project Name}` → repo name (SKILL.md:522),

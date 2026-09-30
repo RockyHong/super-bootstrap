@@ -60,10 +60,9 @@ Bare plugin-name references in prose. Slash-command forms of the same rename liv
 
 ## Paths
 
-Destinations a pipeline-owned file writes to or points at. A kept legacy plan carries its own old path in its cleanup task — the rot scan migrates the literal in place.
+Destinations a pipeline-owned file writes to or points at.
 
-- `docs/work/bootstrap.md` → `.claude/bootstrap.md` — plan relocated out of the card substrate to `.claude/` machine state
-- `docs/work/bootstrap-sync-report.md` → `.claude/bootstrap-sync-report.md` — run artifact follows the plan home
+- `docs/work/bootstrap-sync-report.md` → `.claude/bootstrap-sync-report.md` — run artifact relocated out of the card substrate to `.claude/` machine state
 
 ## Retired files
 

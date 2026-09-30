@@ -29,6 +29,7 @@ One command per repo. Auto-routes:
 
 The runway installs or syncs first either way — [no product Q&A at any point](docs/overview.md#problem). What follows depends on whether the seed docs already carry product content:
 
+- **Code present** → first seeds two GAP cards (feature specs, code-marker sweep), commits them, and works what it can in the same run — an interrupted run leaves the cards for cold pickup.
 - **Seed docs substantive** → curates skills / MCPs / hooks against the stack those docs already declare.
 - **Seed docs unfilled (greenfield)** → seeds three GAP cards (overview, techstack, tech curation) and stops at the resolve gate; curation waits until the product is settled.
 
@@ -38,7 +39,8 @@ Picks are matched to your stack and labeled by trust signal (Anthropic-vetted / 
 flowchart TD
     entry(["/super-bootstrap:setup"])
     entry --> runway["install / sync runway<br/>CLAUDE.md + skeleton docs + rules"]
-    runway --> gate{"seed docs<br/>substantive?"}
+    runway --> code["code present: seed 2 GAP cards<br/>(specs, marker sweep), work now"]
+    code --> gate{"seed docs<br/>substantive?"}
     gate -->|yes| curate["curate skills / MCPs / hooks"]
     gate -->|no| cards["seed 3 GAP cards"]
     cards --> hold["resolve gate — fill<br/>overview + techstack, re-run"]

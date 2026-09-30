@@ -51,7 +51,7 @@ Active development.
 
 > Grows via doc-sync as entry points and pipelines crystallize. Inputs → transforms → outputs through the code.
 
-**Setup** — `/super-bootstrap:setup` → `harness-bootstrap` installs/syncs runway (CLAUDE.md, skeleton docs, rules, hooks) → seed-doc gate → filled: `resolve-plugins` curates picks, writes `.claude/settings.json`; empty: seeds 3 GAP cards, holds at resolve gate (mermaid entry-point diagram in root README).
+**Setup** — `/super-bootstrap:setup` → `harness-bootstrap` installs/syncs runway (CLAUDE.md, skeleton docs, rules, hooks) → code present: seeds 2 GAP cards (spec seeding, marker sweep), commits, works what it can in the same run → seed-doc gate → filled: `resolve-plugins` curates picks, writes `.claude/settings.json`; empty: seeds 3 GAP cards, holds at resolve gate (mermaid entry-point diagram in root README).
 
 **Capture** — `/super-bootstrap:log <observation>` → gateway-inline classify + dedup-surface → card written to `docs/work/{ID}.md`.
 

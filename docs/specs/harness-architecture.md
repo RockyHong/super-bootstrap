@@ -50,6 +50,13 @@ substrate-permanent. Harness engineering's durable work domain is the permanent 
 **Four slots are uncontested:** fast capture, propagation gate, parallel throughput,
 product anchor. Awareness wiring is contested but the mechanisms differ in kind — see §5.
 
+**Pipeline-produced pending work rides the same substrate.** Work the pipeline leaves
+pending in a consumer repo is carried by `docs/work/` cards, seeded and committed before
+the work starts — [`/super-bootstrap:setup`](../../plugins/super-bootstrap/skills/setup/SKILL.md)
+seeds them from its pinned [seed-card bodies](../../plugins/super-bootstrap/skills/setup/assets/seed-cards.md)
+and then works what it can in the same run — so an interrupted run leaves cold-pickup state
+the ordinary doors read, and no second substrate holds it.
+
 **The product-anchor slot is unbuilt on the process-harness side, by design not
 oversight.** A process harness addresses the engineer standing in a codebase, and a
 codebase answers *solution*; product truth — ICP, problem statement, market — is not the
@@ -112,7 +119,7 @@ hyphenated one.
 
 - **Historical** — `harness-bootstrap` must keep matching pre-rename spellings it reads out
   of an already-bootstrapped repo: the `chore: scaffold|sync superpowers pipeline` commit
-  strings its mature-repo detector greps, and the `docs/superpowers/` folder its Phase 2a
+  strings its bootstrap-shaped-commit match greps, and the `docs/superpowers/` folder its Phase 2a
   migration moves to `docs/work/`. Dropping the first makes every existing consumer read as
   never-bootstrapped; dropping the second strands its old tree on disk (§8).
 
