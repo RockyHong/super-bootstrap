@@ -1,6 +1,6 @@
 ---
 name: session-close
-description: "Use at a session boundary — the session looks done, or you are breaking mid-work. Routes by fulfillment: goal delivered whole → done-close (closeout moves + this session's carry file cleared); in-motion remainder → park-close (card-anchored remainder appended as a `## Progress` block on the owning card, only what no card owns to this session's file in the root SESSION-STATE/ ledger). Detects every open closeout move — commit (through /super-bootstrap:commit, doc-sync included), push, card resolve, branch prune, merge, finding triage, ledger write/clear — and drives them to done through one confirm-pick; every write runs after the pick. No argument; reads current session state. Owns the session-carry ledger convention."
+description: "Use at a session boundary — the session looks done, or you are breaking mid-work. Routes by fulfillment: goal delivered whole → done-close (closeout moves + this session's carry file cleared); in-motion remainder → park-close (card-anchored remainder appended as a `## Progress` block on the owning card, only what no card owns to this session's file in the root SESSION-STATE/ ledger). Detects every open closeout move — commit (through /super-bootstrap:commit, doc-sync included), push, card resolve (sweeping every open card for finished or superseded ones, not only this session's), branch prune, merge, finding triage, ledger write/clear — and drives them to done through one confirm-pick; every write runs after the pick. No argument; reads current session state. Owns the session-carry ledger convention."
 tags: [session, close, park, ledger, carry]
 ---
 
@@ -40,7 +40,13 @@ Inspect for uncommitted session work, untracked files, stray artifacts — this 
 
 ### 3. Detect — cards + integration + ledger
 
-- **Cards this session finished** (`docs/work/{BUG,DEBT,GAP}-###.md` whose work landed whole) → a **resolve** move: delete the card file per `docs/work/README.md` § Thread contract (Resolve), folded into the close commit.
+- **Finished cards — sweep every open card**, not only this session's (`docs/work/{BUG,DEBT,GAP}-###.md`). A card is finished when any signal holds:
+  - (a) its latest Progress reports every step of its latest Plan done;
+  - (b) its aim moved — an Amendment or link hands it to a card ID now absent from `docs/work/`, or resolved in this close;
+  - (c) main-line commits other than its own card-thread writes (log, amend, Plan, Progress) name its ID (`git log --grep`) — this session's merges included — and the named Plan steps / Problem line together cover every step of the latest Plan, or the whole Problem (a commit also touching code counts);
+  - (d) this session's work landed it whole, or this session's own text calls it done, superseded, or closed.
+
+  (a)–(c) start as greps over card text and `git log`; deep-read only the cards they hit. Each finished card → a **resolve** move whose line carries its evidence (the signal, quoting the block line or commit): delete the card file per `docs/work/README.md` § Thread contract (Resolve), folded into the close commit. A signal that fires with the card's remaining aim unclear → a **triage** move (`/super-bootstrap:triage {ID}`) instead.
 - **Merged local branches** — branches already merged into the main line (main-line name from ambient; exclude main + current). An empty result is the clean case — guard the exclusion greps so a no-match exits 0. Each is a **prune** move via `git branch -d` (merged-guard refuses unmerged — recoverable). A recurring non-empty result is a producer miss — surface it as a **log** move.
 - **A complete feature branch ready to integrate** → an opt-in **merge** move via `/super-bootstrap:merge` — never auto-merged.
 - **Inflight findings** surfaced this session but not yet carded → triage each: on this session's goal, a bounded live tweak owning no downstream, clean tree, context to spare?
@@ -74,7 +80,7 @@ This is the terminal output — the commit door's cycle handoff does not print u
 
 ## Rules
 
-- **Drive, don't narrate.** Actionable leftovers route to the confirm-pick and execute — never a status report handing a known-actionable list back.
+- **Drive, don't narrate.** Actionable leftovers route to the confirm-pick and execute — never a status report handing a known-actionable list back. A card this close judges done, superseded, or stale is a resolve or triage move in the pick, never only a line of prose.
 - **One pick, every gate, writes after it.** Commit, push, merge, prune, and every file write — Progress, carry, fix-now — run only when picked, after the pick.
 - **Doors, not mechanisms.** Commit → `/super-bootstrap:commit`; log → `/super-bootstrap:log`; merge → `/super-bootstrap:merge`. Never a raw `git commit`.
 - **Inline procedure.** No argument, no subagent, no model pin.

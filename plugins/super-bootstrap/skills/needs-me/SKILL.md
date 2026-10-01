@@ -36,7 +36,7 @@ Deep-read the candidates in the chosen lens — past the origin, through the col
 {ID}  {title}  — {why you, ≤ 8 words}
 …
 {N} items run without you → /super-bootstrap:autorun
-{M} look done or premise-dead: {IDs}        (omit when none)
+{M} look done or premise-dead: {IDs} → offered for resolve at /super-bootstrap:session-close        (omit when none)
 ```
 
 Reply with an ID and the session is in pickup — framing line + route per `CLAUDE.md`, no re-scan.

@@ -80,6 +80,7 @@ The only durable state here is a still-`pending` entry — `pass` discharges it,
   - [ ] mid-card break → `/super-bootstrap:session-close` → one confirm-pick; nothing written before it; on confirm the card gains a `## Progress` block (done step, next step, watch-outs), `SESSION-STATE/<label>-<id>.md` holds only the non-card delta or a pointer stub, and the commit lands through `/super-bootstrap:commit` with no second push prompt and no §7 handoff line
   - [ ] fresh session → `/super-bootstrap:needs-me` prints the `carries in flight` line; `/super-bootstrap:session-continue` finds the carry, renames it to the new session id, leads with the card's latest block of each type, confirms before acting
   - [ ] finish the card → `/super-bootstrap:session-close` done-close deletes the claimed carry in the close commit
+  - [ ] a session that touched no card, with an open card superseded by a resolved successor and one whose Progress reports every Plan step done → `/super-bootstrap:session-close` offers both as resolve moves with evidence lines; an in-flight card stays out (`BUG-081`)
   - [ ] `/super-bootstrap:harness-bootstrap` on a scratch repo → its CLAUDE.md § Context Hygiene names the session-carry ledger
 - **result:** pending
 - **source:** GAP-096
