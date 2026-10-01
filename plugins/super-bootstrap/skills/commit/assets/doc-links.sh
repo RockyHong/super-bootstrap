@@ -140,7 +140,10 @@ is_history_doc() {
 # One transform, two readers: `check`/`refs` want slugs alone, `anchors` wants each
 # slug's line number beside it. Holding the awk body in one variable keeps the two
 # readers from drifting — an anchor `anchors` prints must be one `refs` accepts.
+# Runs only with $FENCE_AWK prepended (it calls fence_skip): a `#`-led line inside
+# a fenced block is code, not a heading.
 SLUG_AWK='
+{ if (fence_skip($0)) next }
 /^#/ {
     s = $0
     sub(/^#*/, "", s)
@@ -181,12 +184,12 @@ SLUG_AWK='
 '
 
 slug_lines() {
-    awk -v NUMBERED=0 "$SLUG_AWK" "$1" 2>/dev/null
+    awk -v NUMBERED=0 "$FENCE_AWK$SLUG_AWK" "$1" 2>/dev/null
 }
 
 # lineno TAB slug per heading, file order.
 slug_lines_numbered() {
-    awk -v NUMBERED=1 "$SLUG_AWK" "$1" 2>/dev/null
+    awk -v NUMBERED=1 "$FENCE_AWK$SLUG_AWK" "$1" 2>/dev/null
 }
 
 # Slug table for <file>, memoized — many anchored links resolve into the same
@@ -307,11 +310,13 @@ function isword(c) { return (c != "" && c ~ /[A-Za-z0-9_-]/) }
 # Fenced-block toggle: an opener records its char + run length; a closer needs the
 # same char, a run at least as long, and nothing but whitespace after it (an info
 # string marks an opener, never a closer). No interval expressions.
-# One toggle, two readers — `extract_links` and `do_pins` — held in one variable for
+# One toggle, three readers — `extract_links`, `do_pins`, and the SLUG_AWK heading
+# table (a `#`-led line inside a fence is code, not a heading) — held in one variable for
 # the reason SLUG_AWK is: this nesting rule is bug-fixed history (a closer that
 # ignored opener char and run length leaked fenced links out as real targets, now
 # test-locked), so a later fix reaching one copy only re-opens that defect.
-# State rides three globals the caller resets per file. Returns 1 when the caller
+# State rides three globals the caller resets per file, or runs one file per awk
+# process (SLUG_AWK). Returns 1 when the caller
 # should skip the line — a fence marker, or any line inside a block.
 FENCE_AWK='
 function fence_skip(s,   run, fchar, flen, frest) {

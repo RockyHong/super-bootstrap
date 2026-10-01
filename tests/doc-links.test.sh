@@ -136,6 +136,36 @@ else
   printf '%s\n' "$out" | sed 's/^/        /'
 fi
 
+echo "== doc-links: BUG-079 — a #-led line inside a fence is not a heading =="
+# A fenced `#!/bin/bash` (or shell comment) slugged as a heading: `anchors` named a
+# phantom section and `check` passed a link to it.
+mkdir -p "$TMP/fhead/docs"
+cat > "$TMP/fhead/docs/c.md" <<'EOF'
+# Doc C
+
+```bash
+#!/bin/bash
+# a comment
+```
+
+## Real section
+
+See [x](#binbash) and [y](#real-section).
+EOF
+
+out="$(cd "$TMP/fhead" && bash "$LINKS" check 2>&1)"; rc=$?
+if [ "$rc" -ne 0 ] && printf '%s' "$out" | grep -q '#binbash' && ! printf '%s' "$out" | grep -q '#real-section'; then
+  ok "fenced #-line: link to its phantom slug reports broken, real heading still resolves"
+else
+  bad "fenced #-line: link to its phantom slug reports broken, real heading still resolves (rc=$rc)"
+  printf '%s\n' "$out" | sed 's/^/        /'
+fi
+
+out="$(cd "$TMP/fhead" && bash "$LINKS" anchors docs/c.md 3,4 2>&1)"
+check "fenced #-line: anchors names the enclosing heading, not a phantom (got: $(printf '%s' "$out" | tr '\n' ' '))" [ "$out" = "doc-c" ]
+out="$(cd "$TMP/fhead" && bash "$LINKS" anchors docs/c.md 9,1 2>&1)"
+check "fenced #-line: line numbering still counts fenced lines (got: $out)" [ "$out" = "real-section" ]
+
 # ---------------------------------------------------------------------------
 # BUG-045 — one-pass slug table + fork-free resolve path.
 # Three locks: (a) output parity across the four finding classes plus `.`/`..`
