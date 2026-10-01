@@ -1,6 +1,6 @@
 ---
 name: plugin-digest
-description: Reduce plugin README / manifest content to a structured digest (hard_paths_shipped, manual_install_steps, user_invoke_trigger, multi_component). Batch: 1..N candidates per dispatch. Read-only. Dispatched by the `/super-bootstrap:resolve-plugins` skill's Phase 2.5 on Haiku — mechanical extraction; safe at this tier because Phase 3 (trust-tier scoring) and the earn-right gate already judge the digest downstream.
+description: 'Reduce plugin README / manifest content to a structured digest (hard_paths_shipped, manual_install_steps, user_invoke_trigger, multi_component). Batch: 1..N candidates per dispatch. Read-only. Dispatched by the `/super-bootstrap:resolve-plugins` skill''s Phase 2.5 on Haiku — mechanical extraction; safe at this tier because Phase 3 (trust-tier scoring) and the earn-right gate already judge the digest downstream.'
 tools: Read, Grep, Glob
 model: haiku
 tags: [resolve-plugins, digest, extraction, plugins]

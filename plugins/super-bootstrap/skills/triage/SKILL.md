@@ -1,6 +1,6 @@
 ---
 name: triage
-description: 'Read-only grounding phase for a card — every card''s pickup. `/super-bootstrap:triage {ID}` dispatches the `triage` subagent (inherit — the session owner's model) to ground the card cold — premise verify, aim validate, blast collect — and append a Verdict block — `## Verdict — auto-fix · {date}` (Fix-shape / Probe-deps / Execution tags) or `## Verdict — surface · {date}` (a fork the gateway climbs before any user hand-off) — to `docs/work/{ID}.md`. No code changes — the fix is a separate phase. Use at raw-card pickup (a card with no Verdict block) or when the user asks to triage/investigate a BUG/DEBT/GAP item.'
+description: 'Read-only grounding phase for a card — every card''s pickup. `/super-bootstrap:triage {ID}` dispatches the `triage` subagent (inherit — the session owner''s model) to ground the card cold — premise verify, aim validate, blast collect — and append a Verdict block — `## Verdict — auto-fix · {date}` (Fix-shape / Probe-deps / Execution tags) or `## Verdict — surface · {date}` (a fork the gateway climbs before any user hand-off) — to `docs/work/{ID}.md`. No code changes — the fix is a separate phase. Use at raw-card pickup (a card with no Verdict block) or when the user asks to triage/investigate a BUG/DEBT/GAP item.'
 tags: [triage, verdict, card, pipeline]
 ---
 
