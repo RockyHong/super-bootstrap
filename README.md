@@ -19,6 +19,19 @@ In Claude Code:
 /plugin install super-bootstrap@super-bootstrap
 ```
 
+### Cloud sessions
+
+A cloud session (Claude Code on the web) loads none of the plugins a repo's `.claude/settings.json` declares — so the [core pin](docs/techstack.md#key-dependencies) `/super-bootstrap:setup` writes doesn't reach it, and `/plugin` isn't available there. Install the plugin from the cloud environment's setup script instead: on claude.ai/code, select the cloud icon above the message box, hover your environment, open its settings (gear), and put this in the **Setup script** field (not *Environment variables*):
+
+```bash
+#!/bin/bash
+claude plugin marketplace add RockyHong/super-bootstrap || true
+claude plugin install super-bootstrap@super-bootstrap || true
+exit 0
+```
+
+The setup script belongs to the environment, not the repo — set it once and every repo opened in that environment gets the plugin. It runs only when a new session starts, so open a new session after saving.
+
 ## Use
 
 ```

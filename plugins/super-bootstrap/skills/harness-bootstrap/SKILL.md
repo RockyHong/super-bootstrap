@@ -229,7 +229,7 @@ Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no su
 
 `.claude/rules/` machinery is **always** scaffolded (zero-cost when empty). `index.md` is seeded from `assets/rules-index-skeleton.md`. Individual rule bodies fill in Phase 2b based on Phase 1 signal detection.
 
-**Core plugin pin (pre-resolve).** A core dep, not an adaptive pick: the skeleton routes every door through `/super-bootstrap:*` and the committed `commit-channel.sh` deny text routes workers to `/super-bootstrap:commit`, so both dangle unless the project pin alone resolves `super-bootstrap` wherever user-scope settings don't apply (fresh clone, second machine, cloud session). The pin lives outside the official marketplace, so its `extraKnownMarketplaces` entry is required. Pin first — tier-2 curation layers adaptive picks on top later.
+**Core plugin pin (pre-resolve).** A core dep, not an adaptive pick: the skeleton routes every door through `/super-bootstrap:*` and the committed `commit-channel.sh` deny text routes workers to `/super-bootstrap:commit`, so both dangle unless the project pin alone resolves `super-bootstrap` wherever user-scope settings don't apply (fresh clone, second machine). A cloud session is the exception the pin cannot cover — it loads no repo-declared plugin. The pin lives outside the official marketplace, so its `extraKnownMarketplaces` entry is required. Pin first — tier-2 curation layers adaptive picks on top later.
 
 Ensure `.claude/settings.json` contains:
 
@@ -623,7 +623,7 @@ After committing (or reporting no changes needed), present results based on repo
 **First-run (just scaffolded)** — render the block verbatim, no additions, before § 2c deletes the sync report; each `{If …}` line resolves to its quoted text or drops; the command literals stay untranslated:
 
 ```
-**Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. The core plugin pin (super-bootstrap) sits in `.claude/settings.json`; stack-matched skill / MCP / hook picks come when `/super-bootstrap:setup` runs gated tier-2 curation. Everything this run installed is in the scaffold commit — `git show --stat HEAD`.
+**Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. The core plugin pin (super-bootstrap) sits in `.claude/settings.json` — local sessions only; a cloud session loads no repo-declared plugin, so install it from the cloud environment's Setup script: https://github.com/RockyHong/super-bootstrap#cloud-sessions. Stack-matched skill / MCP / hook picks come when `/super-bootstrap:setup` runs gated tier-2 curation. Everything this run installed is in the scaffold commit — `git show --stat HEAD`.
 
 {If product skeletons are empty (greenfield): "`docs/overview.md` / `docs/techstack.md` are empty skeletons — `/super-bootstrap:setup` seeds GAP cards for them and surfaces the resolve gate."}
 

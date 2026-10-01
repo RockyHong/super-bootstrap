@@ -185,7 +185,7 @@ If `.claude/settings.json` already has pinned picks, diff the new curation again
 - **Pinned + still recommended + trust block moved** (license / last-commit / archive status changed) → re-show that pick's trust block, ask user to re-confirm
 - **New pick recommended** (upstream added it; or stack signal changed) → propose as **add**
 - **Pinned but no longer recommended** (deprecated upstream; license changed; stack changed) → propose as **drop** with reason
-- **Pinned but source missing** — `enabledPlugins` entry exists with no resolvable source (not in `extraKnownMarketplaces`, not Anthropic-vetted). **Live-query source pool first** to find the plugin's real marketplace; if found, propose **resolve** (add marketplace to `extraKnownMarketplaces`) with trust block; if not found in any source, propose **drop** (orphan, can't reproduce on cloud / fresh machine).
+- **Pinned but source missing** — `enabledPlugins` entry exists with no resolvable source (not in `extraKnownMarketplaces`, not Anthropic-vetted). **Live-query source pool first** to find the plugin's real marketplace; if found, propose **resolve** (add marketplace to `extraKnownMarketplaces`) with trust block; if not found in any source, propose **drop** (orphan, can't reproduce on a fresh machine).
 
 ### Batch presentation format
 
@@ -205,7 +205,7 @@ An LSP pick's row carries two rider notes: (a) the language-server **binary** is
 
 ## Phase 5: Apply approved → settings.json + atomic install + verify + commit
 
-Source of truth: project-scope intent, committed, travels with repo, cloud-friendly. Device install (`claude plugin install`) is optional convenience layered on top.
+Source of truth: project-scope intent, committed, travels with repo to fresh clones and machines. Device install (`claude plugin install`) is optional convenience layered on top.
 
 Each accepted candidate executes as an **atomic unit** — settings write + per-component install + per-component verify. Atomic boundary is per-candidate: one candidate failing verify halts only its own steps; sibling candidates continue independently.
 
@@ -218,7 +218,7 @@ Steps execute sequentially within a candidate. Multiple candidates may install i
 ### Phase 5.2: Settings.json write
 
 - Add accepted picks to `enabledPlugins`. Drop rejected picks. **When harness-active (`docs/work/` exists), never drop the core pin** (`super-bootstrap@super-bootstrap`) — see Phase 4 § Pre-resolve pin.
-- For any plugin NOT from `claude-plugins-official`, ensure its source is in `extraKnownMarketplaces` so cloud sessions / fresh machines can resolve.
+- For any plugin NOT from `claude-plugins-official`, ensure its source is in `extraKnownMarketplaces` so fresh clones / machines can resolve.
 - Example shape:
   ```json
   {
@@ -231,9 +231,10 @@ Steps execute sequentially within a candidate. Multiple candidates may install i
     }
   }
   ```
-- One-line transparency: "Pinning plugins per-project in `.claude/settings.json` so cloud Claude and fresh machines reproduce this toolset."
+- One-line transparency: "Pinning plugins per-project in `.claude/settings.json` so fresh clones and machines reproduce this toolset."
+- Cloud line, printed to the user once after the transparency line: "Cloud sessions ignore this pin — add `claude plugin install <plugin>@<marketplace>` per pick to the cloud environment's Setup script, preceded by `claude plugin marketplace add <owner/repo>` for each pick outside `claude-plugins-official`: https://github.com/RockyHong/super-bootstrap#cloud-sessions"
 
-Pin all accepted picks in `.claude/settings.json` — cloud sessions and fresh machines resolve from there. Device install alone doesn't travel.
+Pin all accepted picks in `.claude/settings.json` — fresh clones and machines resolve from there. Device install alone doesn't travel.
 
 ### Phase 5.3: Verify per component
 
