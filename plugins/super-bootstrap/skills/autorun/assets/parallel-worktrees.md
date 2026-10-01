@@ -58,6 +58,13 @@ Mechanism detail the table doesn't carry (consequences live in the table only):
 - `--setting-sources local,project` — because cwd = worktree, `project` resolves to the worktree tree (registering its rules + skills); user sources stay excluded. The FS wall is cwd-default + no `--add-dir <gateway>`, independent of source selection.
 - `--permission-mode acceptEdits` — auto-accepts Edit/Write within the allow set only; Bash stays deny-by-default unless allowed.
 
+### Worker grants beyond the base set
+
+`Skill,Agent` is the base. `-p` cannot prompt, so a tool or command nothing allows is denied and the card stops `BLOCKED`. A worker gains more from two places only:
+
+- **Per card — the dispatch line** (rule: `SKILL.md` § Run). A grant joins the same comma-joined `--allowedTools` token after the base (`"Skill,Agent,<grant>,…"`), and nothing persists across turns — each spawn carries only what that card's grant adds.
+- **Per repo — stack runners in the repo's committed `.claude/settings.json`.** A runner the template does not list (`pwsh`, a Godot / Unity console exe, a repo test script) goes in as a `permissions.allow` row there — `Bash(pwsh *)`, `Bash(*godot*)` — which the worker loads through `--setting-sources local,project`. The frozen template stays unedited (an edited copy reads as a fork at ensure-infra), and the whole `PowerShell` tool stays off the dispatch line. Two conditions hold: the repo must be trusted — an untrusted workspace drops the rows with a "this workspace has not been trusted" warning (trust is keyed to the repo root, not the worktree path); and the rows also widen the interactive session for everyone who clones the repo.
+
 _These `claude -p` flags are confirmed against the official Claude Code CLI reference and a live end-to-end smoke (CC 2.1.183): `--setting-sources` accepts `user,project,local`; `acceptEdits` is a valid `--permission-mode` value; `--allowedTools` is valid (alias `--allowed-tools`) and variadic. The `--` terminator and the `Agent` grant are defensive rather than smoke-confirmed — they neutralize the variadic swallow whatever precedes the prompt, and hedge subagent-dispatch auto-trust that CLI versions may stop granting. Re-confirm if the CLI surface moves._
 
 Dispatch via `Bash(run_in_background: true)` so multiple subprocesses run concurrently; the gateway is notified on each completion (push, not poll).

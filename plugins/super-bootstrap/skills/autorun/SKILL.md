@@ -39,7 +39,7 @@ Zero admitted → print the skip list and end the turn.
 
 ## Run
 
-Per admitted card or group — `assets/parallel-worktrees.md` § Warm (claim = `mkdir .claude/worktrees/autorun-{id}`, branch `autorun/{id-lower}`, template copied, `OWNED_BY` written), then one background dispatch (§ Dispatch step, `--` before the brief, no model pin — the session inherits the default).
+Per admitted card or group — `assets/parallel-worktrees.md` § Warm (claim = `mkdir .claude/worktrees/autorun-{id}`, branch `autorun/{id-lower}`, template copied, `OWNED_BY` written), then one background dispatch (§ Dispatch step, `--` before the brief, no model pin — the session inherits the default). Append the tools the card's next step needs to that worker's `--allowedTools` — `WebSearch,WebFetch` for web research; stack runners come from the repo's own settings, not the dispatch line (§ Worker grants beyond the base set).
 
 **Brief** — rendered fresh from files at spawn, five parts:
 
