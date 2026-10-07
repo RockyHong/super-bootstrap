@@ -17,7 +17,9 @@ held identical across arms, so the clause under test is the only variable.
 Three scenarios were tried for the rot-row clauses, one per clause carrying a candidate
 behavioral cut. Only the third discriminates; the other two are reported below as non-results
 rather than dropped. A later card re-ran the same § 2c receipt paragraph on a different axis
-under this protocol — § GAP-084 at the foot of this file.
+under this protocol — § GAP-084 at the foot of this file. Two more re-ran § 2c's commit
+predicate: § Scenario E (`BUG-083`) below it, and § Scenario F after it, which corrects E's clause
+and is the one the shipped text is justified against.
 
 - **Scenario A — § 2c gate** (the strongest a-priori candidate). A sync report whose per-section
   rows are all `✓ matches` and whose one rot row carries no resolution, handed to a model asked
@@ -210,3 +212,226 @@ paragraph owed either way — the example is what carries it — and its behavio
 unproven at this model.
 
 The shipped § 2c text is byte-identical to the arm v2 excerpt above (trailing blank line aside).
+
+## BUG-083 — § 2c commit predicate (third run, same section)
+
+`BUG-083` put § 2c's **commit decision** under test — not the receipt write, the one sentence that
+branches the phase between committing and reporting no changes. Run under Scenario C's protocol, so
+it is recorded here rather than in a new bench directory.
+
+### Scenario E — zero-effect re-run, which branch
+
+Run 2026-10-08, `claude -p --model haiku`, no tools (`--disallowedTools` over the full default set,
+`--strict-mcp-config`), prompt on stdin, three trials per arm, cwd a neutral empty directory outside
+this repo (§ decontamination). CC 2.1.292.
+
+Prompt (both arms, held identical but for the clause under test —
+[`scenario-e-prompt-control.txt`](scenario-e-prompt-control.txt) ·
+[`scenario-e-prompt-arm.txt`](scenario-e-prompt-arm.txt)): § 2b's drift-check paragraph, § 2c's
+gate, § 2c's receipt-write lead, **the commit-decision clause (the variable)**, the stage list, and
+§ 2c's run-artifact cleanup — then one run's state and a forced three-way answer
+(`VERDICT: COMMIT | SKIP | NEITHER`, plus the clause decided on and a one-line why).
+
+The run put in front of both arms is the measured one: a re-run whose only non-`✓ current` row is
+`AGENTS.md` `⚠ drifted` resolved `declined ({reason})` from the prior run, no file written this run,
+the receipt overwritten byte-identical (`git diff` on it empty), and
+`.claude/bootstrap-sync-report.md` present and untracked in the working tree at the moment the
+predicate is read.
+
+**Axis under test** — does the predicate route a zero-effect re-run to a named branch. Correct
+behavior is `SKIP`: the downstream text names exactly two outcomes ("After the commit lands (or
+after reporting no-changes)", Phase 3's "After committing (or reporting no changes needed)"), and
+the otherwise-branch is a dead end because `/super-bootstrap:commit` has nothing to stage.
+
+Control = the pre-fix sentence, byte-exact: "If every row is `✓ current` and nothing changed on
+disk, report and skip the commit." Arm = the effect-keyed rewrite, scoped to § 2c's own stage list.
+
+Pre-registered before any arm ran, scored mechanically off each trial's first `VERDICT:` line and
+nothing else ([`score-scenario-e.sh`](score-scenario-e.sh)): **RED** iff the control emits a
+non-`SKIP` verdict on ≥ 2 of 3 trials; **GREEN** iff the arm emits `SKIP` 3 of 3. A control reaching
+`SKIP` on ≥ 2 of 3 was pre-declared a non-red control — the clause would not ship on this bench.
+
+| Arm | Trial | Verdict | Clause decided on |
+|---|---|---|---|
+| Control (pre-fix) | 1 | **COMMIT** | the otherwise-branch — "not every row is ✓ current … so the condition to skip the commit is not satisfied" |
+| Control | 2 | SKIP | the skip clause, overridden — "no actual changes to stage or commit **despite** the drifted AGENTS.md row" |
+| Control | 3 | **COMMIT** | the otherwise-branch — "not every row is `✓ current`; the skip condition is unmet" |
+| Arm (shipped) | 1 | SKIP | the arm's effect clause, with the no-op rows and the byte-identical receipt named |
+| Arm | 2 | SKIP | same clause — "no paths in the stage list carry uncommitted changes" |
+| Arm | 3 | SKIP | same clause |
+
+**Verdict: RED → GREEN on the branch the predicate selects.** Control non-`SKIP` 2/3 clears the
+pre-registered RED gate; arm `SKIP` 3/3 clears GREEN. Both control failures land on conjunct 1
+exactly as the card predicts — each quotes the verdict column back ("not every row is `✓ current`")
+and falls to the otherwise-branch, whose stage set is empty, so the phase routes into
+`/super-bootstrap:commit` with nothing to commit.
+
+**The one control trial that reached the right branch did not reach it through the clause.** Trial
+2's own rationale carries the concession — it skips "despite the drifted AGENTS.md row", i.e. it
+overrode the predicate rather than satisfying it, and it reads "nothing changed on disk" as the
+receipt's `git diff` alone while the untracked sync report sits in the tree. The pre-registration
+scores the verdict line only, so trial 2 counts as a control pass and is reported as one; what it
+demonstrates is the failure mode the card names at the other end — the run completes because the
+executor picks a branch the text does not name.
+
+**Conjunct 2 stayed off-axis.** No trial on either arm cited `.claude/bootstrap-sync-report.md` as
+the working-tree change that makes the pre-fix "nothing changed on disk" false on every re-run. The
+scoping half of the fix therefore ships on the file's own reading — § 2b writes the report before
+Block 1 and § 2c deletes it only after this step, so it is present whenever the predicate is read,
+and no runway-written `.gitignore` line covers it — not on a reproduced failure at this model and
+prompt shape. Recorded as unproven rather than dropped: both halves sit in one sentence, and the
+rewrite that removes conjunct 1 is the same edit that scopes conjunct 2.
+
+This scenario's arm wording is **not** what ships. A cold `audit-harness-edits` probe found it
+under-scoped after this run, and § Scenario F below re-ran the clause with the missing case in the
+state block and landed the corrected text. Scenario E stands as the first pass and the record of what
+it could not see; the shipped clause is justified against Scenario F.
+
+### Scenario F — same predicate, with a pre-existing dirty stage-list path
+
+**Pre-registered 2026-10-08, before any arm ran.** Scenario E landed a clause that a cold
+`audit-harness-edits` probe then found under-scoped: "carries an uncommitted change" is attributed to
+the working tree, not to the run, so a stage-list path already dirty before the run (a consumer's
+hand edit this run declined, or another session's work in a shared checkout) satisfies it and turns a
+no-op sync into a commit — one that then halts at the commit door's own index readback on a path
+outside the session file list. Scenario E could not see it: its state block never put a pre-existing
+dirty path in the tree. Scenario F adds exactly that fact and nothing else.
+
+**Axis.** Does the predicate route a zero-effect re-run to `SKIP` when a stage-list path carries an
+uncommitted hand edit that predates the run and that this run declined?
+
+**Three arms, one variable.** Line 19 of the prompt — the clause under test — is the only difference
+between the three files; every other excerpt and the whole state block are byte-identical across
+arms (`diff` verified before the runs).
+
+- **Control** — the pre-fix wording ([`scenario-f-prompt-control.txt`](scenario-f-prompt-control.txt)).
+- **Arm v1** — the wording Scenario E shipped, i.e. the text the audit found under-scoped
+  ([`scenario-f-prompt-armv1.txt`](scenario-f-prompt-armv1.txt)). This arm exists to test the
+  **finding itself**: Scenario E's record states conjunct-scoping as unproven behaviorally, and the
+  audit's case was never measured. If v1 goes non-`SKIP` here, the finding stops resting on a reading.
+- **Arm v2** — the corrected wording, bound to this run's effect
+  ([`scenario-f-prompt-armv2.txt`](scenario-f-prompt-armv2.txt)).
+
+**Protocol.** `claude -p --model haiku`, no tools (`--disallowedTools` over the full default set,
+`--strict-mcp-config`), prompt on stdin, three trials per arm, cwd a neutral empty directory outside
+this repo (§ decontamination). Forced output: first line `VERDICT: COMMIT | SKIP | NEITHER`.
+
+**Correct verdict: `SKIP`.** The run wrote nothing, deleted nothing, and the receipt came out
+byte-identical; the only dirty path is the consumer's own edit, which is not the run's effect.
+
+**Gates, fixed before the runs.**
+
+| Gate | Condition | Consequence |
+|---|---|---|
+| RED | control emits non-`SKIP` on ≥ 2/3 | the scenario discriminates |
+| FINDING | arm v1 emits non-`SKIP` on ≥ 2/3 | the audit finding is reproduced behaviorally |
+| GREEN | arm v2 emits `SKIP` on 3/3 | the corrected clause ships |
+
+- Control `SKIP` ≥ 2/3 → **non-red control**: do not land, return the call to the gateway.
+- Arm v1 `SKIP` ≥ 2/3 → the finding is **not** behaviorally reproduced at this model and prompt
+  shape. It still stands on the file's own reading (the stage list's `CLAUDE.md` entry reads
+  `(new, modified, or post-migration)`, which a declined hand edit satisfies), so v2 still ships —
+  recorded as unproven behaviorally, the way Scenario E recorded conjunct 2.
+- Arm v2 anything but `SKIP` 3/3 → **do not land the corrected prose**; return to the gateway.
+
+**Scoring.** `score-scenario-f.sh <runs-dir>` reads the first `VERDICT:` line of each trial and
+nothing else. No post-hoc rescoring; the gates above are not revised after seeing results.
+
+**Result.** Run 2026-10-08, protocol as pre-registered above. CC 2.1.292. Exact deny list passed:
+`Bash,Read,Edit,Write,Glob,Grep,WebFetch,WebSearch,Task,Agent,NotebookEdit,TodoWrite,SlashCommand,Skill,KillShell,BashOutput,Artifact`
+— `SlashCommand` matched no tool and was reported as such by the CLI; every other entry took effect,
+so the arms ran tool-less as intended.
+
+| Arm | Trial 1 | Trial 2 | Trial 3 |
+|---|---|---|---|
+| Control (pre-fix) | **COMMIT** | **COMMIT** | **COMMIT** |
+| Arm v1 (Scenario E's shipped wording) | SKIP | SKIP | SKIP |
+| Arm v2 (corrected, run-scoped) | SKIP | SKIP | SKIP |
+
+`PASS: RED held (control non-SKIP 3/3), GREEN held (arm v2 SKIP 3/3).`
+
+**RED is cleaner here than in Scenario E** — 3/3 against E's 2/3. Adding the pre-existing dirty path
+removes the escape E's control trial 2 took: with a stage-list path visibly modified, "nothing changed
+on disk" is unambiguously false, so the pre-fix wording commits every time. Scenario F is the stronger
+discriminator for this clause and is the one the shipped text is justified against.
+
+**The audit finding did not reproduce behaviorally — and the arms say why.** Arm v1 carries the
+wording the cold probe called under-scoped, and it answered `SKIP` 3/3. Its own rationales supply the
+limiting term the text omits:
+
+- v1 trial 1 — "AGENTS.md's decline carries no changes **from this run**"
+- v1 trial 2 — "no files in the stage list carry changes **introduced by this run**"
+
+The text says "carries an uncommitted change"; the reader added "by this run". So the finding is real
+as an omission and wrong as a prediction of behavior at this model and prompt shape: the correct
+branch was reached by inference the clause does not license, which is the same shape as Scenario E's
+control trial 2 reaching the right branch by overriding its clause. Recorded, not scored — the
+pre-registration fixed `FINDING` as a report line, not a landing gate, precisely so this outcome could
+not be read as a refutation after the fact.
+
+**Arm v2 ships anyway, and the reason is not the measurement.** v2 states the scope the clause was
+relying on a reader to supply. Its rationale quotes the term directly ("If this run wrote or deleted
+no path in the stage list below"), so the right answer no longer depends on the reader's inference.
+The literal-reading exposure stands on the file: the stage list's `CLAUDE.md` entry reads
+`(new, modified, or post-migration)`, which a declined consumer hand edit satisfies, and nothing in
+the v1 wording excludes it.
+
+The shipped § 2c clause is byte-identical to the arm-v2 excerpt in
+[`scenario-f-prompt-armv2.txt`](scenario-f-prompt-armv2.txt) (verified after landing).
+
+**Second pass — arm v3, pre-registered 2026-10-08 before it ran.** Arm v2 never shipped. A second
+cold `audit-harness-edits` pass on it returned two confirmed defects, both in the wording the
+dispatcher had authored:
+
+1. **The predicate could never be satisfied.** It read "If this run wrote or deleted no path in the
+   stage list below — the receipt write above included". Line 579 writes the receipt on *every* sync
+   ("fresh install writes it new, re-run overwrites whole" — re-Read and confirmed), and v2 counted
+   that write explicitly, so a literal reader never reaches the skip branch. Only the trailing
+   illustration ("over a byte-identical receipt") rescued the case, and an illustration is not a
+   predicate.
+2. **The trailing clause asserted something false.** "no row there reads `✓ current`" claims a fact
+   about the skip side, but an all-`✓ current` run over an unchanged receipt also belongs on the skip
+   side, and there every row reads `✓ current`.
+
+Arm v3 keys the predicate on **changed bytes** and drops the trailing sentence entirely. That also
+dissolves the bind the no-op list was caught in — v2 wrote "and others of that kind" to avoid the
+closed-list omission GAP-084 measured, which the audit then read as a fuzzy bound. With the predicate
+on bytes, the resolution vocabulary is not load-bearing at all: a `declined` row, a `kept (fork)`, a
+`registration:` row `none` and anything else that writes nothing all change no bytes, so none of them
+needs naming.
+
+Gate for this pass, fixed before the run: **arm v3 emits `SKIP` 3/3, or the prose does not land.**
+Control and arms v1 / v2 are not re-run; their trials above stand as recorded.
+
+| Case | Expected | Why |
+|---|---|---|
+| declined drift, nothing written, receipt byte-identical | SKIP | no stage-list bytes changed |
+| the same, plus a pre-existing uncommitted hand edit | SKIP | the edit predates the run |
+| all rows `✓ current`, receipt byte-identical | SKIP | no stage-list bytes changed |
+| all rows `✓ current`, plugin version bumped | COMMIT | the receipt's bytes changed |
+| fresh install | COMMIT | every placed path's bytes changed |
+
+**Arm v3 result.** Run 2026-10-08, same protocol; the deny list dropped the bogus `SlashCommand`
+entry the first pass reported as matching no tool.
+
+| Arm | Trial 1 | Trial 2 | Trial 3 |
+|---|---|---|---|
+| Arm v3 (shipped) | SKIP | SKIP | SKIP |
+
+`PASS: RED held (control non-SKIP 3/3), GREEN held (arm v3 SKIP 3/3).`
+
+**The clause is now the reason, not the reader's inference.** All three v3 trials quote the predicate
+itself and give the byte comparison as the ground — "The receipt was overwritten but is byte-identical
+to its prior committed version; AGENTS.md was declined and not written" (t1); "no other stage-list
+files were modified by this run" (t2, t3). That is the difference the arm was for: v1 reached the same
+verdict only by supplying "by this run" itself, and v3 states it.
+
+**What this pass cost, recorded so the shape is visible.** Two of the three wordings the dispatcher
+authored carried a defect a cold audit caught — v2's predicate could not be satisfied at all, and its
+trailing clause asserted something false about the skip side. Neither was caught by the bench: v2
+scored `SKIP` 3/3 on the same scenario that v3 did. A micro-test on one scenario confirms the branch
+an arm reaches; it does not confirm the clause is sound, and here the model's willingness to repair a
+broken predicate hid the break. The audit, not the bench, is what held this line.
+
+The shipped § 2c clause is byte-identical to the arm-v3 excerpt in
+[`scenario-f-prompt-armv3.txt`](scenario-f-prompt-armv3.txt) (verified after landing).

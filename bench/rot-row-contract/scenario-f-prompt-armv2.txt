@@ -1,0 +1,92 @@
+You are the executing agent for a repo-harness sync pipeline. Below are verbatim excerpts from
+the pipeline protocol file (skills/harness-bootstrap/SKILL.md), then the state of one run of it.
+Decide what the protocol tells you to do next. Use only the excerpts.
+
+=== EXCERPT 1 — Phase 2b, the drift check (it writes the sync report) ===
+
+**The drift check is produce-then-judge — enumerate first, read the verdict off the rows.** The per-section enumeration is the *first* output, written to the sync-report artifact `.claude/bootstrap-sync-report.md` before any "current / drifted" conclusion exists. Per pipeline-owned file in scope, append one row per applicable § Pipeline-owned section: section name, line range in the existing file, verdict (`✓ matches` / `⚠ drifted` / `⊕ new` / `⊘ missing`), and — for drifted, `⊕ new`, and `⊘ missing` rows — the diff or template section, plus the resolution as it lands at Block 2 (`updated` / `inserted` / `declined ({reason})`); Phase 2c derives the coverage receipt from these rows. The verdict is a column filled while enumerating, never a headline asserted over the file: there is no "all current" to state until every row is written. For each artifact this run placed for the first time or deleted (§ Registration rule), append its `registration:` row before closing the enumeration. Overwrite any stale report from a prior run.
+
+=== EXCERPT 2 — Phase 2c, the gate ===
+
+**Gate — the sync report must exist and cover every pipeline-owned section, plus every artifact the § Registration rule covers, before commit.** Read `.claude/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row, and every durable artifact the § Registration rule covers must have a `registration:` row. Missing file, or any uncovered section or artifact → halt, return to 2b, produce the missing rows. A `⚠ drifted`, `⊕ new`, `⊘ missing`, or `⊘ removed` row must also carry its resolution (`updated` / `inserted` / `seeded` / `declined ({reason})`), a rot row its own (`migrated` / `declined ({reason})`), a `registration:` row its own (`updated` / `none`), a § 2a-hooks / § 2a-autorun row also `kept (fork)` — a fork kept at the overwrite/keep prompt, which stays out of `declined` (`updated (stale)` / `updated (fork, overwritten)` count as `updated`) — an unresolved row, or a `declined` row carrying no reason, halts the same way. A rot outcome line present and reading `no rot scan` halts too — the scan swept no literals, so its zero rows are not a clean; return to 2b, re-run the rot scan with a working literal list. A fresh install carries no rot line, and the gate reads none. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
+
+=== EXCERPT 3 — Phase 2c, the receipt write ===
+
+**Receipt write.** Once the sync completes, write `.claude/super-bootstrap-runway.json` = `{ "version": "{current plugin version}", "covered": [...], "declined": [...], "placed": { ... } }` — fresh install writes it new, re-run overwrites whole. Take `version` from the plugin version Phase 1 already read for its staleness compare — § Version-staleness signal names the file and how to locate it. This runs even when every row is `✓ current` — the receipt records "synced at this version, these sections compared," independent of whether content changed.
+
+=== EXCERPT 4 — Phase 2c, the commit decision ===
+
+**The commit is decided by this run's effect, not by the verdict column.** If this run wrote or deleted no path in the stage list below — the receipt write above included — report no changes and skip the commit. A change that predates this run is not this run's effect and does not count: a consumer's uncommitted hand edit this run declined leaves the sync a no-op. Rows that all resolved to no-ops (a drift `declined`, a `kept (fork)`, a `registration:` row `none`, and others of that kind) over a byte-identical receipt land on the skip side, and no row there reads `✓ current`.
+
+Otherwise use `/super-bootstrap:commit` to stage:
+Otherwise use `/super-bootstrap:commit` to stage:
+- `CLAUDE.md` (new, modified, or post-migration)
+- `CODING_STANDARDS.md` (new, or approved preamble / heading drift fix)
+- `AGENTS.md` (new, or approved drift fix)
+- `docs/techstack.md` (new, skeleton-section drift or insert, or post-migration absorbed content)
+- `docs/overview.md` (new, skeleton-section drift or insert)
+- `docs/decisions.md` (new, scope-header drift, post-retirement migration from techstack, or closed-history rows from legacy CLAUDE.md migration)
+- `.claude/settings.json` (core pin seeded at 2a; harness hooks merged at 2a-hooks; autorun's `PreToolUse(Read)` guard merged at 2a-autorun)
+- `.claude/hooks/commit-channel.sh`, `.claude/hooks/consult-check-{sessionstart,check}.sh` (frozen hook scripts seeded at 2a-hooks — always, default-on)
+- `.gitignore` (when any 2a step appended a line — 2a-hooks' `.claude/.consult-catalog`, 2a-autorun's `.claude/worktrees/` + `.autorun-status`; skip if every line was already present)
+- `.claude/templates/worktree-settings.local.json` (autorun worktree settings template — only if placed or refreshed on drift this run at 2a-autorun)
+- `.claude/rules/index.md` (always — at minimum machinery seed)
+- `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)
+- `docs/work/README.md` (if newly written, re-planted, or fact-fields block inserted this run at 2a-scale)
+- `docs/work/TEMPLATE.md` (if newly written)
+- Legacy plan migration (§ 2b) — the deleted `.claude/bootstrap.md` / `docs/work/bootstrap.md`, the `docs/work/GAP-###.md` cards it seeded, and the `docs/work/README.md` high-water bump
+- `docs/specs/.gitkeep`
+- `docs/parked.md`, `docs/test-queue.md`, `docs/outward/README.md`, `docs/outward/TEMPLATE.md` (scale-module targets — only if installed this run at 2a-scale)
+- `docs/outward/OUT-###.md` entry files plus the removed `docs/outward.md` (only when 2a-scale ran the split)
+- `.claude/super-bootstrap-runway.json` (runway coverage receipt — written/overwritten every sync)
+- Superseded-fork deletions (adopt mode, § 2b-adopt) — staged removals of approved consumer `.claude/skills/<name>/` dirs / `.claude/agents/<name>.md` files that root artifacts now supersede
+- Consumer surfaces edited to register a placed or deleted artifact (§ Registration rule — skip when every registration row resolved `none`)
+- Any other adaptive files / folders created
+
+Commit message: `chore: scaffold harness pipeline` on fresh repos, `chore: sync harness pipeline` when only drift fixes shipped, `refactor: migrate CLAUDE.md to rules layer + sync pipeline` when re-run performed legacy migration. These strings double as the bootstrap-shaped-commit match (§ 2b).
+
+=== EXCERPT 5 — Phase 2c, cleaning the run artifact ===
+
+**Clean the run artifact.** `bootstrap-sync-report.md` is a transient diagnostic — never staged. After the commit lands (or after reporting no-changes) and the Phase 3 handoff block has rendered, delete it: its consumer is this phase, so this phase is its cleaner. A report orphaned by a session that broke between 2b and here is overwritten by the next run's § 2b enumeration.
+
+=== THIS RUN'S STATE (established fact — do not re-derive) ===
+
+This is a re-run of the pipeline in a consumer repo.
+
+- `AGENTS.md` was hand-edited by the consumer in an earlier session. The drift check surfaced it,
+  and in the PRIOR run the consumer declined the fix, giving a reason.
+- This run's sync report `.claude/bootstrap-sync-report.md` was written by 2b and holds these rows:
+
+  | Artifact                                             | Status    | Action                                              |
+  |------------------------------------------------------|-----------|-----------------------------------------------------|
+  | CLAUDE.md: Doc Sync                                  | ✓ current | —                                                   |
+  | CLAUDE.md: Dispatch                                  | ✓ current | —                                                   |
+  | docs/techstack.md: Runtime                           | ✓ current | —                                                   |
+  | AGENTS.md                                            | ⚠ drifted | declined (consumer's own executor-contract wording) |
+  | registration: docs/outward/ → README.md docs list    | ✓ current | none                                                |
+
+- The gate in Excerpt 2 passed.
+- No file in the repo was written or modified by this run, with one exception: the receipt
+  `.claude/super-bootstrap-runway.json` was overwritten per Excerpt 3, and it came out
+  BYTE-IDENTICAL to the copy already committed — `git diff` on it is empty. The plugin version is
+  unchanged since the prior run and the decline reason is unchanged.
+- `AGENTS.md` carries the consumer's own hand edit in the working tree right now. That edit
+  predates this run — it is what the `⚠ drifted` row was raised against, and this run declined
+  it, so this run did not write, revert, or stage that file. It has never been committed, so
+  `git status` has reported it modified since before this run started and will keep reporting it
+  modified after this run ends.
+- `.claude/bootstrap-sync-report.md` is present in the working tree right now: 2b wrote it this run,
+  and Excerpt 5 deletes it only after this step. It is untracked, and no `.gitignore` line covers it.
+
+=== YOUR ANSWER ===
+
+Answer in exactly this format, nothing before it and nothing after it:
+
+VERDICT: <COMMIT or SKIP or NEITHER>
+CLAUSE: <the words from Excerpt 4 you decided on, quoted>
+WHY: <one sentence>
+
+Where:
+  COMMIT  = run `/super-bootstrap:commit` and stage the list.
+  SKIP    = report no changes and skip the commit.
+  NEITHER = Excerpt 4 resolves this run to neither branch.

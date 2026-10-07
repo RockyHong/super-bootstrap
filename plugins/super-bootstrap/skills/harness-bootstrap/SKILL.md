@@ -584,7 +584,7 @@ Per-candidate handling:
 
 **`placed`** is the ensure-infra procedures' own record — `{ "<destination path>": "<sha256 of the file as placed>" }` — which 2a-hooks / 2a-autorun write into the receipt file directly as each file resolves current — copied, or already sha-equal (mechanisms: [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) § Idempotency · [`../autorun/assets/ensure-infra.md`](../autorun/assets/ensure-infra.md) § Idempotency). Read the receipt back from disk here, after those steps ran, and carry its `placed` map forward whole — never from the Phase 1 snapshot, which predates this run's copies.
 
-If every row is `✓ current` and nothing changed on disk, report and skip the commit.
+**The commit is decided by effect, not by the verdict column.** If this run changed no bytes in any path of the stage list below — the receipt included, compared against its prior content — report no changes and skip the commit. A change that predates this run is not this run's effect: a consumer's uncommitted hand edit this run declined leaves the sync a no-op.
 
 Otherwise use `/super-bootstrap:commit` to stage:
 - `CLAUDE.md` (new, modified, or post-migration)
@@ -605,7 +605,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/specs/.gitkeep`
 - `docs/parked.md`, `docs/test-queue.md`, `docs/outward/README.md`, `docs/outward/TEMPLATE.md` (scale-module targets — only if installed this run at 2a-scale)
 - `docs/outward/OUT-###.md` entry files plus the removed `docs/outward.md` (only when 2a-scale ran the split)
-- `.claude/super-bootstrap-runway.json` (runway coverage receipt — written/overwritten every sync)
+- `.claude/super-bootstrap-runway.json` (runway coverage receipt — written every sync; staged when its content changed)
 - Superseded-fork deletions (adopt mode, § 2b-adopt) — staged removals of approved consumer `.claude/skills/<name>/` dirs / `.claude/agents/<name>.md` files that root artifacts now supersede
 - Consumer surfaces edited to register a placed or deleted artifact (§ Registration rule — skip when every registration row resolved `none`)
 - Any other adaptive files / folders created
