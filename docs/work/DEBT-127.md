@@ -1,0 +1,7 @@
+# DEBT-127 — § Code presence has no `.claude/` exclusion, so the pipeline's own hook scripts satisfy its code-present test
+
+**Logged:** 2026-10-07 · **Source:** harness-bootstrap fixture walks, both docs-only fixtures (cold executors, plugin v5.1.1)
+**Problem:** § Code presence sets **code present** on "any source file (e.g. `.js` / `.ts` / `.py` / `.go` / `.rs` / `.sh` — scripts included …)", and draws no exclusion for `.claude/`. On a docs-only repo the pipeline itself places three `.claude/hooks/*.sh` scripts in Phase 2a, so the literal reading flips that repo to code-present on its own second run — which raises `CODING_STANDARDS.md` and `CLAUDE.md § Coding Principles` as `⊕ new` and sets `facts_stale` (the receipt's `covered` carries neither). Both docs-only fixtures reached that state; each executor independently read those files as harness state rather than product source and stayed docs-only, so nothing broke. The clause's "judge by analogy" licenses that call but does not state it: the correct outcome currently rests on an unwritten distinction between the harness's own scripts and the product's.
+**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md` § Code presence, § Fact-staleness signal
+**Blast:** repo — every docs-only consumer's second sync
+**Prior:** The scan scope wants the product tree; `.claude/` is the harness's own and belongs outside it, the way the rot scan already carves out `dimension: history` files.
