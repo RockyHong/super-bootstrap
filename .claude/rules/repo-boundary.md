@@ -1,5 +1,5 @@
 ---
-description: "Repo-boundary discipline — state which copy is under test (published vs in-repo dev); route findings by ownership, served copies under this repo's own .claude/ included (/super-bootstrap:log for native artifacts, /contribute for served or imported ones — never a local-clone edit); shipped skeletons stay self-contained while the dogfood harness may taste-couple; an edit propagates to its mirror in both lanes — dogfood prose → shipped skeleton, frozen asset → placed dogfood copy; .claude/guidelines/ is the storehouse's tree whole — this repo's own material lives in .claude/rules/ or docs/, never under it"
+description: "Repo-boundary discipline — state which copy is under test (published vs in-repo dev); route findings by concern-ownership first (the consumer-resolvability test) and only then by provenance, which names the write door — /super-bootstrap:log when the concern is this repo's, a served copy under this repo's own .claude/ included; /contribute when it is the serving repo's — never a local-clone edit; shipped skeletons stay self-contained while the dogfood harness may taste-couple; an edit propagates to its mirror in both lanes — dogfood prose → shipped skeleton, frozen asset → placed dogfood copy; .claude/guidelines/ is the storehouse's tree whole — this repo's own material lives in .claude/rules/ or docs/, never under it"
 paths:
   - "CLAUDE.md"
   - "plugins/**"
@@ -23,18 +23,38 @@ paths:
 
 # Repo Boundary — Copy Under Test, Finding Lanes, Taste-Coupling
 
-This repo is the plugin source. Three boundaries bind every session:
+This repo is the plugin source. Five boundaries bind every session:
 
 **Copy under test.** State which copy a verification targets — the
 published/installed plugin or the in-repo dev copy — before running it.
 Default: verify against published; work the dev copy only when the session
 explicitly targets it.
 
-**Finding lanes.** Findings about this repo's own artifacts →
-`/super-bootstrap:log`. Findings about served or imported artifacts →
-`/contribute` — the door hands the finding to the serving repo's inbox; that
-handoff is the dedup step, so a fix to a served file lands there, never as an
-edit here or in a local clone of the serving repo. Served copies live under this repo's own `.claude/`
+**Finding lanes.** Two questions, in order — whose **concern** the finding is, then
+whose **tree** holds the file.
+
+*Concern first — the consumer-resolvability test.* Does the artifact **have to**
+resolve in a repo that has only the installed plugin, nothing of the author's?
+
+- Yes → this repo's concern. Log it here (`/super-bootstrap:log`), a served file
+  included — the served copy itself stays untouched, and the fix lands in this repo's
+  own artifact. A duplicate the serving repo holds is retired in that repo, so the
+  card names the retirement as owed there and the author carries it; the session
+  writes to one repo only.
+- No, it resolves only where the author's device layer exists → the serving repo's
+  concern. `/contribute` hands it over.
+
+One edge the test already decides: a test surface or bench follows its artifact's
+owner.
+
+This file is the test's canonical home. A storehouse session cannot read this repo's
+rules, so the storehouse needs the same test in its own routing rule, and a change to
+the test here owes that copy the same change, routed by `/contribute`.
+
+*Then provenance* — it names whose tree holds the file, and so which door a
+**write** goes through, never whose concern the finding is. The `/contribute` handoff
+is also the dedup step, so a serving repo's fix lands there and never as an edit here
+or in a local clone of that repo. Served copies live under this repo's own `.claude/`
 as well as at device level (`~/.claude`, imported work-discipline guidelines).
 Tell a served copy by provenance, per class:
 
@@ -64,8 +84,8 @@ author's served `.claude/guidelines/`:
 - **Shipped skeletons** — `plugins/*/skills/*/assets/**`, seeded into downstream
   repos. MUST be self-contained: downstream ≠ author, so no wire to
   `.claude/guidelines/` and no reference to a plugin-internal path a consumer
-  repo lacks (e.g. `skills/needs-me`). Judge a skeleton line by whether it resolves
-  in a repo that has only the installed plugin, nothing of the author's.
+  repo lacks (e.g. `skills/needs-me`). Every skeleton line must satisfy the
+  plugin-only-repo test § Finding lanes states above.
 
 **Sync direction — an edit carries its mirror; author on the SSOT side.** Two
 lanes, opposite direction, one closure rule. A `harness-bootstrap` re-run verifies

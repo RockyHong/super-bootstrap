@@ -152,6 +152,34 @@ has to resolve on it. Splitting the harness into a
 runtime-neutral core plus per-runtime adapters is a closed fork in
 [`docs/decisions.md`](../decisions.md).
 
+### The second seam: claude-config-manager, the author's device storehouse
+
+A different seam from the one above, decided on a different axis. super-bootstrap is a
+per-repo consumer product; claude-config-manager is the author's device storehouse,
+present only on the author's machine and serving every repo there. Both sides hold
+harness artifacts, and both sides' routing doors face each other, so the boundary needs
+a test either side can apply alone.
+
+**Ownership runs on consumer-resolvability, not on provenance.** Whose tree currently
+holds a file says which door a *write* goes through; it does not say whose problem a
+finding is. The deciding question is whether the artifact must resolve for a consumer
+who has only the installed plugin — the consumer-resolvability test, stated with its
+branches and its settled edge at
+[`.claude/rules/repo-boundary.md`](../../.claude/rules/repo-boundary.md)
+§ Finding lanes, which § Taste-coupling layers there cites for skeleton prose. That
+edge — a test surface or bench follows its artifact's owner — is closed, not open, on
+the doc-consult hook row in [`docs/decisions.md`](../decisions.md).
+
+**Why the test is placed twice.** A storehouse session cannot read a consumer repo's
+rules, so the storehouse needs the same test in its own routing rule rather than a
+read-through to this one — one criterion, two placements, each the other's propagation
+closure.
+
+**The consequence at the doors.** A finding on a served file whose *concern* is this
+repo's is logged here, not contributed out — provenance alone would send it away and the
+item would round-trip, each hop re-grounding cold on a test that cannot answer the
+question being asked.
+
 ## 5. Awareness wiring is the strongest uncontested position
 
 Docs existing ≠ the agent attending to them. The two systems solve this differently:
