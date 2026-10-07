@@ -48,8 +48,8 @@ One edge the test already decides: a test surface or bench follows its artifact'
 owner.
 
 This file is the test's canonical home. A storehouse session cannot read this repo's
-rules, so the storehouse needs the same test in its own routing rule, and a change to
-the test here owes that copy the same change, routed by `/contribute`.
+rules, so the storehouse needs the same test on its own side, and a change to the test
+here owes that copy the same change, routed by `/contribute`.
 
 *Then provenance* — it names whose tree holds the file, and so which door a
 **write** goes through, never whose concern the finding is. The `/contribute` handoff

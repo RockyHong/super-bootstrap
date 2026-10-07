@@ -171,9 +171,8 @@ edge — a test surface or bench follows its artifact's owner — is closed, not
 the doc-consult hook row in [`docs/decisions.md`](../decisions.md).
 
 **Why the test is placed twice.** A storehouse session cannot read a consumer repo's
-rules, so the storehouse needs the same test in its own routing rule rather than a
-read-through to this one — one criterion, two placements, each the other's propagation
-closure.
+rules, so the storehouse needs the same test on its own side rather than a read-through
+to this one — one criterion, two placements, each the other's propagation closure.
 
 **The consequence at the doors.** A finding on a served file whose *concern* is this
 repo's is logged here, not contributed out — provenance alone would send it away and the
