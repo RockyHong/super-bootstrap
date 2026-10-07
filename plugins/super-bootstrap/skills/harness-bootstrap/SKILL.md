@@ -124,9 +124,9 @@ Every other state leaves it unset: no receipt (fresh install — the facts seed 
 
 **Bound.** The receipt records no manifest identity, so this delta keys on the code-presence transition alone. A manifest that changed, moved, or was added beside an existing one on a repo the last run already read as code-present raises nothing here.
 
-Detected here, materialized at § 2b: the flag rides the sync report, not context. When set, § 2b's enumeration appends one `facts:` row to `.claude/bootstrap-sync-report.md` — `facts: stale — last sync docs-only, code present now · manifest {file} · runtime {runtime + version} · framework {framework, or "none"}` — beside the rot rows, and Phase 3 prints its advisory from that row alone (§ Phase 3). The receipt shape and the § 2c set-difference are unchanged: the row is a print source, not a coverage claim.
+Detected here, materialized at § 2b: the flag rides the sync report, not context. When set, § 2b's enumeration appends one `facts:` row to `.claude/bootstrap-sync-report.md` — `facts: stale — last sync docs-only, code present now · manifest {file, or "none"} · runtime {runtime + version, or "none"} · framework {framework, or "none"}` — beside the rot rows, and Phase 3 prints its advisory from that row alone (§ Phase 3). The receipt shape and the § 2c set-difference are unchanged: the row is a print source, not a coverage claim.
 
-**Output of Phase 1 (facts lane):** record `facts_stale`, and with it the facts this run detected — manifest file name, runtime, framework (§ Manifest Detection) — for § 2b to write as the `facts:` row.
+**Output of Phase 1 (facts lane):** record `facts_stale`, and with it the facts this run detected — manifest file name, runtime, framework (§ Manifest Detection), each "none" where detection found nothing, as when code present rests on source files alone with no manifest — for § 2b to write as the `facts:` row.
 
 ---
 
@@ -643,9 +643,9 @@ Read the row back and print this block once, directly under the sync line, its f
 > - `CLAUDE.md` § Tech Stack — the one-line summary. Hand-edited: it is § Project-owned, and doc-sync's write boundary excludes `CLAUDE.md`, so no other door refreshes it.
 > - `docs/techstack.md` § Runtime · § Framework · § Key Dependencies · § Build & Distribution
 >
-> Detected this run: manifest `{manifest file}` · runtime `{runtime + version}` · framework `{framework, or "none"}`.
+> Detected this run: manifest `{manifest file, or "none"}` · runtime `{runtime + version, or "none"}` · framework `{framework, or "none"}`.
 >
-> Edit those five sections by hand from those facts and commit them. This run changed nothing in them.
+> Edit those five sections by hand from those facts and from the repo itself, and commit them; a fact shown as "none" was not detected, so fill it by reading the repo's source and build files. This run changed nothing in them.
 
 The advisory step completes when that block has printed with all five section names and the row's facts substituted in. It has no approval prompt and no on-disk effect — the runway writes none of the five.
 
