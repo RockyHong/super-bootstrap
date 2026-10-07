@@ -31,48 +31,6 @@ The only durable state here is a still-`pending` entry — `pass` discharges it,
 
 ## Pending
 
-### Seed-once stack facts: a re-run after code arrives advises, never rewrites
-
-- **run on:** in-repo dev copy of `harness-bootstrap` (`plugins/super-bootstrap/skills/harness-bootstrap/`) against the GAP-073 docs-only scratch shape (`README.md` + `docs/*.md` only)
-- **checklist:**
-  - [x] bootstrap the docs-only scratch repo → `docs/techstack.md` § Runtime / Framework / Key Dependencies / Build & Distribution hold the unfilled placeholders, `CLAUDE.md` § Tech Stack and § Commands keep the skeleton placeholder body verbatim ([§ 2b Placeholders docs-only rule](../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md#2b-pipeline-docs))
-  - [ ] add a `package.json` and re-run → Phase 3 prints the stale-facts advisory naming all five sections plus the detected manifest / runtime / framework
-  - [x] same re-run → `.claude/bootstrap-sync-report.md` carries one `facts:` row with those detected facts (the advisory's source)
-  - [x] same re-run → those five sections are byte-unchanged on disk, and the four techstack rows read `✓ current` (never `⚠ drifted`)
-  - [x] re-run on this code repo (facts already filled) → no advisory, and the four techstack rows read `✓ current` not `⚠ drifted`
-- **result:** pending — file layer discharged by a scratch-repo fixture run; the one open item is terminal-output only (does Phase 3 actually emit the advisory). Its inputs are verified present: the `facts:` row carries the detected manifest / runtime / framework, and the five sections it names are byte-unchanged. Bound on the discharged items: the executor was a normal session, not a cold container — the shipped-asset byte comparisons hold regardless, the sync-report row spellings were written and then read back by that same session.
-- **source:** GAP-074
-- **on fail:** `/super-bootstrap:log` a bug + re-queue
-
-### The executor contract seeds unconditionally — `⊕ new`, then `✓ current`
-
-- **run on:** in-repo dev copy of `harness-bootstrap` (`plugins/super-bootstrap/skills/harness-bootstrap/`), against a docs-only scratch repo (`README.md` + `docs/*.md` only) and against this repo
-- **checklist:**
-  - [x] bootstrap the docs-only scratch repo → root `AGENTS.md` lands `⊕ new`, inserts on approval, byte-identical to `plugins/super-bootstrap/skills/harness-bootstrap/assets/agents-md-skeleton.md`; the same run places no `CODING_STANDARDS.md` and no `## Coding Principles` — the new asset carries no code-presence gate
-  - [x] same run → `.claude/bootstrap-sync-report.md` carries an `AGENTS.md` row plus its `registration:` row, and `.claude/super-bootstrap-runway.json` `covered` lists `AGENTS.md` by path
-  - [x] re-run the scratch repo unchanged → `AGENTS.md` reads `✓ current`, file byte-unchanged
-  - [ ] hand-edit one shipped line in the scratch `AGENTS.md`, re-run → `⚠ drifted`, diff shown; declining with `n — {reason}` lands `{ "section": "AGENTS.md", "reason": "{reason}" }` under `declined` in the receipt and leaves the file untouched; a further re-run prints `previously declined: {reason}` beside the row's diff before re-prompting
-  - [x] re-run on this repo (code present) → `AGENTS.md` lands `⊕ new` on the first sync and `✓ current` on the second; the `CLAUDE.md` § Dispatch row surfaces `⚠ drifted` once and resolves `updated` — this repo: `⊕ new` landed; § Dispatch read `declined` (dogfood already co-edited), so the `updated` expectation is consumer-shaped
-- **result:** pending — file layer discharged by the same fixture run. The open item's first three clauses are verified (re-run after a hand-edit reads `⚠ drifted` with the diff in Block 2; declining lands exactly `{ "section": "AGENTS.md", "reason": … }` under `declined`; the file's sha is untouched). What remains is its tail alone — whether a further re-run actually renders the `previously declined:` line; the receipt input that line reads from is confirmed present and correctly shaped.
-- **source:** GAP-072
-- **on fail:** `/super-bootstrap:log` a bug + re-queue
-
-### A declined rot row is remembered across runs — both `previously declined:` lanes in one walk
-
-- **run on:** in-repo dev copy of [`harness-bootstrap`](../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md), against a scratch repo carrying a pipeline-owned file with a stale rename-map literal
-- **checklist:**
-  - [ ] plant a stale `old` literal in a pipeline-owned file, re-run → § 2b surfaces a rot row; answering a bare `n` re-prompts for the reason before the row resolves
-  - [ ] answer `n — {reason}` → the sync report's rot row reads `declined ({reason})`, and § 2c's gate does not halt (the row is resolved)
-  - [ ] leave a second rot row unanswered → § 2c halts on it, the way an unresolved drifted section does
-  - [ ] same run → `.claude/super-bootstrap-runway.json` `declined` carries `{ "section": "{file} § rot:{old}", "reason": "{reason}" }`, that identity also appears in `covered`, and `declined` stays a subset of `covered`
-  - [ ] re-run unchanged → the rot row surfaces again with `previously declined: {reason}` beside it, and still takes its own answer rather than auto-resolving
-  - [ ] a second hit of the same literal in the same file → shares the one memory line (the key is the literal, not the line) and still prompts independently
-  - [ ] the section lane's own tail, unverified since `GAP-072` — hand-edit a shipped line, decline with `n — {reason}`, re-run → `previously declined: {reason}` renders beside that row's diff too
-- **result:** pending — the render exists in two lanes and has never been observed firing in either. The receipt inputs are confirmed present and correctly shaped on the section lane; what is unverified is the render itself, which is why both lanes ride one walk.
-- **source:** GAP-083
-- **on fail:** `/super-bootstrap:log` a bug + re-queue
-
-
 ### Session boundary pair: park-close → session-continue → done-close round trip
 
 - **run on:** an sb-harnessed repo with the in-repo dev copy of [`session-close`](../plugins/super-bootstrap/skills/session-close/SKILL.md) / [`session-continue`](../plugins/super-bootstrap/skills/session-continue/SKILL.md) loaded (or the released plugin), device `~/.claude/skills/session-{close,continue}` out of the way
