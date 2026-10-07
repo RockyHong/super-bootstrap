@@ -435,3 +435,50 @@ broken predicate hid the break. The audit, not the bench, is what held this line
 
 The shipped § 2c clause is byte-identical to the arm-v3 excerpt in
 [`scenario-f-prompt-armv3.txt`](scenario-f-prompt-armv3.txt) (verified after landing).
+
+### Scenario G — same predicate, baseline left for the executor to derive
+
+**Pre-registered 2026-10-08, before any trial ran.** A cold triage of `DEBT-128` found the gap in
+Scenario F: its state block handed the executor the baseline as a fact ("No file in the repo was
+written or modified by this run"), so arm v3's 3/3 shows the branch is right *when the baseline is
+given* — not that an executor can establish it. The shipped clause names a before-state for the
+receipt and none for the other stage-list paths.
+
+**Variable: the state block, not the clause.** Every trial runs the shipped clause (Scenario F's arm
+v3, byte-identical). The two lines of F's state block that asserted the baseline are replaced by the
+evidence a real run holds: this run's complete file-write tool-call log, the `git status --porcelain`
+read before Phase 1, and the one read now. Nothing else in F's prompt changes.
+
+- **G1** ([`scenario-g1-prompt.txt`](scenario-g1-prompt.txt)) — the tool log writes only the sync
+  report and the receipt; `AGENTS.md` is dirty before the run and still dirty now. Correct: `SKIP`.
+- **G2** ([`scenario-g2-prompt.txt`](scenario-g2-prompt.txt)) — the same, except the tool log also
+  carries an `Edit` of `CLAUDE.md`, and `CLAUDE.md` shows modified now but not before the run.
+  Correct: `COMMIT`. A sanity case: it shows the clause is not simply answering `SKIP`.
+
+Protocol as Scenario F. Three trials per case.
+
+| Read | Condition | Consequence |
+|---|---|---|
+| RED | G1 emits non-`SKIP` on ≥ 2/3 | the missing baseline bites — author option (B), naming the run's own write and delete calls as the record, and run it on G1 and G2 |
+| GREEN | G1 emits `SKIP` on ≥ 2/3 **and** G2 emits `COMMIT` on ≥ 2/3 | the executor derives the baseline from evidence it holds — close residue 1 with this read-out |
+| INSTRUMENT | G2 emits `COMMIT` on ≤ 1/3 | the state block is mis-built or the clause cannot tell a real write; no read on G1 is taken |
+
+The thresholds follow this file's convention for a control (≥ 2/3), not the any-arm gate the
+`code-presence-scope` bench used. Scored by [`score-scenario-g.sh`](score-scenario-g.sh), first
+`VERDICT:` line only; gates not revised after seeing results.
+
+**Result.** Run 2026-10-08, protocol as pre-registered.
+
+| Case | Trial 1 | Trial 2 | Trial 3 |
+|---|---|---|---|
+| G1 — no stage-list write, `AGENTS.md` dirty before and after | SKIP | SKIP | SKIP |
+| G2 — the same plus an `Edit` of `CLAUDE.md` | COMMIT | COMMIT | COMMIT |
+
+`GREEN: g1 SKIP 3/3, g2 COMMIT 3/3 — the executor derives the baseline from evidence it holds; close residue 1.`
+
+**The executor builds the baseline from the two status reads and the tool log.** G2 trial 1 states
+the derivation outright — `CLAUDE.md` is on the stage list and "git status shows it as modified after
+the run but not before" — and G1's trials set the pre-run `AGENTS.md` edit aside as declined and not
+this run's. A real re-run holds exactly this evidence in its own context, so a clause naming the
+baseline would state what the reader already does. Residue 1 closes here; the closing row in
+[`docs/decisions.md`](../../docs/decisions.md) carries the reopen condition.
