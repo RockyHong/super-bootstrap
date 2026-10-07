@@ -1,0 +1,67 @@
+You are the executing agent for a repo-harness sync pipeline (skills/harness-bootstrap/SKILL.md).
+You are at Phase 1 of a re-run on one repository and must classify it. Below are verbatim excerpts
+from the pipeline protocol, then the repository's full file tree. Use only the excerpts and the tree.
+
+=== EXCERPT 1 — Phase 1, the classification you must make ===
+
+**Code presence.** A manifest, or any source file (e.g. `.js` / `.ts` / `.py` / `.go` / `.rs` / `.sh` — scripts included; illustrative, judge by analogy), sets **code present**. Neither → **docs-only repo**: the code-touch pair — CLAUDE.md § Coding Principles and `CODING_STANDARDS.md` — is not applicable, the way monorepo-only sections are on a single-package repo (§ Pipeline-owned): the drift walk skips both and the receipt's `covered` omits them. A re-run that finds code raises both as `⊕ new` (§ 2b, § 2a). A pair an earlier bootstrap placed on a docs-only repo stays as the consumer left it — the walk carries no removal path.
+
+=== EXCERPT 2 — Phase 2a, a step that ran on this repository's previous run ===
+
+### 2a-hooks: Harness hooks (default-on)
+
+Three hook assets ship as frozen files and install **unconditionally** — no
+opt-in confirm (rationale + full procedure:
+[`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md)).
+
+| # | Asset | Fires on | Effect |
+| - | - | - | - |
+| 1 | `commit-channel` (PreToolUse) | `Bash(git *)` and `PowerShell(git *)` — one hook element per command tool, each a bare-command pre-filter; the script narrows to real `git commit` | Deny raw `git commit` from worker subagents — deny text routes the worker back to `/super-bootstrap:commit`; main session and separate-process workers pass |
+| 2 | `consult-check-sessionstart` (SessionStart) | `startup\|resume\|clear\|compact` | Derives the compact `docs/**` catalog into the gitignored `.claude/.consult-catalog` cache, once per session boundary |
+| 3 | `consult-check-check` (UserPromptSubmit) | every prompt | Injects the catalog + a forced relevance evaluation (judge which docs bear on the prompt, Read each that does; no stated verdict) — the read boundary's activation layer: the right project docs get read at the prompt moment (pure cache read; installs as a pair with #2) |
+
+Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md); stage the placed files with the Phase 2c commit.
+
+Its sync-report rows name the scripts it places:
+- one row per script, identity its destination path — `.claude/hooks/commit-channel.sh`, `.claude/hooks/consult-check-sessionstart.sh`, `.claude/hooks/consult-check-check.sh`
+
+=== THE REPOSITORY ===
+
+This is the second run of the pipeline on this repository. The first run completed and committed.
+The repository's complete file tree, every file listed:
+
+README.md
+CLAUDE.md
+AGENTS.md
+.gitignore
+docs/overview.md
+docs/techstack.md
+docs/decisions.md
+docs/specs/.gitkeep
+docs/work/README.md
+docs/work/TEMPLATE.md
+.claude/settings.json
+.claude/rules/index.md
+.claude/super-bootstrap-runway.json
+.claude/hooks/commit-channel.sh
+.claude/hooks/consult-check-sessionstart.sh
+.claude/hooks/consult-check-check.sh
+
+There is no package manifest of any kind. Every file under docs/ is Markdown prose. README.md,
+CLAUDE.md and AGENTS.md are Markdown.
+
+The previous run's receipt, `.claude/super-bootstrap-runway.json`, reads in part:
+
+  "placed": {
+    ".claude/hooks/commit-channel.sh": "9f2c41e0…",
+    ".claude/hooks/consult-check-sessionstart.sh": "1ab7d93c…",
+    ".claude/hooks/consult-check-check.sh": "c05e88f2…"
+  }
+
+=== YOUR ANSWER ===
+
+Answer in exactly this format, nothing before it and nothing after it:
+
+VERDICT: <code present or docs-only>
+CLAUSE: <the words from Excerpt 1 you decided on, quoted>
+WHY: <one sentence>
