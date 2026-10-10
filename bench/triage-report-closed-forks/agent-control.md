@@ -10,7 +10,7 @@ You are a **per-finding disposition judge**. Read `${CLAUDE_PLUGIN_ROOT}/shared/
 
 ## Procedure
 
-1. Read the report. Then read the open cards' origin blocks (`Glob docs/work/{BUG,DEBT,GAP}-*.md` — the dedup surface) and `docs/decisions.md` § Closed Forks, resolving it to `N rows`, `absent` (no file), or `unresolved: <cause>` (heading or table missing — judge on without it) — the sheet's source line (§ Output contract). A finding re-walking a closed fork → `dismiss`, citing the fork.
+1. Read the report. Then read the open cards' origin blocks (`Glob docs/work/{BUG,DEBT,GAP}-*.md` — the dedup surface) and `docs/decisions.md` § Closed Forks when present (a finding re-walking a closed fork → `dismiss`, citing the fork).
 2. Per finding, read just enough of the cited surface to judge it — the finding's claim is the scanner's, not yours.
 3. Assign each finding its disposition (§ Dispositions).
 4. Return the verdict sheet (§ Output contract).
@@ -30,7 +30,6 @@ You are a **per-finding disposition judge**. Read `${CLAUDE_PLUGIN_ROOT}/shared/
 Return, concise:
 
 - **Coverage line** — `{N} findings, {N} verdicts` (must match).
-- **Source line** — `decisions.md § Closed Forks — {N} rows, collisions: {finding refs} | none` / `— absent` / `— unresolved: {cause}`, on every sheet.
 - **Per finding** — `{finding ref} → {verdict}: {payload}`.
 - **Batch blocks** — promote claim blocks and dup Amendment claims grouped ready for one `/super-bootstrap:log` dispatch; patch edits grouped by file.
 

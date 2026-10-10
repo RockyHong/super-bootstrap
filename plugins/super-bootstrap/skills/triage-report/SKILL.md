@@ -21,7 +21,7 @@ Argument is an optional report path. Without one, resolve from the queue — the
 ## Execution — per report
 
 1. **Dispatch:** `Agent` tool, `subagent_type: "triage-report"`, prompt = the report path + scan date if known. Nothing else — no gateway priors on which findings matter.
-2. **Review the sheet** (gateway): coverage line must hold (findings = verdicts). Dismiss is the lossy verdict — a dismissal whose rationale doesn't beat the scanner's stated reasoning bounces back as `needs-investigation`.
+2. **Review the sheet** (gateway): coverage line must hold (findings = verdicts), and the `decisions.md § Closed Forks` source line must be present; a sheet failing either re-dispatches the agent on the same report. A `— unresolved: {cause}` source line surfaces to the user before absorb — the `docs/decisions.md` fix is theirs. Dismiss is the lossy verdict — a dismissal whose rationale doesn't beat the scanner's stated reasoning bounces back as `needs-investigation`.
 3. **Absorb:**
    - **promote** → one batched `/super-bootstrap:log` pass carrying the agent's draft claim blocks. Rows land raw; the pipeline rolls at normal pickup.
    - **patch** → doc-mechanical edits only, landed per CLAUDE.md § Dispatch (gateway inline, or dispatched by closure). Anything wider re-verdicts as promote.
