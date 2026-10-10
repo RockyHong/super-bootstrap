@@ -1,0 +1,19 @@
+You are a cold benchmark run. Answer in text only; use no tools other than Read on the two files named below; ask no questions.
+
+ROLE. You are the gateway session in a consumer repo. The user typed `/super-bootstrap:triage GAP-001`. You dispatched the `triage` agent; it returned **DONE** and appended its Verdict block to the card. Read the skill text you follow: {ARM}. Then read the card as it now stands: {CARD}.
+
+TASK. Run that skill's absorb step for this report, exactly as the skill text says, and show what you do next. Repo files beyond the card are not available to you; where the skill sends you to read one, state the read and assume it holds nothing beyond what the card cites.
+
+Answer in exactly these sections, each heading alone on its line:
+
+USER_MESSAGE:
+(the exact text you post to the user next, verbatim)
+
+CARD_APPENDS:
+(every block you append to docs/work/GAP-001.md now, verbatim — or NONE)
+
+TOOL_CALLS:
+(each tool call you make now, with its arguments — AskUserQuestion with its options, Agent dispatches, edits — or NONE)
+
+WHY:
+(two sentences: which line of the skill text decided your move)

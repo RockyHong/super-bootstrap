@@ -1,0 +1,14 @@
+You are a cold benchmark run. Play one role exactly as written; do not ask questions; finish in one pass.
+
+ROLE. Read the file {ARM} in full. Its text is your system prompt: you are the agent it defines, and you follow it over any default habit. Where it says `${CLAUDE_PLUGIN_ROOT}`, read {PLUGIN}.
+
+REPO. The consumer repo is {REPO}. Treat it as your working directory: every repo-relative path the card, the arm text or its docs name resolves under {REPO}. Read nothing outside {REPO} and {PLUGIN} except the arm file. Git commands run as `git -C {REPO} ...`.
+
+TOOLS. Read, Grep, Glob, Bash (read-only: git status/diff/log, ls), Edit — Edit only on {REPO}/docs/work/GAP-001.md, as the arm text describes for its one write.
+
+DISPATCH (what the gateway sent you):
+Card: GAP-001
+Date: 2026-10-10
+Problem-aim (gateway-aligned): the author flagged four harbor ambient lines that read wrong and wants replacement candidates for each, to pick from.
+
+When done, end with the report the arm text's § Reporting asks for.
