@@ -166,13 +166,13 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `docs/overview.md` skeleton sections: Problem, User, Current State; the `<!-- harness-meta -->` block — row identity `docs/overview.md harness-meta` (a marker block is not a heading — no `§`, the same spelling the fact-fields block takes) — compared **shape only**: marker comment present + `external-tools:` key present → `✓ current`, whatever the list holds (values are consumer-owned — § 2b asset table; the same rule the seed-once sections take at § 2b Per-doc handling)
 - `docs/decisions.md` scope header (the blockquote + `## Closed Forks` heading)
 - `CODING_STANDARDS.md` preamble + section headings (code present only; drift checked against `assets/coding-standards-skeleton.md`)
-- `docs/work/README.md`, `docs/work/TEMPLATE.md` — the `**ID high-water mark:**` line (here, and in the scale module's `docs/outward/README.md` + `docs/parked.md`) compared **shape only**: line present in its skeleton position → `✓ matches`, whatever IDs it carries (values are consumer-owned, the way `harness-meta`'s are) — never a drift row, never an offer to reset the counter
+- `docs/work/README.md`, `docs/work/TEMPLATE.md` — whole files, drift-checked against their skeletons. A consumer's `**ID high-water mark:**` line (here, and in the scale module's `docs/outward/README.md` + `docs/parked.md`) is a retired counter — IDs come from `/super-bootstrap:log`'s generator — so it drifts against the skeleton: the drift row replaces it with the skeleton's ID-shape text at the same spot (`docs/work/README.md`'s `**ID shape:**` line; the outward README's `## ID convention` paragraph; `docs/parked.md`'s `**ID convention:**` line), never re-plants or resets the counter. Existing numeric IDs stay valid and are never renamed
 - `AGENTS.md` (foreign-executor contract — always placed; whole shipped body drift-checked against `assets/agents-md-skeleton.md`)
 - `.claude/rules/index.md` (rule-authoring guide)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` core plugin pin (`enabledPlugins`, `extraKnownMarketplaces`) — drift-checked for presence alone (§ 2a)
 - `.claude/super-bootstrap-runway.json` (runway coverage receipt — not diffed section-by-section; read at Phase 1 § Version-staleness signal, written at § 2c Receipt write; durable, no cleaner)
-- Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `docs/outward/README.md` + `docs/outward/TEMPLATE.md` (whole files, the way `docs/work/README.md` / `docs/work/TEMPLATE.md` are — high-water line shape only, above), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`)
+- Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `docs/outward/README.md` + `docs/outward/TEMPLATE.md` (whole files, the way `docs/work/README.md` / `docs/work/TEMPLATE.md` are — a retired high-water line drifts to the skeleton's ID-shape text, above), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`)
 
 **Project-owned** (never touched):
 - CLAUDE.md: Tech Stack one-line (**seed-once**, same classification as the `docs/techstack.md` fact sections above — filled from Phase 1 detection facts when the runway first writes CLAUDE.md — the skeleton placeholder kept verbatim on a docs-only repo (§ 2b Placeholders) — consumer-edited from then on; no re-run rewrites it), Commands, any user-added custom sections
@@ -183,7 +183,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `AGENTS.md` grown content (additions appended below the shipped sections)
 - `.claude/rules/<rule>.md` grown sections (additions the user/doc-sync added below the skeleton scaffold)
 - `.claude/rules/<rule>.md` files the user authored without a matching skeleton (treat as fully project-owned)
-- Scale-module container content — `docs/parked.md` `## Entries` + `## Sweep log` content, `docs/test-queue.md` `## Pending` / `## Failed (re-queued for fix)` rows, the `docs/outward/OUT-###.md` entry files (consumer-filled, like card content; only the skeleton headers/shape stay pipeline-owned)
+- Scale-module container content — `docs/parked.md` `## Entries` + `## Sweep log` content, `docs/test-queue.md` `## Pending` / `## Failed (re-queued for fix)` rows, the `docs/outward/OUT-*.md` entry files (consumer-filled, like card content; only the skeleton headers/shape stay pipeline-owned)
 - Other settings in `.claude/settings.json` outside the plugin-pin keys
 
 ### 2a: Folders & core plugin pin
@@ -205,7 +205,7 @@ docs/
   decisions.md   ← closed forks / rejected directions (history dimension — always scaffolded, starts empty)
   specs/         ← feature specs, one .md per feature, no index file (empty + .gitkeep; files land at the spec-seeding card's pickup — `/super-bootstrap:setup` seeds it on a code-present repo)
   work/
-    README.md    ← work-unit workspace header: contract, categories, ID high-water line
+    README.md    ← work-unit workspace header: contract, categories, ID shape
     TEMPLATE.md  ← copy-to-create card template
 .claude/
   rules/         ← path-scoped rules, full-body fires on file match
@@ -291,7 +291,7 @@ On `skip`: nothing placed; autorun's own § Pre-flight step 1 installs on first 
 The scale module adds work-substrate-adjacent runway — a parked-items artifact, a manual-verification queue, and an outward folder (one thread file per item the author or an outside party moves, the repo owning only the result tail) — for repos whose card set has outgrown simple scanning. Earn-gated: offer only when a signal shows the repo has grown into it, silent skip otherwise (no prompt spam on small repos).
 
 Signals — any one arms the offer:
-- Card files (`{BUG|DEBT|GAP}-###.md`) in `docs/work/` ≥ 10.
+- Card files (`{BUG|DEBT|GAP}-*.md`) in `docs/work/` ≥ 10.
 - Autorun worktree infra installed (`.claude/worktrees/` gitignore present).
 - User asked for it.
 
@@ -331,7 +331,7 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 | `assets/techstack-skeleton.md` | `docs/techstack.md` | Grown sections absorb migrated CLAUDE.md state-dimension content (Architecture Rules: still-binding decisions; Coding Patterns: examples) |
 | `assets/overview-skeleton.md` | `docs/overview.md` | `<!-- harness-meta -->` block at top: seed `external-tools:` as a YAML list defaulting to `[github]`. Read by `/super-bootstrap:resolve-plugins` (tier-2 curation) as the external-tools source. |
 | `assets/decisions-skeleton.md` | `docs/decisions.md` | Always |
-| `assets/work-readme-skeleton.md` | `docs/work/README.md` | Always — categories, thread contract, ID high-water line |
+| `assets/work-readme-skeleton.md` | `docs/work/README.md` | Always — categories, thread contract, ID shape |
 | `assets/work-template-skeleton.md` | `docs/work/TEMPLATE.md` | Always — copy-to-create card template |
 | `assets/coding-standards-skeleton.md` | `CODING_STANDARDS.md` (project root) | Code present only (Phase 1 § Code presence) |
 | `assets/agents-md-skeleton.md` | `AGENTS.md` (project root) | Always — foreign-executor contract |
@@ -474,17 +474,6 @@ Acceptance takes legacy migration's three-way shape — `y / n — {reason} / pe
 
 The rot scan runs even when every per-section diff is `✓ current` — a stale slash command literal inside a current-shaped doc is invisible to per-section diff (template hasn't drifted; only the literal inside it has).
 
-**README ID re-plant (re-run, if `docs/work/README.md` predates the ID high-water line).** Detect: `docs/work/README.md` exists and lacks the `**ID high-water mark:**` line. When detected, surface:
-
-```
-docs/work/README.md predates the ID high-water line — missing high-water mark.
-Re-plant rebuilds the counter from git history.
-
-Re-plant? (y / n / dry-run)
-```
-
-On `y`: rebuild the high-water mark from `git log --grep` over consumed IDs — **never from current card files** (resolved-but-deleted IDs stay consumed; re-deriving from live files collides). Then write the high-water line per the rule documented in `docs/work/README.md` § ID high-water mark (the rule's SSoT — don't restate the algorithm). Stage `docs/work/README.md` with the 2c commit.
-
 **Special case — `docs/techstack.md` § Rejected Alternatives retirement (re-run).** Older skeletons grew a § Rejected Alternatives section inside `techstack.md` — state/history dimension pollution, and tech-scoped. It is retired in favor of `docs/decisions.md` (cross-domain history dimension). On re-run, if `techstack.md` carries a § Rejected Alternatives section with content, propose migrating it:
 
 ```
@@ -500,7 +489,7 @@ On `y`: append each entry as a `tech`-domain row in `docs/decisions.md` (preserv
 
 - **Task 1 (Seed feature specs) / Task 2 (Seed cards)** still holding an unchecked box → seed the matching card from [`../setup/assets/seed-cards.md`](../setup/assets/seed-cards.md) (Task 1 → `spec-seeding`, Task 2 → `marker-sweep`) by the hand-copy of [`/super-bootstrap:setup`](../setup/SKILL.md) § Greenfield branch, skipping a card that guard checks 1–2 of § Code-present seed hit. A task with every box checked seeds nothing — the plan's checkboxes are its record.
 - **Task 3 (Cleanup)** carries no card; any other task still holding an unchecked box is named to the user for `/super-bootstrap:log`, not converted.
-- **Delete** every legacy plan copy present (git keeps the prior text) and stage the deletion with the new cards and the `docs/work/README.md` high-water bump.
+- **Delete** every legacy plan copy present (git keeps the prior text) and stage the deletion with the new cards.
 - **Row** — identity `.claude/bootstrap.md` (whole-file), `⊘ removed`, resolution `updated`; it enters `covered` and takes no `registration:` row (the plan is no durable artifact). No plan present → no row.
 
 **Placeholders:**
@@ -599,9 +588,9 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `.claude/templates/worktree-settings.local.json` (autorun worktree settings template — only if placed or refreshed on drift this run at 2a-autorun)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)
-- `docs/work/README.md` (if newly written, re-planted, or fact-fields block inserted this run at 2a-scale)
+- `docs/work/README.md` (if newly written, its retired high-water line replaced by the ID-shape line, or fact-fields block inserted this run at 2a-scale)
 - `docs/work/TEMPLATE.md` (if newly written)
-- Legacy plan migration (§ 2b) — the deleted `.claude/bootstrap.md` / `docs/work/bootstrap.md`, the `docs/work/GAP-###.md` cards it seeded, and the `docs/work/README.md` high-water bump
+- Legacy plan migration (§ 2b) — the deleted `.claude/bootstrap.md` / `docs/work/bootstrap.md` and the `docs/work/GAP-*.md` cards it seeded
 - `docs/specs/.gitkeep`
 - `docs/parked.md`, `docs/test-queue.md`, `docs/outward/README.md`, `docs/outward/TEMPLATE.md` (scale-module targets — only if installed this run at 2a-scale)
 - `docs/outward/OUT-###.md` entry files plus the removed `docs/outward.md` (only when 2a-scale ran the split)

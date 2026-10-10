@@ -6,11 +6,10 @@ Usage: python3 split-outward.py <project-root> <readme-skeleton-path>
 The sync-side migration for the outward container's flat → folder move. Wholly
 mechanical — no per-item judgment, nothing to re-word:
 
-- `<root>/docs/outward.md` is the source. Its `**ID high-water mark:**` line
-  carries the last consumed `OUT-###`; that ID is substituted into the same line
-  of the shipped README skeleton (the ID token on that line only — the rest of
-  the skeleton is written verbatim), and the result becomes
-  `<root>/docs/outward/README.md`.
+- `<root>/docs/outward.md` is the source. The shipped README skeleton is
+  written verbatim as `<root>/docs/outward/README.md`. The flat file's
+  `**ID high-water mark:**` line is not carried over: outward IDs come from the
+  log skill's generator, so no counter survives the split.
 - Each `### OUT-### — {summary}` chunk under `## Entries` becomes
   `<root>/docs/outward/OUT-###.md`: the H1 `# OUT-### — {summary}`, a blank line,
   then the chunk body verbatim (its field lines and anything appended after them),
@@ -35,8 +34,6 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8", newline="\n")  # type: ignore[attr-defined]
 sys.stderr.reconfigure(encoding="utf-8", newline="\n")  # type: ignore[attr-defined]
 
-HIGH_WATER_RE = re.compile(r"^\*\*ID high-water mark:\*\*.*$", re.M)
-OUT_ID_RE = re.compile(r"OUT-\d+")
 CHUNK_HEAD_RE = re.compile(r"^(OUT-\d+) — (.+?)\s*$")
 LINK_TARGET_RE = re.compile(r"\]\(([^)\s]+)\)")          # `](target)` — the markdown link target
 LINK_KEEP_PREFIXES = ("http://", "https://", "mailto:", "#", "/")
@@ -86,29 +83,6 @@ def entries(flat_text):
     return out
 
 
-def high_water(flat_text, ids):
-    """The flat header's `**ID high-water mark:**` ID; absent → the largest entry
-    ID, and `OUT-000` when there are no entries either. The line is the SSOT for a
-    consumed ID, so it wins even when it runs ahead of the entries present."""
-    m = HIGH_WATER_RE.search(flat_text)
-    found = OUT_ID_RE.search(m.group(0)) if m else None
-    if found:
-        return found.group(0)
-    if ids:
-        return max(ids, key=lambda i: int(i.split("-")[1]))
-    return "OUT-000"
-
-
-def readme_text(skeleton, hw):
-    """The skeleton verbatim, its high-water line's ID token swapped for `hw`."""
-    m = HIGH_WATER_RE.search(skeleton)
-    if not m:
-        die(f"refuse: no `**ID high-water mark:**` line in {skeleton!r} — "
-            "the skeleton cannot carry the consumed ID")
-    line = OUT_ID_RE.sub(hw, m.group(0), count=1)
-    return skeleton[:m.start()] + line + skeleton[m.end():]
-
-
 def main():
     if len(sys.argv) != 3:
         die("usage: split-outward.py <project-root> <readme-skeleton-path>")
@@ -122,10 +96,8 @@ def main():
 
     flat_text = read(flat)
     items = entries(flat_text)
-    hw = high_water(flat_text, [oid for oid, _, _ in items])
 
-    targets = [(os.path.join(folder, "README.md"),
-                readme_text(read(skeleton_path), hw))]
+    targets = [(os.path.join(folder, "README.md"), read(skeleton_path))]
     for oid, summary, body in items:
         head = f"# {oid} — {summary}\n"
         targets.append((os.path.join(folder, f"{oid}.md"),

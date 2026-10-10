@@ -12,7 +12,7 @@ Grounding pickup lane for a card. The thinking runs in the `triage` subagent by 
 
 | Invocation | Behavior |
 | --- | --- |
-| `/super-bootstrap:triage BUG-012` (any `BUG/DEBT/GAP-###` ID) | Dispatch the `triage` subagent on that card. |
+| `/super-bootstrap:triage BUG-012` (any `BUG/DEBT/GAP-[0-9a-z]+` ID) | Dispatch the `triage` subagent on that card. |
 | `/super-bootstrap:triage` (bare) | List open cards with no Verdict block yet; the user picks one, then dispatch. |
 
 ## Execution

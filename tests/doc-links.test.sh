@@ -871,6 +871,17 @@ cat > "$TMP/pinsprov/docs/outward/OUT-001.md" <<'EOFP'
 
 As filed: `agents/alpha.md` (Opus).
 EOFP
+# GAP-101 — alphanumeric IDs (`{CAT}-k7f3`) classify the same as numeric ones.
+cat > "$TMP/pinsprov/docs/work/GAP-k7f3.md" <<'EOFP'
+# GAP-k7f3
+
+At capture: `agents/alpha.md` (Opus).
+EOFP
+cat > "$TMP/pinsprov/docs/outward/OUT-k7f3.md" <<'EOFP'
+# OUT-k7f3
+
+As filed: `agents/alpha.md` (Opus).
+EOFP
 
 expected_prov="$(printf 'docs/normal.md:3\topus\tsonnet\tplugins/p/agents/alpha.md\ndocs/work/README.md:3\topus\tsonnet\tplugins/p/agents/alpha.md')"
 got_prov="$(cd "$TMP/pinsprov" && bash "$LINKS" pins 2>&1 | LC_ALL=C sort)"; rc_prov=$?
@@ -885,9 +896,22 @@ prov_silent() { ! printf '%s\n' "$got_prov" | grep -q "^$1:"; }
 check "pins: dimension: history doc excluded" prov_silent 'docs/hist\.md'
 check "pins: docs/work/{GAP}-###.md thread excluded" prov_silent 'docs/work/GAP-001\.md'
 check "pins: docs/outward/OUT-###.md thread excluded" prov_silent 'docs/outward/OUT-001\.md'
+check "pins: docs/work/GAP-k7f3.md (alphanumeric ID) thread excluded" prov_silent 'docs/work/GAP-k7f3\.md'
+check "pins: docs/outward/OUT-k7f3.md (alphanumeric ID) thread excluded" prov_silent 'docs/outward/OUT-k7f3\.md'
 prov_reports() { printf '%s\n' "$got_prov" | grep -q "^$1:"; }
 check "pins: ordinary docs/ file still reports" prov_reports 'docs/normal\.md'
 check "pins: standing folder README still reports (contract, not thread)" prov_reports 'docs/work/README\.md'
+
+# GAP-101 — consumed provenance in `check`: a card thread linking an absent alphanumeric
+# card ID is a resolved sibling, not a broken path.
+mkdir -p "$TMP/consumedid/docs/work"
+cat > "$TMP/consumedid/docs/work/GAP-k7f3.md" <<'EOFP'
+# GAP-k7f3
+
+Resolved sibling: [BUG-m2x9](BUG-m2x9.md).
+EOFP
+out_cid="$(cd "$TMP/consumedid" && bash "$LINKS" check 2>&1)"; rc_cid=$?
+check "check: card thread linking an absent alphanumeric card ID is consumed provenance (rc 0)" [ "$rc_cid" -eq 0 ]
 
 # The exclusion is the four-lane predicate pair, not a second copy of either rule.
 pins_pred="$(fn_body do_pins | grep -cE 'is_history_doc|is_frozen_provenance_path' || true)"

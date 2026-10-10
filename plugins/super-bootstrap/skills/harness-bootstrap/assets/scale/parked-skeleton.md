@@ -4,14 +4,12 @@ Items not in the active pipeline — actionable, but waiting on a named trigger.
 
 **Admission:** Parked = actionable-but-waits-on-a-named-trigger; every entry MUST carry that trigger (observer + fire-moment), else it drops. This header owns the admission bar — an item that can't name what it watches for and what fires it is not parked, it's dropped.
 
-**ID convention:** Every entry carries a stable `PARK-###` ID. IDs are monotonic and **never reused** — a resolved or promoted entry's ID stays consumed (history = `git log --grep="<id>"`). On promotion the `PARK-###` retires; the new card file in `docs/work/` is the live handle. IDs index and cross-reference only — no ordering, no priority.
+**ID convention:** Every entry carries a stable `PARK-xxxx` ID, in the shape and from the generator that [`docs/work/README.md`](work/README.md#categories)'s **ID shape** line states, never made by hand; legacy numeric IDs (`PARK-001`) stay valid. A resolved or promoted entry's ID is never reused (history = `git log --grep="<id>"`). On promotion the `PARK-xxxx` retires; the new card file in `docs/work/` is the live handle. IDs index and cross-reference only — no ordering, no priority.
 
-**ID high-water mark:** `PARK-000` — last consumed parked ID. `/super-bootstrap:log` assigns max+1 from this line and bumps it in the same write.
-
-**Entry shape** — an `### PARK-### — {summary}` heading (so every entry indexes by ID in the outline), then the fields:
+**Entry shape** — an `### PARK-xxxx — {summary}` heading (so every entry indexes by ID in the outline), then the fields:
 
 ```
-### PARK-### — {one-line summary}
+### PARK-xxxx — {one-line summary}
 
 **Logged:** {date} · **Source:** {where this surfaced}
 **Watching for:** {the observer — the signal that says the wait is over}

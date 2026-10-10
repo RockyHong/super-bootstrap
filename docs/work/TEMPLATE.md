@@ -1,6 +1,6 @@
-<!-- Copy this file to {ID}.md at docs/work/ root. Take the next ID from the README high-water line and bump it in the same change. Delete this comment block before committing. -->
+<!-- Card shape for `/super-bootstrap:log`, which writes each card as {ID}.md at docs/work/ root and assigns its ID. Delete this comment block before committing. -->
 
-# {BUG|DEBT|GAP}-### — {one-line summary}
+# {BUG|DEBT|GAP}-xxxx — {one-line summary}
 
 **Logged:** {date} · **Source:** {where this surfaced}
 **Problem:** {what's broken / rotting / missing}

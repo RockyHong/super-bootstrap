@@ -14,7 +14,7 @@ A recommender, not a board. The full list is the card folder itself; this door a
 
 Otherwise read, inline, cheap:
 
-- every open card's origin block plus its latest `## ` heading (`docs/work/{BUG,DEBT,GAP}-###.md`) — Problem line + where the thread stopped;
+- every open card's origin block plus its latest `## ` heading (`docs/work/{BUG,DEBT,GAP}-*.md`) — Problem line + where the thread stopped;
 - `docs/test-queue.md` § Pending entries, `docs/outward/OUT-*.md` origin + latest block, `docs/parked.md` entries — each only when the file exists;
 - `docs/overview.md` Problem / User — the product anchor the ranking leans on.
 

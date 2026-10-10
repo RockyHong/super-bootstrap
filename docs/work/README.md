@@ -4,23 +4,23 @@ One card = one file = one append-only thread. Everything here dies with its work
 
 ## Routing
 
-New cards enter via `/super-bootstrap:log` (classify + dedup + ID assignment) or by hand-copying [`TEMPLATE.md`](TEMPLATE.md) (sanctioned transcription path). Either way the ID high-water line below is bumped in the same change.
+New cards enter via `/super-bootstrap:log` (classify + dedup + ID assignment), in [`TEMPLATE.md`](TEMPLATE.md)'s shape.
 
 **When a card is owed:** only for work that exits the current flow **incomplete** — deferred or dropped. Work completed in-flow carries no card debt. The trigger is completion-state (observable), not worth (triage's call at pickup).
 
 ## Card glob
 
-`{BUG|DEBT|GAP}-###.md` at `docs/work/` root.
+`{BUG|DEBT|GAP}-*.md` at `docs/work/` root.
 
 ## Categories
 
-- **`BUG-###`** — broken behavior. Surface symptom may hide deeper cause.
-- **`DEBT-###`** — working but rotting (test fixture rot, stale dep, cleanup owed).
-- **`GAP-###`** — design gap or unverified capability idea, never properly specced. Forward feature ideas land here; triage decides drop / spec.
+- **`BUG-xxxx`** — broken behavior. Surface symptom may hide deeper cause.
+- **`DEBT-xxxx`** — working but rotting (test fixture rot, stale dep, cleanup owed).
+- **`GAP-xxxx`** — design gap or unverified capability idea, never properly specced. Forward feature ideas land here; triage decides drop / spec.
 
 No phase prescription per category — triage decides [how much ceremony the work earns](../../CLAUDE.md#sizing--scale-ceremony-to-the-works-shape) at pickup.
 
-**ID high-water mark:** `BUG-086` · `DEBT-128` · `GAP-101` — last consumed ID per category. Next ID = max+1 from this line, bumped in the same write. Resolved cards are deleted but their IDs stay consumed (history = `git log --grep="<id>"`); never re-derive IDs from live files.
+**ID shape:** `{CAT}-xxxx` — category prefix + a random 4-char suffix, e.g. `GAP-k7f3`; full pattern `{CAT}-[0-9a-z]+`. Every ID comes from the generator `/super-bootstrap:log` runs, which redraws on any ID already in the repo or its commit messages; never compose, increment, or re-derive one by hand. Legacy numeric IDs (`GAP-012`) stay valid and are never renamed. Order lives in each card's `Logged:` date and in `git log`, not in the ID. Resolved cards are deleted (history = `git log --grep="<id>"`).
 
 <!-- scale-module: fact fields -->
 

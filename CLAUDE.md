@@ -84,7 +84,7 @@ State docs (`overview.md`, `techstack.md`, specs) hold what is **true now** — 
 - Committed change history (what changed / when / why-of-a-change) → **git log + commit messages**. Don't hand-chronicle it into a doc.
 - A direction evaluated and **closed** that left no diff (road-not-taken, wall foreseen) and would otherwise be re-proposed → [`docs/decisions.md`](docs/decisions.md).
 
-**Card resolution:** if work resolves a `BUG-###` / `DEBT-###` / `GAP-###`, delete `docs/work/{ID}.md` — including a shipped feature-`GAP`, which now belongs to the product narrative (Problem / Current State / Module Index). Git history is the archive.
+**Card resolution:** if work resolves a `BUG` / `DEBT` / `GAP` card, delete `docs/work/{ID}.md` — including a shipped feature-`GAP`, which now belongs to the product narrative (Problem / Current State / Module Index). Git history is the archive.
 
 ## Coding Principles
 
@@ -163,7 +163,7 @@ Markdown-authored Claude Code plugin + self-hosted marketplace — no language r
 - [`docs/overview.md`](docs/overview.md) — product context, data flow, module index.
 - [`docs/techstack.md`](docs/techstack.md) — stack, architecture rules, observed coding patterns.
 - [`docs/specs/`](docs/specs/) — feature specs, one `.md` per feature. Filename + heading is the catalog; no index.
-- [`docs/work/`](docs/work/README.md) — open cards (`BUG-###` / `DEBT-###` / `GAP-###` append-only threads), captured via `/super-bootstrap:log`, deleted on resolve; `README.md` holds the thread contract + ID high-water line.
+- [`docs/work/`](docs/work/README.md) — open cards (`{BUG,DEBT,GAP}-[0-9a-z]+` append-only threads), captured via `/super-bootstrap:log`, deleted on resolve; `README.md` holds the thread contract + ID shape.
 - [`docs/parked.md`](docs/parked.md) — deferred items with named triggers (scale module)
 - [`docs/test-queue.md`](docs/test-queue.md) — manual-verification queue (scale module)
 - [`docs/outward/`](docs/outward/README.md) — outward threads: next move + waiting-on party, one file per item (scale module)

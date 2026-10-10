@@ -40,7 +40,7 @@ Inspect for uncommitted session work, untracked files, stray artifacts — this 
 
 ### 3. Detect — cards + integration + ledger
 
-- **Finished cards — sweep every open card**, not only this session's (`docs/work/{BUG,DEBT,GAP}-###.md`). A card is finished when any signal holds:
+- **Finished cards — sweep every open card**, not only this session's (`docs/work/{BUG,DEBT,GAP}-*.md`). A card is finished when any signal holds:
   - (a) its latest Progress reports every step of its latest Plan done;
   - (b) its aim moved — an Amendment or link hands it to a card ID now absent from `docs/work/`, or resolved in this close;
   - (c) main-line commits other than its own card-thread writes (log, amend, Plan, Progress) name its ID (`git log --grep`) — this session's merges included — and the named Plan steps / Problem line together cover every step of the latest Plan, or the whole Problem (a commit also touching code counts);

@@ -6,7 +6,7 @@
 #         surface CLAUDE.md § Doc Sync defines):
 #   check              scan the doc surface for broken links; exit 1 if any — except
 #                      a card thread's link to an absent card ID (both endpoints
-#                      docs/work/{BUG,DEBT,GAP}-###.md), consumed provenance, skipped
+#                      docs/work/{BUG,DEBT,GAP}-<id>.md), consumed provenance, skipped
 #   pins               scan the doc surface for lines whose restated model tier
 #                      disagrees with the agent frontmatter they name; exit 1 if any.
 #                      One finding per line: <doc>:<lineno> TAB claimed tokens TAB
@@ -61,8 +61,8 @@
 #
 # A doc whose leading YAML frontmatter declares `dimension: history` is frozen
 # provenance: `terms` yields nothing for it, `hits`, `refs`, `self` and `pins` leave it
-# out, while `check` still validates its links. Card threads (`docs/work/{BUG,DEBT,GAP}-###.md`)
-# and outward threads (`docs/outward/OUT-###.md`, plus the retired flat
+# out, while `check` still validates its links. Card threads (`docs/work/{BUG,DEBT,GAP}-<id>.md`)
+# and outward threads (`docs/outward/OUT-<id>.md`, plus the retired flat
 # `docs/outward.md`) are frozen provenance by path: `terms` yields
 # nothing for them and `hits`, `refs`, `self` and `pins` leave them out; `check` alone still
 # covers them — a link must resolve whatever dimension it sits in, while a restated
@@ -450,8 +450,8 @@ do_check() {
                 # Consumed provenance: a card thread citing a card ID that no longer
                 # exists is a resolved sibling, not a broken path — both endpoints
                 # card-shaped, skipped uncounted. Any other target stays strict.
-                if [[ "$doc" =~ ^docs/work/(BUG|DEBT|GAP)-[0-9]+\.md$ ]] \
-                   && [[ "$rel" =~ ^docs/work/(BUG|DEBT|GAP)-[0-9]+\.md$ ]]; then
+                if [[ "$doc" =~ ^docs/work/(BUG|DEBT|GAP)-[0-9a-z]+\.md$ ]] \
+                   && [[ "$rel" =~ ^docs/work/(BUG|DEBT|GAP)-[0-9a-z]+\.md$ ]]; then
                     continue
                 fi
                 printf '%s:%s: %s — path not found\n' "$doc" "$lineno" "$rel"
@@ -558,8 +558,8 @@ is_frozen_provenance_path() {
     case "$1" in
         docs/outward.md|*/docs/outward.md) return 0 ;;   # the retired flat form
     esac
-    [[ "$1" =~ (^|/)docs/work/(BUG|DEBT|GAP)-[0-9]+\.md$ ]] && return 0
-    [[ "$1" =~ (^|/)docs/outward/OUT-[0-9]+\.md$ ]] && return 0
+    [[ "$1" =~ (^|/)docs/work/(BUG|DEBT|GAP)-[0-9a-z]+\.md$ ]] && return 0
+    [[ "$1" =~ (^|/)docs/outward/OUT-[0-9a-z]+\.md$ ]] && return 0
     return 1
 }
 

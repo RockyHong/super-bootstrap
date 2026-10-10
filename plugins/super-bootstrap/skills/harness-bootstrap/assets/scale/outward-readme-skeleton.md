@@ -6,7 +6,7 @@ One item = one file = one append-only thread. Everything here dies with its item
 
 ## Routing
 
-New entries enter via `/super-bootstrap:log` (mover gate + dedup + ID assignment) or by hand-copying `TEMPLATE.md` (sanctioned transcription path). Either way the ID high-water line below is bumped in the same change.
+New entries enter via `/super-bootstrap:log` (mover gate + dedup + ID assignment), in `TEMPLATE.md`'s shape.
 
 **Admission:** Outward = the next step is the author's hands or an outside party's **and** it names a repo tail. Every entry MUST name the tail — the doc, card, or preset that changes when the result lands — else it drops: an outward item with no repo tail is the author's personal todo, not repo state. An item the repo moves next stays a card in `docs/work/`; a mixed item splits at capture — the repo's remainder stays a card, the author-or-outside step is an entry here, carrying `Owning card:` when the card waits on it.
 
@@ -14,26 +14,24 @@ New entries enter via `/super-bootstrap:log` (mover gate + dedup + ID assignment
 
 ## Entry glob
 
-`OUT-###.md` at `docs/outward/` root. Only `README.md` and `TEMPLATE.md` stand beside them.
+`OUT-*.md` at `docs/outward/` root. Only `README.md` and `TEMPLATE.md` stand beside them.
 
 ## ID convention
 
-Every entry carries a stable `OUT-###` ID — its filename and its H1 both. IDs are monotonic and **never reused**: a resolved entry's ID stays consumed (history = `git log --grep="<id>"`), so IDs come from the high-water line below, never from the live files. IDs index and cross-reference only — no ordering, no priority.
-
-**ID high-water mark:** `OUT-000` — last consumed outward ID. `/super-bootstrap:log` assigns max+1 from this line and bumps it in the same write.
+Every entry carries a stable `OUT-xxxx` ID — its filename and its H1 both — in the shape and from the generator that [`docs/work/README.md`](../work/README.md#categories)'s **ID shape** line states, never made by hand; legacy numeric IDs (`OUT-004`) stay valid. A resolved entry's ID is never reused (history = `git log --grep="<id>"`). IDs index and cross-reference only — no ordering, no priority.
 
 ## Thread contract
 
 **Origin block** (H1 + field lines) — frozen at capture; the breadcrumb at the top of the thread:
 
 ```
-# OUT-### — {one-line summary}
+# OUT-xxxx — {one-line summary}
 
 **Logged:** {date} · **Source:** {where this surfaced}
 **Next move:** {who does what next — "author: send the revised deck" / "vendor: answer the licence request"}
 **Waiting on:** {the outside party — or `author` when the next move is the author's own}
 **Repo tail — fires on:** {the doc / card / preset that changes when the result lands}
-**Owning card:** {BUG|DEBT|GAP}-###   ← optional; the card that waits on this entry — autorun holds it out until the entry closes; an entry that only touches a card cites it in `Repo tail — fires on:` instead
+**Owning card:** {BUG|DEBT|GAP}-xxxx   ← optional; the card that waits on this entry — autorun holds it out until the entry closes; an entry that only touches a card cites it in `Repo tail — fires on:` instead
 ```
 
 **Appended blocks** — each at end of file, dated + sourced, from the same block vocabulary `docs/work/README.md` § Thread contract states for cards:
@@ -45,7 +43,7 @@ Every entry carries a stable `OUT-###` ID — its filename and its H1 both. IDs 
 
 **Latest block leads:** a block restating `**Next move:**` / `**Waiting on:**` supersedes the origin's lines for every reader — needs-me, log dedup, autorun. `Owning card:` is the origin's alone — the wall is frozen at capture, never re-pointed by a block. Top-to-bottom reads as the item's evolution; the origin stays as grounding.
 
-**Resolve:** the resolving session deletes the entry file when the tail fires — the repo edit lands, or a card opens for it; the deleting commit's message carries the why. Git history is the archive. Deletion dead-ends every markdown link that pointed at the file, so the same change drops those links to plain `` `OUT-###` `` spans — only a live entry earns a link.
+**Resolve:** the resolving session deletes the entry file when the tail fires — the repo edit lands, or a card opens for it; the deleting commit's message carries the why. Git history is the archive. Deletion dead-ends every markdown link that pointed at the file, so the same change drops those links to plain `` `OUT-xxxx` `` spans — only a live entry earns a link.
 
 ## Consumer note
 
