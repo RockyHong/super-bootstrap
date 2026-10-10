@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# tally — count lines per file extension under a directory, write tally.csv
+dir=${1:-.}
+find "$dir" -type f | sed -n 's/.*\.\([A-Za-z0-9]*\)$/\1/p' | sort | uniq -c > tally.csv
