@@ -156,7 +156,7 @@ If rule body needs more context than its summary provides during planning, read 
 - [`docs/overview.md`](docs/overview.md) — product context, data flow, module index.
 - [`docs/techstack.md`](docs/techstack.md) — stack, architecture rules, observed coding patterns.
 - [`docs/specs/`](docs/specs/) — feature specs, one `.md` per feature. Filename + heading is the catalog; no index.
-- [`docs/work/`](docs/work/README.md) — open cards (`{BUG,DEBT,GAP}-[0-9a-z]+` append-only threads), captured via `/super-bootstrap:log`, deleted on resolve; `README.md` holds the thread contract + ID shape.
+- [`docs/work/`](docs/work/README.md) — open cards (`BUG` / `DEBT` / `GAP`, append-only threads), captured via `/super-bootstrap:log`, deleted on resolve; `README.md` holds the thread contract + ID shape.
 {- [`docs/parked.md`](docs/parked.md) — deferred items with named triggers (scale module)}
 {- [`docs/test-queue.md`](docs/test-queue.md) — manual-verification queue (scale module)}
 {- [`docs/outward/`](docs/outward/README.md) — outward threads: next move + waiting-on party, one file per item (scale module)}
