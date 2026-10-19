@@ -6,7 +6,7 @@ autorun needs three pieces of infra committed in the consumer repo. (A fourth �
 
 | # | Frozen asset | Destination | Operation |
 | - | ------------ | ----------- | --------- |
-| 1 | — | `.gitignore` | Ensure both a `.claude/worktrees/` line and an `.autorun-status` line exist (append if absent). The `.autorun-status` line keeps the per-worktree live status off the branch under `git add -A` (`SKILL.md` § Run, status contract). |
+| 1 | — | `.gitignore` | Ensure a `.claude/worktrees/` line, an `.autorun-status` line, a `/OWNED_BY` line and a `/.claude/settings.local.json` line exist (append each if absent). The `.autorun-status` line keeps the per-worktree live status off the branch under `git add -A` (`SKILL.md` § Run, status contract). The other two keep the files the warm step places in a worktree — `OWNED_BY` at its root and `.claude/settings.local.json` (`parallel-worktrees.md` § Warm step) — out of that worktree's `git status`: each worktree checks out the tracked `.gitignore`, and a pattern with a leading or middle slash is anchored, so it matches against the worktree's own root. An existing `.claude/settings.local.json` line (no leading slash) is the same anchored pattern and counts as present. |
 | 2 | `worktree-settings.local.json` | `.claude/templates/worktree-settings.local.json` | Copy verbatim if absent, or byte-differing from the asset while still matching the hash this pipeline placed (§ Idempotency splits the byte-differing case). The warm step copies this into each worktree's `.claude/settings.local.json`. |
 | 3 | `read-hook.json` | `.claude/settings.json` → `hooks.PreToolUse[]` | **Merge** the single entry if absent; **replace that one entry in place** if it differs from the asset — never overwrite the file or other hooks. |
 
@@ -40,6 +40,8 @@ readHookCurrent():
 infraPresent():
   gitignore has ".claude/worktrees/"   AND
   gitignore has ".autorun-status"   AND
+  gitignore has "/OWNED_BY"   AND
+  gitignore has "/.claude/settings.local.json" OR ".claude/settings.local.json"   AND
   templateCurrent()   AND
   readHookCurrent()
 ```
@@ -56,11 +58,11 @@ A drifted **settings entry** (`readHookCurrent()` false, present) replaces in pl
 
 Report what changed, stage it with the session's next commit. Whenever the template resolves current — copied this run, or already byte-equal to the asset — record `placed[".claude/templates/worktree-settings.local.json"] = sha256(asset worktree-settings.local.json)` in `.claude/super-bootstrap-runway.json` unless the entry already holds that hash: a guarded read-modify-write touching only that one `placed` key, leaving `version` / `covered` / `declined` as found; file absent → create it carrying `placed` alone.
 
-Any piece **absent** → surface the one-time install confirm:
+Any piece **absent** → surface the install confirm (first run, or an existing install missing a piece a later version added):
 
 ```
-/super-bootstrap:autorun needs worktree infra installed (first run):
-  + .gitignore       .claude/worktrees/ , .autorun-status  (two ignore lines)
+/super-bootstrap:autorun needs worktree infra installed or completed (only the missing pieces are placed):
+  + .gitignore       .claude/worktrees/ , .autorun-status , /OWNED_BY , /.claude/settings.local.json  (four ignore lines, each appended only if absent)
   + .claude/templates/worktree-settings.local.json  (worktree permission template)
   + .claude/settings.json  PreToolUse(Read) guard (merged, your other hooks untouched)
 Install? [y/N]

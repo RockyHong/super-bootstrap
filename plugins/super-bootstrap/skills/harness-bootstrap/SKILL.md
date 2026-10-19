@@ -280,9 +280,9 @@ Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-in
 > Install `/super-bootstrap:autorun` worktree infra? — worktree settings template + `PreToolUse(Read)` guard + `.claude/worktrees/` gitignore. Most dev repos: yes. Skill / plugin / docs repos: skip (autorun self-installs on first use anyway).
 > Install now? (y / skip)
 
-Infra present and current (the asset's `infraPresent()` — all four pieces) → no ask; run the procedure below to write its rows, all `✓ current`. Any piece absent or stale → ask as above.
+Infra present and current (every check in the asset's `infraPresent()`) → no ask; run the procedure below to write its rows, all `✓ current`. Any piece absent or stale → ask as above.
 
-On `y`: execute the procedure in [`../autorun/assets/ensure-infra.md`](../autorun/assets/ensure-infra.md) — the same idempotent three-piece install autorun self-runs on first invocation; this `y` stands in for its install confirm. Stage the placed files with the Phase 2c commit. Report rows as § 2a-hooks writes them — every check, `✓ current` included, where the asset's "pass silently" means no prompt — outside the § 2c gate's required coverage set; row identities: `.claude/templates/worktree-settings.local.json` (the template), `.claude/settings.json worktree guard` (the Read guard, one combined row), `.gitignore worktrees + autorun-status lines` (both lines, one row). A repo that carries the retired `.drain-status` ignore line keeps it — harmless — and gains the `.autorun-status` line.
+On `y`: execute the procedure in [`../autorun/assets/ensure-infra.md`](../autorun/assets/ensure-infra.md) — the same idempotent three-piece install autorun self-runs on first invocation; this `y` stands in for its install confirm. Stage the placed files with the Phase 2c commit. Report rows as § 2a-hooks writes them — every check, `✓ current` included, where the asset's "pass silently" means no prompt — outside the § 2c gate's required coverage set; row identities: `.claude/templates/worktree-settings.local.json` (the template), `.claude/settings.json worktree guard` (the Read guard, one combined row), `.gitignore worktrees + autorun-status lines` (all four row-1 ignore lines, one row — the label stays as the stable receipt key). A repo that carries the retired `.drain-status` ignore line keeps it — harmless — and gains the `.autorun-status` line.
 
 On `skip`: nothing placed; autorun's own § Pre-flight step 1 installs on first `/super-bootstrap:autorun`.
 
@@ -584,7 +584,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/decisions.md` (new, scope-header drift, post-retirement migration from techstack, or closed-history rows from legacy CLAUDE.md migration)
 - `.claude/settings.json` (core pin seeded at 2a; harness hooks merged at 2a-hooks; autorun's `PreToolUse(Read)` guard merged at 2a-autorun)
 - `.claude/hooks/commit-channel.sh`, `.claude/hooks/consult-check-{sessionstart,check}.sh` (frozen hook scripts seeded at 2a-hooks — always, default-on)
-- `.gitignore` (when any 2a step appended a line — 2a-hooks' `.claude/.consult-catalog`, 2a-autorun's `.claude/worktrees/` + `.autorun-status`; skip if every line was already present)
+- `.gitignore` (when any 2a step appended a line — 2a-hooks' `.claude/.consult-catalog`, 2a-autorun's `.claude/worktrees/`, `.autorun-status`, `/OWNED_BY` and `/.claude/settings.local.json`; skip if every line was already present)
 - `.claude/templates/worktree-settings.local.json` (autorun worktree settings template — only if placed or refreshed on drift this run at 2a-autorun)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)

@@ -28,7 +28,7 @@
 
 ## Staged-Tree Verify
 
-> Optional — one command `/super-bootstrap:commit` runs against a materialized copy of the tree about to commit, whenever that tree differs from the working tree (a hunk-grain commit, or a commit beside other uncommitted changes), so a commit that passes only on the working tree is caught before it lands. Declare it as a single fenced `sh` block in this section — typically the build or compile check; it runs with the copy as cwd, and a non-zero exit stops the commit. No block → the step is skipped.
+> Optional — one command `/super-bootstrap:commit` runs against a materialized copy of the tree about to commit, whenever that tree differs from the working tree (a hunk-grain commit, or a commit beside other uncommitted changes), so a commit that passes only on the working tree is caught before it lands. A deferred-mode commit skips it; autorun's merge-gate verify runs it on the base tree. Declare it as a single fenced `sh` block in this section — typically the build or compile check; it runs with the copy as cwd, and a non-zero exit stops the commit. No block → the step is skipped.
 
 ## Architecture Rules
 

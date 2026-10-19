@@ -1,0 +1,32 @@
+These are the planned commands. I have not run them.
+
+1. Confirm file grain: `git diff HEAD -- src/parse.js` and `git diff HEAD -- test/parse.test.js`. Every hunk should be this session's edit.
+2. Gather state:
+   - `git status --porcelain`
+   - `git diff HEAD -- src/parse.js test/parse.test.js`
+   - `git diff --staged`, expecting no output
+   - `git log --oneline -10`
+3. Skip §3 entirely (doc-sync, link check, pins) because deferred mode goes straight to §5.
+4. Readback: `git diff HEAD --name-only -- src/parse.js test/parse.test.js`. Output must equal both session paths.
+5. Staged-tree verify (Bash tool, POSIX syntax):
+   - `tmp="$(mktemp -d)"`
+   - `tmpidx="$(git rev-parse --git-dir)/index-verify-autorun-bug-12"`
+   - `GIT_INDEX_FILE="$tmpidx" git read-tree HEAD`
+   - `GIT_INDEX_FILE="$tmpidx" git add -- src/parse.js test/parse.test.js`
+   - `GIT_INDEX_FILE="$tmpidx" git checkout-index -a --prefix="$tmp/"`
+   - `(cd "$tmp" && npm test)`
+   - `rm -rf "$tmp"`, then `rm -f "$tmpidx"`
+   - A failing `npm test` stops the commit and gets surfaced.
+6. Stamp: none named in the brief, so skip. If a harness-audit stamp is installed, run it over the two paths right before the commit.
+7. Commit (Bash heredoc, `-o` leaves `scratch.log` and the shared index alone):
+   ```
+   git commit -o -- src/parse.js test/parse.test.js -F - <<'EOF'
+   fix(parse): <subject drafted from the diff>
+
+   Co-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>
+   EOF
+   ```
+   If a pre-commit hook fails, fix the cause. Do not bypass it.
+8. Post-commit check: `git show --name-only --format= HEAD` must list exactly `src/parse.js` and `test/parse.test.js`. Then `git status --porcelain` should still show `?? scratch.log`.
+
+Staged-tree verify: yes, I run it, because `git status --porcelain` lists `scratch.log`, a path outside the session list. The committed tree then differs from the working tree, so `npm test` must check the tree that commits.

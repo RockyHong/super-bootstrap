@@ -1,0 +1,25 @@
+Commands, in order, from the worktree root (`.claude/worktrees/autorun-bug-12/`). I have not run any of them.
+
+```sh
+git status --porcelain
+git diff HEAD -- src/parse.js
+git diff HEAD -- test/parse.test.js
+git diff --staged
+git log --oneline -10
+```
+
+Stop if `git diff --staged` shows a staged entry on either session path, or a staged path outside the list. Stop if either `git diff HEAD` output holds a hunk you did not write.
+
+Then write the commit message to a file outside the worktree (Write tool, for example `<scratchpad>/commit-msg.txt`). Draft the subject from the diff you just read, as `fix(parse): <subject>` in imperative form, 72 characters or fewer. Then run:
+
+```sh
+git diff HEAD --name-only -- src/parse.js test/parse.test.js
+git commit -o -F <scratchpad>/commit-msg.txt -- src/parse.js test/parse.test.js
+git show --name-only --format= HEAD
+```
+
+The readback must print exactly `src/parse.js` and `test/parse.test.js`. The last command must print the same two paths. If the commit hook fails, fix the cause and commit again. Do not bypass the hook.
+
+I skip `git add`, `git add -N` (neither file is new), `git add -A`, and any command that touches `scratch.log`. It stays untracked.
+
+Staged-tree verify: not run. The worktree is in deferred mode, so the skill skips it. The gateway's merge-gate verify on the base tree checks what lands, even though `docs/techstack.md` declares `npm test`.

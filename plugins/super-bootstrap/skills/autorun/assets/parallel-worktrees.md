@@ -20,6 +20,8 @@ item-id: <BUG-12 | DEBT-7 | GAP-3>
 
 Writer = gateway, at warm step. Readers = gateway (scan/orphan tick) + the subprocess (anchor only, never writes).
 
+The marker and the placed `.claude/settings.local.json` are gitignored inside the worktree by ensure-infra's anchored ignore lines (`ensure-infra.md` row 1).
+
 ## Warm step (gateway lane)
 
 ```bash

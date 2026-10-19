@@ -1,0 +1,10 @@
+1. `git status` to read the tree state (§2).
+2. `git diff HEAD` to confirm every hunk in `src/parse.js` and `test/parse.test.js` is this session's edit (file grain).
+3. `git diff --staged` to check for another writer's staged entry on a session path. Any such entry stops the commit.
+4. `git log --oneline -10` to match the recent commit style.
+5. Write the commit message to a file outside the worktree with the Write tool, for example `<scratchpad>/msg.txt`. The subject is a Conventional Commit under 72 characters. The body is included only if the diff doesn't carry the why. The last line is `Co-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>`.
+6. `git diff HEAD --name-only -- src/parse.js test/parse.test.js` as the readback. The output must equal the two session paths. A path missing from it is dropped from the list.
+7. `git commit -o -F <scratchpad>/msg.txt -- src/parse.js test/parse.test.js`. The `-o` form commits only the named paths and leaves `scratch.log` and the shared index alone.
+8. `git show --name-only --format= HEAD` to confirm the commit holds exactly `src/parse.js` and `test/parse.test.js`.
+
+I did not run the staged-tree verify. Deferred mode (autorun worktree) skips it, because the worker's tree is its branch and the gateway's merge-gate verify on the base tree checks what lands. The `npm test` declaration is therefore unused here, even though `scratch.log` would otherwise have triggered it.

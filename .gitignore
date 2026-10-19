@@ -24,6 +24,7 @@ Thumbs.db
 # autorun — worktree isolation (frozen infra)
 .claude/worktrees/
 .autorun-status
+/OWNED_BY
 
 # local settings — never repo state. Committed settings.json is the only durable
 # source, so device behavior stays identical everywhere; anything here is a

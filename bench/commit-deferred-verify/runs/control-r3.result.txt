@@ -1,0 +1,61 @@
+**Commands, in order** (POSIX syntax, so the Bash tool; paths are relative to `.claude/worktrees/autorun-bug-12/`)
+
+1. **Grain read (§1).** Confirm every hunk is this session's edit:
+   ```sh
+   git diff HEAD -- src/parse.js
+   git diff HEAD -- test/parse.test.js
+   ```
+   Both files are tracked and every hunk is mine, so both take file grain. No `git add -N`.
+
+2. **Gather state (§2).**
+   ```sh
+   git status
+   git diff HEAD
+   git diff --staged
+   git log --oneline -10
+   ```
+   I expect nothing staged. `scratch.log` is untracked and off the session list, so I leave it alone.
+
+3. **Doc-sync and link/pin checks (§3): skipped.** Deferred mode skips all of §3, including the link check and the model-pin check.
+
+4. **Write the message (§5).** Use the Write tool to create `<outside-worktree>/commit-msg.txt`, a Conventional Commit subject (`<type>(<scope>): <subject>`, imperative, ≤72 chars), a body only if the diff does not show the why, a blank line, then:
+   ```
+   Co-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>
+   ```
+   I write the file with Write and pass it with `-F`, not a HEREDOC, so the message survives the shell boundary. I have not read the diff content here, so the subject comes from step 1's output.
+
+5. **Readback (§5).**
+   ```sh
+   git diff HEAD --name-only -- src/parse.js test/parse.test.js
+   ```
+   Must print exactly both paths. Any missing path means it carries no change; recheck before continuing.
+
+6. **Staged-tree verify (§5), using the declared `npm test`.**
+   ```sh
+   tmpidx="$(git rev-parse --git-dir)/index-verify-<session>"
+   tmp="<empty-dir-outside-worktree>"
+   GIT_INDEX_FILE="$tmpidx" git read-tree HEAD
+   GIT_INDEX_FILE="$tmpidx" git add -- src/parse.js test/parse.test.js
+   GIT_INDEX_FILE="$tmpidx" git checkout-index -a --prefix="$tmp/"
+   (cd "$tmp" && npm test)
+   rm -rf "$tmp"
+   rm -f "$tmpidx"
+   ```
+   Any failure stops the commit and gets surfaced. If the temp tree has no `node_modules`, the run fails on setup, not on the code. Treat that as a failure to fix, not a pass.
+
+7. **Stamp (§5).** The text names no harness-audit stamp, so none runs.
+
+8. **Commit (§5).**
+   ```sh
+   git commit -o -F "<outside-worktree>/commit-msg.txt" -- src/parse.js test/parse.test.js
+   ```
+   `-o` commits only these paths and leaves every other shared-index entry alone. Pre-commit hooks run; on failure I fix the cause and do not bypass.
+
+9. **Post-check (§5).**
+   ```sh
+   git show --name-only --format= HEAD
+   git status --porcelain
+   ```
+   The first must list exactly `src/parse.js` and `test/parse.test.js`. The second must still show `?? scratch.log`, so the prior dirty state is intact.
+
+**Staged-tree verify:** Yes, I run it, because `scratch.log` sits outside the session list. That makes the tree that commits differ from the working tree, which is the file-grain trigger in §5.

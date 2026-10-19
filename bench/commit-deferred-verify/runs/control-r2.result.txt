@@ -1,0 +1,22 @@
+These are the commands I would run, in order. I have not run any of them; the answer comes from the skill text and the status you gave.
+
+1. **Confirm grain:** `git diff HEAD -- src/parse.js test/parse.test.js`. Both files are tracked (` M`), so neither needs `git add -N`. Every hunk is this session's, so both are file grain.
+2. **Gather state:** `git status --porcelain`, `git diff --staged`, `git log --oneline -10`. The status you gave shows no staged entries, so no other writer's staging is at risk.
+3. **Doc-sync:** skipped. Deferred mode goes straight to §5. The link check and model-pin check are also skipped, since they apply only to non-deferred commits.
+4. **Readback:** `git diff HEAD --name-only -- src/parse.js test/parse.test.js`. It must print exactly those two paths. Read the result before the next step.
+5. **Staged-tree verify**, with a throwaway index and a temp dir outside the worktree (`<tmp>` and `<session>` are placeholders):
+   - `tmpidx="$(git rev-parse --git-dir)/index-verify-<session>"`
+   - `GIT_INDEX_FILE="$tmpidx" git read-tree HEAD`
+   - `GIT_INDEX_FILE="$tmpidx" git add -- src/parse.js test/parse.test.js`
+   - `GIT_INDEX_FILE="$tmpidx" git checkout-index -a --prefix=<tmp>/`
+   - `cd <tmp> && npm test`. The temp dir may lack `node_modules`; a failure there is an environment problem, not a code problem.
+   - `rm -rf <tmp>` and `rm -f "$tmpidx"`
+6. **Audit stamp:** none is stated in your brief, so none runs. If one is installed, run it over the two session paths right before the commit.
+7. **Commit message:** write it with the Write tool to a file outside the worktree, so it does not show up as untracked. Use `fix(parse): <subject from the step 1 diff>`, with the `Co-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>` trailer.
+8. **Commit:** `git commit -o -F <msg-file> -- src/parse.js test/parse.test.js`. This leaves `scratch.log` unstaged. Pre-commit hooks run; if one fails, fix the cause and do not bypass it.
+9. **Post-check:** `git show --name-only --format= HEAD`. It must list exactly the two session paths.
+10. **Cleanup:** delete the message file.
+11. **Push probe:** `git remote`. If it prints nothing, there is no push surface. If a remote exists but the branch has no upstream, ask once before pushing.
+12. **Cycle handoff:** check for `docs/work/{BUG,DEBT,GAP}-*.md` and print the matching one-liner from the table, unless the caller is `session-close`.
+
+**Staged-tree verify: yes.** `git status --porcelain` lists `scratch.log`, a path outside the session list, so the tree that commits differs from the worktree, and the file-grain rule requires the verify.

@@ -1,0 +1,16 @@
+**Commands, in order** (not run; you asked for no tool use)
+
+1. `git status` on the worktree `.claude/worktrees/autorun-bug-12/`. Confirms `scratch.log` is untracked and unstaged. It stays out of every command below.
+2. `git diff HEAD -- src/parse.js test/parse.test.js`. Confirms every hunk is this session's, so both paths are file grain. Stop if any foreign hunk appears.
+3. `git diff --staged --name-only`. Stop if another writer has a staged entry on either session path.
+4. `git log --oneline -10`. Reads the recent commit style for the subject.
+5. Skip §3 entirely (doc-sync gate, link check, model-pin check). Deferred mode defers these to the merge boundary.
+6. Write the commit message with the Write tool to a file outside the worktree. Use a Conventional Commit subject drafted from the diff, and end it with `Co-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>`.
+7. `git diff HEAD --name-only -- src/parse.js test/parse.test.js`. Readback: output must be exactly those two paths. A mismatch stops the commit.
+8. Skip the staged-tree verify. Deferred mode skips it.
+9. `git commit -o -F <msg-file> -- src/parse.js test/parse.test.js`. Commits only the two session paths and leaves the shared index as it was.
+10. `git show --name-only --format= HEAD`. Must print exactly `src/parse.js` and `test/parse.test.js`.
+
+No `git add`, no `-A`, no `.`, and no push or handoff step. §6 and §7 come after the commit and are outside this question.
+
+**Staged-tree verify:** I did not run `npm test` here, because deferred mode skips §5's staged-tree verify. The gateway runs the declared verify at the merge gate on the base tree instead.

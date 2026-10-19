@@ -1,0 +1,13 @@
+Commands, in order (deferred mode, so §3 doc-sync, link check, and pins are skipped):
+
+1. `git diff HEAD -- src/parse.js test/parse.test.js`: confirm every hunk is this session's edit, which keeps file grain.
+2. `git status`: confirm `scratch.log` is the only extra path. It stays out of the commit.
+3. `git diff --staged`: check for another writer's staged entry on either session path. If one exists, stop and surface it.
+4. `git log --oneline -10`: match the recent commit style.
+5. Write the commit message to a file outside the worktree with the Write tool. Use a Conventional Commit subject (`fix(parse): ...`, imperative, 72 characters or fewer), a body only if the diff doesn't show the why, and this trailer: `Co-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>`. I have not read the diff in this answer, so the exact subject comes from that read.
+6. `git diff HEAD --name-only -- src/parse.js test/parse.test.js`: readback. It must print exactly `src/parse.js` and `test/parse.test.js`.
+7. No staged-tree verify (see the line below). No harness-audit stamp is named in this session, so none runs.
+8. `git commit -o -F <message-file> -- src/parse.js test/parse.test.js`: commits only the two session paths and leaves the shared index alone. Pre-commit hooks run. If one fails, fix the cause and do not bypass it.
+9. `git show --name-only --format= HEAD`: must print exactly the two session paths.
+
+Staged-tree verify: not run, because deferred mode skips it. The gateway's merge-gate verify on the base tree checks the landing tree, so the `npm test` declared in `docs/techstack.md` does not run here, even though `scratch.log` is outside the session list.
