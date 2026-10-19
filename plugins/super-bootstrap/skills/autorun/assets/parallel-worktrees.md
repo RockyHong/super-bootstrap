@@ -100,7 +100,7 @@ The gateway reads worktree state **without** ever `Read`-ing a path under `.clau
 | Subprocess return | background task-output capture |
 | Crashed-worktree diagnosis | `git -C .claude/worktrees/{id} status / diff / log`; `git show {branch}:<path>` for committed content |
 
-Backed by the `PreToolUse(Read)` hook (`read-hook.json`, installed by ensure-infra): blocks Read of `.claude/worktrees/` paths (exit 2), with a `CLAUDE_PROJECT_DIR` guard clause so a subprocess reading its own tree is exempt. Tool-scoped to Read only — a permission deny on the path would also block `cd` into the subtree and break dispatch.
+Backed by the `PreToolUse(Read)` hook (`read-hook.json`, installed by ensure-infra): blocks a main-session Read of `.claude/worktrees/` paths (exit 2). Two guard clauses pass a Read through: a subagent's Read (hook stdin carries `agent_id`) lands in the subagent's own context, not the gateway's; a `CLAUDE_PROJECT_DIR` inside `.claude/worktrees/` marks a subprocess reading its own tree. Tool-scoped to Read only — a permission deny on the path would also block `cd` into the subtree and break dispatch.
 
 ## Concurrent dispatch
 
