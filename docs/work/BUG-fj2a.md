@@ -1,0 +1,6 @@
+# BUG-fj2a — autorun worktree Read guard blocks a non-isolated subagent sent into an existing worktree
+
+**Logged:** 2026-10-20 · **Source:** device note from `magnetized-remake` (D:/Git/Games/Magnetized Remake, runway 5.2.0), 2026-10-16
+**Problem:** The PreToolUse `Read` guard blocks any Read under `.claude/worktrees/` unless `$CLAUDE_PROJECT_DIR` itself sits inside a worktree. A gateway opened a worktree with `isolation: "worktree"`, then on later rounds dispatched subagents without isolation into that same worktree; their project dir is the main checkout, so every Read there was blocked, and Edit with it (Edit needs a prior Read). Each round worked around it by copying files to the scratchpad, editing, and `Copy-Item`-ing back — correct results, copy-back risk every round. In that case the re-injected CLAUDE.md is the same repo's file, arguably harmless.
+**Area:** `plugins/super-bootstrap/skills/autorun/assets/read-hook.json`; dispatch / parallel-worktrees guidance
+**Prior:** Either guidance (continuation rounds also dispatch with isolation, or from a session rooted in the worktree) or a guard that recognises a subagent assigned to that worktree (env marker / brief-declared working tree).

@@ -1,0 +1,6 @@
+# BUG-6mp8 — autorun worktree permission template lacks PowerShell allow twins for the worker's git and file ops
+
+**Logged:** 2026-10-20 · **Source:** device note from `jowagoko` (D:/Git/Podcast/jowagoko, autorun 5.2.0, Windows 11 / PowerShell-primary), 2026-10-20 run (3 worktrees, 6 cards)
+**Problem:** `worktree-settings.local.json` twins every deny row as `Bash(...)` / `PowerShell(...)`, but the write allow rows are Bash-only (`Bash(git add *)`, `Bash(git commit *)`, `Bash(git checkout *)`). On a PowerShell-primary machine the worker ran `git add` through the PowerShell tool; under `-p` it cannot prompt, so it was denied → status `BLOCKED — git add/commit denied`. The status file's atomic rename (`Move-Item`) and the card delete (`rm`) were denied too. The gateway committed with `git -C <worktree> add/commit` instead, breaking the worker-commits contract.
+**Area:** `plugins/super-bootstrap/skills/autorun/assets/worktree-settings.local.json`; `plugins/super-bootstrap/skills/autorun/SKILL.md` § Run brief
+**Prior:** Add `PowerShell(git add *)` / `PowerShell(git commit *)` / `PowerShell(git rm *)` plus the status-rename form, or have the brief state that git and file ops go through the Bash tool.
