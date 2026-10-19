@@ -1,0 +1,3 @@
+Merge-gate verify passed on `main` after regenerating derived state: `install.sh`, then `codegen.sh` (registry now lists billing, invoice, orders), then `verify.sh` printed `verify OK` with exit 0. No tracked files changed; `git status` is clean.
+
+PASS

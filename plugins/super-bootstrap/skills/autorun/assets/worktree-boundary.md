@@ -15,6 +15,13 @@ Every edit, every commit, every build command stays inside this tree.
 
 Run git commands, file operations (the status-file rename, a card delete) and `/super-bootstrap:commit` through the Bash tool — the commit door's commands are POSIX shell.
 
+## Provisioning
+
+Read the commands from the repo's docs (`docs/techstack.md` / CLAUDE.md Commands): the install command, and every command they name for regenerating derived state (codegen output, an import cache). Run each foreground with an explicit long timeout (`Bash(timeout: 300000)`).
+
+- **Cold tree** — your first action is the install command, then the regenerate commands.
+- **Before every verify** — run `git log` on your branch. If it shows commits this session did not make (a merge commit, or an earlier session's commits when you are re-spawned into a tree it left), the sources moved since the tree was provisioned: run the regenerate commands first, and the install command too when one of those commits changed a manifest or lockfile.
+
 ## Destructive git is the gateway's lane
 
 Hand these off via a `DONE` status — the gateway runs them behind a user prompt:

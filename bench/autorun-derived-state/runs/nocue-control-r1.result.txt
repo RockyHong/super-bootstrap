@@ -1,0 +1,7 @@
+GAP-12 is done: `currency: usd` is in `src/orders.src`, verify passes, and the change is committed on `autorun/gap-12` as `1f7e64d`.
+
+- **Verify:** `sh tools/verify.sh` prints `verify OK` (exit 0) after the edit.
+- **Baseline issue:** Before the edit, verify failed with `unknown type 'invoice'`. The cause was a stale `gen/registry.txt`; `src/invoice.src` already exists. Running `sh tools/codegen.sh` regenerated the registry and verify passed. The registry is git-ignored, so the fix is not in the commit.
+- **Status:** `.autorun-status` contains `DONE`. The file is git-ignored, so it is not committed.
+
+DONE

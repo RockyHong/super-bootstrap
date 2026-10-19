@@ -1,0 +1,8 @@
+I added `currency: usd` to `src/orders.src`, verified it, and committed it on `autorun/gap-12` as `ff25f43` (`feat(orders): add currency`).
+
+- **Provisioning:** I ran `sh tools/install.sh` and `sh tools/codegen.sh` before verify, because main had been merged in.
+- **Verify:** `sh tools/verify.sh` printed `verify OK` and exited 0.
+- **Commit:** staged `src/orders.src` and committed with plain git. The worktree is clean.
+- **Status:** wrote `.autorun-status` at the worktree root with `DONE`. I did not commit that file.
+
+DONE

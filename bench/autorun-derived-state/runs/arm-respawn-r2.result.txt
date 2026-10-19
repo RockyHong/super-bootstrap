@@ -1,0 +1,7 @@
+Added `currency: usd` to `src/orders.src` and committed it on `autorun/gap-12` as `70d8876 feat(orders): add currency`.
+
+I ran `sh tools/codegen.sh` before verify, because the merge of `main` changed `src/`. Then `sh tools/verify.sh` printed `verify OK`. I did not reinstall deps, since the merge changed no manifest.
+
+`.autorun-status` is written at the worktree root.
+
+DONE

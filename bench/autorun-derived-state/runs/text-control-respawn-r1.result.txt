@@ -1,0 +1,18 @@
+I have not run anything. These are the commands I would run, in order, from the worktree root:
+
+1. ```bash
+   git status --short
+   ```
+   Confirms the only change is the `src/orders.ts` edit, with no stray files. Expected output: ` M src/orders.ts`.
+
+2. ```bash
+   npm run codegen
+   ```
+   Regenerates the git-ignored `src/generated/` from `schemas/*.graphql`. The merged `schemas/invoice.graphql` has no generated output in this tree yet, so `src/billing.ts`'s import of `src/generated/invoice.ts` fails without this step.
+
+3. ```bash
+   npm test
+   ```
+   Runs the verify step (typecheck plus unit tests), covering the `src/orders.ts` edit and the merged `src/billing.ts`. Run it with an explicit 300000 ms timeout.
+
+I skip `npm ci`. Nothing in the situation says the merge changed dependencies, and I do not symlink the main checkout's deps. If `npm test` fails, I report the output and stop before committing. The commit comes after a passing verify, through `/super-bootstrap:commit`, and is not part of this list.

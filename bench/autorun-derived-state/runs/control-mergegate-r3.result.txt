@@ -1,0 +1,3 @@
+PASS
+
+Merge-gate verification ran on `main` in the main checkout, which is not a nested worktree. `install.sh` exited 0, `codegen.sh` exited 0 and wrote `gen/registry.txt` (billing, invoice, orders), and `verify.sh` printed `verify OK` (exit 0). `verify.sh` checks that every `uses:` target in `src/*.src` appears in the registry, so the result reflects real checks. `git status` is clean, so no tracked file changed.

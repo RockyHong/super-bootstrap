@@ -69,9 +69,16 @@ _These `claude -p` flags are confirmed against the official Claude Code CLI refe
 
 Dispatch via `Bash(run_in_background: true)` so multiple subprocesses run concurrently; the gateway is notified on each completion (push, not poll).
 
-## Dependency provisioning (subprocess-side, stack-agnostic)
+## Provisioning — dependencies and derived state (stack-agnostic)
 
-A cold worktree from `git worktree add` carries source only — no installed dependencies. The subprocess's first action is the repo's install command (from `docs/techstack.md` / CLAUDE.md Commands — e.g. `npm ci`, `pnpm install`, `pip install -e .`, `cargo fetch`, `go mod download`), run **foreground with an explicit long timeout** (`Bash(timeout: 300000)`) so a slow install completes within the turn instead of being backgrounded and cutting the `-p` turn short. Do **not** symlink the main checkout's installed deps — workspace package links resolve back to the main tree's source and silently break isolation.
+A tree's verify reads more than its tracked sources: installed dependencies, and git-ignored derived state built from those sources (codegen output, an engine's import cache, a generated registry). Two kinds of command provision it, both read from the repo's docs (`docs/techstack.md` / CLAUDE.md Commands): the install command (e.g. `npm ci`, `pnpm install`, `pip install -e .`, `cargo fetch`, `go mod download`) and every command those docs name for regenerating derived state.
+
+- **Cold tree** — a worktree from `git worktree add` carries source only. The subprocess's first action is the install command, then the regenerate commands.
+- **Before every verify** — whenever tracked sources changed through something other than the verifying session's own edits, run the regenerate commands first, and the install command too when a manifest or lockfile changed. The worker's cue: `git log` on its branch shows commits this session did not make (a merge commit, or an earlier session's commits on a re-spawn into a tree it left). The gateway's cue: a branch landed on the base tree before the merge-gate verify. A verify on stale derived state reports a break the sources do not have.
+
+The worker's copy of this rule is `worktree-boundary.md` § Provisioning, which every brief embeds; keep the two in step.
+
+Run each **foreground with an explicit long timeout** (`Bash(timeout: 300000)`) so a slow step completes within the turn instead of being backgrounded and cutting the `-p` turn short. Do **not** symlink the main checkout's installed deps — workspace package links resolve back to the main tree's source and silently break isolation.
 
 ## Hard FS boundary mechanism
 

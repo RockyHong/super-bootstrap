@@ -1,0 +1,16 @@
+Run these with the Bash tool. Stop at `npm test` as requested.
+
+1. `git status --short`
+   Confirms that `src/orders.ts` is the only modified file and that no stray files are present.
+
+2. `git diff --name-only HEAD^1 HEAD -- package.json package-lock.json`
+   Checks whether the `main` merge changed dependencies. Empty output means the install from the earlier spawn still applies.
+
+3. `npm ci` (Bash `timeout: 300000`), **only if step 2 printed a file name**
+   Reinstalls dependencies so they match the merged lockfile. Do not symlink deps from the main checkout, because that breaks worktree isolation.
+
+4. `npm run codegen`
+   Regenerates the git-ignored `src/generated/` from `schemas/*.graphql`. `src/billing.ts` imports `src/generated/invoice.ts`, which the merge brought in without generated output. Git status does not show ignored files, so the command must run explicitly.
+
+5. `npm test`
+   Verify step: typecheck plus unit tests. It confirms that the `src/orders.ts` edit compiles and passes alongside the merged `src/billing.ts`. If it fails, I report the output and do not commit.

@@ -1,0 +1,19 @@
+Run these in the Bash tool, from the worktree root (`.claude/worktrees/autorun-gap-12`):
+
+1. `cat OWNED_BY`
+   Re-read the dispatch contract to confirm the item (GAP-12), branch (`autorun/gap-12`), and purpose before touching anything.
+
+2. `git branch --show-current && git status --short`
+   Confirm you are on `autorun/gap-12` and that `src/orders.ts` is the only modified file.
+
+3. `git diff -- src/orders.ts`
+   Check that the edit matches what the user's answer asked for.
+
+4. `npm ci` (Bash `timeout: 300000`, foreground)
+   Reinstall from the lockfile, because the merge of `main` may have changed `package-lock.json` and the installed `node_modules` may be stale. Do not symlink the main checkout's dependencies.
+
+5. `npm run codegen`
+   Regenerate the git-ignored `src/generated/` from `schemas/*.graphql`, because the merge may have changed the schemas and the merge does not update generated files.
+
+6. `npm test`
+   Verify the change. This runs the typecheck and unit tests. Stop here. Committing with `/super-bootstrap:commit` comes after this step passes.

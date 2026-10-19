@@ -83,4 +83,4 @@ DONE rows wait for the user; the merge runs only through `/super-bootstrap:merge
 - **Gateway holds destructive git.** Merge, push, worktree removal, branch deletion — gateway only, each behind a user prompt. Sessions hand off through the status line.
 - **State = file presence.** Worktree dir + `OWNED_BY` + card thread + branch. Every invocation re-reads; nothing is remembered across turns.
 - **Read-around, never Read-in.** `git show autorun/{id-lower}:<path>`, `cat` the status file, `Grep` / `Glob` markers — mechanically backed by the `PreToolUse(Read)` hook ensure-infra installs.
-- **Verification that depends on module resolution runs at the merge, on the base tree** — a nested worktree can resolve phantom deps from the parent (`assets/parallel-worktrees.md` § Nested-worktree false-greens).
+- **Verification that depends on module resolution runs at the merge, on the base tree** — a nested worktree can resolve phantom deps from the parent (`assets/parallel-worktrees.md` § Nested-worktree false-greens). The landing changed the base tree's sources, so the gateway first runs the provisioning commands there (`assets/parallel-worktrees.md` § Provisioning).

@@ -1,0 +1,12 @@
+## .bench-log (command order during the run)
+install
+codegen
+verify
+## first verify preceded by codegen?
+yes
+## .autorun-status
+## git log --oneline -4
+05c0047 Merge branch 'autorun/gap-12'
+75f3325 init
+88b9697 feat(billing): add invoice and billing records
+## git status --short

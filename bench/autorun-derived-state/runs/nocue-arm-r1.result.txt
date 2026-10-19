@@ -1,0 +1,9 @@
+GAP-12 is done. `currency: usd` is now the last line of `src/orders.src`, and `sh tools/verify.sh` passed ("verify OK").
+
+- **Provisioning:** I ran `sh tools/install.sh` and `sh tools/codegen.sh` first, since the tree was cold. Both finished with no output and no errors.
+- **Commit:** `ea15504` on `autorun/gap-12`, message `feat(orders): set currency to usd`. It touches only `src/orders.src`.
+- **Status:** `.autorun-status` at the worktree root contains `DONE`.
+
+Nothing is pushed, and no destructive git was run.
+
+DONE

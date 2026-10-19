@@ -1,0 +1,13 @@
+1. `git status --short` and `git log --oneline -3`
+   Confirms the checkout is on `main`, the `--no-ff` merge commit is present, and the tree is clean before any rebuild.
+
+2. `npm ci` (foreground, `timeout: 300000`)
+   Reinstalls `node_modules/` from the merged lockfile. The existing install predates the merge, and `npm ci` removes it first. The main checkout is a real, non-nested tree, so this install is valid for resolution checks.
+
+3. `npm run codegen`
+   Regenerates the git-ignored `src/generated/` from the merged `schemas/order.graphql`. Stale output from earlier work could contain an old `order.ts` and hide a missing or outdated import.
+
+4. `npm test`
+   Runs the verify step (typecheck plus unit tests). `src/orders.ts` resolves `src/generated/order.ts` against the freshly generated output on the merged base, which is the gate GAP-12 deferred to.
+
+If step 4 fails, I report the output and take no destructive git action. Any worktree removal or branch deletion waits for your prompt.

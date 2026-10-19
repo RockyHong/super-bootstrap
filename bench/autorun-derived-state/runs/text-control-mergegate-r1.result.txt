@@ -1,0 +1,13 @@
+I'm not running any tools here, so these are the commands I would run, in order. The merge is already on `main`, so this is the merge-gate check on the non-nested base tree.
+
+1. **`git log -1 --oneline`** (Bash): Confirms `HEAD` on `main` is the `autorun/gap-12` merge commit, so I verify the merged state and not a stale tree.
+
+2. **`npm ci`** (Bash, foreground, `timeout: 300000`): Reinstalls `node_modules/` from the lockfile in this real checkout. The earlier install may not match the merged `package.json`, and `npm ci` removes it first. I don't symlink or reuse the old install, because that could hide resolution problems.
+
+3. **`npm run codegen`** (Bash): Regenerates the git-ignored `src/generated/` from `schemas/*.graphql`, including the new `schemas/order.graphql`. The existing `src/generated/` predates this branch. Codegen runs after step 2 because it may depend on binaries in `node_modules/`.
+
+4. **`test -f src/generated/order.ts && echo OK`** (Bash): Confirms codegen produced the file that `src/orders.ts` imports. A missing file fails here with a clear result, not as a confusing error inside the tests.
+
+5. **`npm test`** (Bash, `timeout: 300000`): Runs the typecheck and unit tests on the merged base. This is the resolution-sensitive verification GAP-12 deferred to the merge gate.
+
+If step 5 fails, I report the full output and stop. Any revert or fix-up merge needs a user prompt first, because the gateway owns destructive git.

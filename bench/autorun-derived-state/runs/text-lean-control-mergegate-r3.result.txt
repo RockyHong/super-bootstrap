@@ -1,0 +1,6 @@
+1. `git status --short && git log --oneline -3`: Confirms you are on `main`, the tree is clean, and the `autorun/gap-12` merge commit is at HEAD, so the verify runs against the merged base.
+2. `npm ci` (Bash `timeout: 300000`, foreground): Removes the stale `node_modules/` and reinstalls from the lockfile, so the merge's dependency changes apply. Running it here, not in the worktree, keeps the check off the nested-worktree path.
+3. `npm run codegen`: Regenerates the git-ignored `src/generated/` from `schemas/*.graphql`, since the merge may have changed the schemas and the existing output may be stale.
+4. `npm test`: The verify step. It runs typecheck and unit tests on the non-nested main checkout, which is the GAP-12 merge gate.
+
+If step 4 fails, I report the output and do not push. Pushing and worktree removal stay behind a user prompt.

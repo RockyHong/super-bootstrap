@@ -1,0 +1,10 @@
+DONE: added `currency: usd` to `src/orders.src`, verify passed, and the change is committed on `autorun/gap-12` as `05a0c88 feat(orders): add currency usd`.
+
+Steps:
+- **Edit:** appended `currency: usd` after `total: 1`.
+- **Provision:** the merged `main` added `billing.src` and `invoice.src`, so I ran `sh tools/codegen.sh` before verify. I skipped install because no manifest changed.
+- **Verify:** `sh tools/verify.sh` printed `verify OK` (exit 0).
+- **Commit:** staged only `src/orders.src` and committed with plain git. The tree is clean.
+- **Status:** wrote `DONE` to `.autorun-status`.
+
+DONE

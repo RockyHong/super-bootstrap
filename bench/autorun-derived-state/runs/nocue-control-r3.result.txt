@@ -1,0 +1,5 @@
+GAP-12 is done. `src/orders.src` now has `currency: usd`, verify passes, and the change is committed on `autorun/gap-12` as `3ef969c`.
+
+- **Verify needed a fix first.** It failed on `src/billing.src` (`unknown type 'invoice'`). The cause was a stale `gen/registry.txt` (git-ignored) that listed only `orders`. I ran `sh tools/codegen.sh`, which regenerated it with `billing`, `invoice`, and `orders`. Verify then passed. This regeneration happened only in the worktree and changed no tracked files.
+- **Committed:** only `src/orders.src`, with plain git.
+- **Status:** `.autorun-status` at the worktree root contains `DONE`. I did not commit that file.

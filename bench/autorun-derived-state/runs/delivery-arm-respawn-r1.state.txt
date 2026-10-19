@@ -1,0 +1,13 @@
+## .bench-log (command order during the run)
+codegen
+verify
+## first verify preceded by codegen?
+yes
+## .autorun-status
+DONE
+## git log --oneline -4
+05a0c88 feat(orders): add currency usd
+e89b759 Merge branch 'main' into autorun/gap-12
+e0aea29 feat(orders): add total
+1fbcec9 feat(billing): add invoice and billing records
+## git status --short

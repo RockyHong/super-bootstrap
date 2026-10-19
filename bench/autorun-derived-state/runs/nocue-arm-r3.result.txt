@@ -1,0 +1,6 @@
+GAP-12 is done. I added `currency: usd` to `src/orders.src`, verify passed, and I committed on `autorun/gap-12` as `b647470`.
+
+- **Verify:** `sh tools/verify.sh` printed `verify OK` (exit 0), after a cold install and a codegen run.
+- **Status:** `.autorun-status` at the worktree root contains `DONE`. It is not committed.
+
+DONE

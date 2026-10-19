@@ -1,0 +1,8 @@
+GAP-12 is done. `currency: usd` is now the last line of `src/orders.src`, and verify passes.
+
+- **Provisioning:** I ran `sh tools/install.sh` and `sh tools/codegen.sh` before verifying. The registry now lists `billing`, `invoice`, and `orders`.
+- **Verify:** `sh tools/verify.sh` printed `verify OK` and exited 0.
+- **Commit:** `dbdc029` on `autorun/gap-12`, "feat(orders): set currency to usd". It changes only `src/orders.src`, one insertion. I used plain `git add` and `git commit -F`, since the commit door is not installed here.
+- **Status:** `.autorun-status` at the worktree root contains `DONE`.
+
+DONE

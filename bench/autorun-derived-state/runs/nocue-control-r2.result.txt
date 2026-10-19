@@ -1,0 +1,7 @@
+GAP-12 is done. I added `currency: usd` to `src/orders.src` and committed it as `da2497d` on `autorun/gap-12`.
+
+Verify failed at first: `src/billing.src: error: unknown type 'invoice'`. The cause was a stale `gen/registry.txt`, which is git-ignored and only lists `orders`. I ran `sh tools/codegen.sh` to regenerate it, and `sh tools/verify.sh` then passed. I did not change any `.src` file except `orders.src`.
+
+I wrote `.autorun-status` with `DONE`. The gateway should know that a fresh worktree needs codegen before verify passes.
+
+DONE

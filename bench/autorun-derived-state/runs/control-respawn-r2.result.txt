@@ -1,0 +1,7 @@
+Added `currency: usd` to `src/orders.src` and committed it as `cb5e5b5` on `autorun/gap-12`.
+
+Verify failed at first with `billing.src: unknown type 'invoice'`. The cause was a stale `gen/registry.txt`, not the record. It listed only `billing` and `orders`. I ran `sh tools/codegen.sh` to regenerate it (the file is git-ignored), and `sh tools/verify.sh` then passed. The commit includes only `src/orders.src`.
+
+Wrote `.autorun-status` at the worktree root. It is untracked, so the gateway can read it directly.
+
+DONE

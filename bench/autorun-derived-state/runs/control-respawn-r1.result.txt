@@ -1,0 +1,7 @@
+DONE
+
+- **Edit:** added `currency: usd` as the last line of `src/orders.src`.
+- **Pre-existing failure, fixed:** `verify` failed before my edit with `src/billing.src: error: unknown type 'invoice'`. `gen/registry.txt` was stale and lacked `billing` and `invoice`. I ran `sh tools/codegen.sh` to regenerate it. The registry is git-ignored, so the fix is not in the commit.
+- **Verify:** `sh tools/verify.sh` prints `verify OK` (rc=0), both before and after the edit.
+- **Commit:** `aeb6d00` on `autorun/gap-12`, message `feat(orders): add currency`. It contains only `src/orders.src`.
+- **Status:** `.autorun-status` at the worktree root contains `DONE`. The file is git-ignored and not committed.

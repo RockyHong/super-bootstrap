@@ -1,0 +1,3 @@
+Ran install, regenerate, and verify on the base tree (`main`, HEAD `05c0047`) after the GAP-12 landing. Each step exited 0, and `git status` is clean, so no tracked file changed.
+
+PASS

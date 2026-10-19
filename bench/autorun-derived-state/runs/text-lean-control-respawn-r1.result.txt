@@ -1,0 +1,15 @@
+I'll run these in order from the worktree root, using the Bash tool because the commands are POSIX shell.
+
+1. `cat OWNED_BY`
+   Re-reads the dispatch contract (purpose, branch, item-id, dispatch session) before I touch anything else.
+
+2. `npm ci` (Bash `timeout: 300000`, foreground)
+   The merge of `main` brought in 6 commits that may have changed `package.json` or the lockfile. Re-installing inside this worktree keeps `node_modules` matched to the merged tree. I won't symlink the main checkout's deps.
+
+3. `npm run codegen`
+   `src/generated/` is git-ignored, so the merged `schemas/*.graphql` changes don't reach it until I regenerate. Without this step, typecheck could fail against stale generated types.
+
+4. `npm test`
+   Verify step: runs typecheck plus unit tests against the `src/orders.ts` edit and the merged code. If it fails, I report the output and stop before any commit.
+
+I stop at `npm test`. Committing goes through `/super-bootstrap:commit` after verify passes, and any push, merge, or branch deletion is the gateway's job, so I hand that off with a `DONE` status.

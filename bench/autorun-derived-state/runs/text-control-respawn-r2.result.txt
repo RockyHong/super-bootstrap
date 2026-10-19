@@ -1,0 +1,24 @@
+I run these commands through the Bash tool, in order:
+
+1. `git status --short`
+   Confirms the only change in the worktree is the edit to `src/orders.ts`, with no stray files.
+
+2. `git diff -- src/orders.ts`
+   Checks the edit against the answer the user gave before I continue.
+
+3. `git diff --name-only HEAD^1 HEAD`
+   Lists the files the merge brought in from `main`, so I can tell whether dependencies changed.
+
+4. `npm ci` (Bash tool, `timeout: 300000`), only if step 3 lists `package.json` or `package-lock.json`.
+   Reinstalls the dependencies that the merge changed. Without a change to those files, the earlier install still applies. Do not symlink the main checkout's `node_modules`.
+
+5. `npm run codegen`
+   Generates `src/generated/invoice.ts`, which `src/billing.ts` imports. The file is git-ignored, so the merge does not supply it, and typecheck fails until it exists.
+
+6. `git status --short`
+   Confirms codegen wrote only ignored files. `src/generated/` must not appear as a change to commit.
+
+7. `npm test`
+   Verify step: runs typecheck and unit tests across `src/orders.ts`, the merged `src/billing.ts`, and the generated invoice module.
+
+If step 7 fails, I report the output and stop. I do not commit or push. The commit goes through `/super-bootstrap:commit` after a passing verify, and any push, merge, or branch deletion goes to the gateway as a `DONE` status.

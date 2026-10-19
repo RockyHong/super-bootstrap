@@ -1,0 +1,3 @@
+Ran install, codegen, and verify on `main` (merge commit `05c0047`), all exit 0. `verify` printed `verify OK`.
+
+PASS

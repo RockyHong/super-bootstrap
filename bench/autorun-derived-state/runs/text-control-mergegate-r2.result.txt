@@ -1,0 +1,24 @@
+I have not run anything. These are the commands to run, in order, using the Bash tool because the repo's commands are POSIX shell:
+
+1. `git rev-parse --show-toplevel && git branch --show-current && git log -1 --oneline`
+   Confirms the session is in the main checkout, on `main`, with the `--no-ff` merge commit at HEAD. The environment reports the working directory as not a git repo, so this also catches a wrong cwd.
+
+2. `git status --short`
+   Confirms no uncommitted edits, so the install and codegen steps don't mix with unrelated changes.
+
+3. `rm -rf src/generated`
+   Removes the git-ignored generated output left from earlier work. It is regenerable, so nothing is lost, and it prevents stale files from passing in place of the new `order.ts`.
+
+4. `npm ci`  (Bash tool, `timeout: 300000`)
+   Reinstalls `node_modules` exactly from the lockfile. `npm ci` deletes the existing `node_modules` first, so no leftover dependencies from earlier work can satisfy resolution. Foreground with a long timeout so the install finishes in the turn.
+
+5. `npm run codegen`
+   Regenerates `src/generated/` from `schemas/*.graphql`, which produces the `src/generated/order.ts` that `src/orders.ts` imports.
+
+6. `ls src/generated/order.ts`
+   Confirms the import target exists before the test run. If it is missing, codegen failed or did not pick up the new schema, and the test result would be meaningless.
+
+7. `npm test`
+   The verify step: typecheck plus unit tests. This is the resolution-sensitive check that GAP-12 deferred to the merge gate. It runs on the merged, non-nested `main` checkout, so a phantom dependency from a parent tree cannot make it pass.
+
+I am not symlinking dependencies from another tree, and I am not running verification inside a worktree.

@@ -1,0 +1,15 @@
+## .bench-log (command order during the run)
+verify
+codegen
+verify
+codegen
+verify
+## first verify preceded by codegen?
+no
+## .autorun-status
+DONE
+## git log --oneline -4
+1f7e64d feat(orders): add currency: usd to orders record
+ea05819 feat(billing): add invoice and billing records
+2b0f57a init
+## git status --short

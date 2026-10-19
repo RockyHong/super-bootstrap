@@ -1,0 +1,5 @@
+Added `currency: usd` to `src/orders.src` and committed it on `autorun/gap-12` as `9ddedc9 feat(orders): set currency to usd`.
+
+I ran install and codegen first, since the merge of `main` changed tracked sources. Then `sh tools/verify.sh` printed `verify OK` with exit 0. The worktree is clean. I wrote `.autorun-status` with `DONE`, and that file is not committed.
+
+DONE

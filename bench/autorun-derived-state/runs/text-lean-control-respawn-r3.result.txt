@@ -1,0 +1,35 @@
+The shell commands below run in the Bash tool, from the worktree root. The merge brought in 6 commits from `main`, so dependencies and generated code may be stale, and I re-run install and codegen before verifying.
+
+1. **Confirm the tree holds only the intended edit**
+
+   ```bash
+   git status --short
+   ```
+
+   Shows that `src/orders.ts` is the only modified file. Any other change would be stray and needs review before verify.
+
+2. **Reinstall dependencies**
+
+   ```bash
+   npm ci
+   ```
+
+   Run with `Bash(timeout: 300000)` in the foreground. The merged `main` may have changed `package-lock.json`, so the install from the earlier spawn may no longer match. I do not symlink the main checkout's `node_modules`, because workspace links would resolve to the main tree's source.
+
+3. **Regenerate the git-ignored generated code**
+
+   ```bash
+   npm run codegen
+   ```
+
+   Rebuilds `src/generated/` from `schemas/*.graphql`. The merge may have changed the schemas, and `src/generated/` is git-ignored, so a stale copy would not show in `git status`.
+
+4. **Verify**
+
+   ```bash
+   npm test
+   ```
+
+   Runs typecheck and unit tests, the repo's verify command. If it fails, I report the output and do not commit.
+
+After a passing verify, I commit the edit with `/super-bootstrap:commit` and hand the `DONE` status to the gateway. I do not push, merge, or remove the worktree myself.

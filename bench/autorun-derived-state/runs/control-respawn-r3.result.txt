@@ -1,0 +1,8 @@
+Added `currency: usd` to `src/orders.src`, and verify passes.
+
+Verify failed before the edit. `gen/registry.txt` listed only `orders`, but `src/` also has `billing` and `invoice`, so `billing.src` reported `unknown type 'invoice'`. I ran `sh tools/codegen.sh` to regenerate the registry (it is git-ignored and sits in this worktree). After that, verify passed. Note that the registry regeneration was needed to pass verify but is not in the commit.
+
+- Commit: `c8d752f feat(orders): add currency` on `autorun/gap-12`, containing only `src/orders.src`.
+- Status file: `.autorun-status` at the worktree root.
+
+DONE

@@ -1,0 +1,15 @@
+Run these from the repo root of the main checkout, after the merge has landed on `main`:
+
+1. `git status --short && git log -1 --oneline`
+   Confirms the tree is clean and HEAD is the merge commit, so the verify run tests the merged base and nothing else.
+
+2. `npm ci` (Bash/PowerShell tool timeout: `300000`)
+   Deletes the stale `node_modules/` left from earlier `main` work and reinstalls exactly from the lockfile. Foreground with a long timeout so the install finishes in this turn. Don't symlink or reuse the old tree.
+
+3. `npm run codegen`
+   Regenerates the git-ignored `src/generated/` from the merged `schemas/*.graphql`, since the existing copy predates GAP-12's schema changes. It runs after step 2 because codegen uses the freshly installed packages.
+
+4. `npm test`
+   Runs typecheck and unit tests on the non-nested main checkout, which is the resolution-sensitive verification GAP-12 deferred to the merge gate.
+
+If step 4 fails, I report the output and don't patch in a worktree. Any revert or fix-up on `main` needs your confirmation, since the gateway owns destructive git.

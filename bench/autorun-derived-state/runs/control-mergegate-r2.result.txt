@@ -1,0 +1,5 @@
+`tools/verify.sh` passes on `main`, the non-nested merged base. `billing.src` declares `uses: invoice`, and `invoice` is in the regenerated registry, so the check compared a real reference and was not vacuous.
+
+Caveat: `tools/install.sh` only writes a stub `deps/ok` file and installs nothing. The verify step checks names against `gen/registry.txt`, not real module resolution. Treat this as a pass of the repo's defined gate, not a full resolution test. No tracked file changed (`git status` is clean). `deps/`, `gen/`, and `.bench-log` are git-ignored.
+
+PASS

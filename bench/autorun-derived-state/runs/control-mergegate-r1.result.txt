@@ -1,0 +1,8 @@
+PASS
+
+Merge-gate verification ran on `main` at `deb1265`, the merged base, not in a nested worktree:
+- `sh tools/install.sh` rc=0
+- `sh tools/codegen.sh` rc=0; `gen/registry.txt` lists `billing`, `invoice`, `orders`
+- `sh tools/verify.sh` printed `verify OK`, rc=0. The one `uses:` line (`billing.src` → `invoice`) resolved against the registry.
+
+No tracked files changed. `git status` shows only the git-ignored `.bench-log`, `deps/`, and `gen/`.

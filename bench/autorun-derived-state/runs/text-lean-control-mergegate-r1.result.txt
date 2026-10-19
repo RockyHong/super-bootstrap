@@ -1,0 +1,27 @@
+Run these from the main checkout root on `main`, not from any worktree. Stop at the first non-zero exit and report it.
+
+1. **Confirm the tree state**
+   ```bash
+   git status --short && git branch --show-current && git log -1 --oneline
+   ```
+   Confirms `main` is clean and HEAD is the merge commit for `autorun/gap-12`, so the verification runs on the merged base.
+
+2. **Reinstall dependencies from the lockfile**
+   ```bash
+   npm ci
+   ```
+   Run with a 300000 ms timeout, in the foreground. The merge may have changed `package.json` or the lockfile, and `npm ci` deletes the existing `node_modules/` before installing exactly what the lockfile specifies. This removes stale packages from earlier work, so no manual `rm` is needed. The main checkout is not nested, so resolution is valid here. Do not symlink deps from elsewhere.
+
+3. **Regenerate the git-ignored generated sources**
+   ```bash
+   npm run codegen
+   ```
+   `src/generated/` is git-ignored and was built from earlier `schemas/*.graphql`. If GAP-12 changed a schema, the old output would make the tests check stale code.
+
+4. **Run the verify gate**
+   ```bash
+   npm test
+   ```
+   Runs the typecheck and unit tests on the merged, non-nested base. The module-resolution-sensitive check for GAP-12 is decided here, not in the worktree. Use a 300000 ms timeout.
+
+The worktree removal and branch deletion for `autorun/gap-12` are gateway-only destructive steps. They wait for a user prompt and are not part of this sequence.
