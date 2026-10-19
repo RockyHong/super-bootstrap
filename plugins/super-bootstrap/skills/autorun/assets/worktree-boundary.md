@@ -13,6 +13,8 @@ You are running as a subprocess Claude inside an isolated autorun worktree. This
 
 Every edit, every commit, every build command stays inside this tree.
 
+Run git commands, file operations (the status-file rename, a card delete) and `/super-bootstrap:commit` through the Bash tool — the commit door's commands are POSIX shell.
+
 ## Destructive git is the gateway's lane
 
 Hand these off via a `DONE` status — the gateway runs them behind a user prompt:
