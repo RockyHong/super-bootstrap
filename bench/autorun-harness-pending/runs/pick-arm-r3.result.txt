@@ -1,0 +1,5 @@
+```
+autorun — 1 card
+run:   GAP-12  add tools/report.sh (line count per src/*.src file), point skill ref y.md at it
+skip:  GAP-13  harness
+```

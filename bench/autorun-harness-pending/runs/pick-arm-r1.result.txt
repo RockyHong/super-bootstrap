@@ -1,0 +1,7 @@
+```
+autorun — 1 cards
+run:   GAP-12  add tools/report.sh: per-file line counts, name: count
+skip:  GAP-13  harness
+```
+
+GAP-12's two edits to `.claude/skills/x/references/y.md` ride along as a Plan block. The script stands without them. GAP-13 changes only `.claude/skills/x/SKILL.md`, so it is harness work for `/super-bootstrap:needs-me`.

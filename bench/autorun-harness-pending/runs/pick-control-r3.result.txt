@@ -1,0 +1,7 @@
+```
+autorun — 0 cards
+skip:  GAP-12  harness (edits .claude/skills/x/references/y.md; route to /super-bootstrap:needs-me)
+skip:  GAP-13  harness (edits .claude/skills/x/SKILL.md; route to /super-bootstrap:needs-me)
+```
+
+GAP-12's `tools/report.sh` half is not a harness file. I skipped the whole card because its deliverable includes the harness reference. If you want that half run alone, say so.

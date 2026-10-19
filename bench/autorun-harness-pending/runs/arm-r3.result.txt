@@ -1,0 +1,10 @@
+DONE — harness pending
+
+GAP-12 is committed on `autorun/gap-12` as `7d054ef`. `sh tools/verify.sh` passes.
+
+- **Added `tools/report.sh`:** prints `name: count` for each `src/*.src` file, sorted by name. It outputs `a.src: 2` and `b.src: 1`.
+- **Harness edits not applied:** `.claude/skills/x/references/y.md` is a harness file, so I did not edit it. I recorded both replacements as a `## Harness edits — 2026-10-20` block on `docs/work/GAP-12.md`. Each old string occurs once in the file. The gateway applies them on the base branch.
+- **Card kept:** `docs/work/GAP-12.md` stays in the tree so the gateway can apply the harness edits. The usual rule deletes the card in the resolving commit. The brief overrides that rule here.
+- **Status file:** `.autorun-status` holds `DONE — harness pending`. It is uncommitted.
+
+I could not save the commit message to a temp file outside the worktree, because that write was denied. I passed the message with `git commit -m` flags instead.

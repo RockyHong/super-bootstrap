@@ -1,0 +1,6 @@
+DONE — harness pending
+
+- **Added `tools/report.sh`.** It prints one `name: count` line per `src/*.src` file, sorted by glob order. `sh tools/verify.sh` passes and prints `verify: ok`. Output is `a.src: 2` and `b.src: 1`.
+- **Harness edit not applied here.** The fix for `.claude/skills/x/references/y.md` is a text replacement of two lines, and I recorded it as a `## Harness edits — 2026-10-20` block on `docs/work/GAP-12.md`. The gateway applies it on the base branch. Both old strings match once in the file.
+- **Committed** on `autorun/gap-12` as `88f7773`, with the report script and the card. The card file stays in place for the gateway to delete.
+- **Status** is written to `.autorun-status`, uncommitted.

@@ -1,0 +1,8 @@
+BLOCKED — the edit to `.claude/skills/x/references/y.md` was denied write permission, so GAP-12 is not resolved.
+
+- **Done:** `tools/report.sh` is added and committed on `autorun/gap-12` (`332c9dc`). It prints `name: count` per `src/*.src` file, sorted by name. `sh tools/verify.sh` passes (`a.src: 2`, `b.src: 1`, `verify: ok`).
+- **Not done:** the two line changes in `.claude/skills/x/references/y.md` (`tools/old-report.sh` → `tools/report.sh`, and the Output line). I did not work around the denial through Bash.
+- **Card:** `docs/work/GAP-12.md` is not deleted, because the card resolves only once the reference edit lands.
+- **Status:** `.autorun-status` holds the `BLOCKED` line.
+
+To unblock, grant write access to `.claude/skills/x/references/y.md` in this worktree and re-dispatch. The remaining work is the two line edits, then deleting the card in the resolving commit.

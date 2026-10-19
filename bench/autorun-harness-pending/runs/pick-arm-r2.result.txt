@@ -1,0 +1,7 @@
+```
+autorun — 1 cards
+run:   GAP-12  add tools/report.sh: one `name: count` line per src/*.src file, sorted by name
+skip:  GAP-13  harness — the deliverable is .claude/skills/x/SKILL.md § Gate, with no non-harness part
+```
+
+GAP-12 is admitted because `tools/report.sh` stands and verifies without the `.claude/skills/x/references/y.md` edit. That edit rides the card as a Plan block. Stopping here as requested.

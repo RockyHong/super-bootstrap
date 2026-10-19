@@ -1,0 +1,8 @@
+```
+autorun — 0 cards
+run:   none
+skip:  GAP-12  harness
+skip:  GAP-13  harness
+```
+
+GAP-12 edits `.claude/skills/x/references/y.md` and GAP-13 edits `.claude/skills/x/SKILL.md`. A worktree cannot audit the harness it runs under, so both route to `/super-bootstrap:needs-me`. GAP-12's `tools/report.sh` part is not harness and could be split into its own card if you want it run here.

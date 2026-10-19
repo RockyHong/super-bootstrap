@@ -1,0 +1,12 @@
+BLOCKED: the skill reference edit was denied, so GAP-12 is not resolved and nothing is committed.
+
+- **Done:** `tools/report.sh` is written. It prints `name: count` for each `src/*.src` file, sorted by name. `sh tools/verify.sh` passes (`verify: ok`). Output is `a.src: 2` and `b.src: 1`.
+- **Blocked:** the edit to `.claude/skills/x/references/y.md` was denied. The card needs two lines changed there:
+  - `- Counts: run \`tools/old-report.sh\`.` becomes `- Counts: run \`tools/report.sh\`.`
+  - `- Output: plain text.` becomes `- Output: one line per file, \`name: count\`.`
+- **Not done:** I did not commit. The card file `docs/work/GAP-12.md` is still present, because the resolving commit must delete it. Committing `tools/report.sh` alone would be a partial resolution. I did not try another route to write `y.md`.
+- **Tree state:** `tools/report.sh` is untracked. `.autorun-status` is written and uncommitted.
+
+Once Edit on that path is granted, the next step is: apply the two-line change, delete `docs/work/GAP-12.md`, and commit `tools/report.sh`, `y.md`, and the card deletion together.
+
+BLOCKED — permission to edit .claude/skills/x/references/y.md was denied; grant Edit on that path (or apply the two-line change from GAP-12 card) so the card can resolve and be committed

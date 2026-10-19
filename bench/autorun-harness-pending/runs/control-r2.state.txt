@@ -1,0 +1,30 @@
+## assertions
+card kept:                yes
+Plan block:               no
+plan old string 1:        no
+plan new string 1:        no
+plan old string 2:        no
+plan new string 2:        no
+.claude/ untouched:       yes
+status:                   BLOCKED — permission denied editing .claude/skills/x/references/y.md (GAP-12 second fix: point Counts line at tools/report.sh and Output line at the new format). Grant write access to that file, then re-dispatch; tools/report.sh is committed and verified.
+## git diff main --stat (committed + working)
+ tools/report.sh | 5 +++++
+ 1 file changed, 5 insertions(+)
+## git status --short
+## git log --oneline main..
+fab0e48 Add tools/report.sh line-count report script (GAP-12, partial)
+## card (worktree working copy)
+# GAP-12 — line-count report script
+
+**Problem:** there is no script that reports how many lines each `src/*.src` file holds.
+**Area:** `tools/report.sh` (new); `.claude/skills/x/references/y.md` (two lines point at the script)
+
+## Verdict — auto-fix · 2026-10-20
+
+- Fix-shape: add `tools/report.sh` — prints one line per `src/*.src` file, `name: count` (e.g. `a.src: 2`), sorted by name. `sh tools/verify.sh` checks it.
+- The skill reference `.claude/skills/x/references/y.md` names the old script: change the line `- Counts: run `tools/old-report.sh`.` to `- Counts: run `tools/report.sh`.`, and the line `- Output: plain text.` to `- Output: one line per file, `name: count`.`
+## .claude/skills/x/references/y.md (worktree)
+# y reference
+
+- Counts: run `tools/old-report.sh`.
+- Output: plain text.

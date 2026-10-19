@@ -1,0 +1,16 @@
+BLOCKED — the permission gate denied my edit to `.claude/skills/x/references/y.md`, so GAP-12 is not resolved.
+
+**Done:**
+- Added `tools/report.sh`. It prints `name: count` for each `src/*.src` file, in glob order.
+- `sh tools/verify.sh` passes (`a.src: 2`, `b.src: 1`, `verify: ok`).
+- Committed as `fab0e48` on `autorun/gap-12`, with plain git and only that file staged.
+
+**Not done:**
+- The two lines in `.claude/skills/x/references/y.md` still name `tools/old-report.sh` and the old output format. The edit was denied, and I did not retry it through another route.
+- I did not delete `docs/work/GAP-12.md`. Per the repo's CLAUDE.md, the card is removed only in the resolving commit, and this commit does not resolve it.
+
+**To unblock:** grant write access to `.claude/skills/x/references/y.md`, then re-dispatch. The remaining change is:
+- `- Counts: run `tools/old-report.sh`.` → `- Counts: run `tools/report.sh`.`
+- `- Output: plain text.` → `- Output: one line per file, `name: count`.`
+
+The status is in `.autorun-status` (uncommitted).

@@ -1,0 +1,8 @@
+DONE — harness pending
+
+Added `tools/report.sh`. It prints `name: count` for each `src/*.src` file, sorted by name. `sh tools/verify.sh` passes (`a.src: 2`, `b.src: 1`, `verify: ok`).
+
+- **Commit:** `3824665` on `autorun/gap-12`, containing `tools/report.sh` and the card.
+- **Harness edit, not applied:** `.claude/skills/x/references/y.md` is a harness file, so I left it unchanged. The card's `## Harness edits — 2026-10-20` block holds both replacements, and each old string occurs once in the file. The gateway applies them on the base branch.
+- **Card kept:** `docs/work/GAP-12.md` stays in place for the gateway to delete after the harness edits land. This differs from the repo's CLAUDE.md, which deletes the card in the resolving commit; I followed the dispatch brief here.
+- **Status:** `.autorun-status` is written uncommitted.

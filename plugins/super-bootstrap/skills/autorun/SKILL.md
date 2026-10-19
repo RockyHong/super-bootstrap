@@ -16,14 +16,16 @@ Pick → run → sheet. The gateway orchestrates; each admitted card is one work
 1. **Infra** — `assets/ensure-infra.md`; absent → one-time install confirm, decline ends the turn.
 2. **Base** — `git fetch` + fast-forward the base branch; a conflict surfaces and ends the turn.
 3. **In flight** — `Glob .claude/worktrees/autorun-*/OWNED_BY`. Each hit is a claimed card: it is skipped by the pick below and listed under `status`. A worktree whose card file is gone → surface for `release`.
+4. **Harness pending** — a card on base whose latest `## Harness edits — {date}` block lists edits, with no unmerged `autorun/{id-lower}` branch and no claimed worktree → run § Harness pending before the pick.
 
 ## Pick
 
 Read every open card thread (`docs/work/{BUG,DEBT,GAP}-*.md` — the cold-reader read set, `docs/work/README.md` § Thread contract). Admit a card when its next step needs no user — the test is `${CLAUDE_PLUGIN_ROOT}/shared/user-wall.md`, read at pick time — and none of these hold:
 
 - claimed (an `autorun-{id}` worktree exists) or already on an unmerged branch (`git branch --no-merged {base}`);
-- the deliverable is a harness file (`CLAUDE.md`, `.claude/**`, plugin-source skills / agents / rules) — a worktree cannot audit the harness it runs under; route to `/super-bootstrap:needs-me`;
-- held by an open `docs/outward/OUT-*.md` whose `Owning card:` names it.
+- the deliverable is a harness file (`CLAUDE.md`, `.claude/**`, plugin-source skills / agents / rules) — route to `/super-bootstrap:needs-me`. Test: the harness lines are incidental when the rest of the card's deliverable (a script, code) stands and verifies without them → admit, the harness edits riding the card as a `## Harness edits` block (§ Run, § Harness pending). A deliverable that needs the harness change to work, or whose only non-harness part is docs describing that change → skip;
+- held by an open `docs/outward/OUT-*.md` whose `Owning card:` names it;
+- carries a `## Harness edits` block whose latest one lists edits — Pre-flight step 4 owns it.
 
 A prose argument narrows the set (`/super-bootstrap:autorun 不碰 business`, `only DEBT`). Cards whose `Area:` / thread name overlapping files share one worktree and run in dependency order; the rest run in parallel.
 
@@ -32,7 +34,7 @@ Print the pick, then proceed — the user interjects in prose if the pick is wro
 ```
 autorun — {N} cards
 run:   {ID}  {one-line aim}           (grouped rows share a worktree, "→" between them)
-skip:  {ID}  {reason — needs you: decision | taste | eyes | waiting on X | claimed | harness | held}
+skip:  {ID}  {reason — needs you: decision | taste | eyes | waiting on X | claimed | harness | held | harness pending}
 ```
 
 Zero admitted → print the skip list and end the turn.
@@ -45,22 +47,23 @@ Per admitted card or group — `assets/parallel-worktrees.md` § Warm (claim = `
 
 1. `assets/worktree-boundary.md`, verbatim.
 2. The card path(s) — "read the cold-reader read set `docs/work/README.md` § Thread contract names — the origin, the latest block of each type, and the Amendments after them."
-3. **Work order** — run the card whole under this repo's `CLAUDE.md` envelope: ground it if no Verdict block grounds it yet (`/super-bootstrap:triage {ID}`), build, verify, then commit on this branch via `/super-bootstrap:commit` (deferred mode — doc-sync belongs to the merge). A group runs its cards in the listed order, one commit each. Resolve the card as the envelope says (delete the card file in the resolving commit).
+3. **Work order** — run the card whole under this repo's `CLAUDE.md` envelope: ground it if no Verdict block grounds it yet (`/super-bootstrap:triage {ID}`), build, verify, then commit on this branch via `/super-bootstrap:commit` (deferred mode — doc-sync belongs to the merge). A group runs its cards in the listed order, one commit each. Resolve the card as the envelope says (delete the card file in the resolving commit); a card whose work includes harness edits stays, carrying them as a `## Harness edits — {date}` block (`assets/worktree-boundary.md` § Harness edits go on the card); a group whose cards carry any writes `DONE — harness pending`.
 4. **Stop conditions** — `${CLAUDE_PLUGIN_ROOT}/shared/user-wall.md` verbatim: the moment finishing needs one of those, land what is done (block appended, commit made), write the status, stop. Missing context the tree does not hold → `BLOCKED`, never a guess.
 5. **Status contract** — one line at `.autorun-status` in the worktree root, written atomically (temp file + rename), uncommitted:
-   `DONE` · `WALL — {one line: what is needed, from whom}` · `BLOCKED — {what is missing}`.
+   `DONE` · `DONE — harness pending` · `WALL — {one line: what is needed, from whom}` · `BLOCKED — {what is missing}`.
 
 The turn ends after the last dispatch. Completions arrive as background notifications; a notification with no status file reads as `BLOCKED — no status written`.
 
 ## Sheet
 
-When every spawned session has returned, read each status via `cat .claude/worktrees/autorun-{id}/.autorun-status` (never `Read` inside a worktree — `assets/parallel-worktrees.md` § Read discipline) and render one sheet:
+When every spawned session has returned, read each status via `cat .claude/worktrees/autorun-{id}/.autorun-status` (never `Read` inside a worktree — `assets/parallel-worktrees.md` § Read discipline) and render one sheet. A `DONE — harness pending` worktree renders one `HARNESS` row per card that carries a `## Harness edits` block — per card of the group, `git show autorun/{id-lower}:docs/work/{ID}.md`; `{n}` = the edits in its latest block — and a `DONE` row for each other card. A card § Harness pending left with edits pending keeps its `HARNESS` row, the pending edits named, until they leave the pending set:
 
 ```
 autorun — sheet
-DONE   {ID}  {aim}                        → inspect, then /super-bootstrap:merge autorun/{id-lower}
-WALL   {ID}  {the one line}
-BLOCKED {ID} {the one line}
+DONE     {ID}  {aim}                     → inspect, then /super-bootstrap:merge autorun/{id-lower}
+HARNESS  {ID}  {aim} · {n} harness edits → inspect, then /super-bootstrap:merge autorun/{id-lower}, then § Harness pending
+WALL     {ID}  {the one line}
+BLOCKED  {ID}  {the one line}
 ```
 
 Then one `AskUserQuestion` per WALL / BLOCKED row — three options, always:
@@ -71,7 +74,16 @@ Then one `AskUserQuestion` per WALL / BLOCKED row — three options, always:
 | **Park** *(default when the user has no time)* | Append `## Progress — {date} · autorun` to the card: the wall line + `branch: autorun/{id-lower}` + what landed. Tear the worktree down (§ Cleanup), keep the branch. A later session picks the card up cold from its thread. |
 | **Drop** | The card is not worth finishing: delete the card file, tear the worktree down, delete the branch — one commit naming why. |
 
-DONE rows wait for the user; the merge runs only through `/super-bootstrap:merge`.
+DONE and HARNESS rows wait for the user; the merge runs only through `/super-bootstrap:merge`.
+
+## Harness pending
+
+Runs on the base branch at the next invocation's Pre-flight (step 4), per card whose branch has merged:
+
+1. Read the card's latest `## Harness edits — {date}` block. Apply each edit verbatim with `Edit` — old string to new string, in the named file. An old string that occurs zero or several times leaves that edit pending.
+2. Run `audit-harness-edits` (or the repo's harness-edit audit) on the applied diff; disposition its findings.
+3. No edit pending → delete the card file and commit via `/super-bootstrap:commit`. An edit pending → append a new `## Harness edits — {date}` block listing only the pending edits, commit it with the applied part, and surface each pending edit: what (file + old string), expected (one occurrence), options (re-derive the edit from the card's Problem · apply it by hand · drop it).
+4. The user's pick takes the edit out of the pending set: the gateway appends a new `## Harness edits — {date}` block listing the edits still pending — a re-derived edit in its new form, a hand-applied or dropped edit left out. An empty list → no edit pending, step 3's delete.
 
 ## Sub-verbs
 
