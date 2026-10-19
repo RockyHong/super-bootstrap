@@ -113,13 +113,17 @@ Omit empty sections. Show to user for approval.
 **Step 5 — Commit and tag:**
 
 ```bash
-git add {{version_file_paths}}
-git diff --cached --name-only   # must list exactly the version files — any other path is another session's staging: stop and surface it, never commit through it
-git commit -m "chore: release v{version}"
+git diff HEAD --name-only -- {{version_file_paths}}
+```
+
+Run this readback as its own call and read its result before committing: it must list exactly the version files. A missing one means its bump did not land — stop, surface it, and resume at step 3 once the bump lands, or abort the release.
+
+```bash
+git commit -o -m "chore: release v{version}" -- {{version_file_paths}}
 git tag -a v{version} --cleanup=verbatim -m "<release notes>"
 ```
 
-Use annotated tag. Pass message via HEREDOC. A path outside the version files in the readback → stop and surface it with the pick: unstage-and-continue (`git restore --staged <foreign>`, on the user's say-so) or abort.
+Use annotated tag. Pass message via HEREDOC. Commit by pathspec and stage nothing into the shared index: `git commit -o` commits only the named version files and leaves every other index entry as it was.
 
 **Step 6 — Report + offer push:**
 
@@ -164,7 +168,7 @@ Push only on explicit yes. Skip by default if silent.
 
 - Push only on explicit confirmation — offer after commit/tag, run `git push ... --tags` on yes, never force, never unannounced.
 - Working tree must be clean before proceeding — step 1 enforces this.
-- The staged set is read back before `git commit` — the clean-tree gate holds at qualify time only; a path another session stages between qualify and commit stops the release for the user's pick (unstage / abort), never rides into it.
+- The clean-tree gate holds at qualify time only; a path another session stages after it stays out of the release commit, and the version files stay out of that session's commit (step 5 commits by pathspec).
 - Never delete or move existing tags.
 - All tags are annotated (`git tag -a`) and written with `--cleanup=verbatim` — the default strips every line starting with `#`, which would delete the release-notes headings.
 - Run `/release` with no arguments — the skill auto-detects state.

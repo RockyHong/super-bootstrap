@@ -128,7 +128,7 @@ Replace all `{{placeholders}}` with detected values:
   Edit `package.json`: change `"version": "1.2.3"` → `"version": "{new_version}"`
   Edit `src-tauri/tauri.conf.json`: change `"version": "1.2.3"` → `"version": "{new_version}"`
   ```
-- `{{version_file_paths}}` — space-separated paths for `git add`
+- `{{version_file_paths}}` — space-separated version file paths, the release commit's pathspec
 - `{{platform_build_number_instructions}}` — how to read each platform's build number. Format: one read instruction per platform file. Example:
   ```
   Read `ProjectSettings/ProjectSettings.asset` → `AndroidBundleVersionCode` for android; `buildNumber.iPhone` for ios.
@@ -140,8 +140,8 @@ The generated skill should be clean markdown with no template syntax remaining.
 ### 9. Commit
 
 ```bash
-git add .claude/skills/release/SKILL.md
-git commit -m "chore: add project release skill"
+git add -N .claude/skills/release/SKILL.md
+git commit -o -m "chore: add project release skill" -- .claude/skills/release/SKILL.md
 ```
 
 ### 10. Report

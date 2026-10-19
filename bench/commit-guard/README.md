@@ -1,7 +1,7 @@
 # bench/commit-guard — micro-test for the commit door's session isolation
 
 Test surface for [`skills/commit/SKILL.md`](../../plugins/super-bootstrap/skills/commit/SKILL.md) § 1, § 2
-and § 5 — the lanes that keep another writer's staged, stale or uncommitted state out of this
+and § 5, and for the release step 5 that `release-init` generates — the lanes that keep another writer's staged, stale or uncommitted state out of this
 session's commit, and this session's paths out of another writer's: file grain by pathspec
 (`git commit -o`), hunk grain through a private index from `HEAD`, the readback, the
 staged-tree verify and the stamp seam. Behavior-shaping prose, so it ships behind the
@@ -44,6 +44,12 @@ the same reason as the stub above.
 - `repro-concurrent.sh <dir>` / `repro-stale.sh <dir> [--on-list]` — deterministic shell
   reproductions, no model: the git mechanics behind arms (b) and (a) on the shared-index
   `git add` + plain `git commit` sequence § 5 used to run.
+- `repro-release.sh add|pathspec <dir>` — the same class on the release step 5 that
+  [`release-init`](../../plugins/super-bootstrap/skills/release-init/assets/template.md) generates:
+  version files bumped, `foreign.md` staged, step 5 run, then `other-writer.sh` commits. `add`
+  (shared-index `git add` + readback stop) fails, the writer's commit taking the version files;
+  `pathspec` (`git diff HEAD` readback + `git commit -o`) passes. Self-contained fixture and
+  assertions.
 - `check.sh readback|stamp|stale|stale-on-list|concurrent|mixed|mixed-stop <dir>` — the arms'
   assertions; one `FAIL:` line per broken assertion, else `PASS`.
 - `arm-prompt.sh readback|stamp|stale|stale-on-list|mixed` — prints an arm's prompt: the task
@@ -156,6 +162,15 @@ Run 2026-08-27, `claude -p --model haiku --allowedTools Bash`, one fixture per a
 | Arm (§ 5 text, session list `a.md, b.md`) | HEAD unchanged (`init`) | read the index back, surfaced `foreign.md` as outside the session list, offered unstage-and-continue / abort, ended its turn without committing |
 
 RED (control sweeps the foreign path) → GREEN (arm stops and surfaces). The § 5 wording shipped is the arm's.
+
+Release step 5, run 2026-10-20, `repro-release.sh` (deterministic, no model).
+
+| Mode | Other writer's commit | Result |
+|---|---|---|
+| `add` (shared-index `git add` + readback stop) | `foreign.md marketplace.json pkg/plugin.json` | FAIL — the release's version files landed in the writer's commit; no release commit tagged `v1.0.1` |
+| `pathspec` (`git diff HEAD` readback + `git commit -o`) | `foreign.md` | PASS |
+
+RED (`add`) → GREEN (`pathspec`). The release-init template's step 5 ships the `pathspec` form.
 
 Stamp-ordering arm, run 2026-08-27, same invocation, one fixture per run.
 
