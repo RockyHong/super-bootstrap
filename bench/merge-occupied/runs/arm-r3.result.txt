@@ -1,0 +1,24 @@
+## Step 7 report: merge of `feature/x` into `main`
+
+**Absorbed cleanly**
+- `feature/x` → `main`, strategy: **Merge --no-ff**. Reason: the branch is checked out in another worktree (`wt-x`), so it was not rewritten. Result: merge commit `dc4c8c4`, 1 file changed (`docs/x.md`, +1 line).
+
+**Conflicts**
+- None.
+
+**Skipped**
+- None.
+
+**Notes**
+- `feature/x` was not deleted. Deleting it is your call after testing.
+- The `wt-x` worktree was not touched.
+
+**Final `git log --oneline --graph -10`**
+```
+*   dc4c8c4 Merge branch 'feature/x'
+|\  
+| * 63dfab5 feat(x): add docs/x.md
+* | bf3eaa5 main: bump version
+|/  
+* b265346 init
+```

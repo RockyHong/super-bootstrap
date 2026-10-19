@@ -1,0 +1,17 @@
+## git log --oneline --graph --all
+* 998dbe5 feat(x): add docs/x.md
+* a76539e main: bump version
+* d7236d0 init
+## main parents
+998dbe56713b4c40db68d0be1cca96cc77805a01 a76539e06a00472e45ce832a5945f5987669c98e
+## feature/x in main?
+yes
+## worktree list
+C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/dcb57d72-88ea-4687-a147-eb12e0372c4b/scratchpad/fx-fcontrol-r1/repo 998dbe5 [main]
+C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/dcb57d72-88ea-4687-a147-eb12e0372c4b/scratchpad/fx-fcontrol-r1/wt-x 998dbe5 [feature/x]
+## wt-x feature/x reflog
+998dbe5 feature/x@{0}: rebase (finish): refs/heads/feature/x onto a76539e06a00472e45ce832a5945f5987669c98e
+f7e29a5 feature/x@{1}: commit: feat(x): add docs/x.md
+d7236d0 feature/x@{2}: branch: Created from HEAD
+## status
+## main

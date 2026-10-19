@@ -1,0 +1,25 @@
+## Step 7 report: `feature/x` into `main`
+
+**Absorbed cleanly**
+- `feature/x` (1 commit, `251cb53` → `f2442ce`: `feat(x): add docs/x.md`)
+  - Strategy: Rebase + fast-forward.
+  - Conflicts: none.
+
+**Conflicts**
+- None.
+
+**Skipped**
+- None.
+
+**Notes**
+- The first rebase attempt failed before it ran. Git refused because `feature/x` is checked out in another worktree (`wt-x`). This was not a merge conflict, so the Conflict Doctrine did not apply.
+- I ran the rebase inside `wt-x`, where the tree was clean. It rebased `feature/x` onto `main` with no conflicts. That is why the commit hash changed from `251cb53` to `f2442ce`.
+- `feature/x` has no upstream remote, so no shared history was rewritten.
+- `feature/x` was not deleted, as the procedure requires. Its worktree `wt-x` still exists. Delete the branch and worktree after you test.
+
+**Final log**
+```
+* f2442ce (HEAD -> main, feature/x) feat(x): add docs/x.md
+* d757533 main: bump version
+* 72c35a6 init
+```

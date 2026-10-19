@@ -1,0 +1,24 @@
+## Step 7 report: merge `feature/x` into `main`
+
+**Absorbed cleanly**
+- `feature/x`: **Rebase + fast-forward** (your pre-confirmed strategy). 1 commit, no conflicts.
+  - Rebased onto `main` in the worktree `wt-x`, because `feature/x` is checked out there and git would not check it out here.
+  - `main` fast-forwarded `a76539e` → `998dbe5`.
+  - Branch `feature/x` is kept, not deleted.
+
+**Branches that hit conflicts**
+- None.
+
+**Branches skipped**
+- None.
+
+**Notes**
+- The rebase was run inside `wt-x`, not from `repo`. The worktree was clean before the run.
+- `feature/x` now points at the same commit as `main`. Delete it after you test.
+
+**Final `git log --oneline --graph -10`**
+```
+* 998dbe5 feat(x): add docs/x.md
+* a76539e main: bump version
+* d7236d0 init
+```

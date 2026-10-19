@@ -1,0 +1,26 @@
+**Merge run complete: `feature/x` absorbed into `main`.**
+
+**Strategy:** Merge --no-ff (pre-confirmed). The branch is checked out in worktree `wt-x`, so history was not rewritten.
+
+**Branches absorbed cleanly**
+- `feature/x` → `main` via `git merge feature/x --no-ff`. 1 commit, `docs/x.md` (+1 line). Merge commit `682166c`.
+
+**Branches that hit conflicts**
+- None.
+
+**Branches skipped**
+- None.
+
+**Notes**
+- `feature/x` was not deleted. Delete it after testing.
+- `wt-x` still holds `feature/x`. The branch is now merged, so that worktree is stale until you remove it.
+
+**Final `git log --oneline --graph -10`**
+```
+*   682166c Merge branch 'feature/x' into main
+|\  
+| * 4463109 feat(x): add docs/x.md
+* | fd13108 main: bump version
+|/  
+* 753f11f init
+```

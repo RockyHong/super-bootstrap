@@ -1,0 +1,22 @@
+## Step 7 report: merge run into `main`
+
+**Absorbed cleanly:** none.
+
+**Conflicts:** none. No unmerged paths.
+
+**Skipped:**
+- `feature/x` (1 commit ahead, 1 behind `main`), strategy: Rebase + fast-forward (pre-confirmed).
+  - Git refused the rebase, so nothing changed:
+    `fatal: 'feature/x' is already used by worktree at 'C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/dcb57d72-88ea-4687-a147-eb12e0372c4b/scratchpad/fx-farm-r1/wt-x'`
+  - Cause: the protocol's occupied-branch rule. `feature/x` is checked out in `wt-x`. The protocol says an occupied branch takes Merge --no-ff, and that a rebase must not rewrite another worktree's branch.
+  - I did not switch to Merge --no-ff. That changes the strategy you pre-confirmed.
+
+**Working tree:** clean on `main`. `feature/x` still at `f7e29a5`. No branch was deleted.
+
+**Final `git log --oneline --graph -10`:**
+```
+* a76539e main: bump version
+* d7236d0 init
+```
+
+**Next step (needs your confirmation):** Merge --no-ff `feature/x` into `main`. This leaves `wt-x` and its branch untouched and adds one merge commit. Alternatively, remove or move `wt-x` first, then rerun the rebase. Tell me which one to run.

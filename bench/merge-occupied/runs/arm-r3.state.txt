@@ -1,0 +1,19 @@
+## git log --oneline --graph --all
+*   dc4c8c4 Merge branch 'feature/x'
+|\  
+| * 63dfab5 feat(x): add docs/x.md
+* | bf3eaa5 main: bump version
+|/  
+* b265346 init
+## main parents
+dc4c8c436dd0169377838fd7225808bc9b053be6 bf3eaa54582f28c3cb7cf4deab3d6baa1aee9591 63dfab548bbef787a6264d48bb003880e9e6ef2f
+## feature/x in main?
+yes
+## worktree list
+C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/dcb57d72-88ea-4687-a147-eb12e0372c4b/scratchpad/fx-arm-r3/repo dc4c8c4 [main]
+C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/dcb57d72-88ea-4687-a147-eb12e0372c4b/scratchpad/fx-arm-r3/wt-x 63dfab5 [feature/x]
+## wt-x feature/x reflog
+63dfab5 feature/x@{0}: commit: feat(x): add docs/x.md
+b265346 feature/x@{1}: branch: Created from HEAD
+## status
+## main

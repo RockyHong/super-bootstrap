@@ -1,0 +1,22 @@
+## Step 7 report
+
+**Branches absorbed cleanly**
+- `feature/x`: **Merge --no-ff**. Merge commit `50c7070`. It has 1 commit ahead and 1 behind. The branch is occupied by worktree `wt-x`, so the merge ran from `main` and left the branch alone. Branch not deleted.
+
+**Branches with conflicts**
+- None.
+
+**Branches skipped**
+- None.
+
+**Final `git log --oneline --graph -10`**
+```
+*   50c7070 Merge branch 'feature/x'
+|\  
+| * 703a90d feat(x): add docs/x.md
+* | 7371686 main: bump version
+|/  
+* 0745501 init
+```
+
+`main` now contains `docs/x.md`. The `feature/x` branch remains for your testing. Delete it when you are done.

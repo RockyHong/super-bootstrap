@@ -1,0 +1,16 @@
+## git log --oneline --graph --all
+*   50c7070 Merge branch 'feature/x'
+|\  
+| * 703a90d feat(x): add docs/x.md
+* | 7371686 main: bump version
+|/  
+* 0745501 init
+## main parents
+50c707092d166ab937f63de53b88a8be548b723c 737168608045317cce7b033efa3104e5263cc93f 703a90dabdea1aed6229b9677f15782080789714
+## feature/x in main?
+yes
+## worktree list
+C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/dcb57d72-88ea-4687-a147-eb12e0372c4b/scratchpad/fx-arm-r1/repo 50c7070 [main]
+C:/Users/User/AppData/Local/Temp/claude/D--Git-super-bootstrap/dcb57d72-88ea-4687-a147-eb12e0372c4b/scratchpad/fx-arm-r1/wt-x 703a90d [feature/x]
+## status
+## main
