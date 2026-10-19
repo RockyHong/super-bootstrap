@@ -17,7 +17,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 - `triage-report` — drains `.review/` scan reports with per-finding dispositions; dispatches `agents/triage-report.md` (Sonnet).
 - `help` — on-demand index of installed user-invoke skills; inline + bundled extraction script.
 - `commit` — session-isolated (never the shared index — `git commit -o` by pathspec, a private index for a file mixed with another writer's hunks; what commits is read back against the session list), doc-sync-gated commit; on a [mechanical gate hit](skills/commit/SKILL.md) the gateway judges the scope warm-inline, dispatching `agents/doc-sync-scan.md` (Sonnet) only past the scope ceiling; product-anchor diffs dispatch `agents/premise-closure.md` (Sonnet).
-- `merge` — absorb feature branches; aborts + surfaces on conflict.
+- `merge` — absorb feature branches; several branches land through one integration branch with one verify; aborts + surfaces on conflict.
 - `check-docs-consistency` — cross-references project docs for drift, stale references, contradictions; timestamped report to `.review/`, report-only.
 - `autorun` — runs the cards that need no user: admits by the shared user-wall judgment, spawns one isolated `claude -p` per card (inherits the default model), each runs the whole card to done and commits on its branch; harness edits incidental to a card's deliverable ride the card as a verbatim `## Harness edits` block the gateway applies on base after the merge (`DONE — harness pending`); walls return as one sheet with resolve / park / drop. Manual only; merge is never automatic — it delegates to `/super-bootstrap:merge`.
 - `release-init` — one-shot; generates a project-level `/release` skill.

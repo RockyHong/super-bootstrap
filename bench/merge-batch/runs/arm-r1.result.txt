@@ -1,0 +1,37 @@
+## Merge report: f1, f2, f3 into `main`
+
+**Strategy:** batch landing (§ 5b). Three branches, one integration branch off `main`, one verify, one fast-forward. Every branch took `--no-ff`, so each has a bisect point.
+
+**Branches absorbed:** f1, f2, f3, all cleanly merged into the integration branch.
+
+**Conflicts:** `docs/roster.md` conflicted on f2 and f3. It is derived output (`docs/techstack.md`), so I settled both by regeneration: `git checkout --theirs`, then `sh tools/roster.sh`, then `git add`. No other path conflicted, so no branch was surfaced or aborted.
+
+**Verify:** `sh tools/roster.sh` then `sh tools/verify.sh` on the integrated tree: `verify OK`. Green, so no bisect was needed.
+
+**Fast-forward:** `main` moved `cceaf6d` → `8803090` (`--ff-only`, clean). The integration branch `integrate/main-20261020-060915` was deleted with `git branch -d`.
+
+**Skipped:** none.
+
+**Push:** no remote is configured (`git remote` is empty), so there is no push surface. Nothing was pushed.
+
+**Branches kept:** `f1`, `f2`, `f3` still exist. Delete them when you have tested. The skill leaves that call to you.
+
+**Final history (`git log --oneline --graph -10`):**
+```
+*   8803090 merge: f3
+|\
+| * 89fba5e feat(f3): add f3
+* |   22ba4a8 merge: f2
+|\ \
+| * | 5df4168 feat(f2): add f2
+| |/
+* |   ff61157 merge: f1
+|\ \
+| |/
+|/|
+| * 990e05d feat(f1): add f1
+|/
+* cceaf6d init
+```
+
+**Working tree:** clean on `main`. `docs/roster.md` now reads `count: 4` with `core`, `f1`, `f2`, `f3`.

@@ -1,0 +1,34 @@
+## Merge report: f1, f2, f3 into `main`
+
+**Strategy:** Batch landing (§ 5b). The skill requires Merge --no-ff for every branch in a batch, and I executed that. The three branches were landed in order through one integration branch, `integrate/main-20261020-062147`.
+
+**Branches absorbed:**
+- **f1:** merged cleanly (`merge: f1`).
+- **f2:** conflicted on `docs/roster.md`, which is declared derived output (`docs/techstack.md`). Settled by regeneration: `git checkout --theirs`, `sh tools/roster.sh`, `git add`, then `merge --continue`. Merge commit `merge: f2`.
+- **f3:** same conflict, same regeneration settle. Merge commit `merge: f3`.
+
+**Verify:** Ran once on the integrated tree, after a regenerate pass. `sh tools/verify.sh` exited 0 (green). The install step was skipped because no manifest or lockfile changed. The first-red scan did not run.
+
+**Base:** `main` fast-forwarded once, from `c1914a2` to `e47d551`. The integration branch was deleted after the fast-forward. The `f1`, `f2`, and `f3` branches are kept, as the skill requires. No push: the repo has no remote.
+
+**Skipped / conflicts:** None left unresolved. No conflict needed the Conflict Doctrine, because the only conflicting path was derived output.
+
+**Final log:**
+```
+*   e47d551 (HEAD -> main) merge: f3
+|\
+| * 843a502 (f3) feat(f3): add f3
+* |   5a7aa9a merge: f2
+|\ \
+| * | b36381d (f2) feat(f2): add f2
+| |/
+* |   6c7af90 merge: f1
+|\ \
+| |/
+|/|
+| * 107064a (f1) feat(f1): add f1
+|/
+* c1914a2 init
+```
+
+Working tree is clean on `main`.

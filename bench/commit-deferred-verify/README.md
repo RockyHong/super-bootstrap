@@ -2,7 +2,7 @@
 
 Test surface for [`skills/commit/SKILL.md`](../../plugins/super-bootstrap/skills/commit/SKILL.md)'s deferred-mode
 skip of the staged-tree verify: an autorun worker committing in deferred mode skips the declared verify, and the
-gateway runs that declared Staged-Tree Verify at the merge gate, on the base tree ([`skills/autorun/SKILL.md` § Rules](../../plugins/super-bootstrap/skills/autorun/SKILL.md#rules)).
+gateway runs that declared Staged-Tree Verify once on the integrated tree, before base moves ([`skills/merge/SKILL.md` § 5b](../../plugins/super-bootstrap/skills/merge/SKILL.md#5b-batch-landing-two-or-more-branches-or---batch)).
 Behavior-shaping prose, so it ships behind the [`skill-authoring`](../../.claude/rules/skill-authoring.md) RED floor.
 
 - [`run.sh`](run.sh) `<dir> <tag> [model]` — one cold headless run: credentials-only `CLAUDE_CONFIG_DIR`, cwd

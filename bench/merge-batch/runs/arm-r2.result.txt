@@ -1,0 +1,41 @@
+## Merge report: f1, f2, f3 → main
+
+**Strategy:** batch landing (§ 5b). Each branch merged with `--no-ff` into one integration branch off `main`. One verify ran on the integrated tree. `main` then fast-forwarded once.
+
+**Branches absorbed:**
+- **f1**: clean merge.
+- **f2**: conflict in `docs/roster.md`, which is derived output. Settled by regeneration: `git checkout --theirs`, then `sh tools/roster.sh`, then `git add`. Concluded with `git merge --continue`.
+- **f3**: same conflict, same settlement.
+
+**Regenerated output:** `docs/roster.md`, by `sh tools/roster.sh`. It now reads `count: 4` and lists core, f1, f2, f3.
+
+**Verify:** `sh tools/verify.sh` is green (`verify OK`). No install step ran, because no manifest or lockfile changed.
+
+**Fast-forward:** `main` moved `cceaf6d` → `eb24f02` with `--ff-only`. The integration branch `integrate/main-20261020-060914` was deleted.
+
+**Skipped / surfaced:** none.
+
+**Push:** no remote is configured, so no push step applies.
+
+**Notes:**
+- The three merge commits say "into integrate/main-20261020-060914", not "into main". The integration branch name is baked into the commit subjects. Say if you want the history rewritten. I did not rewrite it.
+- The f1, f2 and f3 branches are kept, as the skill requires. Delete them when you are satisfied.
+- I made one mistake mid-run. I passed `--no-edit` to `git merge --continue`, which rejected it. A `|| true` hid the error. I retried with the bare form, which succeeded. The f2 merge commit is intact.
+
+**Final `git log --oneline --graph -10`:**
+```
+*   eb24f02 (HEAD -> main) Merge branch 'f3' into integrate/main-20261020-060914
+|\
+| * 89fba5e (f3) feat(f3): add f3
+* |   c8bb595 Merge branch 'f2' into integrate/main-20261020-060914
+|\ \
+| * | 5df4168 (f2) feat(f2): add f2
+| |/
+* |   b8e5764 Merge branch 'f1' into integrate/main-20261020-060914
+|\ \
+| |/
+|/|
+| * 990e05d (f1) feat(f1): add f1
+|/
+* cceaf6d init
+```

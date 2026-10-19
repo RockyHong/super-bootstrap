@@ -29,7 +29,7 @@ Versioned via the `/release` skill. `plugin.json` is the single version source �
 
 ## Staged-Tree Verify
 
-> Optional — one command `/super-bootstrap:commit` runs against a materialized copy of the tree about to commit, whenever that tree differs from the working tree (a hunk-grain commit, or a commit beside other uncommitted changes), so a commit that passes only on the working tree is caught before it lands. A deferred-mode commit skips it; [autorun's merge-gate verify](../plugins/super-bootstrap/skills/autorun/SKILL.md#rules) runs it on the base tree. Declare it as a single fenced `sh` block in this section — typically the build or compile check; it runs with the copy as cwd, and a non-zero exit stops the commit. No block → the step is skipped.
+> Optional — one command `/super-bootstrap:commit` runs against a materialized copy of the tree about to commit, whenever that tree differs from the working tree (a hunk-grain commit, or a commit beside other uncommitted changes), so a commit that passes only on the working tree is caught before it lands. A deferred-mode commit skips it; [`/super-bootstrap:merge`'s batch landing](../plugins/super-bootstrap/skills/merge/SKILL.md#5b-batch-landing-two-or-more-branches-or---batch) runs it once on the integrated tree, before base moves. Declare it as a single fenced `sh` block in this section — typically the build or compile check; it runs with the copy as cwd, and a non-zero exit stops the commit. No block → the step is skipped.
 
 None declared — no build or compile step to run.
 

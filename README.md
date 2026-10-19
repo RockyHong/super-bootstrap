@@ -89,7 +89,7 @@ The runway's doors are bundled skills — all namespaced `super-bootstrap:`, ent
 | `/super-bootstrap:session-continue` | Session opener for resuming — reads the `SESSION-STATE/` ledger, claims the carry you pick, reads its card's latest block of each type, confirms the next step. No carry → hands off to `needs-me`. |
 | `/super-bootstrap:help` | Index of installed user-invoke skills, grouped by category. |
 | `/super-bootstrap:autorun` | Runs the cards that need no one — one isolated git worktree + headless `claude -p` per card, each running the whole card to done; incidental harness edits come back on the card for the gateway to apply after the merge; walls come back as one sheet with resolve / park / drop. User-only by design. |
-| `/super-bootstrap:merge` | When feature branches are ready — absorbs them; aborts + surfaces the file list on conflict. |
+| `/super-bootstrap:merge` | When feature branches are ready — absorbs them; several branches land through one integration branch with one verify; aborts + surfaces the file list on conflict. |
 
 **Claude runs** — reached by the pipeline, not typed (typing them works; you rarely need to)
 

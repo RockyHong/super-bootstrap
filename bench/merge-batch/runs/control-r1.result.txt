@@ -1,0 +1,30 @@
+**Merge run: partial. `f1` landed. `f2` and `f3` conflicted and were aborted.**
+
+**Strategy:** Each branch is one commit with a single logical change, so I used Rebase + fast-forward per branch.
+
+**Absorbed cleanly**
+- `f1`: rebase + fast-forward. `main` is now `990e05d feat(f1): add f1`.
+
+**Hit conflicts**
+- `f2`: rebase + fast-forward. Conflict in `docs/roster.md` after `f1` landed. Aborted. Branch unchanged at `5df4168`.
+- `f3`: rebase + fast-forward. Conflict in `docs/roster.md` after `f1` landed. Aborted. Branch unchanged at `89fba5e`.
+
+Cause: every branch edits the same lines of `docs/roster.md` (`count: 1` → `count: 2`, and an appended `- fN` entry). Each branch alone applies cleanly to `main`, but any second branch collides with the first.
+
+**Skipped:** none.
+
+**Push:** no remote configured, so nothing to push.
+
+**Working tree:** clean, on `main`.
+
+**Next step (your call, no resolver agent named in this repo):** Resolve `f2` and `f3` by hand, or re-dispatch them. `docs/roster.md` is generated. The repo's CLAUDE.md says never hand-edit it. The clean resolution is to finish the rebase onto `main`, then regenerate with `sh tools/roster.sh`, check with `sh tools/verify.sh`, and merge `--ff-only`. Run it in order, `f2` then `f3`.
+
+**Final graph**
+```
+* 990e05d (HEAD -> main, f1) feat(f1): add f1
+| * 5df4168 (f2) feat(f2): add f2
+|/
+| * 89fba5e (f3) feat(f3): add f3
+|/
+* cceaf6d init
+```

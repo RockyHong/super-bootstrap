@@ -1,0 +1,27 @@
+## Merge report: base `main`
+
+**Absorbed cleanly**
+- `f1`: rebase + fast-forward. `main` now at `990e05d`. Changed `features/f1.txt` (new) and `docs/roster.md`.
+
+**Conflicts (aborted, not resolved)**
+- `f2`: rebase + fast-forward. Conflict in `docs/roster.md`. Rebase aborted; `f2` restored at `5df4168`.
+- `f3`: rebase + fast-forward. Conflict in `docs/roster.md`. Rebase aborted; `f3` restored at `89fba5e`.
+
+Both branches add a line to `docs/roster.md`, which `CLAUDE.md` marks as generated. The cause is that each branch hand-edits the same generated file.
+
+**Skipped:** none.
+
+**Push:** no remote configured. No push step.
+
+**Final graph**
+```
+* 990e05d (HEAD -> main, f1) feat(f1): add f1
+* cceaf6d init
+  f2 5df4168  (conflicts with main)
+  f3 89fba5e  (conflicts with main)
+```
+Working tree is clean on `main`.
+
+**Next step (your call):** the skill does not resolve conflicts. Options:
+1. Re-run `f2` and `f3` on top of the new `main`, then regenerate `docs/roster.md` with `sh tools/roster.sh` instead of hand-merging it. Then check with `sh tools/verify.sh`. This is a resolution, so it runs outside this skill.
+2. Drop the `docs/roster.md` edit from `f2` and `f3`, then merge them.

@@ -1,0 +1,40 @@
+**Batch landing: f1, f2, f3 are in `main`.** `main` fast-forwarded from `a6c8e45` to `456ef2d`.
+
+**Strategy:** batch landing through integration branch `integrate/main-20261020-061539`. Each branch merged with `--no-ff`, which is required for a batch.
+
+**Per branch:**
+- **f1:** merged cleanly.
+- **f2:** conflict on `docs/roster.md` only. That file is derived output from `sh tools/roster.sh`, so I regenerated it, staged it, and concluded the merge. Settled by regeneration.
+- **f3:** same conflict on `docs/roster.md`. Settled by regeneration the same way.
+
+**Verify:** `sh tools/roster.sh` (provisioning), then `sh tools/verify.sh` on the integrated tree. Result: `verify OK`, exit 0. No tracked files changed, so no provisioning commit was needed.
+
+**Fast-forward:** `main` moved once with `--ff-only`. The integration branch was deleted with `git branch -d`.
+
+**Conflicts surfaced:** none outside derived output.
+
+**Skipped:** none.
+
+**Push:** no remote is configured, so there was no push step.
+
+**Branches kept:** `f1`, `f2`, `f3` still exist. Deleting them is your call.
+
+**Final graph:**
+```
+*   456ef2d (HEAD -> main) merge: f3
+|\
+| * 4f24ae7 (f3) feat(f3): add f3
+* |   bcbed8a merge: f2
+|\ \
+| * | 16d0733 (f2) feat(f2): add f2
+| |/
+* |   26a7c88 merge: f1
+|\ \
+| |/
+|/|
+| * 06cfbd6 (f1) feat(f1): add f1
+|/
+* a6c8e45 init
+```
+
+**Note:** `tools/roster.sh` and `tools/verify.sh` each append a line to `.bench-log`. That file is gitignored, so it does not affect the merge.
