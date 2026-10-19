@@ -96,7 +96,7 @@ The runway's doors are bundled skills — all namespaced `super-bootstrap:`, ent
 | Door | When |
 |---|---|
 | `/super-bootstrap:triage {ID}` | Every card pickup — a cold, read-only subagent verifies the card's premise and appends a Verdict block; no code changes. |
-| `/super-bootstrap:commit` | End of every cycle — session-isolated (never `-A`; staged set read back against the session list before `git commit`), link-integrity and model-pin checks every commit, doc-sync judged warm gateway-inline on a [mechanical gate hit](plugins/super-bootstrap/skills/commit/SKILL.md) (cold scan dispatch only past the scope ceiling). The `commit-channel` hook routes a worker subagent's raw `git commit` back here. |
+| `/super-bootstrap:commit` | End of every cycle — session-isolated (never `-A`, never the shared index — `git commit -o` by pathspec, a private index for a file mixed with another writer's hunks; what commits is read back against the session list, and an optional consumer-declared verify runs on the tree that commits), link-integrity and model-pin checks every commit, doc-sync judged warm gateway-inline on a [mechanical gate hit](plugins/super-bootstrap/skills/commit/SKILL.md) (cold scan dispatch only past the scope ceiling). The `commit-channel` hook routes a worker subagent's raw `git commit` back here. |
 | `/super-bootstrap:triage-report` | When a scan report lands in `.review/` — per-finding promote / patch / dup / investigate / dismiss. |
 
 Per-skill contract = that skill's `SKILL.md` frontmatter; one-line index in the [plugin README](plugins/super-bootstrap/README.md#skill-catalog); pipeline shape in [`docs/overview.md` § Data Flow](docs/overview.md#data-flow).

@@ -1,6 +1,6 @@
 # Tech Stack
 
-> Living doc — **state dimension only** (what the stack *is* now). Skeleton sections (Runtime / Framework / Key Dependencies / Build & Distribution — **seed-once**: seeded at scaffold from detected facts, hand-edited from then on; a `harness-bootstrap` re-run checks their shape only and never rewrites the facts. Edit Discipline, fixed prose). Grown sections (Architecture Rules / Coding Patterns) start empty and grow via doc-sync — every commit that touches a relevant area triggers a sync proposal, admitted per § Doc Sync. Rejected stack directions are history, not state → [`docs/decisions.md`](decisions.md), never a section here. See [`CLAUDE.md` Doc Sync](../CLAUDE.md#doc-sync-non-negotiable).
+> Living doc — **state dimension only** (what the stack *is* now). Skeleton sections (Runtime / Framework / Key Dependencies / Build & Distribution — **seed-once**: seeded at scaffold from detected facts, hand-edited from then on; a `harness-bootstrap` re-run checks their shape only and never rewrites the facts. Edit Discipline, fixed prose. Staged-Tree Verify, heading + note fixed, its command consumer-declared). Grown sections (Architecture Rules / Coding Patterns) start empty and grow via doc-sync — every commit that touches a relevant area triggers a sync proposal, admitted per § Doc Sync. Rejected stack directions are history, not state → [`docs/decisions.md`](decisions.md), never a section here. See [`CLAUDE.md` Doc Sync](../CLAUDE.md#doc-sync-non-negotiable).
 
 ## Runtime
 
@@ -25,6 +25,10 @@
 {| Package | Path | Role | Build command |}
 {|---|---|---|---|}
 {| {name} | {apps/web} | {what it is — app / shared lib / ui kit} | {per-package build, e.g. `pnpm --filter web build`} |}
+
+## Staged-Tree Verify
+
+> Optional — one command `/super-bootstrap:commit` runs against a materialized copy of the tree about to commit, whenever that tree differs from the working tree (a hunk-grain commit, or a commit beside other uncommitted changes), so a commit that passes only on the working tree is caught before it lands. Declare it as a single fenced `sh` block in this section — typically the build or compile check; it runs with the copy as cwd, and a non-zero exit stops the commit. No block → the step is skipped.
 
 ## Architecture Rules
 

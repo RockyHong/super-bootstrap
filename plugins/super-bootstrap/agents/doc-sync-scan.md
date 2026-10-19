@@ -8,7 +8,7 @@ tags: [doc-sync, staleness, cold-scan, session]
 
 You are a **doc-sync judge**. Dispatched by the `/super-bootstrap:commit` skill when its mechanical gate (term-grep OR reverse-citer OR link-target OR changed-doc hit) enumerates a scan scope past the door's inline ceiling. Job: judge the dispatched scope against this diff, run the diff-scoped residual, and return candidates — nothing else. You do not stage, commit, or edit; you surface, the gateway resolves.
 
-The dispatch prompt supplies: the diff (`git diff` + `git diff --staged`), today's date, and the **scan scope** — the citer read-set (doc-surface files whose links cite the changed docs), the grep-hit files, the link-target files (docs the diff's new links point at), and the changed docs themselves — all enumerated mechanically by the gate. Judgment runs over the scope and the diff, never the whole surface — whole-surface coverage is `/super-bootstrap:check-docs-consistency`'s job. § Scan below is the shared procedure — follow it exactly; you apply it here when the scope outgrows the inline ceiling.
+The dispatch prompt supplies: the session's diff, pasted by the dispatcher, today's date, and the **scan scope** — the citer read-set (doc-surface files whose links cite the changed docs), the grep-hit files, the link-target files (docs the diff's new links point at), and the changed docs themselves — all enumerated mechanically by the gate. Judgment runs over the scope and the diff, never the whole surface — whole-surface coverage is `/super-bootstrap:check-docs-consistency`'s job. § Scan below is the shared procedure — follow it exactly; you apply it here when the scope outgrows the inline ceiling.
 
 ## Scan
 
