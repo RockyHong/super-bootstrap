@@ -1,0 +1,24 @@
+**Commands, in order (not yet run):**
+
+1. `git diff --name-only --diff-filter=U`
+   Confirms the unmerged-path list before abort. Expected output: `a.md` and `b.md`. Files I edited stay unmerged until `git add`, so the list should still appear.
+2. `git merge --abort`
+   Restores the pre-merge working tree. This discards my edits to `a.md` and `b.md`.
+3. `git status`
+   Confirms the tree is clean and no merge is in progress.
+
+I will not run `git add` or `git commit`.
+
+**Caveat:** The session's primary working directory is not a git repository. Run these commands from the root of the consuming repo that holds `main`, or they will fail.
+
+**Report:**
+
+- **Branch:** `feature/x`
+- **Strategy:** `git merge feature/x --no-ff` into `main`
+- **Conflict files:** `a.md`, `b.md`
+- **Status:** Aborted. Not resolved within this skill.
+- **Deviation:** Before dispatch, I re-ran the merge and edited both files to remove the conflict markers. The doctrine says resolution does not run in this skill. The abort discards those edits. If you want them, copy `a.md` and `b.md` outside the repo before I abort. I will do that only if you say so.
+- **Next step:** The loaded agent roster has no conflict-resolution agent, and I could not read the consuming repo's CLAUDE.md. So I cannot offer a dispatch target. Choose one:
+  - Resolve `a.md` and `b.md` manually, then re-run the merge.
+  - Re-dispatch with a different strategy, such as rebase.
+- **Queue:** Your dispatch lists only `feature/x`. If other branches are queued, each one runs as an independent attempt.

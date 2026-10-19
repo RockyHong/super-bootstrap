@@ -1,0 +1,23 @@
+**Next git commands**
+
+```
+git add a.md b.md
+```
+
+No other git command runs. I do not run `git commit`, `git merge --continue`, or `git merge --abort`. The gateway concludes the merge through `/super-bootstrap:commit`.
+
+Caveat: the environment reports that the working directory is not a git repository. If `git add` fails with "not a git repository", I stop and report that failure instead of the report below. I have not verified the merge state.
+
+**Report to gateway**
+
+```
+Branch: feature/x
+Strategy: git merge feature/x --no-ff into main
+Status: merge in progress, staged, not concluded
+
+Files resolved (staged with git add):
+- a.md: conflict markers removed; combined content from both sides.
+- b.md: conflict markers removed; combined content from both sides.
+
+Next step for gateway: conclude the merge via /super-bootstrap:commit.
+```

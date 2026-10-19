@@ -259,7 +259,7 @@ opt-in confirm (rationale + full procedure:
 
 | # | Asset | Fires on | Effect |
 | - | - | - | - |
-| 1 | `commit-channel` (PreToolUse) | `Bash(git *)` and `PowerShell(git *)` — one hook element per command tool, each a bare-command pre-filter; the script narrows to real `git commit` | Deny raw `git commit` from worker subagents — deny text routes the worker back to `/super-bootstrap:commit`; main session and separate-process workers pass |
+| 1 | `commit-channel` (PreToolUse) | `Bash(git *)` and `PowerShell(git *)` — one hook element per command tool, each a bare-command pre-filter; the script narrows to real `git commit`, `git merge --continue` and `git rebase --continue` | Deny those three verbs from worker subagents — deny text routes the worker back to `/super-bootstrap:commit`; main session and separate-process workers pass |
 | 2 | `consult-check-sessionstart` (SessionStart) | `startup\|resume\|clear\|compact` | Derives the compact `docs/**` catalog into the gitignored `.claude/.consult-catalog` cache, once per session boundary |
 | 3 | `consult-check-check` (UserPromptSubmit) | every prompt | Injects the catalog + a forced relevance evaluation (judge which docs bear on the prompt, Read each that does; no stated verdict) — the read boundary's activation layer: the right project docs get read at the prompt moment (pure cache read; installs as a pair with #2) |
 

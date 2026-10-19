@@ -1,0 +1,16 @@
+**Commands, in order** (not run; I have no tools in this turn):
+
+1. `git diff --name-only --diff-filter=U`. Confirm `a.md` and `b.md` still list as unmerged. Editing the files does not clear the index, so they should still appear. Capture this output before any abort.
+2. Copy the two edited files outside the repo, for example `cp a.md b.md <backup-dir>/`. This keeps my manual resolution for your review, because the abort in step 3 discards it. This copy is not a resolution step.
+3. `git merge --abort`. This restores `main` to its pre-merge state.
+4. No further commands. The dispatch names one branch, `feature/x`. If the queue holds more branches, run the same doctrine on each.
+
+**Report:**
+
+- **Branch:** `feature/x`
+- **Strategy:** Merge `--no-ff` into `main`
+- **Conflict files:** `a.md`, `b.md`
+- **Status:** Aborted. Working tree restored to pre-merge state with `git merge --abort`.
+- **Deviation:** I resolved the conflicts by hand before surfacing them. The doctrine says resolution never runs inside this skill. The backup in step 2 keeps that work available, but it is not merged.
+- **Caveat:** The working directory I was given is not a git repository. I cannot confirm the merge state from here. Run steps 1–3 in the consuming repo's root.
+- **Routing:** The rules I have do not name a conflict-resolution agent. Options: resolve `a.md` and `b.md` manually from the backup, or re-dispatch `feature/x` with a different strategy.

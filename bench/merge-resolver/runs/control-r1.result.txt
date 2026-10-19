@@ -1,0 +1,30 @@
+**Commands, in order** (not yet run; no tools in this turn):
+
+1. Back up the hand-resolved files outside the repo, so the abort does not destroy that work:
+   `cp a.md b.md "<scratch>/conflict-backup/"`
+   This is a file copy, not resolution. Skip it if you do not want the backup.
+2. Re-capture the unmerged list before aborting:
+   `git diff --name-only --diff-filter=U`
+   Expected output: `a.md` and `b.md`. Editing a file does not clear its unmerged index entry, so the list should still show both.
+3. Abort the merge:
+   `git merge --abort`
+   This resets the working tree to pre-merge state and discards the edits to `a.md` and `b.md`.
+4. Confirm the abort:
+   `git status`
+   Expected: no merge in progress, and `a.md` and `b.md` back to their pre-merge content.
+
+**Report** (fill the bracketed fields from the command output):
+
+```
+Branch: feature/x
+Strategy: git merge --no-ff into main
+Conflict files (captured before abort): [output of step 2]
+Result: merge aborted (git merge --abort). Working tree restored.
+Discarded: hand edits to a.md and b.md made before this dispatch; backup at [path from step 1, or "none"].
+Other branches in queue: none named in this dispatch. Continue any remaining branches as independent attempts.
+Next step: resolution is not run in this skill. If the consuming repo's CLAUDE.md or agent roster names a conflict-resolution or implementer agent, dispatch it with scope: feature/x, merge --no-ff into main, files a.md and b.md. Otherwise the user resolves manually or re-dispatches with a different strategy.
+```
+
+**Caveats:**
+- The environment reports this directory is not a git repository. If step 2 or 3 fails with "not a git repository", stop and report that. The merge state would then be unverified, and the abort did not run.
+- I have not checked the consuming repo's CLAUDE.md or agent roster, so I cannot confirm that a conflict-resolution agent exists. The routing above is conditional on that check.

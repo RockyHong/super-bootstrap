@@ -1,0 +1,29 @@
+**Commands, in order:**
+
+1. Check for leftover markers. Expect no output:
+   ```
+   grep -nE "^(<<<<<<<|=======|>>>>>>>)" a.md b.md
+   ```
+2. Confirm the unmerged list still names both files, so the staged set matches the conflict scope. Expect `a.md` and `b.md`:
+   ```
+   git diff --name-only --diff-filter=U
+   ```
+3. Stage the resolved files:
+   ```
+   git add a.md
+   git add b.md
+   ```
+
+The last git command is `git add`. I run no `git commit`, `git merge --continue`, or `git merge --abort`. The gateway concludes the merge through `/super-bootstrap:commit`.
+
+**Report to the gateway:**
+
+- **Branch:** `feature/x`
+- **Strategy:** Merge `--no-ff` into `main`
+- **Files resolved:** `a.md`, `b.md`. Both are staged.
+- **How each conflict was settled:**
+  - `a.md`: `<describe the combined content kept from each side>`
+  - `b.md`: `<describe the combined content kept from each side>`
+- **Merge state:** in progress, not concluded. Commit is pending.
+
+**Blocker to check first:** The environment reports that the primary working directory is not a git repository. The dispatch says the merge already ran there. These two facts conflict, so step 1 and step 2 must pass before any `git add`. If `git diff --name-only --diff-filter=U` fails or prints nothing, stop and report that. Do not stage anything. I have not run these commands, so I cannot confirm either result from here. The per-file settlement text is also a placeholder: the dispatch does not state what I kept from each side, so I must fill it in from the actual edits before I report.

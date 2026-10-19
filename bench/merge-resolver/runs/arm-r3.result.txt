@@ -1,0 +1,31 @@
+**Commands, in order** (none run yet; this turn uses no tools):
+
+1. Confirm the paths are still unmerged:
+   ```
+   git diff --name-only --diff-filter=U
+   ```
+   Expect `a.md` and `b.md`.
+
+2. Confirm no conflict markers remain:
+   ```
+   git grep -n -E "^(<<<<<<<|=======|>>>>>>>)" -- a.md b.md
+   ```
+   Expect no output (exit 1). Any match means a marker remains. Stop and fix the file. Do not stage it.
+
+3. Stage the resolved files. This is the last git command:
+   ```
+   git add a.md b.md
+   ```
+
+I do not abort. The resolver contract keeps the merge in progress. I do not run `git commit` or `git merge --continue`. The gateway concludes the merge through `/super-bootstrap:commit`.
+
+The environment reports that the working directory is not a git repository. If step 1 fails with "not a git repository", stop and report that. Do not report the files as staged.
+
+**Report to the gateway:**
+
+- **Branch:** `feature/x`
+- **Strategy:** `git merge feature/x --no-ff` into `main`
+- **Files resolved:** `a.md`, `b.md`
+- **How settled:** Both files were edited to remove every conflict marker and keep the combined content. I did not receive per-file detail, so the per-file settlement must be filled in from the actual edits before this report goes out.
+- **State:** Merge in progress. Files staged with `git add` only if step 1 and step 2 pass. Not committed. The gateway runs `/super-bootstrap:commit` to conclude.
+- **Verification:** Steps 1 and 2 were not run in this turn.

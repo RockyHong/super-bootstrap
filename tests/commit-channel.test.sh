@@ -14,6 +14,8 @@ CHANNEL="$ASSETS/commit-channel.sh"
 # Assembled at runtime so this file's own payload literals never sit at command
 # position in a hook-visible command string.
 C="commit"
+M="merge"
+R="rebase"
 NL=$'\n'
 
 pass=0; fail=0
@@ -93,6 +95,55 @@ check "BUG-072 guard: git add -A; git commit -m x -> denied" denied "$out"
 # value carrying `;` `&` `|` stops the walker before `commit` — silent pass.
 out=$(run_channel "git -c \"x;y\" $C -m x" "some-worker")
 check "BUG-072 accepted residual: git -c \"x;y\" commit -m x -> allowed (exotic global-flag value, not walked)" allowed "$out"
+
+echo "== commit-channel: merge/rebase conclusion is a commit — subagent denied, main allowed =="
+out=$(run_channel "git $M --continue" "some-worker")
+check "git merge --continue from worker -> denied (concludes a merge = a commit)" denied "$out"
+
+out=$(run_channel "GIT_EDITOR=true git $M --continue" "some-worker")
+check "GIT_EDITOR=true git merge --continue from worker -> denied (env-prefixed form)" denied "$out"
+
+out=$(run_channel "git $R --continue" "some-worker")
+check "git rebase --continue from worker -> denied" denied "$out"
+
+out=$(run_channel "GIT_EDITOR=true git $C -m x" "some-worker")
+check "GIT_EDITOR=true git commit from worker -> denied (env prefix covers every commit verb)" denied "$out"
+
+out=$(run_channel "git add -A${NL}git $M --continue" "some-worker")
+check "newline-separated git merge --continue from worker -> denied" denied "$out"
+
+out=$(run_channel "git $M --continue" "main")
+check "git merge --continue from main -> allowed" allowed "$out"
+
+out=$(run_channel "GIT_EDITOR=true git $M --continue" "main")
+check "GIT_EDITOR=true git merge --continue from main -> allowed" allowed "$out"
+
+out=$(run_channel "git $R --continue" "main")
+check "git rebase --continue from main -> allowed" allowed "$out"
+
+echo "== commit-channel: merge/rebase guards — non-concluding verbs from a subagent pass =="
+out=$(run_channel "git $M --abort" "some-worker")
+check "git merge --abort from worker -> allowed (does not conclude)" allowed "$out"
+
+out=$(run_channel "git $R --abort" "some-worker")
+check "git rebase --abort from worker -> allowed (does not conclude)" allowed "$out"
+
+out=$(run_channel "git $M-base HEAD main" "some-worker")
+check "git merge-base from worker -> allowed (different verb)" allowed "$out"
+
+out=$(run_channel "git status" "some-worker")
+check "git status from worker -> allowed" allowed "$out"
+
+# Accepted residual, locked so a later widening is a deliberate change: the
+# assignment walker does not walk a quoted value with a space, nor `env X=y git …`.
+out=$(run_channel "GIT_EDITOR=\"vim -f\" git $M --continue" "some-worker")
+check "accepted residual: GIT_EDITOR=\"vim -f\" git merge --continue -> allowed (quoted assignment value, not walked)" allowed "$out"
+
+out=$(run_channel "env GIT_EDITOR=true git $M --continue" "some-worker")
+check "accepted residual: env GIT_EDITOR=true git merge --continue -> allowed (env form, not walked)" allowed "$out"
+
+out=$(run_channel "echo \"next: git $M --continue\"" "some-worker")
+check "quoted git merge --continue mention on one line -> allowed (not an invocation)" allowed "$out"
 
 echo "== commit-channel: settings snippet covers both command tools =="
 snippet_matcher=$(jq -r '.matcher' "$ASSETS/commit-channel.hook.json")

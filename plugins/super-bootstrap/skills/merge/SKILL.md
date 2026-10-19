@@ -1,6 +1,6 @@
 ---
 name: merge
-description: 'Absorb one or more feature branches into the base branch. Recommends merge vs rebase per branch. On conflict, aborts that branch + surfaces the file list + stops. Resolution out of scope; routes to the harness-named conflict-resolution agent or the user.'
+description: 'Absorb one or more feature branches into the base branch. Recommends merge vs rebase per branch. On conflict, aborts that branch + surfaces the file list + stops. Resolution out of scope; routes to the harness-named conflict-resolution agent (stages the resolution and reports; the gateway concludes it) or the user.'
 tags: [merge, git, branch]
 ---
 
@@ -26,9 +26,20 @@ When `git merge` or `git rebase` stops with unmerged paths (`git diff --name-onl
 
 1. **Abort immediately** — `git merge --abort` (for merge) or `git rebase --abort` (for rebase). Restore the working tree.
 2. **Surface, don't resolve.** Output the branch name, the conflict file list (the unmerged-path list above, captured BEFORE abort), and which strategy hit the conflict.
-3. **Stop the run.** Do not attempt resolution — resolution never runs inside this skill. The step-2 surface is the conflict scope. Route it: if the consuming repo's harness names a conflict-resolution agent (its CLAUDE.md or agent roster — e.g. a builder/implementer agent), offer dispatching that agent with the conflict scope as the recommended next step; otherwise the user resolves manually or re-dispatches with a different strategy.
+3. **Stop the run.** Do not attempt resolution — resolution never runs inside this skill. The step-2 surface is the conflict scope. Route it: if the consuming repo's harness names a conflict-resolution agent (its CLAUDE.md or agent roster — e.g. a builder/implementer agent), offer dispatching that agent with the conflict scope and the § Resolver contract below as the recommended next step; otherwise the user resolves manually or re-dispatches with a different strategy.
 
 This rule applies to every branch in the queue. If branch A conflicts, abort A, surface, then continue with branches B, C — they're independent attempts. Don't skip them silently.
+
+### Resolver contract
+
+A dispatched conflict-resolution agent works one branch's conflict scope:
+
+1. Re-run that branch's merge or rebase with the strategy named in the surface.
+2. Resolve each conflicting file, then stage it — `git add <file>`.
+3. Leave the merge or rebase in progress: the agent's last git command is `git add`. Concluding it — `git commit`, `git merge --continue`, `git rebase --continue` — is the gateway's step.
+4. Report to the gateway: branch, strategy, files resolved, and how each conflict was settled.
+
+The gateway reads the staged resolution and concludes it in the main session with `git merge --continue` or `git rebase --continue` (a pathspec commit is refused mid-merge). A rebase that stops again on a later commit goes back out as a new resolver scope on the same branch, not through the Conflict Doctrine's abort.
 
 ## Protocol
 
@@ -104,7 +115,7 @@ For successfully absorbed branches:
 Report to user:
 
 - Branches absorbed cleanly (with strategy used per branch)
-- Branches that hit conflicts (with file lists — the conflict scope for resolution)
+- Branches that hit conflicts (with file lists — the conflict scope a resolver takes under § Resolver contract)
 - Branches skipped and why — a failed command that left no conflicting files appears here with git's error line verbatim
 - Final `git log --oneline --graph -10`
 
