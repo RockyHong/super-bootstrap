@@ -28,12 +28,21 @@ left by an out-of-door commit, (b) a concurrent plain commit beside this session
 `check.sh` stay in this folder; nothing narrating the scenario is copied into the fixture, for
 the same reason as the stub above.
 
-- `make-fixture-stale.sh <dir> [--on-list]` — another writer committed through a private
+- `make-fixture-stale.sh <dir> [--on-list [<shared path>]]` — another writer committed through a private
   `GIT_INDEX_FILE` (`other.md` v2, new file `new.md`), so the shared index still holds
   `other.md` at its `init` blob and lacks `new.md` while the worktree matches `HEAD`; this
   session's `a.md` + `b.md` modified, unstaged. `--on-list` adds a stale path on the session
   list: the other writer's commit also appended `other line` to `shared.md`, and this session
-  appended `session line` on top (session list `a.md`, `b.md`, `shared.md`).
+  appended `session line` on top (session list `a.md`, `b.md`, `shared.md`). `<shared path>`
+  renames that stale path (default `shared.md`) — the gate arms pass a harness path.
+- `make-fixture-gate.sh <dir>` — harness file `.claude/rules/r.md` holding this session's hunk
+  and another writer's hunk (two git hunks), plus the other writer's dirty `CLAUDE.md`.
+- `gate-arms.sh hunk|stale <dir> [--form current|target]` — deterministic, no model: runs § 5's
+  stamp and commit commands against the **real** planted gate (`harness-audit-pretool.sh`), each
+  step in its own fresh `bash -c` as the Bash tool runs it, then pipes the commit command as a
+  synthesized PreToolUse payload into the gate. Silent gate → `PASS`; a nudge on the audited
+  state → `FAIL:`. `--form` picks the stamp/commit forms the arm runs; `target` holds the forms
+  § 5 ships, so the arm and the prose change together. `GATE=` overrides the gate path.
 - `make-fixture-mixed.sh <dir> [--adjacent|--interleaved]` — `calc.py` holds this session's
   `None`-skip inside `scale()`'s loop plus another writer's uncommitted edit: in `area()` (two
   `git diff` hunks), `--adjacent` in `ratio()` just above (one hunk), `--interleaved` a rewrite
@@ -97,8 +106,23 @@ Same fixture plus `stamp-recorder.sh`, driving § 5's stamp seam. The prompt nam
   by shell (§ Findings).
 - **Boundary** — a § 5 regression that drops the stamp step entirely stays outside this bench's
   reach: § 5 orders a stamp it never commands (the arm's prompt hands the command), and the
-  firing contract belongs to `audit-harness-edits` step 5. The hunk-grain stamp seam has no arm:
-  § 5 names it as an advisory gap, not a procedure.
+  firing contract belongs to `audit-harness-edits` step 5. Whether § 5's stamp forms match the
+  real gate is the gate arms' question, below.
+
+### Gate arms
+
+`gate-arms.sh`, on `make-fixture-gate.sh` (`hunk`) and `make-fixture-stale.sh --on-list
+.claude/rules/shared.md` (`stale`). The stamp runs for real; the gate judges the commit command.
+
+- **Assertion** — the gate stays silent on a commit whose carried harness set was stamped.
+- **RED** (`--form current`) — hunk: a private index named through a shell variable
+  (`GIT_INDEX_FILE="$priv"`) is unset in every later fresh-shell call, and the gate cannot
+  resolve a `$`-bearing prefix, so it judges the whole dirty tree and nudges. stale: a stamp on the
+  shared index hashes the stale staged blob while the gate hashes the worktree blob, and nudges.
+- **GREEN** (`--form target`) — the resolved `"$(git rev-parse --git-dir)/index-<session>"`
+  form on every call plus the private-index stamp (hunk), and a stamp under a throwaway HEAD index
+  over `$(git diff HEAD --name-only -- <paths>)` (stale): the gate stays silent. An emptied stamp
+  store, or a post-audit edit, makes the same target run nudge — the silence is a match.
 
 ### Stale-entry arm (a)
 
