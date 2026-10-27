@@ -65,3 +65,18 @@
 - Step 1 done: `bench/restatement-axis/` (fixture, `ANSWER-KEY.md`, `probe-prompt-red.md` carrying current Step 1–2 verbatim). RED tier `sonnet` (`assets/workflow-fanout.md` § Fan-out contract item 4).
 - Step 2 done — RED is red, 3 runs `sonnet`: case A (×4 in one README) found 1/3, and that one at P3 as a link gap, never P2; case B (×2 cross-doc) 3/3, only as a P3 link gap with no copy count; case C (all linked) no restatement finding (run 1 flagged its copies for omitting an exception — content omission, not count); case D (pointer decoy) 0/3. Unplanned fixture noise every run: 40 °C start check vs 45 °C fuse; run 2 also an empty-cabinet claim.
 - Next: step 3.
+
+## Design — 2026-10-27
+
+User re-aim: `check-docs-consistency` is not run in practice; the commit door's doc-sync is the catch moment (consistent with the closed GAP-082 row in `docs/decisions.md` — every commit's doc-sync is the rolling coverage). Supersedes the Verdict's home and the Plan's steps 3–5:
+- Home: `plugins/super-bootstrap/agents/doc-sync-scan.md` § Scan (shared by the warm-inline and cold lanes), predicate asset beside the commit skill.
+- Diff-scoped: only facts the diff changes or adds; copies counted across the scan scope, intra-doc included (changed docs are read whole). Copies outside the enumerated scope are out of reach by design.
+- Finding: K ≥ 2 copies with at least one lacking a one-hop link to a single home → report K + locations + home.
+- Detect, never fix: a new non-blocking output (beside `stale-docs` / `clean`); the commit door §4 surfaces it with an offer to log a card via `/super-bootstrap:log`. Stale-doc resolution stays blocking as today.
+- `check-docs-consistency` unchanged.
+
+## Plan — 2026-10-27
+
+1. Author the predicate asset, the § Scan step, the output-contract addition, and commit SKILL §4's surfacing line (log offer, non-blocking).
+2. GREEN bench: `bench/restatement-axis/` gains a diff touching case A's fact and a doc-sync probe prompt (RED = current § Scan, GREEN = new); 3 runs `sonnet` each (cold lane tier).
+3. `audit-harness-edits`; doc-sync; commit.
