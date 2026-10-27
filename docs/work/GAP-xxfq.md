@@ -59,3 +59,9 @@
 3. RED went red → author `assets/restatement-predicate.md`, the Step 1 bullet, the Step 2 P2 bullet, the `:71` wording; a GREEN probe-prompt carrying the new text.
 4. GREEN: same tier, 3 runs; ×4 + cross-doc cases found, linked control and pointer decoy clean. Tier check against `opus` if `sonnet` misses.
 5. `audit-harness-edits`; doc-sync (`docs/overview.md` bench roster; READMEs read-and-confirm).
+
+## Progress — 2026-10-27
+
+- Step 1 done: `bench/restatement-axis/` (fixture, `ANSWER-KEY.md`, `probe-prompt-red.md` carrying current Step 1–2 verbatim). RED tier `sonnet` (`assets/workflow-fanout.md` § Fan-out contract item 4).
+- Step 2 done — RED is red, 3 runs `sonnet`: case A (×4 in one README) found 1/3, and that one at P3 as a link gap, never P2; case B (×2 cross-doc) 3/3, only as a P3 link gap with no copy count; case C (all linked) no restatement finding (run 1 flagged its copies for omitting an exception — content omission, not count); case D (pointer decoy) 0/3. Unplanned fixture noise every run: 40 °C start check vs 45 °C fuse; run 2 also an empty-cabinet claim.
+- Next: step 3.
