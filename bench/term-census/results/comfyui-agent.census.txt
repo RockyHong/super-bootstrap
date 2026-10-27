@@ -1,0 +1,113 @@
+# census: agent · 9aca623 · doc-links: /c/Users/User/.claude/plugins/cache/super-bootstrap/super-bootstrap/5.6.0/skills/commit/assets/doc-links.sh
+
+## A — file-derived terms, top 40 (term<TAB>docs)
+comfy	10
+graphs	8
+ui_lint	7
+audio_graphs	6
+convert_headless	4
+jobs	4
+shipped-workflows	4
+wf_polish	4
+HERMES	3
+agent-render-interface	3
+build-ship-pipeline	3
+dasiwa_polish	3
+dogfood	3
+image_graphs	3
+image_polish	3
+inspect_video	3
+prompt_writer	3
+qwen	3
+qwen21_polish	3
+ui_layout	3
+video	3
+writer_prompts	3
+BENCHMARK	2
+[Audio loop] ACE-Step 1.5	2
+[Image edit] Flux Klein 9B realism-restore	2
+[Image t2i] Flux Klein 9B	2
+[Image t2i] Krea 2	2
+[Post] Film finish	2
+[Video r2v] H3	2
+audio_polish	2
+director_wf	2
+drama3	2
+fetch_models	2
+flux2	2
+node_packs	2
+paste_test	2
+private-guard	2
+prompt-generation	2
+seam_check	2
+subgraph_pack	2
+
+doc surface for B: 15 files
+
+## B — code-span tokens, top 40 (token<TAB>docs)
+CLAUDE.md	5
+tools/graphs.py	5
+ui_lint.py	5
+.json	4
+README.md	4
+prompting/	4
+renders/	4
+tools/comfy.py	4
+--pe	3
+/free	3
+/prompt	3
+D:/AI/REGISTRY.md	3
+HERMES.md	3
+MiniMaxChunkFeedForward	3
+OFFICIAL_PE	3
+PE_MODEL	3
+TextGenerate	3
+api/<name>.note.md	3
+assets/INDEX.md	3
+audio_graphs.py	3
+comfy.PUBLIC_KINDS	3
+comfy.py guide	3
+custom_nodes/comfyui-agent-nodes	3
+graphs.py	3
+image_polish.py	3
+output/	3
+qwen21_polish.py	3
+run	3
+submit	3
+temp/	3
+tools/dogfood.py	3
+tools/prompt_writer.py	3
+wf_polish.py	3
+workflows/<Category>/	3
+## <mode>	2
+## Model behaviour	2
+--check	2
+--eros 0	2
+--eros 1.0	2
+--internal	2
+
+## C — link in-degree, top 20 (referrers<TAB>target)
+17	README.md
+13	CLAUDE.md
+4	tools/ui_lint.py
+4	prompting/README.md
+4	docs/specs/shipped-workflows.md
+3	prompting/qwen.md
+3	docs/specs/build-ship-pipeline.md
+3	docs/specs/agent-render-interface.md
+2	tools/graphs.py
+2	docs/specs/prompt-generation.md
+2	docs/decisions.md
+2	HERMES.md
+1	tools/writer_prompts.py
+1	tools/wf_polish.py
+1	tools/ui_layout.py
+1	tools/subgraph_pack.py
+1	tools/qwen21_polish.py
+1	tools/prompt_writer.py
+1	tools/paste_test.py
+1	tools/image_polish.py
+
+## D — fan-in histograms
+A  total 264 · 1:219 · 2:23 · 3-4:18 · 5-8:3 · 9+:1
+B  total 1112 · 1:982 · 2:96 · 3-4:31 · 5-8:3 · 9+:0

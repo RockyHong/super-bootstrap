@@ -1,0 +1,113 @@
+# census: Magnetized Remake · d50bacde · doc-links: /c/Users/User/.claude/plugins/cache/super-bootstrap/super-bootstrap/5.6.0/skills/commit/assets/doc-links.sh
+
+## A — file-derived terms, top 40 (term<TAB>docs)
+visual-guidelines	26
+game	24
+platform-plan	21
+game.gd	19
+ui-guidelines-desktop	19
+bigcake-spec	17
+mechanics-spec	17
+shell-pack-spec	17
+terminology	16
+lv60-spec	15
+shell-level-spec	15
+story-theme	14
+shell-index-spec	13
+shell-lvtext-option-spec	13
+ui-guidelines-mobile	13
+ui-strings	12
+ui-strings.csv	12
+Intro.tscn	11
+achievements-spec	11
+platform	11
+credits-spec	10
+intro-spec	10
+canvas_stack	9
+canvas_stack.gd	9
+dev-harness	9
+edge	9
+ending-spec	9
+name-meanings	9
+narrative-copy-rulings	9
+project	9
+titledown	9
+audio	8
+level-data-rulings	8
+level_sheet	8
+level_sheet.gd	8
+lv81-spec	8
+magnet	8
+page-transition-rulings	8
+player	8
+press	8
+
+doc surface for B: 44 files
+
+## B — code-span tokens, top 40 (token<TAB>docs)
+visual-guidelines.md	12
+CLAUDE.md	10
+Hello World	10
+assets/i18n/ui-strings.csv	10
+game.gd	10
+ui-guidelines-desktop.md	10
+dev-harness.md	9
+../decisions.md	8
+/super-bootstrap:log	8
+mechanics-spec.md	8
+techstack.md	8
+Game.move_camera	7
+back	7
+black_curtain	7
+docs/work/	7
+magnet	7
+project.godot	7
+scripts/audio.gd	7
+title_logo	7
+titledown	7
+CODING_STANDARDS.md	6
+Game._load_level	6
+LV60_FIRST_CLEAR_DEATHS	6
+Pack	6
+SaveState	6
+StarPavedRoad	6
+_start	6
+dream_hex	6
+edge	6
+levels/*.tscn	6
+platform/steam/README.md	6
+road	6
+scripts/save_state.gd	6
+.gdignore	5
+.tscn	5
+/super-bootstrap:needs-me	5
+CometTrails	5
+Game.register_star_pickup	5
+GameAudio.MIX	5
+HELLO_WORLD_OPENED	5
+
+## C — link in-degree, top 20 (referrers<TAB>target)
+94	docs/specs/visual-guidelines.md
+55	docs/specs/shell-pack-spec.md
+53	docs/specs/mechanics-spec.md
+48	docs/specs/ui-guidelines-desktop.md
+40	docs/specs/story-theme.md
+38	docs/specs/shell-level-spec.md
+37	docs/specs/platform-plan.md
+35	docs/specs/lv60-spec.md
+35	docs/dev-harness.md
+25	docs/specs/ending-spec.md
+24	docs/specs/achievements-spec.md
+22	docs/specs/intro-spec.md
+21	docs/techstack.md
+21	docs/specs/terminology.md
+20	docs/specs/shell-index-spec.md
+20	docs/specs/bigcake-spec.md
+19	docs/specs/page-transition-rulings.md
+18	docs/specs/narrative-copy-rulings.md
+17	docs/specs/ui-guidelines-mobile.md
+17	docs/specs/shell-lvtext-option-spec.md
+
+## D — fan-in histograms
+A  total 958 · 1:516 · 2:188 · 3-4:160 · 5-8:63 · 9+:31
+B  total 4992 · 1:3869 · 2:721 · 3-4:341 · 5-8:54 · 9+:7

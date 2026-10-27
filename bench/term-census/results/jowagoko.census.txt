@@ -1,0 +1,113 @@
+# census: jowagoko · 0055032 · doc-links: /c/Users/User/.claude/plugins/cache/super-bootstrap/super-bootstrap/5.6.0/skills/commit/assets/doc-links.sh
+
+## A — file-derived terms, top 40 (term<TAB>docs)
+ep-prep	13
+voice	13
+exposure	12
+podcast-distribution	11
+monetization	10
+render_episode	9
+title	9
+channel-scale	8
+tags	8
+description	7
+ep-cut	6
+ep-render	6
+comment-resonance	5
+ep-illustrate	5
+episodes	5
+residual_velocity	5
+sponsorship	5
+topic-probe	5
+video-fx-layers	5
+Table data	4
+align_cues	4
+brand-palette	4
+comment-replies	4
+ep-subs	4
+episode-anatomy	4
+membership-video	4
+motion-protocol	4
+podcast-membership	4
+reach-out	4
+subtitle-emphasis	4
+yt-replies	4
+PROMPT_SPEC	3
+anchor	3
+chapters	3
+data-update	3
+due_today	3
+engagement_density	3
+hashtags	3
+illustration-motion	3
+motif_ctr	3
+
+doc surface for B: 36 files
+
+## B — code-span tokens, top 40 (token<TAB>docs)
+overview.md	19
+index.md	15
+docs/overview.md	14
+exposure.md	11
+podcast-distribution.md	10
+.claude/skills/ep-prep/references/voice.md	9
+monetization.md	9
+decisions.md	8
+channel-scale.md	7
+data/	7
+render_episode.py	7
+/ep-cut	6
+/super-bootstrap:log	6
+techstack.md	6
+實務未驗證	6
+/ep-illustrate	5
+docs/work/	5
+voice.md	5
+/ep-render	4
+/ep-subs	4
+align_cues.py	4
+comment-resonance.md	4
+description.md	4
+docs/techstack.md	4
+sponsorship.md	4
+subtitle-emphasis.md	4
+tags.md	4
+title.md	4
+--dry	3
+/super-bootstrap:needs-me	3
+/topic-probe	3
+/yt-replies	3
+1×2	3
+1×3	3
+<description>	3
+<link>	3
+Error: video	3
+FONT_WGHT	3
+Highlight members	3
+M<n>	3
+
+## C — link in-degree, top 20 (referrers<TAB>target)
+37	docs/overview.md
+17	docs/know-how/platform/index.md
+13	docs/know-how/platform/monetization.md
+12	docs/know-how/platform/podcast-distribution.md
+12	docs/decisions.md
+11	docs/know-how/platform/exposure.md
+7	docs/techstack.md
+7	docs/parked.md
+7	docs/know-how/platform/channel-scale.md
+7	docs/know-how/craft/episode-anatomy.md
+6	docs/specs/podcast-membership.md
+6	docs/specs/brand-palette.md
+6	docs/know-how/platform/reach-out.md
+6	docs/know-how/craft/membership-video.md
+5	docs/know-how/platform/sponsorship.md
+5	docs/know-how/craft/subtitle-emphasis.md
+5	docs/know-how/craft/comment-resonance.md
+5	.claude/skills/ep-prep/references/voice.md
+4	docs/work/README.md
+4	docs/work/GAP-032.md
+
+## D — fan-in histograms
+A  total 464 · 1:379 · 2:38 · 3-4:28 · 5-8:12 · 9+:7
+B  total 1009 · 1:846 · 2:99 · 3-4:46 · 5-8:11 · 9+:7
