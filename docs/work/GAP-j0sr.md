@@ -1,0 +1,6 @@
+# GAP-j0sr — commit door: a repo-generic term inflates the doc-sync scope with no per-term visibility
+
+**Logged:** 2026-10-27 · **Source:** device note from ComfyUI `workflows/agent` consumer (same commit as `BUG-g66v`)
+**Problem:** `terms` turned `tools/graphs.py` into `graphs`; that repo backticks `graphs.py` / `graphs.<fn>` across its docs, so `hits graphs` alone returned 8 docs, none narrating the change, and pushed the scope over the 8-doc inline ceiling. `hits` prints files only, so the gateway cannot see which term blew the scope; the owner read "13 related docs" as an SSOT-bloat symptom. The real SSOT signal in that commit — one fact restated in 4 places in README — the gate does not surface.
+**Area:** `plugins/super-bootstrap/skills/commit/assets/doc-links.sh` (`do_hits`); `plugins/super-bootstrap/skills/commit/SKILL.md` §3 (scope ceiling) and § Rules "Grep-gate is mechanical" (line 67)
+**Prior:** consumer suggestions — print per-term hit counts; demote a term hitting > N docs (or a share of the surface) to path-segment matching, as hub stems already are (tension with "term extraction is path-structure only, never a judgment"); a "changed fact restated in K places" gate line as the direct SSOT-drift signal.
