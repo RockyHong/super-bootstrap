@@ -158,7 +158,7 @@ registration: {artifact} → {surfaces, or none}
 3. `docs/**/README.md` and `docs/overview.md` § Module Index
 4. `.claude/rules/*.md` bodies — any table or list naming `docs/` paths (ownership / routing); `CLAUDE.md`'s pipeline-owned sections are the plugin's own registration and stay out of this search
 
-The row resolves `updated` once every named surface is edited, before § 2c runs, in the same commit — or `none`, earned only when all four greps return nothing. An unresolved row halts § 2c like a drifted one. The 2a-hooks and 2a-autorun steps sit outside this rule, scripts included: the `.claude/settings.json` and `.gitignore` entries those steps already write are their registration.
+The row resolves `updated` once every named surface is edited, before § 2c runs, in the same commit — or `none`, earned only when all four greps return nothing. An unresolved row halts § 2c like a drifted one. The 2a-hooks step sits outside this rule, scripts included: the `.claude/settings.json` and `.gitignore` entries that step already writes are its registration.
 
 **Pipeline-owned** (subject to drift check):
 - CLAUDE.md sections: Development Workflow, Dispatch, Doc Sync, Coding Principles (code present only — Phase 1 § Code presence), Edit Discipline, Context Hygiene, Finding Triage, Rules, Git Notes, Planning, Monorepo (monorepo tier only — the conditional cross-package build block)
@@ -276,19 +276,6 @@ Execute the procedure in [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-in
 - one row for the `.gitignore` line — `.gitignore consult-catalog line`
 
 § 2c transcodes these rows into `covered` like whole-file rows; they sit outside the § 2c gate's required coverage set.
-
-### 2a-autorun: Autorun infra (opt-in, earn-gated)
-
-`/super-bootstrap:autorun` (unattended worktree runs) needs three committed infra pieces. Most active-dev repos use it; skill / plugin / docs-only repos usually don't. Earn-gated on code: a docs-only repo (Phase 1 § Code presence) skips silently, places nothing, and adds no sync-report row — the way § 2a-scale skips; autorun self-installs on first use, and a later re-run that finds code asks. Code present → ask once:
-
-> Install `/super-bootstrap:autorun` worktree infra? — worktree settings template + `PreToolUse(Read)` guard + `.claude/worktrees/` gitignore. Most dev repos: yes. Skill / plugin / docs repos: skip (autorun self-installs on first use anyway).
-> Install now? (y / skip)
-
-Infra present and current (every check in the asset's `infraPresent()`) → no ask; run the procedure below to write its rows, all `✓ current`. Any piece absent or stale → ask as above.
-
-On `y`: execute the procedure in [`../autorun/assets/ensure-infra.md`](../autorun/assets/ensure-infra.md) — the same idempotent three-piece install autorun self-runs on first invocation; this `y` stands in for its install confirm. Stage the placed files with the Phase 2c commit. Report rows as § 2a-hooks writes them — every check, `✓ current` included, where the asset's "pass silently" means no prompt — outside the § 2c gate's required coverage set; row identities: `.claude/templates/worktree-settings.local.json` (the template), `.claude/settings.json worktree guard` (the Read guard, one combined row), `.gitignore worktrees + autorun-status lines` (all four row-1 ignore lines, one row — the label stays as the stable receipt key). A repo that carries the retired `.drain-status` ignore line keeps it — harmless — and gains the `.autorun-status` line.
-
-On `skip`: nothing placed; autorun's own § Pre-flight step 1 installs on first `/super-bootstrap:autorun`.
 
 ### 2a-scale: Scale module (opt-in, earn-gated)
 
@@ -538,7 +525,7 @@ Per-candidate handling:
 
 ### 2c: Sync report + commit
 
-**Gate — the sync report must exist and cover every pipeline-owned section, plus every artifact the § Registration rule covers, before commit.** Read `.claude/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row, and every durable artifact the § Registration rule covers must have a `registration:` row. Missing file, or any uncovered section or artifact → halt, return to 2b, produce the missing rows. A `⚠ drifted`, `⊕ new`, `⊘ missing`, or `⊘ removed` row must also carry its resolution (`updated` / `inserted` / `seeded` / `declined ({reason})`), a rot row its own (`migrated` / `declined ({reason})`), a `registration:` row its own (`updated` / `none`), a § 2a-hooks / § 2a-autorun row also `kept (fork)` — a fork kept at the overwrite/keep prompt, which stays out of `declined` (`updated (stale)` / `updated (fork, overwritten)` count as `updated`) — an unresolved row, or a `declined` row carrying no reason, halts the same way. A rot outcome line present and reading `no rot scan` halts too — the scan swept no literals, so its zero rows are not a clean; return to 2b, re-run the rot scan with a working literal list. A fresh install carries no rot line, and the gate reads none. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
+**Gate — the sync report must exist and cover every pipeline-owned section, plus every artifact the § Registration rule covers, before commit.** Read `.claude/bootstrap-sync-report.md` and cross-check its per-section rows against § Pipeline-owned: every pipeline-owned section that applies to a file in scope must have a row, and every durable artifact the § Registration rule covers must have a `registration:` row. Missing file, or any uncovered section or artifact → halt, return to 2b, produce the missing rows. A `⚠ drifted`, `⊕ new`, `⊘ missing`, or `⊘ removed` row must also carry its resolution (`updated` / `inserted` / `seeded` / `declined ({reason})`), a rot row its own (`migrated` / `declined ({reason})`), a `registration:` row its own (`updated` / `none`), a § 2a-hooks row also `kept (fork)` — a fork kept at the overwrite/keep prompt, which stays out of `declined` (`updated (stale)` / `updated (fork, overwritten)` count as `updated`) — an unresolved row, or a `declined` row carrying no reason, halts the same way. A rot outcome line present and reading `no rot scan` halts too — the scan swept no literals, so its zero rows are not a clean; return to 2b, re-run the rot scan with a working literal list. A fresh install carries no rot line, and the gate reads none. This is a Read + set-difference check, not a self-attestation — a skipped drift check leaves no rows to find, so it cannot pass the gate.
 
 **Sync report** — rendered from the artifact (the file is canonical; this table is its commit-time view). Always shown once the gate above passes, before the commit. A re-run renders the table below — drift fixes and current items. A fresh install renders one coverage line in the table's place — `{N} sections placed, all ⊕ new` — while the report file keeps its per-row verdicts (`⊕ new | seeded`); the table stays the re-run surface.
 
@@ -573,11 +560,11 @@ Per-candidate handling:
 
 **Receipt write.** Once the sync completes, write `.claude/super-bootstrap-runway.json` = `{ "version": "{current plugin version}", "covered": [...], "declined": [...], "placed": { ... } }` — fresh install writes it new, re-run overwrites whole. Take `version` from the plugin version Phase 1 already read for its staleness compare — § Version-staleness signal names the file and how to locate it. This runs even when every row is `✓ current` — the receipt records "synced at this version, these sections compared," independent of whether content changed.
 
-**`covered`** is an array of bare row-identity strings — one string per sync-report row across all three row classes: its per-section rows, its whole-file artifact rows (the § 2a-hooks / § 2a-autorun rows included, identity as those steps name it), and its rot rows. Each identity is *transcoded* from its report row rather than copied verbatim: the report renders a section row `{file}: {Section}` and the identity is `{file} § {Section}`; a whole-file artifact is its repo-relative path alone; a rot row is `{file} § rot:{old}` — keyed by the stale literal, never the line, since line numbers shift between runs. `registration:` rows stay report-only.
+**`covered`** is an array of bare row-identity strings — one string per sync-report row across all three row classes: its per-section rows, its whole-file artifact rows (the § 2a-hooks rows included, identity as that step names it), and its rot rows. Each identity is *transcoded* from its report row rather than copied verbatim: the report renders a section row `{file}: {Section}` and the identity is `{file} § {Section}`; a whole-file artifact is its repo-relative path alone; a rot row is `{file} § rot:{old}` — keyed by the stale literal, never the line, since line numbers shift between runs. `registration:` rows stay report-only.
 
 **`declined`** is the rows resolved `declined` — a drift kept or an insert declined at Block 2, a rot row left alone at the § 2b rot scan — each written `{ "section": "<row identity>", "reason": "<the row's declined reason>" }`, carrying the row's own `covered` identity string and the parenthetical of `declined ({reason})` as the reason — so `declined` stays a subset of `covered`, and marks divergence accepted, not pending.
 
-**`placed`** is the ensure-infra procedures' own record — `{ "<destination path>": "<sha256 of the file as placed>" }` — which 2a-hooks / 2a-autorun write into the receipt file directly as each file resolves current — copied, or already sha-equal (mechanisms: [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) § Idempotency · [`../autorun/assets/ensure-infra.md`](../autorun/assets/ensure-infra.md) § Idempotency). Read the receipt back from disk here, after those steps ran, and carry its `placed` map forward whole — never from the Phase 1 snapshot, which predates this run's copies.
+**`placed`** is the ensure-infra procedures' own record — `{ "<destination path>": "<sha256 of the file as placed>" }` — which 2a-hooks writes into the receipt file directly as each file resolves current — copied, or already sha-equal (mechanism: [`assets/hooks-ensure-infra.md`](assets/hooks-ensure-infra.md) § Idempotency). `/super-bootstrap:autorun` writes its worktree template entry the same way on its own install ([`../autorun/assets/ensure-infra.md`](../autorun/assets/ensure-infra.md) § Idempotency). Read the receipt back from disk here, after 2a-hooks ran, and carry its `placed` map forward whole, autorun's entry included — never from the Phase 1 snapshot, which predates this run's copies.
 
 **The commit is decided by effect, not by the verdict column.** If this run changed no bytes in any path of the stage list below — the receipt included, compared against its prior content — report no changes and skip the commit. A change that predates this run is not this run's effect: a consumer's uncommitted hand edit this run declined leaves the sync a no-op.
 
@@ -588,10 +575,9 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/techstack.md` (new, skeleton-section drift or insert, or post-migration absorbed content)
 - `docs/overview.md` (new, skeleton-section drift or insert)
 - `docs/decisions.md` (new, scope-header drift, post-retirement migration from techstack, or closed-history rows from legacy CLAUDE.md migration)
-- `.claude/settings.json` (core pin seeded at 2a; harness hooks merged at 2a-hooks; autorun's `PreToolUse(Read)` guard merged at 2a-autorun)
+- `.claude/settings.json` (core pin seeded at 2a; harness hooks merged at 2a-hooks)
 - `.claude/hooks/commit-channel.sh`, `.claude/hooks/consult-check-{sessionstart,check}.sh` (frozen hook scripts seeded at 2a-hooks — always, default-on)
-- `.gitignore` (when any 2a step appended a line — 2a-hooks' `.claude/.consult-catalog`, 2a-autorun's `.claude/worktrees/`, `.autorun-status`, `/OWNED_BY` and `/.claude/settings.local.json`; skip if every line was already present)
-- `.claude/templates/worktree-settings.local.json` (autorun worktree settings template — only if placed or refreshed on drift this run at 2a-autorun)
+- `.gitignore` (when 2a-hooks appended its `.claude/.consult-catalog` line; skip if the line was already present)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
 - `.claude/rules/ssot-doc-link.md`, `.claude/rules/dimension-discipline.md` (if newly written, or approved drift fix)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)

@@ -82,6 +82,6 @@ Durable harness config, not a temporal pipeline artifact — so no cleaner:
 - **Consumer** — the warm step (template → worktree), the gateway (Read-hook + boundary-anchor embed at dispatch).
 - **Cleaner** — none; the infra lives until the user removes autorun. (Contrast worktrees, which are temporal and *do* have a teardown cleaner — `parallel-worktrees.md §Cleanup`.)
 
-## Optional delegated seed
+## Install path
 
-`harness-bootstrap` may call this same procedure during install when the user opts in — asked on code-present repos only, docs-only repos skip silently (most dev repos use autorun; skill/plugin repos decline). That path delegates here — one home for the install logic, no second copy. See `harness-bootstrap/SKILL.md §Phase 2a-autorun (autorun infra opt-in, earn-gated)`.
+autorun § Pre-flight is the only caller — the runway (`harness-bootstrap`) places none of this infra.
