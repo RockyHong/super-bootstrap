@@ -8,3 +8,7 @@
 ## Amendment — 2026-10-27 · gateway
 
 `dimension-discipline` is the same case: `doc-links.sh` and the doc-sync scan treat `dimension: history` frontmatter as frozen provenance, and only that rule tells an author to declare it; the shipped CLAUDE.md skeleton carries the routing summary, not the classify step, the frontmatter declaration or the tripwire. Proposed to CCM as a second takeover; `config-overlay` sent as an open question (no sb dependency, but it fires on harness-bootstrap's settings/hook output). Rulings return on `OUT-2e1a`.
+
+## Amendment — 2026-10-27 · CCM reply note (`OUT-2e1a`)
+
+Scope settled: ship `ssot-doc-link` and `dimension-discipline` together, built from the served copies as they stand — CCM confirms they match its sources byte for byte. `config-overlay` stays out (storehouse-owned). After the release lands, the author notifies CCM so it retires its copies.
