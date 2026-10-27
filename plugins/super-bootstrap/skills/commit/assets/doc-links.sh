@@ -32,7 +32,10 @@
 #                      work: the paths need not exist. A Godot text asset (`.tscn`,
 #                      `.tres`, any case) keeps its extension on the term
 #                      (`levels/Ending.tscn` → `Ending.tscn`) — the origin marker
-#                      `hits` reads. Always exit 0.
+#                      `hits` reads. Always exit 0. A term can hold spaces
+#                      (`a/[Image t2i] Krea 2.json` → `[Image t2i] Krea 2`): newline
+#                      is the only safe delimiter of this output — feed it on with
+#                      `| hits -`, never as an unquoted word list.
 #   hits <term>...     print doc-surface files mentioning any term in code shape —
 #                      a whole word inside an inline code span, or a path segment
 #                      (preceded by `/`, or followed by `/` or `.`+extension).
@@ -47,6 +50,11 @@
 #                      own right, sorted unique — a changed doc is its own scope doc.
 #                      A path the diff deleted, one off the surface, and frozen
 #                      provenance all print nothing. Always exit 0.
+#   terms - | hits - | self -
+#                      a lone `-` reads the list from stdin instead, one item per
+#                      line (blank lines skipped, a trailing CR dropped) — the
+#                      shell-split-proof form for a path or term holding spaces:
+#                      `git -c core.quotePath=false diff --name-only HEAD | doc-links.sh terms - | doc-links.sh hits -`.
 #   anchors <path> <r>...  print the section slug(s) each hunk range touches, sorted
 #                      unique — <r> is a `git diff -U0` post-image range (`+491`,
 #                      `+19,7`, leading `+` optional; no length or `,0` — a pure
@@ -1011,9 +1019,24 @@ do_pins() {
 }
 
 USAGE='Usage: %s check | pins | refs <path>[#anchor]... | index | closure <path>[#anchor]
-       %s terms <changed-path>... | hits <term>... | anchors <path> <hunk-range>...
-       %s self <changed-path>...
+       %s terms <changed-path>...|- | hits <term>...|- | anchors <path> <hunk-range>...
+       %s self <changed-path>...|-     (- = read the list from stdin, one item per line)
 '
+
+# `terms` / `hits` / `self` list intake: a lone `-` argument reads the list from stdin,
+# one item per line, so a path or term holding spaces arrives whole — no shell
+# word-splitting between producer and consumer. Pure bash `read` loop, no fork per
+# item. Blank lines are skipped and a trailing CR is dropped (a CRLF producer).
+# Result in the ITEMS array.
+ITEMS=()
+read_items() {
+    local line
+    ITEMS=()
+    while IFS= read -r line || [ -n "$line" ]; do
+        line="${line%$'\r'}"
+        [ -n "$line" ] && ITEMS+=("$line")
+    done
+}
 
 case "$MODE" in
     check) do_check ;;
@@ -1028,13 +1051,28 @@ case "$MODE" in
         do_closure "$2" ;;
     terms)
         shift
-        do_terms "$@" ;;
+        if [ "$#" -eq 1 ] && [ "$1" = "-" ]; then
+            read_items
+            do_terms ${ITEMS[@]+"${ITEMS[@]}"}
+        else
+            do_terms "$@"
+        fi ;;
     hits)
         shift
-        do_hits "$@" ;;
+        if [ "$#" -eq 1 ] && [ "$1" = "-" ]; then
+            read_items
+            do_hits ${ITEMS[@]+"${ITEMS[@]}"}
+        else
+            do_hits "$@"
+        fi ;;
     self)
         shift
-        do_self "$@" ;;
+        if [ "$#" -eq 1 ] && [ "$1" = "-" ]; then
+            read_items
+            do_self ${ITEMS[@]+"${ITEMS[@]}"}
+        else
+            do_self "$@"
+        fi ;;
     anchors)
         shift
         [ "$#" -lt 2 ] && { printf 'Usage: %s anchors <path> <hunk-range>...\n' "$0" >&2; exit 1; }

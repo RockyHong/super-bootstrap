@@ -704,7 +704,7 @@ else
   printf 'expected:\n%s\ngot:\n%s\n' "$expected_terms" "$got_terms" | sed 's/^/        /'
 fi
 
-got_hits="$(cd "$TMP/asset" && bash "$LINKS" hits $(bash "$LINKS" terms levels/Ending.tscn))"
+got_hits="$(cd "$TMP/asset" && printf '%s\n' levels/Ending.tscn | bash "$LINKS" terms - | bash "$LINKS" hits -)"
 expected_hits="$(printf 'docs/specs/scene-file.md\ndocs/specs/scene-path.md')"
 if [ "$got_hits" = "$expected_hits" ]; then
   ok "hits: .tscn term hits path mentions (levels/Ending.tscn, Ending.tscn), not a backticked bare Ending"
@@ -713,7 +713,7 @@ else
   printf 'expected:\n%s\ngot:\n%s\n' "$expected_hits" "$got_hits" | sed 's/^/        /'
 fi
 
-got_hits="$(cd "$TMP/asset" && bash "$LINKS" hits $(bash "$LINKS" terms res/Loot.tres))"
+got_hits="$(cd "$TMP/asset" && printf '%s\n' res/Loot.tres | bash "$LINKS" terms - | bash "$LINKS" hits -)"
 if [ "$got_hits" = "docs/specs/res-path.md" ]; then
   ok "hits: .tres term hits the path mention res/Loot.tres, not a backticked bare Loot"
 else
@@ -721,12 +721,55 @@ else
   printf 'got:\n%s\n' "$got_hits" | sed 's/^/        /'
 fi
 
-got_hits="$(cd "$TMP/asset" && bash "$LINKS" hits $(bash "$LINKS" terms scripts/Player.gd))"
+got_hits="$(cd "$TMP/asset" && printf '%s\n' scripts/Player.gd | bash "$LINKS" terms - | bash "$LINKS" hits -)"
 if [ "$got_hits" = "docs/specs/code.md" ]; then
   ok "hits: a non-asset (.gd) term still hits on a backticked bare word (regression guard)"
 else
   bad "hits: a non-asset (.gd) term still hits on a backticked bare word (regression guard)"
   printf 'got:\n%s\n' "$got_hits" | sed 's/^/        /'
+fi
+
+echo "== doc-links: BUG-g66v — a spaced path/term rides the stdin form (\`-\`) without shell splitting =="
+# `terms` can print a term holding spaces (`workflows/[Image t2i] Krea 2.json` →
+# `[Image t2i] Krea 2`). Handed on as an unquoted word list, the shell splits it into
+# fragments (`Krea`, `2`) that hit unrelated docs. The `-` argument reads one item per
+# line from stdin, so a pipe carries the list with no word-splitting in any shell.
+mkdir -p "$TMP/spaced/docs/specs"
+printf '# Krea\n\nThe graph lives in `workflows/[Image t2i] Krea 2.json`.\n' > "$TMP/spaced/docs/specs/krea-file.md"
+printf '# Fragment\n\nPick `Krea` for stills; the `2` preset is faster.\n' > "$TMP/spaced/docs/specs/fragment.md"
+printf '# Spaced doc\n\nBody.\n' > "$TMP/spaced/docs/specs/my notes.md"
+spaced_path='workflows/[Image t2i] Krea 2.json'
+
+got_terms="$(cd "$TMP/spaced" && printf '%s\n' "$spaced_path" | bash "$LINKS" terms -)"
+if [ "$got_terms" = "[Image t2i] Krea 2" ]; then
+  ok "terms -: a spaced path read from stdin yields one whole term"
+else
+  bad "terms -: a spaced path read from stdin yields one whole term"
+  printf 'got:\n%s\n' "$got_terms" | sed 's/^/        /'
+fi
+
+got_hits="$(cd "$TMP/spaced" && printf '%s\n' "$spaced_path" | bash "$LINKS" terms - | bash "$LINKS" hits -)"
+if [ "$got_hits" = "docs/specs/krea-file.md" ]; then
+  ok "terms - | hits -: a spaced term hits only the doc naming that file, not a doc with bare fragments"
+else
+  bad "terms - | hits -: a spaced term hits only the doc naming that file, not a doc with bare fragments"
+  printf 'got:\n%s\n' "$got_hits" | sed 's/^/        /'
+fi
+
+got_self="$(cd "$TMP/spaced" && printf '%s\n' 'docs/specs/my notes.md' "$spaced_path" | bash "$LINKS" self -)"
+if [ "$got_self" = "docs/specs/my notes.md" ]; then
+  ok "self -: a spaced changed doc path read from stdin prints whole"
+else
+  bad "self -: a spaced changed doc path read from stdin prints whole"
+  printf 'got:\n%s\n' "$got_self" | sed 's/^/        /'
+fi
+
+got_terms="$(cd "$TMP/spaced" && bash "$LINKS" terms "$spaced_path")"
+if [ "$got_terms" = "[Image t2i] Krea 2" ]; then
+  ok "terms: the argv form still takes a quoted spaced path whole (back-compat)"
+else
+  bad "terms: the argv form still takes a quoted spaced path whole (back-compat)"
+  printf 'got:\n%s\n' "$got_terms" | sed 's/^/        /'
 fi
 # ---------------------------------------------------------------------------
 # GAP-081 — `pins`: a doc line restating an agent's frontmatter `model:` tier is
