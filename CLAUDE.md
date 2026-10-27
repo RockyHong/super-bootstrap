@@ -6,7 +6,7 @@ Work enters by picking up a card — a `docs/work/` card file (`/super-bootstrap
 
 ### The envelope
 
-`ground → route → implement → verify → doc-sync → commit`. Red and verify are structurally empty — no ceremony — on a diff with no test/runtime surface (docs-only). Verify on a harness-file change (CLAUDE.md, rules, skills, agents) = `audit-harness-edits`. Commit = `/super-bootstrap:commit`.
+`ground → route → implement → verify → doc-sync → commit`. Test-first and verify are structurally empty — no ceremony — on a diff with no test/runtime surface (docs-only). Verify on a harness-file change (CLAUDE.md, rules, skills, agents) = `audit-harness-edits`. Commit = `/super-bootstrap:commit`.
 
 **Ambient laws inside implement:**
 
@@ -51,12 +51,12 @@ The gateway orchestrates; it does not build. Inline lane = orchestration, reads,
 - **Build** (within Implement) → dispatch per phase, gateway integrates + verifies between. Build is never a live tweak. **Every build-dispatch prompt carries the commit convention up front** — finish, report the work as built with the file list, do not `git commit`; the gateway fires `/super-bootstrap:commit`. **A brief whose work adds or rewrites an assertion demands the bite check too** — the induced failure text verbatim in the report. Full demands (readings that must not regress, measured-spread calibration): [`dispatch-brief-demands.md`](.claude/guidelines/work-discipline/dispatch-brief-demands.md).
 - **A foreign cold executor is a build container, not an orchestrator** — a separate-process agent runtime (`codex exec -C <dir> --sandbox workspace-write`, or equivalent) is a valid build dispatch under the same closure rule; brief it like any cold implementer and let it read the repo's `AGENTS.md` for the standing contract. Its return is a message, not a diff — `git diff` and re-Read every touched file before verify.
 - **A fixture walk that commits runs headless, rooted at the fixture** — launch it as `claude -p` with the fixture as cwd, not as an in-session subagent: a subagent's commit meets this repo's `commit-channel` deny, whose route (`/super-bootstrap:commit`) commits this repo, not the fixture. Protocol: [`bench/commit-guard/README.md` § Protocol](bench/commit-guard/README.md#protocol).
-- **Transcription is not a build** — when the exact content is already in hand (a plan supplies verbatim old/new text, or the gateway already holds the final text) with no runtime to derive against, applying it carries zero closure: inline it, even mid-dispatch-regime. Reserve dispatch for content a container must derive: reads, integration, judgment.
+- **Transcription is not a build** — when the exact content is already in hand (a plan supplies verbatim old/new text, or the gateway already holds the final text) with no runtime to derive against, applying it carries zero closure: inline it, even mid-dispatch-regime.
 - **Review findings are claims, not instructions** — a judgment-grade review finding routes through the cold `review-intake` judge before any implementer sees it: claims pass numbered + verbatim with their cited surfaces (pointer-less ones marked `(no surface citation)`), minus fix preferences and dispatcher theories; per-claim `confirmed | falsified | needs-evidence` + a coverage line return to the gateway. Confirmed → dispatch at fix grade; falsified → stops at the gateway; needs-evidence → run or delegate the named check. A transcription-grade patch skips intake only when the gateway itself verified the cited text.
-- **Subagent commits route through the commit door** — a dispatched implementer implements + tests + reports (built + file list); the gateway commits via `/super-bootstrap:commit`. A fix→re-review loop scales to fix grade — a transcription-grade fix (shape fully supplied) → dispatcher verifies against the diff, no re-review dispatch; a judgment-grade fix (shape left to the implementer) → re-review dispatches. For free per-implementer commits, use the autorun-worktree path — isolated commits, doc-sync deferred to the merge boundary.
+- **Subagent commits route through the commit door** — a dispatched implementer implements + tests + reports (built + file list); the gateway commits via `/super-bootstrap:commit`. A fix→re-review loop scales to fix grade — a transcription-grade fix (shape fully supplied) → gateway verifies against the diff, no re-review dispatch; a judgment-grade fix (shape left to the implementer) → re-review dispatches. For free per-implementer commits, use `/super-bootstrap:autorun` (worktree-isolated commits, doc-sync deferred to the merge boundary).
 - **Doc-sync** (envelope step) → gateway-inline, judgment included — the gateway judges the mechanically enumerated scope warm in its own context; the cold `doc-sync-scan` agent dispatches only when the scope outgrows the commit door's inline ceiling (mechanism: § Doc Sync); resolving writes land inline or dispatched by closure.
 - **Parallel within a phase, not across it** — N build sub-goals or N doc surfaces fan out together; build → doc-sync stays ordered (doc-sync needs the finished diff).
-- **Writer run mode keys on path overlap, not writer class** — foreground when the writer's paths overlap what the session will keep editing; no overlap (new files included) → background, long build-class dispatches included. Full criterion: `.claude/guidelines/work-discipline/dispatch-run-mode.md`. Narrow exception: under a paired PreToolUse(Write) context-injector hook that is **not subagent-gated** — it still emits when the payload carries `agent_type` — a backgrounded subagent's new-file Write can stall before writing (platform defect); with such a hook wired, new-file writers dispatch foreground. Conformance is read off the wired hook in `settings.json`: a gated or unpaired injector leaves background dispatch free. Full: `~/.claude/guidelines/claude-shape/hook-feedback-channels.md` § Background-subagent Write-create.
+- **Writer run mode keys on path overlap, not writer class** — foreground when the writer's paths overlap what the session will keep editing; no overlap (new files included) → background, long build-class dispatches included. Full criterion: `.claude/guidelines/work-discipline/dispatch-run-mode.md`. Narrow exception: under a paired PreToolUse(Write) context-injector hook that is **not subagent-gated** — it still emits when the payload carries `agent_type` — a backgrounded subagent's new-file Write fails with an internal error and the file is never written (platform defect); with such a hook wired, new-file writers dispatch foreground. Conformance is read off the wired hook in `settings.json`: a gated or unpaired injector leaves background dispatch free. Full: `~/.claude/guidelines/claude-shape/hook-feedback-channels.md` § Background-subagent Write-create.
 
 ## Doc Sync (non-negotiable)
 
@@ -92,7 +92,7 @@ Before writing, reviewing, or refactoring code, read `CODING_STANDARDS.md` at th
 
 ## Edit Discipline — Renames, Replace-All & Stale State
 
-Rename preference order: per-occurrence Edit (call sites from LSP `findReferences` or Grep) → `sed` (unique 8+ char literals) → `replace_all` (long unique literals only).
+Rename preference order: per-occurrence Edit (call sites from LSP `findReferences` where a server is configured, Grep otherwise) → `sed` (unique 8+ char literals) → `replace_all` (long unique literals only).
 
 Stale-state family: Read a file before its first Edit; re-Read after a stale/unread Edit error, or after any write that landed behind your read-tracker (formatter hook, a returned file-writing subagent — `git diff` is not a Read). Two consecutive same-file Edit failures = mandatory re-Read.
 
@@ -164,9 +164,9 @@ Markdown-authored Claude Code plugin + self-hosted marketplace — no language r
 - [`docs/techstack.md`](docs/techstack.md) — stack, architecture rules, observed coding patterns.
 - [`docs/specs/`](docs/specs/) — feature specs, one `.md` per feature. Filename + heading is the catalog; no index.
 - [`docs/work/`](docs/work/README.md) — open cards (`BUG` / `DEBT` / `GAP`, append-only threads), captured via `/super-bootstrap:log`, deleted on resolve; `README.md` holds the thread contract + ID shape.
-- [`docs/parked.md`](docs/parked.md) — deferred items with named triggers (scale module)
-- [`docs/test-queue.md`](docs/test-queue.md) — manual-verification queue (scale module)
-- [`docs/outward/`](docs/outward/README.md) — outward threads: next move + waiting-on party, one file per item (scale module)
+- [`docs/parked.md`](docs/parked.md) — deferred items with named triggers
+- [`docs/test-queue.md`](docs/test-queue.md) — manual-verification queue
+- [`docs/outward/`](docs/outward/README.md) — outward threads: next move + waiting-on party, one file per item
 - [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)
 

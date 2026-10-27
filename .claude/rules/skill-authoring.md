@@ -6,7 +6,7 @@ paths:
 
 # Skill Authoring — Test-Surface Routing
 
-You are editing a shipped skill. The envelope's red phase is NOT structurally
+You are editing a shipped skill. The envelope's test-first law is NOT structurally
 empty here for behavior-shaping prose. Route by what the edit changes:
 
 - **Behavior-shaping content** — gates, protocol steps, disciplines, trigger

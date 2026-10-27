@@ -10,7 +10,7 @@ description: "Rule-authoring guide — loads when any file under .claude/rules/ 
 >
 > **Cold-load caveat:** a rule fires on file *read*, not on intent. Mirror each rule's summary into `CLAUDE.md` § Rules so the orchestrator knows it exists during planning.
 >
-> Use `paths:` in frontmatter — not `globs:` (Cursor key, ignored by Claude Code).
+> Use `paths:` in frontmatter — not `globs:` (Cursor key, unrecognized by Claude Code; the rule silently loads always-on and the path filter is ignored). A rule with no frontmatter at all takes the same eager lane. Patterns match gitignore-style — a bare filename fires at any depth, a leading `/` pins root.
 
 ## Adding a new rule
 
