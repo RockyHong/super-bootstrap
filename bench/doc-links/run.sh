@@ -106,6 +106,9 @@ run_case hits-card hits cardonly
 run_case hits-asset-tscn hits Ending.tscn
 run_case hits-asset-tres hits Loot.tres
 run_case hits-asset-code hits Player
+# Attribution: one `term<TAB>count` per term, each count equal to that term's own
+# single-term hit set above — the hub pair shares one doc yet each counts it.
+run_case hits-by-term hits --by-term level foo-bar overview techstack cardonly Ending.tscn zzznothing
 
 # --- self: changed paths → the scope docs among them ---
 # Every arm in one call: an included docs/** doc, the root README.md and a

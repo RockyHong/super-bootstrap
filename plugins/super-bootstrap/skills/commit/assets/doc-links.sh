@@ -46,11 +46,17 @@
 #                      — a backticked bare `Ending` is domain vocabulary, not narration.
 #                      Sorted unique; exclusion is the caller's (pipe through
 #                      `grep -vxF`). Always exit 0.
+#   hits --by-term <term>...
+#                      attribution instead of the file list: one `term<TAB>count`
+#                      line per distinct input term — the number of doc-surface files
+#                      that term hits on its own, under the same rules (a file two
+#                      terms hit counts for both). Zero-hit terms print `0`. Sorted by
+#                      count, highest first, then term. Takes `-` like `hits`.
 #   self <path>...     print the changed paths that are doc-surface files in their
 #                      own right, sorted unique — a changed doc is its own scope doc.
 #                      A path the diff deleted, one off the surface, and frozen
 #                      provenance all print nothing. Always exit 0.
-#   terms - | hits - | self -
+#   terms - | hits [--by-term] - | self -
 #                      a lone `-` reads the list from stdin instead, one item per
 #                      line (blank lines skipped, a trailing CR dropped) — the
 #                      shell-split-proof form for a path or term holding spaces:
@@ -668,6 +674,10 @@ do_terms() {
 # same paired-backtick parse `extract_links` does — a regex cannot tell a span from
 # the gap between two spans, and that gap is where bare prose false-hits live. One
 # awk pass over the whole surface; terms ride the environment, so no quoting round-trip.
+# HITS_BY_TERM=1 swaps the output for attribution: every term is tested against every
+# file (no first-match break) and END prints term TAB count — one rule set, so the
+# files a term is counted on are exactly the files it adds to the default union.
+HITS_BY_TERM=0
 do_hits() {
     [ "$#" -eq 0 ] && return 0
     local -a files
@@ -680,8 +690,12 @@ do_hits() {
         is_frozen_provenance_path "$f" && continue
         files+=("$f")
     done < <(collect_surface)
-    [ "${#files[@]}" -eq 0 ] && return 0
-    DOCLINK_TERMS="$terms" DOCLINK_HUB="$HUB_STEMS" awk "$ISWORD_AWK$CODESPAN_AWK"'
+    if [ "${#files[@]}" -eq 0 ]; then
+        # No surface: the union is empty, but every term still attributes, at zero.
+        [ "$HITS_BY_TERM" -eq 1 ] || return 0
+        files=(/dev/null)
+    fi
+    DOCLINK_TERMS="$terms" DOCLINK_HUB="$HUB_STEMS" awk -v BYTERM="$HITS_BY_TERM" "$ISWORD_AWK$CODESPAN_AWK"'
     # Whole-word occurrence of needle in hay.
     function wordin(hay, needle,   p, off, L, pre, post) {
         L = length(needle); off = 0
@@ -731,16 +745,37 @@ do_hits() {
         }
     }
 
+    # Does term i occur in code shape on this line? One rule set, both outputs.
+    function termhit(i, line, code) {
+        if (i in asset) return pathin(line, T[i])
+        if (T[i] in hub) return barein(code, T[i])
+        return (wordin(code, T[i]) || pathin(line, T[i]))
+    }
+
     BEGIN {
         n = split(ENVIRON["DOCLINK_TERMS"], T, "\n")
         m = split(ENVIRON["DOCLINK_HUB"], H, " ")
         for (j = 1; j <= m; j++) if (H[j] != "") hub[H[j]] = 1
         # An extension-marked term (`Ending.tscn`) names a Godot text asset: match its
-        # stem path-shaped only.
-        for (i = 1; i <= n; i++)
+        # stem path-shaped only. NAME keeps the term as given, for attribution; a
+        # repeated term is tested once.
+        for (i = 1; i <= n; i++) {
+            NAME[i] = T[i]
+            if (T[i] == "" || (T[i] in seen)) { T[i] = ""; continue }
+            seen[T[i]] = 1
             if (T[i] ~ /\.([Tt][Ss][Cc][Nn]|[Tt][Rr][Ee][Ss])$/) {
                 T[i] = substr(T[i], 1, length(T[i]) - 5); asset[i] = 1
             }
+        }
+    }
+
+    BYTERM == 1 {
+        code = codespans($0)
+        for (i = 1; i <= n; i++) {
+            if (T[i] == "" || ((FILENAME, i) in th)) continue
+            if (termhit(i, $0, code)) { th[FILENAME, i] = 1; cnt[i]++ }
+        }
+        next
     }
 
     {
@@ -748,16 +783,22 @@ do_hits() {
         code = codespans($0)
         for (i = 1; i <= n; i++) {
             if (T[i] == "") continue
-            if (i in asset) {
-                if (pathin($0, T[i])) { hit[FILENAME] = 1; break }
-            } else if (T[i] in hub) {
-                if (barein(code, T[i])) { hit[FILENAME] = 1; break }
-            } else if (wordin(code, T[i]) || pathin($0, T[i])) { hit[FILENAME] = 1; break }
+            if (termhit(i, $0, code)) { hit[FILENAME] = 1; break }
         }
     }
 
-    END { for (f in hit) print f }
-    ' "${files[@]}" | LC_ALL=C sort -u
+    END {
+        if (BYTERM == 1) {
+            for (i = 1; i <= n; i++) if (T[i] != "") print NAME[i] "\t" (cnt[i] + 0)
+        } else {
+            for (f in hit) print f
+        }
+    }
+    ' "${files[@]}" | if [ "$HITS_BY_TERM" -eq 1 ]; then
+        LC_ALL=C sort -t $'\t' -k2,2nr -k1,1
+    else
+        LC_ALL=C sort -u
+    fi
     return 0
 }
 
@@ -1019,7 +1060,7 @@ do_pins() {
 }
 
 USAGE='Usage: %s check | pins | refs <path>[#anchor]... | index | closure <path>[#anchor]
-       %s terms <changed-path>...|- | hits <term>...|- | anchors <path> <hunk-range>...
+       %s terms <changed-path>...|- | hits [--by-term] <term>...|- | anchors <path> <hunk-range>...
        %s self <changed-path>...|-     (- = read the list from stdin, one item per line)
 '
 
@@ -1059,6 +1100,7 @@ case "$MODE" in
         fi ;;
     hits)
         shift
+        if [ "${1:-}" = "--by-term" ]; then HITS_BY_TERM=1; shift; fi
         if [ "$#" -eq 1 ] && [ "$1" = "-" ]; then
             read_items
             do_hits ${ITEMS[@]+"${ITEMS[@]}"}

@@ -771,6 +771,62 @@ else
   bad "terms: the argv form still takes a quoted spaced path whole (back-compat)"
   printf 'got:\n%s\n' "$got_terms" | sed 's/^/        /'
 fi
+
+echo "== doc-links: GAP-j0sr — hits --by-term attributes the hit set to each term =="
+# The default `hits` output is the union, so a scope over the ceiling cannot be traced
+# back to the term that inflated it. `--by-term` prints `term<TAB>count` per input term
+# — each term counted on its own, so one doc hit by two terms counts once for each —
+# sorted by count (high first), then term. Same match rules as `hits`: frozen provenance
+# out, hub stems bare-token only, an extension-marked asset term path-shaped only.
+mkdir -p "$TMP/byterm/docs/specs" "$TMP/byterm/docs/work"
+printf '# A\n\nSee `graphs.py` for the loader.\n' > "$TMP/byterm/docs/specs/a.md"
+printf '# B\n\nCall `graphs.build` first.\n' > "$TMP/byterm/docs/specs/b.md"
+printf '# C\n\nThe `level` node.\n' > "$TMP/byterm/docs/specs/c.md"
+printf '# D\n\nBoth `graphs` and `scripts/level.gd`; see docs/overview.md.\n' > "$TMP/byterm/docs/specs/d.md"
+printf '# E\n\nScene in `levels/Ending.tscn`, and the `overview` doc.\n' > "$TMP/byterm/docs/specs/e.md"
+printf '# Card\n\nNames `graphs.py` and `level`.\n' > "$TMP/byterm/docs/work/GAP-abc1.md"
+
+got_by="$(cd "$TMP/byterm" && bash "$LINKS" hits --by-term level graphs zzzmiss overview Ending.tscn)"
+expected_by="$(printf 'graphs\t3\nlevel\t2\nEnding.tscn\t1\noverview\t1\nzzzmiss\t0')"
+if [ "$got_by" = "$expected_by" ]; then
+  ok "hits --by-term: per-term counts, count-desc then term, zero-hit term listed, frozen provenance out"
+else
+  bad "hits --by-term: per-term counts, count-desc then term, zero-hit term listed, frozen provenance out"
+  printf 'expected:\n%s\ngot:\n%s\n' "$expected_by" "$got_by" | sed 's/^/        /'
+fi
+
+got_by="$(cd "$TMP/byterm" && printf '%s\n' docs/x/graphs.py scripts/level.gd | bash "$LINKS" terms - | bash "$LINKS" hits --by-term -)"
+expected_by="$(printf 'graphs\t3\nlevel\t2')"
+if [ "$got_by" = "$expected_by" ]; then
+  ok "terms - | hits --by-term -: the stdin form attributes the same counts"
+else
+  bad "terms - | hits --by-term -: the stdin form attributes the same counts"
+  printf 'expected:\n%s\ngot:\n%s\n' "$expected_by" "$got_by" | sed 's/^/        /'
+fi
+
+got_by="$(cd "$TMP/byterm" && bash "$LINKS" hits --by-term graphs graphs)"
+if [ "$got_by" = "$(printf 'graphs\t3')" ]; then
+  ok "hits --by-term: a repeated term prints once"
+else
+  bad "hits --by-term: a repeated term prints once"
+  printf 'got:\n%s\n' "$got_by" | sed 's/^/        /'
+fi
+
+got_union="$(cd "$TMP/byterm" && bash "$LINKS" hits level graphs)"
+expected_union="$(printf 'docs/specs/a.md\ndocs/specs/b.md\ndocs/specs/c.md\ndocs/specs/d.md')"
+if [ "$got_union" = "$expected_union" ]; then
+  ok "hits (no flag): default output stays the union file list"
+else
+  bad "hits (no flag): default output stays the union file list"
+  printf 'expected:\n%s\ngot:\n%s\n' "$expected_union" "$got_union" | sed 's/^/        /'
+fi
+
+got_by="$(cd "$TMP/byterm" && bash "$LINKS" hits --by-term)"; rc=$?
+if [ -z "$got_by" ] && [ "$rc" -eq 0 ]; then
+  ok "hits --by-term with no terms prints nothing, exit 0"
+else
+  bad "hits --by-term with no terms prints nothing, exit 0 (rc=$rc, got: $got_by)"
+fi
 # ---------------------------------------------------------------------------
 # GAP-081 — `pins`: a doc line restating an agent's frontmatter `model:` tier is
 # checked against the source. Keyed on the code-shaped path mention, never on a

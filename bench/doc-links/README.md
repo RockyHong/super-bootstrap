@@ -63,6 +63,10 @@ in a code span — a link target, a backticked path, a bare filename and a bare 
 the path mention hits (`asset-scene-path.md` — `` `levels/Ending.tscn` ``; `asset-res-path.md` —
 a bare `res/Loot.tres`), while the backticked bare `Ending` / `Loot` in `asset-bare.md` stays
 out · `hits-asset-code` a non-asset term (`Player`) still hits that same backticked bare word ·
+`hits-by-term` `--by-term` prints `term<TAB>count`, count-high-first then term: each
+count equals that term's own single-term hit set (`level` 3 as `hits-level`, `cardonly` 2
+as `hits-card`, the asset and hub terms under their own rules), `overview` and `techstack`
+each count the one doc they share, and the absent term prints `0` ·
 `hits-history` a frontmatter `dimension: history` declaration drops the doc from the
 hit set, while the doc carrying the same string in its body still hits — the
 declaration is the carrier, not the string ·
