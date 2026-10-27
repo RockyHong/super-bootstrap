@@ -1,0 +1,13 @@
+diff --git a/docs/door-interlock.md b/docs/door-interlock.md
+index e4b651c..b47c555 100644
+--- a/docs/door-interlock.md
++++ b/docs/door-interlock.md
+@@ -6,7 +6,7 @@ and treats an open door as a reason to stop moving the run forward.
+ ## Interlock rule
+ 
+ Opening the cabinet door pauses the active stage's timer and blocks any stage change
+-until the door has been shut for 30 seconds. The heater and the steam generator keep
++until the door has been shut for 45 seconds. The heater and the steam generator keep
+ running against the live stage's targets while the door is open — the cabinet is
+ trying to recover, not giving up — but no minute of an open-door period counts toward
+ the stage.

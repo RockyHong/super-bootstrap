@@ -1,0 +1,13 @@
+diff --git a/README.md b/README.md
+index d2e1e73..eb6eff2 100644
+--- a/README.md
++++ b/README.md
+@@ -19,7 +19,7 @@ two air probes.
+ A proof schedule is an ordered list of stages read from `schedules/<name>.toml`.
+ Each stage sets a target temperature, a target humidity, and a duration in minutes.
+ `brindle` runs the stages strictly in file order, and once the last stage ends the
+-cabinet drops to a 4 °C hold and stays there until someone unloads it.
++cabinet drops to a 3 °C hold and stays there until someone unloads it.
+ 
+ Between stages the controller ramps rather than steps: the heater and the steam
+ generator move toward the next stage's targets at the cabinet's natural rate, and
