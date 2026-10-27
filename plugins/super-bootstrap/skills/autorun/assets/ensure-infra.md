@@ -81,7 +81,3 @@ Durable harness config, not a temporal pipeline artifact — so no cleaner:
 - **Creator** — ensure-infra (first run).
 - **Consumer** — the warm step (template → worktree), the gateway (Read-hook + boundary-anchor embed at dispatch).
 - **Cleaner** — none; the infra lives until the user removes autorun. (Contrast worktrees, which are temporal and *do* have a teardown cleaner — `parallel-worktrees.md §Cleanup`.)
-
-## Install path
-
-autorun § Pre-flight is the only caller — the runway (`harness-bootstrap`) places none of this infra.
