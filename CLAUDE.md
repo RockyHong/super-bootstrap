@@ -76,7 +76,7 @@ Stale candidates resolve together: report path + what looks outdated + relevant 
 
 **Write boundary** — doc-sync writes narrative docs only: `docs/`, the root `README`, and plugin READMEs (`plugins/*/README.md`). All harness — `CLAUDE.md`, `.claude/rules/`, skills, agents, plugin manifests — is **read-only within this step**: flag the drift and route the fix to its owner (a deliberate harness edit carrying its own verify pass; `/release` for manifests).
 
-**Dimension routing (state XOR history — decide before writing any `docs/` file):**
+**Dimension routing (state XOR history — decide before writing any `docs/` file; classify step + tripwire in the `dimension-discipline` rule):**
 
 State docs (`overview.md`, `techstack.md`, specs) hold what is **true now** — never timestamp precedent into them. Route by dimension:
 

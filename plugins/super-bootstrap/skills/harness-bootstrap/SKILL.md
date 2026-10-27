@@ -169,6 +169,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `docs/work/README.md`, `docs/work/TEMPLATE.md` — whole files, drift-checked against their skeletons. A consumer's `**ID high-water mark:**` line (here, and in the scale module's `docs/outward/README.md` + `docs/parked.md`) is a retired counter — IDs come from `/super-bootstrap:log`'s generator — so it drifts against the skeleton: the drift row replaces it with the skeleton's ID-shape text at the same spot (`docs/work/README.md`'s `**ID shape:**` line; the outward README's `## ID convention` paragraph; `docs/parked.md`'s `**ID convention:**` line), never re-plants or resets the counter. Existing numeric IDs stay valid and are never renamed
 - `AGENTS.md` (foreign-executor contract — always placed; whole shipped body drift-checked against `assets/agents-md-skeleton.md`)
 - `.claude/rules/index.md` (rule-authoring guide)
+- `.claude/rules/ssot-doc-link.md`, `.claude/rules/dimension-discipline.md` (doc-authoring rules — always placed; whole shipped bodies drift-checked against `assets/rules-ssot-doc-link-skeleton.md` / `assets/rules-dimension-discipline-skeleton.md`)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
 - `.claude/settings.json` core plugin pin (`enabledPlugins`, `extraKnownMarketplaces`) — drift-checked for presence alone (§ 2a)
 - `.claude/super-bootstrap-runway.json` (runway coverage receipt — not diffed section-by-section; read at Phase 1 § Version-staleness signal, written at § 2c Receipt write; durable, no cleaner)
@@ -211,6 +212,8 @@ docs/
 .claude/
   rules/         ← path-scoped rules, full-body fires on file match
     index.md     ← rule-authoring guide (path-scoped — loads when editing rules)
+    ssot-doc-link.md         ← link each concept to its SSOT home on the asserting line (fires on prose docs)
+    dimension-discipline.md  ← classify a prose doc state vs history before editing (fires on prose docs)
 ```
 
 For each: create if missing, skip if present. Add `.gitkeep` in empty folders. If `docs/` or `.claude/` already exists, nest alongside. Report status per directory.
@@ -228,7 +231,7 @@ Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no su
 
 `CODING_STANDARDS.md` is scaffolded **when code is present** (Phase 1 § Code presence) — copy `assets/coding-standards-skeleton.md` to the repo root if missing (no substitutions); a docs-only repo takes no file, and a later re-run that finds code raises it as `⊕ new`. Starts headings-only; its preamble states the fill contract and the three-way routing (binding + ambient here, binding + path-scoped → `.claude/rules/<scope>.md`, descriptive → `docs/techstack.md` § Coding Patterns).
 
-`.claude/rules/` machinery is **always** scaffolded (zero-cost when empty). `index.md` is seeded from `assets/rules-index-skeleton.md`. Individual rule bodies fill in Phase 2b based on Phase 1 signal detection.
+`.claude/rules/` machinery is **always** scaffolded. `index.md` is seeded from `assets/rules-index-skeleton.md`. The two doc-authoring rules the doc-sync gate rests on are **always** placed — copy `assets/rules-ssot-doc-link-skeleton.md` to `.claude/rules/ssot-doc-link.md` and `assets/rules-dimension-discipline-skeleton.md` to `.claude/rules/dimension-discipline.md` if missing (no substitutions). Signal-seeded rule bodies fill in Phase 2b based on Phase 1 signal detection.
 
 **Core plugin pin (pre-resolve).** A core dep, not an adaptive pick: the skeleton routes every door through `/super-bootstrap:*` and the committed `commit-channel.sh` deny text routes workers to `/super-bootstrap:commit`, so both dangle unless the project pin alone resolves `super-bootstrap` wherever user-scope settings don't apply (fresh clone, second machine). A cloud session is the exception the pin cannot cover — it loads no repo-declared plugin. The pin lives outside the official marketplace, so its `extraKnownMarketplaces` entry is required. Pin first — tier-2 curation layers adaptive picks on top later.
 
@@ -337,6 +340,8 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 | `assets/coding-standards-skeleton.md` | `CODING_STANDARDS.md` (project root) | Code present only (Phase 1 § Code presence) |
 | `assets/agents-md-skeleton.md` | `AGENTS.md` (project root) | Always — foreign-executor contract |
 | `assets/rules-index-skeleton.md` | `.claude/rules/index.md` | Always — machinery |
+| `assets/rules-ssot-doc-link-skeleton.md` | `.claude/rules/ssot-doc-link.md` | Always — doc-authoring rule (SSOT-home links) |
+| `assets/rules-dimension-discipline-skeleton.md` | `.claude/rules/dimension-discipline.md` | Always — doc-authoring rule (state vs history) |
 | `assets/rules-frontend-skeleton.md` | `.claude/rules/<framework>.md` | Only if frontend signal fired in Phase 1 |
 | `assets/rules-mv3-skeleton.md` | `.claude/rules/mv3.md` | Only if MV3 signal fired in Phase 1 |
 
@@ -502,7 +507,7 @@ On `y`: append each entry as a `tech`-domain row in `docs/decisions.md` (preserv
 - Bracketed conditional lines (`{- docs/parked.md — ...}`, `{- docs/test-queue.md — ...}`, `{- docs/outward/ — ...}`) — keep only if the corresponding adaptive doc is scaffolded for this repo (scale module per its 2a install gate); drop the whole line otherwise
 - **Monorepo tier** (Phase 1 § Monorepo detection) — fill CLAUDE.md's conditional monorepo block (workspace tool + the workspace-aware filtered build command) and `techstack.md` § Packages table rows (package | path | role | build command) from the Phase 1 package enumeration. Single-package repo → drop the CLAUDE.md monorepo block and the § Packages section entirely
 - **Code presence** (Phase 1 § Code presence) — code present → unbracket CLAUDE.md's conditional § Coding Principles block verbatim; docs-only repo → drop the block entirely (`CODING_STANDARDS.md` is not scaffolded either, § 2a)
-- CLAUDE.md § **Rules** summary bullets — fill from seeded `.claude/rules/*.md` files (one bullet per rule with glob + 2-4 one-line key points). The `{example scaffolding — …}` label and the bracketed example bullets under it go together: replaced by the seeded rules' bullets, or dropped when no signal-seeded rule file landed (`index.md` is always-placed machinery and takes no bullet) — leaving the explanatory paragraph and the unbracketed read-the-rule-file sentence, which is shipped prose.
+- CLAUDE.md § **Rules** summary bullets — the `ssot-doc-link.md` and `dimension-discipline.md` bullets are unbracketed shipped prose and stay as written. Fill one bullet per signal-seeded `.claude/rules/*.md` file (glob + 2-4 one-line key points). The `{example scaffolding — …}` label and the bracketed example bullets under it go together: replaced by the signal-seeded rules' bullets, or dropped when no signal-seeded rule file landed (`index.md` is always-placed machinery and takes no bullet) — leaving the explanatory paragraph, the two shipped bullets and the unbracketed read-the-rule-file sentence.
 - Rule skeleton placeholders (`{component path glob}`, `{Framework}`, body bullets in `assets/rules-*-skeleton.md`) → fill from Phase 1 detection. Lines that don't apply get dropped during scaffold.
 
 ### 2b-adopt: Superseded-fork adoption (migration, silent-skip)
@@ -588,6 +593,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `.gitignore` (when any 2a step appended a line — 2a-hooks' `.claude/.consult-catalog`, 2a-autorun's `.claude/worktrees/`, `.autorun-status`, `/OWNED_BY` and `/.claude/settings.local.json`; skip if every line was already present)
 - `.claude/templates/worktree-settings.local.json` (autorun worktree settings template — only if placed or refreshed on drift this run at 2a-autorun)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
+- `.claude/rules/ssot-doc-link.md`, `.claude/rules/dimension-discipline.md` (if newly written, or approved drift fix)
 - `.claude/rules/<seeded>.md` (any rule files newly seeded or migrated to)
 - `docs/work/README.md` (if newly written, its retired high-water line replaced by the ID-shape line, or fact-fields block inserted this run at 2a-scale)
 - `docs/work/TEMPLATE.md` (if newly written)

@@ -59,7 +59,7 @@ The gateway orchestrates; it does not build. Inline lane = orchestration, reads,
 
 ## Doc Sync (non-negotiable)
 
-**The guarantee is retrieval-shaped:** any restated fact a reader lands on reaches its SSOT home in one hop — a markdown link on the asserting line, authored when the line is written. Structure carries the guarantee; the commit door maintains the structure rather than re-deriving the whole doc surface per commit.
+**The guarantee is retrieval-shaped:** any restated fact a reader lands on reaches its SSOT home in one hop — a markdown link on the asserting line, authored when the line is written (`ssot-doc-link` rule). Structure carries the guarantee; the commit door maintains the structure rather than re-deriving the whole doc surface per commit.
 
 Named pipeline step — every route includes it between user review and commit. The commit door (`/super-bootstrap:commit`) runs gateway-inline in three layers:
 
@@ -75,7 +75,7 @@ Stale candidates resolve together: report path + what looks outdated + relevant 
 
 **Write boundary** — doc-sync writes narrative docs only: `docs/`, the root `README`, and plugin READMEs (`plugins/*/README.md`). All harness — `CLAUDE.md`, `.claude/rules/`, skills, agents, release-owned manifests — is **read-only within this step**: flag the drift and route the fix to its owner (a deliberate harness edit carrying its own verify pass; the project's release step for manifests).
 
-**Dimension routing (state XOR history — decide before writing any `docs/` file):**
+**Dimension routing (state XOR history — decide before writing any `docs/` file; classify step + tripwire in the `dimension-discipline` rule):**
 
 State docs (`overview.md`, `techstack.md`, specs) hold what is **true now** — never timestamp precedent into them. Route by dimension:
 
@@ -113,6 +113,11 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 ## Rules (auto-load on file match)
 
 `.claude/rules/*.md` files attach to file reads via `paths:` frontmatter — full-body rule fires at the decision moment, zero ambient cost when irrelevant.
+
+- **`dimension-discipline.md`** — fires on `docs/**/*.md`, `README.md`, `plugins/*/README.md`
+  • Before editing a prose doc, classify what it owns: state (overwrite in place) vs history (append-only, git's job).
+- **`ssot-doc-link.md`** — fires on `docs/**/*.md`, `README.md`, `plugins/*/README.md`
+  • Link each concept to its SSOT home as you write — born-linked, not back-filled.
 
 {example scaffolding — this label goes with the example bullets below}
 
