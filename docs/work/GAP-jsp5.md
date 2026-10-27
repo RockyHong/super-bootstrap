@@ -79,3 +79,7 @@ Fix surface and settled calls: the Verdict above (author == executor session; st
 ## Progress — 2026-10-27
 
 Plan steps 1–4 done: both shipped rule skeletons built and placed by harness-bootstrap (always, whole-body drift-checked), cold dry-run gaps patched (multi-home tiebreak, contradiction log route, description wording), `audit-harness-edits` dispositioned. Remaining: `/release`, then the `OUT-2e1a` tail (author's release-landed note to CCM; dogfood swap of both served rules once CCM retires them).
+
+## Progress — 2026-10-27
+
+Released in v5.6.0; CCM notified to retire its copies (`OUT-2e1a`). Remaining: on CCM's retired note, replace `.claude/rules/{ssot-doc-link,dimension-discipline}.md` with the shipped assets byte-identical, delete their `.served` sidecars, and update root `CLAUDE.md` § Rules provenance line; then delete this card and `OUT-2e1a`.

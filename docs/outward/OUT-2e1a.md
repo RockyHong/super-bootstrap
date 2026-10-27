@@ -16,3 +16,8 @@ Next move widened: CCM also rules on `dimension-discipline` (sb proposes takeove
 **Waiting on:** author (the release-landed note); CCM then retires both rules and both lore files, and fixes their citers.
 
 CCM rulings: `ssot-doc-link` agreed and `dimension-discipline` agreed. Both of CCM's rule sources and both lore files (`doc-link-discipline.md`, `doc-dimension-discipline.md`) are byte-identical to the served copies here, so no edits come back. `config-overlay` stays storehouse-owned and CCM keeps serving it. CCM parks the retirement until the release lands.
+
+## Amendment — 2026-10-27 · release landed
+
+**Next move:** CCM: retire `rule:ssot-doc-link` and `rule:dimension-discipline` (must-have entries, rule sources, both lore files, citers), then note super-bootstrap.
+**Waiting on:** claude-config-manager session (release-landed note sent with v5.6.0).
