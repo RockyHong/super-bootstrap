@@ -43,6 +43,8 @@ No phase prescription per category — triage decides [how much ceremony the wor
 
 **Origin block** (H1 + field lines) — frozen at capture; the breadcrumb at the top of the thread.
 
+**Extensions:** `docs/extensions.md`, when present, declares the fields this repo adds to a card's origin block, each naming the hook, script, or skill that reads it — additive to this contract, never overriding a line of it.
+
 **Six block types**, each appended at end of file, dated + sourced — context-scope sections assembled on need, [never stages a card must pass](../specs/harness-architecture.md#change-a-is-complete):
 
 - `## Amendment — {date} · {source}` — reframe, premise supersession, new fact, NEEDS_CONTEXT answer.

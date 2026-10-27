@@ -184,6 +184,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `.claude/rules/<rule>.md` grown sections (additions the user/doc-sync added below the skeleton scaffold)
 - `.claude/rules/<rule>.md` files the user authored without a matching skeleton (treat as fully project-owned)
 - Scale-module container content — `docs/parked.md` `## Entries` + `## Sweep log` content, `docs/test-queue.md` `## Pending` / `## Failed (re-queued for fix)` rows, the `docs/outward/OUT-*.md` entry files (consumer-filled, like card content; only the skeleton headers/shape stay pipeline-owned)
+- `docs/extensions.md` — the consumer's additions to skeleton-owned containers (card, parked-entry, outward-entry fields), which those containers' contracts point to; consumer-created, never seeded, never drift-checked
 - Other settings in `.claude/settings.json` outside the plugin-pin keys
 
 ### 2a: Folders & core plugin pin

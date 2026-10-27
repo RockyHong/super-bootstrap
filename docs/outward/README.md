@@ -34,6 +34,8 @@ Every entry carries a stable `OUT-xxxx` ID — its filename and its H1 both — 
 **Owning card:** {BUG|DEBT|GAP}-xxxx   ← optional; the card that waits on this entry — autorun holds it out until the entry closes; an entry that only touches a card cites it in `Repo tail — fires on:` instead
 ```
 
+**Extensions:** `docs/extensions.md`, when present, declares the fields this repo adds to an outward entry's origin block, each naming the hook, script, or skill that reads it — additive to this contract, never overriding a line of it.
+
 **Appended blocks** — each at end of file, dated + sourced, from the same block vocabulary `docs/work/README.md` § Thread contract states for cards:
 
 - `## Amendment — {date} · {source}` — a reply landed, a move made, a re-route, a new fact.
