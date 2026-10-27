@@ -5,3 +5,7 @@
 **Waiting on:** the three consumer repos' sessions (author runs `/read-notes` there)
 **Repo tail — fires on:** `GAP-ym4e` Design — the ledger shape and the doc-sync fan-in threshold
 **Owning card:** GAP-ym4e
+
+## Amendment — 2026-10-27 · self census
+
+This repo's own read landed: [`bench/term-census/results/super-bootstrap.md`](../../bench/term-census/results/super-bootstrap.md). The census surface was fixed to `doc-links.sh self` before any consumer ran it. Still waiting on the three consumers.

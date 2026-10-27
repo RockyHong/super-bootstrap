@@ -6,8 +6,8 @@
 #   B  inline-code-span tokens → number of distinct docs carrying each
 #   C  link in-degree per doc-surface target (`index`)
 #   D  fan-in histograms for A and B
-# Doc surface for B: docs/**/*.md, every README.md, CLAUDE.md, AGENTS.md — minus card
-# threads (docs/work/{BUG,DEBT,GAP}-*.md) and outward threads (docs/outward/OUT-*.md).
+# Doc surface for B: the commit door's own (`doc-links.sh self` over every tracked path), so
+# scaffolding READMEs (bench, fixtures) and frozen provenance stay out, as in doc-sync.
 set -uo pipefail
 
 LINKS="${1:-$(ls -d "$HOME"/.claude/plugins/cache/super-bootstrap/super-bootstrap/*/skills/commit/assets/doc-links.sh 2>/dev/null | sort -V | tail -1)}"
@@ -21,8 +21,7 @@ git -c core.quotePath=false ls-files | bash "$LINKS" terms - | bash "$LINKS" hit
 echo; echo "## A — file-derived terms, top $TOP (term<TAB>docs)"
 head -n "$TOP" "$TMP/a"
 
-git -c core.quotePath=false ls-files -- 'docs/**/*.md' 'docs/*.md' '*README.md' 'CLAUDE.md' 'AGENTS.md' \
-  | grep -vE '^docs/work/(BUG|DEBT|GAP)-|^docs/outward/OUT-' | sort -u > "$TMP/surface"
+git -c core.quotePath=false ls-files | bash "$LINKS" self - > "$TMP/surface"
 echo; echo "doc surface for B: $(wc -l < "$TMP/surface") files"
 # One awk pass: per file, the set of `code` spans on non-fence lines; count files per token.
 while IFS= read -r f; do printf '%s\0' "$f"; done < "$TMP/surface" \

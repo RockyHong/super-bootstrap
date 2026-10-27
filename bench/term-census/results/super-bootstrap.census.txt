@@ -1,0 +1,73 @@
+# census: super-bootstrap · 6e447f1 · doc-links: /c/Users/User/.claude/plugins/cache/super-bootstrap/super-bootstrap/5.5.0/skills/commit/assets/doc-links.sh
+
+## A — file-derived terms, top 20 (term<TAB>docs)
+needs-me	8
+autorun	7
+harness-bootstrap	6
+commit	5
+parked	5
+resolve-plugins	5
+triage	5
+CODING_STANDARDS	4
+commit-channel	4
+harness-architecture	4
+hooks	4
+merge	4
+session-close	4
+session-continue	4
+setup	4
+test-queue	4
+AGENTS	3
+check-docs-consistency	3
+ensure-infra	3
+help	3
+
+doc surface for B: 11 files
+
+## B — code-span tokens, top 20 (token<TAB>docs)
+/super-bootstrap:log	8
+/super-bootstrap:needs-me	6
+docs/work/	6
+/super-bootstrap:commit	5
+README.md	5
+SKILL.md	5
+docs/outward/	5
+## Progress	4
+.claude/settings.json	4
+/super-bootstrap:autorun	4
+/super-bootstrap:harness-bootstrap	4
+/super-bootstrap:merge	4
+/super-bootstrap:setup	4
+CLAUDE.md	4
+docs/decisions.md	4
+docs/extensions.md	4
+docs/overview.md	4
+docs/parked.md	4
+docs/techstack.md	4
+harness-bootstrap	4
+
+## C — link in-degree, top 20 (referrers<TAB>target)
+12	CLAUDE.md
+8	docs/work/README.md
+8	docs/techstack.md
+7	docs/specs/harness-architecture.md
+6	docs/overview.md
+4	plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md
+4	docs/decisions.md
+4	.claude/rules/repo-boundary.md
+3	plugins/super-bootstrap/hooks/runway-version.sh
+3	plugins/super-bootstrap/README.md
+2	plugins/super-bootstrap/skills/triage/SKILL.md
+2	plugins/super-bootstrap/skills/session-continue/SKILL.md
+2	plugins/super-bootstrap/skills/session-close/SKILL.md
+2	plugins/super-bootstrap/skills/merge/SKILL.md
+2	plugins/super-bootstrap/skills/commit/SKILL.md
+2	plugins/super-bootstrap/hooks/hooks.json
+2	bench/consult-hook/FINDINGS-gap045.md
+2	README.md
+2	.claude/rules/skill-authoring.md
+2	.claude/guidelines/work-discipline/dispatch-run-mode.md
+
+## D — fan-in histograms
+A  total 100 · 1:65 · 2:9 · 3-4:19 · 5-8:7 · 9+:0
+B  total 371 · 1:281 · 2:44 · 3-4:39 · 5-8:7 · 9+:0
