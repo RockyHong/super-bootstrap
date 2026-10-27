@@ -12,3 +12,7 @@ Re-aim: a per-doc "this doc should not carry this" judgment is subjective and lo
 ## Amendment — 2026-10-27 · user deliberation
 
 Registration also happens at authoring time, not only by scan: the session editing a doc knows when it coins or leans on a term, so it registers born-registered — same fire moment and shape as the `ssot-doc-link` rule (born-linked). On a term's first asserting use: ledger hit → link the entry; miss and the term earns an entry → add it; otherwise use it inline. Earn gate against agent term-coining: a cold reader stalls without the definition, or the term spans two or more docs; a term private to one doc stays out. This makes the prose lane workable: authors declare, the census counts, doc-sync flags unregistered code-shaped hot tokens and registered-but-unlinked mentions, the audit works the leftovers. Ownership to settle at Design: `ssot-doc-link` is served from claude-config-manager (read-only here → `/contribute`), or the authoring rule ships as this repo's own skeleton rule.
+
+## Amendment — 2026-10-27 · gateway
+
+The "ownership to settle at Design" fork resolves: `ssot-doc-link` ships as this repo's own rule (`plugins/super-bootstrap/skills/harness-bootstrap/assets/rules-ssot-doc-link-skeleton.md`, GAP-jsp5), so the authoring-time registration extends that asset directly.
