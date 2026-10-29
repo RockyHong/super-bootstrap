@@ -1,8 +1,10 @@
 # bench/commit-push — micro-test for the commit door's no-push handoff
 
 Test surface for [`skills/commit/SKILL.md`](../../plugins/super-bootstrap/skills/commit/SKILL.md) § 6 —
-the handoff step after the commit. The door commits locally and never pushes or asks to push; push is
-a [`session-close`](../../plugins/super-bootstrap/skills/session-close/SKILL.md) move. Behavior-shaping
+the handoff step after the commit. The door commits locally and never pushes or asks to push; no door and no
+[`session-close`](../../plugins/super-bootstrap/skills/session-close/SKILL.md) runs or asks push —
+when to push is the user's own preference ([`bench/session-close-push`](../session-close-push/README.md)
+holds session-close's side). Behavior-shaping
 prose, so it ships behind the [`skill-authoring`](../../.claude/rules/skill-authoring.md) RED floor:
 the wording is held against the wording it replaces on the same fixtures.
 
@@ -29,8 +31,7 @@ skill text verbatim, so the copy under test is this repo's working tree, not the
 - **Arm** — the shipped § 6 (handoff), on each of `none` / `remote` / `upstream`.
 - **Assertion** — in every state: no push question in the output, the bare repo's log
   (`git --git-dir <dir>.remote.git log --oneline --all`) is unchanged, and the output after the commit
-  is the one line `Committed. When the session's work is done: /super-bootstrap:session-close (push,
-  card resolve, carry).`
+  is § 6's one handoff line — no push named in it.
 
 ## Findings
 
@@ -47,7 +48,5 @@ RED (control asks to push and hands off to `/clear`) → GREEN (arm prints the o
 every state, asks nothing, pushes nothing). A first arm round under the user's own settings gave the same
 3/3; the round recorded here ran with `--setting-sources project,local`.
 
-The push itself now runs in `session-close` step 4. One probe on an `upstream` fixture, prompt = a
-confirmed pick of {commit `a.md`, push main → origin/main} plus the shipped drive paragraph: the arm ran
-the commit, then one plain `git push`; the bare repo's `main` moved from `init` to the new commit, equal
-to local `HEAD`.
+The 2026-10-29 rows above ran against a § 6 handoff line that still named push as a session-close move;
+that line is since aimed at no push at all, so a re-run asserts § 6's current line with no push in it.

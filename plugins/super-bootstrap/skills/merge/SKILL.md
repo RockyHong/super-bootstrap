@@ -148,7 +148,7 @@ Report to user:
 ## Rules
 
 - Run inline — no subagent dispatch.
-- The door merges locally and never pushes — no push step, no push question; §7's report is the last output. Push is a `/super-bootstrap:session-close` move, else the user's own.
+- The door merges locally and never pushes — no push step, no push question; §7's report is the last output. When to push is the user's own preference, outside this door.
 - Never resolve conflicts inline. Surface and stop. (See Conflict Doctrine above.) A conflict on derived output only settles by its declared regenerate command (§ 5b step 2).
 - Never force-merge.
 - Never delete the absorbed branches. The batch's own integration branch goes with `git branch -d` once `{base}` holds it.

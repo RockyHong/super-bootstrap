@@ -2,8 +2,8 @@
 
 Test surface for [`skills/merge/SKILL.md`](../../plugins/super-bootstrap/skills/merge/SKILL.md) § 7 and
 its no-push rule — the merge door merges locally and never pushes or asks to push; § 7's report is the
-last output. Push is a [`session-close`](../../plugins/super-bootstrap/skills/session-close/SKILL.md)
-move. Behavior-shaping prose, so it ships behind the
+last output. No door and no [`session-close`](../../plugins/super-bootstrap/skills/session-close/SKILL.md)
+runs or asks push — when to push is the user's own preference. Behavior-shaping prose, so it ships behind the
 [`skill-authoring`](../../.claude/rules/skill-authoring.md) RED floor: the wording is held against the
 wording it replaces, on the same fixture shape [`bench/commit-push`](../commit-push/README.md) uses for
 the sibling commit door.
