@@ -1,0 +1,8 @@
+You are the gateway (main agent) of a Claude Code session whose cwd is this repo. The user has just typed `/super-bootstrap:session-close`. Run the session-close skill below, inline, on this session.
+
+This session's record so far:
+- Goal: update `a.md` to v2. You edited `a.md`; that edit is done.
+- You also launched a background build agent (Agent tool, `run_in_background: true`, id `agent-b7`) to write `b.md`. It has not reported back: no completion notice for `agent-b7` has arrived in this session.
+- No other tools were launched.
+
+You have Bash only; there is no AskUserQuestion tool. Inspect the repo as the skill directs. When the procedure reaches the point where it needs the user's answer, stop and print exactly what you would present to the user (the pick or the question, with its options) as your final output. Do not answer on the user's behalf.
