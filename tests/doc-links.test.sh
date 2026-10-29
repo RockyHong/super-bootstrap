@@ -1144,6 +1144,107 @@ check "existing mid-file single-line range still resolves its own section (got: 
 slug="$(cd "$TMP/anch71" && bash "$LINKS" anchors docs/multi.md +3,0)"
 check "pure-deletion range +3,0 on the heading line resolves that section, not the parent (got: $slug)" [ "$slug" = "section-a" ]
 
+echo "== doc-links: GAP-ym4e — terminology prints the registered list from docs/terminology.md =="
+# Registry shape: `**Term**: def` at line start (optional `- `), `_Avoid_: a, b` after its
+# entry, each word mapping to the most recent entry. Fenced blocks and HTML comments hold
+# examples, not entries. Absent file → an empty lane, silently.
+mkdir -p "$TMP/tgl/docs"
+cat > "$TMP/tgl/docs/terminology.md" <<'EOF'
+# Terminology
+
+**Runway**: The generic harness a repo installs.
+_Avoid_: scaffold, boilerplate
+
+- **Doc surface**: The prose docs the commit door keeps in sync.
+- _Avoid_: docs set
+
+```markdown
+**Fenced**: an example entry, not a registration.
+_Avoid_: fencedword
+```
+
+<!-- **Commented**: a hidden entry. -->
+<!--
+**Hidden**: a multi-line comment entry.
+_Avoid_: hiddenword
+-->
+**Card**: One tracked work item.
+_Avoid_: ticket.
+EOF
+got_tgl="$(cd "$TMP/tgl" && bash "$LINKS" terminology)"; rc=$?
+exp_tgl="$(printf 'term\tRunway\navoid\tscaffold\tRunway\navoid\tboilerplate\tRunway\nterm\tDoc surface\navoid\tdocs set\tDoc surface\nterm\tCard\navoid\tticket\tCard')"
+check "terminology: exits 0" [ "$rc" -eq 0 ]
+if [ "$got_tgl" = "$exp_tgl" ]; then
+  ok "terminology: entries, list-prefixed entries and _Avoid_ words in file order; fence + comment entries skipped"
+else
+  bad "terminology: entries, list-prefixed entries and _Avoid_ words in file order; fence + comment entries skipped"
+  printf 'got:\n%s\n' "$got_tgl" | sed 's/^/        /'
+fi
+mkdir -p "$TMP/tgl-none/docs"
+got_none="$(cd "$TMP/tgl-none" && bash "$LINKS" terminology 2>&1)"; rc=$?
+check "terminology: absent docs/terminology.md prints nothing on stdout or stderr, exit 0 (got: $got_none)" [ -z "$got_none" -a "$rc" -eq 0 ]
+
+echo "== doc-links: GAP-ym4e — term-uses prints registered-term candidates on changed docs' added lines =="
+# The per-commit terminology lane's mechanical half: changed doc-surface paths on stdin,
+# their added lines (`git diff HEAD -U0`) matched case-insensitively, whole-word, against
+# the registered list. No judgment — the commit door's §4 applies link-predicate.md.
+TU="$TMP/tu"
+mkdir -p "$TU/docs/work" "$TU/docs/outward" "$TU/docs/specs"
+cat > "$TU/docs/terminology.md" <<'EOF'
+# Terminology
+
+**Runway**: The generic harness a repo installs.
+_Avoid_: scaffold
+EOF
+printf '# Plan\n\nThe runway was here before this change.\n' > "$TU/docs/plan.md"
+printf '# Linked\n\nSee the [runway](terminology.md#runway).\n' > "$TU/docs/linked.md"
+printf '# GAP-abcd\n\nStart.\n' > "$TU/docs/work/GAP-abcd.md"
+printf '# OUT-abcd\n\nStart.\n' > "$TU/docs/outward/OUT-abcd.md"
+printf -- '---\ndimension: history\n---\n# Log\n\nStart.\n' > "$TU/docs/specs/log.md"
+(cd "$TU" && git init -q && git add -A && git -c user.name=t -c user.email=t@t commit -qm base)
+cat >> "$TU/docs/plan.md" <<'EOF'
+The RUNWAY installs every rule.
+Our scaffold seeds the docs.
+A shellfish runways nothing; runway-ish is one word.
+```
+runway inside a fence
+```
+EOF
+printf 'The runway again.\nOur scaffold again.\n' >> "$TU/docs/linked.md"
+printf 'The runway again.\n' >> "$TU/docs/work/GAP-abcd.md"
+printf 'The runway again.\n' >> "$TU/docs/outward/OUT-abcd.md"
+printf 'The runway again.\n' >> "$TU/docs/specs/log.md"
+printf 'The runway thing.\n' >> "$TU/docs/terminology.md"
+printf '# New\n\nRunway opens this line.\n' > "$TU/docs/new.md"
+got_tu="$(cd "$TU" && printf '%s\n' docs/plan.md docs/linked.md docs/work/GAP-abcd.md docs/outward/OUT-abcd.md docs/specs/log.md docs/terminology.md docs/new.md src/x.sh | bash "$LINKS" term-uses -)"; rc=$?
+check "term-uses: exits 0" [ "$rc" -eq 0 ]
+tu_has() { printf '%s\n' "$got_tu" | grep -qxF "$1"; }
+tu_none() { ! printf '%s\n' "$got_tu" | grep -q "^$1	"; }
+tu_noline() { ! printf '%s\n' "$got_tu" | grep -q "^docs/plan\.md	$1	"; }
+check "term-uses: a case-insensitive whole-word term use on an added line reports doc, line, kind, matched word, canonical" tu_has "$(printf 'docs/plan.md\t4\tterm\tRUNWAY\tRunway')"
+check "term-uses: an _Avoid_ word reports as avoid with its canonical term" tu_has "$(printf 'docs/plan.md\t5\tavoid\tscaffold\tRunway')"
+check "term-uses: an unchanged line stays out (line 3 holds the term pre-diff)" tu_noline 3
+check "term-uses: no whole-word match inside shellfish/runways/runway-ish (line 6)" tu_noline 6
+check "term-uses: a term inside a fenced block on an added line stays out" tu_noline 8
+tu_noterm() { ! printf '%s\n' "$got_tu" | grep -q "^$1	[0-9]*	term	"; }
+check "term-uses: a doc already linking docs/terminology.md takes no term candidate" tu_noterm docs/linked.md
+check "term-uses: an _Avoid_ word in a doc already linking docs/terminology.md still reports" tu_has "$(printf 'docs/linked.md\t5\tavoid\tscaffold\tRunway')"
+check "term-uses: a card thread is frozen provenance, skipped" tu_none docs/work/GAP-abcd.md
+check "term-uses: an outward thread is frozen provenance, skipped" tu_none docs/outward/OUT-abcd.md
+check "term-uses: a dimension: history doc is frozen provenance, skipped" tu_none docs/specs/log.md
+check "term-uses: docs/terminology.md itself is skipped" tu_none docs/terminology.md
+check "term-uses: an untracked new doc reads every line as added; a term at column 1 matches" tu_has "$(printf 'docs/new.md\t3\tterm\tRunway\tRunway')"
+tu_count="$(printf '%s\n' "$got_tu" | grep -c . || true)"
+check "term-uses: exactly the four expected candidates (got $tu_count)" [ "$tu_count" -eq 4 ]
+rm -f "$TU/docs/terminology.md"
+got_tu_none="$(cd "$TU" && printf '%s\n' docs/plan.md | bash "$LINKS" term-uses -)"
+check "term-uses: absent docs/terminology.md prints nothing (got: $got_tu_none)" [ -z "$got_tu_none" ]
+usage_out="$(cd "$TMP" && bash "$LINKS" nosuchmode 2>&1)"
+tu_usage() { printf '%s' "$usage_out" | grep -q 'terminology' && printf '%s' "$usage_out" | grep -q 'term-uses'; }
+tu_header() { grep -qE '^#   terminology ' "$LINKS" && grep -qE '^#   term-uses ' "$LINKS"; }
+check "usage string registers the terminology and term-uses modes" tu_usage
+check "header comment registers the terminology and term-uses modes" tu_header
+
 echo "== doc-links: BUG-045 — whole-surface check under a generous wall-clock ceiling =="
 now_ns="$(date +%s%N 2>/dev/null || true)"
 case "$now_ns" in

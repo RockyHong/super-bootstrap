@@ -56,7 +56,25 @@
 #                      own right, sorted unique — a changed doc is its own scope doc.
 #                      A path the diff deleted, one off the surface, and frozen
 #                      provenance all print nothing. Always exit 0.
-#   terms - | hits [--by-term] - | self -
+#   terminology        print the registered list from docs/terminology.md, file order:
+#                      `term<TAB><Term>` per entry line (`**<Term>**: …` at line
+#                      start, optionally `- `-prefixed) and `avoid<TAB><word><TAB><Term>`
+#                      per word of an `_Avoid_: a, b` line (optionally indented or
+#                      `- `-prefixed), each word mapped to the most recent entry; one
+#                      trailing `.` on a word is dropped. Lines inside fenced blocks or
+#                      HTML comments are not entries. Absent file → nothing. Exit 0.
+#   term-uses <path>...
+#                      print terminology candidates on the changed docs' added lines
+#                      (`git diff HEAD -U0`; a path git does not track reads every line
+#                      as added): `doc<TAB>line<TAB>term|avoid<TAB>matched text<TAB>Term`
+#                      per line × registered item, for a case-insensitive (ASCII fold)
+#                      whole-word match outside fenced blocks. Skipped: a path off the
+#                      doc surface, frozen provenance (as `self`), docs/terminology.md
+#                      itself. A doc already linking docs/terminology.md takes no
+#                      `term` candidate; its `avoid` hits still print — a wrong word
+#                      is wrong whatever the doc links. Empty registry → nothing. Mechanical only — whether a use is
+#                      substantive is the commit door's judgment. Exit 0.
+#   terms - | hits [--by-term] - | self - | term-uses -
 #                      a lone `-` reads the list from stdin instead, one item per
 #                      line (blank lines skipped, a trailing CR dropped) — the
 #                      shell-split-proof form for a path or term holding spaces:
@@ -829,6 +847,152 @@ $p
     return 0
 }
 
+# Project term home — one fixed path. Its absence makes both terminology lanes empty.
+TERM_HOME="docs/terminology.md"
+
+# Registry read: one awk pass over the term home. HTML comments are stripped first
+# (they may span lines), then the shared fence toggle drops fenced lines, then the
+# entry / alias shapes match. Portable-awk dialect: no intervals, explicit [ \t].
+TERMINOLOGY_AWK='
+BEGIN { in_fence = 0; fence_char = ""; fence_len = 0; in_cmt = 0; cur = "" }
+{
+    s = $0
+    if (in_cmt) {
+        p = index(s, "-->")
+        if (p == 0) next
+        s = substr(s, p + 3); in_cmt = 0
+    }
+    while ((p = index(s, "<!--")) > 0) {
+        rest = substr(s, p + 4); q = index(rest, "-->")
+        if (q == 0) { s = substr(s, 1, p - 1); in_cmt = 1; break }
+        s = substr(s, 1, p - 1) substr(rest, q + 3)
+    }
+    if (fence_skip(s)) next
+    if (match(s, /^(- )?\*\*[^*]+\*\*:/)) {
+        t = substr(s, 1, RLENGTH)
+        sub(/^(- )?\*\*/, "", t); sub(/\*\*:$/, "", t)
+        gsub(/^[ \t]+|[ \t]+$/, "", t)
+        if (t != "") { cur = t; print "term\t" t }
+        next
+    }
+    if (cur != "" && match(s, /^[ \t]*(- )?_Avoid_:/)) {
+        rest = substr(s, RLENGTH + 1)
+        n = split(rest, w, ",")
+        for (i = 1; i <= n; i++) {
+            x = w[i]
+            gsub(/^[ \t]+|[ \t\r]+$/, "", x); sub(/\.$/, "", x)
+            if (x != "") print "avoid\t" x "\t" cur
+        }
+    }
+}
+'
+
+do_terminology() {
+    [ -f "$TERM_HOME" ] || return 0
+    awk "$FENCE_AWK$TERMINOLOGY_AWK" "$TERM_HOME"
+    return 0
+}
+
+# Candidate match: two inputs per changed doc — the `git diff HEAD -U0` text on stdin
+# (its `+c,d` ranges mark the added post-image lines) and the doc itself, walked whole
+# so the fence toggle sees every opener. The registry rides the environment, one
+# `kind<TAB>word<TAB>Term` per line. Case-fold is ASCII by hand (no tolower — a Latin-1
+# ctype rewrites UTF-8 lead bytes), so byte offsets stay aligned with the original line
+# and the matched text prints as the doc wrote it. Whole word = isword() on both sides.
+TERMUSE_AWK='
+function afold(s,   out, i, n, c, p) {
+    out = ""; n = length(s)
+    for (i = 1; i <= n; i++) {
+        c = substr(s, i, 1); p = index("ABCDEFGHIJKLMNOPQRSTUVWXYZ", c)
+        out = out (p ? substr("abcdefghijklmnopqrstuvwxyz", p, 1) : c)
+    }
+    return out
+}
+BEGIN {
+    in_fence = 0; fence_char = ""; fence_len = 0
+    nreg = split(ENVIRON["DOCLINK_TERMREG"], rl, "\n")
+    for (i = 1; i <= nreg; i++) {
+        split(rl[i], f, "\t"); kind[i] = f[1]; word[i] = afold(f[2])
+        canon[i] = (f[1] == "term") ? f[2] : f[3]
+    }
+}
+FNR == NR {
+    if (ALL != 1 && match($0, /^@@ [^+]*\+[0-9]+(,[0-9]+)? @@/)) {
+        h = $0; sub(/^@@ [^+]*\+/, "", h); sub(/ @@.*$/, "", h)
+        c = h; sub(/,.*$/, "", c); d = 1
+        if (index(h, ",") > 0) { d = h; sub(/^[^,]*,/, "", d) }
+        for (k = 0; k < d + 0; k++) added[c + k] = 1
+    }
+    next
+}
+{
+    if (fence_skip($0)) next
+    if (ALL != 1 && !(FNR in added)) next
+    line = $0; fl = afold(line)
+    for (i = 1; i <= nreg; i++) {
+        w = word[i]; if (w == "") continue
+        if (LINKED == 1 && kind[i] == "term") continue
+        rest = fl; off = 0
+        while ((p = index(rest, w)) > 0) {
+            a = off + p; b = a + length(w)
+            # a == 1 has no left neighbour: substr(s, 0, 1) is the first char in gawk
+            if ((a == 1 || !isword(substr(fl, a - 1, 1))) && !isword(substr(fl, b, 1))) {
+                print DOC "\t" FNR "\t" kind[i] "\t" substr(line, a, length(w)) "\t" canon[i]
+                break
+            }
+            off = a; rest = substr(fl, a + 1)
+        }
+    }
+}
+'
+
+# Does <doc> carry a link resolving to the term home (any anchor)? A linking doc
+# drops only its `term` candidates (LINKED in TERMUSE_AWK). Reuses
+# extract_links + resolve_target, so the link parse cannot drift from `check`.
+links_term_home() {
+    local doc="$1" ln raw
+    while IFS="$(printf '\t')" read -r ln raw; do
+        resolve_target "$doc" "$raw"
+        [ "$R_KIND" = "path" ] && [ "$R_PATH" = "$TERM_HOME" ] && return 0
+    done <<EOF
+$(extract_links "$doc")
+EOF
+    return 1
+}
+
+do_term_uses() {
+    local reg surface p diff all linked
+    [ "$#" -eq 0 ] && return 0
+    reg="$(do_terminology)"
+    [ -z "$reg" ] && return 0
+    surface="
+$(collect_surface)
+"
+    for p in "$@"; do
+        normalize_path "$p"; p="$NORM"
+        [ -z "$p" ] && continue
+        [ "$p" = "$TERM_HOME" ] && continue
+        case "$surface" in
+            *"
+$p
+"*) ;;
+            *) continue ;;
+        esac
+        is_frozen_provenance_path "$p" && continue
+        is_history_doc "$p" && continue
+        linked=0
+        links_term_home "$p" && linked=1
+        diff="$(git diff HEAD -U0 -- "$p" 2>/dev/null)"
+        all=0
+        if [ -z "$diff" ] && ! git ls-files --error-unmatch -- "$p" >/dev/null 2>&1; then
+            all=1
+        fi
+        printf '%s\n' "$diff" | DOCLINK_TERMREG="$reg" awk -v DOC="$p" -v ALL="$all" -v LINKED="$linked" \
+            "$ISWORD_AWK$FENCE_AWK$TERMUSE_AWK" - "$p"
+    done
+    return 0
+}
+
 # Hunk range → section grain. Headings come out of the shared slug transform in file
 # order. A range that covers the doc's first heading is whole-file grain — `(top)` —
 # whatever else it touches; otherwise it is the union of every heading whose own
@@ -1061,7 +1225,8 @@ do_pins() {
 
 USAGE='Usage: %s check | pins | refs <path>[#anchor]... | index | closure <path>[#anchor]
        %s terms <changed-path>...|- | hits [--by-term] <term>...|- | anchors <path> <hunk-range>...
-       %s self <changed-path>...|-     (- = read the list from stdin, one item per line)
+       %s self <changed-path>...|- | terminology | term-uses <changed-path>...|-
+       (- = read the list from stdin, one item per line)
 '
 
 # `terms` / `hits` / `self` list intake: a lone `-` argument reads the list from stdin,
@@ -1114,6 +1279,15 @@ case "$MODE" in
             do_self ${ITEMS[@]+"${ITEMS[@]}"}
         else
             do_self "$@"
+        fi ;;
+    terminology) do_terminology ;;
+    term-uses)
+        shift
+        if [ "$#" -eq 1 ] && [ "$1" = "-" ]; then
+            read_items
+            do_term_uses ${ITEMS[@]+"${ITEMS[@]}"}
+        else
+            do_term_uses "$@"
         fi ;;
     anchors)
         shift

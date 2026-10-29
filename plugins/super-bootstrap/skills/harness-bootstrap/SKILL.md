@@ -1,6 +1,6 @@
 ---
 name: harness-bootstrap
-description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, AGENTS.md (foreign-executor contract), CODING_STANDARDS.md (headings-only), skeleton docs (overview, techstack, decisions, specs/, work/), path-scoped rules, and the core plugin pin; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap:setup; opt-in earn-gated scale module (parked + test-queue + outward containers, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks and backfills skeleton sections added since bootstrap on re-run. Solo dev workflow."
+description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, AGENTS.md (foreign-executor contract), CODING_STANDARDS.md (headings-only), skeleton docs (overview, techstack, decisions, terminology, specs/, work/), path-scoped rules, and the core plugin pin; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap:setup; opt-in earn-gated scale module (parked + test-queue + outward containers, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks and backfills skeleton sections added since bootstrap on re-run. Solo dev workflow."
 tags: [harness, scaffold, setup, meta, docs]
 ---
 
@@ -165,6 +165,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution (**seed-once** — mechanics at § 2b; stale facts route to the Phase 3 advisory, § Fact-staleness signal), Edit Discipline (fixed prose — body drift-checked against the template), Staged-Tree Verify (the § header + its note drift-checked against the template; the command block below the note is consumer-declared, project-owned, never diffed), Packages (monorepo tier only — the § header + column shape; table rows are consumer-grown, project-owned)
 - `docs/overview.md` skeleton sections: Problem, User, Current State; the `<!-- harness-meta -->` block — row identity `docs/overview.md harness-meta` (a marker block is not a heading — no `§`, the same spelling the fact-fields block takes) — compared **shape only**: marker comment present + `external-tools:` key present → `✓ current`, whatever the list holds (values are consumer-owned — § 2b asset table; the same rule the seed-once sections take at § 2b Per-doc handling)
 - `docs/decisions.md` scope header (the blockquote + `## Closed Forks` heading)
+- `docs/terminology.md` scope header (the H1 + blockquote + example-entry comment, drift-checked against `assets/terminology-skeleton.md`)
 - `CODING_STANDARDS.md` preamble + section headings (code present only; drift checked against `assets/coding-standards-skeleton.md`)
 - `docs/work/README.md`, `docs/work/TEMPLATE.md` — whole files, drift-checked against their skeletons. A consumer's `**ID high-water mark:**` line (here, and in the scale module's `docs/outward/README.md` + `docs/parked.md`) is a retired counter — IDs come from `/super-bootstrap:log`'s generator — so it drifts against the skeleton: the drift row replaces it with the skeleton's ID-shape text at the same spot (`docs/work/README.md`'s `**ID shape:**` line; the outward README's `## ID convention` paragraph; `docs/parked.md`'s `**ID convention:**` line), never re-plants or resets the counter. Existing numeric IDs stay valid and are never renamed
 - `AGENTS.md` (foreign-executor contract — always placed; whole shipped body drift-checked against `assets/agents-md-skeleton.md`)
@@ -180,6 +181,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `docs/techstack.md` grown sections: Architecture Rules, Coding Patterns
 - `docs/overview.md` grown sections: Module Index, Data Flow, Key Boundaries
 - `docs/decisions.md` § Closed Forks table rows (consumer-filled history)
+- `docs/terminology.md` entries (`**Term**:` + `_Avoid_:` lines below the header — consumer-registered)
 - `CODING_STANDARDS.md` section content (consumer-authored by hand when a convention settles — the file sits outside the doc-sync surface)
 - `AGENTS.md` grown content (additions appended below the shipped sections)
 - `.claude/rules/<rule>.md` grown sections (additions the user/doc-sync added below the skeleton scaffold)
@@ -205,6 +207,7 @@ destination — report those paths rather than resolving them.
 ```
 docs/
   decisions.md   ← closed forks / rejected directions (history dimension — always scaffolded, starts empty)
+  terminology.md ← the project's term home: one canonical word per concept (always scaffolded, starts with no entries)
   specs/         ← feature specs, one .md per feature, no index file (empty + .gitkeep; files land at the spec-seeding card's pickup — `/super-bootstrap:setup` seeds it on a code-present repo)
   work/
     README.md    ← work-unit workspace header: contract, categories, ID shape
@@ -224,6 +227,8 @@ CODING_STANDARDS.md ← repo binding conventions (headings-only scaffold; sectio
 ```
 
 `docs/decisions.md` is **always** scaffolded — copy `assets/decisions-skeleton.md` to `docs/decisions.md` if missing (no substitutions). Starts empty (header + `## Closed Forks` table).
+
+`docs/terminology.md` is **always** scaffolded — copy `assets/terminology-skeleton.md` to `docs/terminology.md` if missing (no substitutions); a re-run on a repo that lacks it backfills it as `⊕ new`. Starts with no entries (header + a commented example entry); the project registers terms as they settle.
 
 Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no substitutions). Copy `assets/work-template-skeleton.md` to `docs/work/TEMPLATE.md` if missing (no substitutions).
 
@@ -322,6 +327,7 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 | `assets/techstack-skeleton.md` | `docs/techstack.md` | Grown sections absorb migrated CLAUDE.md state-dimension content (Architecture Rules: still-binding decisions; Coding Patterns: examples) |
 | `assets/overview-skeleton.md` | `docs/overview.md` | `<!-- harness-meta -->` block at top: seed `external-tools:` as a YAML list defaulting to `[github]`. Read by `/super-bootstrap:resolve-plugins` (tier-2 curation) as the external-tools source. |
 | `assets/decisions-skeleton.md` | `docs/decisions.md` | Always |
+| `assets/terminology-skeleton.md` | `docs/terminology.md` | Always — term home (entry shape, `_Avoid_` alias list, admission) |
 | `assets/work-readme-skeleton.md` | `docs/work/README.md` | Always — categories, thread contract, ID shape |
 | `assets/work-template-skeleton.md` | `docs/work/TEMPLATE.md` | Always — copy-to-create card template |
 | `assets/coding-standards-skeleton.md` | `CODING_STANDARDS.md` (project root) | Code present only (Phase 1 § Code presence) |
@@ -575,6 +581,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/techstack.md` (new, skeleton-section drift or insert, or post-migration absorbed content)
 - `docs/overview.md` (new, skeleton-section drift or insert)
 - `docs/decisions.md` (new, scope-header drift, post-retirement migration from techstack, or closed-history rows from legacy CLAUDE.md migration)
+- `docs/terminology.md` (new, or scope-header drift)
 - `.claude/settings.json` (core pin seeded at 2a; harness hooks merged at 2a-hooks)
 - `.claude/hooks/commit-channel.sh`, `.claude/hooks/consult-check-{sessionstart,check}.sh` (frozen hook scripts seeded at 2a-hooks — always, default-on)
 - `.gitignore` (when 2a-hooks appended its `.claude/.consult-catalog` line; skip if the line was already present)

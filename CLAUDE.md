@@ -122,7 +122,7 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 - **`config-overlay.md`** (served) — fires on `.claude/settings.json`, `.claude/settings.local.json`, `.claude/hooks/**`, `.mcp.json`
   • Default to upstream canonical wiring as shipped; empirically prove canonical fails before authoring an overlay, and date-stamp any overlay kept as decay debt.
   • Place ambient-behavior config at the lowest layer every target runtime loads; document parity exceptions explicitly.
-- **`repo-boundary.md`** (native) — fires on `CLAUDE.md`, `AGENTS.md`, `CODING_STANDARDS.md`, `plugins/**`, `.claude/{rules,guidelines,hooks,skills,agents}/**`, and the skeleton-mirrored docs (`docs/{overview,techstack,decisions,parked,test-queue}.md`, `docs/{work,outward}/{README,TEMPLATE}.md`)
+- **`repo-boundary.md`** (native) — fires on `CLAUDE.md`, `AGENTS.md`, `CODING_STANDARDS.md`, `plugins/**`, `.claude/{rules,guidelines,hooks,skills,agents}/**`, and the skeleton-mirrored docs (`docs/{overview,techstack,decisions,terminology,parked,test-queue}.md`, `docs/{work,outward}/{README,TEMPLATE}.md`)
   • State which copy is under test (published vs in-repo dev). Route a finding by whose concern it is before whose tree holds the file — concern = must the artifact resolve in a plugin-only repo? (§ Finding lanes): concern here → `/super-bootstrap:log`, a served copy under this repo's `.claude/` included; the serving repo's → `/contribute`, never a local-clone edit.
   • Taste-coupling: dogfood harness (this repo's own CLAUDE.md/rules) may wire served guidelines; shipped skeletons (`plugins/*/skills/*/assets/**`) must be self-contained — downstream ≠ author.
   • Sync direction, two lanes by SSOT side: dogfood prose ahead → editing it pulls the shipped-skeleton counterpart into the closure (propagate stripped of dogfood-only refs, or state it's dogfood-specific); frozen asset ahead → editing it pulls the placed dogfood copy into the closure (refresh byte-identical). A re-run verifies both.
@@ -167,6 +167,7 @@ Markdown-authored Claude Code plugin + self-hosted marketplace — no language r
 - [`docs/parked.md`](docs/parked.md) — deferred items with named triggers
 - [`docs/test-queue.md`](docs/test-queue.md) — manual-verification queue
 - [`docs/outward/`](docs/outward/README.md) — outward threads: next move + waiting-on party, one file per item
+- [`docs/terminology.md`](docs/terminology.md) — the project's term home: one canonical word per concept, `_Avoid_` aliases; a doc's first substantive use of a term links its entry.
 - [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)
 

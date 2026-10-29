@@ -1,0 +1,5 @@
+tag=c-control-2 ref=HEAD model=sonnet variant=c
+links-terminology: 2
+links-pantry-spec: 1
+avoid-words: 
+registered-terms: Batch Shortfall Pantry Pantry Shortfalls Batches 

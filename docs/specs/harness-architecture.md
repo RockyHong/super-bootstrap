@@ -36,19 +36,19 @@ substrate-permanent. Harness engineering's durable work domain is the permanent 
 | --- | --- | --- |
 | Procedure / discipline | owns | — |
 | Alignment / elicitation | `brainstorming` | — |
-| Shared language | — | — |
+| Shared language | — | **`docs/terminology.md`** — one canonical word per concept, `_Avoid_` aliases, linked on first use |
 | Entry selection (routing) | **absent** | Cluster table — **shape recognition, not entry routing**; rows name disciplines a harness would otherwise supply |
 | Fast capture | — | **`/super-bootstrap:log`** |
 | Standing work state | — | **`docs/work/` cards** (the opt-in scale module adds `docs/parked.md` / `docs/test-queue.md` / `docs/outward/` beside them) |
 | Per-feature work order | temporal specs/plans | the card's `## Design` / `## Plan` blocks |
 | Propagation gate | — | **doc-sync** |
-| Cold-start data map | — | `overview` + `techstack` + `decisions` |
+| Cold-start data map | — | `overview` + `techstack` + `decisions` + `terminology` |
 | Awareness wiring | full-body ambient injection | **path-scoped rules (`paths:` frontmatter)** |
 | Parallel throughput | — | **autorun** |
 | Product anchor (problem / user / ICP / G2M) | — | **`overview.md` Problem / User** |
 
-**Four slots are uncontested:** fast capture, propagation gate, parallel throughput,
-product anchor. Awareness wiring is contested but the mechanisms differ in kind — see §5.
+**Five slots are uncontested:** fast capture, shared language, propagation gate,
+parallel throughput, product anchor. Awareness wiring is contested but the mechanisms differ in kind — see §5.
 
 **Pipeline-produced pending work rides the same substrate.** Work the pipeline leaves
 pending in a consumer repo is carried by `docs/work/` cards, seeded and committed before

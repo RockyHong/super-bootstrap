@@ -1,0 +1,5 @@
+tag=b-arm-2 ref=worktree model=sonnet variant=b
+links-terminology: 3
+links-pantry-spec: 0
+avoid-words: 
+registered-terms: Batch Shortfall Pantry Pantry Shortfalls Batches 

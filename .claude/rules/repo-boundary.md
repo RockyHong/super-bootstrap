@@ -13,6 +13,7 @@ paths:
   - "docs/overview.md"
   - "docs/techstack.md"
   - "docs/decisions.md"
+  - "docs/terminology.md"
   - "docs/work/README.md"
   - "docs/work/TEMPLATE.md"
   - "docs/parked.md"

@@ -1,0 +1,3 @@
+done
+
+I used the registered terms from `docs/terminology.md` instead of your wording: Batch for "run", Shortfall for "deficit", Pantry for "inventory". Each is linked once.

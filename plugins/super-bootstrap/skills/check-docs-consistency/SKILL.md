@@ -64,7 +64,7 @@ Read each file once. While reading, extract everything into a working set:
 
 The goal: build a map of "what references what" across the doc surface. Don't predetermine the categories — discover them from what the project actually documents.
 
-For each concept named across multiple docs, also note its defining (home) doc — where it is actually specified, not merely mentioned. Required for Step 2's P3 link-gap check.
+For each concept named across multiple docs, also note its defining (home) doc — where it is actually specified, not merely mentioned; a term registered in `docs/terminology.md` (a `**Term**:` entry) has that file as its home. Required for Step 2's P3 link-gap check.
 
 ### Step 2: Cross-Reference
 
@@ -101,7 +101,7 @@ All validations run against the extracted set. Every finding comes from comparin
 
 - Doc section referenced in index but empty or stub
 - Feature documented in specs but absent from overview module index
-- Missing link to a concept's home doc — a link-candidate concept in doc A (per the predicate in `assets/link-predicate.md`: B defines it, A uses it substantively, A is not a catalog/index) carries no link to its SSOT home B. Surface as a suggestion; which link to add is the user's call.
+- Missing link to a concept's home doc — a link-candidate concept in doc A (per the predicate in `assets/link-predicate.md`: B defines it, A uses it substantively, A is not a catalog/index) carries no link to its SSOT home B. Surface as a suggestion; which link to add is the user's call. A word on a `docs/terminology.md` entry's `_Avoid_:` line, used for that concept, surfaces the same way, naming the registered term to write instead.
 
 ### Step 2.5: Cross-Reference Findings with the Project Tracker (post-analysis only)
 
