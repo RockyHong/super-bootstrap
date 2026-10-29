@@ -60,7 +60,7 @@ commit, every spelling (`SKILL.md` § 2b); none → skip this loop:
    touching no other entry.
 3. Remove any `placed[".claude/hooks/<name>.sh"]` key for those scripts from
    `.claude/super-bootstrap-runway.json` — a guarded read-modify-write touching only
-   the `placed` map.
+   the `placed` map, held to the LF-only contract the `placed` record below states.
 
 Idempotent: a repo with none of the retired scripts and no matching settings entry is
 already clean, nothing to do.
@@ -146,7 +146,12 @@ Whenever a script resolves current — copied this run, or already sha-equal to 
 — record `placed[".claude/hooks/<name>.sh"] = sha256(asset hooks/<name>.sh)` in
 `.claude/super-bootstrap-runway.json` unless the entry already holds that hash: a guarded
 read-modify-write touching only that one `placed` key, leaving `version` / `covered` /
-`declined` as found; file absent → create it carrying `placed` alone. A sha-equal copy
+`declined` as found; file absent → create it carrying `placed` alone. Write the receipt
+with LF line endings only — on Windows `jq`, Python text mode and PowerShell
+`Set-Content` emit CRLF, so a write through a shell tool pipes its output through
+`tr -d '\r'` before it lands — then confirm with the Bash tool that
+`tr -cd '\r' < .claude/super-bootstrap-runway.json | wc -c` reports a count of zero;
+non-zero → strip the file in place with `tr -d '\r'` and count again. A sha-equal copy
 is byte-identical to the asset whatever placed it, so recording it changes nothing today
 and lets the next asset bump resolve as stale instead of fork. Phase 2c's receipt write
 (`SKILL.md` § 2c) reads the file back and carries every `placed` entry forward.

@@ -1,6 +1,0 @@
-# BUG-gqvb — runway receipt written with CRLF line endings on Windows
-
-**Logged:** 2026-10-29 · **Source:** handoff note from `rockyhong__claude-config-manager` (D:/Git/claude-config-manager), 2026-10-29, read via `/read-notes`
-**Problem:** On Windows, the harness-bootstrap sync leaves `.claude/super-bootstrap-runway.json` in the working tree with every line ending `\r\n`. Seen in claude-config-manager after its 2026-10-27 sync (`chore: sync harness pipeline`, plugin 5.5.0 runway). That consumer pins `* text=auto eol=lf` in `.gitattributes` with `core.autocrlf=true` globally; `git ls-files --eol` showed `i/lf  w/crlf  attr/text=auto eol=lf` — index LF, working tree CRLF, so `git status` stays silent while the consumer's `setup.sh` flags eol drift every run until the file is restored (`rm` + `git checkout --`). Recurs on every sync.
-**Area:** `plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md` § 2c Receipt write (full overwrite each sync); `plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks-ensure-infra.md` (guarded read-modify-write of `placed`)
-**Prior:** mechanism unverified — the sender suspects `jq` (or another writer) emitting CRLF under Git Bash on Windows; proposed `| tr -d '\r'` before writing, in both writers.
