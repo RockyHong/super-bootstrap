@@ -1,5 +1,5 @@
 {
-  "version": "4.3.0",
+  "version": "5.7.0",
   "covered": [
     "CLAUDE.md § Development Workflow",
     "CLAUDE.md § Dispatch",
@@ -15,58 +15,69 @@
     "docs/techstack.md § Framework",
     "docs/techstack.md § Key Dependencies",
     "docs/techstack.md § Build & Distribution",
+    "docs/techstack.md § Staged-Tree Verify",
     "docs/techstack.md § Edit Discipline",
     "docs/overview.md harness-meta",
     "docs/overview.md § Problem",
     "docs/overview.md § User",
     "docs/overview.md § Current State",
     "docs/decisions.md § scope header",
+    "docs/terminology.md § scope header",
     "CODING_STANDARDS.md",
     "AGENTS.md",
     "docs/work/README.md",
     "docs/work/TEMPLATE.md",
     ".claude/rules/index.md",
+    ".claude/rules/ssot-doc-link.md",
+    ".claude/rules/dimension-discipline.md",
     ".claude/settings.json plugin pins",
     ".claude/hooks/commit-channel.sh",
-    ".claude/hooks/consult-check-check.sh",
     ".claude/hooks/consult-check-sessionstart.sh",
+    ".claude/hooks/consult-check-check.sh",
     ".claude/settings.json hook snippets",
     ".gitignore consult-catalog line",
-    ".claude/templates/worktree-settings.local.json",
-    ".claude/settings.json worktree guard",
-    ".gitignore worktrees + autorun-status lines",
     "docs/parked.md",
     "docs/test-queue.md",
     "docs/outward/README.md",
     "docs/outward/TEMPLATE.md",
     "docs/work/README.md fact-fields block",
-    ".claude/super-bootstrap-runway.json",
-    ".claude/bootstrap.md"
+    ".claude/super-bootstrap-runway.json"
   ],
   "declined": [
     {
       "section": "CLAUDE.md § Development Workflow",
-      "reason": "earn-right held — dogfood verify is the device-served `audit-harness-edits` / `load-harness-principles` pair (envelope verify line, cluster-7 route, centrality bullet's `cold audit`); the skeleton cannot name them (decisions.md cluster-7 row)"
+      "reason": "dogfood-ahead: wires the served audit-harness-edits / load-harness-principles skills; the skeleton holds the self-contained form",
+      "anchor": "7a40ffc83f0ea734e2febc79d58301f00367a71c6dc53c1aab8fc3a6bab1c1b3"
     },
     {
       "section": "CLAUDE.md § Dispatch",
-      "reason": "earn-right held — Build bullet's bite-check + `dispatch-brief-demands.md` (decisions.md assertion-liveness row) and run-mode bullet's `dispatch-run-mode.md` / `hook-feedback-channels.md` pointers (decisions.md writer-run-mode row) wire served guidelines the skeleton cannot carry"
+      "reason": "dogfood-ahead: served dispatch-brief-demands / run-mode pointers and the bench fixture-walk bullet; the skeleton holds the self-contained form",
+      "anchor": "f33bf099d6871bed4b3d5c81113fa793f96eba8366e041cff2b4f729097e6d7e"
     },
     {
       "section": "CLAUDE.md § Doc Sync",
-      "reason": "earn-right held — names the served `ssot-doc-link` rule, links layer 2 to the in-repo `plugins/super-bootstrap/skills/commit/SKILL.md`, and names this repo's `/release` door for plugin manifests"
+      "reason": "dogfood-ahead: links the in-repo commit SKILL.md and names plugin manifests / /release",
+      "anchor": "324638040d551674501a01173d03ea7b5fed90c404d9579b34834599cb3f662f"
+    },
+    {
+      "section": "CLAUDE.md § Rules",
+      "reason": "dogfood-ahead: (placed) tags on the two shipped rule bullets",
+      "anchor": "46dac70a81274b306bc261ff99d0a04bb14c776866996dede561e6f91bb27809"
+    },
+    {
+      "section": "docs/techstack.md § Staged-Tree Verify",
+      "reason": "dogfood-ahead: note links the in-repo merge SKILL.md anchor",
+      "anchor": "70d87b423848bb4a5dc01643d2902c6c5c2086354a17ad6f76a44027917f343c"
     },
     {
       "section": "docs/techstack.md § Edit Discipline",
-      "reason": "earn-right held — re-Read trigger line links the served `dispatch-run-mode.md` prevention half"
+      "reason": "dogfood-ahead: pointer to the served dispatch-run-mode guideline",
+      "anchor": "42e8d600bc2122d9eb4ccb276f9ae733b698091781144346cb930716473327c6"
     },
     {
       "section": "docs/work/README.md",
-      "reason": "earn-right held for the in-repo SSOT links (Five-block-types intro → `harness-architecture.md#change-a-is-complete`, Design line → `skills/triage/SKILL.md`); the Plan line's `scope past the session-carry ledger` clause lost its dogfood-only ground — propagation tracked in DEBT-124"
-    },
-    {
-      "section": ".claude/bootstrap.md",
-      "reason": "not regenerated — re-seed skipped, bootstrap complete"
+      "reason": "dogfood-ahead: in-repo SSOT links (harness-architecture, specs)",
+      "anchor": "4db7bfc3ca482591dc54bcf7cc0acb07bd8bff8ef400f7ac640b66f74164e56e"
     }
   ],
   "placed": {
