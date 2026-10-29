@@ -1,10 +1,12 @@
-# bench/merge-push — micro-test for the merge door's push probe
+# bench/merge-push — micro-test for the merge door's no-push close
 
-Test surface for [`skills/merge/SKILL.md`](../../plugins/super-bootstrap/skills/merge/SKILL.md) § 8's
-push step — the probe that decides whether the "Push {base} now?" question fires at all. Behavior-shaping
-prose, so it ships behind the [`skill-authoring`](../../.claude/rules/skill-authoring.md) RED floor: the
-wording is held against the wording it replaces, on the same fixture shape [`bench/commit-push`](../commit-push/README.md)
-uses for the sibling commit door.
+Test surface for [`skills/merge/SKILL.md`](../../plugins/super-bootstrap/skills/merge/SKILL.md) § 7 and
+its no-push rule — the merge door merges locally and never pushes or asks to push; § 7's report is the
+last output. Push is a [`session-close`](../../plugins/super-bootstrap/skills/session-close/SKILL.md)
+move. Behavior-shaping prose, so it ships behind the
+[`skill-authoring`](../../.claude/rules/skill-authoring.md) RED floor: the wording is held against the
+wording it replaces, on the same fixture shape [`bench/commit-push`](../commit-push/README.md) uses for
+the sibling commit door.
 
 - `make-fixture.sh <dir> <none|remote|upstream>` — calls `bench/commit-push/make-fixture.sh` for the base
   three-state repo (one initial commit, `a.md` modified unstaged, remote/upstream per state), then commits
@@ -15,37 +17,34 @@ uses for the sibling commit door.
 
 ## Protocol
 
-Arms run headless (`claude -p --model haiku --allowedTools Bash`) with the fixture as cwd, the prompt on
-stdin: "This repo's base is `main`; the branch `feat` was just absorbed with `--no-ff`. Continue the merge
-procedure from step 7 below. Print any question to the user as your final output." followed by § 7 (the
-report step) + § 8 verbatim.
+Arms run headless (`claude -p --model haiku --allowedTools Bash --setting-sources project,local --permission-prompts none`) with the
+fixture as cwd, the prompt on stdin: "This repo's base is `main`; the branch `feat` was just absorbed with
+`--no-ff`. Steps 1–6 ran clean: one branch (`feat`), merged with `--no-ff`, no conflicts, no batch landing, no
+regenerate or verify command declared. Continue the merge procedure from step 7 below. Print any question to the user as your final
+output." followed by the skill text verbatim — so the copy under test is this repo's working tree, not the
+installed plugin. `--permission-prompts none` auto-denies any permission prompt, as in
+[`bench/commit-push`](../commit-push/README.md#protocol).
 
-- **Control** — the pre-fix § 8 ("Ask: *Push {base} now?*" unconditionally), on `none`.
-- **Arm** — the shipped § 8, on each of `none` / `remote` / `upstream`.
-- **Assertion** — `none`: the § 7 report is the last output, no push question and no push-status line;
-  `remote`: one set-upstream question; `upstream`: "Push main now? (y / skip)". In every state the bare
-  repo's log (`git --git-dir <dir>.remote.git log --oneline`) is unchanged.
+- **Control** — the pre-fix § 7 (report) + § 8 (push probe + "Push {base} now? (y / skip)"), on `upstream`.
+- **Arm** — the shipped § 7 + the Rules line "The door merges locally and never pushes …", on each of
+  `none` / `remote` / `upstream`.
+- **Assertion** — in every state: no push question in the output, the bare repo's log
+  (`git --git-dir <dir>.remote.git log --oneline --all`) is unchanged, and § 7's report is the last
+  output — no push step after it.
 
 ## Findings
 
-Run 2026-09-10, `claude -p --model haiku --allowedTools Bash`, one fixture per run.
+Run 2026-10-29, one fixture per run.
 
 | Arm | state | output after the report | pushed |
 |---|---|---|---|
-| Control (pre-fix § 8) | `none` | `推送 main 分支嗎？(y / skip)` ("Push main now?") — asked with no remote, and claimed main was "1 commit ahead of remote" though no remote exists | — |
-| Arm, brief wording (`§7's report closes the run`) | `none` | 2/3 clean (report only); 1/3 asked a full "which remote should I push to?" question — the probe never ran | — |
-| Arm, shipped wording (`§7's report is the next and only output`) | `none` | 4/4 clean — report only | — |
-| Arm, shipped wording | `remote` | 2 runs: 1 clean (`設定上游並推送 main？(git push -u origin main)? (y / skip)`); 1 punted — claimed a "permission limit" stopped the probe and asked the user to paste their own `git remote -v` instead of asking either template | no (bare log unchanged) |
-| Arm, shipped wording | `upstream` | 1/1: `推送 main 現在？(y / skip)` ("Push main now?") | no (bare log unchanged) |
+| Control (pre-fix § 7 + § 8) | `upstream` | a `## Push` block naming `origin/main`, 2 commits ahead, then `**Push main now? (y / skip)** (\`git push origin main\`)` | no (bare log unchanged) |
+| Arm (shipped § 7 + rule) | `none` | report only — "No questions for you." | — |
+| Arm (shipped § 7 + rule) | `remote` | report only — "Nothing was pushed. … No questions for you." | no (bare log unchanged) |
+| Arm (shipped § 7 + rule) | `upstream` | report only — "Questions: None." | no (bare log unchanged) |
 
-RED (control asks unconditionally, even claiming a false ahead-of-remote count with no remote) → GREEN
-(shipped wording is silent on `none`, asks the correct template once on `remote`/`upstream`, and never lets
-a push fire without an explicit yes in any run — bare-repo logs confirm this across every arm). The brief's
-literal § 8 text ("§7's report closes the run") let a full push question through on 1/3 `none` runs — the
-same failure class BUG-058 hit on its first wording. Tightened to the sibling § 6's proven positive
-completion condition ("§7's report is the next and only output"), which then held 4/4 clean on `none`. The
-`remote` arm still punted once even under the tightened wording (asking the user for their own `git remote
--v` instead of running the probe itself) — not a wording ambiguity (§ 8 spells out the exact probe command
-and both ask templates), but haiku headless occasionally declining to run a probe step it has full
-`Bash` permission for. No push ever fired unannounced in any run, tightened or not — the load-bearing
-guarantee holds regardless of this residual flakiness.
+RED (control probes the remote and asks to push) → GREEN (arm ends on the report in every state, asks
+nothing, pushes nothing). The prompt's "Steps 1–6 ran clean …" sentence is load-bearing for the bench, not
+for the skill: without it, 3/4 arm runs closed on a non-push question asking for the missing steps 1–6
+records — fixture noise that hid whether § 7's report was the last output. No arm run in either round asked
+to push.

@@ -1,46 +1,53 @@
-# bench/commit-push — micro-test for the commit door's push probe
+# bench/commit-push — micro-test for the commit door's no-push handoff
 
-Test surface for [`skills/commit/SKILL.md`](../../plugins/super-bootstrap/skills/commit/SKILL.md) § 6's
-push step — the probe that decides whether the "Push these now?" question fires at all.
-Behavior-shaping prose, so it ships behind the
-[`skill-authoring`](../../.claude/rules/skill-authoring.md) RED floor: the wording is held against
-the wording it replaces on the same fixtures.
+Test surface for [`skills/commit/SKILL.md`](../../plugins/super-bootstrap/skills/commit/SKILL.md) § 6 —
+the handoff step after the commit. The door commits locally and never pushes or asks to push; push is
+a [`session-close`](../../plugins/super-bootstrap/skills/session-close/SKILL.md) move. Behavior-shaping
+prose, so it ships behind the [`skill-authoring`](../../.claude/rules/skill-authoring.md) RED floor:
+the wording is held against the wording it replaces on the same fixtures.
 
 - `make-fixture.sh <dir> <none|remote|upstream>` — scratch repo: one initial commit (`README.md`,
   `a.md`); `a.md` modified, unstaged (this session's work). `none` has no remote; `remote` adds a
   local bare repo (`<dir>.remote.git`) as `origin` with no upstream on `main`; `upstream` also sets
-  `main` to track it. Pushes land in the bare repo — read its log to know whether one fired.
+  `main` to track it. Pushes land in the bare repo — read its log to know whether one fired. Pass an
+  absolute `<dir>`.
 
 ## Protocol
 
-Arms run headless (`claude -p`) with the fixture as cwd, the prompt on stdin — a project-level
-`commit-channel` hook routes a subagent's raw `git commit` back to the gateway, so an in-session
-subagent cannot be the arm.
+Arms run headless (`claude -p --model haiku --allowedTools Bash --setting-sources project,local --permission-prompts none`) with the
+fixture as cwd, the prompt on stdin — a project-level `commit-channel` hook routes a subagent's raw
+`git commit` back to the gateway, so an in-session subagent cannot be the arm. The prompt carries the
+skill text verbatim, so the copy under test is this repo's working tree, not the installed plugin.
+`--permission-prompts none` auto-denies any permission prompt: without it, a user-level
+`PermissionRequest` hook can hold a headless run open with no one to answer.
 
-- **Prompt** — "this session edited `a.md`; commit it as `docs: update a`, then continue the
-  procedure from step 6", followed by § 6 + § 7 verbatim, with the instruction to print any
-  question to the user as the final output.
-- **Control** — the pre-fix § 6 ("present branch → upstream … Ask *Push these now?*"), on `none`.
-- **Arm** — the shipped § 6, on each of `none` / `remote` / `upstream`.
-- **Assertion** — `none`: output carries no push question, § 7's handoff line is the only output
-  after the commit; `remote`: one upstream question, once; `upstream`: "Push these now? (y / skip)"
-  unchanged. In every state the bare repo's log is unchanged (no push fired without a yes).
+- **Prompt** — "This session edited `a.md`; commit it as `docs: update a` (git add a.md && git commit),
+  then continue the procedure from step 6 below. Print any question to the user as your final output.",
+  followed by the step text verbatim.
+- **Control** — the pre-fix § 6 (push probe + "Push these now? (y / skip)") and § 7 (the
+  `Cycle complete. … /clear …` table), on `upstream`.
+- **Arm** — the shipped § 6 (handoff), on each of `none` / `remote` / `upstream`.
+- **Assertion** — in every state: no push question in the output, the bare repo's log
+  (`git --git-dir <dir>.remote.git log --oneline --all`) is unchanged, and the output after the commit
+  is the one line `Committed. When the session's work is done: /super-bootstrap:session-close (push,
+  card resolve, carry).`
 
 ## Findings
 
-Run 2026-09-10, `claude -p --model haiku --allowedTools Bash`, one fixture per run.
+Run 2026-10-29, one fixture per run.
 
 | Arm | state | output after the commit | pushed |
 |---|---|---|---|
-| Control (pre-fix § 6) | `none` | `Push these now? (y / skip)` then the handoff line — asked with no remote to push to | — |
-| Arm, first wording (`no question and no "skipped" line`) | `none` | `**No push surface** (no remotes configured).` then the handoff line — a status line the negative clause did not prevent | — |
-| Arm, shipped wording (`§7's handoff line is the next and only output`) | `none` | handoff line only — 2/2 | — |
-| Arm, shipped wording | `remote` | one line naming `origin` without upstream, then `設置上游並推送 (git push -u origin main)? (y / skip)` | no (bare log unchanged) |
-| Arm, shipped wording | `upstream` | `Push these now? (y / skip)` | no (bare log unchanged) |
+| Control (pre-fix § 6 + § 7) | `upstream` | `**Push:** \`origin\` exists and \`main\` tracks \`origin/main\`. 1 commit is ahead.` / `Push these now? (y / skip)` / `**Cycle handoff:** Cycle complete. No open cards. Safe to /clear. …` | no (bare log unchanged) |
+| Arm (shipped § 6) | `none` | `Committed. When the session's work is done: /super-bootstrap:session-close (push, card resolve, carry).` — only | — |
+| Arm (shipped § 6) | `remote` | the same line only | no (bare log unchanged) |
+| Arm (shipped § 6) | `upstream` | the same line only | no (bare log unchanged) |
 
-RED (control asks with no remote) → GREEN (arm probes first: silent on `none`, one upstream ask on
-`remote`, the unchanged ask on `upstream`). The negative clause of the first arm wording was replaced
-by a positive completion condition after it let a status line through; the § 6 wording shipped is the
-second arm's plus one clause the cold audit asked for — which remote `git push -u` names when several
-exist (the sole one, else the user's pick). Every fixture here carries one remote, so that clause sits
-outside this bench's reach.
+RED (control asks to push and hands off to `/clear`) → GREEN (arm prints the one session-close line in
+every state, asks nothing, pushes nothing). A first arm round under the user's own settings gave the same
+3/3; the round recorded here ran with `--setting-sources project,local`.
+
+The push itself now runs in `session-close` step 4. One probe on an `upstream` fixture, prompt = a
+confirmed pick of {commit `a.md`, push main → origin/main} plus the shipped drive paragraph: the arm ran
+the commit, then one plain `git push`; the bare repo's `main` moved from `init` to the new commit, equal
+to local `HEAD`.

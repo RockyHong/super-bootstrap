@@ -145,14 +145,10 @@ Report to user:
 - Branches skipped and why — a failed command that left no conflicting files appears here with git's error line verbatim
 - Final `git log --oneline --graph -10`
 
-### 8. Push (where a push surface exists)
-
-Probe first, ask second — the probe is a fact the gateway reads itself. `git remote` prints nothing → no push surface: §7's report is the next and only output. A remote but no upstream for the base (`git rev-parse --abbrev-ref @{u}` errors) → say so in one line and ask once: **"Set upstream and push {base} (`git push -u <remote> {base}`)? (y / skip)"** — `<remote>` is the sole remote, or the one the user names when several exist. Remote + upstream → present base → remote, commits ahead of remote, which branches were folded in; ask **"Push {base} now? (y / skip)"**. Push on explicit yes only; skip on silence or decline. Never force. Branches that hit conflicts are not pushed. `{base}` did not move (a batch landing that stopped red or before its fast-forward) → no push ask. Same push-probe shape as the commit skill's § 6.
-
 ## Rules
 
 - Run inline — no subagent dispatch.
-- Push asks only where a push surface exists, and only on explicit confirmation — §8's probe decides whether the question fires; present what will push, never force, never unannounced.
+- The door merges locally and never pushes — no push step, no push question; §7's report is the last output. Push is a `/super-bootstrap:session-close` move, else the user's own.
 - Never resolve conflicts inline. Surface and stop. (See Conflict Doctrine above.) A conflict on derived output only settles by its declared regenerate command (§ 5b step 2).
 - Never force-merge.
 - Never delete the absorbed branches. The batch's own integration branch goes with `git branch -d` once `{base}` holds it.

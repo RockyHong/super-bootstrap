@@ -36,7 +36,7 @@ Is this session's goal delivered whole, with nothing left in motion? Whole → *
 
 ### 2. Detect — tree + commit
 
-Inspect for uncommitted session work, untracked files, stray artifacts — this session's changes only. Session changes → a **commit** move, run through `/super-bootstrap:commit` (Skill tool) — the door owns staging, doc-sync, and the message; never a raw `git commit`. Commits ahead of upstream, or a push the commit will create → a **push** move, answered in the pick.
+Inspect for uncommitted session work, untracked files, stray artifacts — this session's changes only. Session changes → a **commit** move, run through `/super-bootstrap:commit` (Skill tool) — the door owns staging, doc-sync, and the message; never a raw `git commit`. Commits ahead of upstream, or a branch with a remote but no upstream → a **push** move, answered in the pick. No remote (`git remote` prints nothing) → no push move.
 
 ### 3. Detect — cards + integration + ledger
 
@@ -59,7 +59,7 @@ Inspect for uncommitted session work, untracked files, stray artifacts — this 
 
 ### 4. Drive to close
 
-Gather every detected move into ONE confirm-pick — multi-select, recommended default = all. A single detected move still routes through the pick, paired with an explicit "close without running it" option, so the pick always offers ≥2 choices. Present each as a concrete line: what it does, and its blast for moves that mutate or reach outward (push, merge, prune). The push line states branch → upstream (or the `-u` setup when none exists). The pick IS the confirm-gate — no per-move prompt, the door's included.
+Gather every detected move into ONE confirm-pick — multi-select, recommended default = all. A single detected move still routes through the pick, paired with an explicit "close without running it" option, so the pick always offers ≥2 choices. Present each as a concrete line: what it does, and its blast for moves that mutate or reach outward (push, merge, prune). The push line names the remote and states branch → upstream (or the `-u` setup when none exists); the remote is the sole one, or the one the user names when several exist. The pick IS the confirm-gate — no per-move prompt, the door's included.
 
 **The park move** runs the cold-pickup test — "if a new session starts cold, can it orient from files alone?" — and sorts the in-motion remainder:
 
@@ -67,13 +67,13 @@ Gather every detected move into ONE confirm-pick — multi-select, recommended d
 - **Durable, not card-owned** (decisions, spec deltas) → the owning doc, landed through the commit door's doc-sync.
 - **Volatile, no card owns it** (cross-card session context, a thread not yet carded) → the own ledger file, in the convention's slots; Read first names the card ID(s). Never restate what the Progress block or a doc already holds — a watch-out binding the card lives on the card, not only in the carry. Nothing volatile beyond the card → a pointer-only stub (Anchor + card ID + Next step pointer), still written so session-continue finds it.
 
-Show the drafted Progress block(s) and carry body in the pick. **Nothing is written before the pick.** On confirm, execute the picked moves in dependency order: fix-now edits → Progress appends → ledger-write / ledger-clear → card resolve → commit via `/super-bootstrap:commit` (its §6 takes the pick's push answer; its §7 handoff is skipped) → merge → prune. Re-verify the tree is clean, then **close**.
+Show the drafted Progress block(s) and carry body in the pick. **Nothing is written before the pick.** On confirm, execute the picked moves in dependency order: fix-now edits → Progress appends → ledger-write / ledger-clear → card resolve → commit via `/super-bootstrap:commit` (its §6 handoff line is skipped) → merge → push → prune. The push move runs here, not in a door — neither the commit door nor the merge door pushes: `git push` when the branch has an upstream, else `git push -u <remote> <branch>` with the remote the pick line named. It pushes only a branch whose picked commit or merge landed: a merge move pushes `{base}`, and a merge that stopped on a conflict or red left nothing to push. Never force. It runs once, after every picked commit and merge has landed. Re-verify the tree is clean, then **close**.
 
 If step 1 found an undelivered goal the user expects finished, surface it above the pick in three parts — what's open, what whole-delivery expected, the options (finish it, park-close it, or accept and close anyway). It gates the close but can't be move-executed. Proceed until closed or the user accepts an explicit close-anyway.
 
 ## Output
 
-This is the terminal output — the commit door's cycle handoff does not print under session-close.
+This is the terminal output — the commit door's handoff line does not print under session-close.
 
 - The shape taken (done-close / park-close), the moves executed (and any declined), with the final tree + close state.
 - Done: close confirmation, or the open thread blocking a clean close. Park: the Progress block(s) and carry as written, echoed for a final eyeball, and the resume line — `Next session: /super-bootstrap:session-continue`.
