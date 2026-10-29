@@ -36,7 +36,7 @@ substrate-permanent. Harness engineering's durable work domain is the permanent 
 | --- | --- | --- |
 | Procedure / discipline | owns | — |
 | Alignment / elicitation | `brainstorming` | — |
-| Shared language | — | **`docs/terminology.md`** — one canonical word per concept, `_Avoid_` aliases, linked on first use |
+| Shared language | — | **`docs/terminology.md`** — one canonical word per concept, `_Avoid_` aliases, linked on first use, entries proposed at commit-time doc-sync when a diff coins a term |
 | Entry selection (routing) | **absent** | Cluster table — **shape recognition, not entry routing**; rows name disciplines a harness would otherwise supply |
 | Fast capture | — | **`/super-bootstrap:log`** |
 | Standing work state | — | **`docs/work/` cards** (the opt-in scale module adds `docs/parked.md` / `docs/test-queue.md` / `docs/outward/` beside them) |

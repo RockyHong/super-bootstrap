@@ -6,7 +6,7 @@
 >
 > **Alias list** — an `_Avoid_: <word>, <word>` line directly after its entry, comma-separated. A retired or rejected word for the same concept goes here; a doc that uses it writes the registered term instead.
 >
-> **Admission** — a concept specific to this project. A general programming word stays out. Two words for one concept → pick one as the entry, list the other under `_Avoid_`.
+> **Admission** — a concept specific to this project. A general programming word stays out. Two words for one concept → pick one as the entry, list the other under `_Avoid_`. Entries arrive at commit time: when a diff's added doc lines coin a project term or use a second word for a registered one, doc-sync proposes the entry and the author registers or skips it.
 >
 > Fenced code blocks and HTML comments are never entries.
 
