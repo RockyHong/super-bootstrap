@@ -74,7 +74,16 @@
 #                      `term` candidate; its `avoid` hits still print — a wrong word
 #                      is wrong whatever the doc links. Empty registry → nothing. Mechanical only — whether a use is
 #                      substantive is the commit door's judgment. Exit 0.
-#   terms - | hits [--by-term] - | self - | term-uses -
+#   volatile-ids <path>...
+#                      print tracker IDs on the changed docs' added lines (same added-line
+#                      read as `term-uses`): `doc<TAB>line<TAB>id` per line × distinct ID
+#                      matching `\b(BUG|DEBT|GAP|OUT|PARK)-[0-9a-z]+\b` outside fenced
+#                      blocks. The literal `xxxx` suffix is a placeholder, skipped; `card`
+#                      is a legal suffix, so `GAP-card` hits. Skipped: a path off the doc
+#                      surface, docs/work/, docs/outward/ (and the retired flat form),
+#                      docs/parked.md, docs/test-queue.md, a `dimension: history` doc.
+#                      Advisory: always exit 0.
+#   terms - | hits [--by-term] - | self - | term-uses - | volatile-ids -
 #                      a lone `-` reads the list from stdin instead, one item per
 #                      line (blank lines skipped, a trailing CR dropped) — the
 #                      shell-split-proof form for a path or term holding spaces:
@@ -993,6 +1002,75 @@ $p
     return 0
 }
 
+# Tracker IDs on added lines: the same two awk inputs as TERMUSE_AWK. Awk has no `\b`, so
+# the regex takes the run and the boundary test sits beside it. The boundary class is the
+# regex word class, narrower than isword(): a hyphen ends an ID (`GAP-abc-def` is `GAP-abc`).
+VOLID_AWK='
+function idword(c) { return (c != "" && c ~ /[A-Za-z0-9_]/) }
+BEGIN { in_fence = 0; fence_char = ""; fence_len = 0 }
+FNR == NR {
+    if (ALL != 1 && match($0, /^@@ [^+]*\+[0-9]+(,[0-9]+)? @@/)) {
+        h = $0; sub(/^@@ [^+]*\+/, "", h); sub(/ @@.*$/, "", h)
+        c = h; sub(/,.*$/, "", c); d = 1
+        if (index(h, ",") > 0) { d = h; sub(/^[^,]*,/, "", d) }
+        for (k = 0; k < d + 0; k++) added[c + k] = 1
+    }
+    next
+}
+{
+    if (fence_skip($0)) next
+    if (ALL != 1 && !(FNR in added)) next
+    line = $0; off = 0; seen = " "
+    while (match(substr(line, off + 1), /(BUG|DEBT|GAP|OUT|PARK)-[0-9a-z]+/)) {
+        a = off + RSTART; b = a + RLENGTH
+        id = substr(line, a, RLENGTH)
+        pre = (a > 1) ? substr(line, a - 1, 1) : ""
+        if (!idword(pre) && !idword(substr(line, b, 1)) &&
+            substr(id, index(id, "-") + 1) != "xxxx" && index(seen, " " id " ") == 0) {
+            print DOC "\t" FNR "\t" id
+            seen = seen id " "
+        }
+        off = b - 1
+    }
+}
+'
+
+# Off this lane: the tracker's own files, and whatever records history by declaration.
+# Wider than is_frozen_provenance_path — a folder's standing README documents the ID shape.
+volatile_ids_exempt() {
+    case "$1" in
+        docs/work/*|docs/outward/*|docs/parked.md|docs/test-queue.md) return 0 ;;
+    esac
+    is_frozen_provenance_path "$1" && return 0
+    is_history_doc "$1"
+}
+
+do_volatile_ids() {
+    local surface p diff all
+    [ "$#" -eq 0 ] && return 0
+    surface="
+$(collect_surface)
+"
+    for p in "$@"; do
+        normalize_path "$p"; p="$NORM"
+        [ -z "$p" ] && continue
+        case "$surface" in
+            *"
+$p
+"*) ;;
+            *) continue ;;
+        esac
+        volatile_ids_exempt "$p" && continue
+        diff="$(git diff HEAD -U0 -- "$p" 2>/dev/null)"
+        all=0
+        if [ -z "$diff" ] && ! git ls-files --error-unmatch -- "$p" >/dev/null 2>&1; then
+            all=1
+        fi
+        printf '%s\n' "$diff" | awk -v DOC="$p" -v ALL="$all" "$FENCE_AWK$VOLID_AWK" - "$p"
+    done
+    return 0
+}
+
 # Hunk range → section grain. Headings come out of the shared slug transform in file
 # order. A range that covers the doc's first heading is whole-file grain — `(top)` —
 # whatever else it touches; otherwise it is the union of every heading whose own
@@ -1225,7 +1303,7 @@ do_pins() {
 
 USAGE='Usage: %s check | pins | refs <path>[#anchor]... | index | closure <path>[#anchor]
        %s terms <changed-path>...|- | hits [--by-term] <term>...|- | anchors <path> <hunk-range>...
-       %s self <changed-path>...|- | terminology | term-uses <changed-path>...|-
+       %s self <changed-path>...|- | terminology | term-uses <changed-path>...|- | volatile-ids <changed-path>...|-
        (- = read the list from stdin, one item per line)
 '
 
@@ -1288,6 +1366,14 @@ case "$MODE" in
             do_term_uses ${ITEMS[@]+"${ITEMS[@]}"}
         else
             do_term_uses "$@"
+        fi ;;
+    volatile-ids)
+        shift
+        if [ "$#" -eq 1 ] && [ "$1" = "-" ]; then
+            read_items
+            do_volatile_ids ${ITEMS[@]+"${ITEMS[@]}"}
+        else
+            do_volatile_ids "$@"
         fi ;;
     anchors)
         shift

@@ -1,0 +1,8 @@
+done
+
+I added `## Known limitations` between `## Retries` and `## Storage` in `docs/specs/upload.md`.
+
+- **Card ID left out:** the section doesn't name `BUG-q7m2` or link its file. The doc rule keeps volatile item IDs and pointers out of durable docs.
+- **Where to check status:** it points readers to the open cards in the `docs/work/` folder, which is a standing folder pointer rather than a pointer to one item.
+- **Not done:** the card doesn't cite this spec yet. The rule wants the card to cite the doc, but you limited me to one file. Add a line to the card pointing at `docs/specs/upload.md`.
+- **Added cause:** the paragraph also says the server's chunk index overflows past 2 GB. I took that from the card.

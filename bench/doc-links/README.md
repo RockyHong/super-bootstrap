@@ -24,6 +24,9 @@ to §3's mechanics re-runs this bench (`bash bench/doc-links/run.sh`).
   a card citing an absent spec, and a non-card doc citing an absent card.
 - `fixture-consumed-card-clean/` — a fourth mini root holding the exempt class alone,
   so the silent-and-uncounted half of the exemption is pinned on its own.
+- `fixture-volatile-ids/` — a fifth mini root for the `volatile-ids` lane, copied into a
+  repo with no HEAD so every line reads as added: a plan doc and the root `README.md`
+  carrying IDs, beside one citing file per exempt class.
 - `expected/` — one golden per case, byte-compared; every case must also exit 0
   except `check-history-broken` and `check-consumed-card`, which pin exit 1.
 
@@ -82,6 +85,13 @@ changed path yields no term — a history doc neither triggers the gate nor join
 files stay in (the same ID-pattern key as `hits-card` / `refs-card`, on the self side);
 a `dimension: history` doc stays out; an off-surface path (`scripts/level.gd`) and a
 path the diff deleted (`docs/deleted.md`, absent from the fixture) yield nothing.
+
+**`volatile-ids` — changed docs → tracker IDs on added lines.**
+`volatile-ids-mixed` a linked ID repeated on one line prints once, a `git log --grep` pointer's
+ID and a second ID on that line each print, `GAP-card` prints (`card` is a legal suffix), and
+the root `README.md` prints; the `OUT-xxxx` placeholder, `XBUG-123`, a fenced ID, every exempt
+class (`docs/work/`, `docs/outward/`, `docs/parked.md`, `docs/test-queue.md`, `dimension: history`)
+and an absent path yield nothing. Which lines count as added is `tests/doc-links.test.sh`'s case.
 
 **`anchors` — hunk ranges → section slugs.**
 `anchors-basic` two ranges under two different headings (one of them a `###`

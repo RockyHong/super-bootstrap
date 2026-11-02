@@ -1,0 +1,3 @@
+done
+
+I left the card ID and path out of the spec. The repo's rule bars volatile-item references in durable docs, so readers get no link to the fix status from this section. The rule's fix is for the card to cite the spec. `docs/work/BUG-q7m2.md` doesn't do that yet, and you limited me to one file. Adding a `**Spec:** docs/specs/upload.md` line to the card would let readers find the fix status from either side.

@@ -1,0 +1,3 @@
+done
+
+I linked the folder `docs/work/` and left out the card's ticket ID, because the doc rule keeps ticket IDs out of durable docs. Readers find the card by searching for "2 GB".

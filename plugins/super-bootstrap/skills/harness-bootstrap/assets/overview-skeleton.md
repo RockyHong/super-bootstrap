@@ -5,19 +5,19 @@ Default [github]; add any of: notion, linear, jira, slack, trello, clickup, othe
 external-tools: [github]
 -->
 
-> Living doc. Skeleton sections (Problem / User / Current State) carry their placeholder body verbatim at scaffold and fill at GAP-card pickup. Grown sections (Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync — every commit that adds, removes, or reshapes a module triggers a sync proposal, admitted per § Doc Sync. See [`CLAUDE.md` Doc Sync](../CLAUDE.md#doc-sync-non-negotiable).
+> Living doc. Skeleton sections (Problem / User / Current State) carry their placeholder body verbatim at scaffold and fill at GAP card pickup. Grown sections (Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync — every commit that adds, removes, or reshapes a module triggers a sync proposal, admitted per § Doc Sync. See [`CLAUDE.md` Doc Sync](../CLAUDE.md#doc-sync-non-negotiable).
 
 ## Problem
 
-{what problem this project solves and why it exists — one paragraph; filled at GAP-card pickup}
+{what problem this project solves and why it exists — one paragraph; filled at GAP card pickup}
 
 ## User
 
-{who uses it — end users / developers / internal tool / library consumers / etc.; filled at GAP-card pickup}
+{who uses it — end users / developers / internal tool / library consumers / etc.; filled at GAP card pickup}
 
 ## Current State
 
-{where the project is today — greenfield / active development / maintenance / mid-rewrite; filled at GAP-card pickup}
+{where the project is today — greenfield / active development / maintenance / mid-rewrite; filled at GAP card pickup}
 
 ## Module Index
 

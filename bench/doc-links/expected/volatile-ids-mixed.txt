@@ -1,0 +1,5 @@
+docs/plan.md	3	OUT-011
+docs/plan.md	4	DEBT-146
+docs/plan.md	4	PARK-007
+docs/plan.md	7	GAP-card
+README.md	3	BUG-root

@@ -45,11 +45,15 @@ of the stale-doc scope and still checks its links.
 4. **When-checked → git.** A "last checked on <date>" stamp belongs in git commit
    metadata; keep the date out of the body. A version-bound pin ("valid as of
    vX.Y") is substantive state — it bounds the fact's validity — and stays.
-5. **Ticket IDs → chronicle homes.** A durable doc records the decided behavior
-   or policy present-tense, never the card that decided it (`BUG-##`, `DEBT-##`,
-   any tracker prefix). Ticket refs belong in history-dimension docs (decision
-   logs) and temporal work-tracking files (cards, handoffs — their provenance
-   fields); git log serves the rest.
+5. **Volatile items → the item cites the doc.** A card, outward thread or parked
+   entry is temporal, live or closed; its ID (`BUG-##`, `DEBT-##`, `OUT-##`,
+   `PARK-##`, any tracker prefix) and any pointer to it, by path or by its folder,
+   stay out of a durable doc. The doc states the behavior, policy or limitation
+   present-tense, and the volatile item cites the doc; on resolve, the item's
+   outcome lands in the doc as present-tense state. Provenance that must survive
+   points at a commit sha, never a `git log --grep=<ID>` pointer. Ticket refs
+   belong in history-dimension docs (decision logs) and temporal work-tracking files
+   (cards, handoffs, outward threads, parked entries — their provenance fields).
 
 ## Tripwire — the artifact is the trap
 

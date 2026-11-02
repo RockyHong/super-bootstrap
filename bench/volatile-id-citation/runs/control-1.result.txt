@@ -1,0 +1,1 @@
+done. I added `## Known limitations` between `## Retries` and `## Storage` in `docs/specs/upload.md`. I linked to `docs/work/README.md` rather than naming the card, because the repo rule keeps ticket IDs out of durable docs. I didn't open `docs/work/README.md`, so I haven't checked that it lists the card.

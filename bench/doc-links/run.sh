@@ -9,6 +9,7 @@ FIX="$PWD/bench/doc-links/fixture"
 FIXHB="$PWD/bench/doc-links/fixture-history-broken"
 FIXCC="$PWD/bench/doc-links/fixture-consumed-card"
 FIXCCC="$PWD/bench/doc-links/fixture-consumed-card-clean"
+FIXVI="$PWD/bench/doc-links/fixture-volatile-ids"
 EXP="$PWD/bench/doc-links/expected"
 TMP="$(mktemp)"
 fail=0
@@ -126,6 +127,35 @@ run_case self-mixed self \
   docs/chronicle.md \
   scripts/level.gd \
   docs/deleted.md
+
+# --- volatile-ids: tracker IDs on added lines of changed docs ---
+# Own fixture root, copied into a repo with no HEAD: git tracks nothing there, so every
+# line reads as added. The added-line boundary is tests/doc-links.test.sh's.
+VIROOT="$(mktemp -d)"
+cp -R "$FIXVI/." "$VIROOT/"
+git -C "$VIROOT" init -q
+( cd "$VIROOT" && bash "$SCRIPT" volatile-ids - <<'EOF'
+docs/plan.md
+README.md
+docs/work/README.md
+docs/work/BUG-001.md
+docs/outward/README.md
+docs/outward/OUT-001.md
+docs/parked.md
+docs/test-queue.md
+docs/chronicle.md
+docs/absent.md
+EOF
+) > "$TMP" 2>/dev/null
+rc=$?
+if [ "$rc" -eq 0 ] && diff "$EXP/volatile-ids-mixed.txt" "$TMP" > /dev/null; then
+  echo "PASS volatile-ids-mixed"
+else
+  echo "FAIL volatile-ids-mixed (exit $rc)"
+  diff "$EXP/volatile-ids-mixed.txt" "$TMP"
+  fail=1
+fi
+rm -rf "$VIROOT"
 
 # --- anchors: nearest heading at or above each range start ---
 run_case anchors-basic anchors docs/anchors.md +9 +16,2

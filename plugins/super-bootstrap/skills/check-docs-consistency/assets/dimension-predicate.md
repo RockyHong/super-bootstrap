@@ -29,13 +29,18 @@ mis-trusting as current?" — dimension pollution.
 4. **Verification stamps stay.** A stamp recording *when a fact was last checked*
    (probed / measured on date) is current-state metadata — it tells the reader the
    fact's freshness. Not history pollution.
+5. **Volatile items → the item cites the doc.** A card, outward thread or parked
+   entry is temporal, live or closed: a durable doc states the behavior present-tense
+   and carries neither its ID nor a pointer to it; a standing index line naming the
+   tracker folder stays. Ticket refs belong in history
+   docs and work-tracking files.
 
 ## Audit predicate — pollution shapes
 
 A doc shows dimension pollution when any holds:
 
-1. **Chronicle crawl-in** — timestamps / "was X, now Y" / decision-dated prose
-   accumulating in a persistent state-SSOT doc.
+1. **Chronicle crawl-in** — timestamps / "was X, now Y" / ticket-ID refs /
+   decision-dated prose accumulating in a persistent state-SSOT doc.
 2. **Stale workspace doc** — a vaporizable / status doc gone out-of-date against
    the reality it claims to track.
 3. **State leak into history** — a history / decision-timeline doc carrying

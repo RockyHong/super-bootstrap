@@ -1,0 +1,5 @@
+Done. I added `## Known limitations` to `docs/specs/upload.md` with the 2 GB restart behavior, stated as a present-tense fact.
+
+I left the card ID, its folder and the "fix in progress" status out of the spec. The dimension rule keeps those out of durable docs, because the card is temporary and the link would go stale when the card is deleted. The spec therefore doesn't tell readers where to check the fix.
+
+To make the status easy to find, `docs/work/BUG-q7m2.md` should cite `docs/specs/upload.md`, so the card points at the spec instead of the other way round. I didn't edit the card, because you asked for one file only. Do you want me to add that citation?

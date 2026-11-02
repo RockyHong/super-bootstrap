@@ -45,7 +45,7 @@ Every entry carries a stable `OUT-xxxx` ID — its filename and its H1 both — 
 
 **Latest block leads:** a block restating `**Next move:**` / `**Waiting on:**` supersedes the origin's lines for every reader — needs-me, log dedup, autorun. `Owning card:` is the origin's alone — the wall is frozen at capture, never re-pointed by a block. Top-to-bottom reads as the item's evolution; the origin stays as grounding.
 
-**Resolve:** the resolving session deletes the entry file when the tail fires — the repo edit lands, or a card opens for it; the deleting commit's message carries the why. Git history is the archive. Deletion dead-ends every markdown link that pointed at the file, so the same change drops those links to plain `` `OUT-xxxx` `` spans — only a live entry earns a link.
+**Resolve:** the resolving session deletes the entry file when the tail fires — the repo edit lands, or a card opens for it; the deleting commit's message carries the why. Git history is the archive. Deletion dead-ends every markdown link a card or outward thread holds to the file, so the same change drops those thread links to plain `` `OUT-xxxx` `` spans — only a live entry earns a thread's link. A durable doc cites no entry, live or closed: the entry's outcome lands in the doc as present-tense state.
 
 ## Consumer note
 

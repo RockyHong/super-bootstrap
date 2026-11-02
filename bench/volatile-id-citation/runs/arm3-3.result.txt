@@ -1,0 +1,3 @@
+done
+
+I left the card's ID and path out of the spec, because the rule keeps volatile items out of durable docs. The section points readers to the `docs/work/` folder as a standing line instead. The card doesn't cite the spec yet. I didn't edit it, since you limited me to one file.

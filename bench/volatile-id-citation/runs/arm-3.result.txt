@@ -1,0 +1,5 @@
+done
+
+I left the card ID and the fix status out of the spec. The repo rule keeps volatile item IDs and folders out of durable docs, and "fix in progress" goes stale. The section states the limitation as current fact and nothing else.
+
+That means readers can't get from the spec to the card. To fix that, add a line to `docs/work/BUG-q7m2.md` that cites `docs/specs/upload.md`. The card then points readers to the spec. I didn't edit the card because you limited this to one file. When the bug is fixed, delete the section.

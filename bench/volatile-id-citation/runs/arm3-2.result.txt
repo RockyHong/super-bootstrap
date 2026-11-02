@@ -1,0 +1,1 @@
+done. The new section points readers to the `docs/work/` folder and leaves out the card ID, as the rule requires. The card (`BUG-q7m2`) should cite `docs/specs/upload.md`, but I left it alone because you asked for one file only.

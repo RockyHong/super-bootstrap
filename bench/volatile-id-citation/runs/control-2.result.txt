@@ -1,0 +1,3 @@
+done
+
+I linked the work folder (`docs/work/`) instead of naming the card. The doc rule keeps ticket IDs out of durable docs, and the card is still easy to find there.

@@ -1,0 +1,5 @@
+Done. I added the section to `docs/specs/upload.md` with the limitation stated in the present tense.
+
+I left out the card's ID, its path, and any "fix in progress" wording. The rule keeps tracker items and pointers to them out of durable docs, because they go stale. So a reader of the spec can't yet reach the card from it.
+
+The link should run the other way: the card `docs/work/BUG-q7m2.md` should cite `docs/specs/upload.md` in its provenance field. I couldn't do that here because you limited me to this one file. When the fix lands, the card's outcome should be written into the spec, and the section removed.

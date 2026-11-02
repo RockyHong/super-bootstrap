@@ -1245,6 +1245,105 @@ tu_header() { grep -qE '^#   terminology ' "$LINKS" && grep -qE '^#   term-uses 
 check "usage string registers the terminology and term-uses modes" tu_usage
 check "header comment registers the terminology and term-uses modes" tu_header
 
+echo "== doc-links: DEBT-5egy — volatile-ids prints tracker IDs on changed docs' added lines =="
+# The rule's decidable half: an added line of a durable doc carrying a card, outward or
+# parked ID. Advisory, so the lane always exits 0. `card` is a legal ID suffix, so
+# `GAP-card` is a hit by design; only the literal placeholder `xxxx` is exempt.
+VI="$TMP/vi"
+mkdir -p "$VI/docs/work" "$VI/docs/outward" "$VI/docs/specs" "$VI/plugins/p" "$VI/src"
+printf '# Plan\n\nThe old DEBT-old1 line.\n' > "$VI/docs/plan.md"
+printf '# Gone\n\nBody.\n' > "$VI/docs/gone.md"
+printf '# Repo\n' > "$VI/README.md"
+printf '# Plugin\n' > "$VI/plugins/p/README.md"
+printf '# Work\n' > "$VI/docs/work/README.md"
+printf '# GAP-abcd\n' > "$VI/docs/work/GAP-abcd.md"
+printf '# Outward\n' > "$VI/docs/outward/README.md"
+printf '# OUT-abcd\n' > "$VI/docs/outward/OUT-abcd.md"
+printf '# Parked\n' > "$VI/docs/parked.md"
+printf '# Test queue\n' > "$VI/docs/test-queue.md"
+printf -- '---\ndimension: history\n---\n# Log\n' > "$VI/docs/specs/log.md"
+(cd "$VI" && git init -q && git add -A && git -c user.name=t -c user.email=t@t commit -qm base)
+cat >> "$VI/docs/plan.md" <<'EOF'
+See [OUT-011](../outward/OUT-011.md) for the reply.
+Run git log --grep="DEBT-146" and read parked.md PARK-007.
+Every entry carries an OUT-xxxx ID and a BUG-xxxx card.
+XBUG-123 is a part number; so are BUG-Foo, GAP-fooBar, GAP-foo_bar and bug-123.
+Fill it at GAP-card pickup.
+```
+BUG-fen1 inside a fence
+```
+BUG-1a2b opens this line, and the line ends with GAP-zz9
+見BUG-cjk1。
+EOF
+rm -f "$VI/docs/gone.md"
+printf 'Cites BUG-root1.\n' >> "$VI/README.md"
+printf 'Cites BUG-plug1.\n' >> "$VI/plugins/p/README.md"
+printf 'Cites BUG-wrk1.\n' >> "$VI/docs/work/README.md"
+printf 'Cites BUG-wrk2.\n' >> "$VI/docs/work/GAP-abcd.md"
+printf 'Cites BUG-out1.\n' >> "$VI/docs/outward/README.md"
+printf 'Cites BUG-out2.\n' >> "$VI/docs/outward/OUT-abcd.md"
+printf 'Cites BUG-prk1.\n' >> "$VI/docs/parked.md"
+printf 'Cites BUG-tq1.\n' >> "$VI/docs/test-queue.md"
+printf 'Cites BUG-hist1.\n' >> "$VI/docs/specs/log.md"
+printf '# New\n\nCites BUG-new1.\n' > "$VI/docs/new.md"
+printf 'Cites BUG-off1.\n' > "$VI/src/x.md"
+vi_paths='docs/plan.md
+docs/gone.md
+README.md
+plugins/p/README.md
+docs/work/README.md
+docs/work/GAP-abcd.md
+docs/outward/README.md
+docs/outward/OUT-abcd.md
+docs/parked.md
+docs/test-queue.md
+docs/specs/log.md
+docs/new.md
+src/x.md'
+got_vi="$(cd "$VI" && printf '%s\n' "$vi_paths" | bash "$LINKS" volatile-ids -)"; rc=$?
+check "volatile-ids: exits 0 with hits (advisory)" [ "$rc" -eq 0 ]
+vi_has() { printf '%s\n' "$got_vi" | grep -qxF "$(printf '%s\t%s\t%s' "$1" "$2" "$3")"; }
+vi_noid() { ! printf '%s\n' "$got_vi" | grep -qF "$1"; }
+check "volatile-ids: a linked ID on an added line reports doc, line, ID" vi_has docs/plan.md 4 OUT-011
+vi_link_count="$(printf '%s\n' "$got_vi" | grep -c 'OUT-011' || true)"
+check "volatile-ids: an ID repeated on one line reports once (got $vi_link_count)" [ "$vi_link_count" -eq 1 ]
+check "volatile-ids: a git log --grep pointer's ID reports" vi_has docs/plan.md 5 DEBT-146
+check "volatile-ids: a second ID on one line reports" vi_has docs/plan.md 5 PARK-007
+check "volatile-ids: an unchanged line stays out" vi_noid DEBT-old1
+check "volatile-ids: the literal OUT-xxxx placeholder is exempt" vi_noid OUT-xxxx
+check "volatile-ids: the literal BUG-xxxx placeholder is exempt" vi_noid BUG-xxxx
+check "volatile-ids: a word character before the prefix is no boundary (XBUG-123)" vi_noid BUG-123
+check "volatile-ids: an uppercase first suffix character is no ID (BUG-Foo)" vi_noid BUG-Foo
+check "volatile-ids: an uppercase later suffix character is no boundary (GAP-fooBar)" vi_noid GAP-foo
+check "volatile-ids: a lowercase prefix is no ID (bug-123)" vi_noid bug-123
+check "volatile-ids: GAP-card is a hit, card being a legal suffix" vi_has docs/plan.md 8 GAP-card
+check "volatile-ids: an ID in a fenced block stays out" vi_noid BUG-fen1
+check "volatile-ids: an ID at column 1 reports" vi_has docs/plan.md 12 BUG-1a2b
+check "volatile-ids: an ID at line end reports" vi_has docs/plan.md 12 GAP-zz9
+check "volatile-ids: a non-ASCII neighbour is a boundary" vi_has docs/plan.md 13 BUG-cjk1
+check "volatile-ids: the root README is on the surface" vi_has README.md 2 BUG-root1
+check "volatile-ids: a plugin README is on the surface" vi_has plugins/p/README.md 2 BUG-plug1
+check "volatile-ids: docs/work/ standing README is exempt" vi_noid BUG-wrk1
+check "volatile-ids: a card thread is exempt" vi_noid BUG-wrk2
+check "volatile-ids: docs/outward/ standing README is exempt" vi_noid BUG-out1
+check "volatile-ids: an outward thread is exempt" vi_noid BUG-out2
+check "volatile-ids: docs/parked.md is exempt" vi_noid BUG-prk1
+check "volatile-ids: docs/test-queue.md is exempt" vi_noid BUG-tq1
+check "volatile-ids: a dimension: history doc is exempt" vi_noid BUG-hist1
+check "volatile-ids: an untracked new doc reads every line as added" vi_has docs/new.md 3 BUG-new1
+check "volatile-ids: a path off the doc surface stays out" vi_noid BUG-off1
+vi_count="$(printf '%s\n' "$got_vi" | grep -c . || true)"
+check "volatile-ids: exactly the ten expected hits (got $vi_count)" [ "$vi_count" -eq 10 ]
+got_vi_argv="$(cd "$VI" && bash "$LINKS" volatile-ids docs/new.md)"
+check "volatile-ids: the argv form takes a path (got: $got_vi_argv)" [ "$got_vi_argv" = "$(printf 'docs/new.md\t3\tBUG-new1')" ]
+got_vi_none="$(cd "$VI" && bash "$LINKS" volatile-ids 2>&1)"; rc=$?
+check "volatile-ids: no path prints nothing, exit 0 (rc=$rc, got: $got_vi_none)" [ -z "$got_vi_none" -a "$rc" -eq 0 ]
+usage_out="$(cd "$TMP" && bash "$LINKS" nosuchmode 2>&1)"
+vi_usage() { printf '%s' "$usage_out" | grep -q 'volatile-ids'; }
+vi_header() { grep -qE '^#   volatile-ids ' "$LINKS"; }
+check "usage string registers the volatile-ids mode" vi_usage
+check "header comment registers the volatile-ids mode" vi_header
+
 echo "== doc-links: BUG-045 — whole-surface check under a generous wall-clock ceiling =="
 now_ns="$(date +%s%N 2>/dev/null || true)"
 case "$now_ns" in

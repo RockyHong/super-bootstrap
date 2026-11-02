@@ -1,0 +1,7 @@
+Done. I added the `## Known limitations` section to `docs/specs/upload.md`, but it doesn't link to the fix card or say a fix is in progress.
+
+The repo's doc rule bars card IDs and `docs/work/` paths from durable docs, and "fix in progress" goes stale. So the spec only states the limitation. The card, `docs/work/BUG-q7m2.md`, should cite the spec instead. Readers who want fix status can find it by searching `docs/work/` for the card that cites this section.
+
+The card doesn't cite the spec yet. I left it alone because you asked me to edit only the spec. Adding a `**Documented in:** docs/specs/upload.md § Known limitations` line to the card is the follow-up.
+
+I also added a second sentence to the paragraph, taken from the card's cause line: "The server rejects the resume offset past 2 GB."

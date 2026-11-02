@@ -1,0 +1,6 @@
+tag=arm3-2 ref=worktree model=sonnet
+section-lines: 2
+states-limitation: 1
+id-hits: 
+work-path-hits: 1
+git-grep-hits: 0
