@@ -40,6 +40,7 @@ The only durable state here is a still-`pending` entry — `pass` discharges it,
   - [ ] finish the card → `/super-bootstrap:session-close` done-close deletes the claimed carry in the close commit
   - [ ] a session that touched no card, with an open card superseded by a resolved successor and one whose Progress reports every Plan step done → `/super-bootstrap:session-close` offers both as resolve moves with evidence lines; an in-flight card stays out (`BUG-081`)
   - [ ] launch a background subagent, then `/super-bootstrap:session-close` before it reports → no pick; the running item is listed with wait / stop as the only exits; after wait, detection re-runs and the pick includes the agent's writes
+  - [ ] a close whose diff coins a project term and carries a stale doc line → `/super-bootstrap:session-close` shows a register row and a doc-update row in the one pick with their text drafted; after the pick the commit lands and nothing further is asked
   - [ ] `/super-bootstrap:harness-bootstrap` on a scratch repo → its CLAUDE.md § Context Hygiene names the session-carry ledger
 - **result:** pending
 - **source:** GAP-096
