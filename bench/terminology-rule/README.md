@@ -3,8 +3,8 @@
 Test surface for the `Registered term` bullet in
 [`assets/rules-ssot-doc-link-skeleton.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/rules-ssot-doc-link-skeleton.md)
 § Home selection (placed byte-identical at [`.claude/rules/ssot-doc-link.md`](../../.claude/rules/ssot-doc-link.md)):
-`docs/terminology.md` is the home of every term it registers, a doc's first substantive use links it even where
-another doc also explains the term, and an `_Avoid_` word is replaced by the registered term. Behavior-shaping prose
+`docs/terminology.md` is the home of every term it registers, a doc's first substantive use links it in place of
+any other doc that explains the term, and an `_Avoid_` word is replaced by the registered term. Behavior-shaping prose
 in a shipped asset, so it ships behind the [`skill-authoring`](../../.claude/rules/skill-authoring.md) RED floor.
 
 ## Fixture

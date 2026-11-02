@@ -1,6 +1,6 @@
 # Terminology
 
-> **The project's term home.** One canonical word per project concept, one entry per word. Docs use the word this file registers; a doc's first substantive use of a registered term links its entry here.
+> **The project's term home.** One canonical word per project concept, one entry per word. Docs use the word this file registers; a doc's first substantive use of a registered term links this file.
 >
 > **Entry shape** — one line at line start, optionally `- ` prefixed: `**<Term>**: <definition>`. The definition is 1–2 sentences on what the term IS — no implementation detail.
 >

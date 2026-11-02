@@ -167,7 +167,7 @@ Markdown-authored Claude Code plugin + self-hosted marketplace — no language r
 - [`docs/parked.md`](docs/parked.md) — deferred items with named triggers
 - [`docs/test-queue.md`](docs/test-queue.md) — manual-verification queue
 - [`docs/outward/`](docs/outward/README.md) — outward threads: next move + waiting-on party, one file per item
-- [`docs/terminology.md`](docs/terminology.md) — the project's term home: one canonical word per concept, `_Avoid_` aliases; a doc's first substantive use of a term links its entry.
+- [`docs/terminology.md`](docs/terminology.md) — the project's term home: one canonical word per concept, `_Avoid_` aliases; a doc's first substantive use of a term links `docs/terminology.md`.
 - [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)
 
