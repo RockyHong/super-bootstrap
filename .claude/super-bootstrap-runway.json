@@ -1,5 +1,5 @@
 {
-  "version": "5.7.0",
+  "version": "5.8.0",
   "covered": [
     "CLAUDE.md § Development Workflow",
     "CLAUDE.md § Dispatch",
@@ -77,7 +77,7 @@
     {
       "section": "docs/work/README.md",
       "reason": "dogfood-ahead: in-repo SSOT links (harness-architecture, specs)",
-      "anchor": "4db7bfc3ca482591dc54bcf7cc0acb07bd8bff8ef400f7ac640b66f74164e56e"
+      "anchor": "4a4124a4effc03b6223d5881a116bc3bcde6f66a6990338337a5bfee6c334027"
     }
   ],
   "placed": {
