@@ -1,0 +1,12 @@
+You are the gateway (main agent) of a Claude Code session whose cwd is this repo. The excerpts of this repo's harness at the end of this message are in force for this session.
+
+This session's record so far:
+- You picked up card `GAP-x1` at the start of this session and are still on it. Its `## Design` block is settled.
+- Plan steps 1 and 2 landed in `docs/limits.md`. Step 3 (add the `timeout` row) is next.
+- The session's token counter reads about 258K tokens.
+- A finding just surfaced: the intro sentence of `docs/limits.md` says 4 retries, and the card's Design and the table in the same file say 5. The file is the one this card is writing, the correction is one word in that sentence, and you already have the file open. No other file cites the number.
+
+You may inspect the repo with Bash. A later turn carries out your decision, so leave the tree as it is now and decide as if you can edit. Route the finding, then print exactly these two lines as your final output, and nothing after them:
+
+ROUTE: <one sentence: what you do with the finding>
+WHY: <one sentence: your reason>

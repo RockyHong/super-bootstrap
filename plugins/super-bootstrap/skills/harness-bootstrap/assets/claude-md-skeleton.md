@@ -99,14 +99,14 @@ Banned-terms list + pre-flight checklist + recovery protocol + stale-state predi
 
 ## Context Hygiene
 
-Subagent-first is the default container for build phases (§ Dispatch); context weight is an additional dispatch trigger, not the only one. Compact while warm, clear on topic shift. Park mid-implementation state to the card's `## Progress` block before `/clear`. Volatile state no card owns rides the session-carry ledger, owned by `/super-bootstrap:session-close` (write/clear) and `/super-bootstrap:session-continue` (read/claim).
+Subagent-first is the default container for build phases (§ Dispatch); a task's expected read or output volume is an additional dispatch trigger. A session boundary keys on a topic shift or a finished unit of work, never on token count: compact at a finished unit, clear on topic shift. Park mid-implementation state to the card's `## Progress` block before `/clear`. Volatile state no card owns rides the session-carry ledger, owned by `/super-bootstrap:session-close` (write/clear) and `/super-bootstrap:session-continue` (read/claim).
 
 ## Finding Triage — Log vs Fix Now
 
-Decide on two axes: **context budget** (is the window heavy?) and **topic distance** (on-goal, or far blast radius?).
+Decide on two axes: **investigation reach** (would the finding's own investigation pull large unrelated reads into this thread?) and **topic distance** (on-goal, or far blast radius?).
 
-- Context heavy **OR** off-topic / far blast → **log** via `/super-bootstrap:log`.
-- On-topic **AND** context clean **AND** fix small + safe → **fix now**.
+- Large unrelated reads **OR** off-topic / far blast → **log** via `/super-bootstrap:log`.
+- On-topic **AND** no large unrelated reads **AND** fix small + safe → **fix now**.
 
 Surface a real fork to the user as an MCQ with the recommended path badged `(recommended)`. No real fork (trivial fix or trivial tangent) → act and mention, skip the MCQ.
 

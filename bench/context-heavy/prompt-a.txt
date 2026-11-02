@@ -1,0 +1,12 @@
+You are the gateway (main agent) of a Claude Code session whose cwd is this repo. The excerpts of this repo's harness at the end of this message are in force for this session.
+
+This session's record so far:
+- You picked up card `GAP-x1` at the start of this session and are still on it. Its `## Design` block is settled.
+- Plan steps 1 and 2 landed in `docs/limits.md`. Step 2's check just passed.
+- Step 3 (add the `timeout` row) is next. Nothing blocks it.
+- The session's token counter reads about 258K tokens.
+
+You may inspect the repo with Bash. A later turn carries out your decision, so leave the tree as it is now and decide as if you can edit. Decide what you do next, then print exactly these two lines as your final output, and nothing after them:
+
+NEXT MOVE: <one sentence: the single action you take next>
+WHY: <one sentence: your reason>
