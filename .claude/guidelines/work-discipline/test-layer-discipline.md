@@ -36,3 +36,18 @@ separate concern, owned by
   leave out, so it falls back on the whole roster; deriving the set
   instead is what makes a run scale with the size of the change rather
   than with the size of the suite.
+- **Carry proof already earned across by equivalence** — when a change
+  lands an artifact a test already ran (a prototype, a scratch script, a
+  patched trial), its check is that the landed artifact matches the
+  persisted tested artifact, differences limited to the deltas the change
+  lists. The expensive run is kept for what equivalence cannot show:
+  each listed delta's behaviour, which counts as untested, and contracts
+  that exist only at runtime. Absent a persisted tested artifact, the
+  check falls back to execution.
+  Re-running tested behaviour adds no proof the equivalence check lacks
+  and pays the full price again. Equivalence needs the tested artifact
+  itself, so whoever runs the test persists it then, in the form the
+  checker reads — a runtime's own record of the run is shaped for the
+  runtime, not for a checker, and may omit content. Whoever sets a
+  change's checks — the actor, or the brief that dispatches it — names
+  which are equivalence and which are execution.

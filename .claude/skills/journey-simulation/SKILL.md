@@ -9,9 +9,9 @@ agents: [walkthrough-narrator]
 
 ## Overview
 
-Spawn isolated subagent to **execute a real task** under identity-as-fact briefing + sandbox spec. Subagent never knows it's observed. Gateway extracts funnel post-hoc from narration.
+Start an isolated runner — a headless process outside the caller's project — to **execute a real task** under identity-as-fact briefing + sandbox spec. The runner never knows it's observed. Gateway extracts funnel post-hoc from narration.
 
-**Persona is a distribution, not a single person.** Persona-slug names a group; subagent samples one path. Read each waypoint as "how thinned is this group?" — not "did this individual finish?" Funnel attrition is the unit of signal.
+**Persona is a distribution, not a single person.** Persona-slug names a group; the runner samples one path. Read each waypoint as "how thinned is this group?" — not "did this individual finish?" Funnel attrition is the unit of signal.
 
 ## When to use
 
@@ -31,7 +31,7 @@ Run before dispatch. Caller-in-loop. **Never skipped.**
 4. **Curate:** strip project jargon, success-bias, design rationale, vision-statement leakage.
 5. **Structural-cue check:** if curated persona reads as constructed (over-precise biographic detail, hyper-specific multi-constraint situations, obscure personal history), loosen toward naturalistic under-specification.
 6. **Show curated AND stripped versions side-by-side.** Caller picks curated, stripped, or correction. Single-stage curation = bias not fully surfaced. Both versions visible to caller is the load-bearing step.
-7. **Capture bullseye + hypothesis privately.** Held only by gateway. Never enters subagent prompt.
+7. **Capture bullseye + hypothesis privately.** Held only by gateway. Never enters the brief.
 
 ## Phase 1 — Input contract
 
@@ -46,8 +46,8 @@ Required inputs (free-form shape, must hit minimum bar each):
 | 5 | Platform | optional |
 
 Gateway-private:
-- **Bullseye** — caller's success criterion. **NEVER to subagent.**
-- **Hypothesis** — caller's worry. **NEVER to subagent.**
+- **Bullseye** — caller's success criterion. **NEVER to the runner.**
+- **Hypothesis** — caller's worry. **NEVER to the runner.**
 
 ## Phase 2 — Sandbox 5-question contract
 
@@ -65,34 +65,40 @@ Generalizes across artifacts:
 - README / doc: sections / scroll-skip-search / next-section / builder's mental model / info-not-there
 - Future-self review: doc state / re-read attempts / what reminds you / forgotten context / rotted links
 
-If caller cannot answer all five → return to Phase 0. Under-specified sandbox = subagent will hit "out of bounds" frequently (still signal, but degrades to noise if too sparse).
+If caller cannot answer all five → return to Phase 0. Under-specified sandbox = the runner will hit "out of bounds" frequently (still signal, but degrades to noise if too sparse).
 
-**Out-of-bounds attempts are friction signal at the gateway side; never named as such in the subagent prompt.**
+**Out-of-bounds attempts are friction signal at the gateway side; never named as such in the brief.**
 
 ## Phase 3 — Dispatch
 
-**Tool isolation enforced by the agent type.** Dispatch with `subagent_type="walkthrough-narrator"` — the registered agent this skill declares. Its frontmatter (`tools: Write`, `model: sonnet`) is the isolation: the subagent has NO Read / Grep / Bash / WebSearch / WebFetch. The Agent call takes no tool list, so any other type (`general-purpose` included) hands the subagent the full toolkit. If subagent wants to "look something up", that itself is signal (missing affordance / unmet expectation) — captured in narration.
+**The runner is a headless process started outside the caller's project.** An `Agent`-tool subagent receives the caller's project from the runtime whatever the brief holds — working directory, repo name, git snapshot, every instruction file, MCP instruction blocks — so a brief handed to one is not the runner's whole context. A `claude -p` process started in a neutral directory with every settings source off receives the brief, the narrator body, and nothing about the project. Shape, flags and the neutral directory: `subagent-prompt.md` § Dispatch call shape.
 
-**Dispatch shape and the agent-not-registered stop** — `subagent-prompt.md` § Dispatch call shape.
+**Tool isolation by flag.** `--tools Write` is the only tool; `--model sonnet` the tier; `--system-prompt` the narrator body read from the served `walkthrough-narrator` agent file (frontmatter stripped). The runner has NO Read / Grep / Bash / WebSearch / WebFetch. If it wants to "look something up", that itself is signal (missing affordance / unmet expectation) — captured in narration.
+
+**What the runner still sees.** The runtime's environment block reaches a headless process too: OS and shell, the date, the model name, the account email, and the neutral directory's path — under an OS temp root that path carries the OS account name. Nothing in the skill can withhold these. The checkpoint below lists them; the gateway names the clash there when a caller's hypothesis rides on one of them (an account-name product, a date-keyed flow).
+
+**Where a process cannot be started** — no `claude` on PATH, the Bash call denied, a cloud session — say so at the checkpoint and stop. An `Agent`-tool run is not a fallback: it is a run the runner can read the project from, and a trace from it reports as unisolated if the caller still wants it.
 
 **Identity-as-fact briefing.** Use the template in `subagent-prompt.md` (this directory). Fill placeholders from Phase 1 inputs.
 
-**Drift / abandon allowed.** Subagent prompt explicitly licenses incomplete + irrational behavior, otherwise the LLM defaults to "engaged thoughtful completion-oriented assistant" archetype regardless of declared identity.
+**Drift / abandon allowed.** The brief explicitly licenses incomplete + irrational behavior, otherwise the LLM defaults to "engaged thoughtful completion-oriented assistant" archetype regardless of declared identity.
 
 **Confirmation checkpoint before dispatch.** Show the caller verbatim:
 ```
-Dispatching {N} subagent(s):
+Dispatching {N} runner(s):
 
 1. {persona-slug} — {one-line persona summary}
    Pre-context: {channel + posture}
    Drive: {goal or trigger}
    Sandbox: {state count} states, entry = {first state}
-   Agent: walkthrough-narrator (tools: Write · model: sonnet, from its frontmatter)
+   Runner: claude -p · tools: Write · model: sonnet · system prompt: walkthrough-narrator body · no settings sources
 
-Output: docs/walkthroughs/{batch-folder}/
+Runs in: {neutral directory} (outside this project)
+Runner also sees: OS + shell, today's date, the model name, the account email, the OS account name in that path
+Output: docs/walkthroughs/{batch-folder}/ (moved in after the run)
 Go?
 ```
-The `Agent: walkthrough-narrator` line is mandatory and must appear verbatim — it names the only dispatch type allowed. Tools and model come from that agent's frontmatter, so the Agent call carries no `model=` (if one is passed, it must be `sonnet`). If the line is missing or names another type, caller should refuse confirmation. Wait for caller confirmation before invoking Agent tool.
+The `Runner: claude -p` line is mandatory and must appear verbatim — it names the only dispatch form allowed. If the line is missing or names the `Agent` tool, caller should refuse confirmation. Wait for caller confirmation before starting any process. N runners start as N concurrent processes from the same neutral directory, each with its own output file.
 
 ## Phase 4 — Multi-runner default
 
@@ -104,9 +110,9 @@ The `Agent: walkthrough-narrator` line is mandatory and must appear verbatim —
 
 ## Phase 5 — Funnel trace
 
-Gateway reads subagent's narration file. Produces a **funnel trace**, not a report. (The word "report" implies graded ground-truth; the artifact here is one observed path through a distribution.)
+Gateway reads the runner's narration file. Produces a **funnel trace**, not a report. (The word "report" implies graded ground-truth; the artifact here is one observed path through a distribution.)
 
-All vocab below is gateway-side only — never appears in subagent prompt.
+All vocab below is gateway-side only — never appears in the brief.
 
 ### Per-state row
 
@@ -154,13 +160,13 @@ When N > 1: produce one funnel trace **per runner**, each in its own file. Do NO
 
 ## Output location
 
-`docs/walkthroughs/{flow}_{YYYYMMDD-HHmm}/{persona-slug}_{scenario-slug}.md` in the **caller's project directory** (not the skills repo).
+The runner writes `{persona-slug}_{scenario-slug}.md` inside the neutral directory it runs in — the only path it is told. After every runner exits, the gateway moves the files to `docs/walkthroughs/{flow}_{YYYYMMDD-HHmm}/` in the **caller's project directory** (not the skills repo) and removes the neutral directory. The batch folder name never reaches the runner.
 
-Path word "walkthroughs" is Layer 3 — the path string substitutes into the subagent prompt, so "simulation" or any forbidden vocab in the path leaks the meta-frame.
+The persona and scenario slugs are the only caller-derived words in the runner's path — they are under the Layer 3 fence like every other substituted string.
 
 Add `docs/walkthroughs/` to caller's `.gitignore` — temporal artifacts, not committed history.
 
-## Layer 3 forbidden vocab — never in subagent prompt
+## Layer 3 forbidden vocab — never in the brief
 
 These words / phrases trigger meta-awareness or performance frame:
 
@@ -173,9 +179,9 @@ These words / phrases trigger meta-awareness or performance frame:
 - report (as a noun for the gateway artifact — primes graded-ground-truth reading; use "funnel trace" or "walkthrough log" gateway-side)
 - skill name "journey-simulation", "journey simulations", or any reference to this protocol
 
-**Path-level applicability.** Forbidden vocab also applies to any string substituted into the subagent prompt, including `{output_file_path}`. Folder names, file names, batch labels — all subject to the same fence. `docs/journey-simulations/...` would leak the meta-frame even when the surrounding prose is clean.
+**Path-level applicability.** Forbidden vocab also applies to any string substituted into the brief, including `{output_file_path}`. File names and slugs are subject to the same fence, and so is the caller's own identity: the caller project's folder name, a codename, or an intent-bearing flow label (`checkout-redesign`) in the path tells the runner what it is walking through. The neutral directory keeps the project out of the path by construction; the slugs the gateway composes are the part it has to check.
 
-## Layer 3 allowed vocab — what subagent prompt may contain
+## Layer 3 allowed vocab — what the brief may contain
 
 - "you" (self)
 - identity-as-fact: "you are X", "you have done Y", "you live in Z"
@@ -188,30 +194,32 @@ These words / phrases trigger meta-awareness or performance frame:
 
 | Excuse | Reality |
 |---|---|
-| "Caller's hypothesis is helpful context, subagent should know what to look for" | Hypothesis IS the bias. Bullseye stays gateway-private; comparison happens post-hoc in Phase 5. |
+| "Caller's hypothesis is helpful context, the runner should know what to look for" | Hypothesis IS the bias. Bullseye stays gateway-private; comparison happens post-hoc in Phase 5. |
 | "'Simulate' is the natural word, no harm" | Triggers performance-frame. Use identity-as-fact briefing only. |
-| "Subagent walked through, so persona converted" | LLM defaults toward completion. Persistence past soft-leave / hard-quit = post-quit probe, not evidence of persistence. Tag would-have-quit point in Phase 5. |
+| "The runner walked through, so persona converted" | LLM defaults toward completion. Persistence past soft-leave / hard-quit = post-quit probe, not evidence of persistence. Tag would-have-quit point in Phase 5. |
 | "Single persona is fine, caller said 'typical user'" | Generalization claim. Single runner = anecdote. Push 2-3 divergent vectors, or get explicit anecdote-reframe acknowledgment. |
 
 ## Red flags — stop and restart
 
 If any of these appear, **stop and return to Phase 0**:
 
-- Subagent prompt contains any Layer 3 forbidden vocab (including in path strings)
+- Brief contains any Layer 3 forbidden vocab (including in path strings)
 - `{output_file_path}` substitution contains "simulation", "simulations", "journey-simulation", or other Layer 3 forbidden vocab
-- Subagent prompt mentions caller's hypothesis or success criterion
-- Subagent prompt asks for scores / ratings / rankings / recommendations
-- Agent tool invoked with any `subagent_type` other than `walkthrough-narrator` (`general-purpose` fallback included)
-- Confirmation checkpoint shown to caller without the verbatim `Agent: walkthrough-narrator` line
+- `{output_file_path}` lies inside the caller's project, or carries the project's folder name, a codename, or the flow label
+- Brief mentions caller's hypothesis or success criterion
+- Brief asks for scores / ratings / rankings / recommendations
+- Runner started through the `Agent` tool (any `subagent_type`, `walkthrough-narrator` included) instead of a `claude -p` process
+- Process started with a settings source, a tool beyond `Write`, or from a directory inside the caller's project
+- Confirmation checkpoint shown to caller without the verbatim `Runner: claude -p` line
 - Phase 0 skipped because "caller's request was clear"
 - Phase 0 step 6 collapsed to single-stage (only curated shown, stripped not shown)
 - Single runner dispatched for a generalization claim **without** caller-acknowledged anecdote-reframe
 - Persona description is longer than ~3 sentences with hyper-specific biographic detail
-- Subagent told it's "testing", "simulating", "evaluating", or "playing the role of"
+- Runner told it's "testing", "simulating", "evaluating", or "playing the role of"
 - Phase 5 output framed as "report" or aggregated across runners
 - Phase 5 omits archetype-strength zone declaration
 
 ## See also
 
-- `subagent-prompt.md` (this directory) — Layer 3 sealed template for Agent dispatch
-- `walkthrough-narrator` agent (declared in this skill's frontmatter) — the Write-only dispatch type
+- `subagent-prompt.md` (this directory) — Layer 3 sealed template + the `claude -p` dispatch shape
+- `walkthrough-narrator` agent (declared in this skill's frontmatter) — the narrator body the process runs under as its system prompt

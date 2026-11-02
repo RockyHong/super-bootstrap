@@ -31,6 +31,30 @@
 #        - model param missing -> deny (tier-guidance message; names the
 #          resolved frontmatter-less local agent if there is one)
 #
+# Footer tier prefix: every ALLOWED dispatch that carries a non-empty
+# `description` also emits updatedInput (the whole tool_input) with description
+# rewritten to "[<tier>] <description>", so the terminal footer's subagent row
+# shows which model runs. <tier> = the effective model after the table above:
+# the pin (branch 1), else the call-site model (branch 2), mapped to its family
+# word haiku|sonnet|opus|fable. Pin `inherit` -> the session's model: within
+# the last 400 transcript_path lines, the last assistant line whose
+# .message.model maps to a family; none / unreadable -> `inherit`. A leading
+# `[haiku|sonnet|opus|fable|inherit] ` tag is replaced, never stacked; any other
+# tag (`[wip] `) survives behind the prefix. No ANSI (description also lands in
+# the transcript and the task notification). Absent/empty description is not
+# added; with no rewrite either, the hook stays silent. Deny output is unchanged.
+# Trade-off (decided for the footer label): updatedInput rides a decision
+# (allow / ask); this hook uses allow, so every Agent dispatch this pass
+# rewrites carries permissionDecision "allow", which skips the mode-level
+# permission prompt for that call (Agent normally has none). Settings `deny` /
+# `ask` rules still apply — the official permissions docs evaluate them
+# whatever a PreToolUse hook returns.
+# Known limit: the official docs document transcript_path as the main session's
+# transcript for SubagentStop only; which transcript PreToolUse carries inside
+# a subagent is undocumented, and the code checks readability only, so an
+# `inherit` dispatch made from inside a subagent may be labeled with the main
+# session's tier, not the parent subagent's. Documented only; no code gate.
+#
 # Resolution order (first match wins):
 #   $CLAUDE_PROJECT_DIR/.claude/agents/<type>.md
 #   ~/.claude/agents/<type>.md
@@ -124,7 +148,8 @@ same_dir() {
 # definition. Anything unusable
 # (no registry, unparseable, no matching key, no installPath, pruned directory)
 # degrades to the highest cached version by `sort -V` — never to lexical order,
-# which is the whole defect: 2.29.4 sorts before 2.6.0 and 2.37.2.
+# which is the whole defect: 2.29.4 sorts before 2.6.0 and 2.37.2. A `sort`
+# without `-V` yields no candidate → PIN stays empty → branch 2.
 plugin_cache_dir() {
     local plugin="$1"
     local registry="${HOME_DIR}/.claude/plugins/installed_plugins.json"
@@ -171,7 +196,7 @@ plugin_cache_dir() {
             [ -d "$dir" ] || continue
             dir="${dir%/}"
             printf '%s\t%s\n' "${dir##*/}" "$dir"
-        done | sort -V | tail -n 1 | cut -f2-
+        done | sort -V 2>/dev/null | tail -n 1 | cut -f2-
     )"
     [ -n "$candidate" ] && printf '%s' "$candidate"
     return 0
@@ -219,34 +244,97 @@ if [ -n "$SUBAGENT_TYPE" ]; then
     fi
 fi
 
+# Tier word for a model string: haiku | sonnet | opus | fable by family substring
+# (covers aliases, full ids, and `sonnet[1m]`-style pins). Prints nothing when no
+# family matches.
+family_word() {
+    case "$1" in
+        *haiku*)  printf 'haiku' ;;
+        *sonnet*) printf 'sonnet' ;;
+        *opus*)   printf 'opus' ;;
+        *fable*)  printf 'fable' ;;
+    esac
+}
+
+# Tier word for a pin / call-site model: its family word, else the value
+# lowercased and stripped to [a-z0-9-], else `inherit`.
+tier_of() {
+    local t
+    t="$(family_word "$1")"
+    [ -n "$t" ] || t="$(printf '%s' "$1" | tr 'A-Z' 'a-z' | tr -cd 'a-z0-9-')"
+    printf '%s' "${t:-inherit}"
+}
+
+# Tier of the session's own model — what an `inherit` dispatch runs on (scan
+# rule: header § Footer tier prefix).
+session_tier() {
+    local tp model tier=""
+    tp="$(jq -r '.transcript_path // empty' <<< "$PAYLOAD" 2>/dev/null | tr -d '\r')"
+    if [ -n "$tp" ]; then
+        tp="$(norm_path "$tp")"
+        if [ -r "$tp" ]; then
+            # Family filter before taking the last: assistant lines whose model
+            # maps to no family (e.g. `<synthetic>`) are skipped, so they never
+            # mask the real model.
+            model="$(tail -n 400 "$tp" 2>/dev/null | grep -F '"assistant"' \
+                | jq -r 'select(.type == "assistant") | .message.model | strings | select(test("haiku|sonnet|opus|fable"))' 2>/dev/null \
+                | tr -d '\r' | tail -n 1)"
+            tier="$(family_word "$model")"
+        fi
+    fi
+    printf '%s' "${tier:-inherit}"
+}
+
+# Emit an allow decision. $1 = tier word, $2 = model action (keep | drop | set),
+# $3 = notice ("" for none), $4 = pin (for set). Prefix contract: header
+# § Footer tier prefix.
+emit_allow() {
+    local tier="$1" action="$2" reason="$3" pin="$4" desc
+    desc="$(jq -r '.tool_input.description // empty | strings' <<< "$PAYLOAD" 2>/dev/null)"
+    [ -z "$desc" ] && [ -z "$reason" ] && exit 0
+    jq --arg t "$tier" --arg a "$action" --arg r "$reason" --arg p "$pin" '
+        (.tool_input
+         | if $a == "drop" then del(.model) elif $a == "set" then .model = $p else . end
+         | if (.description | type) == "string" and .description != ""
+           then .description = "[" + $t + "] " + (.description | sub("^[[](haiku|sonnet|opus|fable|inherit)[]] "; ""))
+           else . end) as $u
+        | {hookSpecificOutput: ({hookEventName: "PreToolUse", permissionDecision: "allow", updatedInput: $u}
+            + (if $r != "" then {permissionDecisionReason: $r, additionalContext: $r} else {} end))}
+    ' <<< "$PAYLOAD"
+    exit 0
+}
+
 if [ -n "$PIN" ]; then
     # Branch 1: pinned typed agent — the pin is authoritative, even against an
     # explicit model param. A mismatch is corrected in place rather than denied:
     # a deny only bought a re-issue of the same call without the param.
-    [ -z "$MODEL" ] && exit 0
-    [ "$MODEL" = "$PIN" ] && exit 0
+    if [ "$PIN" = "inherit" ]; then
+        TIER="$(session_tier)"
+    else
+        TIER="$(tier_of "$PIN")"
+    fi
+
+    if [ -z "$MODEL" ] || [ "$MODEL" = "$PIN" ]; then
+        emit_allow "$TIER" keep "" ""
+    fi
 
     # additionalContext carries the notice: permissionDecisionReason on allow is
     # not Claude-visible for Agent (transcript logs it as a hook_success
     # attachment only), while paired additionalContext lands in-band.
     if [ "$PIN" = "inherit" ]; then
         REASON="Model pin: ${SUBAGENT_TYPE} is pinned to inherit in its frontmatter (top tier — the session's own model); call-site model '${MODEL}' dropped so the pin governs the tier."
-        jq --arg r "$REASON" \
-            '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "allow", permissionDecisionReason: $r, additionalContext: $r, updatedInput: (.tool_input | del(.model))}}' \
-            <<< "$PAYLOAD"
-        exit 0
+        emit_allow "$TIER" drop "$REASON" ""
     fi
 
     REASON="Model pin: ${SUBAGENT_TYPE} is pinned to ${PIN} in its frontmatter; call-site model '${MODEL}' rewritten to the pin."
-    jq --arg p "$PIN" --arg r "$REASON" \
-        '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "allow", permissionDecisionReason: $r, additionalContext: $r, updatedInput: (.tool_input | .model = $p)}}' \
-        <<< "$PAYLOAD"
-    exit 0
+    emit_allow "$TIER" set "$REASON" "$PIN"
 fi
 
 # Branch 2: ad-hoc / built-in, or a resolved-but-frontmatter-less local agent
 # (missing/empty subagent_type also lands here). An explicit model satisfies it.
-[ -n "$MODEL" ] && exit 0
+if [ -n "$MODEL" ]; then
+    emit_allow "$(tier_of "$MODEL")" keep "" ""
+fi
 
 # The reason names a path the model will open with a native Windows tool: a
 # /c/... form resolves against cwd's drive (→ D:\c\...). cygpath -w → C:\ form

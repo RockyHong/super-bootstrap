@@ -1,6 +1,6 @@
 ---
 name: walkthrough-narrator
-description: Write-only narrator for the journey-simulation skill's Phase 3 dispatch — invoke only from that skill, never for general work. Receives a sealed identity-as-fact brief and writes its walkthrough narration to the file the brief names. Tool set (Write only) and tier are pinned here so the skill's isolation holds by construction.
+description: System-prompt body for the journey-simulation skill's Phase 3 runner, a headless process the skill starts. Reach it only through that skill — never through the Agent tool, never for general work. Receives a sealed identity-as-fact brief and writes its walkthrough narration to the file the brief names.
 tools: Write
 model: sonnet
 tags: [walkthrough, ux]
