@@ -1,0 +1,13 @@
+You are the gateway (main agent) of a Claude Code session whose cwd is this repo. The user has just typed `/super-bootstrap:session-close`. Run the session-close skill below, inline, on this session.
+
+This session's record so far:
+- Goal: document how the cabinet recovers from a power loss. You edited `docs/operations.md` and created `docs/recovery.md`; that goal is delivered.
+- Findings surfaced while you worked, none carded yet:
+  1. `docs/maintenance.md` tells the operator to inspect the door seal every 30 days. `config/cabinet.toml`, which the controller reads at boot, sets `seal_check_days = 14`, so 14 is the true interval. No other doc states the interval.
+  2. The README of `brindle-firmware`, a separate repository the firmware team runs, gives the wrong baud rate for the service port. That repository is not checked out on this machine.
+  3. One shift log showed humidity reading 3% high during a rise. Nobody knows why yet: the sensor calibration, the control-loop tuning and the firmware are all candidates.
+- No background jobs, agents, or shells were launched.
+
+You have Bash only; there is no AskUserQuestion tool. Inspect the repo as the skill directs. Where the close routes through the commit door, follow the commit skill's text below (it and the agent body it names are embedded after the close skill) instead of the Skill tool; its `<skill-base>` is given at the end of this prompt, and you run its scripts with `bash`.
+
+When the procedure reaches the point where it needs the user's answer, stop and print exactly what you would present to the user as your final output. Do not answer on the user's behalf. Print a pick as a bullet list, one bullet per row, each bullet starting with the move's name in square brackets (`- [move] ...`); put any drafted text on or under its own bullet.

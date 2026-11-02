@@ -11,7 +11,7 @@ tags: [session, close, park, ledger, carry]
 | Detected state | Shape |
 |---|---|
 | Goal delivered whole, nothing in-motion | **done-close** — closeout moves + own carry cleared |
-| In-motion remainder (mid-work break, topic switch, context heavy) | **park-close** — closeout moves + Progress block on the card + carry landed in the ledger |
+| In-motion remainder (mid-work break, topic switch) | **park-close** — closeout moves + Progress block on the card + carry landed in the ledger |
 
 Step 1 routes by fulfillment; on ambiguity the user's framing wins — only they know a done session from a pause.
 
@@ -26,9 +26,9 @@ This section is the convention's SSOT; `/super-bootstrap:session-continue` reads
 
 ## Protocol
 
-The gateway runs this inline — it inspects the live session's work and tree, dispatches no subagent, pins no model.
+The gateway runs this inline — it inspects the live session's work and tree and pins no model. The commit door's own dispatches are the close's only ones: at step 3b, in the foreground.
 
-Two passes: **detect** every open closeout move (steps 0–3) — read-only, nothing written; step 0's exit choice is the one prompt before the pick — then **drive** them to done in one confirm-pick (step 4).
+Two passes: **detect** every open closeout move (steps 0–3b) — read-only, with worktree, HEAD and shared index left as found; step 0's exit choice is the one prompt before the pick — then **drive** them to done in one confirm-pick (step 4).
 
 ### 0. Detect — still-running work (gate)
 
@@ -47,7 +47,7 @@ Is this session's goal delivered whole, with nothing left in motion? Whole → *
 
 ### 2. Detect — tree + commit
 
-Inspect for uncommitted session work, untracked files, stray artifacts — this session's changes only. Session changes → a **commit** move, run through `/super-bootstrap:commit` (Skill tool) — the door owns staging, doc-sync, and the message; never a raw `git commit`. Push is no move here: when to push is the user's own preference, outside this skill.
+Inspect for uncommitted session work, untracked files, stray artifacts — this session's changes only. Session changes → a **commit** move, run through `/super-bootstrap:commit close-commit` (Skill tool) — the door owns staging, doc-sync, and the message; never a raw `git commit`. Push is no move here: when to push is the user's own preference, outside this skill.
 
 ### 3. Detect — cards + integration + ledger
 
@@ -60,17 +60,29 @@ Inspect for uncommitted session work, untracked files, stray artifacts — this 
   (a)–(c) start as greps over card text and `git log`; deep-read only the cards they hit. Each finished card → a **resolve** move whose line carries its evidence (the signal, quoting the block line or commit): delete the card file per `docs/work/README.md` § Thread contract (Resolve), folded into the close commit. A signal that fires with the card's remaining aim unclear → a **triage** move (`/super-bootstrap:triage {ID}`) instead.
 - **Merged local branches** — branches already merged into the main line (main-line name from ambient; exclude main + current). An empty result is the clean case — guard the exclusion greps so a no-match exits 0. Each is a **prune** move via `git branch -d` (merged-guard refuses unmerged — recoverable). A recurring non-empty result is a producer miss — surface it as a **log** move.
 - **A complete feature branch ready to integrate** → an opt-in **merge** move via `/super-bootstrap:merge` — never auto-merged.
-- **Inflight findings** surfaced this session but not yet carded → triage each: on this session's goal, a bounded live tweak owning no downstream, clean tree, context to spare?
-  - all yes → a **fix-now** move: the edit, folded into the close commit.
-  - far afield, carries propagation closure, OR context heavy → a **log** move via `/super-bootstrap:log`.
-  Judge fit by ownership, not diff size.
+- **Inflight findings** surfaced this session but not yet carded → finish what this close can finish. Each takes one move:
+  - This repo's, with its edit and everything that edit must keep in sync draftable exactly now, however far from this session's goal → a **fix-now** move: the exact text in the pick, folded into the close commit.
+  - Every other finding → a **log** move via `/super-bootstrap:log`, whose row states why it cannot finish now: its closure outgrows a drafted edit, its own investigation would pull large unrelated reads into this thread, or another repo or party owns it.
+  Judge fit by ownership and closure, not diff size.
 - **Ledger** — this session's own file under root `SESSION-STATE/` (other sessions' files stay untouched, read or written):
   - done-close, own file present → a **ledger-clear** move (delete it, folded into the close commit).
   - park-close → a **park** move (step 4 owns its body): a Progress append per anchoring card + the ledger-write.
 
+### 3b. Detect — the commit door's judgment
+
+With a commit move in hand, run the door's read-only entry — `/super-bootstrap:commit close-detect` — over the session's changes plus every fix-now draft, so the whole diff is judged once, here. Each return settles as a row of the pick, its exact text drafted:
+
+- **Stale candidate, premise re-frame or dangling, broken link, stale pin** → a **doc-update** row: path, what is outdated, the edit. Every one of these carries a row.
+- **Register item** → a **register** row: the word, doc:line, the entry verbatim, the edit to the using line.
+- **Terminology miss** → a **terminology** row: doc:line and the line's edit.
+- **Restatement** → a **restatement** row: the edit linking each unlinked copy to the home. No home, or a closure past a drafted edit → a **log** move stating that reason.
+- **Volatile-ID hit** → a **volatile-ID** row: doc:line and the line's edit, the outcome stated present-tense or a commit sha cited.
+
+A register, terminology or restatement return that does not earn a move gets no line. A return with two live resolutions only the user can judge carries both on its row.
+
 ### 4. Drive to close
 
-Gather every detected move into ONE confirm-pick — multi-select, recommended default = all. A single detected move still routes through the pick, paired with an explicit "close without running it" option, so the pick always offers ≥2 choices. Present each as a concrete line: what it does, and its blast for moves that mutate or reach outward (merge, prune). The pick IS the confirm-gate — no per-move prompt, the door's included.
+Gather every detected move into ONE confirm-pick — multi-select, recommended default = all. A single detected move still routes through the pick, paired with an explicit "close without running it" option, so the pick always offers ≥2 choices. Present each as a concrete line: what it does, and its blast for moves that mutate or reach outward (merge, prune). The pick's text is the shape and its rows: the detect pass's working stays behind it. The pick IS the confirm-gate — no per-move prompt, the door's included.
 
 **The park move** runs the cold-pickup test — "if a new session starts cold, can it orient from files alone?" — and sorts the in-motion remainder:
 
@@ -78,7 +90,7 @@ Gather every detected move into ONE confirm-pick — multi-select, recommended d
 - **Durable, not card-owned** (decisions, spec deltas) → the owning doc, landed through the commit door's doc-sync.
 - **Volatile, no card owns it** (cross-card session context, a thread not yet carded) → the own ledger file, in the convention's slots; Read first names the card ID(s). Never restate what the Progress block or a doc already holds — a watch-out binding the card lives on the card, not only in the carry. Nothing volatile beyond the card → a pointer-only stub (Anchor + card ID + Next step pointer), still written so session-continue finds it.
 
-Show the drafted Progress block(s) and carry body in the pick. **Nothing is written before the pick.** On confirm, execute the picked moves in dependency order: stop standing items → fix-now edits → Progress appends → ledger-write / ledger-clear → card resolve → commit via `/super-bootstrap:commit` (its §6 handoff line is skipped) → merge → prune. Re-verify the tree is clean, then **close**.
+Show the drafted Progress block(s), carry body, fix-now edits and door-judgment rows in the pick. **Nothing is written before the pick.** On confirm, execute the picked moves in dependency order: stop standing items → fix-now edits and picked door-judgment rows → Progress appends → ledger-write / ledger-clear → card resolve → commit via `/super-bootstrap:commit close-commit` (its §6 handoff line is skipped) → merge → prune. A declined row writes nothing. A failure the run hits — a hook failure, a conflict, a door stop — stops and surfaces. Re-verify the tree is clean, then **close**.
 
 If step 1 found an undelivered goal the user expects finished, surface it above the pick in three parts — what's open, what whole-delivery expected, the options (finish it, park-close it, or accept and close anyway). It gates the close but can't be move-executed. Proceed until closed or the user accepts an explicit close-anyway.
 
@@ -86,16 +98,16 @@ If step 1 found an undelivered goal the user expects finished, surface it above 
 
 This is the terminal output — the commit door's handoff line does not print under session-close.
 
-- The shape taken (done-close / park-close), the moves executed (and any declined), with the final tree + close state. The close state includes the branch's commits ahead of its upstream (`git rev-list --count @{u}..HEAD`), or "no remote" when `git remote` prints nothing, else "no upstream" when `@{u}` does not resolve — a plain fact, with no push recommendation or ask attached.
+- The shape taken (done-close / park-close), the moves executed (and any declined), the count of scope docs the door read and confirmed unchanged, with the final tree + close state. The close state includes the branch's commits ahead of its upstream (`git rev-list --count @{u}..HEAD`), or "no remote" when `git remote` prints nothing, else "no upstream" when `@{u}` does not resolve — a plain fact, with no push recommendation or ask attached.
 - Done: close confirmation, or the open thread blocking a clean close. Park: the Progress block(s) and carry as written, echoed for a final eyeball, and the resume line — `Next session: /super-bootstrap:session-continue`.
 
 ## Rules
 
-- **Drive, don't narrate.** Actionable leftovers route to the confirm-pick and execute — never a status report handing a known-actionable list back; the commits-ahead count is the one fact reported, not driven (§ Output). A card this close judges done, superseded, or stale is a resolve or triage move in the pick, never only a line of prose.
-- **One pick, every gate, writes after it.** Commit, merge, prune, and every file write — Progress, carry, fix-now — run only when picked, after the pick. Step 0's wait-or-stop choice is the one prompt before it.
+- **Drive, don't narrate.** Actionable leftovers route to the confirm-pick and execute — never a status report handing a known-actionable list back; the commits-ahead count is the one fact reported, not driven (§ Output). A card this close judges done, superseded, or stale is a resolve or triage move in the pick, never only a line of prose. A surfaced item carries the action this close will take or a genuine fork with its options; an item with neither gets no line.
+- **One pick, every gate, writes after it.** Commit, merge, prune, and every file write — Progress, carry, fix-now, door-judgment rows — run only when picked, after the pick. Step 0's wait-or-stop choice is the one prompt before it. Every judgment settles inside the pick; only a failure the run hits surfaces after it.
 - **Doors, not mechanisms.** Commit → `/super-bootstrap:commit`; log → `/super-bootstrap:log`; merge → `/super-bootstrap:merge`. Never a raw `git commit`.
 - **Nothing running at close.** No job this session started is still running when the close commits (step 0).
-- **Inline procedure.** No argument, no subagent, no model pin.
+- **Inline procedure.** No argument, no model pin; the door's dispatches at step 3b are the only ones.
 - **Own file only.** Write and delete the carry carrying this session's id — authored here or claimed at pickup; leave every other file in `SESSION-STATE/` as found — no read-pass over the folder.
 - **Two terminal shapes.** done = goal delivered + tree clean + own carry cleared; park = card state on the card, volatile rest in the own carry. Every close lands exactly one.
 - **Card first, carry holds the delta.** What a card owns lands on the card; the carry holds only what no card or doc owns, plus pointers — a restated Progress block is a parallel truth.
