@@ -4,7 +4,7 @@ Items not in the active pipeline — actionable, but waiting on a named trigger.
 
 **Admission:** Parked = actionable-but-waits-on-a-named-trigger; every entry MUST carry that trigger (observer + fire-moment), else it drops. This header owns the admission bar — an item that can't name what it watches for and what fires it is not parked, it's dropped.
 
-**ID convention:** Every entry carries a stable `PARK-xxxx` ID, in the shape and from the generator that [`docs/work/README.md`](work/README.md#categories)'s **ID shape** line states, never made by hand; legacy numeric IDs (`PARK-001`) stay valid. A resolved or promoted entry's ID is never reused (history = `git log --grep="<id>"`). On promotion the `PARK-xxxx` retires; the new card file in `docs/work/` is the live handle. IDs index and cross-reference only — no ordering, no priority.
+**ID convention:** Every entry carries a stable `PARK-xxxx` ID, in the shape and from the generator that [`docs/work/README.md`](work/README.md#categories)'s **ID shape** line states, never made by hand; legacy numeric IDs (`PARK-001`) stay valid. A resolved or promoted entry's ID is never reused; the commits naming it hold its history. On promotion the `PARK-xxxx` retires; the new card file in `docs/work/` is the live handle. IDs index and cross-reference only — no ordering, no priority.
 
 **Entry shape** — an `### PARK-xxxx — {summary}` heading (so every entry indexes by ID in the outline), then the fields:
 

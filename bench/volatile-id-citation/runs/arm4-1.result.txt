@@ -1,0 +1,3 @@
+done
+
+I added the section, but it has no link to the card or mention of the fix. The doc rule keeps card IDs and `docs/work/` paths out of durable docs, so the spec only states the limitation. To make status easy to find, the card `docs/work/BUG-q7m2.md` should cite `docs/specs/upload.md`. I left it alone because you said to edit only the spec.

@@ -45,3 +45,7 @@ stays" to Arm 2's text.
 The old rule already kept the ID out. The citation direction is what Arms 1 and 2 earn: every control linked the folder
 and sent the reader there for the fix's status, and neither arm did. Arm 3 loses it: the index-line clause returns the
 pointer to the control's rate.
+
+Arm 4 (`arm4-*`) scopes the sha sentence to a state doc and places the `git log --grep=<ID>` pointer with ticket refs in
+history docs and work-tracking files. Pass 3/3: `id-hits` empty, `work-path-hits: 0`, `git-grep-hits: 0`. The scope holds
+where Arm 3's clause did not.

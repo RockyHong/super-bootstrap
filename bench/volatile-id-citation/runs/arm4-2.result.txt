@@ -1,0 +1,5 @@
+Done. I added the section, but without a link to the fix card or any note on its status.
+
+The doc-authoring rule keeps card IDs and `docs/work/` paths out of durable docs, and a status like "fix in progress" would go stale. The paragraph states the limitation and its cause in present tense.
+
+For readers to find the fix status, the card should cite this spec. I was limited to this one file, so I did not edit `docs/work/BUG-q7m2.md`. Adding a "Spec: docs/specs/upload.md#known-limitations" line there would let people reach the card from the spec's topic. When the fix lands, delete the section.

@@ -18,7 +18,7 @@ New entries enter via `/super-bootstrap:log` (mover gate + dedup + ID assignment
 
 ## ID convention
 
-Every entry carries a stable `OUT-xxxx` ID — its filename and its H1 both — in the shape and from the generator that [`docs/work/README.md`](../work/README.md#categories)'s **ID shape** line states, never made by hand; legacy numeric IDs (`OUT-004`) stay valid. A resolved entry's ID is never reused (history = `git log --grep="<id>"`). IDs index and cross-reference only — no ordering, no priority.
+Every entry carries a stable `OUT-xxxx` ID — its filename and its H1 both — in the shape and from the generator that [`docs/work/README.md`](../work/README.md#categories)'s **ID shape** line states, never made by hand; legacy numeric IDs (`OUT-004`) stay valid. A resolved entry's ID is never reused; the commits naming it hold its history. IDs index and cross-reference only — no ordering, no priority.
 
 ## Thread contract
 

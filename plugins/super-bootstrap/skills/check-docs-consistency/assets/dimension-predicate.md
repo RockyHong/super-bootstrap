@@ -32,8 +32,9 @@ mis-trusting as current?" — dimension pollution.
 5. **Volatile items → the item cites the doc.** A card, outward thread or parked
    entry is temporal, live or closed: a durable doc states the behavior present-tense
    and carries neither its ID nor a pointer to it; a standing index line naming the
-   tracker folder stays. Ticket refs belong in history
-   docs and work-tracking files.
+   tracker folder stays. Surviving provenance in a state doc points at a commit sha.
+   Ticket refs and `git log --grep=<ID>` pointers belong in history docs and
+   work-tracking files.
 
 ## Audit predicate — pollution shapes
 

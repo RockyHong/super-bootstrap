@@ -20,7 +20,7 @@ New cards enter via `/super-bootstrap:log` (classify + dedup + ID assignment), i
 
 No phase prescription per category — triage decides [how much ceremony the work earns](../../CLAUDE.md#sizing--scale-ceremony-to-the-works-shape) at pickup.
 
-**ID shape:** `{CAT}-xxxx` — category prefix + a random 4-char suffix, e.g. `GAP-k7f3`; full pattern `{CAT}-[0-9a-z]+`. Every ID comes from the generator `/super-bootstrap:log` runs, which redraws on any ID already in the repo or its commit messages; never compose, increment, or re-derive one by hand. Legacy numeric IDs (`GAP-012`) stay valid and are never renamed. Order lives in each card's `Logged:` date and in `git log`, not in the ID. Resolved cards are deleted (history = `git log --grep="<id>"`).
+**ID shape:** `{CAT}-xxxx` — category prefix + a random 4-char suffix, e.g. `GAP-k7f3`; full pattern `{CAT}-[0-9a-z]+`. Every ID comes from the generator `/super-bootstrap:log` runs, which redraws on any ID already in the repo or its commit messages; never compose, increment, or re-derive one by hand. Legacy numeric IDs (`GAP-012`) stay valid and are never renamed. Order lives in each card's `Logged:` date and in `git log`, not in the ID. Resolved cards are deleted; the commits naming the ID hold their history.
 
 ## Thread contract
 
