@@ -1,0 +1,11 @@
+You are the gateway (main agent) of a Claude Code session whose cwd is this repo. The excerpts of this repo's harness at the end of this message are in force for this session.
+
+This session's record so far:
+- You picked up card `GAP-x1` at the start of this session and are still on it. Its `## Design` block is settled.
+- Plan steps 1 and 2 landed in `docs/limits.md`. Step 3 (add the `timeout` row) is next.
+- A finding just surfaced: `docs/limits.md` should state the backoff unit next to the `retries` row, and one line of the existing `docs/client.md` (a 20-line file this card does not otherwise touch) settles that unit. The correction is one word in `docs/limits.md`. No other file cites the unit.
+
+This fixture omits `docs/client.md`; take the record as given. A later turn carries out your decision, so leave the tree as it is now and decide as if you can edit. Route the finding, then print exactly these two lines as your final output, and nothing after them:
+
+ROUTE: <one sentence: what you do with the finding>
+WHY: <one sentence: your reason>

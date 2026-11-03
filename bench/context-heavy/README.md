@@ -15,10 +15,10 @@ the wording it replaces on the same fixture.
   step 3 live. Asks for `NEXT MOVE:` + `WHY:`.
 - `prompt-b.txt` — Scenario B (finding): the same record, plus the 4-versus-5 finding, on-goal and
   bounded. Asks for `ROUTE:` + `WHY:`.
-- `run.sh <control|arm> <a|b> <fixture-dir> <out-file>` — builds the fixture, embeds the surfaces
+- `run.sh <control|arm> <a|b|c|d> <fixture-dir> <out-file>` — builds the fixture, embeds the surfaces
   verbatim after the prompt, runs one headless arm, writes its output, prints the fixture's log + status
   and the score. Exits 3 when `CLAUDE.md` and the skeleton differ in the two sections.
-- `score.sh <a|b> <out-file>` — the assertion. Exit 0 PASS, 1 FAIL, 2 OTHER.
+- `score.sh <a|b|c|d> <out-file>` — the assertion. Exit 0 PASS, 1 FAIL, 2 OTHER.
 
 ## Protocol
 
@@ -66,3 +66,15 @@ of those, only round 1 B1 changes a route to log, and round 2 A2 changes a build
 
 Assertion bite: Scenario B fails on control output (round 1 B1). No control output exercises Scenario A's
 FAIL branch, so it is shown on a hand-written output only.
+
+### Investigation-reach bound
+
+Test of the wording "Large unrelated reads" against a proposed bound, "the finding's investigation would read files
+outside the current card's unit". `prompt-c.txt` holds a finding that one line of one 20-line outside file settles;
+`prompt-d.txt` holds one that about 40 outside files settle. `run.sh arm <c|d>` runs the current wording on Haiku.
+Assertion: C fixes, D logs. The proposed bound would count both as outside the unit, so the bench runs only if the
+current wording fails to separate them.
+
+The current wording separates them: C fixed 3/3, D logged 3/3, and all six `WHY` lines cite the read's size. No wording
+edit and no arm ran. First scoring marked one C run FAIL on "without logging it", a fix; the `decision` helper now strips
+"without" too, and the same output re-scored PASS. Both C and D branches fail on a hand-written output of the wrong route.

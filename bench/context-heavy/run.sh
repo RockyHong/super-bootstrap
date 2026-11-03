@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # run.sh — one headless run of the context-heavy micro-test.
-# Usage: bash bench/context-heavy/run.sh <control|arm> <a|b> <fixture-dir> <out-file>
+# Usage: bash bench/context-heavy/run.sh <control|arm> <a|b|c|d> <fixture-dir> <out-file>
 #
 #   control — the surfaces as of 8cb9c9f, via git show
 #   arm     — the working-tree surfaces (copy under test: this repo's dev copy)
@@ -8,7 +8,7 @@
 # Builds a fresh fixture, embeds the surfaces verbatim in the prompt, runs with the fixture
 # as cwd, writes stdout to <out-file>, then prints the fixture's tree state and the score.
 set -eu
-mode="${1:?usage: run.sh <control|arm> <a|b> <fixture-dir> <out-file>}"
+mode="${1:?usage: run.sh <control|arm> <a|b|c|d> <fixture-dir> <out-file>}"
 scenario="${2:?scenario}"
 fx="${3:?fixture dir}"
 out="${4:?out file}"
@@ -25,7 +25,7 @@ case "$mode" in
   *) echo "unknown mode: $mode" >&2; exit 64 ;;
 esac
 case "$scenario" in
-  a|b) ;;
+  a|b|c|d) ;;
   *) echo "unknown scenario: $scenario" >&2; exit 64 ;;
 esac
 
