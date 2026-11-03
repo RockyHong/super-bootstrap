@@ -35,9 +35,9 @@ Fail any one → not a candidate.
 ## Home selection
 
 - **Registered term.** `docs/terminology.md` is the home of every term it
-  registers (a `**Term**:` entry line). A doc's first substantive use of a
-  registered term links `docs/terminology.md` in place of any other doc that
-  explains it, a doc dedicated to the concept included.
+  registers (a `**Term**:` entry line), even where a dedicated concept doc exists:
+  this overrides predicate 1. A doc's first substantive use of a registered term
+  links `docs/terminology.md`.
 - **Two homes (concept vs surface).** A concept defined as an idea in one doc and
   as a surface (endpoint, storage, schema) in another → link the
   **concept-definition** home.

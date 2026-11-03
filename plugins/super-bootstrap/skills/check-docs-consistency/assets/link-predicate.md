@@ -31,9 +31,8 @@ every shared token reads as a missing link.
 ## Home selection edges
 
 - **Registered term.** `docs/terminology.md` is the home of every term it
-  registers (a `**Term**:` entry line), in place of any other doc that explains
-  it, a doc dedicated to the concept included. A use of a word on an entry's
-  `_Avoid_:` line is a use of the registered term: the finding names the
+  registers (a `**Term**:` entry line), even where a dedicated concept doc exists.
+  A use of a word on an entry's `_Avoid_:` line is a use of the registered term: the finding names the
   registered term to write instead.
 - **Two homes (concept vs surface).** A concept defined as an idea in one doc and
   as a surface (endpoint, storage, schema) in another → the link points at the
