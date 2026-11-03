@@ -902,6 +902,22 @@ do_terminology() {
     return 0
 }
 
+# Hunk-range reader, one rule for two readers (TERMUSE_AWK, VOLID_AWK): the first input is
+# the `git diff HEAD -U0` text, whose `+c,d` ranges mark the added post-image lines in
+# added[]; `next` keeps the diff text from reaching the reader's own rules. Concatenate it
+# after the readers' functions and before their main rule — BEGIN position is free.
+HUNK_AWK='
+FNR == NR {
+    if (ALL != 1 && match($0, /^@@ [^+]*\+[0-9]+(,[0-9]+)? @@/)) {
+        h = $0; sub(/^@@ [^+]*\+/, "", h); sub(/ @@.*$/, "", h)
+        c = h; sub(/,.*$/, "", c); d = 1
+        if (index(h, ",") > 0) { d = h; sub(/^[^,]*,/, "", d) }
+        for (k = 0; k < d + 0; k++) added[c + k] = 1
+    }
+    next
+}
+'
+
 # Candidate match: two inputs per changed doc — the `git diff HEAD -U0` text on stdin
 # (its `+c,d` ranges mark the added post-image lines) and the doc itself, walked whole
 # so the fence toggle sees every opener. The registry rides the environment, one
@@ -924,15 +940,6 @@ BEGIN {
         split(rl[i], f, "\t"); kind[i] = f[1]; word[i] = afold(f[2])
         canon[i] = (f[1] == "term") ? f[2] : f[3]
     }
-}
-FNR == NR {
-    if (ALL != 1 && match($0, /^@@ [^+]*\+[0-9]+(,[0-9]+)? @@/)) {
-        h = $0; sub(/^@@ [^+]*\+/, "", h); sub(/ @@.*$/, "", h)
-        c = h; sub(/,.*$/, "", c); d = 1
-        if (index(h, ",") > 0) { d = h; sub(/^[^,]*,/, "", d) }
-        for (k = 0; k < d + 0; k++) added[c + k] = 1
-    }
-    next
 }
 {
     if (fence_skip($0)) next
@@ -997,7 +1004,7 @@ $p
             all=1
         fi
         printf '%s\n' "$diff" | DOCLINK_TERMREG="$reg" awk -v DOC="$p" -v ALL="$all" -v LINKED="$linked" \
-            "$ISWORD_AWK$FENCE_AWK$TERMUSE_AWK" - "$p"
+            "$ISWORD_AWK$FENCE_AWK$HUNK_AWK$TERMUSE_AWK" - "$p"
     done
     return 0
 }
@@ -1008,15 +1015,6 @@ $p
 VOLID_AWK='
 function idword(c) { return (c != "" && c ~ /[A-Za-z0-9_]/) }
 BEGIN { in_fence = 0; fence_char = ""; fence_len = 0 }
-FNR == NR {
-    if (ALL != 1 && match($0, /^@@ [^+]*\+[0-9]+(,[0-9]+)? @@/)) {
-        h = $0; sub(/^@@ [^+]*\+/, "", h); sub(/ @@.*$/, "", h)
-        c = h; sub(/,.*$/, "", c); d = 1
-        if (index(h, ",") > 0) { d = h; sub(/^[^,]*,/, "", d) }
-        for (k = 0; k < d + 0; k++) added[c + k] = 1
-    }
-    next
-}
 {
     if (fence_skip($0)) next
     if (ALL != 1 && !(FNR in added)) next
@@ -1066,7 +1064,7 @@ $p
         if [ -z "$diff" ] && ! git ls-files --error-unmatch -- "$p" >/dev/null 2>&1; then
             all=1
         fi
-        printf '%s\n' "$diff" | awk -v DOC="$p" -v ALL="$all" "$FENCE_AWK$VOLID_AWK" - "$p"
+        printf '%s\n' "$diff" | awk -v DOC="$p" -v ALL="$all" "$FENCE_AWK$HUNK_AWK$VOLID_AWK" - "$p"
     done
     return 0
 }

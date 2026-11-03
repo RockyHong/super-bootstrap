@@ -38,7 +38,7 @@ echo "== doc-links: BUG-042 — no interval expression in any awk regex =="
 # 2019 (macOS) read `{3,}` as literal braces, so the fence toggle never fires and
 # every path inside a fenced block reports as a broken link. The host awk (GNU)
 # accepts intervals, so this is a construct grep, not a behavior test — the
-# cross-awk behavior check runs under Docker (see docs/techstack.md § Coding Patterns).
+# cross-awk behavior check runs under Docker (see .claude/rules/asset-dialects.md § Portable-awk subset).
 interval_hits="$(grep -nE '\{[0-9]+(,[0-9]*)?\}' "$LINKS" || true)"
 if [ -z "$interval_hits" ]; then
   ok "no interval expression ({n,} / {n,m}) in the asset"
@@ -1274,6 +1274,7 @@ BUG-fen1 inside a fence
 ```
 BUG-1a2b opens this line, and the line ends with GAP-zz9
 見BUG-cjk1。
+The OUT-of-band note and BUG-abc-def.
 EOF
 rm -f "$VI/docs/gone.md"
 printf 'Cites BUG-root1.\n' >> "$VI/README.md"
@@ -1321,6 +1322,8 @@ check "volatile-ids: an ID in a fenced block stays out" vi_noid BUG-fen1
 check "volatile-ids: an ID at column 1 reports" vi_has docs/plan.md 12 BUG-1a2b
 check "volatile-ids: an ID at line end reports" vi_has docs/plan.md 12 GAP-zz9
 check "volatile-ids: a non-ASCII neighbour is a boundary" vi_has docs/plan.md 13 BUG-cjk1
+check "volatile-ids: a hyphen ends an ID, no continuation (OUT-of-band reports OUT-of)" vi_has docs/plan.md 14 OUT-of
+check "volatile-ids: a hyphen ends an ID, no continuation (BUG-abc-def reports BUG-abc)" vi_has docs/plan.md 14 BUG-abc
 check "volatile-ids: the root README is on the surface" vi_has README.md 2 BUG-root1
 check "volatile-ids: a plugin README is on the surface" vi_has plugins/p/README.md 2 BUG-plug1
 check "volatile-ids: docs/work/ standing README is exempt" vi_noid BUG-wrk1
@@ -1333,7 +1336,7 @@ check "volatile-ids: a dimension: history doc is exempt" vi_noid BUG-hist1
 check "volatile-ids: an untracked new doc reads every line as added" vi_has docs/new.md 3 BUG-new1
 check "volatile-ids: a path off the doc surface stays out" vi_noid BUG-off1
 vi_count="$(printf '%s\n' "$got_vi" | grep -c . || true)"
-check "volatile-ids: exactly the ten expected hits (got $vi_count)" [ "$vi_count" -eq 10 ]
+check "volatile-ids: exactly the twelve expected hits (got $vi_count)" [ "$vi_count" -eq 12 ]
 got_vi_argv="$(cd "$VI" && bash "$LINKS" volatile-ids docs/new.md)"
 check "volatile-ids: the argv form takes a path (got: $got_vi_argv)" [ "$got_vi_argv" = "$(printf 'docs/new.md\t3\tBUG-new1')" ]
 got_vi_none="$(cd "$VI" && bash "$LINKS" volatile-ids 2>&1)"; rc=$?

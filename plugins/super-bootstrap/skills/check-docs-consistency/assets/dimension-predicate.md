@@ -26,9 +26,10 @@ mis-trusting as current?" — dimension pollution.
    present-tense in the state-SSOT, stripped of when/why-decided. "Refinement is
    deferred behind the port" — not "on <date> we decided to defer refinement
    because…".
-4. **Verification stamps stay.** A stamp recording *when a fact was last checked*
-   (probed / measured on date) is current-state metadata — it tells the reader the
-   fact's freshness. Not history pollution.
+4. **When-checked → git.** A stamp recording *when a fact was last checked*
+   (probed / measured on date) belongs in git commit metadata; keep the date out of
+   the body. A version-bound pin ("valid as of vX.Y") is substantive state — it bounds
+   the fact's validity — and stays.
 5. **Volatile items → the item cites the doc.** A card, outward thread or parked
    entry is temporal, live or closed: a durable doc states the behavior present-tense
    and carries neither its ID nor a pointer to it; a standing index line naming the
