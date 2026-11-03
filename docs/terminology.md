@@ -32,7 +32,7 @@ _Avoid_: backlog row
 
 **Door**: A bundled skill or agent that is the one named entry for its move, such as the capture front door (`log`), the commit door or a grounding door. Work that needs the move passes through it.
 
-**Commit door**: `/super-bootstrap:commit` — the one route by which a session's changes land. It is session-isolated, runs doc-sync gateway-inline, and commits locally without pushing ([`commit`](../plugins/super-bootstrap/skills/commit/SKILL.md)).
+**Commit door**: `/super-bootstrap:commit` — the one route by which a session's changes land. It is session-isolated, judges doc-sync warm-inline at or under its scope ceiling and through the cold `doc-sync-scan` above it, and commits locally without pushing ([`commit`](../plugins/super-bootstrap/skills/commit/SKILL.md)).
 
 **Propagation closure**: An edit plus every truth it must keep in sync. Its size, not the diff size, decides whether work is dispatched or inlined ([CLAUDE.md § Dispatch](../CLAUDE.md#dispatch--who-holds-each-phase)).
 

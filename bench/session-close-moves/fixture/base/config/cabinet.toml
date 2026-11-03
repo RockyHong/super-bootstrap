@@ -1,0 +1,4 @@
+# Read by the controller at boot. These values are what the cabinet does.
+seal_check_days = 14
+max_ramp_c_per_min = 2
+outage_report_max_retries = 5

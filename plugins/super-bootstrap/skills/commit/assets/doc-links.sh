@@ -40,7 +40,8 @@
 #                      a whole word inside an inline code span, or a path segment
 #                      (preceded by `/`, or followed by `/` or `.`+extension).
 #                      Bare prose does not hit. Two shape-by-origin exceptions: a hub
-#                      stem (HUB_STEMS) counts only as a bare token in a code span, and
+#                      stem (HUB_STEMS) counts only as a bare token in a code span — its
+#                      path mentions stay out to keep scope bounded — and
 #                      an extension-marked asset term (`Ending.tscn`) counts only as
 #                      its stem in a path segment (`levels/Ending.tscn`, `Ending.tscn`)
 #                      — a backticked bare `Ending` is domain vocabulary, not narration.
@@ -652,9 +653,11 @@ term_generic() {
 # Harness-seeded hub stems — the skeleton files harness-bootstrap plants in every repo
 # (SSOT: skills/harness-bootstrap/SKILL.md § Phase 2c placement rows), cited as link
 # targets across the doc surface under the `ssot-doc-link` rule. `hits` counts one of these only as a
-# bare token inside a code span (`techstack`): a path mention (`docs/techstack.md`,
-# `](../techstack.md)`) is a citation the anchored citer lane already reaches, not a
-# narration. Hardcoded on purpose — the seeded set moves at release cadence.
+# bare token inside a code span (`techstack`): path mentions (`docs/techstack.md`,
+# `](../techstack.md)`) stay out of this lane to keep scope bounded. So an unlinked path
+# mention of a hub doc is not scanned, and on a section-grain change neither is an
+# anchorless link to one; /super-bootstrap:check-docs-consistency is the backstop.
+# Hardcoded on purpose — the seeded set moves at release cadence.
 HUB_STEMS=" overview techstack decisions super-bootstrap-runway worktree-settings.local "
 
 # Path → term. A skill is named by its directory (`*/skills/<X>/SKILL.md` → `<X>`);

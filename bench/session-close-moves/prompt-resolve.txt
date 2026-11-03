@@ -1,0 +1,4 @@
+This session's record so far:
+- Goal: read the open cards under `docs/work/` and report to the user which ones are in motion. You edited no file; that goal is delivered.
+- No findings surfaced beyond what the cards say.
+- No background jobs, agents, or shells were launched.

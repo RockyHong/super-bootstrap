@@ -1,0 +1,1 @@
+The user's pick: every row, as recommended. Run the picked moves, then print the close's final output.

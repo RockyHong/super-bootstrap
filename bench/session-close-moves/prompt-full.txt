@@ -1,0 +1,4 @@
+This session's record so far:
+- Goal: document the end-of-shift routine. You edited `docs/operations.md` and created `docs/shutdown.md`, and no other file; that goal is delivered.
+- One finding surfaced while you worked, not carded yet: `docs/maintenance.md` tells the operator to inspect the door seal every 30 days. `config/cabinet.toml`, which the controller reads at boot, sets `seal_check_days = 14`, so 14 is the true interval.
+- No background jobs, agents, or shells were launched.

@@ -1,0 +1,427 @@
+set	script	repo	sha	date	flags	changed	gate_paths	citers	hits	targets	self	union	cross	bytes	subject
+sb-recent	head	sb	35b4c3ef	2026-11-04	-	22	21	0	6	1	2	8	0	99955	fix(rules): scope the grep-pointer ban to state docs — resolve BUG-p
+sb-recent	head	sb	3caddf27	2026-11-04	-	3	3	0	2	0	0	2	0	31903	fix(rules): state the registered term's precedence — resolve DEBT-g6
+sb-recent	head	sb	cd3d85a3	2026-11-04	-	6	6	0	0	1	0	1	0	5840	docs(decisions): close budget trigger and reach bound — resolve DEBT
+sb-recent	head	sb	090fdd09	2026-11-03	sync	14	14	0	0	10	0	10	1	30319	chore(config): sync claude-config-manager artifacts
+sb-recent	head	sb	e46c3946	2026-11-03	sync	1	1	0	0	0	0	0	0	0	chore: sync harness pipeline
+sb-recent	head	sb	9d174363	2026-11-03	release	1	1	0	0	0	0	0	0	0	chore: release v5.8.0
+sb-recent	head	sb	35174c8d	2026-11-03	-	4	4	1	2	4	4	10	1	139360	docs: sync flows, bench catalog and test queue with the close and lane
+sb-recent	head	sb	a14b5ddc	2026-11-03	-	4	1	0	0	0	0	0	0	0	docs(decisions): close the changed-doc term narrowing — resolve BUG-
+sb-recent	head	sb	6be541c2	2026-11-03	-	19	17	0	6	9	0	15	1	121933	feat(session-close): settle the commit door's judgment inside the one 
+sb-recent	head	sb	5f387626	2026-11-03	-	81	78	0	8	6	1	15	1	198235	feat(doc-sync): keep volatile IDs out of durable docs — resolve DEBT
+sb-recent	head	sb	c455b6e3	2026-11-03	-	9	8	0	1	3	0	4	0	60403	fix(harness): key session boundaries and triage on measurable conditio
+sb-recent	head	sb	8cb9c9f1	2026-11-03	-	8	8	0	3	1	1	4	0	66540	fix(harness-bootstrap): state registered-term link precedence and targ
+sb-recent	head	sb	963b4c8a	2026-10-29	-	1	1	0	7	0	0	7	0	97411	fix(harness-bootstrap): classify overview Problem/User/Current State a
+sb-recent	head	sb	79a9726d	2026-10-29	sync	1	1	0	0	0	0	0	0	0	chore: sync harness pipeline
+sb-recent	head	sb	17186fda	2026-10-29	-	14	13	1	3	6	4	13	1	131228	feat(session-close): take push out of super-bootstrap — resolve GAP-
+sb-recent	head	sb	46652b53	2026-10-29	-	15	14	1	5	4	3	12	1	163043	feat(doc-sync): propose docs/terminology.md entries for coined terms �
+sb-recent	head	sb	f0f26966	2026-10-29	release	1	1	0	0	0	0	0	0	0	chore: release v5.7.0
+sb-recent	head	sb	fa46e0f7	2026-10-29	-	9	8	1	6	5	1	12	1	199450	fix(harness-bootstrap): write the runway receipt LF-only — resolve B
+sb-recent	head	sb	59252a1d	2026-10-29	-	9	8	2	3	4	3	10	1	112950	feat(session-close): gate the pick on still-running jobs — resolve G
+sb-recent	head	sb	9234302f	2026-10-29	-	72	71	1	6	20	3	22	1	370789	feat(terminology): ship a unified docs/terminology.md term home with a
+sb-recent	head	sb	ea3e4b14	2026-10-29	-	9	8	0	3	6	3	12	1	145897	feat(commit): stop asking to push; hand off to session-close — resol
+sb-recent	head	sb	b1317ff4	2026-10-27	-	2	1	0	0	0	0	0	0	0	docs(work): reopen GAP-ym4e — the closure tested staleness, not its 
+sb-recent	head	sb	d920b49d	2026-10-27	-	9	7	0	0	0	0	0	0	0	docs(decisions): close GAP-ym4e — no doc-sync gap behind the term ce
+sb-recent	head	sb	96ba04ec	2026-10-27	-	5	3	0	1	0	0	1	0	13783	chore(rules): place the shipped doc-authoring rules in the dogfood har
+sb-recent	head	sb	a3830fe3	2026-10-27	release	1	1	0	0	0	0	0	0	0	chore: release v5.6.0
+sb-recent	head	sb	7769b101	2026-10-27	-	2	1	0	0	0	0	0	0	0	docs(decisions): close GAP-1jfs — single-site learnings already land
+sb-recent	head	sb	e84917ec	2026-10-27	-	2	2	0	6	0	0	6	0	88031	fix(harness-bootstrap): store a carried decline's original reason
+sb-recent	head	sb	75e2aa63	2026-10-27	-	3	2	0	5	1	1	7	0	159964	feat(harness-bootstrap): carry a decline forward while its template is
+sb-recent	head	sb	308695d4	2026-10-27	-	2	1	0	6	0	0	6	0	87881	feat(harness-bootstrap): treat consumer index lines in § Rules / § P
+sb-recent	head	sb	cdd83e27	2026-10-27	-	4	3	1	5	2	1	8	0	107227	feat(harness-bootstrap): drop the § 2a-autorun install prompt
+sb-recent	old	sb	35b4c3ef	2026-11-04	-	22	21	0	7	1	2	9	1	101306	fix(rules): scope the grep-pointer ban to state docs — resolve BUG-p
+sb-recent	old	sb	3caddf27	2026-11-04	-	3	3	0	2	0	0	2	0	31903	fix(rules): state the registered term's precedence — resolve DEBT-g6
+sb-recent	old	sb	cd3d85a3	2026-11-04	-	6	6	0	0	1	0	1	0	5840	docs(decisions): close budget trigger and reach bound — resolve DEBT
+sb-recent	old	sb	090fdd09	2026-11-03	sync	14	14	0	0	10	0	10	1	30319	chore(config): sync claude-config-manager artifacts
+sb-recent	old	sb	e46c3946	2026-11-03	sync	1	1	0	0	0	0	0	0	0	chore: sync harness pipeline
+sb-recent	old	sb	9d174363	2026-11-03	release	1	1	0	0	0	0	0	0	0	chore: release v5.8.0
+sb-recent	old	sb	35174c8d	2026-11-03	-	4	4	1	3	4	4	11	1	141042	docs: sync flows, bench catalog and test queue with the close and lane
+sb-recent	old	sb	a14b5ddc	2026-11-03	-	4	1	0	0	0	0	0	0	0	docs(decisions): close the changed-doc term narrowing — resolve BUG-
+sb-recent	old	sb	6be541c2	2026-11-03	-	19	17	0	9	9	0	18	1	127083	feat(session-close): settle the commit door's judgment inside the one 
+sb-recent	old	sb	5f387626	2026-11-03	-	81	78	0	11	6	1	18	1	203840	feat(doc-sync): keep volatile IDs out of durable docs — resolve DEBT
+sb-recent	old	sb	c455b6e3	2026-11-03	-	9	8	0	2	3	0	5	0	62937	fix(harness): key session boundaries and triage on measurable conditio
+sb-recent	old	sb	8cb9c9f1	2026-11-03	-	8	8	0	5	1	1	6	0	70857	fix(harness-bootstrap): state registered-term link precedence and targ
+sb-recent	old	sb	963b4c8a	2026-10-29	-	1	1	0	7	0	0	7	0	97411	fix(harness-bootstrap): classify overview Problem/User/Current State a
+sb-recent	old	sb	79a9726d	2026-10-29	sync	1	1	0	0	0	0	0	0	0	chore: sync harness pipeline
+sb-recent	old	sb	17186fda	2026-10-29	-	14	13	1	3	6	4	13	1	131228	feat(session-close): take push out of super-bootstrap — resolve GAP-
+sb-recent	old	sb	46652b53	2026-10-29	-	15	14	1	6	4	3	13	1	164764	feat(doc-sync): propose docs/terminology.md entries for coined terms �
+sb-recent	old	sb	f0f26966	2026-10-29	release	1	1	0	0	0	0	0	0	0	chore: release v5.7.0
+sb-recent	old	sb	fa46e0f7	2026-10-29	-	9	8	1	6	5	1	12	1	199450	fix(harness-bootstrap): write the runway receipt LF-only — resolve B
+sb-recent	old	sb	59252a1d	2026-10-29	-	9	8	2	3	4	3	10	1	112950	feat(session-close): gate the pick on still-running jobs — resolve G
+sb-recent	old	sb	9234302f	2026-10-29	-	72	71	1	6	20	3	22	1	370789	feat(terminology): ship a unified docs/terminology.md term home with a
+sb-recent	old	sb	ea3e4b14	2026-10-29	-	9	8	0	4	6	3	13	1	151036	feat(commit): stop asking to push; hand off to session-close — resol
+sb-recent	old	sb	b1317ff4	2026-10-27	-	2	1	0	0	0	0	0	0	0	docs(work): reopen GAP-ym4e — the closure tested staleness, not its 
+sb-recent	old	sb	d920b49d	2026-10-27	-	9	7	0	0	0	0	0	0	0	docs(decisions): close GAP-ym4e — no doc-sync gap behind the term ce
+sb-recent	old	sb	96ba04ec	2026-10-27	-	5	3	0	2	0	0	2	0	17538	chore(rules): place the shipped doc-authoring rules in the dogfood har
+sb-recent	old	sb	a3830fe3	2026-10-27	release	1	1	0	0	0	0	0	0	0	chore: release v5.6.0
+sb-recent	old	sb	7769b101	2026-10-27	-	2	1	0	0	0	0	0	0	0	docs(decisions): close GAP-1jfs — single-site learnings already land
+sb-recent	old	sb	e84917ec	2026-10-27	-	2	2	0	9	0	0	9	1	114397	fix(harness-bootstrap): store a carried decline's original reason
+sb-recent	old	sb	75e2aa63	2026-10-27	-	3	2	0	8	1	1	10	1	178015	feat(harness-bootstrap): carry a decline forward while its template is
+sb-recent	old	sb	308695d4	2026-10-27	-	2	1	0	10	0	0	10	1	106797	feat(harness-bootstrap): treat consumer index lines in § Rules / § P
+sb-recent	old	sb	cdd83e27	2026-10-27	-	4	3	1	10	2	1	13	1	126956	feat(harness-bootstrap): drop the § 2a-autorun install prompt
+mr-recent	head	mr	c70a5c43	2026-11-04	sync	7	6	0	17	1	2	19	1	1025207	chore: sync harness pipeline
+mr-recent	head	mr	e61c9f84	2026-11-04	sync	3	3	0	0	1	0	1	0	3376	chore(harness): sync served work-discipline lore to 9ca129a
+mr-recent	head	mr	564645c0	2026-11-03	-	4	2	0	3	0	1	4	0	153115	docs(work): tick the Y9 look checks, log the 30 FPS hand-feel question
+mr-recent	head	mr	6cd0c9ae	2026-11-03	-	4	3	0	4	1	2	6	0	180659	docs(work): resolve GAP-8x7w at its stop-loss, park what still fails
+mr-recent	head	mr	e53f3030	2026-11-03	-	4	4	6	9	0	1	10	1	823987	fix(perf-report): zone the Logo page narrative
+mr-recent	head	mr	fb1d0180	2026-11-03	-	14	14	5	13	0	2	15	1	1019293	perf(level): draw the strip celebration's strikes and stars cheaper
+mr-recent	head	mr	e6a670b2	2026-11-03	-	7	6	5	11	0	2	13	1	904781	fix(shell): land a cube recipe bake only on materials still bound to i
+mr-recent	head	mr	552b2979	2026-11-03	-	10	9	4	7	2	3	10	1	822485	fix(harness): retry a crashed import pass, up to three attempts
+mr-recent	head	mr	a102e713	2026-11-03	-	3	1	0	0	0	0	0	0	0	test(e2e): enter the transit card from a timeout, as the strip does
+mr-recent	head	mr	4ba729bc	2026-11-03	-	5	5	12	24	6	5	29	1	1371744	docs: name the batch's moved symbols by their new owners
+mr-recent	head	mr	f67b76b0	2026-11-03	-	11	10	4	11	1	3	14	1	979323	refactor(intro): draw each flyover tier as one TierPicture
+mr-recent	head	mr	4fb7021c	2026-11-03	-	12	11	4	10	0	3	13	1	898042	fix(burn): bridge arcs hold no instance-uniform slot
+mr-recent	head	mr	8951ccd8	2026-11-03	-	18	17	12	24	2	3	27	1	1338712	refactor(level): move the clear beat and tile hit to their own class
+mr-recent	head	mr	c7eacd2d	2026-11-03	-	10	9	12	26	0	1	27	1	1338677	refactor(pack): move the landing's release shake to its own class
+mr-recent	head	mr	f9276e70	2026-11-03	-	4	3	0	6	0	0	6	0	694953	perf(shell): ask the finale landing's rests at setup, drop stale cube 
+mr-recent	head	mr	e71319c9	2026-11-03	-	6	5	0	12	0	1	13	1	1001278	fix(lv81): restart the moving obstacles at time zero on the block's sp
+mr-recent	head	mr	92767117	2026-11-03	-	30	29	0	24	1	0	24	1	1195008	refactor(game): move the death marks into their own class
+mr-recent	head	mr	66d8a9e1	2026-11-03	-	17	16	0	25	0	0	25	1	1202844	refactor(game): move the magnet hold feedback into its own class
+mr-recent	head	mr	edb16c0c	2026-11-03	-	6	5	1	26	2	1	27	1	1308008	refactor(win): drop the win door's always-LEVEL destination parameter
+mr-recent	head	mr	710a5309	2026-11-03	-	8	7	4	23	1	3	26	1	1227994	fix(powder): hold the backdrop's parallax through a crossing's pan
+mr-recent	head	mr	9474a50d	2026-11-03	-	7	6	5	8	0	2	10	1	811920	test(death): pin the one reload term that grows with the deaths
+mr-recent	head	mr	34611417	2026-11-03	-	3	2	0	7	0	0	7	0	718163	fix(road): keep broken ends out of the editor's draw
+mr-recent	head	mr	92239d9e	2026-11-03	-	2	1	0	0	0	0	0	0	0	chore(session): park GAP-tgqg on its owed e2e rerun
+mr-recent	head	mr	bf8de8e9	2026-11-03	-	9	8	0	11	0	1	12	1	863287	fix(ending): stand the lamps on the road height the sheet draws
+mr-recent	head	mr	a8f34e56	2026-11-03	-	55	52	10	26	3	4	30	1	1377799	feat(shell): settle UI motion on the art px grid, retire the A/B switc
+mr-recent	head	mr	5e6ac849	2026-11-03	-	2	2	0	0	0	0	0	0	0	chore(session): park the GAP-tgqg carry on its save-point branch
+mr-recent	head	mr	d49ae70d	2026-11-03	-	56	55	7	26	2	2	28	1	1245327	feat(shell): UI content lands on the art px grid, transitions soften (
+mr-recent	head	mr	2a755906	2026-10-30	-	15	14	9	21	2	3	24	1	1206283	refactor(audio): name the finale gong and the curtain synth by role
+mr-recent	head	mr	be3d9753	2026-10-30	-	5	3	0	0	2	0	2	0	51694	docs(work): resolve GAP-ren4 and GAP-w3yf
+mr-recent	head	mr	cf1061e1	2026-10-30	-	9	9	4	10	0	1	11	1	832625	chore: drop the ElevenLabs sound-effect tooling
+mr-recent	old	mr	c70a5c43	2026-11-04	sync	7	6	0	17	1	2	19	1	1025207	chore: sync harness pipeline
+mr-recent	old	mr	e61c9f84	2026-11-04	sync	3	3	0	0	1	0	1	0	3376	chore(harness): sync served work-discipline lore to 9ca129a
+mr-recent	old	mr	564645c0	2026-11-03	-	4	2	0	4	0	1	5	0	156519	docs(work): tick the Y9 look checks, log the 30 FPS hand-feel question
+mr-recent	old	mr	6cd0c9ae	2026-11-03	-	4	3	0	5	1	2	7	0	184063	docs(work): resolve GAP-8x7w at its stop-loss, park what still fails
+mr-recent	old	mr	e53f3030	2026-11-03	-	4	4	7	10	0	1	11	1	968761	fix(perf-report): zone the Logo page narrative
+mr-recent	old	mr	fb1d0180	2026-11-03	-	14	14	6	14	0	2	16	1	1164067	perf(level): draw the strip celebration's strikes and stars cheaper
+mr-recent	old	mr	e6a670b2	2026-11-03	-	7	6	6	14	0	2	16	1	1073021	fix(shell): land a cube recipe bake only on materials still bound to i
+mr-recent	old	mr	552b2979	2026-11-03	-	10	9	5	9	2	3	12	1	989812	fix(harness): retry a crashed import pass, up to three attempts
+mr-recent	old	mr	a102e713	2026-11-03	-	3	1	0	0	0	0	0	0	0	test(e2e): enter the transit card from a timeout, as the strip does
+mr-recent	old	mr	4ba729bc	2026-11-03	-	5	5	14	28	6	5	33	1	1541213	docs: name the batch's moved symbols by their new owners
+mr-recent	old	mr	f67b76b0	2026-11-03	-	11	10	5	17	1	3	20	1	1183486	refactor(intro): draw each flyover tier as one TierPicture
+mr-recent	old	mr	4fb7021c	2026-11-03	-	12	11	5	17	0	3	20	1	1105976	fix(burn): bridge arcs hold no instance-uniform slot
+mr-recent	old	mr	8951ccd8	2026-11-03	-	18	17	14	29	2	3	32	1	1510184	refactor(level): move the clear beat and tile hit to their own class
+mr-recent	old	mr	c7eacd2d	2026-11-03	-	10	9	14	32	0	1	33	1	1526415	refactor(pack): move the landing's release shake to its own class
+mr-recent	old	mr	f9276e70	2026-11-03	-	4	3	0	11	0	0	11	1	898406	perf(shell): ask the finale landing's rests at setup, drop stale cube 
+mr-recent	old	mr	e71319c9	2026-11-03	-	6	5	0	17	0	1	18	1	1207279	fix(lv81): restart the moving obstacles at time zero on the block's sp
+mr-recent	old	mr	92767117	2026-11-03	-	30	29	0	31	1	0	31	1	1399918	refactor(game): move the death marks into their own class
+mr-recent	old	mr	66d8a9e1	2026-11-03	-	17	16	0	32	0	0	32	1	1427945	refactor(game): move the magnet hold feedback into its own class
+mr-recent	old	mr	edb16c0c	2026-11-03	-	6	5	1	32	2	1	33	1	1530825	refactor(win): drop the win door's always-LEVEL destination parameter
+mr-recent	old	mr	710a5309	2026-11-03	-	8	7	5	30	1	3	33	1	1451488	fix(powder): hold the backdrop's parallax through a crossing's pan
+mr-recent	old	mr	9474a50d	2026-11-03	-	7	6	6	13	0	2	15	1	1018183	test(death): pin the one reload term that grows with the deaths
+mr-recent	old	mr	34611417	2026-11-03	-	3	2	0	7	0	0	7	0	718163	fix(road): keep broken ends out of the editor's draw
+mr-recent	old	mr	92239d9e	2026-11-03	-	2	1	0	0	0	0	0	0	0	chore(session): park GAP-tgqg on its owed e2e rerun
+mr-recent	old	mr	bf8de8e9	2026-11-03	-	9	8	0	12	0	1	13	1	1008061	fix(ending): stand the lamps on the road height the sheet draws
+mr-recent	old	mr	a8f34e56	2026-11-03	-	55	52	11	40	3	4	44	1	1610478	feat(shell): settle UI motion on the art px grid, retire the A/B switc
+mr-recent	old	mr	5e6ac849	2026-11-03	-	2	2	0	0	0	0	0	0	0	chore(session): park the GAP-tgqg carry on its save-point branch
+mr-recent	old	mr	d49ae70d	2026-11-03	-	56	55	8	39	2	2	41	1	1473370	feat(shell): UI content lands on the art px grid, transitions soften (
+mr-recent	old	mr	2a755906	2026-10-30	-	15	14	9	24	2	3	27	1	1246308	refactor(audio): name the finale gong and the curtain synth by role
+mr-recent	old	mr	be3d9753	2026-10-30	-	5	3	0	0	2	0	2	0	51694	docs(work): resolve GAP-ren4 and GAP-w3yf
+mr-recent	old	mr	cf1061e1	2026-10-30	-	9	9	4	15	0	1	16	1	1123478	chore: drop the ElevenLabs sound-effect tooling
+sb-24d-gate	head	sb	1e52e068	2026-09-12	-	1	1	0	0	0	0	0	0	0	chore: gitignore .review/ beside the other ephemeral dirs
+sb-24d-gate	head	sb	3004f10a	2026-09-12	-	5	5	0	1	2	4	6	0	92548	docs: sync eight drifted restatements to their SSOT homes
+sb-24d-gate	head	sb	40b1c272	2026-09-12	-	1	1	0	4	0	1	5	0	67192	test(harness-bootstrap): discharge the runway smoke queue against a sc
+sb-24d-gate	head	sb	f3fba6ba	2026-09-12	sync	1	1	0	0	0	0	0	0	0	chore: sync harness pipeline — runway 2.49.0 → 2.50.2
+sb-24d-gate	head	sb	8a02aa1a	2026-09-12	release	1	1	0	0	0	0	0	0	0	chore: release v2.50.2
+sb-24d-gate	head	sb	ebe2fa5a	2026-09-12	-	5	4	0	5	1	2	8	0	102117	fix(harness-bootstrap): AGENTS.md hands the unrun steps back when no o
+sb-24d-gate	head	sb	5c5233ca	2026-09-11	release	1	1	0	0	0	0	0	0	0	chore: release v2.50.1
+sb-24d-gate	head	sb	ab6c4be3	2026-09-11	-	3	2	0	6	2	0	8	0	94030	fix(harness-bootstrap): the missing-on-mature `bootstrap.md` advisory 
+sb-24d-gate	head	sb	089e8f20	2026-09-11	release	2	2	0	0	0	0	0	0	0	chore: release v2.50.0
+sb-24d-gate	head	sb	7cc0e5af	2026-09-11	-	10	9	0	1	3	4	6	0	139033	feat(hooks): plugin-owned SessionStart advisory when the runway receip
+sb-24d-gate	head	sb	4e878d81	2026-09-11	-	5	4	0	4	3	2	9	1	160481	feat(harness-bootstrap): receipt `declined` rows carry their reason, r
+sb-24d-gate	head	sb	22954b89	2026-09-10	release	1	1	0	0	0	0	0	0	0	chore: release v2.49.1
+sb-24d-gate	head	sb	1d29ca29	2026-09-10	sync	1	1	0	0	0	0	0	0	0	chore(session): clear carry — runway sync landed
+sb-24d-gate	head	sb	728454f6	2026-09-10	sync	5	4	0	4	0	1	5	0	64236	chore(harness): finish the runway sync — receipt 2.39.0 → 2.49.0, 
+sb-24d-gate	head	sb	fd6e6df9	2026-09-10	-	4	3	0	0	0	0	0	0	0	fix(harness-bootstrap): ship the asserting-line SSOT links in the thre
+sb-24d-gate	head	sb	f10773d7	2026-09-10	-	3	3	1	2	1	1	4	0	49849	fix(harness): repo-boundary § Sync direction runs two lanes by SSOT s
+sb-24d-gate	head	sb	a4c11389	2026-09-10	-	3	1	0	0	0	0	0	0	0	docs(work): re-ground DEBT-114 + DEBT-115 — two lanes split by SSOT 
+sb-24d-gate	head	sb	759690c3	2026-09-10	sync	1	1	0	0	3	0	3	0	10896	chore(session): park carry — runway sync halted at the approval gate
+sb-24d-gate	head	sb	6538faeb	2026-09-10	-	7	6	0	0	1	0	1	0	7545	chore(harness): re-serve tiering lore + model hooks — resolve OUT-00
+sb-24d-gate	head	sb	56d7fb15	2026-09-10	release	2	2	0	0	0	0	0	0	0	chore: release v2.49.0
+sb-24d-gate	head	sb	c241b87f	2026-09-10	-	1	1	0	0	0	0	0	0	0	chore(session): clear carry — GAP-072 resolved
+sb-24d-gate	head	sb	2050816a	2026-09-10	-	11	10	1	5	4	4	11	1	171586	feat(harness-bootstrap): seed AGENTS.md executor contract — resolve 
+sb-24d-gate	head	sb	2772327a	2026-09-10	-	1	1	0	0	0	0	0	0	0	chore(session): park carry — next session picks up GAP-072
+sb-24d-gate	head	sb	94541876	2026-09-10	-	4	3	2	4	0	1	5	0	63235	fix(agents): triage inherits the session model — resolve DEBT-113
+sb-24d-gate	head	sb	81443f01	2026-09-10	-	4	1	0	0	0	1	1	0	4266	docs(work): log DEBT-113 + OUT-003 — top tier inherits the session o
+sb-24d-gate	head	sb	8236e584	2026-09-10	-	11	10	1	4	0	2	6	0	70005	fix(hooks): commit-channel v6 — cover the PowerShell tool, treat a n
+sb-24d-gate	head	sb	ba1005e4	2026-09-10	-	7	6	0	3	2	3	8	0	150938	feat(harness-bootstrap): seed-once stack facts + stale-facts advisory 
+sb-24d-gate	head	sb	8c706d32	2026-09-10	-	4	3	0	3	2	1	6	0	113813	fix(harness-bootstrap): markers guard first install, drift owns the re
+sb-24d-gate	head	sb	786d22da	2026-09-10	-	5	4	0	4	3	1	8	0	76504	fix(merge): probe remote/upstream before the push ask — resolve BUG-
+sb-24d-gate	head	sb	d48bd9aa	2026-09-10	-	1	1	0	4	0	1	5	0	59408	docs(test-queue): drop the duplicated Lifecycle tail left by the GAP-0
+sb-24d-gate	old	sb	1e52e068	2026-09-12	-	1	1	0	0	0	0	0	0	0	chore: gitignore .review/ beside the other ephemeral dirs
+sb-24d-gate	old	sb	3004f10a	2026-09-12	-	5	5	0	1	2	4	6	0	92548	docs: sync eight drifted restatements to their SSOT homes
+sb-24d-gate	old	sb	40b1c272	2026-09-12	-	1	1	0	4	0	1	5	0	67192	test(harness-bootstrap): discharge the runway smoke queue against a sc
+sb-24d-gate	old	sb	f3fba6ba	2026-09-12	sync	1	1	0	0	0	0	0	0	0	chore: sync harness pipeline — runway 2.49.0 → 2.50.2
+sb-24d-gate	old	sb	8a02aa1a	2026-09-12	release	1	1	0	0	0	0	0	0	0	chore: release v2.50.2
+sb-24d-gate	old	sb	ebe2fa5a	2026-09-12	-	5	4	0	5	1	2	8	0	102117	fix(harness-bootstrap): AGENTS.md hands the unrun steps back when no o
+sb-24d-gate	old	sb	5c5233ca	2026-09-11	release	1	1	0	0	0	0	0	0	0	chore: release v2.50.1
+sb-24d-gate	old	sb	ab6c4be3	2026-09-11	-	3	2	0	6	2	0	8	0	94030	fix(harness-bootstrap): the missing-on-mature `bootstrap.md` advisory 
+sb-24d-gate	old	sb	089e8f20	2026-09-11	release	2	2	0	0	0	0	0	0	0	chore: release v2.50.0
+sb-24d-gate	old	sb	7cc0e5af	2026-09-11	-	10	9	0	1	3	4	6	0	139033	feat(hooks): plugin-owned SessionStart advisory when the runway receip
+sb-24d-gate	old	sb	4e878d81	2026-09-11	-	5	4	0	4	3	2	9	1	160481	feat(harness-bootstrap): receipt `declined` rows carry their reason, r
+sb-24d-gate	old	sb	22954b89	2026-09-10	release	1	1	0	0	0	0	0	0	0	chore: release v2.49.1
+sb-24d-gate	old	sb	1d29ca29	2026-09-10	sync	1	1	0	0	0	0	0	0	0	chore(session): clear carry — runway sync landed
+sb-24d-gate	old	sb	728454f6	2026-09-10	sync	5	4	0	4	0	1	5	0	64236	chore(harness): finish the runway sync — receipt 2.39.0 → 2.49.0, 
+sb-24d-gate	old	sb	fd6e6df9	2026-09-10	-	4	3	0	0	0	0	0	0	0	fix(harness-bootstrap): ship the asserting-line SSOT links in the thre
+sb-24d-gate	old	sb	f10773d7	2026-09-10	-	3	3	1	2	1	1	4	0	49849	fix(harness): repo-boundary § Sync direction runs two lanes by SSOT s
+sb-24d-gate	old	sb	a4c11389	2026-09-10	-	3	1	0	0	0	0	0	0	0	docs(work): re-ground DEBT-114 + DEBT-115 — two lanes split by SSOT 
+sb-24d-gate	old	sb	759690c3	2026-09-10	sync	1	1	0	0	3	0	3	0	10896	chore(session): park carry — runway sync halted at the approval gate
+sb-24d-gate	old	sb	6538faeb	2026-09-10	-	7	6	0	0	1	0	1	0	7545	chore(harness): re-serve tiering lore + model hooks — resolve OUT-00
+sb-24d-gate	old	sb	56d7fb15	2026-09-10	release	2	2	0	0	0	0	0	0	0	chore: release v2.49.0
+sb-24d-gate	old	sb	c241b87f	2026-09-10	-	1	1	0	0	0	0	0	0	0	chore(session): clear carry — GAP-072 resolved
+sb-24d-gate	old	sb	2050816a	2026-09-10	-	11	10	1	5	4	4	11	1	171586	feat(harness-bootstrap): seed AGENTS.md executor contract — resolve 
+sb-24d-gate	old	sb	2772327a	2026-09-10	-	1	1	0	0	0	0	0	0	0	chore(session): park carry — next session picks up GAP-072
+sb-24d-gate	old	sb	94541876	2026-09-10	-	4	3	2	4	0	1	5	0	63235	fix(agents): triage inherits the session model — resolve DEBT-113
+sb-24d-gate	old	sb	81443f01	2026-09-10	-	4	1	0	0	0	1	1	0	4266	docs(work): log DEBT-113 + OUT-003 — top tier inherits the session o
+sb-24d-gate	old	sb	8236e584	2026-09-10	-	11	10	1	4	0	2	6	0	70005	fix(hooks): commit-channel v6 — cover the PowerShell tool, treat a n
+sb-24d-gate	old	sb	ba1005e4	2026-09-10	-	7	6	0	3	2	3	8	0	150938	feat(harness-bootstrap): seed-once stack facts + stale-facts advisory 
+sb-24d-gate	old	sb	8c706d32	2026-09-10	-	4	3	0	3	2	1	6	0	113813	fix(harness-bootstrap): markers guard first install, drift owns the re
+sb-24d-gate	old	sb	786d22da	2026-09-10	-	5	4	0	4	3	1	8	0	76504	fix(merge): probe remote/upstream before the push ask — resolve BUG-
+sb-24d-gate	old	sb	d48bd9aa	2026-09-10	-	1	1	0	4	0	1	5	0	59408	docs(test-queue): drop the duplicated Lifecycle tail left by the GAP-0
+sb-24d-doc	head	sb	3004f10a	2026-09-12	-	5	5	0	1	2	4	6	0	92548	docs: sync eight drifted restatements to their SSOT homes
+sb-24d-doc	head	sb	40b1c272	2026-09-12	-	1	1	0	4	0	1	5	0	67192	test(harness-bootstrap): discharge the runway smoke queue against a sc
+sb-24d-doc	head	sb	ebe2fa5a	2026-09-12	-	5	4	0	5	1	2	8	0	102117	fix(harness-bootstrap): AGENTS.md hands the unrun steps back when no o
+sb-24d-doc	head	sb	7cc0e5af	2026-09-11	-	10	9	0	1	3	4	6	0	139033	feat(hooks): plugin-owned SessionStart advisory when the runway receip
+sb-24d-doc	head	sb	4e878d81	2026-09-11	-	5	4	0	4	3	2	9	1	160481	feat(harness-bootstrap): receipt `declined` rows carry their reason, r
+sb-24d-doc	head	sb	728454f6	2026-09-10	sync	5	4	0	4	0	1	5	0	64236	chore(harness): finish the runway sync — receipt 2.39.0 → 2.49.0, 
+sb-24d-doc	head	sb	f10773d7	2026-09-10	-	3	3	1	2	1	1	4	0	49849	fix(harness): repo-boundary § Sync direction runs two lanes by SSOT s
+sb-24d-doc	head	sb	2050816a	2026-09-10	-	11	10	1	5	4	4	11	1	171586	feat(harness-bootstrap): seed AGENTS.md executor contract — resolve 
+sb-24d-doc	head	sb	94541876	2026-09-10	-	4	3	2	4	0	1	5	0	63235	fix(agents): triage inherits the session model — resolve DEBT-113
+sb-24d-doc	head	sb	81443f01	2026-09-10	-	4	1	0	0	0	1	1	0	4266	docs(work): log DEBT-113 + OUT-003 — top tier inherits the session o
+sb-24d-doc	head	sb	8236e584	2026-09-10	-	11	10	1	4	0	2	6	0	70005	fix(hooks): commit-channel v6 — cover the PowerShell tool, treat a n
+sb-24d-doc	head	sb	ba1005e4	2026-09-10	-	7	6	0	3	2	3	8	0	150938	feat(harness-bootstrap): seed-once stack facts + stale-facts advisory 
+sb-24d-doc	head	sb	8c706d32	2026-09-10	-	4	3	0	3	2	1	6	0	113813	fix(harness-bootstrap): markers guard first install, drift owns the re
+sb-24d-doc	head	sb	786d22da	2026-09-10	-	5	4	0	4	3	1	8	0	76504	fix(merge): probe remote/upstream before the push ask — resolve BUG-
+sb-24d-doc	head	sb	d48bd9aa	2026-09-10	-	1	1	0	4	0	1	5	0	59408	docs(test-queue): drop the duplicated Lifecycle tail left by the GAP-0
+sb-24d-doc	head	sb	0fbc349d	2026-09-10	-	6	5	0	2	0	0	2	0	17368	refactor(harness): keep this repo's material out of the storehouse's g
+sb-24d-doc	head	sb	632eabeb	2026-09-10	-	4	3	0	4	0	1	5	0	59790	fix(harness-bootstrap): land the audit findings on the code-presence g
+sb-24d-doc	head	sb	ca49afc2	2026-09-10	-	3	2	0	4	0	1	5	0	59408	docs(work): park GAP-073 — Design + Progress blocks, manual verify q
+sb-24d-doc	head	sb	eb20b213	2026-09-10	-	4	4	0	4	1	2	7	0	133238	feat(harness-bootstrap): gate the code-touch pair on code presence —
+sb-24d-doc	head	sb	98f4db75	2026-09-10	-	5	4	0	4	2	1	7	0	79886	fix(commit): probe remote/upstream before the push ask — resolve BUG
+sb-24d-doc	head	sb	f3ce4216	2026-09-05	-	3	3	1	1	1	1	3	0	40661	refactor(rules): move asset-dialect conventions from techstack to a pa
+sb-24d-doc	head	sb	c5d8ab2a	2026-09-05	-	10	9	0	3	3	3	8	0	92975	fix(harness-bootstrap): name the convention axis — CODING_STANDARDS 
+sb-24d-doc	head	sb	d323cb33	2026-09-05	-	2	1	0	0	0	0	0	0	0	docs(work): resolve GAP-071 — issue filing closes at /send-issue, no
+sb-24d-doc	head	sb	a62fdb21	2026-09-02	-	2	1	0	5	3	1	9	1	136275	docs(work): demote GAP-070 to PARK-001 — consult link-graph walk par
+sb-24d-doc	head	sb	a1b38da0	2026-09-01	-	10	10	0	2	1	3	6	0	85545	feat(commit): doc-sync judgment goes warm gateway-inline — resolve G
+sb-24d-doc	head	sb	c7f5ce9f	2026-08-28	-	3	3	0	2	0	1	3	0	44698	feat(commit): name the strip-list gap on a doc-links anchor miss
+sb-24d-doc	head	sb	a3418fe7	2026-08-28	-	4	3	0	2	0	0	2	0	19354	fix(commit): strip the unicode marks GitHub drops from doc-links slugs
+sb-24d-doc	head	sb	56884d5b	2026-08-28	-	1	1	0	4	0	1	5	0	59308	docs(spec): drop the unearned tier-justification line from harness-arc
+sb-24d-doc	head	sb	680b736f	2026-08-28	premise	16	15	0	1	7	5	10	1	135240	feat(harness): unpair mattpocock/skills — the paired pin retires (DE
+sb-24d-doc	head	sb	ba6a38d9	2026-08-28	-	6	5	0	0	2	1	3	0	24617	fix(harness): hold locally-owned lore outside the clone-replaced serve
+sb-24d-doc	old	sb	3004f10a	2026-09-12	-	5	5	0	1	2	4	6	0	92548	docs: sync eight drifted restatements to their SSOT homes
+sb-24d-doc	old	sb	40b1c272	2026-09-12	-	1	1	0	4	0	1	5	0	67192	test(harness-bootstrap): discharge the runway smoke queue against a sc
+sb-24d-doc	old	sb	ebe2fa5a	2026-09-12	-	5	4	0	5	1	2	8	0	102117	fix(harness-bootstrap): AGENTS.md hands the unrun steps back when no o
+sb-24d-doc	old	sb	7cc0e5af	2026-09-11	-	10	9	0	1	3	4	6	0	139033	feat(hooks): plugin-owned SessionStart advisory when the runway receip
+sb-24d-doc	old	sb	4e878d81	2026-09-11	-	5	4	0	4	3	2	9	1	160481	feat(harness-bootstrap): receipt `declined` rows carry their reason, r
+sb-24d-doc	old	sb	728454f6	2026-09-10	sync	5	4	0	4	0	1	5	0	64236	chore(harness): finish the runway sync — receipt 2.39.0 → 2.49.0, 
+sb-24d-doc	old	sb	f10773d7	2026-09-10	-	3	3	1	2	1	1	4	0	49849	fix(harness): repo-boundary § Sync direction runs two lanes by SSOT s
+sb-24d-doc	old	sb	2050816a	2026-09-10	-	11	10	1	5	4	4	11	1	171586	feat(harness-bootstrap): seed AGENTS.md executor contract — resolve 
+sb-24d-doc	old	sb	94541876	2026-09-10	-	4	3	2	4	0	1	5	0	63235	fix(agents): triage inherits the session model — resolve DEBT-113
+sb-24d-doc	old	sb	81443f01	2026-09-10	-	4	1	0	0	0	1	1	0	4266	docs(work): log DEBT-113 + OUT-003 — top tier inherits the session o
+sb-24d-doc	old	sb	8236e584	2026-09-10	-	11	10	1	4	0	2	6	0	70005	fix(hooks): commit-channel v6 — cover the PowerShell tool, treat a n
+sb-24d-doc	old	sb	ba1005e4	2026-09-10	-	7	6	0	3	2	3	8	0	150938	feat(harness-bootstrap): seed-once stack facts + stale-facts advisory 
+sb-24d-doc	old	sb	8c706d32	2026-09-10	-	4	3	0	3	2	1	6	0	113813	fix(harness-bootstrap): markers guard first install, drift owns the re
+sb-24d-doc	old	sb	786d22da	2026-09-10	-	5	4	0	4	3	1	8	0	76504	fix(merge): probe remote/upstream before the push ask — resolve BUG-
+sb-24d-doc	old	sb	d48bd9aa	2026-09-10	-	1	1	0	4	0	1	5	0	59408	docs(test-queue): drop the duplicated Lifecycle tail left by the GAP-0
+sb-24d-doc	old	sb	0fbc349d	2026-09-10	-	6	5	0	2	0	0	2	0	17368	refactor(harness): keep this repo's material out of the storehouse's g
+sb-24d-doc	old	sb	632eabeb	2026-09-10	-	4	3	0	4	0	1	5	0	59790	fix(harness-bootstrap): land the audit findings on the code-presence g
+sb-24d-doc	old	sb	ca49afc2	2026-09-10	-	3	2	0	4	0	1	5	0	59408	docs(work): park GAP-073 — Design + Progress blocks, manual verify q
+sb-24d-doc	old	sb	eb20b213	2026-09-10	-	4	4	0	4	1	2	7	0	133238	feat(harness-bootstrap): gate the code-touch pair on code presence —
+sb-24d-doc	old	sb	98f4db75	2026-09-10	-	5	4	0	4	2	1	7	0	79886	fix(commit): probe remote/upstream before the push ask — resolve BUG
+sb-24d-doc	old	sb	f3ce4216	2026-09-05	-	3	3	1	1	1	1	3	0	40661	refactor(rules): move asset-dialect conventions from techstack to a pa
+sb-24d-doc	old	sb	c5d8ab2a	2026-09-05	-	10	9	0	3	3	3	8	0	92975	fix(harness-bootstrap): name the convention axis — CODING_STANDARDS 
+sb-24d-doc	old	sb	d323cb33	2026-09-05	-	2	1	0	0	0	0	0	0	0	docs(work): resolve GAP-071 — issue filing closes at /send-issue, no
+sb-24d-doc	old	sb	a62fdb21	2026-09-02	-	2	1	0	5	3	1	9	1	136275	docs(work): demote GAP-070 to PARK-001 — consult link-graph walk par
+sb-24d-doc	old	sb	a1b38da0	2026-09-01	-	10	10	0	2	1	3	6	0	85545	feat(commit): doc-sync judgment goes warm gateway-inline — resolve G
+sb-24d-doc	old	sb	c7f5ce9f	2026-08-28	-	3	3	0	2	0	1	3	0	44698	feat(commit): name the strip-list gap on a doc-links anchor miss
+sb-24d-doc	old	sb	a3418fe7	2026-08-28	-	4	3	0	2	0	0	2	0	19354	fix(commit): strip the unicode marks GitHub drops from doc-links slugs
+sb-24d-doc	old	sb	56884d5b	2026-08-28	-	1	1	0	4	0	1	5	0	59308	docs(spec): drop the unearned tier-justification line from harness-arc
+sb-24d-doc	old	sb	680b736f	2026-08-28	premise	16	15	0	1	7	5	10	1	135240	feat(harness): unpair mattpocock/skills — the paired pin retires (DE
+sb-24d-doc	old	sb	ba6a38d9	2026-08-28	-	6	5	0	0	2	1	3	0	24617	fix(harness): hold locally-owned lore outside the clone-replaced serve
+sb-et1c-doc	head	sb	5f387626	2026-11-03	-	81	78	0	8	6	1	15	1	198235	feat(doc-sync): keep volatile IDs out of durable docs — resolve DEBT
+sb-et1c-doc	head	sb	8cb9c9f1	2026-11-03	-	8	8	0	3	1	1	4	0	66540	fix(harness-bootstrap): state registered-term link precedence and targ
+sb-et1c-doc	head	sb	17186fda	2026-10-29	-	14	13	1	3	6	4	13	1	131228	feat(session-close): take push out of super-bootstrap — resolve GAP-
+sb-et1c-doc	head	sb	46652b53	2026-10-29	-	15	14	1	5	4	3	12	1	163043	feat(doc-sync): propose docs/terminology.md entries for coined terms �
+sb-et1c-doc	head	sb	fa46e0f7	2026-10-29	-	9	8	1	6	5	1	12	1	199450	fix(harness-bootstrap): write the runway receipt LF-only — resolve B
+sb-et1c-doc	head	sb	59252a1d	2026-10-29	-	9	8	2	3	4	3	10	1	112950	feat(session-close): gate the pick on still-running jobs — resolve G
+sb-et1c-doc	head	sb	9234302f	2026-10-29	-	72	71	1	6	20	3	22	1	370789	feat(terminology): ship a unified docs/terminology.md term home with a
+sb-et1c-doc	head	sb	ea3e4b14	2026-10-29	-	9	8	0	3	6	3	12	1	145897	feat(commit): stop asking to push; hand off to session-close — resol
+sb-et1c-doc	head	sb	b1317ff4	2026-10-27	-	2	1	0	0	0	0	0	0	0	docs(work): reopen GAP-ym4e — the closure tested staleness, not its 
+sb-et1c-doc	head	sb	d920b49d	2026-10-27	-	9	7	0	0	0	0	0	0	0	docs(decisions): close GAP-ym4e — no doc-sync gap behind the term ce
+sb-et1c-doc	head	sb	7769b101	2026-10-27	-	2	1	0	0	0	0	0	0	0	docs(decisions): close GAP-1jfs — single-site learnings already land
+sb-et1c-doc	head	sb	75e2aa63	2026-10-27	-	3	2	0	5	1	1	7	0	159964	feat(harness-bootstrap): carry a decline forward while its template is
+sb-et1c-doc	head	sb	cdd83e27	2026-10-27	-	4	3	1	5	2	1	8	0	107227	feat(harness-bootstrap): drop the § 2a-autorun install prompt
+sb-et1c-doc	head	sb	87342157	2026-10-27	-	3	1	0	0	0	0	0	0	0	docs(work): close GAP-66q7 as already covered; settle GAP-ym4e rule ow
+sb-et1c-doc	head	sb	94b630a8	2026-10-27	-	7	6	0	5	0	1	6	0	87984	feat(harness-bootstrap): ship ssot-doc-link and dimension-discipline r
+sb-et1c-doc	old	sb	5f387626	2026-11-03	-	81	78	0	11	6	1	18	1	203840	feat(doc-sync): keep volatile IDs out of durable docs — resolve DEBT
+sb-et1c-doc	old	sb	8cb9c9f1	2026-11-03	-	8	8	0	5	1	1	6	0	70857	fix(harness-bootstrap): state registered-term link precedence and targ
+sb-et1c-doc	old	sb	17186fda	2026-10-29	-	14	13	1	3	6	4	13	1	131228	feat(session-close): take push out of super-bootstrap — resolve GAP-
+sb-et1c-doc	old	sb	46652b53	2026-10-29	-	15	14	1	6	4	3	13	1	164764	feat(doc-sync): propose docs/terminology.md entries for coined terms �
+sb-et1c-doc	old	sb	fa46e0f7	2026-10-29	-	9	8	1	6	5	1	12	1	199450	fix(harness-bootstrap): write the runway receipt LF-only — resolve B
+sb-et1c-doc	old	sb	59252a1d	2026-10-29	-	9	8	2	3	4	3	10	1	112950	feat(session-close): gate the pick on still-running jobs — resolve G
+sb-et1c-doc	old	sb	9234302f	2026-10-29	-	72	71	1	6	20	3	22	1	370789	feat(terminology): ship a unified docs/terminology.md term home with a
+sb-et1c-doc	old	sb	ea3e4b14	2026-10-29	-	9	8	0	4	6	3	13	1	151036	feat(commit): stop asking to push; hand off to session-close — resol
+sb-et1c-doc	old	sb	b1317ff4	2026-10-27	-	2	1	0	0	0	0	0	0	0	docs(work): reopen GAP-ym4e — the closure tested staleness, not its 
+sb-et1c-doc	old	sb	d920b49d	2026-10-27	-	9	7	0	0	0	0	0	0	0	docs(decisions): close GAP-ym4e — no doc-sync gap behind the term ce
+sb-et1c-doc	old	sb	7769b101	2026-10-27	-	2	1	0	0	0	0	0	0	0	docs(decisions): close GAP-1jfs — single-site learnings already land
+sb-et1c-doc	old	sb	75e2aa63	2026-10-27	-	3	2	0	8	1	1	10	1	178015	feat(harness-bootstrap): carry a decline forward while its template is
+sb-et1c-doc	old	sb	cdd83e27	2026-10-27	-	4	3	1	10	2	1	13	1	126956	feat(harness-bootstrap): drop the § 2a-autorun install prompt
+sb-et1c-doc	old	sb	87342157	2026-10-27	-	3	1	0	0	0	0	0	0	0	docs(work): close GAP-66q7 as already covered; settle GAP-ym4e rule ow
+sb-et1c-doc	old	sb	94b630a8	2026-10-27	-	7	6	0	11	0	1	12	1	105823	feat(harness-bootstrap): ship ssot-doc-link and dimension-discipline r
+mr-et1c-doc	head	mr	bf8de8e9	2026-11-03	-	9	8	0	11	0	1	12	1	863287	fix(ending): stand the lamps on the road height the sheet draws
+mr-et1c-doc	head	mr	a8f34e56	2026-11-03	-	55	52	10	26	3	4	30	1	1377799	feat(shell): settle UI motion on the art px grid, retire the A/B switc
+mr-et1c-doc	head	mr	d49ae70d	2026-11-03	-	56	55	7	26	2	2	28	1	1245327	feat(shell): UI content lands on the art px grid, transitions soften (
+mr-et1c-doc	head	mr	2a755906	2026-10-30	-	15	14	9	21	2	3	24	1	1206283	refactor(audio): name the finale gong and the curtain synth by role
+mr-et1c-doc	head	mr	be3d9753	2026-10-30	-	5	3	0	0	2	0	2	0	51694	docs(work): resolve GAP-ren4 and GAP-w3yf
+mr-et1c-doc	head	mr	cf1061e1	2026-10-30	-	9	9	4	10	0	1	11	1	832625	chore: drop the ElevenLabs sound-effect tooling
+mr-et1c-doc	head	mr	16f08c71	2026-10-30	-	15	15	14	24	2	4	28	1	1344066	feat(finale): strike the gong when the marker frame fills
+mr-et1c-doc	head	mr	a93b1c1f	2026-10-30	-	15	15	12	22	2	6	28	1	1314236	feat(audio): let the BIGCAKE crossing sound only its confirm
+mr-et1c-doc	head	mr	81856d8e	2026-10-30	-	14	14	14	24	2	4	28	1	1343915	feat(finale): strike a gong on the last star instead of the frame
+mr-et1c-doc	head	mr	4a9fc901	2026-10-30	-	29	29	15	22	6	8	30	1	1376559	feat(finale): carry LV81's white into a finale that waits for a press
+mr-et1c-doc	head	mr	46990023	2026-10-30	-	1	1	0	0	2	0	2	0	64236	docs(decisions): close the strip world-clear show before the Pack fina
+mr-et1c-doc	head	mr	57f2bbd8	2026-10-30	-	10	10	11	24	5	6	30	1	1318008	feat(shell): show LV81 as level 0 on the card and pause heading
+mr-et1c-doc	head	mr	4ef45dd9	2026-10-30	-	20	20	12	20	1	4	24	1	1195493	feat(audio): score the pack finale with one author-mixed file
+mr-et1c-doc	head	mr	b397e7c4	2026-10-30	-	17	16	13	28	4	6	34	1	1395912	docs(terms): register Dream wall and retire its three other names
+mr-et1c-doc	head	mr	12150b0f	2026-10-30	-	1	1	2	14	2	1	16	1	959079	docs(story): LV60 reads both ways, arrival in the text, departure in t
+mr-et1c-doc	old	mr	bf8de8e9	2026-11-03	-	9	8	0	12	0	1	13	1	1008061	fix(ending): stand the lamps on the road height the sheet draws
+mr-et1c-doc	old	mr	a8f34e56	2026-11-03	-	55	52	11	40	3	4	44	1	1610478	feat(shell): settle UI motion on the art px grid, retire the A/B switc
+mr-et1c-doc	old	mr	d49ae70d	2026-11-03	-	56	55	8	39	2	2	41	1	1473370	feat(shell): UI content lands on the art px grid, transitions soften (
+mr-et1c-doc	old	mr	2a755906	2026-10-30	-	15	14	9	24	2	3	27	1	1246308	refactor(audio): name the finale gong and the curtain synth by role
+mr-et1c-doc	old	mr	be3d9753	2026-10-30	-	5	3	0	0	2	0	2	0	51694	docs(work): resolve GAP-ren4 and GAP-w3yf
+mr-et1c-doc	old	mr	cf1061e1	2026-10-30	-	9	9	4	15	0	1	16	1	1123478	chore: drop the ElevenLabs sound-effect tooling
+mr-et1c-doc	old	mr	16f08c71	2026-10-30	-	15	15	17	31	2	4	35	1	1638774	feat(finale): strike the gong when the marker frame fills
+mr-et1c-doc	old	mr	a93b1c1f	2026-10-30	-	15	15	13	33	2	6	39	1	1648902	feat(audio): let the BIGCAKE crossing sound only its confirm
+mr-et1c-doc	old	mr	81856d8e	2026-10-30	-	14	14	17	31	2	4	35	1	1637005	feat(finale): strike a gong on the last star instead of the frame
+mr-et1c-doc	old	mr	4a9fc901	2026-10-30	-	29	29	19	38	6	8	46	1	1713822	feat(finale): carry LV81's white into a finale that waits for a press
+mr-et1c-doc	old	mr	46990023	2026-10-30	-	1	1	0	0	2	0	2	0	64236	docs(decisions): close the strip world-clear show before the Pack fina
+mr-et1c-doc	old	mr	57f2bbd8	2026-10-30	-	10	10	11	29	5	6	35	1	1615712	feat(shell): show LV81 as level 0 on the card and pause heading
+mr-et1c-doc	old	mr	4ef45dd9	2026-10-30	-	20	20	14	31	1	4	35	1	1527539	feat(audio): score the pack finale with one author-mixed file
+mr-et1c-doc	old	mr	b397e7c4	2026-10-30	-	17	16	15	38	4	6	44	1	1706838	docs(terms): register Dream wall and retire its three other names
+mr-et1c-doc	old	mr	12150b0f	2026-10-30	-	1	1	2	16	2	1	18	1	1070034	docs(story): LV60 reads both ways, arrival in the text, departure in t
+sb-et1c-doc40	head	sb	5f387626	2026-11-03	-	81	78	0	8	6	1	15	1	198235	feat(doc-sync): keep volatile IDs out of durable docs — resolve DEBT
+sb-et1c-doc40	head	sb	8cb9c9f1	2026-11-03	-	8	8	0	3	1	1	4	0	66540	fix(harness-bootstrap): state registered-term link precedence and targ
+sb-et1c-doc40	head	sb	17186fda	2026-10-29	-	14	13	1	3	6	4	13	1	131228	feat(session-close): take push out of super-bootstrap — resolve GAP-
+sb-et1c-doc40	head	sb	46652b53	2026-10-29	-	15	14	1	5	4	3	12	1	163043	feat(doc-sync): propose docs/terminology.md entries for coined terms �
+sb-et1c-doc40	head	sb	fa46e0f7	2026-10-29	-	9	8	1	6	5	1	12	1	199450	fix(harness-bootstrap): write the runway receipt LF-only — resolve B
+sb-et1c-doc40	head	sb	59252a1d	2026-10-29	-	9	8	2	3	4	3	10	1	112950	feat(session-close): gate the pick on still-running jobs — resolve G
+sb-et1c-doc40	head	sb	9234302f	2026-10-29	-	72	71	1	6	20	3	22	1	370789	feat(terminology): ship a unified docs/terminology.md term home with a
+sb-et1c-doc40	head	sb	ea3e4b14	2026-10-29	-	9	8	0	3	6	3	12	1	145897	feat(commit): stop asking to push; hand off to session-close — resol
+sb-et1c-doc40	head	sb	b1317ff4	2026-10-27	-	2	1	0	0	0	0	0	0	0	docs(work): reopen GAP-ym4e — the closure tested staleness, not its 
+sb-et1c-doc40	head	sb	d920b49d	2026-10-27	-	9	7	0	0	0	0	0	0	0	docs(decisions): close GAP-ym4e — no doc-sync gap behind the term ce
+sb-et1c-doc40	head	sb	7769b101	2026-10-27	-	2	1	0	0	0	0	0	0	0	docs(decisions): close GAP-1jfs — single-site learnings already land
+sb-et1c-doc40	head	sb	75e2aa63	2026-10-27	-	3	2	0	5	1	1	7	0	159964	feat(harness-bootstrap): carry a decline forward while its template is
+sb-et1c-doc40	head	sb	cdd83e27	2026-10-27	-	4	3	1	5	2	1	8	0	107227	feat(harness-bootstrap): drop the § 2a-autorun install prompt
+sb-et1c-doc40	head	sb	87342157	2026-10-27	-	3	1	0	0	0	0	0	0	0	docs(work): close GAP-66q7 as already covered; settle GAP-ym4e rule ow
+sb-et1c-doc40	head	sb	94b630a8	2026-10-27	-	7	6	0	5	0	1	6	0	87984	feat(harness-bootstrap): ship ssot-doc-link and dimension-discipline r
+sb-et1c-doc40	head	sb	d98b216d	2026-10-27	-	13	12	1	5	4	1	10	1	119907	feat(commit): surface facts restated in K places during doc-sync
+sb-et1c-doc40	head	sb	e0255f27	2026-10-27	-	9	7	0	6	1	3	10	1	174105	feat(harness-bootstrap): give consumers a docs/extensions.md seam for 
+sb-et1c-doc40	head	sb	e93ae549	2026-10-20	-	32	31	0	4	3	4	11	1	118664	feat(merge): land several branches as one batch through an integration
+sb-et1c-doc40	head	sb	dc16ee0d	2026-10-20	-	26	25	0	6	4	2	12	1	137240	fix(autorun): keep worker commits off the staged-tree verify; run it a
+sb-et1c-doc40	head	sb	0873f8c8	2026-10-20	-	47	45	0	4	4	3	11	1	114451	feat(autorun): admit cards with incidental harness edits via a harness
+sb-et1c-doc40	head	sb	b7d282b8	2026-10-20	-	90	89	0	6	5	1	12	1	120792	feat(autorun): regenerate derived state before verify when sources mov
+sb-et1c-doc40	head	sb	0d0f9450	2026-10-20	-	27	26	1	3	5	3	10	1	185712	fix(merge): state the resolver contract; confine merge/rebase --contin
+sb-et1c-doc40	head	sb	5f92d778	2026-10-20	-	25	24	0	4	4	1	9	1	97625	fix(merge): land a branch held by another worktree with --no-ff
+sb-et1c-doc40	head	sb	7b6a8a1c	2026-10-20	-	6	5	0	1	0	1	2	0	41622	fix(autorun): let a subagent's Read pass the worktree Read guard
+sb-et1c-doc40	head	sb	ebab584d	2026-10-20	-	20	18	0	2	3	4	9	1	221798	fix(commit): stop staging into the shared index; verify the tree that 
+sb-et1c-doc40	head	sb	0939c49e	2026-10-10	-	32	29	0	5	2	5	11	1	107184	feat(log): draw collision-free card IDs from a guarded generator
+sb-et1c-doc40	head	sb	b568aca9	2026-10-10	-	17	16	0	3	9	1	13	1	105451	fix(triage-report): give the verdict sheet a Closed Forks source line
+sb-et1c-doc40	head	sb	8bf2537d	2026-10-10	-	13	12	0	1	5	1	7	0	59049	fix(log): resolve Closed Forks through a script with per-entry outcome
+sb-et1c-doc40	head	sb	e33863c8	2026-10-10	-	43	41	0	4	6	1	11	1	111437	fix(triage): give taste cards a grounding-only surface shape
+sb-et1c-doc40	head	sb	d0e249e4	2026-10-08	-	4	3	0	4	1	1	6	0	82283	fix(triage): land first-hand evidence on the card before dispatch
+sb-et1c-doc40	head	sb	5cfa2528	2026-10-08	-	4	3	0	0	1	0	1	0	7678	fix(harness): launch committing fixture walks headless, rooted at the 
+sb-et1c-doc40	head	sb	548921a1	2026-10-08	-	6	5	0	0	2	0	2	0	125722	docs(decisions): close DEBT-128 — § 2c's predicate needs no stated 
+sb-et1c-doc40	head	sb	ff25ceb2	2026-10-08	-	6	5	0	1	3	1	5	0	205959	docs(decisions): close DEBT-127 — § Code presence needs no scan-sur
+sb-et1c-doc40	head	sb	533685c0	2026-10-08	-	14	11	0	5	0	1	6	0	82323	fix(harness-bootstrap): decide § 2c's commit by this run's effect
+sb-et1c-doc40	head	sb	0867838a	2026-10-07	-	1	1	0	4	0	1	5	0	72661	test: discharge the declined-memory and stack-facts smoke entries
+sb-et1c-doc40	head	sb	bc24f63b	2026-10-07	-	4	2	0	0	2	1	3	0	18948	docs(outward): OUT-004 — storehouse half submitted, waiting on diges
+sb-et1c-doc40	head	sb	a63816c7	2026-10-07	-	4	3	0	4	1	1	6	0	82159	docs(work): draft GAP-100's storehouse half, corrected against the rec
+sb-et1c-doc40	head	sb	50f82e2c	2026-10-07	-	3	3	0	4	2	1	7	0	164568	fix(harness): route a finding by concern-ownership before provenance
+sb-et1c-doc40	head	sb	2f6e60c9	2026-10-02	-	4	3	0	7	0	1	8	0	91385	fix(session-close): sweep every open card for finished ones at close
+sb-et1c-doc40	head	sb	f4dc3e96	2026-10-01	-	1	1	0	0	0	0	0	0	0	docs(decisions): note script-indirection bypass on commit-channel row
+mr-et1c-doc40	head	mr	bf8de8e9	2026-11-03	-	9	8	0	11	0	1	12	1	863287	fix(ending): stand the lamps on the road height the sheet draws
+mr-et1c-doc40	head	mr	a8f34e56	2026-11-03	-	55	52	10	26	3	4	30	1	1377799	feat(shell): settle UI motion on the art px grid, retire the A/B switc
+mr-et1c-doc40	head	mr	d49ae70d	2026-11-03	-	56	55	7	26	2	2	28	1	1245327	feat(shell): UI content lands on the art px grid, transitions soften (
+mr-et1c-doc40	head	mr	2a755906	2026-10-30	-	15	14	9	21	2	3	24	1	1206283	refactor(audio): name the finale gong and the curtain synth by role
+mr-et1c-doc40	head	mr	be3d9753	2026-10-30	-	5	3	0	0	2	0	2	0	51694	docs(work): resolve GAP-ren4 and GAP-w3yf
+mr-et1c-doc40	head	mr	cf1061e1	2026-10-30	-	9	9	4	10	0	1	11	1	832625	chore: drop the ElevenLabs sound-effect tooling
+mr-et1c-doc40	head	mr	16f08c71	2026-10-30	-	15	15	14	24	2	4	28	1	1344066	feat(finale): strike the gong when the marker frame fills
+mr-et1c-doc40	head	mr	a93b1c1f	2026-10-30	-	15	15	12	22	2	6	28	1	1314236	feat(audio): let the BIGCAKE crossing sound only its confirm
+mr-et1c-doc40	head	mr	81856d8e	2026-10-30	-	14	14	14	24	2	4	28	1	1343915	feat(finale): strike a gong on the last star instead of the frame
+mr-et1c-doc40	head	mr	4a9fc901	2026-10-30	-	29	29	15	22	6	8	30	1	1376559	feat(finale): carry LV81's white into a finale that waits for a press
+mr-et1c-doc40	head	mr	46990023	2026-10-30	-	1	1	0	0	2	0	2	0	64236	docs(decisions): close the strip world-clear show before the Pack fina
+mr-et1c-doc40	head	mr	57f2bbd8	2026-10-30	-	10	10	11	24	5	6	30	1	1318008	feat(shell): show LV81 as level 0 on the card and pause heading
+mr-et1c-doc40	head	mr	4ef45dd9	2026-10-30	-	20	20	12	20	1	4	24	1	1195493	feat(audio): score the pack finale with one author-mixed file
+mr-et1c-doc40	head	mr	b397e7c4	2026-10-30	-	17	16	13	28	4	6	34	1	1395912	docs(terms): register Dream wall and retire its three other names
+mr-et1c-doc40	head	mr	12150b0f	2026-10-30	-	1	1	2	14	2	1	16	1	959079	docs(story): LV60 reads both ways, arrival in the text, departure in t
+mr-et1c-doc40	head	mr	4451477d	2026-10-30	-	16	16	7	24	4	5	29	1	1356719	feat(lv60,lv81): mirror the run-up band in time and snap LV81's tape b
+mr-et1c-doc40	head	mr	8fe8a1b6	2026-10-30	-	18	18	15	21	2	5	27	1	1255190	feat(audio): score the pack finale with swell and close cues
+mr-et1c-doc40	head	mr	022b9ee6	2026-10-30	-	3	2	9	18	2	2	20	1	1029375	docs: register page voice; lock the strip clear beat
+mr-et1c-doc40	head	mr	337cf910	2026-10-30	-	32	31	11	21	10	9	30	1	1358296	feat(audio): split the UI cue into focus and confirm
+mr-et1c-doc40	head	mr	b060538e	2026-10-30	-	3	2	3	16	0	1	17	1	977112	docs(lv60): lock the ending's audio restraint and the landing drop
+mr-et1c-doc40	head	mr	11a6c0f5	2026-10-30	-	13	12	16	21	2	4	25	1	1238601	feat(audio): the checkpoint crossing's pan sounds a low grind scrape
+mr-et1c-doc40	head	mr	f690e75c	2026-10-29	-	7	7	20	23	3	7	33	1	1416818	docs: durable docs carry no card, outward or parked references
+mr-et1c-doc40	head	mr	6fa801bf	2026-10-29	-	4	4	12	18	2	4	23	1	1218167	docs: drop closed-card IDs from state docs
+mr-et1c-doc40	head	mr	abc46f37	2026-10-29	-	76	75	5	26	2	4	30	1	1269800	refactor: retire pink from comments and docs; check holds it absent
+mr-et1c-doc40	head	mr	c9a39e3d	2026-10-29	-	95	94	20	26	0	4	30	1	1352577	refactor: one home for the CMY palette; rename the pink identifiers to
+mr-et1c-doc40	head	mr	b4494c24	2026-10-29	-	26	25	9	16	15	20	36	1	1423556	docs: move the term home to docs/terminology.md
+mr-et1c-doc40	head	mr	c2ddcbc5	2026-10-29	sync	13	12	0	20	11	7	31	1	1132336	chore: sync harness pipeline
+mr-et1c-doc40	head	mr	479d1532	2026-10-29	-	33	31	4	24	2	5	29	1	1331170	feat(audio): world-clear back on teslaex, hold and press quiet, orbit 
+mr-et1c-doc40	head	mr	66358628	2026-10-29	-	6	6	3	18	0	1	19	1	1098145	feat(narrative): LV59's door says 千山 萬水 before 一步之遙
+mr-et1c-doc40	head	mr	9df167db	2026-10-29	-	22	21	6	21	2	5	26	1	1211123	feat(audio): the strip's win-return flow sounds every beat; the world-
+mr-et1c-doc40	head	mr	4729a18a	2026-10-29	-	22	21	7	25	3	3	28	1	1291618	feat(audio): the magnet's press, hold and release sound on its hum; th
+mr-et1c-doc40	head	mr	a574daaf	2026-10-29	-	26	24	11	22	7	8	30	1	1333167	feat(index): the title ceremony holds the menu dark-to-full on the cue
+mr-et1c-doc40	head	mr	59d774a8	2026-10-29	-	33	31	9	20	2	7	27	1	1292373	feat(audio): page round trips play opposite pairs; the VHS glitch is a
+mr-et1c-doc40	head	mr	2c1442a3	2026-10-29	-	19	19	10	22	3	5	27	1	1291629	feat(audio): voice the LV81 rewind, the Ending lamps and the Pack idle
+mr-et1c-doc40	head	mr	5c966bd1	2026-10-29	-	24	23	10	23	3	7	30	1	1325753	feat(audio): give Curtain, the shell Break and the title ceremony thei
+mr-et1c-doc40	head	mr	0d4d3a38	2026-10-29	-	34	34	14	19	7	11	31	1	1380745	feat(audio): UI sounds play by situation token, one voice per page rec
+mr-et1c-doc40	head	mr	c9b56f55	2026-10-29	-	34	33	9	21	3	7	28	1	1315384	feat(audio): apply the sfx inventory verdicts — retire flash, ending
+mr-et1c-doc40	head	mr	1c6f7f0f	2026-10-29	-	5	4	6	9	0	1	10	1	792946	test(perf): the tour judges a row by its 95th-percentile frame
+mr-et1c-doc40	head	mr	bb5da03a	2026-10-29	-	5	5	11	26	1	2	28	1	1311282	perf(level): the strip pays its first draws on the frame after its bui
+mr-et1c-doc40	head	mr	ab17d4ca	2026-10-29	-	3	3	0	1	0	1	2	0	372724	perf(level): the fibre-current tile lays each size once per process
+sb-24d-doc45	old	sb	3004f10a	2026-09-12	-	5	5	0	1	2	4	6	0	92548	docs: sync eight drifted restatements to their SSOT homes
+sb-24d-doc45	old	sb	40b1c272	2026-09-12	-	1	1	0	4	0	1	5	0	67192	test(harness-bootstrap): discharge the runway smoke queue against a sc
+sb-24d-doc45	old	sb	ebe2fa5a	2026-09-12	-	5	4	0	5	1	2	8	0	102117	fix(harness-bootstrap): AGENTS.md hands the unrun steps back when no o
+sb-24d-doc45	old	sb	7cc0e5af	2026-09-11	-	10	9	0	1	3	4	6	0	139033	feat(hooks): plugin-owned SessionStart advisory when the runway receip
+sb-24d-doc45	old	sb	4e878d81	2026-09-11	-	5	4	0	4	3	2	9	1	160481	feat(harness-bootstrap): receipt `declined` rows carry their reason, r
+sb-24d-doc45	old	sb	728454f6	2026-09-10	sync	5	4	0	4	0	1	5	0	64236	chore(harness): finish the runway sync — receipt 2.39.0 → 2.49.0, 
+sb-24d-doc45	old	sb	f10773d7	2026-09-10	-	3	3	1	2	1	1	4	0	49849	fix(harness): repo-boundary § Sync direction runs two lanes by SSOT s
+sb-24d-doc45	old	sb	2050816a	2026-09-10	-	11	10	1	5	4	4	11	1	171586	feat(harness-bootstrap): seed AGENTS.md executor contract — resolve 
+sb-24d-doc45	old	sb	94541876	2026-09-10	-	4	3	2	4	0	1	5	0	63235	fix(agents): triage inherits the session model — resolve DEBT-113
+sb-24d-doc45	old	sb	81443f01	2026-09-10	-	4	1	0	0	0	1	1	0	4266	docs(work): log DEBT-113 + OUT-003 — top tier inherits the session o
+sb-24d-doc45	old	sb	8236e584	2026-09-10	-	11	10	1	4	0	2	6	0	70005	fix(hooks): commit-channel v6 — cover the PowerShell tool, treat a n
+sb-24d-doc45	old	sb	ba1005e4	2026-09-10	-	7	6	0	3	2	3	8	0	150938	feat(harness-bootstrap): seed-once stack facts + stale-facts advisory 
+sb-24d-doc45	old	sb	8c706d32	2026-09-10	-	4	3	0	3	2	1	6	0	113813	fix(harness-bootstrap): markers guard first install, drift owns the re
+sb-24d-doc45	old	sb	786d22da	2026-09-10	-	5	4	0	4	3	1	8	0	76504	fix(merge): probe remote/upstream before the push ask — resolve BUG-
+sb-24d-doc45	old	sb	d48bd9aa	2026-09-10	-	1	1	0	4	0	1	5	0	59408	docs(test-queue): drop the duplicated Lifecycle tail left by the GAP-0
+sb-24d-doc45	old	sb	0fbc349d	2026-09-10	-	6	5	0	2	0	0	2	0	17368	refactor(harness): keep this repo's material out of the storehouse's g
+sb-24d-doc45	old	sb	632eabeb	2026-09-10	-	4	3	0	4	0	1	5	0	59790	fix(harness-bootstrap): land the audit findings on the code-presence g
+sb-24d-doc45	old	sb	ca49afc2	2026-09-10	-	3	2	0	4	0	1	5	0	59408	docs(work): park GAP-073 — Design + Progress blocks, manual verify q
+sb-24d-doc45	old	sb	eb20b213	2026-09-10	-	4	4	0	4	1	2	7	0	133238	feat(harness-bootstrap): gate the code-touch pair on code presence —
+sb-24d-doc45	old	sb	98f4db75	2026-09-10	-	5	4	0	4	2	1	7	0	79886	fix(commit): probe remote/upstream before the push ask — resolve BUG
+sb-24d-doc45	old	sb	f3ce4216	2026-09-05	-	3	3	1	1	1	1	3	0	40661	refactor(rules): move asset-dialect conventions from techstack to a pa
+sb-24d-doc45	old	sb	c5d8ab2a	2026-09-05	-	10	9	0	3	3	3	8	0	92975	fix(harness-bootstrap): name the convention axis — CODING_STANDARDS 
+sb-24d-doc45	old	sb	d323cb33	2026-09-05	-	2	1	0	0	0	0	0	0	0	docs(work): resolve GAP-071 — issue filing closes at /send-issue, no
+sb-24d-doc45	old	sb	a62fdb21	2026-09-02	-	2	1	0	5	3	1	9	1	136275	docs(work): demote GAP-070 to PARK-001 — consult link-graph walk par
+sb-24d-doc45	old	sb	a1b38da0	2026-09-01	-	10	10	0	2	1	3	6	0	85545	feat(commit): doc-sync judgment goes warm gateway-inline — resolve G
+sb-24d-doc45	old	sb	c7f5ce9f	2026-08-28	-	3	3	0	2	0	1	3	0	44698	feat(commit): name the strip-list gap on a doc-links anchor miss
+sb-24d-doc45	old	sb	a3418fe7	2026-08-28	-	4	3	0	2	0	0	2	0	19354	fix(commit): strip the unicode marks GitHub drops from doc-links slugs
+sb-24d-doc45	old	sb	56884d5b	2026-08-28	-	1	1	0	4	0	1	5	0	59308	docs(spec): drop the unearned tier-justification line from harness-arc
+sb-24d-doc45	old	sb	680b736f	2026-08-28	premise	16	15	0	1	7	5	10	1	135240	feat(harness): unpair mattpocock/skills — the paired pin retires (DE
+sb-24d-doc45	old	sb	ba6a38d9	2026-08-28	-	6	5	0	0	2	1	3	0	24617	fix(harness): hold locally-owned lore outside the clone-replaced serve
+sb-24d-doc45	old	sb	6fffae45	2026-08-28	-	46	44	1	7	7	6	15	1	180779	feat(work): outward becomes a folder of threads — one OUT-###.md per
+sb-24d-doc45	old	sb	f8a60e0a	2026-08-28	-	9	7	0	8	1	1	9	1	107318	fix(triage): gateway climbs before a surface verdict reaches the user
+sb-24d-doc45	old	sb	ce853550	2026-08-28	-	29	27	0	7	0	0	7	0	98492	feat(work): the mover is the container — author-moved items live in 
+sb-24d-doc45	old	sb	7f86cbb6	2026-08-27	-	8	7	0	2	0	1	3	0	68387	fix(commit): slug headings the GitHub way — letters of every script 
+sb-24d-doc45	old	sb	0f203e99	2026-08-27	-	5	4	0	6	0	1	7	0	99518	fix(commit): read the index back before the harness-audit stamp
+sb-24d-doc45	old	sb	b5da3726	2026-08-27	-	6	5	1	4	2	2	8	0	64398	fix(commit): read the index back against the session list before git c
+sb-24d-doc45	old	sb	d73d922c	2026-08-27	-	17	16	6	7	3	0	12	1	108844	fix(commit): history-dimension docs leave the doc-sync gate by declara
+sb-24d-doc45	old	sb	66d26f06	2026-08-27	-	5	4	0	6	2	1	9	1	166534	fix(harness-bootstrap): record `placed` when a frozen file verifies cu
+sb-24d-doc45	old	sb	60ae8310	2026-08-27	-	43	42	0	7	2	1	10	1	160828	fix(commit): mechanize the doc-sync gate — terms / hits / anchors + 
+sb-24d-doc45	old	sb	40fa36a7	2026-08-27	-	7	6	0	2	2	2	5	0	138524	feat(harness): admission test for the doc surface in § Doc Sync
+sb-24d-doc45	old	sb	601e454e	2026-08-27	-	2	1	0	0	0	0	0	0	0	chore(work): resolve GAP-064 — pilot migrated its author-moved cards
+sb-24d-doc45	old	sb	305fb3a7	2026-08-27	-	5	1	0	1	0	1	2	0	99251	docs(work): log DEBT-101 / DEBT-102 / GAP-066 — doc-sync gate cost, 
+sb-24d-doc45	old	sb	7ae49352	2026-08-27	-	9	5	1	5	1	2	8	0	157850	feat(harness-bootstrap): tell a stale hook copy from a consumer fork b
+sb-24d-doc45	old	sb	2b96d107	2026-08-27	-	3	2	0	9	1	1	11	1	214964	feat(harness-bootstrap): register planted and deleted artifacts on the
+sb-24d-doc45	old	sb	551045e8	2026-08-27	-	8	7	1	5	4	5	11	1	212504	feat(harness-bootstrap): offer the paired pin as an approval row on sy
+ctrl-4451477d	head	mr	4451477d	2026-10-30	-	16	16	7	24	4	5	29	1	1356719	feat(lv60,lv81): mirror the run-up band in time and snap LV81's tape b

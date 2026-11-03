@@ -1,0 +1,2 @@
+You are the gateway (main agent) of a Claude Code session whose cwd is this repo. The user has just typed `/super-bootstrap:session-close`. Run the session-close skill below, inline, on this session.
+
