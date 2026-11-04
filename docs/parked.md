@@ -33,3 +33,9 @@ Spec-coupled items may replace **Watching for** / **Fires on** with a `surface-o
 ## Sweep log
 
 *(overwrite in place at each sweep — what was removed and why, no running chronicle)*
+
+### PARK-mw8r — session-close residuals after the leak-catching redesign
+
+**Logged:** 2026-11-04 · **Source:** `DEBT-70b1`, closed on the user's ruling; its thread is in the deleting commit's parent
+**Watching for:** a real close that picks wrong, drops work, or misleads the user. Known residuals: a nested list after "splits into N commits", the register row at 6 of 9, and an empty push check named in the pick's framing or final output. No reading yet on a real remote, a rejected push, the Skill-tool path, park-close output or a declined row.
+**Fires on:** one such close observed, or `docs/test-queue.md`'s device case failing. Tuning prose against these readings alone does not fire it.
