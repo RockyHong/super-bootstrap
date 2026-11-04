@@ -1,5 +1,5 @@
 {
-  "version": "5.8.0",
+  "version": "5.9.0",
   "covered": [
     "CLAUDE.md § Development Workflow",
     "CLAUDE.md § Dispatch",
@@ -47,41 +47,41 @@
     {
       "section": "CLAUDE.md § Development Workflow",
       "reason": "dogfood-ahead: wires the served audit-harness-edits / load-harness-principles skills; the skeleton holds the self-contained form",
-      "anchor": "7a40ffc83f0ea734e2febc79d58301f00367a71c6dc53c1aab8fc3a6bab1c1b3"
+      "anchor": "fe5017211a9508d0c47051a4eacbb08aef1f8daa310e623b76e8468cdae93523"
     },
     {
       "section": "CLAUDE.md § Dispatch",
       "reason": "dogfood-ahead: served dispatch-brief-demands / run-mode pointers and the bench fixture-walk bullet; the skeleton holds the self-contained form",
-      "anchor": "f33bf099d6871bed4b3d5c81113fa793f96eba8366e041cff2b4f729097e6d7e"
+      "anchor": "95361b7acb628af7ba0da48c57e78cfcbe777210b9507f09f6ca81a6859b49f1"
     },
     {
       "section": "CLAUDE.md § Doc Sync",
       "reason": "dogfood-ahead: links the in-repo commit SKILL.md and names plugin manifests / /release",
-      "anchor": "324638040d551674501a01173d03ea7b5fed90c404d9579b34834599cb3f662f"
+      "anchor": "74419951e925c3e3c3a42c585183e490658915464ba9177de1e1f80a3784420c"
     },
     {
       "section": "CLAUDE.md § Rules",
       "reason": "dogfood-ahead: (placed) tags on the two shipped rule bullets",
-      "anchor": "46dac70a81274b306bc261ff99d0a04bb14c776866996dede561e6f91bb27809"
+      "anchor": "744b1cec7148ecaf09c20cb38d7db693364880d081b3e2692087153369db6e41"
     },
     {
       "section": "docs/techstack.md § Staged-Tree Verify",
       "reason": "dogfood-ahead: note links the in-repo merge SKILL.md anchor",
-      "anchor": "70d87b423848bb4a5dc01643d2902c6c5c2086354a17ad6f76a44027917f343c"
+      "anchor": "e4304b438dfbefcdf7931beff447abcf9e23bc5dd9e01fd627562d33b8e26f07"
     },
     {
       "section": "docs/techstack.md § Edit Discipline",
       "reason": "dogfood-ahead: pointer to the served dispatch-run-mode guideline",
-      "anchor": "42e8d600bc2122d9eb4ccb276f9ae733b698091781144346cb930716473327c6"
+      "anchor": "8cc989101faf10be4482f5df7d90bd9ec48658f984d80a916e44511836376a2d"
     },
     {
       "section": "docs/work/README.md",
       "reason": "dogfood-ahead: in-repo SSOT links (harness-architecture, specs)",
-      "anchor": "4a4124a4effc03b6223d5881a116bc3bcde6f66a6990338337a5bfee6c334027"
+      "anchor": "22a2d61f47a40d9689df2c85a50e807757ac20a12df08d05534fd9557f387725"
     }
   ],
   "placed": {
-    ".claude/templates/worktree-settings.local.json": "660433a9abcdcb1748f6e094923cf41fb654133540d4c9b1ba571d74f46d87a3",
+    ".claude/templates/worktree-settings.local.json": "83ab6bbfe183baf6296ddb8292e8fd5d26c1c92bc3dae84309721306d4ece851",
     ".claude/hooks/commit-channel.sh": "4734d05a4c3b6bc339399c0aafff42626611bb4a535a07e33c6495cb3be42c76",
     ".claude/hooks/consult-check-sessionstart.sh": "f37df2036984468c5d36b8087d40a7c3d79f2a0b07c1b9d844b508eebe1a6a66",
     ".claude/hooks/consult-check-check.sh": "80ae1598bc9abe9ba52a6906cc38abc7c9a023a1dfae41dd10c4853becaa1a5a"
