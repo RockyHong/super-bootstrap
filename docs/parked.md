@@ -30,10 +30,6 @@ Spec-coupled items may replace **Watching for** / **Fires on** with a `surface-o
 **Watching for:** a consumer repo's `.claude/.consult-catalog` render (current deriver) approaching the cap — say >1200 chars — or one live consult recall miss through the shipped hook (that instance becomes the fixture).
 **Fires on:** either signal → promote to a GAP card carrying this measurement recipe, in order, each stage gating the next: (1) static link-coverage audit via `doc-links.sh index` — orphan rate + k-hop reachability; high orphan rate kills the direction (link graphs err false-negative, per the reverse-link-lookup row in [`docs/decisions.md`](decisions.md)); (2) live shadow read-out from session-store JSONL — per real prompt, compare the docs the model actually read (Read or shell-read events on catalog paths — the shipped check sentence demands no stated verdict, [`FINDINGS-gap045.md`](../bench/consult-hook/FINDINGS-gap045.md) § No-stated-output revision) and the set a graph walk from prompt-named seeds would return; tests GAP-070's entry-node-asymmetry prior on real traffic at zero fixture cost; (3) hermetic A/B on the [`bench/consult-hook/`](../bench/consult-hook/README.md) harness only if 1–2 pass — baseline is the shipped arm, forcedeval-v2 (not no-wire), a graph-oracle ceiling arm runs first, the fixture's doc surface must overflow the flat catalog's token band (else the saturated-baseline flaw recurs), and probes must hit both error directions (keyed doc in a link-reachable unnamed neighbor, and in an orphan doc).
 
-## Sweep log
-
-*(overwrite in place at each sweep — what was removed and why, no running chronicle)*
-
 ### PARK-mw8r — session-close residuals after the leak-catching redesign
 
 **Logged:** 2026-11-04 · **Source:** `DEBT-70b1`, closed on the user's ruling; its thread is in the deleting commit's parent
@@ -51,3 +47,7 @@ Spec-coupled items may replace **Watching for** / **Fires on** with a `surface-o
 **Logged:** 2026-11-04 · **Source:** `GAP-e81g`, parked on the user's ask to drain the cards
 **Watching for:** a card whose build rounds repair a step that the owner then says the normal flow should rarely reach. Candidate rule: triage asks that question and re-aims at the upstream cause.
 **Fires on:** a second such card. Needs a light RED first, since the question may over-fire on ordinary edge-case bugs.
+
+## Sweep log
+
+*(overwrite in place at each sweep — what was removed and why, no running chronicle)*
