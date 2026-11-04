@@ -23,7 +23,10 @@ bash "$here/make-fixture.sh" "$fx" >/dev/null
 prompt="$(cat "$here/prompt.txt")
 
 ----- SKILL.md (session-close) -----
-$skill"
+$skill
+
+----- <skill-base> of the session-close skill -----
+$repo/plugins/super-bootstrap/skills/session-close"
 ( cd "$fx" && printf '%s\n' "$prompt" | claude -p --model haiku --allowedTools Bash \
     --setting-sources project,local --permission-prompts none ) > "$out" 2>&1 || true
 echo "--- fixture after run: $fx"

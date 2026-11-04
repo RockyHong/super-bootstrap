@@ -26,6 +26,11 @@ echo "== (e) baseline: a yes-or-no question passes"; printf 'Run git push -u ori
 echo "== (e) a no row closes without the move"; good > "$o"; echo '- [no] no, close without running it' >> "$o"; bash "$here/score.sh" ahead "$o" "$a"
 echo "== (f) solo names the state"; printf 'Close state: no remote.\n' > "$o"; bash "$here/score.sh" solo "$o" "$s"
 echo "== (f) solo names the move"; printf -- 'Nothing to git push here.\n' > "$o"; bash "$here/score.sh" solo "$o" "$s"
+echo "== (f2) baseline: a statement fails (f) and passes (f2)"; printf -- '- **Push:** the push check printed nothing.\n' > "$o"; bash "$here/score.sh" solo "$o" "$s"
+echo "== (f2) a push row"; printf -- '- [push] send main out\n' > "$o"; bash "$here/score.sh" solo "$o" "$s"
+echo "== (f2) a question about pushing"; printf -- 'Should this be pushed?\n' > "$o"; bash "$here/score.sh" solo "$o" "$s"
+echo "== (f2) a yes-or-no offer with no question mark"; printf -- 'Yes pushes main, no leaves it.\n' > "$o"; bash "$here/score.sh" solo "$o" "$s"
+echo "== (f2) a command offered"; printf -- 'Next: git push\n' > "$o"; bash "$here/score.sh" solo "$o" "$s"
 echo "== (d) sent before the pick"
 d="$scratch/b-early"; bash "$here/make-fixture.sh" ahead "$d" >/dev/null; git -C "$d" push -q origin main; git -C "$d" branch -q -D topic-old; good > "$o"; bash "$here/score.sh" ahead "$o" "$d"
 

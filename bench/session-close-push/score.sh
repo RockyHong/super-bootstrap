@@ -58,4 +58,12 @@ if [ "$scenario" = solo ]; then
   if [ -n "$hits" ]; then fail "(f) the output names push or remote: $hits"
   else echo "PASS (f) the output names neither word"; fi
 fi
+# (f2) `solo`, the fallback named in the README: no ask and no offer. A line stating the check found nothing passes.
+if [ "$scenario" = solo ]; then
+  row="$(printf '%s\n' "$text" | grep -Ei "$bullet\[push\]" | cut -c1-160)"
+  ask="$(printf '%s\n' "$text" | grep -i 'push' | grep -Ei '\?|\byes\b|\bconfirm\b|would you|shall i|do you want|want me|(^|[^a-z])(run|next:?) `?git push' | cut -c1-160)"
+  if [ -n "$row" ]; then fail "(f2) a push row: $row"
+  elif [ -n "$ask" ]; then fail "(f2) a question or an offer about pushing: $ask"
+  else echo "PASS (f2) no ask and no offer"; fi
+fi
 [ "$fails" = 0 ]

@@ -60,7 +60,6 @@ Commits land in flow, so this step catches leaks. Inspect for uncommitted sessio
   (a)–(c) start as greps over card text and `git log`; deep-read only the cards they hit. Each finished card → a **resolve** move whose row carries its evidence (the signal, quoting the block line or commit) and its outcome — the behavior or limitation the card leaves true: the exact edit drafted into the doc that owns it, or the doc:line that already states it. The outcome edit stays on this row, never split into a doc-update row, so picking the resolve picks its outcome. The move lands that edit and deletes the card file per `docs/work/README.md` § Thread contract (Resolve). A signal that fires with the card's remaining aim unclear → a **triage** move (`/super-bootstrap:triage {ID}`) instead.
 - **Merged local branches** — branches already merged into the main line (main-line name from ambient; exclude main + current). An empty result is the clean case — guard the exclusion greps so a no-match exits 0. Each is a **prune** move via `git branch -d` (merged-guard refuses unmerged — recoverable). A recurring non-empty result is a producer miss — surface it as a **log** move.
 - **A complete feature branch ready to integrate** → an opt-in **merge** move via `/super-bootstrap:merge` — never auto-merged.
-- **Push, by repo shape** — this check runs only where `git remote` prints a name. There, any one of these brings a **push** move: the branch is ahead of its upstream (`git rev-list --count @{u}..HEAD` above 0); `@{u}` does not resolve; this close holds a commit or merge move (the commits it will land count as ahead). The move runs `git push`, or `git push -u origin <branch>` with no upstream, never a force flag.
 - **Inflight findings** surfaced this session but not yet carded → finish what this close can finish. Each takes one move:
   - This repo's, with its edit and everything that edit must keep in sync draftable exactly now, however far from this session's goal → a **fix-now** move: the exact text in the pick.
   - Every other finding → a **log** move via `/super-bootstrap:log`, whose row states why it cannot finish now: its closure outgrows a drafted edit, its own investigation would pull large unrelated reads into this thread, or another repo or party owns it.
@@ -68,6 +67,7 @@ Commits land in flow, so this step catches leaks. Inspect for uncommitted sessio
 - **Ledger** — this session's own file under root `SESSION-STATE/` (other sessions' files stay untouched, read or written):
   - done-close, own file present → a **ledger-clear** move (delete it).
   - park-close → a **park** move (step 4 owns its body): a Progress append per anchoring card + the ledger-write.
+- **Push** — run `bash <skill-base>/assets/push-state.sh move`, with `--landing` when this close holds a commit or merge move, as its own call; `<skill-base>` is the `Base directory for this skill:` path surfaced at invocation. A printed line → a **push** move running that line. Nothing printed → this step is finished and leaves no line. The script is the whole check: no separate lookup runs.
 
 ### 3b. Detect — the commit door's judgment
 
@@ -99,12 +99,21 @@ If step 1 found an undelivered goal the user expects finished, surface it above 
 
 This is the terminal output — the commit door's handoff line does not print under session-close.
 
-- The shape taken (done-close / park-close), the moves executed (and any declined), the count of scope docs the door read and confirmed unchanged, with the final tree + close state. When `git remote` prints a name, the close state includes the branch's commits ahead of its upstream (`git rev-list --count @{u}..HEAD`), or "no upstream" when `@{u}` does not resolve — a plain fact: the pick already asked.
-- Done: close confirmation, or the open thread blocking a clean close. Park: the Progress block(s) and carry as written, echoed for a final eyeball, and the resume line — `Next session: /super-bootstrap:session-continue`.
+After the moves, run `bash <skill-base>/assets/push-state.sh state` as its own call.
+
+The final output holds these fields:
+
+- The shape taken (done-close / park-close).
+- The moves executed, and any declined.
+- The count of scope docs the door read and confirmed unchanged.
+- The final tree state.
+- The line `push-state.sh state` printed, if any.
+- An open thread blocking a clean close, if any.
+- On a park-close: the Progress block(s) and carry as written, for a final eyeball, and the resume line — `Next session: /super-bootstrap:session-continue`.
 
 ## Rules
 
-- **Drive, don't narrate.** Actionable leftovers route to the confirm-pick and execute — never a status report handing a known-actionable list back; the commits-ahead count is the one fact reported after the pick (§ Output), for a declined push or no push move. A card this close judges done, superseded, or stale is a resolve or triage move in the pick, never only a line of prose. A surfaced item carries the action this close will take or a genuine fork with its options; an item with neither gets no line.
+- **Drive, don't narrate.** Actionable leftovers route to the confirm-pick and execute — never a status report handing a known-actionable list back; the line `push-state.sh state` prints is the one push fact reported after the pick (§ Output). A card this close judges done, superseded, or stale is a resolve or triage move in the pick, never only a line of prose. A surfaced item carries the action this close will take or a genuine fork with its options; an item with neither gets no line.
 - **One pick, every gate, writes after it.** Commit, merge, prune, push, and every file write — Progress, carry, fix-now, door-judgment rows — run only when picked, after the pick. Step 0's wait-or-stop choice is the one prompt before it. Every judgment settles inside the pick; only a failure the run hits surfaces after it.
 - **Doors, not mechanisms.** Commit → `/super-bootstrap:commit`; log → `/super-bootstrap:log`; merge → `/super-bootstrap:merge`. Never a raw `git commit`.
 - **Nothing running at close.** No job this session started is still running when the close commits (step 0).

@@ -87,6 +87,18 @@ partition. (w1)'s no-mix limb on `full` gates, named before the second round's r
 Limit of this harness: the door's text is embedded ahead of the pick, so the walk proves the door's post-pick body
 and not the Skill-tool loading order. The device case in [`docs/test-queue.md`](../../docs/test-queue.md) owns that order.
 
+Script round: the push check moves into [`push-state.sh`](../../plugins/super-bootstrap/skills/session-close/assets/push-state.sh),
+and `run.sh` and `prompt-tail.txt` name the close skill's `<skill-base>`, the working-tree path. Scorers do not change. Pass
+condition, named before any run, three arm walks per scenario, one round, no control: everything the second wording round
+met stays met: (p1), (p2) `BUG-rt51`, (p3) `docs/console.md`, (p3) `README.md` on `full`, (p4), (p6), (p8) on `leak` and
+`single`, (p9), (w1), (w2), (w4). Reported against the last reading and open if unmet: (p3) `README.md` on `fixnow`, last 1 of
+3; (p7), last 2, 2, 1 of 3; (p8) on `large`, last 1 of 3; (p11), last 2 of 3; (w3), last 14 of 15; the register row of
+`session-close-judgment`'s `run.sh arm`, last 2 of 3.
+
+Field-list round: `session-close` § Output now holds a fixed list of fields. Same pass condition and same scenarios as the
+script round, named before any run. A miss on a condition the second round met is reported at the end of the run with its
+verbatim lines, with no retuning.
+
 ## Findings
 
 Three walks per scenario, sonnet. A row lists what failed; every assertion it does not list passed. Scorer changes after
@@ -198,3 +210,49 @@ remote, on `single` 3. (w3) misses on `resolve` 3: "no readback over 'docs/work/
 
 Regression, `session-close-judgment`'s `run.sh arm`, three runs: (a)–(d) 3 of 3, stale row 3 of 3, register row 2 of 3. The
 register row is below the 3 of 3 named here.
+
+Script round: not run. [`session-close-push`](../session-close-push/README.md#findings) (f) read 0 of 3 on `solo`, which
+stops the round before this bench, so the second round's table above stays the last reading.
+
+Field-list round, arm, one wording, three walks per scenario, sonnet. `large` stops at the pick. Last reading = the second round.
+
+| Assertion | Last | This | Verdict |
+|---|---|---|---|
+| (p1) | 15 of 15 | 14 of 15 | **regressed** |
+| (p2) `BUG-rt51` row | 6 of 6 | 6 of 6 | met |
+| (p3) `docs/console.md` | 6 of 6 | 6 of 6 | met |
+| (p3) `README.md`, `full` / `fixnow` | 3 / 1 of 3 | 2 / 3 of 3 | met, at the 2 of 3 condition |
+| (p4), (p6) | 6 of 6, 18 of 18 | 6 of 6, 18 of 18 | met |
+| (p7) `full`, `leak`, `large` | 2, 2, 1 of 3 | 3, 3, 3 of 3 | met |
+| (p8) `leak`, `single`, `large` | 3, 3, 1 of 3 | 2, 3, 0 of 3 | **regressed on `leak`**, unmet on `large` |
+| (p9) | 18 of 18 | 17 of 18 | **regressed** |
+| (p11) | 2 of 3 | 3 of 3 | met |
+| (w1) no-mix on `full` | 3 of 3 | 3 of 3 | met; commits 3, 4, 3 |
+| (w1) rest, (w2) | 15 of 15 each | 15 of 15 each | met |
+| (w3) | 14 of 15 | 15 of 15 | met |
+| (w4) | 15 of 15 | 14 of 15 | **regressed** |
+
+The misses, verbatim:
+
+- (p1), (p8) and (w4) on `leak` 1 are one miss. The run reads a merged branch as unmerged, so it finds a lone move and asks in
+  prose: "`topic-old` is not merged into main, so I'm not pruning it." `FAIL (p1) no [commit] row. Rows:`,
+  `FAIL (p8) no commit row`, `FAIL (w4) topic-old was not pruned`.
+- (p9) on `large` 2: "Reply yes to run the commit move. Reply no to close without it, which leaves `docs/operations.md`,
+  `docs/shutdown.md` and `tuning/` uncommitted." `FAIL (p9) a close-without option is offered`. This is a yes-or-no ask, not an option
+  row. `session-close-push`'s (e) exempts that form and this scorer does not. The scorer stood unchanged.
+- (p8) on `large`: `FAIL (p8) 1 commit rows, 2 commit subjects, 0 numbered parts`, on two runs; the third reads 2 numbered parts.
+  The row states the split, then nests the subjects.
+
+Regression, `session-close-judgment`'s `run.sh arm`, three runs, with `run.sh` and `prompt.txt` now naming the close skill's
+`<skill-base>`: (a) 3, (b) 2, (c) 3, (d) 3 of 3, stale row 1 of 3, register row 2 of 3. Its condition fails, and the stale row is below
+the 2 of 3 named here.
+
+- (b) on run 2, a row that does state ownership in words the scorer does not list: "Why it is not fixed now: the firmware team runs
+  that repository and it is not checked out here." The scorer stood unchanged.
+- Stale row on runs 2 and 3: `MISS (e) no [doc-update] row for the stale line in docs/operations.md. Rows: commit fix-now register log log`.
+  The last two readings were 2 and 3 of 3. Three runs cannot separate this from variance or from the changed text.
+
+`bench/spike-route`, arm, three runs: (s1) and (s2) 3 of 3, (r1) one commit on `spike/jump-arc-feel`, 3 of 3. No change.
+
+This round's picks still narrate on no-remote fixtures, which nothing here gates: "No push line printed: no remote is configured and
+nothing is ahead of upstream."

@@ -42,6 +42,9 @@ $(cat "$root/$commit_rel")
 ----- agents/doc-sync-scan.md -----
 $(cat "$root/$agent_rel")
 
+----- <skill-base> of the session-close skill -----
+$root/plugins/super-bootstrap/skills/session-close
+
 ----- <skill-base> of the commit skill -----
 $root/plugins/super-bootstrap/skills/commit"
 flags="--model sonnet --allowedTools Bash --setting-sources project,local --permission-prompts none"

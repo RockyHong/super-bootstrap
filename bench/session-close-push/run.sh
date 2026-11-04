@@ -43,13 +43,19 @@ $(cat "$root/$commit_rel")
 ----- agents/doc-sync-scan.md -----
 $(cat "$root/$agent_rel")
 
+----- <skill-base> of the session-close skill -----
+$root/plugins/super-bootstrap/skills/session-close
+
 ----- <skill-base> of the commit skill -----
 $root/plugins/super-bootstrap/skills/commit"
 else
   prompt="$(cat "$here/prompt.txt")
 
 ----- SKILL.md (session-close) -----
-$(cat "$root/$close_rel")"
+$(cat "$root/$close_rel")
+
+----- <skill-base> of the session-close skill -----
+$root/plugins/super-bootstrap/skills/session-close"
 fi
 sys="You are a coding agent. Follow the user's prompt."
 ( cd "$fx" && printf '%s\n' "$prompt" | claude -p --model sonnet --allowedTools Bash --setting-sources "" \

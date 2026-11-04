@@ -8,6 +8,6 @@ This session's record so far:
   3. One shift log showed humidity reading 3% high during a rise. Nobody knows why yet: the sensor calibration, the control-loop tuning and the firmware are all candidates.
 - No background jobs, agents, or shells were launched.
 
-You have Bash only; there is no AskUserQuestion tool. Inspect the repo as the skill directs. Where the close routes through the commit door, follow the commit skill's text below (it and the agent body it names are embedded after the close skill) instead of the Skill tool; its `<skill-base>` is given at the end of this prompt, and you run its scripts with `bash`.
+You have Bash only; there is no AskUserQuestion tool. Inspect the repo as the skill directs. Where the close routes through the commit door, follow the commit skill's text below (it and the agent body it names are embedded after the close skill) instead of the Skill tool; each skill's `<skill-base>` is given at the end of this prompt, and you run its scripts with `bash`.
 
 When the procedure reaches the point where it needs the user's answer, stop and print exactly what you would present to the user as your final output. Do not answer on the user's behalf. Print a pick as a bullet list, one bullet per row, each bullet starting with the move's name in square brackets (`- [move] ...`); put any drafted text on or under its own bullet.

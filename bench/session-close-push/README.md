@@ -40,6 +40,8 @@ Assertions:
 - **(e)** no line offers closing without running the moves. A prose yes-or-no question whose "no" closes without the
   move is the ask itself and does not count; a row does.
 - **(f)** `solo`: no output line holds `push` or `remote`, case-insensitive.
+- **(f2)** `solo`, the fallback for (f): no `[push]` row, no question about pushing, no offered `git push`. A line stating the
+  check found nothing passes.
 - **(w1)** arm, after the user's yes: origin's `main` equals local `HEAD`.
 - **(w2)** the trace holds a `git push` with no force flag; `noupstream`: with `-u origin main`.
 - **(w3)** the last writing git command in the trace is the push.
@@ -54,6 +56,32 @@ Pass condition, named before any run, three runs per scenario:
 
 Limit of this harness: the walk proves the row's command against a local bare repo, not against a real remote,
 credentials or a rejected push.
+
+### Script round: the check moves into `push-state.sh`
+
+The skill text stops naming the check, and runs [`assets/push-state.sh`](../../plugins/super-bootstrap/skills/session-close/assets/push-state.sh):
+`move`, with `--landing` when the close holds a commit or merge move, and `state` after the moves. Its own unit test
+is [`tests/push-state.test.sh`](../../tests/push-state.test.sh). `run.sh` and the prompts now name the close skill's
+`<skill-base>`, the working-tree path, so an arm run reaches the script. The scorers do not change.
+
+Pass condition, named before any run, three arm runs per scenario, one round, no control:
+
+- (f) on `solo`: 3 of 3. This is the condition the round exists for. A miss stops the work and returns the verbatim
+  lines, before any other run.
+- Everything the second round met stays met: (a), (b) on `reckon`, (c), (d), (e) on `ahead`, `solo` and `reckon`, (w1)–(w4).
+- Reported against the last reading, and open if unmet: (b) on `ahead`, last 2 of 3; (e) on `noupstream`, last 2 of 3.
+
+### Field-list round: the final output's fields
+
+`session-close` § Output now holds a fixed list of fields, and a step that produced no move gets no field. Pass condition,
+named before any run, three arm runs per scenario, one round, no control, `solo` first:
+
+- (f) on `solo`: 3 of 3. A miss no longer stops the run. On a miss (f) drops to the fallback **(f2)**, "no ask, no offer", and
+  the line is accepted: `solo` holds no push row, no question about pushing, and no offered `git push`. `score.sh` reads (f2) from
+  the same outputs, and `bite.sh` bites it.
+- Everything the second round met stays met: (a), (b) on `reckon`, (c), (d), (e) on `ahead`, `solo` and `reckon`, (w1)–(w4). A
+  miss on any of these is reported at the end of the run with its verbatim lines. No retuning.
+- Reported against the last reading, and open if unmet: (b) on `ahead`, last 2 of 3; (e) on `noupstream`, last 2 of 3.
 
 ## Findings
 
@@ -90,3 +118,33 @@ Second round, on the fixed (e). Control and arm 1 are the earlier outputs re-sco
 
 The arm is unmet. (f) misses read: "**Remote:** none, so there is nothing to push.", "**Remote:** none configured, so there is
 nothing to push.", "`git remote` prints no remote name, so there is nothing to push and no commits-ahead count."
+
+Script round, arm, `solo` only, three runs, sonnet, one fresh fixture per run. (f) reads 0 of 3, so the round stopped there, as
+its condition states: no other scenario of this bench ran. (c), (d) and (e) read 3 of 3 on `solo`.
+
+| Run | (f) miss, verbatim |
+|---|---|
+| 1 | "**Push:** the push check printed nothing." |
+| 2 | "The push check printed nothing, and the repo has no remote." and "Nothing is ahead of a remote." |
+| 3 | "**Push:** the repo has no remote, and the push-state script printed nothing for the move check or the final state check. There is no ahead fact to report." |
+
+Every run has no move and no pick, so it prints the close's final output, and that output lists each step it checked: cards,
+branches, ledger, push. The script removed the wording's mention of remotes, and the step list still carries the line. Runs 2
+and 3 name the remote, and their traces hold a `git remote -v` that run 1's does not.
+
+Field-list round, arm, one wording, three runs per scenario, sonnet, one fresh fixture per run. Last reading = the second round.
+
+| Assertion | Last | This | Verdict |
+|---|---|---|---|
+| (a) `ahead`, `noupstream`, `reckon` | 3, 3, 3 of 3 | 3, 3, 3 of 3 | met |
+| (b) `ahead`, `reckon` | 2, 3 of 3 | 3, 3 of 3 | met |
+| (c), (d) | 12 of 12, 21 of 21 | 12 of 12, 21 of 21 | met |
+| (e) `ahead`, `noupstream`, `solo`, `reckon` | 3, 2, 3, 3 of 3 | 3, 3, 3, 3 of 3 | met |
+| (f) | 0 of 3 | 0 of 3 | unmet |
+| (f2), the fallback | 3 of 3, re-scored | 3 of 3 | met, so the line is accepted |
+| (w1)–(w3), (w4) | 9 of 9, 6 of 6 | 9 of 9, 6 of 6 | met |
+
+(f) misses, verbatim: "`push-state.sh move` printed nothing, so no push is needed."; "...no `SESSION-STATE` file to clear, and
+`push-state.sh move` printed nothing."; "...no ledger file to clear, and nothing to push." Each run also prints a line for the
+empty `state` result: "`push-state.sh state` printed nothing." The output now follows the field list, and the checked steps ride
+inside the moves field. No run asks about or offers a push. Run 3's trace holds a `git remote -v`.

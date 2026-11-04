@@ -161,3 +161,7 @@ Regressions on the final working tree, three runs each:
 The precision miss runs the door's no-argument flow, whose § Scan step 8 text is unchanged since the earlier 3 of 3
 precision reading. Three runs cannot separate it from the judge's variance. The fixture's added lines do use "fault code"
 twice.
+
+### Field-list round
+
+`run.sh` and `prompt.txt` now also name the close skill's `<skill-base>`. Arm, sonnet: stale row 1 of 3, then 4 of 6 on six extra runs; the same six extra runs on the previous commit's text read 3 of 6, so this is no regression. Register row 2 of 3 and 4 of 6, against 6 of 6 on the previous commit's text, so a small drop is not excluded.
