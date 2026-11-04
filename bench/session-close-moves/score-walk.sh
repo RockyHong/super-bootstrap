@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # score-walk.sh — assertions over the fixture after turn 2 ran the pick, plus git's trace of the run.
-# Usage: bash bench/session-close-moves/score-walk.sh <full|resolve|fixnow> <fixture-dir>
+# Usage: bash bench/session-close-moves/score-walk.sh <full|resolve|fixnow|leak|single> <fixture-dir>
 # One PASS or FAIL per assertion. Exits 1 on any FAIL.
 set -u
 scenario="${1:?usage: score-walk.sh <scenario> <fixture-dir>}"
@@ -13,19 +13,20 @@ commits="$(g rev-list --reverse "$base..HEAD")"
 count="$(printf '%s' "$commits" | grep -c . || true)"
 files_of() { g show --name-only --format= "$1" | tr -d '\r' | sort | tr '\n' ' '; }
 
-# (w1) the pick landed commits; on `full`, this session's work apart from the seal fix and the outcome.
-w1_before="$fails"
-[ "$count" -ge 1 ] || fail "(w1) no commit landed"
+# (w1) the pick landed a commit. On `full`, unrelated changes do not share one; the count is a reading.
+if [ "$count" -ge 1 ]; then echo "PASS (w1) $count commit(s) landed"; else fail "(w1) no commit landed"; fi
 if [ "$scenario" = full ]; then
-  [ "$count" -ge 2 ] || fail "(w1) $count commit holds the session's work and the seal fix"
+  mixed=no
   for c in $commits; do
     set_c="$(files_of "$c")"
     case "$set_c" in *shutdown.md*)
-      case "$set_c" in *maintenance.md*|*recovery.md*) fail "(w1) one commit mixes unrelated changes: $set_c" ;; esac ;;
+      case "$set_c" in *maintenance.md*|*recovery.md*) mixed=yes ;; esac ;;
     esac
   done
+  if [ "$mixed" = yes ]; then fail "(w1) docs/shutdown.md shares a commit with the seal fix or the outcome"
+  else echo "PASS (w1) unrelated changes sit in separate commits"; fi
+  echo "READING (w1) $count commit(s)"
 fi
-[ "$w1_before" != "$fails" ] || echo "PASS (w1) $count commit(s) landed"
 
 # (w2) the other writer's state stayed out and stayed as it was; the tree holds nothing else.
 w2_before="$fails"
@@ -77,16 +78,20 @@ done
 at() { g show "HEAD:$1" 2>/dev/null | tr -d '\r'; }
 gone() { if g cat-file -e "HEAD:$1" 2>/dev/null; then fail "(w4) $1 still exists at HEAD"; fi; }
 w4_before="$fails"
-if [ "$scenario" != fixnow ]; then
-  gone docs/work/BUG-rt51.md; gone docs/work/BUG-sd22.md
-  { at docs/recovery.md; at docs/console.md; } | grep -q 'E7' || fail "(w4) no doc at HEAD states the E7 outcome"
-fi
 g cat-file -e HEAD:docs/work/GAP-ff03.md 2>/dev/null || fail "(w4) GAP-ff03 was deleted"
-if [ "$scenario" != resolve ]; then
-  at docs/maintenance.md | grep -Eq '14[ -]days?' || fail "(w4) docs/maintenance.md at HEAD lacks the 14-day interval"
-fi
-if [ "$scenario" = full ]; then
-  g cat-file -e HEAD:docs/shutdown.md 2>/dev/null || fail "(w4) docs/shutdown.md did not land"
-fi
+case "$scenario" in
+  resolve|full)
+    gone docs/work/BUG-rt51.md; gone docs/work/BUG-sd22.md
+    { at docs/recovery.md; at docs/console.md; } | grep -q 'E7' || fail "(w4) no doc at HEAD states the E7 outcome" ;;
+esac
+case "$scenario" in
+  fixnow|full)
+    at docs/maintenance.md | grep -Eq '14[ -]days?' || fail "(w4) docs/maintenance.md at HEAD lacks the 14-day interval" ;;
+esac
+if [ "$scenario" = full ] && ! g cat-file -e HEAD:docs/shutdown.md 2>/dev/null; then fail "(w4) docs/shutdown.md did not land"; fi
+case "$scenario" in
+  leak|single) g cat-file -e HEAD:shift-log.txt 2>/dev/null || fail "(w4) shift-log.txt did not land" ;;
+esac
+if [ "$scenario" = leak ] && g rev-parse -q --verify refs/heads/topic-old >/dev/null; then fail "(w4) topic-old was not pruned"; fi
 [ "$w4_before" != "$fails" ] || echo "PASS (w4) the picked moves landed at HEAD"
 [ "$fails" = 0 ]

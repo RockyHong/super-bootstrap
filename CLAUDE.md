@@ -8,6 +8,8 @@ Work enters by picking up a card — a `docs/work/` card file (`/super-bootstrap
 
 `ground → route → implement → verify → doc-sync → commit`. Test-first and verify are structurally empty — no ceremony — on a diff with no test/runtime surface (docs-only). Verify on a harness-file change (CLAUDE.md, rules, skills, agents) = `audit-harness-edits`. Commit = `/super-bootstrap:commit`.
 
+**Commit in flow** — commit at each verified unit; an approval a commit needs is asked there, not deferred to the close.
+
 **Ambient laws inside implement:**
 
 - **Test-first** — where a test surface exists, a failing test precedes the implementation.
@@ -28,6 +30,7 @@ Recognize the card's shape, then take that row's discipline; a repo that install
 | 6 | Docs / prose | envelope only |
 | 7 | Harness edit | `load-harness-principles` pre, `audit-harness-edits` post |
 | 8 | Triage / investigation-only | card → `/super-bootstrap:triage {ID}` (verdict phase appending a Verdict block to the card); ad-hoc question → inline reads + dispatched probes |
+| 9 | Spike / iterative code (variants tried by running them) | branch out before the first edit, commit in flow, merge via `/super-bootstrap:merge` when the user settles it |
 
 ### Framing + Route — state, don't gate
 

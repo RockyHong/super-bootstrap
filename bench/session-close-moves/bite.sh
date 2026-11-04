@@ -18,9 +18,7 @@ good() { cat <<'ROWS'
 - [resolve] BUG-rt51: Progress reports every Plan step done. Delete the card. Outcome edit, docs/recovery.md:
   After 5 failed retries the controller drops the report and the panel shows fault E7.
 - [resolve] BUG-sd22: Progress reports every Plan step done. Delete the card. Outcome already stated at docs/operations.md:12.
-- [commit] docs/operations.md docs/shutdown.md
-- [commit] docs/maintenance.md README.md
-- [commit] docs/recovery.md docs/console.md docs/work/BUG-rt51.md docs/work/BUG-sd22.md
+- [commit] Left uncommitted: docs/operations.md docs/shutdown.md. Also lands docs/maintenance.md README.md docs/recovery.md docs/console.md docs/work/BUG-rt51.md docs/work/BUG-sd22.md
 ROWS
 }
 pick() { good > "$scratch/o.txt"; }
@@ -37,11 +35,32 @@ echo "== (p3) stale citers carry no row: a MISS, gated across a set"
 good | grep -v '^- \[doc-update\]' > "$scratch/o.txt"; score
 echo "== (p4) the seal finding routed to log"
 good | sed -e 's/^- \[fix-now\]/- [log]/' > "$scratch/o.txt"; score
-echo "== (p5) one commit row holds all of it"
-good | grep -v '^- \[commit\]' > "$scratch/o.txt"
-echo '- [commit] docs/operations.md docs/shutdown.md docs/maintenance.md README.md docs/recovery.md docs/console.md' >> "$scratch/o.txt"; score
 echo "== (p6) intent-to-add entry in the shared index"
 pick; git -C "$pfx" add -N docs/shutdown.md; score
+
+lx="$scratch/bite-leak"; bash "$here/make-fixture.sh" leak "$lx" >/dev/null
+sx="$scratch/bite-single"; bash "$here/make-fixture.sh" single "$sx" >/dev/null
+gx="$scratch/bite-large"; bash "$here/make-fixture.sh" large "$gx" >/dev/null
+sc() { bash "$here/score-pick.sh" "$1" "$scratch/o.txt" "$2"; }
+leakgood() { printf -- '- [commit] Left uncommitted: shift-log.txt\n- [prune] git branch -d topic-old\n'; }
+echo "== leak baseline (all pass)"; leakgood > "$scratch/o.txt"; sc leak "$lx"
+echo "== (p7) leak row does not name the leak as uncommitted"
+printf -- '- [commit] shift-log.txt\n- [prune] git branch -d topic-old\n' > "$scratch/o.txt"; sc leak "$lx"
+echo "== (p8) two commit rows"
+printf -- '- [commit] Left uncommitted: shift-log.txt\n- [commit] docs/x.md\n- [prune] y\n' > "$scratch/o.txt"; sc leak "$lx"
+echo "== (p8) commits nested under one row"
+printf -- '- [commit] Left uncommitted: shift-log.txt\n  - commit 1: docs: a\n  - commit 2: chore: b\n- [prune] y\n' > "$scratch/o.txt"; sc leak "$lx"
+echo "== (p9) a close-without option"
+leakgood > "$scratch/o.txt"; echo '- [close] close without running it' >> "$scratch/o.txt"; sc leak "$lx"
+echo "== single baseline (all pass)"; echo 'One move is open: commit shift-log.txt, left uncommitted. Run it?' > "$scratch/o.txt"; sc single "$sx"
+echo "== (p11) a lone move with a second choice"
+printf -- '- [commit] shift-log.txt\n- [other] x\n' > "$scratch/o.txt"; sc single "$sx"
+echo "== (p11) no question"; echo 'Done: shift-log.txt is committed.' > "$scratch/o.txt"; sc single "$sx"
+echo "== (p11) baseline: yes and no stated with no question mark"; echo 'Commit shift-log.txt. Yes commits it. No leaves it.' > "$scratch/o.txt"; sc single "$sx"
+echo "== (p11) baseline: confirm or decline"; echo 'Confirm to commit shift-log.txt, or decline it.' > "$scratch/o.txt"; sc single "$sx"
+echo "== (p7) baseline: untracked names the leak"; printf -- '- [commit] shift-log.txt, which this session left untracked\n- [prune] y\n' > "$scratch/o.txt"; sc leak "$lx"
+echo "== (p7) untracked names another path only"; printf -- '- [commit] shift-log.txt\n- [prune] y\nAlso untracked: other.txt\n' > "$scratch/o.txt"; sc leak "$lx"
+echo "== large baseline (all pass)"; echo '- [commit] Left uncommitted: docs/shutdown.md docs/operations.md tuning/. Splits into 2 commits.' > "$scratch/o.txt"; sc large "$gx"
 
 # A hand-driven walk of `full`: land the picked edits, then commit by the shape each violation names.
 land() {
@@ -72,8 +91,11 @@ walk() { bash "$here/score-walk.sh" full "$1"; unset GIT_TRACE; }
 echo "== walk baseline (all pass)"
 w="$scratch/bite-walk"; land "$w"
 commit_part "$w" yes $part1; commit_part "$w" yes $part2; commit_part "$w" yes $part3; walk "$w"
-echo "== (w1) one commit holds all of it"
+echo "== (w1) no commit landed"
 w="$scratch/bite-w1"; land "$w"
+walk "$w"
+echo "== (w1) one commit holds unrelated changes"
+w="$scratch/bite-w1b"; land "$w"
 commit_part "$w" yes $part1 $part2 $part3; walk "$w"
 echo "== (w2) the session sweeps the other writer's paths in, and the tree keeps a stray file"
 w="$scratch/bite-w2"; land "$w"

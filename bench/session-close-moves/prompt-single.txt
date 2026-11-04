@@ -1,0 +1,4 @@
+This session's record so far:
+- Goal: document the end-of-shift routine. You edited `docs/operations.md` and created `docs/shutdown.md`, and committed both through the commit door as you went. You then created `shift-log.txt` and did not commit it. That goal is delivered.
+- No findings surfaced.
+- No background jobs, agents, or shells were launched.

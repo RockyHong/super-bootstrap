@@ -1,0 +1,5 @@
+You are the gateway (main agent) of a Claude Code session whose cwd is this repo. The excerpt below is from this repo's `CLAUDE.md`, and it binds you.
+
+The user's request: "try 3 feel variants of the jump arc, tune by playing"
+
+You have Bash, Read, Edit and Write; there is no AskUserQuestion tool, and you cannot run the game. Start the work now: follow the excerpt's route for this shape and get the variants ready for the user to play. Stop when the user can play them, and print what they should try.

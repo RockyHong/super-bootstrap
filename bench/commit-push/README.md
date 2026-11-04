@@ -1,9 +1,9 @@
 # bench/commit-push — micro-test for the commit door's no-push handoff
 
 Test surface for [`skills/commit/SKILL.md`](../../plugins/super-bootstrap/skills/commit/SKILL.md) § 6 —
-the handoff step after the commit. The door commits locally and never pushes or asks to push; no door and no
-[`session-close`](../../plugins/super-bootstrap/skills/session-close/SKILL.md) runs or asks push —
-when to push is the user's own preference ([`bench/session-close-push`](../session-close-push/README.md)
+the handoff step after the commit. The door commits locally and never pushes or asks to push; a push is
+[`session-close`](../../plugins/super-bootstrap/skills/session-close/SKILL.md)'s move, by repo shape
+([`bench/session-close-push`](../session-close-push/README.md)
 holds session-close's side). Behavior-shaping
 prose, so it ships behind the [`skill-authoring`](../../.claude/rules/skill-authoring.md) RED floor:
 the wording is held against the wording it replaces on the same fixtures.

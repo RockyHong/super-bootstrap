@@ -1,0 +1,7 @@
+You are the gateway (main agent) of a Claude Code session whose cwd is this repo. The user has just typed `/super-bootstrap:session-close`. Run the session-close skill below, inline, on this session.
+
+This session's record so far:
+- Goal: update `a.md` to v2. You edited `a.md` and did not commit it; that goal is delivered.
+- No background jobs, agents, or shells were launched.
+
+You have Bash only; there is no AskUserQuestion tool. Inspect the repo as the skill directs. Where the close routes through the commit door, follow the commit skill's text below (it and the agent body it names are embedded after the close skill) instead of the Skill tool; its `<skill-base>` is given at the end of this prompt, and you run its scripts with `bash`. When the procedure reaches the point where it needs the user's answer, stop and print exactly what you would present to the user as your final output. Do not answer on the user's behalf. Print a pick of several rows as a bullet list, one bullet per row, each bullet starting with the move's name in square brackets (`- [move] ...`). If the procedure needs no answer from the user, finish the close and print its output.

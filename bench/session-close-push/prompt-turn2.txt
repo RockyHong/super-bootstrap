@@ -1,0 +1,1 @@
+The user's answer: yes, every row as recommended. Run the moves, then print the close's final output.
