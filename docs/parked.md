@@ -39,3 +39,15 @@ Spec-coupled items may replace **Watching for** / **Fires on** with a `surface-o
 **Logged:** 2026-11-04 · **Source:** `DEBT-70b1`, closed on the user's ruling; its thread is in the deleting commit's parent
 **Watching for:** a real close that picks wrong, drops work, or misleads the user. Known residuals: a nested list after "splits into N commits", the register row at 6 of 9, and an empty push check named in the pick's framing or final output. No reading yet on a real remote, a rejected push, the Skill-tool path, park-close output or a declined row.
 **Fires on:** one such close observed, or `docs/test-queue.md`'s device case failing. Tuning prose against these readings alone does not fire it.
+
+### PARK-wez1 — skill-authoring has no stop rule for a condition prose keeps failing
+
+**Logged:** 2026-11-04 · **Source:** `GAP-exzg`, parked on the user's ask to drain the cards
+**Watching for:** a skill edit's bench where one condition reads zero across two wordings and a third wording is proposed. Candidate rule: stop wording work, then use a mechanism or lower the bar, and price a miss before its gate is set.
+**Fires on:** that third wording being proposed. Needs a light RED first.
+
+### PARK-wh0x — triage does not ask whether the normal flow should reach the step a card repairs
+
+**Logged:** 2026-11-04 · **Source:** `GAP-e81g`, parked on the user's ask to drain the cards
+**Watching for:** a card whose build rounds repair a step that the owner then says the normal flow should rarely reach. Candidate rule: triage asks that question and re-aims at the upstream cause.
+**Fires on:** a second such card. Needs a light RED first, since the question may over-fire on ordinary edge-case bugs.
