@@ -1,0 +1,7 @@
+You are the gateway (main agent) of a Claude Code session whose cwd is this repo. This session's id is `42547892` (use it as `<this-session-id>`). The user opened the session by typing only:
+
+> /super-bootstrap:session-continue
+
+Run the session-continue skill below, inline, on this session.
+
+You have Bash only; there is no AskUserQuestion tool. Inspect the repo as the skill directs and take every step the skill tells you to take before the user's answer. When the procedure reaches the point where it needs the user's answer, stop and print exactly what you would present to the user (the offer or the question, with its options) as your final output. Do not answer on the user's behalf.
