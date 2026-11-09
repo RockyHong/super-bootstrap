@@ -88,7 +88,7 @@ State docs (`overview.md`, `techstack.md`, specs) hold what is **true now** — 
 - Committed change history (what changed / when / why-of-a-change) → **git log + commit messages**. Don't hand-chronicle it into a doc.
 - A direction evaluated and **closed** that left no diff (road-not-taken, wall foreseen) and would otherwise be re-proposed → [`docs/decisions.md`](docs/decisions.md).
 
-**Card resolution:** if work resolves a `BUG` / `DEBT` / `GAP` card, delete `docs/work/{ID}.md` — including a shipped feature-`GAP`, which now belongs to the product narrative (Problem / Current State / Module Index). Git history is the archive.
+**Card resolution:** if work resolves a `BUG` / `DEBT` / `GAP` card, delete `docs/work/{ID}.md` — including a shipped feature-`GAP`, which now belongs to the product narrative (Problem / Current State / Module Index); a behavior or limitation the card leaves true and no doc yet states first lands in its owning doc ([`.claude/rules/dimension-discipline.md`](.claude/rules/dimension-discipline.md) item 5). Git history is the archive.
 
 ## Coding Principles
 
@@ -171,7 +171,7 @@ Markdown-authored Claude Code plugin + self-hosted marketplace — no language r
 - [`docs/parked.md`](docs/parked.md) — deferred items with named triggers
 - [`docs/test-queue.md`](docs/test-queue.md) — manual-verification queue
 - [`docs/outward/`](docs/outward/README.md) — outward threads: next move + waiting-on party, one file per item
-- [`docs/terminology.md`](docs/terminology.md) — the project's term home: one canonical word per concept, `_Avoid_` aliases; a doc's first substantive use of a term links `docs/terminology.md`.
+- [`docs/terminology.md`](docs/terminology.md) — the project's term home: one canonical word per concept, `_Avoid_` aliases; a doc's first substantive use of a term links this file.
 - [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)
 
