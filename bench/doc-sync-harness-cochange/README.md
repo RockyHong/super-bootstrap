@@ -33,23 +33,29 @@ repo. The copy under test is this repo's dev copy. The scope is 3 docs, so the d
 Assertions:
 
 - **(a0)** the fixture is as built: only ` M docs/criteria.md`.
-- **(a1)** the `ep-prep` item names a landing this round and an audit or verify pass.
-- **(a2)** the `ep-prep` item carries no deferral: no route to owner, flag-only, separate edit, follow-up, log a card.
+- **(a1)** the `ep-prep` item names a landing this round and an audit or verify pass, read on the run's own route (below).
+- **(a2)** the `ep-prep` item carries no deferral on the run's own route: no route to owner, flag-only, separate edit, follow-up, log a card.
 - **(a3)** `docs/workflow.md` is in the same message, and the message holds at most one question (prose `?` lines plus
   AskUserQuestion `question` keys).
 - **(a4)** `clip-cut`, when named, routes to its owner (owner, served, upstream, `/contribute`).
 
-An item is its line, its indented continuation and the nearest heading or label line above it.
+An item is its line, its indented continuation and the nearest heading or label line above it. (a1) and (a2) read the run's own
+route: prose rows, plus the recommended option of each AskUserQuestion question (the option whose label holds `recommend`, any case;
+none labelled, the first option). The options the run only offers do not count, in pretty or compact one-line JSON alike.
 
 Pass condition, named before any run, three walks each: RED = control fails (a1), (a2) or (a3) on 2 of 3. GREEN = arm passes
 (a0)–(a4) on 3 of 3. At most 3 wording passes after RED.
 
 ## Findings
 
-Three walks per row, sonnet. Every row is scored with the final `score.sh`. Scorer changes after the first control reading:
+Three walks per row, sonnet. The walk outputs are not kept, so rows were scored as follows: every row with the scorer as it stood
+before the recommended-option scoping, which came last. That scoping only removes lines from (a1) and (a2) input of an offered
+option, so a pass stays a pass in (a2); an earlier (a2) FAIL could flip to PASS, and an (a1) PASS on an offered option's "now" could
+flip to FAIL. The RED verdict stands on (a3) 0 of 3 and (a1) 1 of 3, neither of which the scoping can raise. Scorer changes after
+the first control reading:
 (a2) catches the deferral phrasings control used ("route to their owners", "flagged only", "separate harness edit"),
 leaves out lines that also name the served skill, keeps only the `ep-prep` clauses of a line that names a numbered row,
-and continuation stops inside a fenced block; (a1) matches `now` and `land` as whole words.
+and continuation stops inside a fenced block; (a1) matches `now` and `land` as whole words; (a1) and (a2) score the recommended option of an ask, not the alternatives.
 
 | Round | Text | (a1) | (a2) | (a3) | (a0), (a4) |
 |---|---|---|---|---|---|

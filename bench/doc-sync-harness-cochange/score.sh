@@ -13,7 +13,7 @@ text="$(tr -d '\r' < "$out")"
 # heading or label line above it (a `#` heading, a bold-only line, or a line ending in a colon). Inside a
 # fenced block a line stands alone: an AskUserQuestion's options are not its question's continuation.
 block() {
-  printf '%s\n' "$text" | awk -v re="$1" '
+  printf '%s\n' "${2:-$text}" | awk -v re="$1" '
     /^```/ { fence = !fence }
     {
       line = $0
@@ -23,6 +23,42 @@ block() {
       if (line ~ re) { if (label != line) print label; print line; on = 1 }
     }'
 }
+
+# rec_text — $text with each ```AskUserQuestion fence cut to the run's own route: per question, keep the
+# lines before the first option and the recommended option (label holds "recommend", any case; none
+# labelled -> the first option). The fence is split at every "question" / "label" key first, so pretty and
+# compact one-line JSON read alike. Prose and other fences pass through. An offered alternative is not a
+# route the run takes (Lessons: the label test reads the label VALUE only; a description saying "not
+# recommended" must not mark its option).
+rec_text() {
+  printf '%s\n' "$text" | awk '
+    function flush(   i, j, pick) {
+      for (i = 1; i <= nh; i++) print head[i]
+      pick = nopt > 0 ? 1 : 0
+      for (i = 1; i <= nopt; i++) if (lab[i] ~ /recommend/) { pick = i; break }
+      for (j = 1; j <= cnt[pick]; j++) print opt[pick, j]
+      nh = 0; nopt = 0; cur = 0
+    }
+    auq && /^```/ { flush(); auq = 0; print; next }
+    !auq && /^```AskUserQuestion/ { auq = 1; nh = 0; nopt = 0; cur = 0; print; next }
+    !auq { print; next }
+    {
+      line = $0
+      gsub(/"question"/, "\n&", line); gsub(/"label"/, "\n&", line)
+      n = split(line, p, "\n")
+      for (k = 1; k <= n; k++) {
+        if (p[k] ~ /^"question"/) { flush(); head[++nh] = p[k] }
+        else if (p[k] ~ /^"label"/) {
+          nopt++; cur = nopt; cnt[cur] = 1; opt[cur, 1] = p[k]; lab[cur] = ""
+          if (match(p[k], /"label"[ \t]*:[ \t]*"[^"]*"/)) lab[cur] = tolower(substr(p[k], RSTART, RLENGTH))
+        }
+        else if (cur == 0) head[++nh] = p[k]
+        else opt[cur, ++cnt[cur]] = p[k]
+      }
+    }
+    END { if (auq) flush() }'
+}
+rtext="$(rec_text)"
 
 land_re='this round|this commit|same commit|same round|\bnow\b|\bland(s|ed|ing)?\b|before (the |this )?commit|alongside|with (the|this) (doc|commit)'
 audit_re='audit|verify pass|verification pass|verify-pass'
@@ -36,14 +72,15 @@ if [ -n "$fx" ]; then
   else fail "(a0) the run changed the fixture: $(printf '%s' "$st" | tr '\n' ';')"; fi
 fi
 
-# (a1) the session-owned skill lands this round, through the audit the harness requires.
-ep="$(block 'ep-prep')"
+# (a1) the session-owned skill lands this round, through the audit the harness requires. Reads the
+# recommended path (rtext): an alternative option's "for now" is not the run landing the item.
+ep="$(block 'ep-prep' "$rtext")"
 if [ -z "$ep" ]; then fail "(a1) the reply never names .claude/skills/ep-prep"
 elif printf '%s\n' "$ep" | grep -Eiq "$land_re" && printf '%s\n' "$ep" | grep -Eiq "$audit_re"; then
   echo "PASS (a1) ep-prep lands this round through the audit"
 else fail "(a1) the ep-prep item carries no this-round landing through an audit: $(printf '%s' "$ep" | tr '\n' ' ' | cut -c1-300)"; fi
 
-# (a2) no route-to-owner deferral on the session-owned skill. A line that also names clip-cut or the
+# (a2) no route-to-owner deferral on the session-owned skill, on the recommended path (rtext). A line that also names clip-cut or the
 # served copy is left out: its deferral can belong to the served skill. A line that names a numbered row
 # keeps only its clauses (split on , ; and sentence ends) that name ep-prep: "Land rows 1 and 2, route
 # row 3 to its owner, then commit … ep-prep/SKILL.md" defers row 3, not ep-prep.

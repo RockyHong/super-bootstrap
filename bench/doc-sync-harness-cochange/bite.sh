@@ -44,3 +44,33 @@ echo "== (a3) the stale doc is not in the message"
 good | grep -v 'workflow' > "$o"; score
 echo "== (a4) the served skill is landed as the session's own"
 good | sed -e 's#is a served copy: route the fix to its owner via /contribute#lands this round too#' > "$o"; score
+
+# Recommended-option scoping (DEBT-2qm2): (a1) and (a2) read the recommended option of each ask, not the
+# alternatives the run offers. Options are built as pretty (one key per line) and compact (one line) JSON.
+ask_ml() { printf '%s\n' '```AskUserQuestion' '{' '  "questions": [' '    {' '      "question": "Which route?",' \
+  '      "header": "Route",' '      "options": [' '        {' "          \"label\": \"$1\"," "          \"description\": \"$2\"" \
+  '        },' '        {' "          \"label\": \"$3\"," "          \"description\": \"$4\"" '        }' '      ]' '    }' '  ]' '}' '```'; }
+ask_cp() { printf '%s\n' '```AskUserQuestion' "{\"questions\": [{\"question\": \"Which route?\", \"header\": \"Route\", \"options\": [{\"label\": \"$1\", \"description\": \"$2\"}, {\"label\": \"$3\", \"description\": \"$4\"}]}]}" '```'; }
+noask() { good | grep -v '^Land both rows'; }
+LAND_D='Land the ep-prep edit this round through the verify pass, with docs/workflow.md.'
+DEFER_D='Acknowledge ep-prep as accurate for now and leave it for a separate harness edit.'
+echo "== (a2) deferral only in a non-recommended option, pretty JSON (expect PASS a2)"
+{ noask; ask_ml 'All rows (Recommended)' "$LAND_D" 'Row 1 only' "$DEFER_D"; } > "$o"; score
+echo "== (a2) deferral only in a non-recommended option, compact JSON (expect PASS a2)"
+{ noask; ask_cp 'All rows (Recommended)' "$LAND_D" 'Row 1 only' "$DEFER_D"; } > "$o"; score
+echo "== (a2) deferral only in the non-first option, no recommend label, compact JSON (expect PASS a2)"
+{ noask; ask_cp 'All rows' "$LAND_D" 'Row 1 only' "$DEFER_D"; } > "$o"; score
+echo "== (a2) the recommended option defers, (Recommended) label, pretty JSON (expect FAIL a2)"
+{ noask; ask_ml 'Row 1 only (Recommended)' "$DEFER_D" 'All rows' "$LAND_D"; } > "$o"; score
+echo "== (a2) the recommended option defers, (Recommended) label, compact JSON (expect FAIL a2)"
+{ noask; ask_cp 'All rows' "$LAND_D" 'Row 1 only (recommended)' "$DEFER_D"; } > "$o"; score
+echo "== (a2) the first option defers, no recommend label, pretty JSON (expect FAIL a2)"
+{ noask; ask_ml 'Row 1 only' "$DEFER_D" 'All rows' "$LAND_D"; } > "$o"; score
+echo "== (a2) the first option defers, no recommend label, compact JSON (expect FAIL a2)"
+{ noask; ask_cp 'Row 1 only' "$DEFER_D" 'All rows' "$LAND_D"; } > "$o"; score
+echo "== (a1) 'for now' only in a non-recommended option, the recommended one leaves ep-prep (expect FAIL a1)"
+{ noask | sed -e 's/ Lands this round as a harness edit, through the verify pass, before the commit\./ Goes through the verify pass./'
+  ask_ml 'Skip the skill (Recommended)' 'Leave ep-prep as it is.' 'Edit it' 'Edit ep-prep for now.'; } > "$o"; score
+echo "== (a1) same, compact JSON (expect FAIL a1)"
+{ noask | sed -e 's/ Lands this round as a harness edit, through the verify pass, before the commit\./ Goes through the verify pass./'
+  ask_cp 'Skip the skill (Recommended)' 'Leave ep-prep as it is.' 'Edit it' 'Edit ep-prep for now.'; } > "$o"; score
