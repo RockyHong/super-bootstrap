@@ -1347,6 +1347,64 @@ vi_header() { grep -qE '^#   volatile-ids ' "$LINKS"; }
 check "usage string registers the volatile-ids mode" vi_usage
 check "header comment registers the volatile-ids mode" vi_header
 
+echo "== doc-links: GAP-ha7m — .claude/doc-surface declares extra surface globs =="
+# A repo whose caller-facing prose lives outside docs/ declares it in .claude/doc-surface:
+# one glob per line, relative to repo root, `*` crossing `/`, only `*.md` entries
+# counted, `#` comments and blank lines ignored. Every surface lane inherits the
+# declaration through collect_surface; an absent or empty file keeps the built-in set.
+mk_ds_tree() { # mk_ds_tree <dir> — the same tree with and without a declaration
+  mkdir -p "$1/docs" "$1/kinds/sub" "$1/notes" "$1/other" "$1/comment" "$1/plugins/p"
+  printf '# Doc A\n\n## Known\n\nBroken: [b](nope.md).\n' > "$1/docs/a.md"
+  printf '# Repo\n' > "$1/README.md"
+  printf '# Plugin p\n' > "$1/plugins/p/README.md"
+  # `fine` bare in the span, not `--fine`: isword() counts `-` as a word character, so
+  # `hits fine` never matches inside `--fine` — the hits lane matches terms, not flags.
+  printf '# Kind X\n\nPass `fine` to [a](../docs/a.md#known).\nBroken: [k](gone.md).\nOpen BUG-kind1 here.\n' > "$1/kinds/x.md"
+  printf '# Kind Y\n' > "$1/kinds/sub/y.md"
+  printf 'not markdown\n' > "$1/notes/n.txt"
+  printf '# Other\n' > "$1/other/o.md"
+  printf '# Comment\n' > "$1/comment/c.md"
+}
+DS="$TMP/ds"; mk_ds_tree "$DS"
+mkdir -p "$DS/.claude"
+printf '%s\n' '# extra surface for this repo' '#comment/*.md' '' 'kinds/*.md' 'notes/*.txt' 'other/*' '  docs/*.md  ' > "$DS/.claude/doc-surface"
+
+got_ds_check="$(cd "$DS" && bash "$LINKS" check 2>/dev/null)"
+check "doc-surface: check walks a declared kinds/x.md (got: $got_ds_check)" \
+  sh -c 'printf "%s\n" "$1" | grep -qxF "kinds/x.md:4: kinds/gone.md — path not found"' _ "$got_ds_check"
+check "doc-surface: a glob overlapping the built-in set walks the doc once (got: $got_ds_check)" \
+  [ "$(printf '%s\n' "$got_ds_check" | grep -c '^docs/a\.md:')" -eq 1 ]
+got_ds_hits="$(cd "$DS" && bash "$LINKS" hits fine)"
+check "doc-surface: hits reaches a declared kinds/x.md (got: $got_ds_hits)" [ "$got_ds_hits" = "kinds/x.md" ]
+got_ds_refs="$(cd "$DS" && bash "$LINKS" refs docs/a.md)"
+check "doc-surface: refs lists a declared citer (got: $got_ds_refs)" [ "$got_ds_refs" = "kinds/x.md" ]
+got_ds_self="$(cd "$DS" && bash "$LINKS" self kinds/x.md kinds/sub/y.md other/o.md comment/c.md notes/n.txt)"
+check "doc-surface: self keeps declared docs, \`*\` crossing / (got: $got_ds_self)" \
+  [ "$got_ds_self" = "$(printf 'kinds/sub/y.md\nkinds/x.md')" ]
+got_ds_vi="$(cd "$DS" && bash "$LINKS" volatile-ids kinds/x.md)"
+check "doc-surface: volatile-ids reads a declared doc (got: $got_ds_vi)" \
+  [ "$got_ds_vi" = "$(printf 'kinds/x.md\t5\tBUG-kind1')" ]
+got_ds_closure="$(cd "$DS" && bash "$LINKS" closure docs/a.md)"
+exp_ds_closure="README.md
+kinds/sub/y.md
+kinds/x.md
+plugins/p/README.md"
+check "doc-surface: closure = built-in + declared, comment / non-.md globs ignored (got: $got_ds_closure)" \
+  [ "$got_ds_closure" = "$exp_ds_closure" ]
+
+# No declaration: today's set exactly. An empty or comment-only file reads the same.
+exp_builtin="README.md
+docs/a.md
+plugins/p/README.md"
+NODS="$TMP/nods"; mk_ds_tree "$NODS"
+got_nods="$(cd "$NODS" && bash "$LINKS" closure none.md)"
+check "doc-surface: absent file keeps the built-in surface exactly (got: $got_nods)" [ "$got_nods" = "$exp_builtin" ]
+got_nods_hits="$(cd "$NODS" && bash "$LINKS" hits fine)"
+check "doc-surface: absent file leaves kinds/ off hits (got: $got_nods_hits)" [ -z "$got_nods_hits" ]
+mkdir -p "$NODS/.claude"; printf '%s\n' '# nothing declared' '' > "$NODS/.claude/doc-surface"
+got_empty="$(cd "$NODS" && bash "$LINKS" closure none.md)"
+check "doc-surface: comment-only file keeps the built-in surface exactly (got: $got_empty)" [ "$got_empty" = "$exp_builtin" ]
+
 echo "== doc-links: BUG-045 — whole-surface check under a generous wall-clock ceiling =="
 now_ns="$(date +%s%N 2>/dev/null || true)"
 case "$now_ns" in

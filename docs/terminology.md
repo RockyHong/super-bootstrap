@@ -36,7 +36,7 @@ _Avoid_: backlog row
 
 **Propagation closure**: An edit plus every truth it must keep in sync. Its size, not the diff size, decides whether work is dispatched or inlined ([CLAUDE.md § Dispatch](../CLAUDE.md#dispatch--who-holds-each-phase)).
 
-**Doc surface**: The set of narrative docs that doc-sync keeps true — `docs/`, the root README, plugin READMEs, and any manifest description field the behavior changes ([CLAUDE.md § Doc Sync](../CLAUDE.md#doc-sync-non-negotiable)).
+**Doc surface**: The set of narrative docs that doc-sync keeps true — `docs/`, the root README, plugin READMEs, any manifest description field the behavior changes, and the markdown files a repo declares in `.claude/doc-surface` ([CLAUDE.md § Doc Sync](../CLAUDE.md#doc-sync-non-negotiable)).
 
 **Scan scope**: The docs that the commit door's mechanical lanes enumerate for one diff — citers, grep hits, link targets and the changed docs themselves — that the doc-sync judgment reads ([`commit`](../plugins/super-bootstrap/skills/commit/SKILL.md)).
 

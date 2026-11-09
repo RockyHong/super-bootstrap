@@ -2,8 +2,9 @@
 # doc-links.sh — markdown link checker and reverse index for a docs surface
 #
 # Modes (all but `terms` and `anchors` scan the full doc surface: docs/**/*.md +
-#         README.md + plugins/*/README.md — the markdown-file portion of the doc
-#         surface CLAUDE.md § Doc Sync defines):
+#         README.md + plugins/*/README.md, plus every `*.md` glob the repo declares
+#         in .claude/doc-surface — see collect_declared_surface; CLAUDE.md § Doc Sync
+#         narrates the surface, this file and the declaration compute it):
 #   check              scan the doc surface for broken links; exit 1 if any — except
 #                      a card thread's link to an absent card ID (both endpoints
 #                      docs/work/{BUG,DEBT,GAP}-<id>.md), consumed provenance, skipped
@@ -133,9 +134,55 @@ set -uo pipefail
 MODE="${1:-}"
 
 collect_surface() {
+    local builtin
+    builtin="$(collect_builtin_surface)"
+    [ -n "$builtin" ] && printf '%s\n' "$builtin"
+    collect_declared_surface "$builtin"
+    return 0
+}
+
+collect_builtin_surface() {
     [ -d docs ] && find docs -name '*.md' -type f
     [ -f README.md ] && echo README.md
     [ -d plugins ] && find plugins -mindepth 2 -maxdepth 2 -name 'README.md' -type f
+    return 0
+}
+
+# The repo's extra surface: `.claude/doc-surface`, one glob per line, relative to repo
+# root. Only entries ending `.md` count (every lane parses markdown); `#` lines and
+# blank lines are skipped; surrounding whitespace, a trailing CR and a leading `./`
+# are dropped. bash 3.2 has no globstar, so an entry matches as an unquoted `case`
+# pattern against one `find` listing — `*` crosses `/`, so `kinds/*.md` also takes
+# `kinds/sub/y.md`. Paths already in <builtin> print nothing (dedup), the rest print
+# in find order after the built-in set. Absent file or no `.md` entry → no find, no
+# output. One read and one find per call; the per-path loop is pure bash.
+DOC_SURFACE_FILE=".claude/doc-surface"
+collect_declared_surface() {
+    local builtin="
+$1
+" line p pat
+    local -a pats
+    pats=()
+    [ -f "$DOC_SURFACE_FILE" ] || return 0
+    while IFS= read -r line || [ -n "$line" ]; do
+        line="${line%$'\r'}"
+        trim "$line"; line="${TRIM#./}"
+        case "$line" in ''|'#'*) continue ;; *.md) pats+=("$line") ;; esac
+    done < "$DOC_SURFACE_FILE"
+    [ "${#pats[@]}" -gt 0 ] || return 0
+    while IFS= read -r p; do
+        p="${p#./}"
+        case "$builtin" in *"
+$p
+"*) continue ;; esac
+        for pat in "${pats[@]}"; do
+            # Unquoted on purpose: the entry is the glob.
+            # shellcheck disable=SC2254
+            case "$p" in
+                $pat) printf '%s\n' "$p"; break ;;
+            esac
+        done
+    done < <(find . \( -name .git -o -name node_modules \) -prune -o -type f -name '*.md' -print 2>/dev/null)
     return 0
 }
 
