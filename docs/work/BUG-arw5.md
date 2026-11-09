@@ -1,0 +1,6 @@
+# BUG-arw5 — commit door's fixed session-close handoff line interrupts work still in flight
+
+**Logged:** 2026-11-09 · **Source:** device note from `rockyhong__jowagoko` (D:/Git/Podcast/jowagoko), 2026-11-09
+**Problem:** Commit §6 Handoff makes "the next and only output after the commit" the fixed line `Committed. When the session's work is done: /super-bootstrap:session-close (card resolve, carry).` It prints on every commit, whatever the work state. Under commit-in-flow it fires mid-work: a multi-step or multi-session worker reads it as a wrap-up signal and stops, and "only output" stops the reply from reporting progress on the ongoing work. Instance: jowagoko EP75 edit pipeline, step 1 (ASR) running in the background, a one-line `docs/techstack.md` commit — the reply shrank to the handoff line. User quote: 「這個提醒很煩，明明工作剛開始，提醒這個只會讓 multi session worker 被斷」. The session-close-invoked path already skips the line.
+**Area:** `plugins/super-bootstrap/skills/commit/SKILL.md` §6 Handoff (line 66)
+**Prior:** Sender's shapes, preference order: (a) drop the fixed line — report the commit and continue the work; (b) name session-close only when the session looks finished (no background work, no in-flight card step, no pending pipeline step); (c) at least drop "only output", so the line cannot replace the progress report.
