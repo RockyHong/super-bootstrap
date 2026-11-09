@@ -1,5 +1,5 @@
 {
-  "version": "5.9.0",
+  "version": "5.10.0",
   "covered": [
     "CLAUDE.md § Development Workflow",
     "CLAUDE.md § Dispatch",
@@ -47,32 +47,32 @@
     {
       "section": "CLAUDE.md § Development Workflow",
       "reason": "dogfood-ahead: wires the served audit-harness-edits / load-harness-principles skills; the skeleton holds the self-contained form",
-      "anchor": "fe5017211a9508d0c47051a4eacbb08aef1f8daa310e623b76e8468cdae93523"
+      "anchor": "cd56d9b8145c3c07f4fcf2311c68b8fb423fb90ec42b422ea7deeb7db4039b51"
     },
     {
       "section": "CLAUDE.md § Dispatch",
       "reason": "dogfood-ahead: served dispatch-brief-demands / run-mode pointers and the bench fixture-walk bullet; the skeleton holds the self-contained form",
-      "anchor": "95361b7acb628af7ba0da48c57e78cfcbe777210b9507f09f6ca81a6859b49f1"
+      "anchor": "cd7f2118ae457b2aa26d1e5bd05856f72cb09d2a68f73f5d5a6599e404c81a04"
     },
     {
       "section": "CLAUDE.md § Doc Sync",
       "reason": "dogfood-ahead: links the in-repo commit SKILL.md and names plugin manifests / /release",
-      "anchor": "74419951e925c3e3c3a42c585183e490658915464ba9177de1e1f80a3784420c"
+      "anchor": "de86311c0ed2074002382015c4e490d5b376027aac959158f0b69480bb57563e"
     },
     {
       "section": "CLAUDE.md § Rules",
       "reason": "dogfood-ahead: (placed) tags on the two shipped rule bullets",
-      "anchor": "744b1cec7148ecaf09c20cb38d7db693364880d081b3e2692087153369db6e41"
+      "anchor": "8bf9fcb8fdd8b8057b955cccf2779a955637bbf8d700037957da5131aa62291e"
     },
     {
       "section": "docs/techstack.md § Staged-Tree Verify",
       "reason": "dogfood-ahead: note links the in-repo merge SKILL.md anchor",
-      "anchor": "e4304b438dfbefcdf7931beff447abcf9e23bc5dd9e01fd627562d33b8e26f07"
+      "anchor": "70d87b423848bb4a5dc01643d2902c6c5c2086354a17ad6f76a44027917f343c"
     },
     {
       "section": "docs/techstack.md § Edit Discipline",
       "reason": "dogfood-ahead: pointer to the served dispatch-run-mode guideline",
-      "anchor": "8cc989101faf10be4482f5df7d90bd9ec48658f984d80a916e44511836376a2d"
+      "anchor": "42e8d600bc2122d9eb4ccb276f9ae733b698091781144346cb930716473327c6"
     },
     {
       "section": "docs/work/README.md",
