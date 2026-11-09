@@ -54,7 +54,7 @@ _Avoid_: outward item
 
 **Shipped skeleton**: A frozen asset under `plugins/*/skills/*/assets/` that `harness-bootstrap` renders into a consumer repo. It must be self-contained, because downstream is not the author ([`repo-boundary`](../.claude/rules/repo-boundary.md)).
 
-**Placed**: Said of a file that `harness-bootstrap` wrote into a repo from a shipped skeleton and refreshes byte-identical on re-run ([CLAUDE.md § Rules](../CLAUDE.md#rules-auto-load-on-file-match)).
+**Placed**: Said of a file that `harness-bootstrap` wrote into a repo from a shipped skeleton and refreshes byte-identical on re-run, a placed doc rule outside the `paths:` entries the consumer adds after the skeleton's ([CLAUDE.md § Rules](../CLAUDE.md#rules-auto-load-on-file-match)).
 
 **Served**: Said of a file that the storehouse delivers into this repo's `.claude/` tree, clone-replaced, and not owned by this repo ([CLAUDE.md § Rules](../CLAUDE.md#rules-auto-load-on-file-match)).
 

@@ -1,0 +1,39 @@
+You are executing one step of a harness re-run (a sync of an already-installed repo). Below are the governing excerpts of the skill you follow, then the files of the repo under sync. Apply the excerpts exactly as written. Do not use tools; answer from the text alone.
+
+===== SKILL EXCERPTS =====
+@EXCERPTS@
+===== END SKILL EXCERPTS =====
+
+===== REPO STATE =====
+Shipped asset `assets/rules-ssot-doc-link-skeleton.md`, frontmatter:
+---
+paths:
+  - "docs/**/*.md"
+  - "README.md"
+  - "plugins/*/README.md"
+description: "Fires on read of a prose doc. Link each concept to its SSOT home as you write — link-candidate predicate, home-selection edges and placement on the asserting line."
+---
+
+Placed file `.claude/rules/ssot-doc-link.md`, frontmatter:
+---
+paths:
+  - "docs/**/*.md"
+  - "README.md"
+  - "plugins/*/README.md"
+  - "kinds/**/*.md"
+description: "Fires on read of a prose doc. Link each concept to its SSOT home as you write — link-candidate predicate, home-selection edges and placement on the asserting line."
+---
+
+Apart from the lines shown, the asset and the placed file are byte-identical.
+
+File `.claude/doc-surface` exists, content:
+kinds/*.md
+guides/*.md
+
+===== END REPO STATE =====
+
+Answer with exactly these four lines and nothing else:
+STATUS: <the drift-check status of .claude/rules/ssot-doc-link.md: CURRENT or DRIFTED>
+REMOVED: <the paths: entries the drift row proposes removing or reverting, comma-separated, or NONE>
+PATHS_AFTER: <the file's paths: entries after the user approves every proposed row, comma-separated>
+COMMAND: <the command the excerpts have you run about .claude/doc-surface coverage, verbatim, or NONE>

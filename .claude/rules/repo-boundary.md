@@ -108,6 +108,7 @@ both lanes and catches up what a commit missed.
   `.claude/settings.json` entry, root `AGENTS.md` / `CODING_STANDARDS.md` shipped
   body, `.claude/templates/*`) is a placed
   derivative. Editing the asset pulls that copy into the closure — refresh it
-  byte-identical (deep-equal for a snippet) so the next re-run reads it
-  `✓ current`. Look it up live — grep the shipped assets for the matching
-  destination; no single static map.
+  byte-identical (deep-equal for a snippet; a placed doc rule byte-identical
+  outside its consumer `paths:` tail) so the next re-run reads it `✓ current`.
+  Look it up live — grep the shipped assets for the matching destination; no
+  single static map.

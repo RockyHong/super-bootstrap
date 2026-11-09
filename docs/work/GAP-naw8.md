@@ -201,3 +201,7 @@ The verdicts measured re-run frequency and walk size, and neither measured this 
 **Correction to the earlier reply in the session.** The session told the author it found no evidence for subfolder `CLAUDE.md`. The dispatches asked about loading mechanics and community reports only, and no search asked for official placement guidance. That statement reported a gap in the search as a gap in the evidence.
 
 **One candidate route the verdicts do not list, unverified:** content a sync places byte-identical to a shipped skeleton was already audited at its source here, so the audit gate could treat it as audited. The fix would sit in `claude-config-manager`, and it addresses the audit cost without moving any prose. Skeleton rendering and per-section consumer edits may break the byte match; not checked.
+
+## Amendment — 2026-11-09 · GAP-h3cz landing
+
+The two placed doc rules (`dimension-discipline`, `ssot-doc-link`) are no longer byte-identical to their skeletons in every repo: `paths:` entries after the skeleton's own are consumer-owned, and the re-run drift check leaves them alone. A route here that relies on a placed file's byte match against its skeleton compares those two rules outside that tail.
