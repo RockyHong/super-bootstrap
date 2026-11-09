@@ -95,13 +95,13 @@ Gather every detected move into ONE confirm-pick, asked through AskUserQuestion 
 - **Durable, not card-owned** (decisions, spec deltas) → the owning doc, landed through the commit door's doc-sync.
 - **Volatile, no card owns it** (cross-card session context, a thread not yet carded) → the own ledger file, in the convention's slots; Read first names the card ID(s). Never restate what the Progress block or a doc already holds — a watch-out binding the card lives on the card, not only in the carry. Nothing volatile beyond the card → a pointer-only stub (Anchor + card ID + Next step pointer), still written so session-continue finds it.
 
-Show the drafted Progress block(s), carry body, park doc edits, fix-now edits, resolve outcomes and door-judgment rows in the pick. **Nothing is written before the pick.** On confirm, execute the picked moves in dependency order: stop standing items → fix-now edits, park doc edits and picked door-judgment rows → the post-edit audit each harness edit the close landed owes — fix-now and harness-edit rows alike — over its landed paths → Progress appends → ledger-write / ledger-clear → card resolve → commit via `/super-bootstrap:commit close-commit`, handing it the picked commit row (its §6 handoff line is skipped) → merge → prune → push. A declined row writes nothing, and its paths leave the commit row; a commit row left with no path runs no commit. A failure the run hits — a hook failure, a conflict, a door stop, an audit finding — stops and surfaces. Re-verify the tree is clean, then **close**.
+Show the drafted Progress block(s), carry body, park doc edits, fix-now edits, resolve outcomes and door-judgment rows in the pick. **Nothing is written before the pick.** On confirm, execute the picked moves in dependency order: stop standing items → fix-now edits, park doc edits and picked door-judgment rows → the post-edit audit each harness edit the close landed owes — fix-now and harness-edit rows alike — over its landed paths → Progress appends → ledger-write / ledger-clear → card resolve → commit via `/super-bootstrap:commit close-commit`, handing it the picked commit row (its §6 commit report is skipped) → merge → prune → push. A declined row writes nothing, and its paths leave the commit row; a commit row left with no path runs no commit. A failure the run hits — a hook failure, a conflict, a door stop, an audit finding — stops and surfaces. Re-verify the tree is clean, then **close**.
 
 If step 1 found an undelivered goal the user expects finished, surface it above the pick in three parts — what's open, what whole-delivery expected, the options (finish it, park-close it, or accept and close anyway). It gates the close but can't be move-executed. Proceed until closed or the user accepts an explicit close-anyway.
 
 ## Output
 
-This is the terminal output — the commit door's handoff line does not print under session-close.
+This is the terminal output — the commit door's §6 commit report does not print under session-close.
 
 After the moves, run `bash <skill-base>/assets/push-state.sh state` as its own call.
 

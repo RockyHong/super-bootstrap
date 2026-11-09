@@ -6,7 +6,7 @@
 #   remote    — a remote (local bare repo beside <dir>) but the branch has no upstream
 #   upstream  — the same remote with the branch tracking it
 #
-# After: one initial commit (README.md a.md); a.md modified, unstaged (this session's work).
+# After: one initial commit (README.md a.md b.md); a.md modified, unstaged (this session's work).
 set -eu
 dir="${1:?usage: make-fixture.sh <dir> <none|remote|upstream>}"
 state="${2:?usage: make-fixture.sh <dir> <none|remote|upstream>}"
@@ -17,8 +17,8 @@ git init -q -b main
 git config user.name bench
 git config user.email bench@example.invalid
 git config core.autocrlf false
-for f in README a; do printf '%s v1\n' "$f" > "$f.md"; done
-git add README.md a.md
+for f in README a b; do printf '%s v1\n' "$f" > "$f.md"; done
+git add README.md a.md b.md
 git commit -qm "init"
 case "$state" in
   none) ;;
