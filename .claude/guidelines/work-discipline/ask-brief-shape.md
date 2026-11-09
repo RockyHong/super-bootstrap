@@ -27,6 +27,18 @@ Six slots, in this order:
    optional. Each option stands on its own, needing no context the brief
    left behind in the session.
 
+A ruling the reader reaches by hand — what they see, play, hear or run — starts
+with reaching the thing, so slot 3 also states three parts:
+
+- **Where to run it** — checkout, branch or device, and which other locations
+  still hold the old version: looking there returns the old version as the
+  result.
+- **How to start it** — the paste-ready command or link.
+- **What to check** — what to look at and what counts as a pass.
+
+A request for the reader's hands with no ruling in it — a login, a device
+step — takes these three parts alone.
+
 Where the reader asked for the instruction alone — "just tell me which one"
 — the brief is itself the attention waste the shape exists to prevent.
 Answer the question.
@@ -34,10 +46,10 @@ Answer the question.
 ## Boundary
 
 Fires once an ask has survived the threshold and something is about to reach
-a human for a ruling — a reply, a modal, a review page, one item inside a
-batch — and governs what that one item contains. Whether the ask is owed,
-and how far a batch may grow, belong to the ambient ask-threshold rule that
-points here. Both sit under the **escalation-design** axiom — surface with
+a human for a ruling or for their hands — a reply, a modal, a review page, one
+item inside a batch — and governs what that one item contains. Whether the ask
+is owed, and how far a batch may grow, belong to the ambient ask-threshold rule
+that points here. Both sit under the **escalation-design** axiom — surface with
 context rather than deviate silently — which also owns the two roots slot 2
 names. Its three-part blocked surface is a different artifact from this one,
 routed to a dispatcher who must unblock the work. The agent-facing

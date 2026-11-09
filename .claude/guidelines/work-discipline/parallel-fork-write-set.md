@@ -12,6 +12,14 @@ complete — so the loss raises no signal downstream.
   may create or edit, given as paths, with everything outside them read-only.
   Keep the sets disjoint across members: a path sitting in two write sets is a
   collision the brief has already authored.
+- **Give separate logical changes to one file one commit each, in turn** — the
+  next change starts once the previous one has committed, whether the changes
+  run as fan-out members, sequential dispatches or sequential cards. Git groups
+  edits by distance, so nearby lines from two changes share a hunk, and
+  separating them then means rebuilding the patch by hand; how near they land
+  is known only after the edit, so distance earns no exception. A dispatcher
+  whose members do not commit places the commit between the dispatches, and
+  holds the next change while that commit cannot land yet.
 - **The dispatcher assembles the shared output** — a combined report, a merged
   table, a ranked list — from the messages the members return. Shared output
   belongs to no member's write set, which is what keeps the sets disjoint when
