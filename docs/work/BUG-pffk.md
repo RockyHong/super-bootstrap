@@ -1,0 +1,8 @@
+# BUG-pffk — `session-close` logged a drafted fix instead of fixing it, and asked a single move in prose
+
+**Logged:** 2026-11-09 · **Source:** device note from a claude-config-manager session, 2026-11-08, about super-bootstrap 5.9.0 `skills/session-close/SKILL.md`. The user called that close 「太亂來了」: it proposed a card that was not needed and skipped steps.
+**Problem:** Two failures in one close.
+(a) Step 3 "Inflight findings" makes a finding a fix-now move when its edit, and everything that edit must keep in sync, can be drafted exactly now, "however far from this session's goal". The gateway held a complete one-paragraph lore addition (a fact line for `claude-shape/hook-feedback-channels.md`) and still offered a log move. Its reason: the edit "needs /load-harness-principles first and a post-edit audit". It treated the pre-edit load and the post-edit audit as a closure that outgrew the drafted edit. But that audit runs inside the close's own commit flow, at the commit door's audit-harness-edits stamp seam.
+(b) Step 4 says "A single detected move is asked in prose." The user expected the usual MCQ pick and was annoyed by an inline yes/no. That prose ask also drifted out of the session's language (繁中 to English).
+**Area:** `plugins/super-bootstrap/skills/session-close/SKILL.md` steps 3 and 4
+**Prior:** The note proposes two changes. Step 3: "A pre-edit load or post-edit audit the edit owes is part of landing it, not grounds for log; log is for a closure the close cannot draft." Step 4: ask through AskUserQuestion even for one move, so the confirm gate always has one recognizable form, in the session's language.
