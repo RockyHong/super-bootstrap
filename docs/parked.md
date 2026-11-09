@@ -54,6 +54,12 @@ Spec-coupled items may replace **Watching for** / **Fires on** with a `surface-o
 **Watching for:** a harness line that the same change made stale, found only after the commit landed, that the doc-sync scan did not report. The scan reports a harness co-change only when its judgment reads or greps that file; no mechanical lane lists harness paths. Candidate: widen the commit door's grep lane (`doc-links.sh hits`) to the consumer's own harness (`CLAUDE.md`, `.claude/{rules,skills,agents}/**`) for the diff's removed terms, leaving out served copies by their `.served` marker. Cost: a larger scan scope, so more cold dispatches above the ceiling of 8, and a `doc-links.sh` change with its bench.
 **Fires on:** one such post-commit harness drift observed.
 
+### PARK-knda — cut the harness-bootstrap re-run burden (the audit wait it chains into)
+
+**Logged:** 2026-11-09 · **Source:** `GAP-naw8`, parked on the author's ask with no option settled ("先不選，這session不決定"); its thread — two verdicts, the docs and hook reads, the author's answer that the felt cost is the re-run chaining into `claude-config-manager`'s harness-audit wait — is in the deleting commit's parent
+**Watching for:** the author's ruling on which part of the burden the next card targets — the thread's last verdict frames it as options (a)–(d), recommending (c) with (a) first — or one of the routes it names becoming ready: a positive-control probe showing plugin `SessionStart` / `SubagentStart` output reaching the main session, a subagent and a compacted context; or `claude-config-manager`'s audit gate treating a sync placed byte-identical to an audited skeleton (outside a doc rule's consumer `paths:` tail) as audited.
+**Fires on:** the author opening that discussion or picking an option, or either route above landing → promote to a GAP card restoring the thread from git.
+
 ## Sweep log
 
 *(overwrite in place at each sweep — what was removed and why, no running chronicle)*
