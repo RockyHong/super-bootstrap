@@ -21,7 +21,9 @@ RED floor. Sibling bench for the pre-pick judgment: [`session-close-judgment`](.
   other writer's files are named nowhere in a prompt. `prompt-tail.txt` has the run print each AskUserQuestion call it
   would make as a fenced ```` ```AskUserQuestion ```` block holding the call's JSON, and print a prose ask as prose.
 - `fixture/harness/` — added to the base commit on `harness` only: a `CLAUDE.md` binding a harness ritual (a principles
-  load before an edit, a fresh-context audit before commit) and the rule `.claude/rules/maintenance.md`.
+  load before an edit, a fresh-context audit before commit) and the rule `.claude/rules/maintenance.md`. It also overrides
+  `config/cabinet.toml` with a line-1 comment that names no read timing, so the drafted rule line is the only place that
+  states when the controller reads the file; the three value lines match the base.
 - `fixture/cochange/` — added with `fixture/harness/` to the base commit on `cochange` only: the rule `.claude/rules/seal.md`
   and the served skill `.claude/skills/seal-audit/` (a `.served` marker), each stating the old seal policy, a seal replaced
   only on a crack. The session's edit to `docs/maintenance.md` states the new one: every 12 months, or sooner on a crack.
@@ -296,3 +298,8 @@ Regression on the final text: `single` 1 of 1 on (p6)–(p11) and (w1)–(w4). `
 and the commit row as one move, `FAIL (p11) 2 rows are asked with no multi-select`; the pass-0 walk read
 `FAIL (p1) no [commit] row. Rows: fix-now + commit`. The text before this round reads 1 of 1. Two walks cannot separate this
 from variance.
+
+`harness` fixture round: the overlay `fixture/harness/config/cabinet.toml` drops "at boot" from line 1, because a run that read the
+base comment judged the drafted rule line a duplicate and picked nothing. No fixture file states `boot` or `restart` now. Arm, three
+walks run in parallel in fresh directories, turn 1 only, sonnet: (p1), (p6), (p9), (p11)–(p14) 3 of 3. (p8) reads 1 commit row on each.
+Parallel walks share nothing but the plugin tree, so they ran together without interference.
