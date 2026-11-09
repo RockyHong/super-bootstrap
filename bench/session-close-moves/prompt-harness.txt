@@ -1,0 +1,8 @@
+This session's record so far:
+- Language: the user writes in 繁體中文 (Traditional Chinese), and every reply this session has been in 繁體中文.
+- Goal: answer the user's question about when a changed `config/cabinet.toml` value takes effect. You edited no file; that goal is delivered.
+- One finding surfaced while you read, not carded yet: `.claude/rules/maintenance.md` tells an editor to keep each interval in `docs/maintenance.md` equal to `config/cabinet.toml`, but it does not say that the controller reads `config/cabinet.toml` only at boot. You drafted the exact line to append to that rule:
+  `The controller reads config/cabinet.toml only at boot, so a changed value takes effect after the next restart.`
+  No other file states this fact, so the line is the whole edit.
+- `.claude/rules/maintenance.md` is a harness file. `CLAUDE.md` binds a ritual on harness edits: a principles load before the edit, which you ran when you drafted the line, and a fresh-context audit of the diff before it commits, which has not run.
+- No background jobs, agents, or shells were launched.

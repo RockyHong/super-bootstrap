@@ -48,6 +48,12 @@ Spec-coupled items may replace **Watching for** / **Fires on** with a `surface-o
 **Watching for:** a card whose build rounds repair a step that the owner then says the normal flow should rarely reach. Candidate rule: triage asks that question and re-aims at the upstream cause.
 **Fires on:** a second such card. Needs a light RED first, since the question may over-fire on ordinary edge-case bugs.
 
+### PARK-s218 — commit doc-sync grep lane does not enumerate the consumer's own harness
+
+**Logged:** 2026-11-09 · **Source:** `GAP-drwb`, option B deferred by its Design block
+**Watching for:** a harness line that the same change made stale, found only after the commit landed, that the doc-sync scan did not report. The scan reports a harness co-change only when its judgment reads or greps that file; no mechanical lane lists harness paths. Candidate: widen the commit door's grep lane (`doc-links.sh hits`) to the consumer's own harness (`CLAUDE.md`, `.claude/{rules,skills,agents}/**`) for the diff's removed terms, leaving out served copies by their `.served` marker. Cost: a larger scan scope, so more cold dispatches above the ceiling of 8, and a `doc-links.sh` change with its bench.
+**Fires on:** one such post-commit harness drift observed.
+
 ## Sweep log
 
 *(overwrite in place at each sweep — what was removed and why, no running chronicle)*

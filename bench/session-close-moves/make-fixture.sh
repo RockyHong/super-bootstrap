@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 # make-fixture.sh — scratch repo for session-close's moves.
-# Usage: bash bench/session-close-moves/make-fixture.sh <full|resolve|fixnow|leak|single|large> <dir>
+# Usage: bash bench/session-close-moves/make-fixture.sh <full|resolve|fixnow|leak|single|large|harness|cochange> <dir>
 #
 # After: one base commit built with plumbing; another writer's staged notes/supplier.md and dirty
 # notes/rota.md on every scenario. `full` adds this session's work (docs/operations.md modified,
 # docs/shutdown.md new). Only `full` and `resolve` keep the two finished cards.
 # `leak` and `single` commit that work in flow and leave one new file, shift-log.txt; `leak` also holds a
 # merged branch, topic-old, so the pick has two moves. `large` leaves that work plus eight tuning files.
+# `harness` adds a CLAUDE.md binding a harness ritual and the rule .claude/rules/maintenance.md to the base commit.
+# `cochange` adds the same, plus the rule .claude/rules/seal.md and the served skill .claude/skills/seal-audit/ (a `.served`
+# marker), each stating the old seal policy; the session's edit to docs/maintenance.md states the new one.
 # <dir>.snap holds the state the pick leaves alone; <dir>.foreign holds the other writer's blobs;
 # <dir>.base holds the sha the close starts from.
 set -eu
@@ -16,6 +19,8 @@ here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 rm -rf "$dir" "$dir.snap" "$dir.foreign" "$dir.base"
 mkdir -p "$dir"
 cp -R "$here/fixture/base/." "$dir/"
+case "$scenario" in harness|cochange) cp -R "$here/fixture/harness/." "$dir/" ;; esac
+[ "$scenario" != cochange ] || cp -R "$here/fixture/cochange/." "$dir/"
 case "$scenario" in full|resolve) ;; *) rm -f "$dir/docs/work/BUG-rt51.md" "$dir/docs/work/BUG-sd22.md" ;; esac
 cd "$dir"
 git init -q -b main
@@ -38,6 +43,7 @@ printf 'Tuesday: Ben.\n' >> notes/rota.md
 case "$scenario" in
   full) cp -R "$here/fixture/session/." "$dir/" ;;
   leak|single) printf 'Shift 3 closed by Ana.\n' > shift-log.txt ;;
+  cochange) sed -i -e 's/and replace it when it shows a crack\./and replace it every 12 months, or sooner when it shows a crack./' docs/maintenance.md ;;
   large)
     cp -R "$here/fixture/session/." "$dir/"
     mkdir -p tuning

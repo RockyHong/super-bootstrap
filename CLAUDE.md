@@ -14,6 +14,7 @@ Work enters by picking up a card — a `docs/work/` card file (`/super-bootstrap
 
 - **Test-first** — where a test surface exists, a failing test precedes the implementation.
 - **Verify before claiming** — evidence before "done / fixed / passing": run the check, read the output, then claim.
+- **Closure before a criterion edit** — a change to a criterion or policy SSOT enumerates its closure before the edit: every doc, harness file, off-surface place and already-sent outward message that states the old criterion. Do the list in one pass, so doc-sync verifies the closure instead of discovering it.
 - **Review received, not absorbed** — check a review claim against the code before implementing it; disagree with grounds rather than complying performatively. Judgment-grade findings: `review-intake` first (§ Dispatch).
 
 ### Cluster routing
@@ -77,7 +78,7 @@ Doc surface: `docs/` (specs, overview, techstack, the [`docs/work/`](docs/work/R
 
 Stale candidates resolve together: report path + what looks outdated + relevant diff context; update or acknowledge still-accurate — never silently fix or skip. Every doc the gate enumerates gets an outcome marker (updated, or read-and-confirmed-unchanged).
 
-**Write boundary** — doc-sync writes narrative docs only: `docs/`, the root `README`, and plugin READMEs (`plugins/*/README.md`). All harness — `CLAUDE.md`, `.claude/rules/`, skills, agents, plugin manifests — is **read-only within this step**: flag the drift and route the fix to its owner (a deliberate harness edit carrying its own verify pass; `/release` for manifests).
+**Write boundary** — doc-sync writes narrative docs only: `docs/`, the root `README`, and plugin READMEs (`plugins/*/README.md`). All harness — `CLAUDE.md`, `.claude/rules/`, skills, agents, plugin manifests — is **read-only within this step**, and a harness line the change left stale routes by owner. Harness this repo owns, made stale by the same change → a harness edit this round, in the same list as the stale docs, carrying its own `audit-harness-edits` pass before the commit lands. Foreign-owned harness — a served copy (provenance classes: `.claude/rules/repo-boundary.md` § Finding lanes; `.claude/guidelines/**` whole: § Ownership by folder), a file in another repo — → flag the drift and route it by that rule's concern-first test: this repo's concern → `/super-bootstrap:log` here, the served copy untouched; the serving repo's → `/contribute`. Plugin manifests → `/release`.
 
 **Dimension routing (state XOR history — decide before writing any `docs/` file; classify step + tripwire in the `dimension-discipline` rule):**
 

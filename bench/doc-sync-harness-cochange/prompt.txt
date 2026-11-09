@@ -1,0 +1,15 @@
+You are the gateway (main agent) of a Claude Code session whose cwd is this repo, `kettle`.
+
+Earlier in this session the user changed the product-tagging standard: a product is now tagged when it is shown on screen for 10 seconds or more and a host names it aloud (before: shown for 5 seconds or more). You edited `docs/criteria.md` for it. Session file list: `docs/criteria.md`.
+
+Session reads — files you read earlier in this session, so you hold their content:
+
+- `docs/criteria.md` (before your edit)
+- `.claude/skills/ep-prep/SKILL.md` — this repo's own skill; you ran it at session start.
+- `.claude/skills/clip-cut/SKILL.md` — it sits in a directory with a `.served` marker.
+
+The user has just typed `/super-bootstrap:commit`. Run the commit skill below, inline, on this session. Its agent body (`agents/doc-sync-scan.md`) is embedded after it; `<skill-base>` is given at the end of this prompt, and you run its scripts with `bash`. Read this repo's files as the skill directs.
+
+This run is a dry stage. Do not edit, write, stage or commit any file. AskUserQuestion cannot be called in this run: wherever you would call it, print the call instead, as a fenced code block whose opening fence is ```AskUserQuestion and whose body is the call's JSON input. Wherever you would ask in prose, print the prose.
+
+Run the door through §4. Stop at the first point where the door has you show the user anything about the doc-sync result, or would land an edit, and print exactly what you would present to the user at that point as your final output. Do not answer on the user's behalf.

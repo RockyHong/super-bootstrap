@@ -3,7 +3,7 @@
 Test surface for [`skills/session-close/SKILL.md`](../../plugins/super-bootstrap/skills/session-close/SKILL.md)
 steps 2–4 and for the § Session-close entries and § 5 of
 [`skills/commit/SKILL.md`](../../plugins/super-bootstrap/skills/commit/SKILL.md). Commits land in flow, so the close
-catches leaks: one commit row, naming what the session left uncommitted, and a lone move asked in prose. The door's
+catches leaks: one commit row, naming what the session left uncommitted, and every pick asked through AskUserQuestion. The door's
 § 5 lands the N commits a row states when the leak mixes unrelated changes. A resolve row carries its outcome. A move that writes the tree brings a
 commit move and the door's judgment with it, even when the session changed nothing itself.
 Behavior-shaping prose, so it ships behind the [`skill-authoring`](../../.claude/rules/skill-authoring.md)
@@ -17,21 +17,29 @@ RED floor. Sibling bench for the pre-pick judgment: [`session-close-judgment`](.
   succeeds". Open cards: `BUG-rt51` (every Plan step done, outcome in no doc), `BUG-sd22` (every Plan step done,
   outcome stated in `docs/operations.md`), `GAP-ff03` (in motion).
 - `fixture/session/` — the session work: `docs/operations.md` modified, `docs/shutdown.md` new.
-- `prompt-{head,full,resolve,fixnow,leak,single,large,tail,turn2}.txt` — the session records and the second turn. The
-  other writer's files are named nowhere in a prompt.
+- `prompt-{head,full,resolve,fixnow,leak,single,large,harness,cochange,tail,turn2}.txt` — the session records and the second turn. The
+  other writer's files are named nowhere in a prompt. `prompt-tail.txt` has the run print each AskUserQuestion call it
+  would make as a fenced ```` ```AskUserQuestion ```` block holding the call's JSON, and print a prose ask as prose.
+- `fixture/harness/` — added to the base commit on `harness` only: a `CLAUDE.md` binding a harness ritual (a principles
+  load before an edit, a fresh-context audit before commit) and the rule `.claude/rules/maintenance.md`.
+- `fixture/cochange/` — added with `fixture/harness/` to the base commit on `cochange` only: the rule `.claude/rules/seal.md`
+  and the served skill `.claude/skills/seal-audit/` (a `.served` marker), each stating the old seal policy, a seal replaced
+  only on a crack. The session's edit to `docs/maintenance.md` states the new one: every 12 months, or sooner on a crack.
 - `make-fixture.sh <scenario> <dir>` — builds the repo with plumbing, with another writer's staged
   `notes/supplier.md` and dirty `notes/rota.md`, and writes `<dir>.snap`, `<dir>.foreign` and `<dir>.base`.
 - `run.sh <control|arm> <scenario> <dir>` — one two-turn walk: turn 1 stops at the pick, turn 2
-  (`claude -p --continue`) runs every row; `large` stops after turn 1. Records every git command in `<dir>.trace`
+  (`claude -p --continue`) runs every row; `large`, `harness` and `cochange` stop after turn 1. `CONTROL_REV` (env) picks control's revision, default `bb069c4`. Records every git command in `<dir>.trace`
   through `GIT_TRACE`.
-- `score-pick.sh <scenario> <out> <dir>` — (p1)–(p11) over turn 1, with (p5) and (p10) retired.
+- `score-pick.sh <scenario> <out> <dir>` — (p1)–(p17) over turn 1, with (p5) and (p10) retired.
 - `score-walk.sh <scenario> <dir>` — (w1)–(w4) over the fixture and the trace after turn 2.
 - `bite.sh <scratch-dir>` — each assertion failing on a violating output or a hand-driven walk. Zero LLM calls.
 
 Scenarios: `full` (session work, the seal finding, two finished cards), `resolve` (no session work, two finished
 cards), `fixnow` (no session work, the seal finding), `leak` (work committed in flow, one new file left over, a merged
 branch: two moves), `single` (the same with no merged branch: a lone move), `large` (nothing committed: the session's
-work plus eight tuning files).
+work plus eight tuning files), `harness` (no session work, a drafted line for a harness rule that owes a post-edit
+audit, the session in Traditional Chinese), `cochange` (a policy change in `docs/maintenance.md`, left uncommitted,
+that a session-owned rule and a served skill still contradict).
 
 ## Protocol
 
@@ -58,9 +66,19 @@ Assertions:
   `shift-log.txt`; each is an untracked path).
 - **(p8)** `leak`, `large`, `single`: at most one `[commit]` row (`leak`, `large`: exactly one), with no second commit
   subject and no numbered part under it. A non-gating reading on the other scenarios.
-- **(p9)** no line offers closing without running the moves.
+- **(p9)** no line offers closing without running the moves. A lone move's single-select ask is exempt: its skip option closes without that move by design.
 - **(p10)** retired: the spike pointer left the close.
-- **(p11)** `single`: at most one bullet row, an ask (a question, or a yes and a no stated), and `shift-log.txt` named.
+- **(p11)** every scenario: the pick is one printed AskUserQuestion call. Several bullet rows → `multiSelect: true`; one
+  row → not multi-select, with two options (run and skip). `single` also: at most one bullet row, `shift-log.txt` named.
+- **(p12)** `harness`: a `[fix-now]` row names `.claude/rules/maintenance.md` with its drafted line; no `[log]` row names it.
+- **(p13)** `harness`: a row other than `[log]`, or the ask, names the owed audit.
+- **(p14)** `harness`: the ask's `question` holds CJK text, the session's language.
+- **(p15)** `cochange`: a row other than `[commit]` and `[log]` names `.claude/rules/seal.md` with `12 months`, its drafted
+  edit; no `[log]` row names it.
+- **(p16)** `cochange`: that row names the audit the harness edit owes.
+- **(p17)** `cochange`: the served `seal-audit` skill is routed, not landed: no `[fix-now]` row and not the `[commit]` row name
+  it, every other row naming it names its owner route (owner, served, upstream, `/contribute`, `claude-config-manager`,
+  source), and some line names it with that route.
 - **(w1)** at least one commit landed. `full`: unrelated changes do not share a commit: `docs/shutdown.md` sits apart from
   `docs/maintenance.md` and `docs/recovery.md`. The commit count is a non-gating reading.
 - **(w2)** the other writer's paths are in no commit, `notes/supplier.md` stays staged with its blob, `notes/rota.md`
@@ -256,3 +274,25 @@ the 2 of 3 named here.
 
 This round's picks still narrate on no-remote fixtures, which nothing here gates: "No push line printed: no remote is configured and
 nothing is ahead of upstream."
+
+Harness-row round: session-close step 3b takes a row for the commit door's `harness` return, and step 3 runs an owner check
+on every harness path before a fix-now draft. Scenario `cochange`, turn 1 only, sonnet. Pass condition, named before any run:
+RED = control fails (p15), (p16) or (p17) on 2 of 3; GREEN = arm passes (p1), (p6), (p9), (p11), (p15)–(p17) on 3 of 3. At
+most 2 wording passes after RED. Control = `CONTROL_REV=HEAD` (`5c5c165`), which lacks the door's `harness` class too.
+
+| Assertion | Control `HEAD` | Pass 0: 3b row | Pass 1: owner check in 3b | Pass 2: owner check in step 3 |
+|---|---|---|---|---|
+| (p15) rule row with its edit | 3 of 3 | 3 of 3 | 3 of 3 | 3 of 3 |
+| (p16) the row names its audit | 3 of 3 | 3 of 3 | 3 of 3 | 3 of 3 |
+| (p17) served skill routed | 1 of 3 | 0 of 3 | 0 of 3 | 3 of 3 |
+| (p1), (p6), (p9), (p11) | 3 of 3 | 3 of 3 | 3 of 3 | 3 of 3 |
+
+RED holds on (p17) only: control lands the served skill as a `[doc-update]` row on 2 of 3. (p15) and (p16) hold no RED: the
+fixture's `CLAUDE.md` names the audit, so control states it. Pass 0 and pass 1 land the served skill on 6 of 6, as a
+`[harness-edit]` or `[fix-now]` row, or in the commit row: the session had read the skill, so it drafted it as an inflight
+finding before 3b's check could see it. Pass 2 is GREEN.
+
+Regression on the final text: `single` 1 of 1 on (p6)–(p11) and (w1)–(w4). `harness` 1 of 2: one walk asks the fix-now row
+and the commit row as one move, `FAIL (p11) 2 rows are asked with no multi-select`; the pass-0 walk read
+`FAIL (p1) no [commit] row. Rows: fix-now + commit`. The text before this round reads 1 of 1. Two walks cannot separate this
+from variance.

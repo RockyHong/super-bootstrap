@@ -1,0 +1,4 @@
+This session's record so far:
+- Goal: the user changed the seal replacement policy: a door seal is now replaced every 12 months, or sooner when it shows a crack. You edited `docs/maintenance.md` to state the new policy, and no other file; that goal is delivered.
+- While you worked you read `.claude/rules/seal.md` and `.claude/skills/seal-audit/SKILL.md`. You edited neither.
+- No background jobs, agents, or shells were launched.
