@@ -1,0 +1,6 @@
+This session's record so far:
+- Goal: document the end-of-shift routine. You edited `docs/operations.md` and created `docs/shutdown.md`, and committed both through the commit door as you went. That goal is delivered.
+- While writing `docs/shutdown.md` you noticed it never tells the operator to switch the heater off. You logged it through `/super-bootstrap:log`, which printed `BUG-qk47` and committed `docs(work): log BUG-qk47 — the shutdown routine leaves the heater on`. You did not work it.
+- You told the user you would add a line to `README.md` pointing operators to `docs/shutdown.md` for the end of a shift. You have not done it.
+- You then created `shift-log.txt` and did not commit it.
+- No background jobs, agents, or shells were launched.

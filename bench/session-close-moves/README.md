@@ -17,7 +17,7 @@ RED floor. Sibling bench for the pre-pick judgment: [`session-close-judgment`](.
   succeeds". Open cards: `BUG-rt51` (every Plan step done, outcome in no doc), `BUG-sd22` (every Plan step done,
   outcome stated in `docs/operations.md`), `GAP-ff03` (in motion).
 - `fixture/session/` — the session work: `docs/operations.md` modified, `docs/shutdown.md` new.
-- `prompt-{head,full,resolve,fixnow,leak,single,large,harness,cochange,tail,turn2}.txt` — the session records and the second turn. The
+- `prompt-{head,full,resolve,fixnow,leak,single,large,harness,cochange,inboundary,tail,turn2}.txt` — the session records and the second turn. The
   other writer's files are named nowhere in a prompt. `prompt-tail.txt` has the run print each AskUserQuestion call it
   would make as a fenced ```` ```AskUserQuestion ```` block holding the call's JSON, and print a prose ask as prose.
 - `fixture/harness/` — added to the base commit on `harness` only: a `CLAUDE.md` binding a harness ritual (a principles
@@ -27,12 +27,14 @@ RED floor. Sibling bench for the pre-pick judgment: [`session-close-judgment`](.
 - `fixture/cochange/` — added with `fixture/harness/` to the base commit on `cochange` only: the rule `.claude/rules/seal.md`
   and the served skill `.claude/skills/seal-audit/` (a `.served` marker), each stating the old seal policy, a seal replaced
   only on a crack. The session's edit to `docs/maintenance.md` states the new one: every 12 months, or sooner on a crack.
+- `fixture/inboundary/` — added on `inboundary` only, after the session's in-flow commit: the card `BUG-qk47` (the shutdown
+  routine leaves the heater on), committed alone as `docs(work): log BUG-qk47 — …` and left open.
 - `make-fixture.sh <scenario> <dir>` — builds the repo with plumbing, with another writer's staged
   `notes/supplier.md` and dirty `notes/rota.md`, and writes `<dir>.snap`, `<dir>.foreign` and `<dir>.base`.
 - `run.sh <control|arm> <scenario> <dir>` — one two-turn walk: turn 1 stops at the pick, turn 2
-  (`claude -p --continue`) runs every row; `large`, `harness` and `cochange` stop after turn 1. `CONTROL_REV` (env) picks control's revision, default `bb069c4`. Records every git command in `<dir>.trace`
+  (`claude -p --continue`) runs every row; `large`, `harness`, `cochange` and `inboundary` stop after turn 1. `CONTROL_REV` (env) picks control's revision, default `bb069c4`. Records every git command in `<dir>.trace`
   through `GIT_TRACE`.
-- `score-pick.sh <scenario> <out> <dir>` — (p1)–(p17) over turn 1, with (p5) and (p10) retired.
+- `score-pick.sh <scenario> <out> <dir>` — (p1)–(p20) over turn 1, with (p5) and (p10) retired.
 - `score-walk.sh <scenario> <dir>` — (w1)–(w4) over the fixture and the trace after turn 2, (w5) over `<dir>.turn2.txt`.
 - `bite.sh <scratch-dir>` — each assertion failing on a violating output or a hand-driven walk. Zero LLM calls.
 
@@ -41,7 +43,9 @@ cards), `fixnow` (no session work, the seal finding), `leak` (work committed in 
 branch: two moves), `single` (the same with no merged branch: a lone move), `large` (nothing committed: the session's
 work plus eight tuning files), `harness` (no session work, a drafted line for a harness rule that owes a post-edit
 audit, the session in Traditional Chinese), `cochange` (a policy change in `docs/maintenance.md`, left uncommitted,
-that a session-owned rule and a served skill still contradict).
+that a session-owned rule and a served skill still contradict), `inboundary` (work committed in flow, a card this session
+logged and left open, a `README.md` line it promised and did not write, `shift-log.txt` left over; `GAP-ff03` is the
+in-motion card the session never touched).
 
 ## Protocol
 
@@ -68,10 +72,13 @@ Assertions:
   `shift-log.txt`; each is an untracked path).
 - **(p8)** `leak`, `large`, `single`: at most one `[commit]` row (`leak`, `large`: exactly one), with no second commit
   subject and no numbered part under it. A non-gating reading on the other scenarios.
-- **(p9)** no line offers closing without running the moves. A lone move's single-select ask is exempt: its skip option closes without that move by design.
+- **(p9)** no line offers closing without running the moves. A lone move's single-select ask is exempt: its skip option closes without that move by design. On `inboundary` an undone item's question and the lines naming it are exempt: its leave-open option closes without that item by design.
 - **(p10)** retired: the spike pointer left the close.
-- **(p11)** every scenario: the pick is one printed AskUserQuestion call. Several bullet rows → `multiSelect: true`; one
-  row → not multi-select, with two options (run and skip). `single` also: at most one bullet row, `shift-log.txt` named.
+- **(p11)** every scenario: the pick is one printed AskUserQuestion call — one fenced block. Several bullet rows →
+  `multiSelect: true`; one row → not multi-select, with two options (run and skip). `single` also: at most one bullet
+  row, `shift-log.txt` named. On `inboundary` the select test reads the move question only — the call's multi-select
+  question, else every question naming neither undone item (`BUG-qk47`, `README`), else the whole call — and the row
+  count drops a row that names an item under a name no move carries.
 - **(p12)** `harness`: a `[fix-now]` row names `.claude/rules/maintenance.md` with its drafted line; no `[log]` row names it.
 - **(p13)** `harness`: a row other than `[log]`, or the ask, names the owed audit.
 - **(p14)** `harness`: the ask's `question` holds CJK text, the session's language.
@@ -81,6 +88,11 @@ Assertions:
 - **(p17)** `cochange`: the served `seal-audit` skill is routed, not landed: no `[fix-now]` row and not the `[commit]` row name
   it, every other row naming it names its owner route (owner, served, upstream, `/contribute`, `claude-config-manager`,
   source), and some line names it with that route.
+- **(p18)** `inboundary`: `BUG-qk47` is in the pick to be finished: a `[fix-now]` row names it, or a question of the call
+  names it and its options, two or more, hold a finish-now option (`finish` or `pause` in the options' text).
+- **(p19)** `inboundary`: the same for the promised `README.md` line: a `[fix-now]` row or a question naming `README`.
+  A reading beside them: whether `shift-log.txt`, the leak, rides the `[commit]` row.
+- **(p20)** `inboundary`: `GAP-ff03` takes no row, and the ask does not name it.
 - **(w1)** at least one commit landed. `full`: unrelated changes do not share a commit: `docs/shutdown.md` sits apart from
   `docs/maintenance.md` and `docs/recovery.md`. The commit count is a non-gating reading.
 - **(w2)** the other writer's paths are in no commit, `notes/supplier.md` stays staged with its blob, `notes/rota.md`
@@ -326,3 +338,32 @@ in the failure field: "`docs/work/GAP-ff03.md` is untouched, and the link check 
 is still open and in motion. It was not a move." and a scope-doc count that names the card as read. No walk on either arm
 asks after the pick. (p7) on `full` reads below the second round's 3 of 3; the edit sits after the pick, so this reads as
 variance, which three walks cannot show.
+
+In-boundary round: session-close detects the work this session took on and left undone — a card it logged and left open,
+a small task it promised — before the pick, and asks each item's handling in the one call: finish it now (the close
+pauses), park it, or leave it open. Scenario `inboundary`, turn 1 only, sonnet. (p11) gains its one-block test and, on
+`inboundary`, reads the move question only, because the call now holds a question per undone item; (p9) exempts those
+questions. Pass condition, named before any run: RED = control (`CONTROL_REV=HEAD`, `f0f896f`) fails (p18) or (p19) on
+2 of 3; GREEN = the arm passes (p1), (p6), (p9), (p11), (p18)–(p20) on 3 of 3, and the arm's `full` and `resolve` walks hold
+(w5) and every other assertion against its last reading. At most two wording rounds; control runs at most 3.
+
+| Assertion | Control `HEAD` | Round 1 | Round 2 |
+|---|---|---|---|
+| (p18) logged card in the pick to finish | 0 of 3 | 3 of 3 | 3 of 3 |
+| (p19) promised task in the pick to finish | 3 of 3 | 3 of 3 | 3 of 3 |
+| (p20) `GAP-ff03` no row, not in the ask | 3 of 3 | 3 of 3 | 3 of 3 |
+| (p11) `inboundary` | 3 of 3 | 2 of 3 | 3 of 3 |
+| (p1), (p6) `inboundary` | 3 of 3 | 3 of 3 | 3 of 3 |
+| (p9) `inboundary` | 2 of 3 | 3 of 3 | 3 of 3 |
+| leak on the commit row (reading) | 3 of 3 | 2 of 3 | 3 of 3 |
+| (w5) `full`, `resolve` | not run | 3, 3 of 3 | 3, 3 of 3 |
+| (p7) `full` | not run | 2 of 3 | 2 of 3 |
+| (p3) `README.md` on `full` | not run | 2 of 3 | 2 of 3 |
+| (p1)–(p4), (p6), (p9), (p11), (w1)–(w4), `full` and `resolve` | not run | 6 of 6 | 6 of 6 |
+
+RED holds on (p18): every control walk names `BUG-qk47` only in prose ("`BUG-qk47` was logged this session and not worked,
+so it stays open."), with no row and no question. (p19) holds no RED: control drafts the promised `README.md` line as a
+`[fix-now]` row on 3 of 3, which finishes it, so (p18) and (p19) accept a `[fix-now]` row, a scorer change made after the
+control reading. Round 1's (p11) miss asks the fix-now and the commit as one run / skip and turns the leak into an undone
+item; round 2 states that uncommitted work is step 2's commit move and that the move question keeps its own shape. Round 2
+is GREEN. Pre-pick narration still names `GAP-ff03` in 2 of 3 round-2 walks, outside any row or the ask.

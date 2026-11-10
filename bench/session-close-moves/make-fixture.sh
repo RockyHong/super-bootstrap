@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # make-fixture.sh — scratch repo for session-close's moves.
-# Usage: bash bench/session-close-moves/make-fixture.sh <full|resolve|fixnow|leak|single|large|harness|cochange> <dir>
+# Usage: bash bench/session-close-moves/make-fixture.sh <full|resolve|fixnow|leak|single|large|harness|cochange|inboundary> <dir>
 #
 # After: one base commit built with plumbing; another writer's staged notes/supplier.md and dirty
 # notes/rota.md on every scenario. `full` adds this session's work (docs/operations.md modified,
@@ -10,6 +10,8 @@
 # `harness` adds a CLAUDE.md binding a harness ritual and the rule .claude/rules/maintenance.md to the base commit.
 # `cochange` adds the same, plus the rule .claude/rules/seal.md and the served skill .claude/skills/seal-audit/ (a `.served`
 # marker), each stating the old seal policy; the session's edit to docs/maintenance.md states the new one.
+# `inboundary` commits the session's work in flow, then the card BUG-qk47 in a `docs(work): log` commit of its own,
+# left open, and leaves shift-log.txt; base's GAP-ff03 stays the in-motion card this session never touched.
 # <dir>.snap holds the state the pick leaves alone; <dir>.foreign holds the other writer's blobs;
 # <dir>.base holds the sha the close starts from.
 set -eu
@@ -30,11 +32,16 @@ git config core.autocrlf false
 git add -A
 git update-ref refs/heads/main "$(git commit-tree "$(git write-tree)" -m init)"
 case "$scenario" in
-  leak|single)
+  leak|single|inboundary)
     [ "$scenario" != leak ] || git branch topic-old HEAD
     cp -R "$here/fixture/session/." "$dir/"
     git add docs/operations.md docs/shutdown.md
     git update-ref refs/heads/main "$(git commit-tree "$(git write-tree)" -p HEAD -m "docs: document the end-of-shift routine")"
+    if [ "$scenario" = inboundary ]; then
+      cp -R "$here/fixture/inboundary/." "$dir/"
+      git add docs/work/BUG-qk47.md
+      git update-ref refs/heads/main "$(git commit-tree "$(git write-tree)" -p HEAD -m "docs(work): log BUG-qk47 — the shutdown routine leaves the heater on")"
+    fi
     ;;
 esac
 printf 'Backup supplier: Orlo.\n' >> notes/supplier.md
@@ -42,7 +49,7 @@ git add notes/supplier.md
 printf 'Tuesday: Ben.\n' >> notes/rota.md
 case "$scenario" in
   full) cp -R "$here/fixture/session/." "$dir/" ;;
-  leak|single) printf 'Shift 3 closed by Ana.\n' > shift-log.txt ;;
+  leak|single|inboundary) printf 'Shift 3 closed by Ana.\n' > shift-log.txt ;;
   cochange) sed -i -e 's/and replace it when it shows a crack\./and replace it every 12 months, or sooner when it shows a crack./' docs/maintenance.md ;;
   large)
     cp -R "$here/fixture/session/." "$dir/"

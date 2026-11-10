@@ -126,6 +126,35 @@ cochangegood | sed -e '2s/.*/- [harness] .claude\/skills\/seal-audit\/SKILL.md: 
 echo "== (p17) the served skill is named nowhere"
 cochangegood | sed -e '2d' > "$scratch/o.txt"; sc cochange "$cx"
 
+ix="$scratch/bite-inboundary"; bash "$here/make-fixture.sh" inboundary "$ix" >/dev/null
+# The one call: the lone commit move as run / skip, then one single-select question per undone item.
+ibgood() {
+  echo '- [commit] Left uncommitted: shift-log.txt'
+  echo '- [undone] BUG-qk47, logged this session and still open: finish now, park, or leave open.'
+  echo '- [undone] The README.md line pointing to docs/shutdown.md, promised this session: finish now, park, or leave open.'
+  echo '```AskUserQuestion'
+  echo '{"questions":[{"question":"Commit shift-log.txt?","header":"Close","multiSelect":false,"options":[{"label":"Run","description":"commit it"},{"label":"Skip","description":"leave it"}]},'
+  echo '{"question":"BUG-qk47 is still open. Handle it how?","header":"BUG-qk47","multiSelect":false,"options":[{"label":"Finish now","description":"pause the close, fix it, re-run the close"},{"label":"Park","description":"Progress block on the card"},{"label":"Leave open","description":"no write"}]},'
+  echo '{"question":"The README.md line is not written. Handle it how?","header":"README","multiSelect":false,"options":[{"label":"Finish now","description":"pause the close, write it, re-run the close"},{"label":"Leave open","description":"no write"}]}]}'
+  echo '```'
+}
+echo "== inboundary baseline (all pass)"; ibgood > "$scratch/o.txt"; sc inboundary "$ix"
+echo "== (p18) the logged card gets no question"
+ibgood | grep -v 'BUG-qk47' > "$scratch/o.txt"; sc inboundary "$ix"
+echo "== (p18) the logged card's question offers no finish-now option"
+ibgood | sed -e '/"header":"BUG-qk47"/s/{"label":"Finish now","description":"pause the close, fix it, re-run the close"},//' > "$scratch/o.txt"; sc inboundary "$ix"
+echo "== (p19) the promised task's question offers no finish-now option"
+ibgood | sed -e '/"header":"README"/s/"Finish now","description":"pause the close, write it, re-run the close"/"Park","description":"a carry line"/' > "$scratch/o.txt"; sc inboundary "$ix"
+echo "== (p19) baseline: the promised line drafted as a [fix-now] row, which the close lands"
+{ echo '- [fix-now] README.md: append "At the end of a shift, follow docs/shutdown.md."'
+  ibgood | grep -v 'README' | sed -e 's/^- \[commit\] Left uncommitted: shift-log.txt$/& Also lands the fix-now edit./' \
+    -e 's/"question":"Commit shift-log.txt?","header":"Close","multiSelect":false/"question":"Run which moves?","header":"Close","multiSelect":true/' \
+    -e '/"header":"BUG-qk47"/s/},$/}]}/'; } > "$scratch/o.txt"; sc inboundary "$ix"
+echo "== (p20) the out-of-boundary in-motion card takes a row"
+{ ibgood | grep -v '^[`{]'; echo '- [triage] GAP-ff03: still in motion.'; ibgood | sed -n '/^```/,$p'; } > "$scratch/o.txt"; sc inboundary "$ix"
+echo "== (p11) the undone items asked in a second call"
+{ ibgood | sed -e 's/"leave it"}]},$/"leave it"}]}]}/' -e '/"header":"BUG-qk47"/i ```' -e '/"header":"BUG-qk47"/i ```AskUserQuestion' -e '/"header":"BUG-qk47"/s/^/{"questions":[/'; } > "$scratch/o.txt"; sc inboundary "$ix"
+
 # A hand-driven walk of `full`: land the picked edits, then commit by the shape each violation names.
 land() {
   fx="$1"
@@ -137,7 +166,7 @@ land() {
   sed -i -e 's/keeps retrying until it succeeds, so the list is always complete/retries up to 5 times/' docs/console.md
   rm -f docs/work/BUG-rt51.md docs/work/BUG-sd22.md
   git add -N docs/shutdown.md
-  rm -f "$fx.trace"
+  rm -f "$fx.trace" "$fx.turn2.txt"
   GIT_TRACE="$native/$(basename "$fx").trace"
   export GIT_TRACE
   cd "$here"

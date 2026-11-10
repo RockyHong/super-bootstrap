@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # run.sh — one headless two-turn walk of session-close: turn 1 stops at the pick, turn 2 runs it.
-# Usage: bash bench/session-close-moves/run.sh <control|arm> <full|resolve|fixnow|leak|single|large|harness|cochange> <fixture-dir>
+# Usage: bash bench/session-close-moves/run.sh <control|arm> <full|resolve|fixnow|leak|single|large|harness|cochange|inboundary> <fixture-dir>
 #
 #   control — session-close + commit SKILL.md + doc-sync-scan at CONTROL_REV (env, default bb069c4), exported beside the fixture
 #   arm     — the working-tree copies (copy under test: this repo's dev copy)
 #
 # Writes <dir>.turn1.txt, <dir>.turn2.txt and <dir>.trace, git's own record of every command the run
-# issued. Scores turn 1 before turn 2 runs; `large`, `harness` and `cochange` stop after turn 1. Pass a <fixture-dir> outside this repo.
+# issued. Scores turn 1 before turn 2 runs; `large`, `harness`, `cochange` and `inboundary` stop after turn 1. Pass a <fixture-dir> outside this repo.
 set -u
 mode="${1:?usage: run.sh <control|arm> <scenario> <fixture-dir>}"
 scenario="${2:?scenario}"
@@ -51,7 +51,7 @@ flags="--model sonnet --allowedTools Bash --setting-sources project,local --perm
 ( cd "$fx" && printf '%s\n' "$prompt" | claude -p $flags ) > "$fx.turn1.txt" 2>&1
 echo "== pick $mode $scenario $fx"
 bash "$here/score-pick.sh" "$scenario" "$fx.turn1.txt" "$fx"
-case "$scenario" in large|harness|cochange) exit 0 ;; esac
+case "$scenario" in large|harness|cochange|inboundary) exit 0 ;; esac
 # Turn 2 writes the picked rows: Edit and Write join Bash, or a headless run has no way to land an edit.
 flags2="--model sonnet --allowedTools Bash,Read,Edit,Write --setting-sources project,local --permission-prompts none"
 ( cd "$fx" && claude -p --continue $flags2 < "$here/prompt-turn2.txt" ) > "$fx.turn2.txt" 2>&1

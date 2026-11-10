@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # score-pick.sh — assertions over turn 1's pick and the fixture it left.
-# Usage: bash bench/session-close-moves/score-pick.sh <full|resolve|fixnow|leak|single|large|harness|cochange> <out-file> <fixture-dir>
+# Usage: bash bench/session-close-moves/score-pick.sh <full|resolve|fixnow|leak|single|large|harness|cochange|inboundary> <out-file> <fixture-dir>
 # One PASS or FAIL per gating assertion, PASS or MISS for the recall reading (p3), READING for a
 # non-gating count. Exits 1 on any FAIL.
 set -u
@@ -99,15 +99,36 @@ esac
 
 # The ask the run printed: the body of a ```AskUserQuestion fenced block, empty when it asked in prose.
 ask="$(tr -d '\r' < "$out" | awk '/^[ \t]*```AskUserQuestion/ { f = 1; next } f && /^[ \t]*```/ { f = 0 } f')"
-row_count="$(printf '%s\n' "$all_rows" | grep -c . || true)"
-labels="$(printf '%s\n' "$ask" | grep -o '"label"' | grep -c . || true)"
-multi() { printf '%s\n' "$ask" | grep -Eq '"multiSelect"[[:space:]]*:[[:space:]]*true'; }
+calls="$(tr -d '\r' < "$out" | grep -c '^[ \t]*```AskUserQuestion' || true)"
+# One line per question of the call: the question text through its options.
+questions="$(printf '%s' "$ask" | tr -d '\n' | sed -e 's/"question"[[:space:]]*:/\n&/g' | grep '"question"')"
+# `inboundary`'s undone items: the card this session logged and the README line it promised. The move question is
+# the multi-select question when the call holds one, else every question naming neither item. A row is a move
+# unless it names an item and its name is no move's name. With no move question found, the whole call is read.
+items=''
+[ "$scenario" != inboundary ] || items='BUG-qk47|README'
+moves='^(commit|resolve|fix-now|triage|prune|merge|push|log|park|ledger|stop|doc-update|register|terminology|restatement|volatile|harness)'
+move_q="$questions"; move_rows="$all_rows"
+if [ -n "$items" ]; then
+  move_rows="$(printf '%s\n' "$all_rows" | awk -F'\t' -v k="$items" -v m="$moves" 'tolower($1) ~ m || $0 !~ k')"
+  mq="$(printf '%s\n' "$questions" | grep -E '"multiSelect"[[:space:]]*:[[:space:]]*true')"
+  [ -n "$mq" ] || mq="$(printf '%s\n' "$questions" | grep -Ev "$items")"
+  [ -z "$mq" ] || move_q="$mq"
+fi
+row_count="$(printf '%s\n' "$move_rows" | grep -c . || true)"
+labels="$(printf '%s\n' "$move_q" | grep -o '"label"' | grep -c . || true)"
+multi() { printf '%s\n' "$move_q" | grep -Eq '"multiSelect"[[:space:]]*:[[:space:]]*true'; }
 
 # (p9) no option closes without running the moves. A lone move's single-select ask is exempt: its skip
-# option closes without that move by design, so (p9) reads the output outside that ask.
+# option closes without that move by design, so (p9) reads the output outside that ask. An undone item's
+# question is exempt too: its leave-open option closes without that item by design.
 p9_text="$(tr -d '\r' < "$out")"
-if [ -n "$ask" ] && [ "$row_count" -le 1 ] && ! multi; then
+if [ -n "$ask" ] && { { [ "$row_count" -le 1 ] && ! multi; } || [ -n "$items" ]; }; then
   p9_text="$(printf '%s\n' "$p9_text" | awk '/^[ \t]*```AskUserQuestion/ { f = 1; next } f && /^[ \t]*```/ { f = 0; next } !f')"
+  if [ -n "$items" ]; then
+    p9_text="$(printf '%s\n' "$p9_text" | grep -Ev "$items")"
+    if [ "$row_count" -gt 1 ] || multi; then p9_text="$(printf '%s\n' "$p9_text"; printf '%s\n' "$move_q")"; fi
+  fi
 fi
 if printf '%s\n' "$p9_text" | grep -Eiq 'close without|without running'; then fail "(p9) a close-without option is offered"
 else echo "PASS (p9) no close-without option"; fi
@@ -115,6 +136,7 @@ else echo "PASS (p9) no close-without option"; fi
 # (p11) every pick is an AskUserQuestion call: several rows multi-select, a lone row single-select run / skip.
 # `single` also holds the lone move to at most one row naming the leak.
 if [ -z "$ask" ]; then fail "(p11) the pick is not an AskUserQuestion call ($row_count bullet rows)"
+elif [ "$calls" -gt 1 ]; then fail "(p11) the pick is $calls AskUserQuestion calls, not one"
 elif [ "$scenario" = single ] && [ "$row_count" -gt 1 ]; then fail "(p11) $row_count rows on a lone move. Rows: $names"
 elif [ "$scenario" = single ] && ! tr -d '\r' < "$out" | grep -q 'shift-log\.txt'; then fail "(p11) the pick does not name shift-log.txt"
 elif [ "$row_count" -le 1 ]; then
@@ -161,5 +183,31 @@ if [ "$scenario" = cochange ]; then
   elif { tr -d '\r' < "$out"; printf '%s\n' "$all_rows"; } | grep 'seal-audit' | grep -Eqi "$route"; then
     echo "PASS (p17) the served skill routes to its owner, not landed"
   else fail "(p17) no line names seal-audit with its owner route"; fi
+fi
+
+if [ "$scenario" = inboundary ]; then
+  # (p18), (p19) each in-boundary undone item is in the pick to be finished: a [fix-now] row naming it, which the
+  # close lands, or a question of the one call naming it with a finish-now option among two or more.
+  item_q() { # item_q <tag> <pattern> <what>
+    q="$(printf '%s\n' "$questions" | grep -E "$2" | grep -Ev '"multiSelect"[[:space:]]*:[[:space:]]*true' | head -1)"
+    [ -n "$q" ] || q="$(printf '%s\n' "$questions" | grep -E "$2" | head -1)"
+    opts="$(printf '%s\n' "$q" | sed -e 's/.*"options"//')"
+    if named '^fix-now' | grep -Eq "$2"; then echo "PASS $1 $3 is a [fix-now] row the close lands"
+    elif [ -z "$q" ]; then fail "$1 no [fix-now] row and no question of the call names $3. Rows: $names"
+    elif ! printf '%s\n' "$opts" | grep -Eqi 'finish|pause'; then
+      fail "$1 the question naming $3 offers no finish-now option: $(printf '%s' "$q" | cut -c1-240)"
+    elif [ "$(printf '%s\n' "$opts" | grep -o '"label"' | grep -c .)" -lt 2 ]; then
+      fail "$1 the question naming $3 holds fewer than two options"
+    else echo "PASS $1 $3 is a question of the pick with a finish-now option"; fi
+  }
+  item_q '(p18)' 'BUG-qk47' 'the card this session logged (BUG-qk47)'
+  item_q '(p19)' 'README' "the README line the session promised"
+  # Reading: the leak, shift-log.txt, rides the [commit] row (step 2), not an undone item's question.
+  if named '^commit' | grep -q 'shift-log\.txt'; then echo "READING leak on the commit row: yes"
+  else echo "READING leak on the commit row: no"; fi
+  # (p20) the out-of-boundary in-motion card takes no row and is not in the ask.
+  if printf '%s\n' "$all_rows" | grep -q 'GAP-ff03'; then fail "(p20) GAP-ff03 takes a row: $(printf '%s\n' "$all_rows" | grep 'GAP-ff03' | head -1 | cut -c1-200)"
+  elif printf '%s\n' "$ask" | grep -q 'GAP-ff03'; then fail "(p20) the ask names GAP-ff03"
+  else echo "PASS (p20) GAP-ff03 takes no row and is not in the ask"; fi
 fi
 [ "$fails" = 0 ]
