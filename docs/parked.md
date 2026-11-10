@@ -33,7 +33,7 @@ Spec-coupled items may replace **Watching for** / **Fires on** with a `surface-o
 ### PARK-mw8r — session-close residuals after the leak-catching redesign
 
 **Logged:** 2026-11-04 · **Source:** `DEBT-70b1`, closed on the user's ruling; its thread is in the deleting commit's parent
-**Watching for:** a real close that picks wrong, drops work, or misleads the user. Known residuals: a nested list after "splits into N commits", the register row at 6 of 9, and an empty push check named in the pick's framing or final output. No reading yet on a real remote, a rejected push, the Skill-tool path, park-close output or a declined row.
+**Watching for:** a real close that picks wrong, drops work, or misleads the user. Known residuals: a nested list after "splits into N commits", the register row at 6 of 9, an empty push check named in the pick's framing or final output, and a final output that names an open card no picked move touched ([`bench/session-close-moves`](../bench/session-close-moves/README.md#findings) (w5), 5 of 6). One real close read: a consumer repo's final output listed the open cards after the pick, one marked as needing the owner's judgement; the close skill's § Output bounds that case. No reading yet on a real remote, a rejected push, the Skill-tool path, park-close output or a declined row.
 **Fires on:** one such close observed, or `docs/test-queue.md`'s device case failing. Tuning prose against these readings alone does not fire it.
 
 ### PARK-wez1 — skill-authoring has no stop rule for a condition prose keeps failing

@@ -33,7 +33,7 @@ RED floor. Sibling bench for the pre-pick judgment: [`session-close-judgment`](.
   (`claude -p --continue`) runs every row; `large`, `harness` and `cochange` stop after turn 1. `CONTROL_REV` (env) picks control's revision, default `bb069c4`. Records every git command in `<dir>.trace`
   through `GIT_TRACE`.
 - `score-pick.sh <scenario> <out> <dir>` — (p1)–(p17) over turn 1, with (p5) and (p10) retired.
-- `score-walk.sh <scenario> <dir>` — (w1)–(w4) over the fixture and the trace after turn 2.
+- `score-walk.sh <scenario> <dir>` — (w1)–(w4) over the fixture and the trace after turn 2, (w5) over `<dir>.turn2.txt`.
 - `bite.sh <scratch-dir>` — each assertion failing on a violating output or a hand-driven walk. Zero LLM calls.
 
 Scenarios: `full` (session work, the seal finding, two finished cards), `resolve` (no session work, two finished
@@ -89,6 +89,8 @@ Assertions:
   `git diff HEAD --name-only -- <same set>` after the previous commit. This is the door's readback, per part.
 - **(w4)** the picked moves landed at `HEAD`: finished cards gone, `GAP-ff03` kept, a doc states `E7`, 14 days in
   `docs/maintenance.md`, `docs/shutdown.md` present. `leak`, `single`: `shift-log.txt` present. `leak`: `topic-old` gone.
+- **(w5)** the pick was the last ask: turn 2's output names no open card that is not a move (`GAP-ff03`), and holds no
+  question or judgment ask (a line ending in `?`, a printed AskUserQuestion call, "your judgement", "want me to" and the like).
 
 Pass condition, named before any run, three walks per scenario:
 
@@ -115,7 +117,7 @@ met stays met: (p1), (p2) `BUG-rt51`, (p3) `docs/console.md`, (p3) `README.md` o
 3; (p7), last 2, 2, 1 of 3; (p8) on `large`, last 1 of 3; (p11), last 2 of 3; (w3), last 14 of 15; the register row of
 `session-close-judgment`'s `run.sh arm`, last 2 of 3.
 
-Field-list round: `session-close` § Output now holds a fixed list of fields. Same pass condition and same scenarios as the
+Field-list round: `session-close` § Output holds a fixed list of fields. Same pass condition and same scenarios as the
 script round, named before any run. A miss on a condition the second round met is reported at the end of the run with its
 verbatim lines, with no retuning.
 
@@ -303,3 +305,24 @@ from variance.
 base comment judged the drafted rule line a duplicate and picked nothing. No fixture file states `boot` or `restart` now. Arm, three
 walks run in parallel in fresh directories, turn 1 only, sonnet: (p1), (p6), (p9), (p11)–(p14) 3 of 3. (p8) reads 1 commit row on each.
 Parallel walks share nothing but the plugin tree, so they ran together without interference.
+
+Last-ask round: § Output's open-thread field becomes a failure-only field, the tree-state field names `git status` paths, and
+a card no picked move touched gets no line in any field. Scorer (w5), named before any run. Pass condition: RED = control
+(`CONTROL_REV=HEAD`, `a02d2ab`) fails (w5) on a walk; GREEN = arm passes (w5) on 3 of 3 per scenario on `resolve` and `full`,
+with every other assertion against its last reading. At most two wording passes.
+
+| Assertion | Control `HEAD` | Pass 1: failure field + bound | Pass 2: bound binds every field |
+|---|---|---|---|
+| (w5) `resolve` | 0 of 1 | 2 of 3 | 3 of 3 |
+| (w5) `full` | 0 of 1 | 2 of 3 | 2 of 3 |
+| (p7) `full` | 1 of 1 | 1 of 3 | 2 of 3 |
+| (w1) no-mix on `full` | 0 of 1 | 2 of 3 | 3 of 3 |
+| (w3) | 2 of 2 | 5 of 6 | 6 of 6 |
+| (p1)–(p4), (p6), (p9), (p11), (w1) rest, (w2), (w4) | 2 of 2 | 6 of 6 | 6 of 6 |
+
+RED holds on (w5): both control walks print `GAP-ff03` in the tree-state field ("`GAP-ff03` is still open (step 2 not
+started) and untouched.") while the open-thread field reads "none". The arm is unmet on `full`. Pass 2's miss puts the card
+in the failure field: "`docs/work/GAP-ff03.md` is untouched, and the link check is clean." Pass 1's misses: "`docs/work/GAP-ff03.md`
+is still open and in motion. It was not a move." and a scope-doc count that names the card as read. No walk on either arm
+asks after the pick. (p7) on `full` reads below the second round's 3 of 3; the edit sits after the pick, so this reads as
+variance, which three walks cannot show.

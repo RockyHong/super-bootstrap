@@ -175,3 +175,15 @@ w="$scratch/bite-w4"; land "$w"
 ( cd "$w" && git checkout -q -- docs/maintenance.md docs/work/BUG-sd22.md ) >/dev/null 2>&1
 commit_part "$w" yes docs/operations.md; commit_part "$w" yes README.md docs/console.md docs/recovery.md docs/work/BUG-rt51.md
 git -C "$w" rm -q --cached docs/shutdown.md; rm -f "$w/docs/shutdown.md"; walk "$w"
+
+# (w5) over turn 2's output: the walk baseline's tree, with a printed final output beside it.
+w="$scratch/bite-walk"
+final_good() { printf 'Shape: done-close.\nExecuted: commit (3 commits), resolve BUG-rt51, resolve BUG-sd22, fix-now docs/maintenance.md.\nDoor: 4 scope docs read and confirmed unchanged.\nTree: clean apart from notes/rota.md and notes/supplier.md, another writer'"'"'s.\n'; }
+echo "== (w5) baseline (all pass)"
+final_good > "$w.turn2.txt"; walk "$w"
+echo "== (w5) the output lists an open card that is not a move"
+{ final_good; echo 'Remaining cards for next session: GAP-ff03 (in motion).'; } > "$w.turn2.txt"; walk "$w"
+echo "== (w5) the output asks for a judgement after the pick"
+{ final_good; echo 'One card needs your judgement before the next session.'; } > "$w.turn2.txt"; walk "$w"
+echo "== (w5) the output ends on a question"
+{ final_good; echo 'Want me to start on the next card?'; } > "$w.turn2.txt"; walk "$w"

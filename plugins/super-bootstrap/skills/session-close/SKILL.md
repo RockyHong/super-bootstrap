@@ -105,15 +105,17 @@ This is the terminal output — the commit door's §6 commit report does not pri
 
 After the moves, run `bash <skill-base>/assets/push-state.sh state` as its own call.
 
-The final output holds these fields:
+The final output holds these fields and nothing else. Each field names only what this close did — its moves, the paths they wrote — and its failure; it asks nothing beyond a failure's options, since the pick was the last ask:
 
 - The shape taken (done-close / park-close).
 - The moves executed, and any declined.
 - The count of scope docs the door read and confirmed unchanged.
-- The final tree state.
+- The final tree state: what `git status` shows, by path.
 - The line `push-state.sh state` printed, if any.
-- An open thread blocking a clean close, if any.
+- What a failure the run hit stopped, and where, and the options for it, if any.
 - On a park-close: the Progress block(s) and carry as written, for a final eyeball, and the resume line — `Next session: /super-bootstrap:session-continue`.
+
+A card with no row in the pick gets no line in any field — not as "still open", not as read, not as next: open work is `/super-bootstrap:needs-me`'s.
 
 ## Rules
 
@@ -125,4 +127,4 @@ The final output holds these fields:
 - **Own file only.** Write and delete the carry carrying this session's id — authored here or claimed at pickup; leave every other file in `SESSION-STATE/` as found — no read-pass over the folder.
 - **Two terminal shapes.** done = goal delivered + tree clean + own carry cleared; park = card state on the card, volatile rest in the own carry. Every close lands exactly one.
 - **Card first, carry holds the delta.** What a card owns lands on the card; the carry holds only what no card or doc owns, plus pointers — a restated Progress block is a parallel truth.
-- **Surface the un-actionable.** An undelivered goal can't be move-executed; surface it three-part and close only on explicit user accept.
+- **Surface the un-actionable above the pick.** An undelivered goal can't be move-executed; surface it three-part above the pick (step 4) and close only on explicit user accept.

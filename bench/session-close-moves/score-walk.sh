@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # score-walk.sh — assertions over the fixture after turn 2 ran the pick, plus git's trace of the run.
 # Usage: bash bench/session-close-moves/score-walk.sh <full|resolve|fixnow|leak|single> <fixture-dir>
+# Reads <fixture-dir>.turn2.txt for (w5) when present.
 # One PASS or FAIL per assertion. Exits 1 on any FAIL.
 set -u
 scenario="${1:?usage: score-walk.sh <scenario> <fixture-dir>}"
@@ -94,4 +95,18 @@ case "$scenario" in
 esac
 if [ "$scenario" = leak ] && g rev-parse -q --verify refs/heads/topic-old >/dev/null; then fail "(w4) topic-old was not pruned"; fi
 [ "$w4_before" != "$fails" ] || echo "PASS (w4) the picked moves landed at HEAD"
+
+# (w5) the pick was the last ask: turn 2's output names no open card that is not a move, and asks nothing.
+out2="$fx.turn2.txt"
+if [ ! -f "$out2" ]; then echo "SKIP (w5) no turn-2 output"
+else
+  w5_before="$fails"
+  for id in GAP-ff03; do
+    hit="$(tr -d '\r' < "$out2" | grep -n "$id" | head -3)"
+    [ -z "$hit" ] || fail "(w5) the output names $id, an open card that is not a move: $hit"
+  done
+  ask="$(tr -d '\r' < "$out2" | grep -nEi '\?[*_`)]*[[:space:]]*$|```AskUserQuestion|your judge?ment|need(s)? (your|the user|the owner)|want me to|should I |shall I |let me know|would you like|do you want' | head -3)"
+  [ -z "$ask" ] || fail "(w5) the output asks after the pick: $ask"
+  [ "$w5_before" != "$fails" ] || echo "PASS (w5) the output names no non-move open card and asks nothing"
+fi
 [ "$fails" = 0 ]
