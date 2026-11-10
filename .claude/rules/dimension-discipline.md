@@ -1,7 +1,7 @@
 ---
 paths:
   - "docs/**/*.md"
-  - "README.md"
+  - "/README.md"
   - "plugins/*/README.md"
 description: "Fires on read of a prose doc. Classify its dimension (state vs history) and author to it before propagating — classify, route, dimension: history declaration, mixed-doc tripwire and mixed-dimension shapes."
 ---

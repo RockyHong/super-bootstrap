@@ -118,9 +118,9 @@ Surface a real fork to the user as an MCQ with the recommended path badged `(rec
 
 `.claude/rules/*.md` files attach to file reads via `paths:` frontmatter — full-body rule fires at the decision moment, zero ambient cost when irrelevant.
 
-- **`dimension-discipline.md`** — fires on `docs/**/*.md`, `README.md`, `plugins/*/README.md` (+ the consumer's `paths:` tail)
+- **`dimension-discipline.md`** — fires on `docs/**/*.md`, `/README.md` (root), `plugins/*/README.md` (plus any `paths:` entries the repo appends)
   • Before editing a prose doc, classify what it owns: state (overwrite in place) vs history (append-only, git's job).
-- **`ssot-doc-link.md`** — fires on `docs/**/*.md`, `README.md`, `plugins/*/README.md` (+ the consumer's `paths:` tail)
+- **`ssot-doc-link.md`** — fires on `docs/**/*.md`, `/README.md` (root), `plugins/*/README.md` (plus any `paths:` entries the repo appends)
   • Link each concept to its SSOT home as you write — born-linked, not back-filled.
 
 {example scaffolding — this label goes with the example bullets below}

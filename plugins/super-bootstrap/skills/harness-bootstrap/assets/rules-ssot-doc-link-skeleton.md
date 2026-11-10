@@ -1,7 +1,7 @@
 ---
 paths:
   - "docs/**/*.md"
-  - "README.md"
+  - "/README.md"
   - "plugins/*/README.md"
 description: "Fires on read of a prose doc. Link each concept to its SSOT home as you write — link-candidate predicate, home-selection edges and placement on the asserting line."
 ---

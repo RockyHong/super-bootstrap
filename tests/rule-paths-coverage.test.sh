@@ -48,7 +48,7 @@ rule() {
     echo '---'
     echo 'paths:'
     echo '  - "docs/**/*.md"'
-    echo '  - "README.md"'
+    echo '  - "/README.md"'
     echo '  - "plugins/*/README.md"'
     for e in "$@"; do echo "  - \"$e\""; done
     echo 'description: "x"'
@@ -114,6 +114,12 @@ D="$(fixture broad)"; both "$D" 'guide/**' 'README.md'
 printf 'docs/extra/*.md\nguide/a/*.md\nsub/README.md\n' > "$D/.claude/doc-surface"
 run "$D" check
 expect "docs/**/*.md, guide/**, bare README.md cover" ''
+
+echo "== check: skeleton /README.md pins root =="
+D="$(fixture rootpin)"; both "$D"
+printf 'README.md\nsub/README.md\n' > "$D/.claude/doc-surface"
+run "$D" check
+expect "/README.md covers root README only; sub/README.md warns" "$(line "$DD" 'sub/README.md' 'sub/README.md'; echo; line "$SL" 'sub/README.md' 'sub/README.md')"
 
 echo "== check: mid-segment glob needs both entries =="
 D="$(fixture mid)"; both "$D" 'notes/draft-*.md'
