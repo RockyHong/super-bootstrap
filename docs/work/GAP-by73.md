@@ -17,3 +17,12 @@ Evidence in hand, from Claude Code session transcripts of `magnetized-remake` (2
 - Warm runs: 160 commit windows; the outcome is mostly unrecorded (109 with no outcome text, against the per-doc outcome marker the skill requires). 16 real catches among 24 judged; 6 of them reachable only by reading the scoped docs — 3 are the changed file's own row in `docs/overview.md`, found through the basename grep hit.
 - No commit in the window was fixed because `check` or `pins` fired.
 - Limits: 30 days, one consumer repo carries 96% of cold runs; a transcript cannot show a stale doc nobody caught, so there is no miss rate and no with/without comparison; "the session could have caught it" is a counterfactual — every one of those 30 was in fact fixed only after the scan reported it.
+
+## Amendment — 2026-11-13 · transcript history probe, second read
+
+- Lane models: the cold `doc-sync-scan` agent runs `model: sonnet`; the warm lane runs on the gateway session's own model.
+- The cold judge is not cold in practice: dispatch prompts commonly carry a "Change intent" line and sometimes "Known suspects"; in at least 2 runs the judge could not read the diff and judged from the intent alone.
+- At least 5 cold catches were code comments, off the doc surface, found by the judge reading the diff or its own grep.
+- The changed-doc (self) lane is the top producer: 24 of the 51 sampled cold catches.
+- 37 warm windows show a path count over 8 — an over-count or a ceiling not followed, undetermined.
+- Probe intermediates (per-run detail, sidechain records, judging packs) sit beside the tables in `bench/doc-sync-history/`, untracked.
