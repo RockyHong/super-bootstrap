@@ -50,8 +50,9 @@ of the stale-doc scope and still checks its links.
    `PARK-##`, any tracker prefix) and any pointer to it, by path or by its folder,
    stay out of a durable doc. The doc states the behavior, policy or limitation
    present-tense; the volatile item cites the doc.
-   - **On resolve:** a behavior or limitation the item leaves true and no doc yet
-     states lands in the doc that owns it, present-tense.
+   - **On resolve:** a behavior or limitation the item leaves true lands in its
+     owning doc, present-tense — unless a line of that doc already states it, and
+     then the deleting commit's message names that doc:line.
    - **Provenance:** surviving provenance in a state doc points at a commit sha.
      Ticket refs and `git log --grep=<ID>` pointers belong in history-dimension
      docs (decision logs) and temporal work-tracking files (cards, handoffs,
