@@ -1,0 +1,306 @@
+set	repo	sha	arm	n_terms	terms	demoted
+mr-code30	mr	3891bf41	head	1	game	-
+mr-code30	mr	3891bf41	A-all	5	LV58 PLAY_TS_BY_VIEW PLAY_TS_FAST PLAY_TS_MID const	-
+mr-code30	mr	3891bf41	A-shaped	4	LV58 PLAY_TS_BY_VIEW PLAY_TS_FAST PLAY_TS_MID	-
+mr-code30	mr	3891bf41	B-fanin	1	game	game
+mr-code30	mr	3891bf41	AB	5	LV58 PLAY_TS_BY_VIEW PLAY_TS_FAST PLAY_TS_MID game	game
+mr-code30	mr	6b246fa6	head	6	dev-harness game mechanics-spec overview player_magnet_reaction player_magnet_reaction.gd	-
+mr-code30	mr	6b246fa6	A-all	59	HeldMagnetTremble PlayerMagnetReaction _drop_magnet_hold _held_tremble _load_level _magnet_frame _magnet_press _magnet_reaction _magnet_release _update_tether above back block body colour dev-harness drawn each else engine_dt func has_player head heading held keep_input layout_name lets locked_magnet magnet mechanics-spec null overview player player_magnet_reaction player_magnet_reaction.gd plus p	-
+mr-code30	mr	6b246fa6	A-shaped	23	HeldMagnetTremble PlayerMagnetReaction _drop_magnet_hold _held_tremble _load_level _magnet_frame _magnet_press _magnet_reaction _magnet_release _update_tether dev-harness engine_dt has_player keep_input layout_name locked_magnet mechanics-spec overview player_magnet_reaction player_magnet_reaction.gd rad_to_deg rotation_degrees tether_ring	-
+mr-code30	mr	6b246fa6	B-fanin	6	dev-harness game mechanics-spec overview player_magnet_reaction player_magnet_reaction.gd	game
+mr-code30	mr	6b246fa6	AB	24	HeldMagnetTremble PlayerMagnetReaction _drop_magnet_hold _held_tremble _load_level _magnet_frame _magnet_press _magnet_reaction _magnet_release _update_tether dev-harness engine_dt game has_player keep_input layout_name locked_magnet mechanics-spec overview player_magnet_reaction player_magnet_reaction.gd rad_to_deg rotation_degrees tether_ring	game
+mr-code30	mr	84e283e7	head	5	lv60_sheet overview persistent_halo vector_glow visual-guidelines	-
+mr-code30	mr	84e283e7	A-all	99	ARMED FINALE_GLOW_ALPHA FINALE_GLOW_FLICKER_DEPTH FLICKER_AMP GLOW LV60 LV60Sheet PersistentHalo Player RefCounted ShaderMaterial Sprite2D StarShardLook State _check_star_collect _end_cutscene _finale_glow _finale_glow_clock _finale_glow_flick_a _finale_glow_flick_b _finale_magnet _mats _spawn_sprite _tick_finale alpha armed aura band before bool breath built cake centre const cube depth entities 	-
+mr-code30	mr	84e283e7	A-shaped	30	ARMED FINALE_GLOW_ALPHA FINALE_GLOW_FLICKER_DEPTH FLICKER_AMP GLOW LV60 LV60Sheet PersistentHalo RefCounted ShaderMaterial Sprite2D StarShardLook _check_star_collect _end_cutscene _finale_glow _finale_glow_clock _finale_glow_flick_a _finale_glow_flick_b _finale_magnet _mats _spawn_sprite _tick_finale flicker_wave is_instance_valid locked_magnet nearest_magnet_halo new_magnet overview type_idx_w_co	-
+mr-code30	mr	84e283e7	B-fanin	5	lv60_sheet overview persistent_halo vector_glow visual-guidelines	-
+mr-code30	mr	84e283e7	AB	5	lv60_sheet overview persistent_halo vector_glow visual-guidelines	-
+mr-code30	mr	c5ee2230	head	11	checkpoint_segments dev-harness dev_seed lv60-spec lv60_press_greeting lv60_sheet magnet_square_ripple overview star_shard_look tape_rewind_fx visual-guidelines	-
+mr-code30	mr	c5ee2230	A-all	678	AFTERGLOW_ALPHA_FRAC ALPHA Anything Array BODY BOLT_COLOURS Banks Born Both CORRIDOR_BURST_COLOURS CRACKLE_AFTERGLOW_S CRACKLE_ALPHA CRACKLE_COLOURS CRACKLE_FLASH_S CRACKLE_FLICKER_EACH_TICK CRACKLE_FLICKER_SPAN CRACKLE_GAP_S CRACKLE_SPAN_PX CYAN Callable CanvasLayer CheckpointSegments Color ColorRect DEV_STAR_ROAD_LEAD_PX DRIVEN DevSeed Dictionary END_SPREADS Each Every FADE_IN FLICKER_ALPHA_FRAC	-
+mr-code30	mr	c5ee2230	A-shaped	212	AFTERGLOW_ALPHA_FRAC ALPHA BODY BOLT_COLOURS CORRIDOR_BURST_COLOURS CRACKLE_AFTERGLOW_S CRACKLE_ALPHA CRACKLE_COLOURS CRACKLE_FLASH_S CRACKLE_FLICKER_EACH_TICK CRACKLE_FLICKER_SPAN CRACKLE_GAP_S CRACKLE_SPAN_PX CYAN CanvasLayer CheckpointSegments ColorRect DEV_STAR_ROAD_LEAD_PX DRIVEN DevSeed END_SPREADS FADE_IN FLICKER_ALPHA_FRAC FRAME_SPREAD FootStyle GLARE_DRIVE_CURVE GLITCH_SEED_SPAN GREETING 	-
+mr-code30	mr	c5ee2230	B-fanin	11	checkpoint_segments dev-harness dev_seed lv60-spec lv60_press_greeting lv60_sheet magnet_square_ripple overview star_shard_look tape_rewind_fx visual-guidelines	-
+mr-code30	mr	c5ee2230	AB	11	checkpoint_segments dev-harness dev_seed lv60-spec lv60_press_greeting lv60_sheet magnet_square_ripple overview star_shard_look tape_rewind_fx visual-guidelines	-
+mr-code30	mr	fc1a0fd2	head	10	checkpoint_segments dev-harness dev_seed fx_tape_rewind lv60_press_greeting lv60_press_greeting.gd lv60_sheet magnet_square_ripple overview tape_rewind_fx	-
+mr-code30	mr	fc1a0fd2	A-all	470	AFTER ALPHA BODY Banks CanvasLayer CheckpointSegments Color DEV_STAR_ROAD_LEAD_PX DRIVEN DevSeed Dictionary EVEN Frees GLARE_DRIVE_CURVE GLITCH_SEED_SPAN Game InputEvent KEY_0 LOGO_SWELL_ALPHA LV60 LV60PressGreeting LV60Sheet LevelObjectData MAG_LEVEL MARK_HUM_DEPTH MARK_HUM_DEPTH_PRESSED MARK_HUM_DEPTH_REST MARK_HUM_RATE_A MARK_HUM_RATE_B MagnetSquareRipple MixDesk NONE Node Node2D Play Player RO	-
+mr-code30	mr	fc1a0fd2	A-shaped	136	AFTER ALPHA BODY CanvasLayer CheckpointSegments DEV_STAR_ROAD_LEAD_PX DRIVEN DevSeed EVEN GLARE_DRIVE_CURVE GLITCH_SEED_SPAN InputEvent KEY_0 LOGO_SWELL_ALPHA LV60 LV60PressGreeting LV60Sheet LevelObjectData MAG_LEVEL MARK_HUM_DEPTH MARK_HUM_DEPTH_PRESSED MARK_HUM_DEPTH_REST MARK_HUM_RATE_A MARK_HUM_RATE_B MagnetSquareRipple MixDesk NONE Node2D ROAD ROAD_ALPHA ROAD_STROKE_CELLS Rect2 SHOUT SIDES S	-
+mr-code30	mr	fc1a0fd2	B-fanin	10	checkpoint_segments dev-harness dev_seed fx_tape_rewind lv60_press_greeting lv60_press_greeting.gd lv60_sheet magnet_square_ripple overview tape_rewind_fx	-
+mr-code30	mr	fc1a0fd2	AB	10	checkpoint_segments dev-harness dev_seed fx_tape_rewind lv60_press_greeting lv60_press_greeting.gd lv60_sheet magnet_square_ripple overview tape_rewind_fx	-
+mr-code30	mr	5bba26f6	head	2	level_rest_pose overview	-
+mr-code30	mr	5bba26f6	A-all	22	Array CollisionShape2D Label Node RectangleShape2D RefCounted RotateBehavior SineBehavior _read _write append_array clock extends func horizontal_alignment overview shape speed static text void whose	-
+mr-code30	mr	5bba26f6	A-shaped	10	CollisionShape2D RectangleShape2D RefCounted RotateBehavior SineBehavior _read _write append_array horizontal_alignment overview	-
+mr-code30	mr	5bba26f6	B-fanin	2	level_rest_pose overview	-
+mr-code30	mr	5bba26f6	AB	2	level_rest_pose overview	-
+mr-code30	mr	b40c5083	head	13	lvtext_sheet mechanics-spec narrative-copy-rulings overview shell-lvtext-option-spec star_whisper_sheet story-theme typography ui-guidelines-desktop ui-guidelines-mobile ui-strings ui-strings.en visual-guidelines	-
+mr-code30	mr	b40c5083	A-all	300	Array BOUNDARY BREAK_MARK CARD_CENTRE CHAPTER_LINE_W Clear Color DOOR_LINE_FLOOR_PX DOOR_LINE_MAX_W DOOR_LINE_PAD_X DOOR_LINE_SIZES_PX Dictionary Ending Every Font Intro Label LvTextSheet Maybe Mobile NARRATION_PX NARRATIVE_BIGCAKE_ROADS_WILL_CROSS NARRATIVE_LV13_1 NARRATIVE_LV14_1 NARRATIVE_LV15_1 NARRATIVE_LV1_1 NARRATIVE_LV20_1 NARRATIVE_LV21_1 NARRATIVE_LV25_1 NARRATIVE_LV26_1 NARRATIVE_LV36_1	-
+mr-code30	mr	b40c5083	A-shaped	81	BOUNDARY BREAK_MARK CARD_CENTRE CHAPTER_LINE_W DOOR_LINE_FLOOR_PX DOOR_LINE_MAX_W DOOR_LINE_PAD_X DOOR_LINE_SIZES_PX LvTextSheet NARRATION_PX NARRATIVE_BIGCAKE_ROADS_WILL_CROSS NARRATIVE_LV13_1 NARRATIVE_LV14_1 NARRATIVE_LV15_1 NARRATIVE_LV1_1 NARRATIVE_LV20_1 NARRATIVE_LV21_1 NARRATIVE_LV25_1 NARRATIVE_LV26_1 NARRATIVE_LV36_1 NARRATIVE_LV37_1 NARRATIVE_LV40_1 NARRATIVE_LV41_1 NARRATIVE_LV44_1 NAR	-
+mr-code30	mr	b40c5083	B-fanin	13	lvtext_sheet mechanics-spec narrative-copy-rulings overview shell-lvtext-option-spec star_whisper_sheet story-theme typography ui-guidelines-desktop ui-guidelines-mobile ui-strings ui-strings.en visual-guidelines	ui-strings
+mr-code30	mr	b40c5083	AB	34	NARRATIVE_BIGCAKE_ROADS_WILL_CROSS NARRATIVE_LV13_1 NARRATIVE_LV14_1 NARRATIVE_LV15_1 NARRATIVE_LV1_1 NARRATIVE_LV20_1 NARRATIVE_LV21_1 NARRATIVE_LV25_1 NARRATIVE_LV26_1 NARRATIVE_LV36_1 NARRATIVE_LV37_1 NARRATIVE_LV40_1 NARRATIVE_LV41_1 NARRATIVE_LV44_1 NARRATIVE_LV45_1 NARRATIVE_LV4_1 NARRATIVE_LV5_1 NARRATIVE_LV70_1 NARRATIVE_LV71_1 NARRATIVE_LV77_1 NARRATIVE_LV78_1 lvtext_sheet mechanics-spec 	ui-strings
+mr-code30	mr	2440477b	head	3	level_sheet overview shell-level-spec	-
+mr-code30	mr	2440477b	A-all	73	Array MAG_STRIP_FOCUS_LV Pack Pure Tesla _debug_focus_lv _target_rows _tick_fanfare _world_clear_celebration after_lv ahead area back band bool breaks came chain clear cleared crosses edge else entry entry_target first float fresh from from_lv fully func head hint is_empty last level locked names never next next_locked next_open_uncleared none nothing open opens over overview owns rest return rewa	-
+mr-code30	mr	2440477b	A-shaped	15	MAG_STRIP_FOCUS_LV _debug_focus_lv _target_rows _tick_fanfare _world_clear_celebration after_lv entry_target from_lv is_empty next_locked next_open_uncleared overview shell-level-spec was_cleared win_advance_over_rows	-
+mr-code30	mr	2440477b	B-fanin	3	level_sheet overview shell-level-spec	-
+mr-code30	mr	2440477b	AB	3	level_sheet overview shell-level-spec	-
+mr-code30	mr	279166d4	head	2	game overview	-
+mr-code30	mr	279166d4	A-all	19	Band ENTRY_COVER_FRAME_OVERRIDES LV80 String _entry_cover_frame band const cyan deviations func ladder layout_name open overview return static switch_band_frame third yellow	-
+mr-code30	mr	279166d4	A-shaped	6	ENTRY_COVER_FRAME_OVERRIDES LV80 _entry_cover_frame layout_name overview switch_band_frame	-
+mr-code30	mr	279166d4	B-fanin	2	game overview	game
+mr-code30	mr	279166d4	AB	7	ENTRY_COVER_FRAME_OVERRIDES LV80 _entry_cover_frame game layout_name overview switch_band_frame	game
+mr-code30	mr	6839a923	head	1	audio	-
+mr-code30	mr	6839a923	A-all	18	BANDS Clip PLAY_VARIATION band bonus boss carry chapter colour const gate last memories menu names shell terror track	-
+mr-code30	mr	6839a923	A-shaped	2	BANDS PLAY_VARIATION	-
+mr-code30	mr	6839a923	B-fanin	1	audio	audio
+mr-code30	mr	6839a923	AB	3	BANDS PLAY_VARIATION audio	audio
+mr-code30	mr	1a32ae40	head	4	backdrop_powder game mechanics-spec overview	-
+mr-code30	mr	1a32ae40	A-all	26	Array Bonus COVER_COLOUR_OVERRIDES Color ENTRY_COVER_FRAME_OVERRIDES Game LV60 LV61 LV80 LV81 Node2D String WHITE const every extends func level lv_min mechanics-spec overview roles_for scene_key scenes static theme	-
+mr-code30	mr	1a32ae40	A-shaped	13	COVER_COLOUR_OVERRIDES ENTRY_COVER_FRAME_OVERRIDES LV60 LV61 LV80 LV81 Node2D WHITE lv_min mechanics-spec overview roles_for scene_key	-
+mr-code30	mr	1a32ae40	B-fanin	4	backdrop_powder game mechanics-spec overview	game
+mr-code30	mr	1a32ae40	AB	7	COVER_COLOUR_OVERRIDES ENTRY_COVER_FRAME_OVERRIDES WHITE backdrop_powder game mechanics-spec overview	game
+mr-code30	mr	40ee52d6	head	9	dev-harness ending-spec ending_sheet game lv81-spec lv81_sheet overview page-transition-rulings terminology	-
+mr-code30	mr	40ee52d6	A-all	165	BED_LOWPASS_IN_S BLACK Beats DEATH_FX_HOLD DEATH_REWIND Does ENDING_TRACK ENDING_TRACK_BEAT_S FROM Game LV60 LV81 LV81Sheet MUSIC_OPENING_BEATS Node Node2D OPENING_BLACK_HOLD_S OPENING_FADE_IN_BEATS OPENING_FADE_IN_S REVEAL Real RenderLayers SCENE SWITCH_FRAME_BLACK Sprite2D String UNDER Whether _arm_cover_entry_fade _dev_jump _dev_jump_asked _load_level _opens_from_black _reveal_scene_from_black 	-
+mr-code30	mr	40ee52d6	A-shaped	50	BED_LOWPASS_IN_S BLACK DEATH_FX_HOLD DEATH_REWIND ENDING_TRACK ENDING_TRACK_BEAT_S FROM LV60 LV81 LV81Sheet MUSIC_OPENING_BEATS Node2D OPENING_BLACK_HOLD_S OPENING_FADE_IN_BEATS OPENING_FADE_IN_S REVEAL RenderLayers SCENE SWITCH_FRAME_BLACK Sprite2D UNDER _arm_cover_entry_fade _dev_jump _dev_jump_asked _load_level _opens_from_black _reveal_scene_from_black _scrub_without_curtain _spawn_screen_cove	-
+mr-code30	mr	40ee52d6	B-fanin	9	dev-harness ending-spec ending_sheet game lv81-spec lv81_sheet overview page-transition-rulings terminology	game
+mr-code30	mr	40ee52d6	AB	37	BLACK DEATH_REWIND FROM LV81 LV81Sheet REVEAL RenderLayers SCENE SWITCH_FRAME_BLACK Sprite2D UNDER _arm_cover_entry_fade _load_level _opens_from_black _reveal_scene_from_black _scrub_without_curtain _spawn_screen_cover arrival_black_hold_s arrival_from_black_s dev-harness ending-spec ending_sheet fade_rect game has_method hold_s layout_name lv81-spec lv81_sheet nodes_by_type overview page-transiti	game
+mr-code30	mr	18d13fd1	head	11	CODING_STANDARDS audio caption caption_typewriter ending-spec game in_level_captions level_rest_pose lvtext_sheet mechanics-spec story-theme	-
+mr-code30	mr	18d13fd1	A-all	613	Answers Area2D Arms Array BigCakeSheet Builds Built CARET_ALONE_LONG_S CARET_OFF CENTER CLICK_SHEET Camera2D CaptionTypewriter Counted DEADLY DOWN Dictionary Drops EMPHASIS EMPHASIS_TYPING_KEYS ENTRY EVENTS EXITS Ending Every FIRE Fade GRACE Game GameAudio InLevelCaptions LAYOUT_SIZE LEAVES LEVEL_ENTRY_GRACE_S LEVEL_KEYSTROKE_SFX LEVEL_TYPED_EXIT LEVEL_TYPED_NO_EXIT_CLOCK LEVEL_TYPING_LAYOUTS LV59	-
+mr-code30	mr	18d13fd1	A-shaped	144	Area2D BigCakeSheet CARET_ALONE_LONG_S CARET_OFF CENTER CLICK_SHEET Camera2D CaptionTypewriter DEADLY DOWN EMPHASIS EMPHASIS_TYPING_KEYS ENTRY EVENTS EXITS FIRE GRACE GameAudio InLevelCaptions LAYOUT_SIZE LEAVES LEVEL_ENTRY_GRACE_S LEVEL_KEYSTROKE_SFX LEVEL_TYPED_EXIT LEVEL_TYPED_NO_EXIT_CLOCK LEVEL_TYPING_LAYOUTS LV59 LV60 LV81 LevelData LevelView LvText LvTextSheet Node2D PAGE PLAIN PLAY PROCESS	-
+mr-code30	mr	18d13fd1	B-fanin	11	CODING_STANDARDS audio caption caption_typewriter ending-spec game in_level_captions level_rest_pose lvtext_sheet mechanics-spec story-theme	audio game
+mr-code30	mr	18d13fd1	AB	27	Area2D CODING_STANDARDS EVENTS InLevelCaptions LEVEL_KEYSTROKE_SFX LvText LvTextSheet SHEET_SCRIPTS TYPED_LINE_KEYSTROKE_SFX _load_level _physics_tick _ready _reset_level_in_place audio caption caption_typewriter current_layout ending-spec event_sheet game get_physics_process_delta_time in_level_captions layout_name level_rest_pose lvtext_sheet mechanics-spec story-theme	audio game
+mr-code30	mr	8c70910f	head	6	narrative-copy-rulings overview story-theme ui-strings ui-strings.en visual-guidelines	-
+mr-code30	mr	8c70910f	A-all	204	BURN KIDDING Maybe NARRATIVE_BIGCAKE_ROADS_WILL_CROSS NARRATIVE_LV10_1 NARRATIVE_LV11_1 NARRATIVE_LV12_1 NARRATIVE_LV13_1 NARRATIVE_LV14_1 NARRATIVE_LV15_1 NARRATIVE_LV16_1 NARRATIVE_LV17_1 NARRATIVE_LV18_1 NARRATIVE_LV19_1 NARRATIVE_LV1_1 NARRATIVE_LV20_1 NARRATIVE_LV21_1 NARRATIVE_LV22_1 NARRATIVE_LV23_1 NARRATIVE_LV24_1 NARRATIVE_LV25_1 NARRATIVE_LV26_1 NARRATIVE_LV27_1 NARRATIVE_LV28_1 NARRATI	-
+mr-code30	mr	8c70910f	A-shaped	73	BURN KIDDING NARRATIVE_BIGCAKE_ROADS_WILL_CROSS NARRATIVE_LV10_1 NARRATIVE_LV11_1 NARRATIVE_LV12_1 NARRATIVE_LV13_1 NARRATIVE_LV14_1 NARRATIVE_LV15_1 NARRATIVE_LV16_1 NARRATIVE_LV17_1 NARRATIVE_LV18_1 NARRATIVE_LV19_1 NARRATIVE_LV1_1 NARRATIVE_LV20_1 NARRATIVE_LV21_1 NARRATIVE_LV22_1 NARRATIVE_LV23_1 NARRATIVE_LV24_1 NARRATIVE_LV25_1 NARRATIVE_LV26_1 NARRATIVE_LV27_1 NARRATIVE_LV28_1 NARRATIVE_LV2	-
+mr-code30	mr	8c70910f	B-fanin	6	narrative-copy-rulings overview story-theme ui-strings ui-strings.en visual-guidelines	ui-strings
+mr-code30	mr	8c70910f	AB	75	BURN KIDDING NARRATIVE_BIGCAKE_ROADS_WILL_CROSS NARRATIVE_LV10_1 NARRATIVE_LV11_1 NARRATIVE_LV12_1 NARRATIVE_LV13_1 NARRATIVE_LV14_1 NARRATIVE_LV15_1 NARRATIVE_LV16_1 NARRATIVE_LV17_1 NARRATIVE_LV18_1 NARRATIVE_LV19_1 NARRATIVE_LV1_1 NARRATIVE_LV20_1 NARRATIVE_LV21_1 NARRATIVE_LV22_1 NARRATIVE_LV23_1 NARRATIVE_LV24_1 NARRATIVE_LV25_1 NARRATIVE_LV26_1 NARRATIVE_LV27_1 NARRATIVE_LV28_1 NARRATIVE_LV2	ui-strings
+mr-code30	mr	ce0075b0	head	7	dev-harness narrative-copy-rulings overview story-theme ui-strings ui-strings.zh_Hans ui-strings.zh_Hant	-
+mr-code30	mr	ce0075b0	A-all	192	KIDDING Maybe NARRATIVE_BIGCAKE_ROADS_WILL_CROSS NARRATIVE_LV19_1 NARRATIVE_LV1_1 NARRATIVE_LV20_1 NARRATIVE_LV21_1 NARRATIVE_LV22_1 NARRATIVE_LV23_1 NARRATIVE_LV24_1 NARRATIVE_LV25_1 NARRATIVE_LV26_1 NARRATIVE_LV27_1 NARRATIVE_LV28_1 NARRATIVE_LV29_1 NARRATIVE_LV2_1 NARRATIVE_LV30_1 NARRATIVE_LV31_1 NARRATIVE_LV32_1 NARRATIVE_LV33_1 NARRATIVE_LV34_1 NARRATIVE_LV35_1 NARRATIVE_LV36_1 NARRATIVE_LV3	-
+mr-code30	mr	ce0075b0	A-shaped	69	KIDDING NARRATIVE_BIGCAKE_ROADS_WILL_CROSS NARRATIVE_LV19_1 NARRATIVE_LV1_1 NARRATIVE_LV20_1 NARRATIVE_LV21_1 NARRATIVE_LV22_1 NARRATIVE_LV23_1 NARRATIVE_LV24_1 NARRATIVE_LV25_1 NARRATIVE_LV26_1 NARRATIVE_LV27_1 NARRATIVE_LV28_1 NARRATIVE_LV29_1 NARRATIVE_LV2_1 NARRATIVE_LV30_1 NARRATIVE_LV31_1 NARRATIVE_LV32_1 NARRATIVE_LV33_1 NARRATIVE_LV34_1 NARRATIVE_LV35_1 NARRATIVE_LV36_1 NARRATIVE_LV37_1 NA	-
+mr-code30	mr	ce0075b0	B-fanin	7	dev-harness narrative-copy-rulings overview story-theme ui-strings ui-strings.zh_Hans ui-strings.zh_Hant	ui-strings
+mr-code30	mr	ce0075b0	AB	72	KIDDING NARRATIVE_BIGCAKE_ROADS_WILL_CROSS NARRATIVE_LV19_1 NARRATIVE_LV1_1 NARRATIVE_LV20_1 NARRATIVE_LV21_1 NARRATIVE_LV22_1 NARRATIVE_LV23_1 NARRATIVE_LV24_1 NARRATIVE_LV25_1 NARRATIVE_LV26_1 NARRATIVE_LV27_1 NARRATIVE_LV28_1 NARRATIVE_LV29_1 NARRATIVE_LV2_1 NARRATIVE_LV30_1 NARRATIVE_LV31_1 NARRATIVE_LV32_1 NARRATIVE_LV33_1 NARRATIVE_LV34_1 NARRATIVE_LV35_1 NARRATIVE_LV36_1 NARRATIVE_LV37_1 NA	ui-strings
+mr-code30	mr	ca2147a5	head	8	boss_tunnel_motif comet_trails death_marks death_road_stain mechanics-spec one_step_away_tunnel_motif overview visual-guidelines	-
+mr-code30	mr	ca2147a5	A-all	122	BossTunnelMotif CometTrails DEATH DeathMarks DeathRoadStain Dictionary Drops EVERY False LEAVE LEVEL LV59 Node2D SPRAY STAIN TeleportSpray TrailLifecycle True What Whether _death_stain_node _game _go_empty _init _request_redraw _show_death_stain airborne answer answers arm_death_kit armed arms black bool boss_tunnel_motif camera_never_pans_back carry_death_grains cells class clean clear_grains dea	-
+mr-code30	mr	ca2147a5	A-shaped	37	BossTunnelMotif CometTrails DEATH DeathMarks DeathRoadStain EVERY LEAVE LEVEL LV59 Node2D SPRAY STAIN TeleportSpray TrailLifecycle _death_stain_node _game _go_empty _init _request_redraw _show_death_stain arm_death_kit boss_tunnel_motif camera_never_pans_back carry_death_grains clear_grains death_leaves_stain death_stain_cells drop_all_grains drop_death_spray_grains live_death_spray live_death_sta	-
+mr-code30	mr	ca2147a5	B-fanin	8	boss_tunnel_motif comet_trails death_marks death_road_stain mechanics-spec one_step_away_tunnel_motif overview visual-guidelines	-
+mr-code30	mr	ca2147a5	AB	8	boss_tunnel_motif comet_trails death_marks death_road_stain mechanics-spec one_step_away_tunnel_motif overview visual-guidelines	-
+mr-code30	mr	374f4052	head	1	one_step_away_tunnel_motif	-
+mr-code30	mr	374f4052	A-all	6	bool camera_never_pans_back death_leaves_stain false func return	-
+mr-code30	mr	374f4052	A-shaped	2	camera_never_pans_back death_leaves_stain	-
+mr-code30	mr	374f4052	B-fanin	1	one_step_away_tunnel_motif	-
+mr-code30	mr	374f4052	AB	1	one_step_away_tunnel_motif	-
+mr-code30	mr	e2a713cf	head	4	story-theme ui-strings ui-strings.zh_Hans ui-strings.zh_Hant	-
+mr-code30	mr	e2a713cf	A-all	8	NARRATIVE_ENDING_I_WANT_TO_BE_A_VOICE_ACTOR NARRATIVE_ENDING_I_WANT_TO_TOUR_THE_WORLD_AS_A_DJ actor story-theme tour voice want world	-
+mr-code30	mr	e2a713cf	A-shaped	3	NARRATIVE_ENDING_I_WANT_TO_BE_A_VOICE_ACTOR NARRATIVE_ENDING_I_WANT_TO_TOUR_THE_WORLD_AS_A_DJ story-theme	-
+mr-code30	mr	e2a713cf	B-fanin	4	story-theme ui-strings ui-strings.zh_Hans ui-strings.zh_Hant	ui-strings
+mr-code30	mr	e2a713cf	AB	6	NARRATIVE_ENDING_I_WANT_TO_BE_A_VOICE_ACTOR NARRATIVE_ENDING_I_WANT_TO_TOUR_THE_WORLD_AS_A_DJ story-theme ui-strings ui-strings.zh_Hans ui-strings.zh_Hant	ui-strings
+mr-code30	mr	c5a21f5c	head	1	LV28.tscn	-
+mr-code30	mr	c5a21f5c	A-all	7	Array ExtResource Resource_001 SubResource Vector2 behaviors position	-
+mr-code30	mr	c5a21f5c	A-shaped	4	ExtResource Resource_001 SubResource Vector2	-
+mr-code30	mr	c5a21f5c	B-fanin	1	LV28.tscn	-
+mr-code30	mr	c5a21f5c	AB	1	LV28.tscn	-
+mr-code30	mr	58d02ab3	head	5	BIGCAKE.tscn bigcake-spec bigcake_sheet narrative-copy-rulings story-theme	-
+mr-code30	mr	58d02ab3	A-all	12	Array CAPTION_DEATHS_ROLE CAPTION_READING_ORDER String bigcake-spec const narrative-copy-rulings offset_bottom offset_left offset_right offset_top story-theme	-
+mr-code30	mr	58d02ab3	A-shaped	9	CAPTION_DEATHS_ROLE CAPTION_READING_ORDER bigcake-spec narrative-copy-rulings offset_bottom offset_left offset_right offset_top story-theme	-
+mr-code30	mr	58d02ab3	B-fanin	5	BIGCAKE.tscn bigcake-spec bigcake_sheet narrative-copy-rulings story-theme	-
+mr-code30	mr	58d02ab3	AB	5	BIGCAKE.tscn bigcake-spec bigcake_sheet narrative-copy-rulings story-theme	-
+mr-code30	mr	3224ba6d	head	4	level_sheet shell-level-spec ui-guidelines-desktop ui_nav_map	-
+mr-code30	mr	3224ba6d	A-all	97	Back Both CONFIRM Dictionary Edge GLYPHS Hint LEVEL Pack PromptFont Select Sprite2D StringName UI_HINT_CONFIRM Vector2 WORD_CONFIRM _axis_taught _place_star_box _teach _teach_axis _word_of a_glyph a_live accelerator acts axes axis b_glyph back bind bool cell center check_hint_glyphs confirm const desktop device direction directions down else family float four func glyph glyphs guidelines held_end 	-
+mr-code30	mr	3224ba6d	A-shaped	25	CONFIRM GLYPHS LEVEL PromptFont Sprite2D StringName UI_HINT_CONFIRM Vector2 WORD_CONFIRM _axis_taught _place_star_box _teach _teach_axis _word_of a_glyph a_live b_glyph check_hint_glyphs held_end hint_specs is_empty nav_ pair_glyph shell-level-spec ui-guidelines-desktop	-
+mr-code30	mr	3224ba6d	B-fanin	4	level_sheet shell-level-spec ui-guidelines-desktop ui_nav_map	-
+mr-code30	mr	3224ba6d	AB	4	level_sheet shell-level-spec ui-guidelines-desktop ui_nav_map	-
+mr-code30	mr	8705a7ac	head	4	story-theme ui-strings ui-strings.zh_Hans ui-strings.zh_Hant	-
+mr-code30	mr	8705a7ac	A-all	82	NARRATIVE_ENDING_I_WANT_A_HOUSE_FULL_OF_CATS NARRATIVE_ENDING_I_WANT_MY_FAMILY_TO_BE_PROUD_OF_ME NARRATIVE_ENDING_I_WANT_TO_BE_AN_ASTRONAUT NARRATIVE_ENDING_I_WANT_TO_BE_A_VOICE_ACTOR NARRATIVE_ENDING_I_WANT_TO_BOOK_MY_FIRST_SPEAKING_ROLE NARRATIVE_ENDING_I_WANT_TO_BREW_THE_BEST_COFFEE_IN_THE_WORLD NARRATIVE_ENDING_I_WANT_TO_COMPLETE_MY_GRANDPAS_STAMP_ALBUM NARRATIVE_ENDING_I_WANT_TO_GET_INTO_MY_D	-
+mr-code30	mr	8705a7ac	A-shaped	25	NARRATIVE_ENDING_I_WANT_A_HOUSE_FULL_OF_CATS NARRATIVE_ENDING_I_WANT_MY_FAMILY_TO_BE_PROUD_OF_ME NARRATIVE_ENDING_I_WANT_TO_BE_AN_ASTRONAUT NARRATIVE_ENDING_I_WANT_TO_BE_A_VOICE_ACTOR NARRATIVE_ENDING_I_WANT_TO_BOOK_MY_FIRST_SPEAKING_ROLE NARRATIVE_ENDING_I_WANT_TO_BREW_THE_BEST_COFFEE_IN_THE_WORLD NARRATIVE_ENDING_I_WANT_TO_COMPLETE_MY_GRANDPAS_STAMP_ALBUM NARRATIVE_ENDING_I_WANT_TO_GET_INTO_MY_D	-
+mr-code30	mr	8705a7ac	B-fanin	4	story-theme ui-strings ui-strings.zh_Hans ui-strings.zh_Hant	ui-strings
+mr-code30	mr	8705a7ac	AB	28	NARRATIVE_ENDING_I_WANT_A_HOUSE_FULL_OF_CATS NARRATIVE_ENDING_I_WANT_MY_FAMILY_TO_BE_PROUD_OF_ME NARRATIVE_ENDING_I_WANT_TO_BE_AN_ASTRONAUT NARRATIVE_ENDING_I_WANT_TO_BE_A_VOICE_ACTOR NARRATIVE_ENDING_I_WANT_TO_BOOK_MY_FIRST_SPEAKING_ROLE NARRATIVE_ENDING_I_WANT_TO_BREW_THE_BEST_COFFEE_IN_THE_WORLD NARRATIVE_ENDING_I_WANT_TO_COMPLETE_MY_GRANDPAS_STAMP_ALBUM NARRATIVE_ENDING_I_WANT_TO_GET_INTO_MY_D	ui-strings
+mr-code30	mr	e04ec114	head	4	dev-harness ending-spec ending_dream_wall overview	-
+mr-code30	mr	e04ec114	A-all	159	Array Card Dictionary EMERGE_FLOOR_A EMERGE_S FADE_IN_S FADE_OUT_S FIRST_SPEAKER_KEY FLOAT_PX_PER_S FONT Full HOLD_END_S INK_PEAK_FAR KEYS Label PEAK Rect2 RefCounted RoadLamps SHRINK String Typography Vector2 WALL_PX WALL_PX_FLOOR_WIDE WALL_PX_MIN _deal _float _land _open_speaker _start_fade against away back baseline both camera cannot canvas card character clampf clampi class clear climbs const	-
+mr-code30	mr	e04ec114	A-shaped	39	EMERGE_FLOOR_A EMERGE_S FADE_IN_S FADE_OUT_S FIRST_SPEAKER_KEY FLOAT_PX_PER_S FONT HOLD_END_S INK_PEAK_FAR KEYS PEAK Rect2 RefCounted RoadLamps SHRINK Vector2 WALL_PX WALL_PX_FLOOR_WIDE WALL_PX_MIN _deal _float _land _open_speaker _start_fade dev-harness distance_t emerge_a emergence_now ending-spec fade_out_at footprints_now ink_peak ink_peak_for longest_life_s overview px_for self_modulate side_	-
+mr-code30	mr	e04ec114	B-fanin	4	dev-harness ending-spec ending_dream_wall overview	-
+mr-code30	mr	e04ec114	AB	4	dev-harness ending-spec ending_dream_wall overview	-
+mr-code30	mr	e3a8f3f3	head	3	ui-strings ui-strings.zh_Hans ui-strings.zh_Hant	-
+mr-code30	mr	e3a8f3f3	A-all	23	NARRATIVE_LV56_1 NARRATIVE_LV57_1 NARRATIVE_LV58_1_CORRECTED NARRATIVE_LV59_1 NARRATIVE_LV59_1_CORRECTED away behind closer comes down edge fading farther feels here proves space step this time today universe where	-
+mr-code30	mr	e3a8f3f3	A-shaped	5	NARRATIVE_LV56_1 NARRATIVE_LV57_1 NARRATIVE_LV58_1_CORRECTED NARRATIVE_LV59_1 NARRATIVE_LV59_1_CORRECTED	-
+mr-code30	mr	e3a8f3f3	B-fanin	3	ui-strings ui-strings.zh_Hans ui-strings.zh_Hant	ui-strings
+mr-code30	mr	e3a8f3f3	AB	8	NARRATIVE_LV56_1 NARRATIVE_LV57_1 NARRATIVE_LV58_1_CORRECTED NARRATIVE_LV59_1 NARRATIVE_LV59_1_CORRECTED ui-strings ui-strings.zh_Hans ui-strings.zh_Hant	ui-strings
+mr-code30	mr	9db96f59	head	1	LV59.tscn	-
+mr-code30	mr	9db96f59	A-all	6	Vector2 offset_bottom offset_left offset_right offset_top position	-
+mr-code30	mr	9db96f59	A-shaped	5	Vector2 offset_bottom offset_left offset_right offset_top	-
+mr-code30	mr	9db96f59	B-fanin	1	LV59.tscn	-
+mr-code30	mr	9db96f59	AB	1	LV59.tscn	-
+mr-code30	mr	b8bed480	head	6	ending_dream_wall story-theme ui-strings ui-strings.en ui-strings.zh_Hans ui-strings.zh_Hant	-
+mr-code30	mr	b8bed480	A-all	166	Array Camino Everest KEYS Mount NARRATIVE_ENDING_I_WANT_AN_ICE_CREAM_TRUCK_OF_MY_OWN NARRATIVE_ENDING_I_WANT_A_HOUSE_FULL_OF_CATS NARRATIVE_ENDING_I_WANT_A_PLACE_OF_MY_OWN NARRATIVE_ENDING_I_WANT_MY_STORY_ON_THE_FRONT_PAGE NARRATIVE_ENDING_I_WANT_THE_WORLD_TO_TASTE_MY_GRANDMAS_COOKING NARRATIVE_ENDING_I_WANT_TO_BE_A_MARINE_BIOLOGIST NARRATIVE_ENDING_I_WANT_TO_BE_A_VOICE_ACTOR NARRATIVE_ENDING_I_WA	-
+mr-code30	mr	b8bed480	A-shaped	51	KEYS NARRATIVE_ENDING_I_WANT_AN_ICE_CREAM_TRUCK_OF_MY_OWN NARRATIVE_ENDING_I_WANT_A_HOUSE_FULL_OF_CATS NARRATIVE_ENDING_I_WANT_A_PLACE_OF_MY_OWN NARRATIVE_ENDING_I_WANT_MY_STORY_ON_THE_FRONT_PAGE NARRATIVE_ENDING_I_WANT_THE_WORLD_TO_TASTE_MY_GRANDMAS_COOKING NARRATIVE_ENDING_I_WANT_TO_BE_A_MARINE_BIOLOGIST NARRATIVE_ENDING_I_WANT_TO_BE_A_VOICE_ACTOR NARRATIVE_ENDING_I_WANT_TO_BE_BATMAN_AND_CATCH_T	-
+mr-code30	mr	b8bed480	B-fanin	6	ending_dream_wall story-theme ui-strings ui-strings.en ui-strings.zh_Hans ui-strings.zh_Hant	ui-strings
+mr-code30	mr	b8bed480	AB	55	NARRATIVE_ENDING_I_WANT_AN_ICE_CREAM_TRUCK_OF_MY_OWN NARRATIVE_ENDING_I_WANT_A_HOUSE_FULL_OF_CATS NARRATIVE_ENDING_I_WANT_A_PLACE_OF_MY_OWN NARRATIVE_ENDING_I_WANT_MY_STORY_ON_THE_FRONT_PAGE NARRATIVE_ENDING_I_WANT_THE_WORLD_TO_TASTE_MY_GRANDMAS_COOKING NARRATIVE_ENDING_I_WANT_TO_BE_A_MARINE_BIOLOGIST NARRATIVE_ENDING_I_WANT_TO_BE_A_VOICE_ACTOR NARRATIVE_ENDING_I_WANT_TO_BE_BATMAN_AND_CATCH_THE_BA	ui-strings
+mr-code30	mr	0b6217f0	head	16	LV55.tscn LV56.tscn ink_bleed level-data-rulings level-design-grammar level_thumbnail_shapes.tres mechanics-spec narrative-copy-rulings parked scan_road_orbit_candidates story-theme ui-strings ui-strings.en ui-strings.zh_Hans ui-strings.zh_Hant zone_yellow	-
+mr-code30	mr	0b6217f0	A-all	234	ALREADY Array Color Dictionary ExtResource Flash LV55 LV56 LV57 LV58 LV59 LV60 LV81 NARRATIVE_LV54_1 NARRATIVE_LV55_1 NARRATIVE_LV56_1 NARRATIVE_LV58_1_CORRECTED NARRATIVE_LV59_1 NARRATIVE_LV59_1_CORRECTED NARRATIVE_LV59_DEADLY_CAPTION Node2D OVER OneStepAwayTunnelMotif PackedColorArray PackedScene PackedVector2Array Path REPO ROAD Resource Resource_001 Resource_002 Resource_006 Resource_010 Resou	-
+mr-code30	mr	0b6217f0	A-shaped	167	ALREADY ExtResource LV55 LV56 LV57 LV58 LV59 LV60 LV81 NARRATIVE_LV54_1 NARRATIVE_LV55_1 NARRATIVE_LV56_1 NARRATIVE_LV58_1_CORRECTED NARRATIVE_LV59_1 NARRATIVE_LV59_1_CORRECTED NARRATIVE_LV59_DEADLY_CAPTION Node2D OVER OneStepAwayTunnelMotif PackedColorArray PackedScene PackedVector2Array REPO ROAD Resource_001 Resource_002 Resource_006 Resource_010 Resource_011 Resource_012 Resource_013 Resource_	-
+mr-code30	mr	0b6217f0	B-fanin	16	LV55.tscn LV56.tscn ink_bleed level-data-rulings level-design-grammar level_thumbnail_shapes.tres mechanics-spec narrative-copy-rulings parked scan_road_orbit_candidates story-theme ui-strings ui-strings.en ui-strings.zh_Hans ui-strings.zh_Hant zone_yellow	ui-strings
+mr-code30	mr	0b6217f0	AB	23	LV55.tscn LV56.tscn NARRATIVE_LV54_1 NARRATIVE_LV55_1 NARRATIVE_LV56_1 NARRATIVE_LV58_1_CORRECTED NARRATIVE_LV59_1 NARRATIVE_LV59_1_CORRECTED NARRATIVE_LV59_DEADLY_CAPTION ink_bleed level-data-rulings level-design-grammar level_thumbnail_shapes.tres mechanics-spec narrative-copy-rulings parked scan_road_orbit_candidates story-theme ui-strings ui-strings.en ui-strings.zh_Hans ui-strings.zh_Hant zon	ui-strings
+mr-code30	mr	c116da23	head	9	boss_tunnel_motif burn_the_ships_tunnel_motif dev-harness forge_the_sword_tunnel_motif game mechanics-spec one_step_away_tunnel_motif overview page-transition-rulings	-
+mr-code30	mr	c116da23	A-all	156	Answer BonusFinale BossTunnelMotif CheckpointSegments EXIT ExitStep Finale ForgeHammer Game INSIDE InkBleed NONE Play Player RIGHT Rect2 SCREENS Vector2 WAIT WATER What Where Whether _check_win _exit_finale_heard _exit_hold_pending _exit_motif_heard _exit_window _hold_exit_for_bonus_finale _hold_exit_for_motif _release_exit_hold absf active against along anything armed asked attempt before black b	-
+mr-code30	mr	c116da23	A-shaped	44	BonusFinale BossTunnelMotif CheckpointSegments EXIT ExitStep ForgeHammer INSIDE InkBleed NONE RIGHT Rect2 SCREENS Vector2 WAIT WATER _check_win _exit_finale_heard _exit_hold_pending _exit_motif_heard _exit_window _hold_exit_for_bonus_finale _hold_exit_for_motif _release_exit_hold boss_tunnel_motif crossing_step current_layout death_leaves_stain dev-harness exit_leaves_on_white exit_step exit_windo	-
+mr-code30	mr	c116da23	B-fanin	9	boss_tunnel_motif burn_the_ships_tunnel_motif dev-harness forge_the_sword_tunnel_motif game mechanics-spec one_step_away_tunnel_motif overview page-transition-rulings	game
+mr-code30	mr	c116da23	AB	40	BonusFinale BossTunnelMotif CheckpointSegments ExitStep INSIDE NONE RIGHT Rect2 Vector2 WAIT _check_win _exit_finale_heard _exit_hold_pending _exit_motif_heard _exit_window _hold_exit_for_bonus_finale _hold_exit_for_motif _release_exit_hold boss_tunnel_motif burn_the_ships_tunnel_motif crossing_step current_layout dev-harness exit_step exit_window forge_the_sword_tunnel_motif game half_width half_	game
+mr-code30	mr	ea95921b	head	1	white_flood_cuts	-
+mr-code30	mr	ea95921b	A-all	29	ForgeHammer GRAMMAR LV58 Node2D SHARED WhiteFoldingFan cell_rect cells class cut_cells cut_length draws exit extends fan_polygon folding keep line pieces polygon_rows same screen screen_pin_under static sword this visible_rect_through wedges with	-
+mr-code30	mr	ea95921b	A-shaped	13	ForgeHammer GRAMMAR LV58 Node2D SHARED WhiteFoldingFan cell_rect cut_cells cut_length fan_polygon polygon_rows screen_pin_under visible_rect_through	-
+mr-code30	mr	ea95921b	B-fanin	1	white_flood_cuts	-
+mr-code30	mr	ea95921b	AB	1	white_flood_cuts	-
+mr-code30	mr	34be714f	head	7	dev-harness forge_hammer forge_the_sword_tunnel_motif mechanics-spec overview page-transition-rulings white_flood_cuts	-
+mr-code30	mr	34be714f	A-all	394	Array BossTunnelMotif Both Call CanvasItem Color ColorRect Dictionary Drawn ForgeHammer Frees GRID_PX Game Hung Intro LAYOUT_SIZE LV58 LevelView Node Node2D PAST_EDGE_PX PackedVec PackedVector2Array Reads Rect2 SWORD_FAN_ SWORD_FAN_EASE_POW SWORD_FAN_FOLD_SEC SWORD_FAN_LINE_CELLS SWORD_FAN_START_SHARE_OUT SWORD_FLIGHT_CLEAR_PX SWORD_FLIGHT_EASE_POW SWORD_FLIGHT_SEC SWORD_FLIGHT_SFX SWORD_SHED_ SWO	-
+mr-code30	mr	34be714f	A-shaped	120	BossTunnelMotif CanvasItem ColorRect ForgeHammer GRID_PX LAYOUT_SIZE LV58 LevelView Node2D PAST_EDGE_PX PackedVec PackedVector2Array Rect2 SWORD_FAN_ SWORD_FAN_EASE_POW SWORD_FAN_FOLD_SEC SWORD_FAN_LINE_CELLS SWORD_FAN_START_SHARE_OUT SWORD_FLIGHT_CLEAR_PX SWORD_FLIGHT_EASE_POW SWORD_FLIGHT_SEC SWORD_FLIGHT_SFX SWORD_SHED_ SWORD_SHED_MULT SWORD_WHITE_ SWORD_WHITE_BLEED_PX SWORD_WHITE_FADE_SEC SWOR	-
+mr-code30	mr	34be714f	B-fanin	7	dev-harness forge_hammer forge_the_sword_tunnel_motif mechanics-spec overview page-transition-rulings white_flood_cuts	-
+mr-code30	mr	34be714f	AB	7	dev-harness forge_hammer forge_the_sword_tunnel_motif mechanics-spec overview page-transition-rulings white_flood_cuts	-
+sb-code30	sb	2d3bca55	head	2	ccm-version dispatch-inquiry-aim	-
+sb-code30	sb	2d3bca55	A-all	1	dispatch-inquiry-aim	-
+sb-code30	sb	2d3bca55	A-shaped	1	dispatch-inquiry-aim	-
+sb-code30	sb	2d3bca55	B-fanin	2	ccm-version dispatch-inquiry-aim	-
+sb-code30	sb	2d3bca55	AB	2	ccm-version dispatch-inquiry-aim	-
+sb-code30	sb	e1b523a5	head	5	claude-md-skeleton dimension-discipline rules-dimension-discipline-skeleton session-close work-readme-skeleton	-
+sb-code30	sb	e1b523a5	A-all	219	Before Card Commits Current DEBT Each Foreign Harness Inline Inspect Module Named Problem READMEs Resolve Resolving Stale State Sync Thread Write above agent agents already another archive before behavior belongs between block bootstrap both boundary build candidates card cards carries carrying catches category ceiling ceremony change checks closure cold commit completed context contract copy coun	-
+sb-code30	sb	e1b523a5	A-shaped	2	DEBT READMEs	-
+sb-code30	sb	e1b523a5	B-fanin	5	claude-md-skeleton dimension-discipline rules-dimension-discipline-skeleton session-close work-readme-skeleton	-
+sb-code30	sb	e1b523a5	AB	5	claude-md-skeleton dimension-discipline rules-dimension-discipline-skeleton session-close work-readme-skeleton	-
+sb-code30	sb	07a37bd6	head	3	overview session-close test-queue	-
+sb-code30	sb	07a37bd6	A-all	370	Actionable AskUserQuestion Before Blind Commits Detects Drive Each Every Gates Gather Inspect Moves Once Output Owns Present Proceed Progress Resolve Routes SESSION STATE Session Several Show Surface Then Thread Undone Whole With Work above accept accepts action actionable adds after again already also anchored another anyway appended argument arriving artifacts asked asks back been before behavio	-
+sb-code30	sb	07a37bd6	A-shaped	5	AskUserQuestion SESSION STATE overview test-queue	-
+sb-code30	sb	07a37bd6	B-fanin	3	overview session-close test-queue	-
+sb-code30	sb	07a37bd6	AB	3	overview session-close test-queue	-
+sb-code30	sb	f0f896f3	head	2	parked session-close	-
+sb-code30	sb	f0f896f3	A-all	68	After Each Surface What above accept actionable asks assets base bash beyond blocking bootstrap card clean close else executed explicit failure field fields final gets goal holds last line move moves names needs next nothing only open options output parked part path paths pick push read shows since state status step still stopped super surface these they this thread three tree undelivered user wha	-
+sb-code30	sb	f0f896f3	A-shaped	1	parked	-
+sb-code30	sb	f0f896f3	B-fanin	2	parked session-close	-
+sb-code30	sb	f0f896f3	AB	2	parked session-close	-
+sb-code30	sb	76b43b4f	head	5	claude-md-skeleton dimension-discipline rules-dimension-discipline-skeleton rules-ssot-doc-link-skeleton ssot-doc-link	-
+sb-code30	sb	76b43b4f	A-all	23	Surface appends badged consumer dimension discipline docs entries fires fork link path paths plugins plus real recommended repo root ssot tail user with	-
+sb-code30	sb	76b43b4f	A-shaped	0		-
+sb-code30	sb	76b43b4f	B-fanin	5	claude-md-skeleton dimension-discipline rules-dimension-discipline-skeleton rules-ssot-doc-link-skeleton ssot-doc-link	-
+sb-code30	sb	76b43b4f	AB	5	claude-md-skeleton dimension-discipline rules-dimension-discipline-skeleton rules-ssot-doc-link-skeleton ssot-doc-link	-
+sb-code30	sb	c92b5f53	head	4	claude-md-skeleton dimension-discipline rules-dimension-discipline-skeleton work-readme-skeleton	-
+sb-code30	sb	c92b5f53	A-all	124	Before Card Current DEBT Module Problem Provenance Resolve State Surviving Ticket _Avoid_ aliases archive behavior belong belongs body both canonical card cards carries category ceremony checks cites closed commit completed concept context decides decision delete deletes deleting dimension direction discipline docs dropped during entries entry feature fields file files first grep handoffs history 	-
+sb-code30	sb	c92b5f53	A-shaped	2	DEBT _Avoid_	-
+sb-code30	sb	c92b5f53	B-fanin	4	claude-md-skeleton dimension-discipline rules-dimension-discipline-skeleton work-readme-skeleton	-
+sb-code30	sb	c92b5f53	AB	4	claude-md-skeleton dimension-discipline rules-dimension-discipline-skeleton work-readme-skeleton	-
+sb-code30	sb	a91b7d63	head	2	session-continue test-queue	-
+sb-code30	sb	a91b7d63	A-all	263	After AskUserQuestion Bodies Carries Carry Claim Claims Cold Every Exactly Follow Gather Leave Ledger Mirror Name None Offer Other Parse Progress Read Resume Root SESSION STATE Several Show Stale Surface Then Thread alone also anchor answer argument author authored auto back bearing before below beside binding block bodies body bootstrap card cards carries carry checkout claim claimable claimed cl	-
+sb-code30	sb	a91b7d63	A-shaped	4	AskUserQuestion SESSION STATE test-queue	-
+sb-code30	sb	a91b7d63	B-fanin	2	session-continue test-queue	-
+sb-code30	sb	a91b7d63	AB	2	session-continue test-queue	-
+sb-code30	sb	3e84534b	head	3	ask-brief-shape ccm-version parallel-fork-write-set	-
+sb-code30	sb	3e84534b	A-all	135	Both Fires Give What Where Whether about after alone also ambient axiom batch belong between branch cannot cards change changes check checkout command commit committed complete contains counts design device dispatcher dispatches distance downstream each earns edit edits escalation exception file from governs groups grow hand hands hear here hold holds human hunk inside item known land lines link l	-
+sb-code30	sb	3e84534b	A-shaped	0		-
+sb-code30	sb	3e84534b	B-fanin	3	ask-brief-shape ccm-version parallel-fork-write-set	-
+sb-code30	sb	3e84534b	AB	3	ask-brief-shape ccm-version parallel-fork-write-set	-
+sb-code30	sb	b873a634	head	6	claude-md-skeleton harness-bootstrap overview repo-boundary rule-paths-coverage terminology	-
+sb-code30	sb	b873a634	A-all	211	Always CLAUDE_PLUGIN_ROOT Copy Each Exists Look Once Packages Phase Pipeline Planning Print Project Rules SSOT Signal Sources Staged Surface Their Tree Verify Walk adds advisory after against alone always among apply approval approved approving artifact assets authoring badged based bash because before below block bodies body bootstrap both built byte catches check checked command commit completes	-
+sb-code30	sb	b873a634	A-shaped	5	CLAUDE_PLUGIN_ROOT SSOT overview rule-paths-coverage terminology	-
+sb-code30	sb	b873a634	B-fanin	6	claude-md-skeleton harness-bootstrap overview repo-boundary rule-paths-coverage terminology	-
+sb-code30	sb	b873a634	AB	6	claude-md-skeleton harness-bootstrap overview repo-boundary rule-paths-coverage terminology	-
+sb-code30	sb	e51eb52d	head	5	claude-md-skeleton commit doc-links doc-sync-scan terminology	-
+sb-code30	sb	e51eb52d	A-all	273	Absent Commits Coverage DOC_SURFACE_FILE Every Exclude Foreign Glob HEAD Harness Link Named Only Paths READMEs Read Refinements SC2254 SSOT Stale Sync TRIM Unquoted Write above absent after against agents already also among anchors another assets backstop base bash before behavior beside between blank body bootstrap boundary break built builtin call candidates card carrying case change changed cha	-
+sb-code30	sb	e51eb52d	A-shaped	11	DOC_SURFACE_FILE HEAD READMEs SC2254 SSOT TRIM collect_builtin_surface collect_declared_surface collect_surface node_modules terminology	-
+sb-code30	sb	e51eb52d	B-fanin	5	claude-md-skeleton commit doc-links doc-sync-scan terminology	-
+sb-code30	sb	e51eb52d	AB	5	claude-md-skeleton commit doc-links doc-sync-scan terminology	-
+sb-code30	sb	7c4ba5f6	head	3	commit overview session-close	-
+sb-code30	sb	7c4ba5f6	A-all	129	AskUserQuestion Commits Committed Gather Handoff Nothing Output Progress Report Show Skipped Then This When above acknowledged after alike appends asked audit before block body bootstrap break calling card carry changes clean clear close closes commit confirm conflict declined dependency detected does done door drafted each edit edits every execute expects failure finding finished found goal handi	-
+sb-code30	sb	7c4ba5f6	A-shaped	2	AskUserQuestion overview	-
+sb-code30	sb	7c4ba5f6	B-fanin	3	commit overview session-close	-
+sb-code30	sb	7c4ba5f6	AB	3	commit overview session-close	-
+sb-code30	sb	16616ce8	head	6	claude-md-skeleton commit doc-sync-scan overview parked session-close	-
+sb-code30	sb	16616ce8	A-all	542	AGENTS Agent Also AskUserQuestion Before Closure Cold Commit Commits Dispatched Each Either Every Foreign GIT_INDEX_FILE Gather Given HEAD Harness Inflight Inline Inspect Land Moves Never Nothing Present Progress READMEs Read Register Resolved Restatements Return SSOT Scan Several Show Skip Sonnet Stale Step Stop Term Terminology This Volatile When Whole With Work Worktree Write _Avoid_ above accu	-
+sb-code30	sb	16616ce8	A-shaped	10	AGENTS AskUserQuestion GIT_INDEX_FILE HEAD READMEs SSOT _Avoid_ overview parked subagent_type	-
+sb-code30	sb	16616ce8	B-fanin	6	claude-md-skeleton commit doc-sync-scan overview parked session-close	-
+sb-code30	sb	16616ce8	AB	6	claude-md-skeleton commit doc-sync-scan overview parked session-close	-
+sb-code30	sb	86c55b98	head	3	overview push-state session-close	-
+sb-code30	sb	86c55b98	A-all	148	Actionable After Base Commits Done Drive HEAD Inspect Next Nothing Output Park Progress Push There This When above action actionable after ahead already asked assets back base bash block blocking bootstrap branch brings call card carries carry catches check clean close commit commits confirm confirmation confirmed continue count declined directory docs does done door echoed execute executed eyebal	-
+sb-code30	sb	86c55b98	A-shaped	3	HEAD overview push-state	-
+sb-code30	sb	86c55b98	B-fanin	3	overview push-state session-close	-
+sb-code30	sb	86c55b98	AB	3	overview push-state session-close	-
+sb-code30	sb	2303783c	head	7	claude-md-skeleton commit harness-architecture merge overview session-close test-queue	-
+sb-code30	sb	2303783c	A-all	345	Actionable Before Commit Commits Committed Detects Drive Each Every Gates Gather HEAD Inspect Nothing Output Owns Present Progress Push Recognize Report Routes SESSION STATE Session Show Spike Step There This When Whole Work above acknowledged action actionable after ahead already always anchored appended appends approval argument artifacts asked attached back before behind binds blast block body 	-
+sb-code30	sb	2303783c	A-shaped	6	HEAD SESSION STATE harness-architecture overview test-queue	-
+sb-code30	sb	2303783c	B-fanin	7	claude-md-skeleton commit harness-architecture merge overview session-close test-queue	-
+sb-code30	sb	2303783c	AB	7	claude-md-skeleton commit harness-architecture merge overview session-close test-queue	-
+sb-code30	sb	0be682ff	head	8	claude-md-skeleton commit doc-links doc-sync-scan overview session-close terminology test-queue	-
+sb-code30	sb	0be682ff	A-all	582	Above Both Bundled Cold Commit Commits Conventional Dispatch Dispatched Each Ending Explicit GIT_INDEX_FILE Gateway Gather Given Godot HEAD HUB_STEMS Hardcoded Harness Inline Inspect Judgment Message Named Never Nothing Otherwise Present Progress Push Read Resolve Scan Scope Session Show Sonnet Stop Sync Terms This Thread Touched Whole With Worktree _Avoid_ above acknowledged across after against 	-
+sb-code30	sb	0be682ff	A-shaped	9	GIT_INDEX_FILE HEAD HUB_STEMS _Avoid_ overview quotePath term_generic terminology test-queue	-
+sb-code30	sb	0be682ff	B-fanin	8	claude-md-skeleton commit doc-links doc-sync-scan overview session-close terminology test-queue	-
+sb-code30	sb	0be682ff	AB	8	claude-md-skeleton commit doc-links doc-sync-scan overview session-close terminology test-queue	-
+sb-code30	sb	f2e7990d	head	2	dimension-predicate doc-links	-
+sb-code30	sb	f2e7990d	A-all	74	BEGIN Concatenate FENCE_AWK HEAD HUNK_AWK Hunk ISWORD_AWK TERMUSE_AWK VOLID_AWK Verification When added after before belongs body bound bounds checked commit current date diff dimension do_terminology fact fence_char fence_len first free freshness from functions history image in_fence input keep keeps last lines mark match measured metadata next pollution position post printf probed range ranges r	-
+sb-code30	sb	f2e7990d	A-shaped	11	BEGIN FENCE_AWK HEAD HUNK_AWK ISWORD_AWK TERMUSE_AWK VOLID_AWK do_terminology fence_char fence_len in_fence	-
+sb-code30	sb	f2e7990d	B-fanin	2	dimension-predicate doc-links	-
+sb-code30	sb	f2e7990d	AB	2	dimension-predicate doc-links	-
+sb-code30	sb	35b4c3ef	head	7	dimension-discipline dimension-predicate outward-readme-skeleton parked parked-skeleton rules-dimension-discipline-skeleton work-readme-skeleton	-
+sb-code30	sb	35b4c3ef	A-all	133	Every Items Legacy Logged Order PARK Provenance Resolved Surviving Ticket actionable active already assignment belong bootstrap both card cards carries categories category ceremony char checks comes commit commits compose convention cross current date decides decision dedup deleted derive dimension docs each enter entries entry fields file filename files folder from full gate generator grep hand h	-
+sb-code30	sb	35b4c3ef	A-shaped	3	PARK k7f3 parked	-
+sb-code30	sb	35b4c3ef	B-fanin	7	dimension-discipline dimension-predicate outward-readme-skeleton parked parked-skeleton rules-dimension-discipline-skeleton work-readme-skeleton	-
+sb-code30	sb	35b4c3ef	AB	7	dimension-discipline dimension-predicate outward-readme-skeleton parked parked-skeleton rules-dimension-discipline-skeleton work-readme-skeleton	-
+sb-code30	sb	3caddf27	head	3	link-predicate rules-ssot-doc-link-skeleton ssot-doc-link	-
+sb-code30	sb	3caddf27	A-all	36	Fail Term _Avoid_ candidate concept dedicated docs entry even every exists explains finding first included line link links missing names other overrides place predicate reads registered registers shared substantive term terminology that this token where word	-
+sb-code30	sb	3caddf27	A-shaped	1	_Avoid_	-
+sb-code30	sb	3caddf27	B-fanin	3	link-predicate rules-ssot-doc-link-skeleton ssot-doc-link	-
+sb-code30	sb	3caddf27	AB	3	link-predicate rules-ssot-doc-link-skeleton ssot-doc-link	-
+sb-code30	sb	090fdd09	head	13	agent-model-pretool ask-brief-shape attention-efficiency ccm-version dispatch-breadcrumb dispatch-lesson-landing doc-dimension-discipline doc-link-discipline journey-simulation root-cause-root-intention subagent-prompt test-layer-discipline walkthrough-narrator	-
+sb-code30	sb	090fdd09	A-all	772	ALLOWED ANALYSIS ANSI Absent After Agent Answers Bash Beside Breadcrumb Brief Bullseye Caller Capture Carry Closing Common Confirmation Counter Deny Dispatch Dispatching Documented Drift Each Edit Emit Entry Equivalence Everything FINDINGS Fact Family File Folder Footer Forbidden Funnel Gateway Generalizes Grep HHmm Held Helpful Hidden Hypothesis Keep Known Layer MODEL Mechanism NARRATOR NEVER Nev	-
+sb-code30	sb	090fdd09	A-shaped	45	ALLOWED ANALYSIS ANSI FINDINGS HHmm MODEL NARRATOR NEVER PATH PAYLOAD PROJECT_ROOT PreToolUse REASON REPORT SUMMARY SubagentStop TIER WebFetch WebSearch YYYYMMDD acceptEdits additionalContext ask-brief-shape attention-efficiency dispatch-lesson-landing doc-dimension-discipline doc-link-discipline emit_allow family_word fec0889 hookEventName hookSpecificOutput norm_path output_file_path permissionD	-
+sb-code30	sb	090fdd09	B-fanin	13	agent-model-pretool ask-brief-shape attention-efficiency ccm-version dispatch-breadcrumb dispatch-lesson-landing doc-dimension-discipline doc-link-discipline journey-simulation root-cause-root-intention subagent-prompt test-layer-discipline walkthrough-narrator	-
+sb-code30	sb	090fdd09	AB	13	agent-model-pretool ask-brief-shape attention-efficiency ccm-version dispatch-breadcrumb dispatch-lesson-landing doc-dimension-discipline doc-link-discipline journey-simulation root-cause-root-intention subagent-prompt test-layer-discipline walkthrough-narrator	-
+sb-code30	sb	6be541c2	head	2	commit session-close	-
+sb-code30	sb	6be541c2	A-all	382	Actionable Commit Commits Detect Drive Each Every GIT_INDEX_FILE Gather HEAD Inflight Inline Inspect Judge Nothing Output Present Progress Push Register Restatement SSOT Session Show Stale Step Stop Terminology This Volatile Whole With Worktree acknowledged action actionable afield after ahead always another appends argument artifacts attached autorun back before behind below blast block body boot	-
+sb-code30	sb	6be541c2	A-shaped	3	GIT_INDEX_FILE HEAD SSOT	-
+sb-code30	sb	6be541c2	B-fanin	2	commit session-close	-
+sb-code30	sb	6be541c2	AB	2	commit session-close	-
+sb-code30	sb	5f387626	head	10	commit dimension-discipline dimension-predicate doc-links harness-bootstrap outward-readme-skeleton overview-skeleton rules-dimension-discipline-skeleton setup work-readme-skeleton	-
+sb-code30	sb	5f387626	A-all	382	Advisory BEGIN Boundaries Chronicle Commits Current DEBT Data Deletion Every FENCE_AWK Flow Grown HEAD ITEMS Living MODE Module NORM Never Orchestrates PARK Problem Provenance RLENGTH RSTART Resolve SSOT Skeleton Skipped State Sync TERMUSE_AWK Ticket Tracker USAGE Usage User VOLID_AWK Volatile Wider above accumulating action active added adds admitted already always anchor answer append archive as	-
+sb-code30	sb	5f387626	A-shaped	25	BEGIN DEBT FENCE_AWK HEAD ITEMS MODE NORM PARK RLENGTH RSTART SSOT TERMUSE_AWK USAGE VOLID_AWK collect_surface do_volatile_ids fence_char fence_len fence_skip in_fence is_frozen_provenance_path is_history_doc normalize_path read_items volatile_ids_exempt	-
+sb-code30	sb	5f387626	B-fanin	10	commit dimension-discipline dimension-predicate doc-links harness-bootstrap outward-readme-skeleton overview-skeleton rules-dimension-discipline-skeleton setup work-readme-skeleton	-
+sb-code30	sb	5f387626	AB	10	commit dimension-discipline dimension-predicate doc-links harness-bootstrap outward-readme-skeleton overview-skeleton rules-dimension-discipline-skeleton setup work-readme-skeleton	-
+sb-code30	sb	c455b6e3	head	1	claude-md-skeleton	-
+sb-code30	sb	c455b6e3	A-all	88	Banned Compact Context Decide Dispatch Large Park Progress Subagent Volatile additional axes before blast block bootstrap boundary budget build card carry checklist claim clean clear close compact container context continue count default dispatch distan distance expected finding finished first flight goal heavy implementation into investigation keys large ledger list never only output owned owns p	-
+sb-code30	sb	c455b6e3	A-shaped	0		-
+sb-code30	sb	c455b6e3	B-fanin	1	claude-md-skeleton	-
+sb-code30	sb	c455b6e3	AB	1	claude-md-skeleton	-
+sb-code30	sb	8cb9c9f1	head	6	claude-md-skeleton link-predicate rules-ssot-doc-link-skeleton ssot-doc-link terminology terminology-skeleton	-
+sb-code30	sb	8cb9c9f1	A-all	55	Docs Fail Term _Avoid_ aliases also another body candidate canonical concept context dedicated docs during entry even every explains file finding first here home included instead line link links missing more names needs other place planning project provides read reads registered registers rule shared substantive summary term terminology than that this token where word write	-
+sb-code30	sb	8cb9c9f1	A-shaped	2	_Avoid_ terminology	-
+sb-code30	sb	8cb9c9f1	B-fanin	6	claude-md-skeleton link-predicate rules-ssot-doc-link-skeleton ssot-doc-link terminology terminology-skeleton	-
+sb-code30	sb	8cb9c9f1	AB	6	claude-md-skeleton link-predicate rules-ssot-doc-link-skeleton ssot-doc-link terminology terminology-skeleton	-
+sb-code30	sb	963b4c8a	head	1	harness-bootstrap	-
+sb-code30	sb	963b4c8a	A-all	112	Build Commands Current Dependencies Distribution Exists Framework Heading Phase Pipeline Placeholders Problem Runtime Sources Stack State Tech User Walk above advised advisory against always apply artifact asset before block body both bullet card carries code comment compare compared consumer current detected diffed docs each edited every external fact facts fields fill filled first handling harne	-
+sb-code30	sb	963b4c8a	A-shaped	0		-
+sb-code30	sb	963b4c8a	B-fanin	1	harness-bootstrap	-
+sb-code30	sb	963b4c8a	AB	1	harness-bootstrap	-
+sb-code30	sb	17186fda	head	5	commit merge overview session-close test-queue	-
+sb-code30	sb	17186fda	A-all	232	Actionable Commit Commits Committed Detects Drive Gates Gather HEAD Handoff Inspect Never Nothing Output Owns Present Progress Push Report Routes SESSION STATE Session Show Skipped Step This When Whole actionable after ahead always anchored answered appended appends argument artifacts attached back base before blast block body bootstrap boundary branch breaking card carry changes choice choices cl	-
+sb-code30	sb	17186fda	A-shaped	5	HEAD SESSION STATE overview test-queue	-
+sb-code30	sb	17186fda	B-fanin	5	commit merge overview session-close test-queue	-
+sb-code30	sb	17186fda	AB	5	commit merge overview session-close test-queue	-
+sb-code30	sb	46652b53	head	6	commit doc-sync-scan harness-architecture overview terminology terminology-skeleton	-
+sb-code30	sb	46652b53	A-all	280	Admission Agent Apply Cold Commits Dispatched Entries Given Grep HEAD Hold Judge Never Read Record Register Return Scan Second Skip Sonnet Term This Unregistered _Avoid_ about added addition against agent alias already appears arrive artifact asks asserting assertion asset assets author backoff base beside binary blocking body bootstrap both built cache candidate candidates ceiling changed changes	-
+sb-code30	sb	46652b53	A-shaped	6	HEAD _Avoid_ harness-architecture overview subagent_type terminology	-
+sb-code30	sb	46652b53	B-fanin	6	commit doc-sync-scan harness-architecture overview terminology terminology-skeleton	-
+sb-code30	sb	46652b53	AB	6	commit doc-sync-scan harness-architecture overview terminology terminology-skeleton	-
+sb-code30	sb	fa46e0f7	head	4	ensure-infra harness-bootstrap hooks-ensure-infra overview	-
+sb-code30	sb	fa46e0f7	A-all	125	Bash CRLF Content Once Phase PowerShell Python Receipt Report Take This Version Whenever Windows Write absent again alone already asset before below bootstrap byte candidate carrying changed commit compare compared completes confirm content contract copied copy count cove covered create current declined drifted emit endings entry equal even every false file found fresh from guarded handling hash h	-
+sb-code30	sb	fa46e0f7	A-shaped	5	CRLF PowerShell overview readHookCurrent sha256	-
+sb-code30	sb	fa46e0f7	B-fanin	4	ensure-infra harness-bootstrap hooks-ensure-infra overview	-
+sb-code30	sb	fa46e0f7	AB	4	ensure-infra harness-bootstrap hooks-ensure-infra overview	-
+sb-code30	sb	59252a1d	head	3	overview session-close test-queue	-
+sb-code30	sb	59252a1d	A-all	214	Blind Commit Detect Detects Gates Gather List Monitor Never Nothing Once Owns Progress Recurring Routes SESSION STATE Show Step Surface TaskStop This after agent anchored appended appends argument armed back background backgrounded base been before beside block body bootstrap boundary branch breaking card carry change changes choice clean clear cleared close closeout codex commit commits compacted	-
+sb-code30	sb	59252a1d	A-shaped	5	SESSION STATE TaskStop overview test-queue	-
+sb-code30	sb	59252a1d	B-fanin	3	overview session-close test-queue	-
+sb-code30	sb	59252a1d	AB	3	overview session-close test-queue	-
+sb-code30	sb	9234302f	head	14	check-docs-consistency claude-md-skeleton commit doc-links doc-sync-scan harness-architecture harness-bootstrap link-predicate overview repo-boundary rules-ssot-doc-link-skeleton ssot-doc-link terminology terminology-skeleton	-
+sb-code30	sb	9234302f	A-all	537	ABCDEFGHIJKLMNOPQRSTUVWXYZ AGENTS ASCII Absent Agent Always BEGIN CODING_STANDARDS Candidate Case Cold Commits DOCLINK_TERMREG Dispatched Does ENVIRON Each Empty Every Exit FENCE_AWK Fail Given Grep HEAD HTML ISWORD_AWK ITEMS Install Judge Judgment LINKED Latin Lines MODE Mechanical Missing Monorepo NORM Never Otherwise Portable Project RLENGTH R_KIND R_PATH Read Registered Registry Required Retur	-
+sb-code30	sb	9234302f	A-shaped	44	ABCDEFGHIJKLMNOPQRSTUVWXYZ AGENTS ASCII BEGIN CODING_STANDARDS DOCLINK_TERMREG ENVIRON FENCE_AWK HEAD HTML ISWORD_AWK ITEMS LINKED MODE NORM RLENGTH R_KIND R_PATH SSOT TERMINOLOGY_AWK TERMUSE_AWK TERM_HOME USAGE _Avoid_ collect_surface do_term_uses do_terminology extract_links fence_char fence_len fence_skip harness-architecture in_cmt in_fence is_frozen_provenance_path is_history_doc links_term_h	-
+sb-code30	sb	9234302f	B-fanin	14	check-docs-consistency claude-md-skeleton commit doc-links doc-sync-scan harness-architecture harness-bootstrap link-predicate overview repo-boundary rules-ssot-doc-link-skeleton ssot-doc-link terminology terminology-skeleton	-
+sb-code30	sb	9234302f	AB	14	check-docs-consistency claude-md-skeleton commit doc-links doc-sync-scan harness-architecture harness-bootstrap link-predicate overview repo-boundary rules-ssot-doc-link-skeleton ssot-doc-link terminology terminology-skeleton	-
+sb-code30	sb	ea3e4b14	head	5	commit merge overview session-close test-queue	-
+sb-code30	sb	ea3e4b14	A-all	275	Branches Bundled Commit Commits Committed Conventional Cycle DEBT Gather Handoff Inspect Invoked Never Next Nothing Open Output Plan Present Probe Progress Push Remote Report Safe Same Session Show Skipped This When Whole abbrev above after against agent ahead already always anchor answer answered appends artifacts asks autorun back base batch before blast block body bootstrap branch branches card	-
+sb-code30	sb	ea3e4b14	A-shaped	3	DEBT overview test-queue	-
+sb-code30	sb	ea3e4b14	B-fanin	5	commit merge overview session-close test-queue	-
+sb-code30	sb	ea3e4b14	AB	5	commit merge overview session-close test-queue	-
+ctrl-3891bf41	mr	3891bf41	head	1	game	-
+ctrl-3891bf41	mr	3891bf41	A-all	5	LV58 PLAY_TS_BY_VIEW PLAY_TS_FAST PLAY_TS_MID const	-
+ctrl-3891bf41	mr	3891bf41	A-shaped	4	LV58 PLAY_TS_BY_VIEW PLAY_TS_FAST PLAY_TS_MID	-
+ctrl-3891bf41	mr	3891bf41	B-fanin	1	game	game
+ctrl-3891bf41	mr	3891bf41	AB	5	LV58 PLAY_TS_BY_VIEW PLAY_TS_FAST PLAY_TS_MID game	game

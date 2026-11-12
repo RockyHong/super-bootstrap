@@ -316,6 +316,9 @@ do_all() {
     } > "$out/pairs.tsv"
 }
 
+# Sourcing guard: arms.sh sources this file for its helpers and sets REPLAY_SOURCED=1.
+[ "${REPLAY_SOURCED:-0}" = 1 ] && return 0
+
 case "${1:-}" in
     list)  shift; do_list "$@" ;;
     run)   shift; do_run "$@" ;;

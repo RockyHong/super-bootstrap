@@ -1,0 +1,306 @@
+set	repo	sha	date	arm	n_terms	hits	union	cross	bytes	subject	head_hits_doc_only	head_hits_code_only	head_hits_both
+mr-code30	mr	3891bf41	2026-11-13	head	1	24	24	1	1280441	feat(pacing): LV58 runs every view at pace 1.0	0	24	0
+mr-code30	mr	3891bf41	2026-11-13	A-all	5	3	3	0	498031	feat(pacing): LV58 runs every view at pace 1.0	-	-	-
+mr-code30	mr	3891bf41	2026-11-13	A-shaped	4	3	3	0	498031	feat(pacing): LV58 runs every view at pace 1.0	-	-	-
+mr-code30	mr	3891bf41	2026-11-13	B-fanin	1	6	6	0	602227	feat(pacing): LV58 runs every view at pace 1.0	-	-	-
+mr-code30	mr	3891bf41	2026-11-13	AB	5	8	8	0	677539	feat(pacing): LV58 runs every view at pace 1.0	-	-	-
+mr-code30	mr	6b246fa6	2026-11-13	head	6	26	29	1	1428429	feat(magnet): the magnet yanks the block's drawn head per colour	5	4	17
+mr-code30	mr	6b246fa6	2026-11-13	A-all	59	27	30	1	1450373	feat(magnet): the magnet yanks the block's drawn head per colour	-	-	-
+mr-code30	mr	6b246fa6	2026-11-13	A-shaped	23	22	25	1	1339151	feat(magnet): the magnet yanks the block's drawn head per colour	-	-	-
+mr-code30	mr	6b246fa6	2026-11-13	B-fanin	6	22	25	1	1339151	feat(magnet): the magnet yanks the block's drawn head per colour	-	-	-
+mr-code30	mr	6b246fa6	2026-11-13	AB	24	22	25	1	1339151	feat(magnet): the magnet yanks the block's drawn head per colour	-	-	-
+mr-code30	mr	84e283e7	2026-11-13	head	5	24	26	1	1410153	fix(lv60): draw no halo on the finale magnet while held	21	0	3
+mr-code30	mr	84e283e7	2026-11-13	A-all	99	28	30	1	1476482	fix(lv60): draw no halo on the finale magnet while held	-	-	-
+mr-code30	mr	84e283e7	2026-11-13	A-shaped	30	24	26	1	1410153	fix(lv60): draw no halo on the finale magnet while held	-	-	-
+mr-code30	mr	84e283e7	2026-11-13	B-fanin	5	24	26	1	1410153	fix(lv60): draw no halo on the finale magnet while held	-	-	-
+mr-code30	mr	84e283e7	2026-11-13	AB	5	24	26	1	1410153	fix(lv60): draw no halo on the finale magnet while held	-	-	-
+mr-code30	mr	c5ee2230	2026-11-12	head	11	25	29	1	1455233	feat(lv60): land the press greeting as production code	18	0	7
+mr-code30	mr	c5ee2230	2026-11-12	A-all	678	42	46	1	1578815	feat(lv60): land the press greeting as production code	-	-	-
+mr-code30	mr	c5ee2230	2026-11-12	A-shaped	212	27	31	1	1477839	feat(lv60): land the press greeting as production code	-	-	-
+mr-code30	mr	c5ee2230	2026-11-12	B-fanin	11	25	29	1	1455233	feat(lv60): land the press greeting as production code	-	-	-
+mr-code30	mr	c5ee2230	2026-11-12	AB	11	25	29	1	1455233	feat(lv60): land the press greeting as production code	-	-	-
+mr-code30	mr	fc1a0fd2	2026-11-12	head	10	13	17	1	1073361	feat(lv60): spike the press greeting the author settled by hand	6	3	4
+mr-code30	mr	fc1a0fd2	2026-11-12	A-all	470	35	38	1	1554091	feat(lv60): spike the press greeting the author settled by hand	-	-	-
+mr-code30	mr	fc1a0fd2	2026-11-12	A-shaped	136	19	23	1	1226412	feat(lv60): spike the press greeting the author settled by hand	-	-	-
+mr-code30	mr	fc1a0fd2	2026-11-12	B-fanin	10	13	17	1	1073361	feat(lv60): spike the press greeting the author settled by hand	-	-	-
+mr-code30	mr	fc1a0fd2	2026-11-12	AB	10	13	17	1	1073361	feat(lv60): spike the press greeting the author settled by hand	-	-	-
+mr-code30	mr	5bba26f6	2026-11-12	head	2	0	1	0	419570	refactor(rest-pose): stop recording Label text and alignment	0	0	0
+mr-code30	mr	5bba26f6	2026-11-12	A-all	22	10	11	1	911521	refactor(rest-pose): stop recording Label text and alignment	-	-	-
+mr-code30	mr	5bba26f6	2026-11-12	A-shaped	10	3	4	0	676293	refactor(rest-pose): stop recording Label text and alignment	-	-	-
+mr-code30	mr	5bba26f6	2026-11-12	B-fanin	2	0	1	0	419570	refactor(rest-pose): stop recording Label text and alignment	-	-	-
+mr-code30	mr	5bba26f6	2026-11-12	AB	2	0	1	0	419570	refactor(rest-pose): stop recording Label text and alignment	-	-	-
+mr-code30	mr	b40c5083	2026-11-12	head	13	24	32	1	1497145	feat(point-line): pixel-clean sizes, 120 px margin, break before shrin	15	0	9
+mr-code30	mr	b40c5083	2026-11-12	A-all	300	29	37	1	1550512	feat(point-line): pixel-clean sizes, 120 px margin, break before shrin	-	-	-
+mr-code30	mr	b40c5083	2026-11-12	A-shaped	81	24	32	1	1497145	feat(point-line): pixel-clean sizes, 120 px margin, break before shrin	-	-	-
+mr-code30	mr	b40c5083	2026-11-12	B-fanin	13	24	32	1	1497145	feat(point-line): pixel-clean sizes, 120 px margin, break before shrin	-	-	-
+mr-code30	mr	b40c5083	2026-11-12	AB	34	24	32	1	1497145	feat(point-line): pixel-clean sizes, 120 px margin, break before shrin	-	-	-
+mr-code30	mr	2440477b	2026-11-12	head	3	15	17	1	1110441	fix(level-strip): advance to the next locked level when nothing open l	9	2	4
+mr-code30	mr	2440477b	2026-11-12	A-all	73	27	29	1	1391990	fix(level-strip): advance to the next locked level when nothing open l	-	-	-
+mr-code30	mr	2440477b	2026-11-12	A-shaped	15	13	15	1	1074435	fix(level-strip): advance to the next locked level when nothing open l	-	-	-
+mr-code30	mr	2440477b	2026-11-12	B-fanin	3	15	17	1	1110441	fix(level-strip): advance to the next locked level when nothing open l	-	-	-
+mr-code30	mr	2440477b	2026-11-12	AB	3	15	17	1	1110441	fix(level-strip): advance to the next locked level when nothing open l	-	-	-
+mr-code30	mr	279166d4	2026-11-12	head	2	23	24	1	1269605	fix(transition): LV80/81 opening cover follows the card's band colour	0	23	0
+mr-code30	mr	279166d4	2026-11-12	A-all	19	9	10	1	878549	fix(transition): LV80/81 opening cover follows the card's band colour	-	-	-
+mr-code30	mr	279166d4	2026-11-12	A-shaped	6	2	3	0	495095	fix(transition): LV80/81 opening cover follows the card's band colour	-	-	-
+mr-code30	mr	279166d4	2026-11-12	B-fanin	2	5	6	0	594284	fix(transition): LV80/81 opening cover follows the card's band colour	-	-	-
+mr-code30	mr	279166d4	2026-11-12	AB	7	7	8	0	670094	fix(transition): LV80/81 opening cover follows the card's band colour	-	-	-
+mr-code30	mr	6839a923	2026-11-12	head	1	11	11	1	850135	feat(audio): LV80 plays 8bit Memories with LV77-79, not the boss track	0	11	0
+mr-code30	mr	6839a923	2026-11-12	A-all	18	10	10	1	770127	feat(audio): LV80 plays 8bit Memories with LV77-79, not the boss track	-	-	-
+mr-code30	mr	6839a923	2026-11-12	A-shaped	2	3	3	0	500057	feat(audio): LV80 plays 8bit Memories with LV77-79, not the boss track	-	-	-
+mr-code30	mr	6839a923	2026-11-12	B-fanin	1	3	3	0	520153	feat(audio): LV80 plays 8bit Memories with LV77-79, not the boss track	-	-	-
+mr-code30	mr	6839a923	2026-11-12	AB	3	5	5	0	600929	feat(audio): LV80 plays 8bit Memories with LV77-79, not the boss track	-	-	-
+mr-code30	mr	1a32ae40	2026-11-12	head	4	25	27	1	1384416	feat(lv80): yellow transit card and covers, back on the band frame	3	7	15
+mr-code30	mr	1a32ae40	2026-11-12	A-all	26	25	27	1	1365884	feat(lv80): yellow transit card and covers, back on the band frame	-	-	-
+mr-code30	mr	1a32ae40	2026-11-12	A-shaped	13	21	23	1	1295138	feat(lv80): yellow transit card and covers, back on the band frame	-	-	-
+mr-code30	mr	1a32ae40	2026-11-12	B-fanin	4	18	20	1	1204651	feat(lv80): yellow transit card and covers, back on the band frame	-	-	-
+mr-code30	mr	1a32ae40	2026-11-12	AB	7	18	20	1	1204651	feat(lv80): yellow transit card and covers, back on the band frame	-	-	-
+mr-code30	mr	40ee52d6	2026-11-12	head	9	26	32	1	1463673	feat(transition): reveal Ending and LV81 from black with the music's o	8	2	16
+mr-code30	mr	40ee52d6	2026-11-12	A-all	165	29	35	1	1495472	feat(transition): reveal Ending and LV81 from black with the music's o	-	-	-
+mr-code30	mr	40ee52d6	2026-11-12	A-shaped	50	26	32	1	1463673	feat(transition): reveal Ending and LV81 from black with the music's o	-	-	-
+mr-code30	mr	40ee52d6	2026-11-12	B-fanin	9	25	31	1	1454004	feat(transition): reveal Ending and LV81 from black with the music's o	-	-	-
+mr-code30	mr	40ee52d6	2026-11-12	AB	37	25	31	1	1454004	feat(transition): reveal Ending and LV81 from black with the music's o	-	-	-
+mr-code30	mr	18d13fd1	2026-11-12	head	11	29	32	1	1489838	feat(lv59): stand the deadly caption whole from the load	5	5	19
+mr-code30	mr	18d13fd1	2026-11-12	A-all	613	44	47	1	1568690	feat(lv59): stand the deadly caption whole from the load	-	-	-
+mr-code30	mr	18d13fd1	2026-11-12	A-shaped	144	30	33	1	1512194	feat(lv59): stand the deadly caption whole from the load	-	-	-
+mr-code30	mr	18d13fd1	2026-11-12	B-fanin	11	27	30	1	1456021	feat(lv59): stand the deadly caption whole from the load	-	-	-
+mr-code30	mr	18d13fd1	2026-11-12	AB	27	28	31	1	1465812	feat(lv59): stand the deadly caption whole from the load	-	-	-
+mr-code30	mr	8c70910f	2026-11-12	head	6	26	30	1	1466859	fix(copy): align en point-line punctuation with the two systems	17	0	9
+mr-code30	mr	8c70910f	2026-11-12	A-all	204	30	34	1	1525860	fix(copy): align en point-line punctuation with the two systems	-	-	-
+mr-code30	mr	8c70910f	2026-11-12	A-shaped	73	26	30	1	1466859	fix(copy): align en point-line punctuation with the two systems	-	-	-
+mr-code30	mr	8c70910f	2026-11-12	B-fanin	6	26	30	1	1466859	fix(copy): align en point-line punctuation with the two systems	-	-	-
+mr-code30	mr	8c70910f	2026-11-12	AB	75	26	30	1	1466859	fix(copy): align en point-line punctuation with the two systems	-	-	-
+mr-code30	mr	ce0075b0	2026-11-12	head	7	21	26	1	1302120	fix(copy): streamline zh point-line punctuation into two systems	13	0	8
+mr-code30	mr	ce0075b0	2026-11-12	A-all	192	28	33	1	1474004	fix(copy): streamline zh point-line punctuation into two systems	-	-	-
+mr-code30	mr	ce0075b0	2026-11-12	A-shaped	69	21	26	1	1302120	fix(copy): streamline zh point-line punctuation into two systems	-	-	-
+mr-code30	mr	ce0075b0	2026-11-12	B-fanin	7	21	26	1	1302120	fix(copy): streamline zh point-line punctuation into two systems	-	-	-
+mr-code30	mr	ce0075b0	2026-11-12	AB	72	21	26	1	1302120	fix(copy): streamline zh point-line punctuation into two systems	-	-	-
+mr-code30	mr	ca2147a5	2026-11-12	head	8	26	29	1	1436558	refactor(death-marks): cut the level-leaves-no-stain carve-out	23	0	3
+mr-code30	mr	ca2147a5	2026-11-12	A-all	122	28	31	1	1469341	refactor(death-marks): cut the level-leaves-no-stain carve-out	-	-	-
+mr-code30	mr	ca2147a5	2026-11-12	A-shaped	37	26	29	1	1436558	refactor(death-marks): cut the level-leaves-no-stain carve-out	-	-	-
+mr-code30	mr	ca2147a5	2026-11-12	B-fanin	8	26	29	1	1436558	refactor(death-marks): cut the level-leaves-no-stain carve-out	-	-	-
+mr-code30	mr	ca2147a5	2026-11-12	AB	8	26	29	1	1436558	refactor(death-marks): cut the level-leaves-no-stain carve-out	-	-	-
+mr-code30	mr	374f4052	2026-11-12	head	1	3	3	0	631040	spike(LV59): let deaths press the road stain again	0	3	0
+mr-code30	mr	374f4052	2026-11-12	A-all	6	7	7	0	789618	spike(LV59): let deaths press the road stain again	-	-	-
+mr-code30	mr	374f4052	2026-11-12	A-shaped	2	3	3	0	631040	spike(LV59): let deaths press the road stain again	-	-	-
+mr-code30	mr	374f4052	2026-11-12	B-fanin	1	3	3	0	631040	spike(LV59): let deaths press the road stain again	-	-	-
+mr-code30	mr	374f4052	2026-11-12	AB	1	3	3	0	631040	spike(LV59): let deaths press the road stain again	-	-	-
+mr-code30	mr	e2a713cf	2026-11-12	head	4	18	19	1	1188257	fix(ending-wall): voice actor wish reads 我想成為一名聲優	7	4	7
+mr-code30	mr	e2a713cf	2026-11-12	A-all	8	15	16	1	1112536	fix(ending-wall): voice actor wish reads 我想成為一名聲優	-	-	-
+mr-code30	mr	e2a713cf	2026-11-12	A-shaped	3	14	15	1	1009649	fix(ending-wall): voice actor wish reads 我想成為一名聲優	-	-	-
+mr-code30	mr	e2a713cf	2026-11-12	B-fanin	4	15	16	1	1112536	fix(ending-wall): voice actor wish reads 我想成為一名聲優	-	-	-
+mr-code30	mr	e2a713cf	2026-11-12	AB	6	15	16	1	1112536	fix(ending-wall): voice actor wish reads 我想成為一名聲優	-	-	-
+mr-code30	mr	c5a21f5c	2026-11-12	head	1	0	0	0	0	fix(lv28): raise magnet_317 by 6.5 px	0	0	0
+mr-code30	mr	c5a21f5c	2026-11-12	A-all	7	8	8	0	832219	fix(lv28): raise magnet_317 by 6.5 px	-	-	-
+mr-code30	mr	c5a21f5c	2026-11-12	A-shaped	4	0	0	0	0	fix(lv28): raise magnet_317 by 6.5 px	-	-	-
+mr-code30	mr	c5a21f5c	2026-11-12	B-fanin	1	0	0	0	0	fix(lv28): raise magnet_317 by 6.5 px	-	-	-
+mr-code30	mr	c5a21f5c	2026-11-12	AB	1	0	0	0	0	fix(lv28): raise magnet_317 by 6.5 px	-	-	-
+mr-code30	mr	58d02ab3	2026-11-12	head	5	23	26	1	1246312	feat(bigcake): type the Deaths line before the setbacks pair	18	0	5
+mr-code30	mr	58d02ab3	2026-11-12	A-all	12	24	27	1	1273035	feat(bigcake): type the Deaths line before the setbacks pair	-	-	-
+mr-code30	mr	58d02ab3	2026-11-12	A-shaped	9	23	26	1	1246312	feat(bigcake): type the Deaths line before the setbacks pair	-	-	-
+mr-code30	mr	58d02ab3	2026-11-12	B-fanin	5	23	26	1	1246312	feat(bigcake): type the Deaths line before the setbacks pair	-	-	-
+mr-code30	mr	58d02ab3	2026-11-12	AB	5	23	26	1	1246312	feat(bigcake): type the Deaths line before the setbacks pair	-	-	-
+mr-code30	mr	3224ba6d	2026-11-11	head	4	23	25	1	1374179	feat(hint): teach pad nav with left-stick glyphs, one four-way glyph	16	1	6
+mr-code30	mr	3224ba6d	2026-11-11	A-all	97	25	27	1	1413824	feat(hint): teach pad nav with left-stick glyphs, one four-way glyph	-	-	-
+mr-code30	mr	3224ba6d	2026-11-11	A-shaped	25	22	24	1	1361038	feat(hint): teach pad nav with left-stick glyphs, one four-way glyph	-	-	-
+mr-code30	mr	3224ba6d	2026-11-11	B-fanin	4	23	25	1	1374179	feat(hint): teach pad nav with left-stick glyphs, one four-way glyph	-	-	-
+mr-code30	mr	3224ba6d	2026-11-11	AB	4	23	25	1	1374179	feat(hint): teach pad nav with left-stick glyphs, one four-way glyph	-	-	-
+mr-code30	mr	8705a7ac	2026-11-11	head	4	18	19	1	1188449	fix(copy): reword dream-wall wishes and sync the zh_Hans column	7	4	7
+mr-code30	mr	8705a7ac	2026-11-11	A-all	82	26	27	1	1380608	fix(copy): reword dream-wall wishes and sync the zh_Hans column	-	-	-
+mr-code30	mr	8705a7ac	2026-11-11	A-shaped	25	14	15	1	1009841	fix(copy): reword dream-wall wishes and sync the zh_Hans column	-	-	-
+mr-code30	mr	8705a7ac	2026-11-11	B-fanin	4	15	16	1	1112728	fix(copy): reword dream-wall wishes and sync the zh_Hans column	-	-	-
+mr-code30	mr	8705a7ac	2026-11-11	AB	28	15	16	1	1112728	fix(copy): reword dream-wall wishes and sync the zh_Hans column	-	-	-
+mr-code30	mr	e04ec114	2026-11-11	head	4	17	20	1	1237794	feat(ending): fade each dream-wall wish's peak ink with distance	15	1	1
+mr-code30	mr	e04ec114	2026-11-11	A-all	159	29	32	1	1442266	feat(ending): fade each dream-wall wish's peak ink with distance	-	-	-
+mr-code30	mr	e04ec114	2026-11-11	A-shaped	39	16	19	1	1203431	feat(ending): fade each dream-wall wish's peak ink with distance	-	-	-
+mr-code30	mr	e04ec114	2026-11-11	B-fanin	4	17	20	1	1237794	feat(ending): fade each dream-wall wish's peak ink with distance	-	-	-
+mr-code30	mr	e04ec114	2026-11-11	AB	4	17	20	1	1237794	feat(ending): fade each dream-wall wish's peak ink with distance	-	-	-
+mr-code30	mr	e3a8f3f3	2026-11-11	head	3	12	12	1	830786	fix(copy): drop the LV57 comma and re-space the LV59 lines in both zh 	0	12	0
+mr-code30	mr	e3a8f3f3	2026-11-11	A-all	23	12	12	1	903573	fix(copy): drop the LV57 comma and re-space the LV59 lines in both zh 	-	-	-
+mr-code30	mr	e3a8f3f3	2026-11-11	A-shaped	5	2	2	0	133610	fix(copy): drop the LV57 comma and re-space the LV59 lines in both zh 	-	-	-
+mr-code30	mr	e3a8f3f3	2026-11-11	B-fanin	3	2	2	0	521820	fix(copy): drop the LV57 comma and re-space the LV59 lines in both zh 	-	-	-
+mr-code30	mr	e3a8f3f3	2026-11-11	AB	8	4	4	0	655430	fix(copy): drop the LV57 comma and re-space the LV59 lines in both zh 	-	-	-
+mr-code30	mr	9db96f59	2026-11-11	head	1	0	0	0	0	fix(LV59): move the deadly caption left beside its step	0	0	0
+mr-code30	mr	9db96f59	2026-11-11	A-all	6	8	8	0	831810	fix(LV59): move the deadly caption left beside its step	-	-	-
+mr-code30	mr	9db96f59	2026-11-11	A-shaped	5	0	0	0	0	fix(LV59): move the deadly caption left beside its step	-	-	-
+mr-code30	mr	9db96f59	2026-11-11	B-fanin	1	0	0	0	0	fix(LV59): move the deadly caption left beside its step	-	-	-
+mr-code30	mr	9db96f59	2026-11-11	AB	1	0	0	0	0	fix(LV59): move the deadly caption left beside its step	-	-	-
+mr-code30	mr	b8bed480	2026-11-11	head	6	18	19	1	1187558	feat(ending): settle the dream wall's 48 wishes in each locale's own v	7	4	7
+mr-code30	mr	b8bed480	2026-11-11	A-all	166	26	27	1	1356494	feat(ending): settle the dream wall's 48 wishes in each locale's own v	-	-	-
+mr-code30	mr	b8bed480	2026-11-11	A-shaped	51	14	15	1	1008950	feat(ending): settle the dream wall's 48 wishes in each locale's own v	-	-	-
+mr-code30	mr	b8bed480	2026-11-11	B-fanin	6	16	17	1	1146200	feat(ending): settle the dream wall's 48 wishes in each locale's own v	-	-	-
+mr-code30	mr	b8bed480	2026-11-11	AB	55	16	17	1	1146200	feat(ending): settle the dream wall's 48 wishes in each locale's own v	-	-	-
+mr-code30	mr	0b6217f0	2026-11-11	head	16	24	30	1	1426916	feat(narrative): drop the Chinese title on LV59 and swap LV55/LV56	11	0	13
+mr-code30	mr	0b6217f0	2026-11-11	A-all	234	30	36	1	1542902	feat(narrative): drop the Chinese title on LV59 and swap LV55/LV56	-	-	-
+mr-code30	mr	0b6217f0	2026-11-11	A-shaped	167	26	32	1	1468843	feat(narrative): drop the Chinese title on LV59 and swap LV55/LV56	-	-	-
+mr-code30	mr	0b6217f0	2026-11-11	B-fanin	16	24	30	1	1426916	feat(narrative): drop the Chinese title on LV59 and swap LV55/LV56	-	-	-
+mr-code30	mr	0b6217f0	2026-11-11	AB	23	24	30	1	1426916	feat(narrative): drop the Chinese title on LV59 and swap LV55/LV56	-	-	-
+mr-code30	mr	c116da23	2026-11-11	head	9	25	29	1	1413860	feat(exit): hold a level's exit until the whole block has left the vie	5	2	18
+mr-code30	mr	c116da23	2026-11-11	A-all	156	31	35	1	1528629	feat(exit): hold a level's exit until the whole block has left the vie	-	-	-
+mr-code30	mr	c116da23	2026-11-11	A-shaped	44	24	29	1	1399249	feat(exit): hold a level's exit until the whole block has left the vie	-	-	-
+mr-code30	mr	c116da23	2026-11-11	B-fanin	9	23	28	1	1386108	feat(exit): hold a level's exit until the whole block has left the vie	-	-	-
+mr-code30	mr	c116da23	2026-11-11	AB	40	23	28	1	1386108	feat(exit): hold a level's exit until the whole block has left the vie	-	-	-
+mr-code30	mr	ea95921b	2026-11-11	head	1	2	2	0	66847	docs(white-flood): name LV58's sword fan as a user of the shared cells	0	2	0
+mr-code30	mr	ea95921b	2026-11-11	A-all	29	14	14	1	1014694	docs(white-flood): name LV58's sword fan as a user of the shared cells	-	-	-
+mr-code30	mr	ea95921b	2026-11-11	A-shaped	13	7	7	0	738505	docs(white-flood): name LV58's sword fan as a user of the shared cells	-	-	-
+mr-code30	mr	ea95921b	2026-11-11	B-fanin	1	2	2	0	66847	docs(white-flood): name LV58's sword fan as a user of the shared cells	-	-	-
+mr-code30	mr	ea95921b	2026-11-11	AB	1	2	2	0	66847	docs(white-flood): name LV58's sword fan as a user of the shared cells	-	-	-
+mr-code30	mr	34be714f	2026-11-11	head	7	24	28	1	1383982	feat(LV58): close the sword's exit with a white fan folding shut	21	1	2
+mr-code30	mr	34be714f	2026-11-11	A-all	394	35	39	1	1547586	feat(LV58): close the sword's exit with a white fan folding shut	-	-	-
+mr-code30	mr	34be714f	2026-11-11	A-shaped	120	25	29	1	1397123	feat(LV58): close the sword's exit with a white fan folding shut	-	-	-
+mr-code30	mr	34be714f	2026-11-11	B-fanin	7	24	28	1	1383982	feat(LV58): close the sword's exit with a white fan folding shut	-	-	-
+mr-code30	mr	34be714f	2026-11-11	AB	7	24	28	1	1383982	feat(LV58): close the sword's exit with a white fan folding shut	-	-	-
+sb-code30	sb	2d3bca55	2026-11-12	head	2	0	3	0	13987	chore(guidelines): sync served work-discipline lore from claude-config	0	0	0
+sb-code30	sb	2d3bca55	2026-11-12	A-all	1	0	3	0	13987	chore(guidelines): sync served work-discipline lore from claude-config	-	-	-
+sb-code30	sb	2d3bca55	2026-11-12	A-shaped	1	0	3	0	13987	chore(guidelines): sync served work-discipline lore from claude-config	-	-	-
+sb-code30	sb	2d3bca55	2026-11-12	B-fanin	2	0	3	0	13987	chore(guidelines): sync served work-discipline lore from claude-config	-	-	-
+sb-code30	sb	2d3bca55	2026-11-12	AB	2	0	3	0	13987	chore(guidelines): sync served work-discipline lore from claude-config	-	-	-
+sb-code30	sb	e1b523a5	2026-11-12	head	5	7	8	0	102678	fix(harness-bootstrap): reword skeleton prose downstream audits misrea	0	7	0
+sb-code30	sb	e1b523a5	2026-11-12	A-all	219	12	13	1	127232	fix(harness-bootstrap): reword skeleton prose downstream audits misrea	-	-	-
+sb-code30	sb	e1b523a5	2026-11-12	A-shaped	2	3	4	0	32460	fix(harness-bootstrap): reword skeleton prose downstream audits misrea	-	-	-
+sb-code30	sb	e1b523a5	2026-11-12	B-fanin	5	7	8	0	102678	fix(harness-bootstrap): reword skeleton prose downstream audits misrea	-	-	-
+sb-code30	sb	e1b523a5	2026-11-12	AB	5	7	8	0	102678	fix(harness-bootstrap): reword skeleton prose downstream audits misrea	-	-	-
+sb-code30	sb	07a37bd6	2026-11-10	head	3	3	9	1	127785	fix(session-close): ask in-boundary undone work in the pick — resolv	2	0	1
+sb-code30	sb	07a37bd6	2026-11-10	A-all	370	8	14	1	151011	fix(session-close): ask in-boundary undone work in the pick — resolv	-	-	-
+sb-code30	sb	07a37bd6	2026-11-10	A-shaped	5	3	9	1	127785	fix(session-close): ask in-boundary undone work in the pick — resolv	-	-	-
+sb-code30	sb	07a37bd6	2026-11-10	B-fanin	3	3	9	1	127785	fix(session-close): ask in-boundary undone work in the pick — resolv	-	-	-
+sb-code30	sb	07a37bd6	2026-11-10	AB	3	3	9	1	127785	fix(session-close): ask in-boundary undone work in the pick — resolv	-	-	-
+sb-code30	sb	f0f896f3	2026-11-10	head	2	7	9	1	130443	fix(session-close): make the pick the last ask — resolve BUG-mzqp	2	1	4
+sb-code30	sb	f0f896f3	2026-11-10	A-all	68	10	12	1	145886	fix(session-close): make the pick the last ask — resolve BUG-mzqp	-	-	-
+sb-code30	sb	f0f896f3	2026-11-10	A-shaped	1	6	8	0	125656	fix(session-close): make the pick the last ask — resolve BUG-mzqp	-	-	-
+sb-code30	sb	f0f896f3	2026-11-10	B-fanin	2	7	9	1	130443	fix(session-close): make the pick the last ask — resolve BUG-mzqp	-	-	-
+sb-code30	sb	f0f896f3	2026-11-10	AB	2	7	9	1	130443	fix(session-close): make the pick the last ask — resolve BUG-mzqp	-	-	-
+sb-code30	sb	76b43b4f	2026-11-10	head	5	4	4	0	69361	fix(harness-bootstrap): pin doc-rule README glob to root — resolve D	0	4	0
+sb-code30	sb	76b43b4f	2026-11-10	A-all	23	12	12	1	121976	fix(harness-bootstrap): pin doc-rule README glob to root — resolve D	-	-	-
+sb-code30	sb	76b43b4f	2026-11-10	A-shaped	0	0	0	0	0	fix(harness-bootstrap): pin doc-rule README glob to root — resolve D	-	-	-
+sb-code30	sb	76b43b4f	2026-11-10	B-fanin	5	4	4	0	69361	fix(harness-bootstrap): pin doc-rule README glob to root — resolve D	-	-	-
+sb-code30	sb	76b43b4f	2026-11-10	AB	5	4	4	0	69361	fix(harness-bootstrap): pin doc-rule README glob to root — resolve D	-	-	-
+sb-code30	sb	c92b5f53	2026-11-09	head	4	3	5	0	61025	docs(harness-bootstrap): tighten resolve and provenance wording in tem	0	3	0
+sb-code30	sb	c92b5f53	2026-11-09	A-all	124	12	13	1	125875	docs(harness-bootstrap): tighten resolve and provenance wording in tem	-	-	-
+sb-code30	sb	c92b5f53	2026-11-09	A-shaped	2	5	6	0	80338	docs(harness-bootstrap): tighten resolve and provenance wording in tem	-	-	-
+sb-code30	sb	c92b5f53	2026-11-09	B-fanin	4	3	5	0	61025	docs(harness-bootstrap): tighten resolve and provenance wording in tem	-	-	-
+sb-code30	sb	c92b5f53	2026-11-09	AB	4	3	5	0	61025	docs(harness-bootstrap): tighten resolve and provenance wording in tem	-	-	-
+sb-code30	sb	a91b7d63	2026-11-09	head	2	6	9	1	107144	fix(session-continue): claim a carry only on the user's resume pick �	3	0	3
+sb-code30	sb	a91b7d63	2026-11-09	A-all	263	11	14	1	130285	fix(session-continue): claim a carry only on the user's resume pick �	-	-	-
+sb-code30	sb	a91b7d63	2026-11-09	A-shaped	4	6	9	1	107144	fix(session-continue): claim a carry only on the user's resume pick �	-	-	-
+sb-code30	sb	a91b7d63	2026-11-09	B-fanin	2	6	9	1	107144	fix(session-continue): claim a carry only on the user's resume pick �	-	-	-
+sb-code30	sb	a91b7d63	2026-11-09	AB	2	6	9	1	107144	fix(session-continue): claim a carry only on the user's resume pick �	-	-	-
+sb-code30	sb	3e84534b	2026-11-09	head	3	0	2	0	5459	chore: sync served work-discipline guidelines	0	0	0
+sb-code30	sb	3e84534b	2026-11-09	A-all	135	8	10	1	113448	chore: sync served work-discipline guidelines	-	-	-
+sb-code30	sb	3e84534b	2026-11-09	A-shaped	0	0	2	0	5459	chore: sync served work-discipline guidelines	-	-	-
+sb-code30	sb	3e84534b	2026-11-09	B-fanin	3	0	2	0	5459	chore: sync served work-discipline guidelines	-	-	-
+sb-code30	sb	3e84534b	2026-11-09	AB	3	0	2	0	5459	chore: sync served work-discipline guidelines	-	-	-
+sb-code30	sb	b873a634	2026-11-09	head	6	5	11	1	212636	feat(harness-bootstrap): keep a consumer paths: tail on placed doc rul	0	4	1
+sb-code30	sb	b873a634	2026-11-09	A-all	211	10	16	1	232242	feat(harness-bootstrap): keep a consumer paths: tail on placed doc rul	-	-	-
+sb-code30	sb	b873a634	2026-11-09	A-shaped	5	3	9	1	194060	feat(harness-bootstrap): keep a consumer paths: tail on placed doc rul	-	-	-
+sb-code30	sb	b873a634	2026-11-09	B-fanin	6	5	11	1	212636	feat(harness-bootstrap): keep a consumer paths: tail on placed doc rul	-	-	-
+sb-code30	sb	b873a634	2026-11-09	AB	6	5	11	1	212636	feat(harness-bootstrap): keep a consumer paths: tail on placed doc rul	-	-	-
+sb-code30	sb	e51eb52d	2026-11-09	head	5	7	10	1	137533	feat(commit): let a repo declare extra doc-surface globs in .claude/do	0	5	2
+sb-code30	sb	e51eb52d	2026-11-09	A-all	273	11	13	1	143108	feat(commit): let a repo declare extra doc-surface globs in .claude/do	-	-	-
+sb-code30	sb	e51eb52d	2026-11-09	A-shaped	11	2	5	0	84908	feat(commit): let a repo declare extra doc-surface globs in .claude/do	-	-	-
+sb-code30	sb	e51eb52d	2026-11-09	B-fanin	5	7	10	1	137533	feat(commit): let a repo declare extra doc-surface globs in .claude/do	-	-	-
+sb-code30	sb	e51eb52d	2026-11-09	AB	5	7	10	1	137533	feat(commit): let a repo declare extra doc-surface globs in .claude/do	-	-	-
+sb-code30	sb	7c4ba5f6	2026-11-09	head	3	5	11	1	141095	fix(commit): report the commit and return to the work, not a session-c	1	4	0
+sb-code30	sb	7c4ba5f6	2026-11-09	A-all	129	9	15	1	160044	fix(commit): report the commit and return to the work, not a session-c	-	-	-
+sb-code30	sb	7c4ba5f6	2026-11-09	A-shaped	2	1	8	0	111994	fix(commit): report the commit and return to the work, not a session-c	-	-	-
+sb-code30	sb	7c4ba5f6	2026-11-09	B-fanin	3	5	11	1	141095	fix(commit): report the commit and return to the work, not a session-c	-	-	-
+sb-code30	sb	7c4ba5f6	2026-11-09	AB	3	5	11	1	141095	fix(commit): report the commit and return to the work, not a session-c	-	-	-
+sb-code30	sb	16616ce8	2026-11-09	head	6	7	16	1	199682	feat(close,commit): land same-change harness edits in one pick, ask ev	1	2	4
+sb-code30	sb	16616ce8	2026-11-09	A-all	542	10	19	1	205257	feat(close,commit): land same-change harness edits in one pick, ask ev	-	-	-
+sb-code30	sb	16616ce8	2026-11-09	A-shaped	10	5	14	1	184581	feat(close,commit): land same-change harness edits in one pick, ask ev	-	-	-
+sb-code30	sb	16616ce8	2026-11-09	B-fanin	6	7	16	1	199682	feat(close,commit): land same-change harness edits in one pick, ask ev	-	-	-
+sb-code30	sb	16616ce8	2026-11-09	AB	6	7	16	1	199682	feat(close,commit): land same-change harness edits in one pick, ask ev	-	-	-
+sb-code30	sb	86c55b98	2026-11-04	head	3	5	7	0	99837	feat(close): check push by script and fix the final output's fields	1	4	0
+sb-code30	sb	86c55b98	2026-11-04	A-all	148	11	13	1	127407	feat(close): check push by script and fix the final output's fields	-	-	-
+sb-code30	sb	86c55b98	2026-11-04	A-shaped	3	1	4	0	64791	feat(close): check push by script and fix the final output's fields	-	-	-
+sb-code30	sb	86c55b98	2026-11-04	B-fanin	3	5	7	0	99837	feat(close): check push by script and fix the final output's fields	-	-	-
+sb-code30	sb	86c55b98	2026-11-04	AB	3	5	7	0	99837	feat(close): check push by script and fix the final output's fields	-	-	-
+sb-code30	sb	2303783c	2026-11-04	head	7	3	16	1	214783	feat(close): commit in flow, catch leaks at the close, push by repo sh	1	0	2
+sb-code30	sb	2303783c	2026-11-04	A-all	345	7	20	1	224787	feat(close): commit in flow, catch leaks at the close, push by repo sh	-	-	-
+sb-code30	sb	2303783c	2026-11-04	A-shaped	6	3	16	1	214783	feat(close): commit in flow, catch leaks at the close, push by repo sh	-	-	-
+sb-code30	sb	2303783c	2026-11-04	B-fanin	7	3	16	1	214783	feat(close): commit in flow, catch leaks at the close, push by repo sh	-	-	-
+sb-code30	sb	2303783c	2026-11-04	AB	7	3	16	1	214783	feat(close): commit in flow, catch leaks at the close, push by repo sh	-	-	-
+sb-code30	sb	0be682ff	2026-11-04	head	8	3	21	1	219217	fix(close): one commit per logical change, and restate the door's lane	0	2	1
+sb-code30	sb	0be682ff	2026-11-04	A-all	582	7	25	1	231833	fix(close): one commit per logical change, and restate the door's lane	-	-	-
+sb-code30	sb	0be682ff	2026-11-04	A-shaped	9	1	19	1	204263	fix(close): one commit per logical change, and restate the door's lane	-	-	-
+sb-code30	sb	0be682ff	2026-11-04	B-fanin	8	3	21	1	219217	fix(close): one commit per logical change, and restate the door's lane	-	-	-
+sb-code30	sb	0be682ff	2026-11-04	AB	8	3	21	1	219217	fix(close): one commit per logical change, and restate the door's lane	-	-	-
+sb-code30	sb	f2e7990d	2026-11-04	head	2	2	6	0	30281	refactor(doc-links): share the hunk reader, align the audit predicate 	0	2	0
+sb-code30	sb	f2e7990d	2026-11-04	A-all	74	9	13	1	118160	refactor(doc-links): share the hunk reader, align the audit predicate 	-	-	-
+sb-code30	sb	f2e7990d	2026-11-04	A-shaped	11	0	4	0	7827	refactor(doc-links): share the hunk reader, align the audit predicate 	-	-	-
+sb-code30	sb	f2e7990d	2026-11-04	B-fanin	2	2	6	0	30281	refactor(doc-links): share the hunk reader, align the audit predicate 	-	-	-
+sb-code30	sb	f2e7990d	2026-11-04	AB	2	2	6	0	30281	refactor(doc-links): share the hunk reader, align the audit predicate 	-	-	-
+sb-code30	sb	35b4c3ef	2026-11-04	head	7	6	8	0	99955	fix(rules): scope the grep-pointer ban to state docs — resolve BUG-p	5	0	1
+sb-code30	sb	35b4c3ef	2026-11-04	A-all	133	10	12	1	115832	fix(rules): scope the grep-pointer ban to state docs — resolve BUG-p	-	-	-
+sb-code30	sb	35b4c3ef	2026-11-04	A-shaped	3	6	8	0	99955	fix(rules): scope the grep-pointer ban to state docs — resolve BUG-p	-	-	-
+sb-code30	sb	35b4c3ef	2026-11-04	B-fanin	7	6	8	0	99955	fix(rules): scope the grep-pointer ban to state docs — resolve BUG-p	-	-	-
+sb-code30	sb	35b4c3ef	2026-11-04	AB	7	6	8	0	99955	fix(rules): scope the grep-pointer ban to state docs — resolve BUG-p	-	-	-
+sb-code30	sb	3caddf27	2026-11-04	head	3	2	2	0	31903	fix(rules): state the registered term's precedence — resolve DEBT-g6	0	2	0
+sb-code30	sb	3caddf27	2026-11-04	A-all	36	11	11	1	111532	fix(rules): state the registered term's precedence — resolve DEBT-g6	-	-	-
+sb-code30	sb	3caddf27	2026-11-04	A-shaped	1	3	3	0	53687	fix(rules): state the registered term's precedence — resolve DEBT-g6	-	-	-
+sb-code30	sb	3caddf27	2026-11-04	B-fanin	3	2	2	0	31903	fix(rules): state the registered term's precedence — resolve DEBT-g6	-	-	-
+sb-code30	sb	3caddf27	2026-11-04	AB	3	2	2	0	31903	fix(rules): state the registered term's precedence — resolve DEBT-g6	-	-	-
+sb-code30	sb	090fdd09	2026-11-03	head	13	0	10	1	30319	chore(config): sync claude-config-manager artifacts	0	0	0
+sb-code30	sb	090fdd09	2026-11-03	A-all	772	12	22	1	146133	chore(config): sync claude-config-manager artifacts	-	-	-
+sb-code30	sb	090fdd09	2026-11-03	A-shaped	45	0	10	1	30319	chore(config): sync claude-config-manager artifacts	-	-	-
+sb-code30	sb	090fdd09	2026-11-03	B-fanin	13	0	10	1	30319	chore(config): sync claude-config-manager artifacts	-	-	-
+sb-code30	sb	090fdd09	2026-11-03	AB	13	0	10	1	30319	chore(config): sync claude-config-manager artifacts	-	-	-
+sb-code30	sb	6be541c2	2026-11-03	head	2	6	15	1	121933	feat(session-close): settle the commit door's judgment inside the one 	0	6	0
+sb-code30	sb	6be541c2	2026-11-03	A-all	382	12	21	1	167767	feat(session-close): settle the commit door's judgment inside the one 	-	-	-
+sb-code30	sb	6be541c2	2026-11-03	A-shaped	3	0	9	1	53334	feat(session-close): settle the commit door's judgment inside the one 	-	-	-
+sb-code30	sb	6be541c2	2026-11-03	B-fanin	2	6	15	1	121933	feat(session-close): settle the commit door's judgment inside the one 	-	-	-
+sb-code30	sb	6be541c2	2026-11-03	AB	2	6	15	1	121933	feat(session-close): settle the commit door's judgment inside the one 	-	-	-
+sb-code30	sb	5f387626	2026-11-03	head	10	8	15	1	198235	feat(doc-sync): keep volatile IDs out of durable docs — resolve DEBT	0	8	0
+sb-code30	sb	5f387626	2026-11-03	A-all	382	11	18	1	206336	feat(doc-sync): keep volatile IDs out of durable docs — resolve DEBT	-	-	-
+sb-code30	sb	5f387626	2026-11-03	A-shaped	25	3	10	1	124101	feat(doc-sync): keep volatile IDs out of durable docs — resolve DEBT	-	-	-
+sb-code30	sb	5f387626	2026-11-03	B-fanin	10	8	15	1	198235	feat(doc-sync): keep volatile IDs out of durable docs — resolve DEBT	-	-	-
+sb-code30	sb	5f387626	2026-11-03	AB	10	8	15	1	198235	feat(doc-sync): keep volatile IDs out of durable docs — resolve DEBT	-	-	-
+sb-code30	sb	c455b6e3	2026-11-03	head	1	1	4	0	60403	fix(harness): key session boundaries and triage on measurable conditio	0	1	0
+sb-code30	sb	c455b6e3	2026-11-03	A-all	88	11	14	1	145108	fix(harness): key session boundaries and triage on measurable conditio	-	-	-
+sb-code30	sb	c455b6e3	2026-11-03	A-shaped	0	0	3	0	31596	fix(harness): key session boundaries and triage on measurable conditio	-	-	-
+sb-code30	sb	c455b6e3	2026-11-03	B-fanin	1	1	4	0	60403	fix(harness): key session boundaries and triage on measurable conditio	-	-	-
+sb-code30	sb	c455b6e3	2026-11-03	AB	1	1	4	0	60403	fix(harness): key session boundaries and triage on measurable conditio	-	-	-
+sb-code30	sb	8cb9c9f1	2026-11-03	head	6	3	4	0	66540	fix(harness-bootstrap): state registered-term link precedence and targ	0	1	2
+sb-code30	sb	8cb9c9f1	2026-11-03	A-all	55	10	11	1	110145	fix(harness-bootstrap): state registered-term link precedence and targ	-	-	-
+sb-code30	sb	8cb9c9f1	2026-11-03	A-shaped	2	2	3	0	52729	fix(harness-bootstrap): state registered-term link precedence and targ	-	-	-
+sb-code30	sb	8cb9c9f1	2026-11-03	B-fanin	6	3	4	0	66540	fix(harness-bootstrap): state registered-term link precedence and targ	-	-	-
+sb-code30	sb	8cb9c9f1	2026-11-03	AB	6	3	4	0	66540	fix(harness-bootstrap): state registered-term link precedence and targ	-	-	-
+sb-code30	sb	963b4c8a	2026-10-29	head	1	7	7	0	97411	fix(harness-bootstrap): classify overview Problem/User/Current State a	0	7	0
+sb-code30	sb	963b4c8a	2026-10-29	A-all	112	12	12	1	114174	fix(harness-bootstrap): classify overview Problem/User/Current State a	-	-	-
+sb-code30	sb	963b4c8a	2026-10-29	A-shaped	0	0	0	0	0	fix(harness-bootstrap): classify overview Problem/User/Current State a	-	-	-
+sb-code30	sb	963b4c8a	2026-10-29	B-fanin	1	7	7	0	97411	fix(harness-bootstrap): classify overview Problem/User/Current State a	-	-	-
+sb-code30	sb	963b4c8a	2026-10-29	AB	1	7	7	0	97411	fix(harness-bootstrap): classify overview Problem/User/Current State a	-	-	-
+sb-code30	sb	17186fda	2026-10-29	head	5	3	13	1	131228	feat(session-close): take push out of super-bootstrap — resolve GAP-	1	1	1
+sb-code30	sb	17186fda	2026-10-29	A-all	232	8	18	1	147991	feat(session-close): take push out of super-bootstrap — resolve GAP-	-	-	-
+sb-code30	sb	17186fda	2026-10-29	A-shaped	5	2	12	1	120703	feat(session-close): take push out of super-bootstrap — resolve GAP-	-	-	-
+sb-code30	sb	17186fda	2026-10-29	B-fanin	5	3	13	1	131228	feat(session-close): take push out of super-bootstrap — resolve GAP-	-	-	-
+sb-code30	sb	17186fda	2026-10-29	AB	5	3	13	1	131228	feat(session-close): take push out of super-bootstrap — resolve GAP-	-	-	-
+sb-code30	sb	46652b53	2026-10-29	head	6	5	12	1	163043	feat(doc-sync): propose docs/terminology.md entries for coined terms �	1	2	2
+sb-code30	sb	46652b53	2026-10-29	A-all	280	9	16	1	172898	feat(doc-sync): propose docs/terminology.md entries for coined terms �	-	-	-
+sb-code30	sb	46652b53	2026-10-29	A-shaped	6	3	10	1	142831	feat(doc-sync): propose docs/terminology.md entries for coined terms �	-	-	-
+sb-code30	sb	46652b53	2026-10-29	B-fanin	6	5	12	1	163043	feat(doc-sync): propose docs/terminology.md entries for coined terms �	-	-	-
+sb-code30	sb	46652b53	2026-10-29	AB	6	5	12	1	163043	feat(doc-sync): propose docs/terminology.md entries for coined terms �	-	-	-
+sb-code30	sb	fa46e0f7	2026-10-29	head	4	6	12	1	199450	fix(harness-bootstrap): write the runway receipt LF-only — resolve B	0	5	1
+sb-code30	sb	fa46e0f7	2026-10-29	A-all	125	7	13	1	206358	fix(harness-bootstrap): write the runway receipt LF-only — resolve B	-	-	-
+sb-code30	sb	fa46e0f7	2026-10-29	A-shaped	5	1	8	0	154930	fix(harness-bootstrap): write the runway receipt LF-only — resolve B	-	-	-
+sb-code30	sb	fa46e0f7	2026-10-29	B-fanin	4	6	12	1	199450	fix(harness-bootstrap): write the runway receipt LF-only — resolve B	-	-	-
+sb-code30	sb	fa46e0f7	2026-10-29	AB	4	6	12	1	199450	fix(harness-bootstrap): write the runway receipt LF-only — resolve B	-	-	-
+sb-code30	sb	59252a1d	2026-10-29	head	3	3	10	1	112950	feat(session-close): gate the pick on still-running jobs — resolve G	1	0	2
+sb-code30	sb	59252a1d	2026-10-29	A-all	214	8	15	1	139581	feat(session-close): gate the pick on still-running jobs — resolve G	-	-	-
+sb-code30	sb	59252a1d	2026-10-29	A-shaped	5	3	10	1	112950	feat(session-close): gate the pick on still-running jobs — resolve G	-	-	-
+sb-code30	sb	59252a1d	2026-10-29	B-fanin	3	3	10	1	112950	feat(session-close): gate the pick on still-running jobs — resolve G	-	-	-
+sb-code30	sb	59252a1d	2026-10-29	AB	3	3	10	1	112950	feat(session-close): gate the pick on still-running jobs — resolve G	-	-	-
+sb-code30	sb	9234302f	2026-10-29	head	14	6	22	1	370789	feat(terminology): ship a unified docs/terminology.md term home with a	1	3	2
+sb-code30	sb	9234302f	2026-10-29	A-all	537	9	24	1	371859	feat(terminology): ship a unified docs/terminology.md term home with a	-	-	-
+sb-code30	sb	9234302f	2026-10-29	A-shaped	44	4	22	1	370789	feat(terminology): ship a unified docs/terminology.md term home with a	-	-	-
+sb-code30	sb	9234302f	2026-10-29	B-fanin	14	6	22	1	370789	feat(terminology): ship a unified docs/terminology.md term home with a	-	-	-
+sb-code30	sb	9234302f	2026-10-29	AB	14	6	22	1	370789	feat(terminology): ship a unified docs/terminology.md term home with a	-	-	-
+sb-code30	sb	ea3e4b14	2026-10-29	head	5	3	12	1	145897	feat(commit): stop asking to push; hand off to session-close — resol	1	1	1
+sb-code30	sb	ea3e4b14	2026-10-29	A-all	275	8	17	1	162660	feat(commit): stop asking to push; hand off to session-close — resol	-	-	-
+sb-code30	sb	ea3e4b14	2026-10-29	A-shaped	3	3	12	1	142280	feat(commit): stop asking to push; hand off to session-close — resol	-	-	-
+sb-code30	sb	ea3e4b14	2026-10-29	B-fanin	5	3	12	1	145897	feat(commit): stop asking to push; hand off to session-close — resol	-	-	-
+sb-code30	sb	ea3e4b14	2026-10-29	AB	5	3	12	1	145897	feat(commit): stop asking to push; hand off to session-close — resol	-	-	-
+ctrl-3891bf41	mr	3891bf41	2026-11-13	head	1	24	24	1	1280441	feat(pacing): LV58 runs every view at pace 1.0	0	24	0
+ctrl-3891bf41	mr	3891bf41	2026-11-13	A-all	5	3	3	0	498031	feat(pacing): LV58 runs every view at pace 1.0	-	-	-
+ctrl-3891bf41	mr	3891bf41	2026-11-13	A-shaped	4	3	3	0	498031	feat(pacing): LV58 runs every view at pace 1.0	-	-	-
+ctrl-3891bf41	mr	3891bf41	2026-11-13	B-fanin	1	6	6	0	602227	feat(pacing): LV58 runs every view at pace 1.0	-	-	-
+ctrl-3891bf41	mr	3891bf41	2026-11-13	AB	5	8	8	0	677539	feat(pacing): LV58 runs every view at pace 1.0	-	-	-
