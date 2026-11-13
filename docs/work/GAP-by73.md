@@ -26,3 +26,7 @@ Evidence in hand, from Claude Code session transcripts of `magnetized-remake` (2
 - The changed-doc (self) lane is the top producer: 24 of the 51 sampled cold catches.
 - 37 warm windows show a path count over 8 — an over-count or a ceiling not followed, undetermined.
 - Probe intermediates (per-run detail, sidechain records, judging packs) sit beside the tables in `bench/doc-sync-history/`, untracked.
+
+## Amendment — 2026-11-13 · author ruling on the probe's files
+
+Author: "隱私資料或transcript要集中管理然後gitignore，或是刪掉". `bench/doc-sync-history/` stays on this device and is git-ignored whole — tables, extractor and intermediates. It is this card's evidence and costs four reader passes to rebuild, so it is kept; whether the extractor becomes a tracked bench is this card's call. The grep-lane catches among its rows were replayed without their text: `bench/scope-replay/README.md` § Pre-fix replay of recorded catches.

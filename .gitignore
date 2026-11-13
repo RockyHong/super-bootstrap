@@ -34,3 +34,6 @@ __pycache__/
 
 # consult-hook bench — raw run transcripts (MBs of JSONL; scored tables live in FINDINGS)
 bench/consult-hook/runs-*/
+
+# doc-sync history probe — tables and extractor mined from session transcripts (excerpts; local-only)
+bench/doc-sync-history/
