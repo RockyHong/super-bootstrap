@@ -1,0 +1,7 @@
+# BUG-hw7q — the cold doc-sync judge returns a verdict when it cannot read the diff, and its dispatch prompt carries more than the door lists
+
+**Logged:** 2026-11-13 · **Source:** 30-day transcript history of the commit door (228 cold runs, 56 sampled and read), gathered under the since-closed `GAP-by73`; tables kept on the author's device in `bench/doc-sync-history/` (git-ignored)
+**Problem:** `commit/SKILL.md` §4 lists the cold dispatch prompt as the diff, today's date, the scan scope, the predicate paths and the terminology candidates. In the history, dispatch prompts commonly add a "Change intent" line and sometimes "Known suspects", and in at least 2 sampled runs the `doc-sync-scan` judge could not read the diff and judged from the intent alone, still returning `stale-docs` or `clean`. The agent has no return for a prompt without a readable diff — the `premise-closure` agent has a `no-hunks` line for the same case. A judge handed the author's intent in place of the diff is not a cold read, and its `clean` reads the same as a real one.
+**Area:** `plugins/super-bootstrap/agents/doc-sync-scan.md` (inputs, output contract); `plugins/super-bootstrap/skills/commit/SKILL.md` §4 cold dispatch
+**Prior:** Two parts — a `no-diff` return the gateway re-dispatches on, as `premise-closure` has; and whether the added intent line is a contract breach to stop or an input to admit.
+**Blast:** pkg
