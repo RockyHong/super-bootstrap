@@ -75,3 +75,41 @@ One restating pair is on changed text (`docs/parked.md` at `a14b5ddc`). 30 are o
 `docs/overview.md` at `cd3d85a3` calls the term-ledger row "closed", while that row reads "Overturned — card reopened". That commit's changed text did not cause this, so the pair is not stale under the class above. Read against the whole section, it is one stale unlinked mention. The line is still at `35b4c3e`.
 
 Limits: one reader judged the pairs. Unchanged rows were checked by keyword only, and four `mr` citers' rows were not located (lv60 curves, SOC, colour register, the in-game line).
+
+## Code-origin term arms
+
+`arms.sh` replays the grep lane under alternative term rules for a changed path off the doc surface; its header defines the arms. The other three lanes are the same in every arm. Fixture: `mr` at `3891bf41`, this repo at `d25164e`, the last 30 commits in each that change a term-yielding path off the doc surface, plus `ctrl-3891bf41` — a two-line diff with a recorded 24-doc scope.
+
+```bash
+export REPLAY_DIR=<scratch dir> SB_REPO=<this repo> MR_REPO="<magnetized-remake>"
+bash arms.sh all results                      # results/arms-{commits,dropped,terms,summary}.tsv
+bash arms.sh parity <doc-links.sh> results    # results/arms-parity.tsv
+```
+
+`AB`: a code-origin term that alone hits more docs than the ceiling is demoted to hub-stem matching, and the symbol-shaped identifiers on its path's changed lines join the terms. The door runs it as `doc-links.sh grep-scope`, with one narrowing: a term is demoted only when every changed path that yields it is a modified file off the doc surface, so an added, deleted or renamed path keeps its path mentions in scope.
+
+- `mr` commits changing no doc (9): crossings 4 → 0, mean scope 8.6 → 3.4. `mr` commits that also change a doc (21): 21 → 21 in every arm; their scope comes from the doc-origin lanes.
+- This repo: no term is demoted in 30 commits; `AB` equals `head` on every row.
+- `ctrl-3891bf41`: 24 docs → 8, the three that name the changed constant among them.
+- On these 60 commits `AB` widens no scope. `A-all` widens 53 and `A-shaped` 9; `A-shaped` drops the most docs (87 in `mr`, 58 here).
+- What `AB` drops, `results/arms-judged.tsv`: 68 (commit, doc) pairs over 12 `mr` commits — 63 pointer-only, 5 restating an unchanged neighbouring fact, 0 stale.
+- `grep-scope` equals `AB` on 61 of 61 commits (`results/arms-parity.tsv`): no demoted term in the fixture comes from a path the narrowing holds back.
+
+A finished commit cannot show a catch the rule would lose: a doc the door caught as stale was fixed inside that commit, so it sits on the changed-doc lane. `prefix.sh` covers that side.
+
+## Pre-fix replay of recorded catches
+
+`prefix.sh` takes the door's recorded real catches that the grep lane brought into scope (`results/prefix-cases.tsv`: 30 cases from 30 days of door runs, 26 in `mr` and 4 here, plus 2 excluded rows where the judge's own grep found the doc) and replays each at its pre-fix doc surface; its header defines the surface and the verdicts.
+
+```bash
+bash prefix.sh results/prefix-cases.tsv <out.tsv>            # NOPRE=1: non-doc paths only
+```
+
+`results/prefix-catches.tsv` is that output with `other_lane` and the `NOPRE=1` re-run joined into `note` by hand.
+
+- Kept 26, lost 0, not-grep 4. With non-doc paths only on every row: kept 23, lost 0, not-grep 7.
+- 8 kept rows have a demoted term (`game`, `ui-strings`, `audio`, `level_sheet`, all `mr`); the other 18 are kept by construction. In 3 rows the baseline reaches the stale doc through a demoted term alone, and the added identifiers reach it.
+- The rule can widen a scope here: 28 → 29 and 13 → 18, where an added identifier hits a doc the basename did not. Both scopes are over the ceiling either way.
+- The 4 not-grep rows: the stale doc names the changed file in prose only, or was a changed doc itself.
+
+Limits: every demotion comes from one consumer repo and four terms. The pre-fix surface approximates the working tree the door saw; 5 of the 13 pre-gate doc lists are inferred. The case list holds caught docs only, so this is recall over known catches, not a miss rate.

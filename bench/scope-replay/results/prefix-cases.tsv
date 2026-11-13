@@ -1,0 +1,32 @@
+a662bdae3c41548ef	MR	cold	pure	a4be0356	a4be0356	docs/specs/shell-level-spec.md	docs/specs/shell-lvtext-option-spec.md,docs/overview.md	pre-gate docs from cases.jsonl pre(edit>0); row says dispatcher topic list
+a4a9759f4d93e6892	MR	cold	mixed	10098b03	10098b03	docs/specs/mechanics-spec.md	-	D itself edited pre-gate (pre edit=1): self lane; list run non-doc-only
+a298b1c30b75d04c5	MR	cold	mixed	7dc4f4ec	7dc4f4ec	docs/README.md	docs/specs/mechanics-spec.md,docs/techstack.md,docs/overview.md,docs/specs/visual-guidelines.md,docs/dev-harness.md	pre-gate docs from pre(edit>0)
+a0369d175637b74b8	MR	cold	pure	f3ecef07	f3ecef07	docs/test-queue.md	docs/dev-harness.md	pre-gate doc inferred from evidence (its hunk quoted as the diff)
+a77f2e7a634452599	MR	cold	judge-grep	-	-	scripts/forge_the_sword_tunnel_motif.gd	-	residual grep by the judge; target is code comments
+a3b26643f63ed79be	MR	cold	pure	b02d92c	b02d92c	docs/techstack.md	docs/specs/visual-guidelines.md	pre-gate doc from pre(edit=5)
+a0ccea5ae790a44c4	MR	cold	mixed	f934b98	f934b98	docs/overview.md	docs/specs/visual-guidelines.md	pre-gate doc inferred from scope_lane (citer of visual-guidelines)
+a2a82ffb484c5bf45	MR	cold	pure	2e7cde3	2e7cde3	docs/overview.md	docs/specs/visual-guidelines.md	pre-gate doc from scope label (changed doc first)
+a118ce49721632410	MR	cold	mixed	58757db	58757db	docs/specs/visual-guidelines.md	docs/specs/shell-pack-spec.md	pre-gate doc inferred from evidence (changed hunks link D)
+a39a4776d71fc0905	MR	cold	pure	20a8b705	20a8b705	docs/dev-harness.md	-	commit from cases.jsonl; pre-gate doc edits unknown
+a02de94e88a64a07b	MR	cold	pure	0b6217f	0b6217f	docs/specs/mechanics-spec.md	docs/specs/story-theme.md	pre-gate doc from pre(edit=1)
+a9d9f0992122e42e9	SB	cold	pure	16616ce	16616ce	docs/overview.md	-	no pre-gate doc evidence
+ad0b9d304f1ab54aa	SB	cold	pure	9234302	9234302	docs/specs/harness-architecture.md	docs/terminology.md	new doc inferred pre-gate (note: reached via link target of the new doc)
+a60541579cb8b4ed2	MR	cold	pure	b98b535	b98b535	docs/specs/name-meanings.md	-	no pre-gate doc evidence
+a59020bc5dccf4ca4	MR	cold	mixed	28db1f5	28db1f5	docs/specs/visual-guidelines.md	-	pre shows no gateway doc edit
+a141c05da3b2975df	MR	cold	mixed	d81f124a	d81f124a	docs/specs/shell-level-spec.md	docs/overview.md	pack paired 674ac2a wrongly; real commit d81f124a; overview pre(edit=2)
+a945581c2ff140b12	MR	cold	judge-grep	-	-	docs/work/DEBT-55re.md	-	residual grep by the judge; card outside scope
+a380a0cc90257512d	MR	cold	mixed	6b096286	6b096286	docs/specs/ending-spec.md	docs/overview.md,docs/dev-harness.md	pack paired 12d162d wrongly; scope label names the two changed docs
+af4d8d0f433ec17c0	MR	cold	pure	e0ddaa2	aadadc26	docs/parked.md	-	fix in later commit; surface = F^; D itself pre(edit=1)
+cNvgNUrrVJa9U	MR	warm	pure	41d4a460	41d4a460	docs/overview.md	docs/dev-harness.md	pre-gate doc inferred (anchors/self/refs calls in the gate)
+cjEGBzQW4KyuH	MR	warm	mixed	bbf86642	bbf86642	docs/specs/visual-guidelines.md	-	docs-only commit; D is a changed doc; hand-written phrase grep
+ctSTS1yb1N4eb	MR	warm	pure	014494e2	014494e2	docs/overview.md	-	evidence: overview hunks all post-gate
+cKAx99D6BejBU	MR	warm	pure	5a563999	5a563999	docs/overview.md	-	evidence: terms args were code files only
+czwYyLkBgniBC	MR	warm	pure	6aca342b	6aca342b	docs/overview.md	docs/dev-harness.md	evidence: dev-harness edited pre-gate
+cYGRU6xxgKUpu	MR	warm	pure	60751e21	60751e21	docs/overview.md	-	evidence: both overview hunks post-gate
+cjJurtkJePhRA	MR	warm	pure	03e0dbbd	03e0dbbd	docs/specs/level-design-grammar.md	-	term from scripts/player.gd per row
+cE6eWt38PQ9Bz	MR	warm	pure	11e00004	11e00004	docs/specs/shell-pack-spec.md	-	evidence: both spec hunks post-gate
+cC6rkGHZbKGZW	MR	warm	pure	ce440cef	ce440cef	docs/overview.md	-	evidence: overview one hunk = the fix
+c6AB78QMcuvVb	MR	warm	pure	5bba26f6	5bba26f6	docs/overview.md	-	evidence: terms args were code + card only
+coaDU3aaf3rhD	MR	warm	pure	626da678	626da678	docs/overview.md	-	evidence: overview edits post-gate
+cnzVYuGLFBFDj	SB	warm	pure	94b630a8	94b630a8	README.md	-	no pre-gate doc evidence
+chaBy5eyQDAqB	SB	warm	pure	a91b7d63	a91b7d63	docs/test-queue.md	-	evidence: test-queue one hunk = the fix

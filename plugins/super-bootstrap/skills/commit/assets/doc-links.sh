@@ -54,6 +54,42 @@
 #                      that term hits on its own, under the same rules (a file two
 #                      terms hit counts for both). Zero-hit terms print `0`. Sorted by
 #                      count, highest first, then term. Takes `-` like `hits`.
+#   grep-scope <changed-path>...
+#                      print the doc-surface files the grep lane puts in scope for a
+#                      changed-file list — `terms - | hits -` with one rule on top.
+#                      Each path yields its `terms` term. A term is demoted for this
+#                      run only when its own `hits --by-term` count is over the scope
+#                      ceiling (GREP_SCOPE_CEILING, 8) AND every changed path that
+#                      yields it is a modified file (git status M in the diff) off
+#                      the doc surface and not a Godot asset (`X.tscn`). Any other
+#                      path yielding the term keeps it undemoted: a doc-surface
+#                      path, an asset path, or a path the diff shows as added,
+#                      deleted or renamed, or does not show at all (no diff,
+#                      untracked, git failed). A demoted term matches as a hub stem
+#                      does — a bare token in a code span only, its path mentions
+#                      out — and the symbol-shaped identifiers on its paths' changed
+#                      lines join the term list: maximal `[A-Za-z0-9_]` runs
+#                      starting with a letter or `_` on the diff's `-` / `+` lines
+#                      and each hunk header's trailing context, 4+ characters, not
+#                      a generic basename word, holding `_`, a digit, or an
+#                      uppercase letter after the first character. An undemoted
+#                      term adds none. Nothing demoted → output identical to
+#                      `terms - | hits -`. Sorted unique;
+#                      exclusion is the caller's, as for `hits`. Always exit 0.
+#                      Diff source: `git diff HEAD -- <paths>` in the cwd
+#                      (`--name-status` for the modified test, `-U0` for the
+#                      identifiers), the same worktree-against-HEAD read `term-uses`
+#                      makes. Two environment knobs replay another diff (a replay
+#                      bench): DOCLINK_DIFF_RANGE="<a> <b>" swaps
+#                      `HEAD` for those revision arguments (word-split), and
+#                      DOCLINK_DIFF_REPO=<dir> runs git in <dir> (`git -C`) while the
+#                      doc surface is still walked in the cwd. Both read by this mode
+#                      only.
+#   grep-scope --by-term <changed-path>...
+#                      attribution instead of the file list, as `hits --by-term`:
+#                      `term<TAB>count` over the final term list (head terms plus
+#                      added identifiers); a demoted term's line carries its
+#                      post-demotion count and a third column, `demoted`.
 #   self <path>...     print the changed paths that are doc-surface files in their
 #                      own right, sorted unique — a changed doc is its own scope doc.
 #                      A path the diff deleted, one off the surface, and frozen
@@ -85,7 +121,7 @@
 #                      surface, docs/work/, docs/outward/ (and the retired flat form),
 #                      docs/parked.md, docs/test-queue.md, a `dimension: history` doc.
 #                      Advisory: always exit 0.
-#   terms - | hits [--by-term] - | self - | term-uses - | volatile-ids -
+#   terms - | hits [--by-term] - | grep-scope [--by-term] - | self - | term-uses - | volatile-ids -
 #                      a lone `-` reads the list from stdin instead, one item per
 #                      line (blank lines skipped, a trailing CR dropped) — the
 #                      shell-split-proof form for a path or term holding spaces:
@@ -633,8 +669,9 @@ do_closure() {
 
 # --- grep-gate enumeration (terms / hits / anchors / self) -----------------------
 #
-# The commit door's §3 gate reads these four: `terms` turns a changed-file list into
-# grep terms, `hits` turns terms into doc-surface files, `anchors` turns a changed
+# The commit door's §3 gate reads these: `terms` turns a changed-file list into
+# grep terms, `hits` turns terms into doc-surface files, `grep-scope` runs the two as
+# the door's grep lane with the demotion rule on top, `anchors` turns a changed
 # doc's hunk ranges into the section slugs `refs` narrows on, and `self` keeps each
 # changed doc in scope as its own scope doc. Each is mechanical and total — the gate
 # stays a gate, never a judgment call about which identifiers matter.
@@ -687,11 +724,14 @@ path_exempt() {
 
 # Basenames that name a slot rather than a subject — they hit everywhere and mean
 # nothing. Compared case-insensitively; terms under 4 characters join them.
+# The word list sits in one variable for its two readers: this predicate and
+# `grep-scope`'s identifier filter (GREPSCOPE_TOKEN_AWK).
+GENERIC_WORDS=" skill claude readme template backlog marketplace plugin gitignore index settings run main test tests spec config "
 term_generic() {
     local t
     t="$(printf '%s' "$1" | tr 'A-Z' 'a-z')"
     [ "${#t}" -lt 4 ] && return 0
-    case " skill claude readme template backlog marketplace plugin gitignore index settings run main test tests spec config " in
+    case "$GENERIC_WORDS" in
         *" $t "*) return 0 ;;
     esac
     return 1
@@ -729,19 +769,29 @@ derive_term() {
     TERM_OUT="$base"
 }
 
+# One changed path → its grep term, or none. Result in $TERM_OUT (empty = no term).
+# One body, two readers (`terms`, `grep-scope`), so the two cannot disagree on a path.
+path_term() {
+    local p="$1"
+    TERM_OUT=""
+    path_exempt "$p" && return 0
+    is_history_doc "$p" && return 0
+    derive_term "$p"
+    [ -z "$TERM_OUT" ] && return 0
+    if term_generic "$TERM_OUT"; then TERM_OUT=""; return 0; fi
+    # Godot text asset → keep the extension: the marker `hits` reads its
+    # path-shape-only rule from (see do_hits).
+    case "$p" in
+        *.[tT][sS][cC][nN]|*.[tT][rR][eE][sS]) TERM_OUT="$TERM_OUT.${p##*.}" ;;
+    esac
+    return 0
+}
+
 do_terms() {
     local p
     for p in "$@"; do
-        path_exempt "$p" && continue
-        is_history_doc "$p" && continue
-        derive_term "$p"
+        path_term "$p"
         [ -z "$TERM_OUT" ] && continue
-        term_generic "$TERM_OUT" && continue
-        # Godot text asset → keep the extension: the marker `hits` reads its
-        # path-shape-only rule from (see do_hits).
-        case "$p" in
-            *.[tT][sS][cC][nN]|*.[tT][rR][eE][sS]) TERM_OUT="$TERM_OUT.${p##*.}" ;;
-        esac
         printf '%s\n' "$TERM_OUT"
     done | LC_ALL=C sort -u
     return 0
@@ -754,7 +804,15 @@ do_terms() {
 # HITS_BY_TERM=1 swaps the output for attribution: every term is tested against every
 # file (no first-match break) and END prints term TAB count — one rule set, so the
 # files a term is counted on are exactly the files it adds to the default union.
+# Three more inputs, all inert for the `hits` mode itself and set only by `grep-scope`:
+# HITS_BY_TERM=2 prints both readouts from one walk, unsorted (`F<TAB>file` per union
+# file, `T<TAB>term<TAB>count` per term); HITS_DEMOTED (one term per line) joins the hub
+# set for this run only — HUB_STEMS itself never changes; HITS_STDIN_TERMS=1 appends
+# stdin's lines to the term list, since a wide diff's identifiers can outgrow what one
+# environment variable carries and a failed exec would read as an empty scope.
 HITS_BY_TERM=0
+HITS_DEMOTED=""
+HITS_STDIN_TERMS=0
 do_hits() {
     [ "$#" -eq 0 ] && return 0
     local -a files
@@ -769,10 +827,11 @@ do_hits() {
     done < <(collect_surface)
     if [ "${#files[@]}" -eq 0 ]; then
         # No surface: the union is empty, but every term still attributes, at zero.
-        [ "$HITS_BY_TERM" -eq 1 ] || return 0
+        [ "$HITS_BY_TERM" -ge 1 ] || return 0
         files=(/dev/null)
     fi
-    DOCLINK_TERMS="$terms" DOCLINK_HUB="$HUB_STEMS" awk -v BYTERM="$HITS_BY_TERM" "$ISWORD_AWK$CODESPAN_AWK"'
+    DOCLINK_TERMS="$terms" DOCLINK_HUB="$HUB_STEMS" DOCLINK_DEMOTED="$HITS_DEMOTED" \
+        awk -v BYTERM="$HITS_BY_TERM" -v XT="$HITS_STDIN_TERMS" "$ISWORD_AWK$CODESPAN_AWK"'
     # Whole-word occurrence of needle in hay.
     function wordin(hay, needle,   p, off, L, pre, post) {
         L = length(needle); off = 0
@@ -831,7 +890,11 @@ do_hits() {
 
     BEGIN {
         n = split(ENVIRON["DOCLINK_TERMS"], T, "\n")
+        # `getline < "-"` is stdin in gawk, mawk and one-true-awk alike.
+        if (XT == 1) while ((getline xl < "-") > 0) { sub(/\r$/, "", xl); T[++n] = xl }
         m = split(ENVIRON["DOCLINK_HUB"], H, " ")
+        for (j = 1; j <= m; j++) if (H[j] != "") hub[H[j]] = 1
+        m = split(ENVIRON["DOCLINK_DEMOTED"], H, "\n")
         for (j = 1; j <= m; j++) if (H[j] != "") hub[H[j]] = 1
         # An extension-marked term (`Ending.tscn`) names a Godot text asset: match its
         # stem path-shaped only. NAME keeps the term as given, for attribution; a
@@ -846,11 +909,11 @@ do_hits() {
         }
     }
 
-    BYTERM == 1 {
+    BYTERM >= 1 {
         code = codespans($0)
         for (i = 1; i <= n; i++) {
             if (T[i] == "" || ((FILENAME, i) in th)) continue
-            if (termhit(i, $0, code)) { th[FILENAME, i] = 1; cnt[i]++ }
+            if (termhit(i, $0, code)) { th[FILENAME, i] = 1; cnt[i]++; hit[FILENAME] = 1 }
         }
         next
     }
@@ -865,17 +928,194 @@ do_hits() {
     }
 
     END {
-        if (BYTERM == 1) {
+        if (BYTERM == 2) {
+            for (f in hit) print "F\t" f
+            for (i = 1; i <= n; i++) if (T[i] != "") print "T\t" NAME[i] "\t" (cnt[i] + 0)
+        } else if (BYTERM == 1) {
             for (i = 1; i <= n; i++) if (T[i] != "") print NAME[i] "\t" (cnt[i] + 0)
         } else {
             for (f in hit) print f
         }
     }
-    ' "${files[@]}" | if [ "$HITS_BY_TERM" -eq 1 ]; then
+    ' "${files[@]}" | if [ "$HITS_BY_TERM" -eq 2 ]; then
+        cat
+    elif [ "$HITS_BY_TERM" -eq 1 ]; then
         LC_ALL=C sort -t $'\t' -k2,2nr -k1,1
     else
         LC_ALL=C sort -u
     fi
+    return 0
+}
+
+# --- grep-scope: the grep lane as one mode ---------------------------------------
+#
+# `terms - | hits -` plus one rule: a term that alone crosses the scope ceiling, and
+# that only modified code files yield, stops counting on path mentions, and what those
+# files' diffs changed inside is searched instead. One path of another kind yielding
+# the term — a doc-surface path, a Godot asset, a file the diff adds, deletes or
+# renames, or one it does not show (no diff, untracked, git failed) — keeps the term
+# whole: a deleted or renamed hub file is when the docs citing its path go stale, and a
+# failed diff read must not shrink the scope. Every edge leans one way — in doubt, not
+# demoted. The rule is a fixed status test and token shape, so the lane stays a gate.
+
+# The commit door's scope ceiling (SSOT: commit/SKILL.md §3). A term can be demoted
+# when its own count is over it, not at it.
+GREP_SCOPE_CEILING=8
+
+# Symbol-shaped identifiers of a `git diff -U0` stream, one per line, each once. The
+# caller's pathspec is the demoted paths only — status M by the caller's own read — so
+# every file section is eligible; the add / delete header guard is a second line of
+# defence for a tree that moved between the two reads (`--no-renames` turns a rename
+# into that pair).
+# A run that starts with a digit is dropped whole, not trimmed to its letter tail.
+# `--- ` / `+++ ` are file-header lines only before a section's first `@@`: inside a
+# hunk a removed line whose text starts with `-- ` prints as `--- `, hence the hdr state.
+# tolower() is safe here without the lead-byte probe SLUG_AWK needs: a token is ASCII
+# by construction and the caller runs this program under LC_ALL=C.
+GREPSCOPE_TOKEN_AWK='
+BEGIN { k = split(GENERIC, G, " "); for (i = 1; i <= k; i++) gen[G[i]] = 1; hdr = 1; mod = 0 }
+function emit(s,   k, i, a, t) {
+    gsub(/[^A-Za-z0-9_]+/, " ", s)
+    k = split(s, a, " ")
+    for (i = 1; i <= k; i++) {
+        t = a[i]
+        if (length(t) < 4 || t ~ /^[0-9]/ || (t in seen)) continue
+        seen[t] = 1
+        if (!(t ~ /_/ || t ~ /[0-9]/ || substr(t, 2) ~ /[A-Z]/)) continue
+        if (tolower(t) in gen) continue
+        print t
+    }
+}
+/^diff --git / { hdr = 1; mod = 1; next }
+hdr && /^(new|deleted) file mode / { mod = 0; next }
+/^@@ / {
+    hdr = 0
+    if (mod) { s = $0; sub(/^@@ [^@]*@@/, "", s); emit(s) }
+    next
+}
+!hdr && mod && /^[-+]/ { emit(substr($0, 2)) }
+'
+
+# Up to two walks of the surface: the first prints the head terms' union and per-term
+# counts together (HITS_BY_TERM=2), which is the whole answer when nothing is demoted;
+# a demotion re-walks with the widened hub set and the added identifiers. Per-path work
+# is pure bash; git runs at most twice per call (status, then tokens), never per path,
+# and not at all when no term is over the ceiling.
+GREP_SCOPE_BY_TERM=0
+do_grep_scope() {
+    [ "$#" -eq 0 ] && return 0
+    local nl=$'\n' tab=$'\t' surface p q t i both line rest files="" counts="" demoted="" tokens
+    local held="" over="" st="" mset notm=""
+    local -a hterms opaths oterms cpaths dpaths range gitc
+    hterms=(); opaths=(); oterms=(); cpaths=(); dpaths=()
+    surface="$nl$(collect_surface)$nl"
+    for p in "$@"; do
+        path_term "$p"
+        [ -z "$TERM_OUT" ] && continue
+        t="$TERM_OUT"
+        hterms+=("$t")
+        # Never demoted: a Godot asset term (the shape `hits` reads the asset rule from;
+        # the kept extension makes it a term no code path can yield) and any term a
+        # doc-surface path yields — `held`, whatever other path yields the same term.
+        case "$t" in *.[tT][sS][cC][nN]|*.[tT][rR][eE][sS]) continue ;; esac
+        normalize_path "$p"; q="$NORM"
+        case "$surface" in *"$nl$q$nl"*) held="$held$t$nl"; continue ;; esac
+        opaths+=("${q:-$p}"); oterms+=("$t")
+    done
+    [ "${#hterms[@]}" -eq 0 ] && return 0
+
+    HITS_BY_TERM=2
+    both="$(do_hits "${hterms[@]}")"
+    HITS_BY_TERM=0
+    while IFS= read -r line; do
+        case "$line" in
+            F"$tab"*) files="$files${line#F"$tab"}$nl" ;;
+            T"$tab"*)
+                rest="${line#T"$tab"}"; counts="$counts$rest$nl"
+                t="${rest%"$tab"*}"
+                [ "${rest##*"$tab"}" -gt "$GREP_SCOPE_CEILING" ] || continue
+                case "$nl$held" in *"$nl$t$nl"*) continue ;; esac
+                over="$over$t$nl" ;;
+        esac
+    done <<EOF
+$both
+EOF
+
+    # Demotion candidates: the code paths of the over-ceiling terms. A term is demoted
+    # only when every one of them is a modified file, so the diff status is read before
+    # the decision — one git call per run, and none at all when no term is over.
+    if [ -n "$over" ]; then
+        i=0
+        while [ "$i" -lt "${#oterms[@]}" ]; do
+            case "$nl$over" in *"$nl${oterms[$i]}$nl"*) cpaths+=("${opaths[$i]}") ;; esac
+            i=$((i + 1))
+        done
+    fi
+    if [ "${#cpaths[@]}" -gt 0 ]; then
+        # --literal-pathspecs: a changed path can hold glob characters (`[Image t2i] x.json`).
+        gitc=(git)
+        [ -n "${DOCLINK_DIFF_REPO:-}" ] && gitc=(git -C "$DOCLINK_DIFF_REPO")
+        range=(HEAD)
+        [ -n "${DOCLINK_DIFF_RANGE:-}" ] && read -r -a range <<< "$DOCLINK_DIFF_RANGE"
+        # `M<TAB>path` per modified candidate. Every way this read comes back without a
+        # path leaves that path unmodified, hence its term undemoted: git failing (no
+        # repo, bad range — a partial listing is dropped with it), a path the diff does
+        # not list (unchanged, untracked), an A / D / T / U status (`--no-renames` turns a
+        # rename into an A + D pair), and a path git prints C-quoted (a tab, newline,
+        # quote or backslash in the name), which matches no candidate. `--relative`
+        # prints paths as the pathspecs give them — relative to the directory git runs
+        # in, not to the repo top — so a run below the top still matches; a candidate
+        # outside that directory (`../x`) is not listed and stays undemoted.
+        st="$("${gitc[@]}" --literal-pathspecs -c core.quotePath=false diff --name-status --no-renames \
+            --relative --no-ext-diff "${range[@]}" -- "${cpaths[@]}" 2>/dev/null)" || st=""
+        mset="$nl"
+        while IFS= read -r line; do
+            case "$line" in M"$tab"*) mset="$mset${line#M"$tab"}$nl" ;; esac
+        done <<EOF
+$st
+EOF
+        # One unmodified path holds its term back; the rest demote, each with its paths.
+        i=0
+        while [ "$i" -lt "${#oterms[@]}" ]; do
+            case "$nl$over" in *"$nl${oterms[$i]}$nl"*)
+                case "$mset" in *"$nl${opaths[$i]}$nl"*) ;; *) notm="$notm${oterms[$i]}$nl" ;; esac ;;
+            esac
+            i=$((i + 1))
+        done
+        i=0
+        while [ "$i" -lt "${#oterms[@]}" ]; do
+            t="${oterms[$i]}"; i=$((i + 1))
+            case "$nl$over" in *"$nl$t$nl"*) ;; *) continue ;; esac
+            case "$nl$notm" in *"$nl$t$nl"*) continue ;; esac
+            case "$nl$demoted" in *"$nl$t$nl"*) ;; *) demoted="$demoted$t$nl" ;; esac
+            dpaths+=("${opaths[$((i - 1))]}")
+        done
+    fi
+
+    if [ -z "$demoted" ]; then
+        if [ "$GREP_SCOPE_BY_TERM" -eq 1 ]; then
+            printf '%s' "$counts" | LC_ALL=C sort -t "$tab" -k2,2nr -k1,1
+        else
+            printf '%s' "$files" | LC_ALL=C sort -u
+        fi
+        return 0
+    fi
+
+    # Same git command, range and pathspec handling as the status read above; the
+    # pathspec is the demoted terms' paths, every one of them status M there.
+    tokens="$("${gitc[@]}" --literal-pathspecs -c core.quotePath=false diff -U0 --no-renames --no-ext-diff \
+        --no-textconv "${range[@]}" -- "${dpaths[@]}" 2>/dev/null \
+        | LC_ALL=C awk -v GENERIC="$GENERIC_WORDS" "$GREPSCOPE_TOKEN_AWK")"
+
+    HITS_DEMOTED="$demoted"; HITS_STDIN_TERMS=1; HITS_BY_TERM="$GREP_SCOPE_BY_TERM"
+    if [ "$GREP_SCOPE_BY_TERM" -eq 1 ]; then
+        printf '%s\n' "$tokens" | do_hits "${hterms[@]}" | DOCLINK_DEMOTED="$demoted" awk -F'\t' '
+            BEGIN { m = split(ENVIRON["DOCLINK_DEMOTED"], D, "\n"); for (j = 1; j <= m; j++) if (D[j] != "") d[D[j]] = 1 }
+            { print $0 (($1 in d) ? "\tdemoted" : "") }'
+    else
+        printf '%s\n' "$tokens" | do_hits "${hterms[@]}"
+    fi
+    HITS_DEMOTED=""; HITS_STDIN_TERMS=0; HITS_BY_TERM=0
     return 0
 }
 
@@ -1351,11 +1591,12 @@ do_pins() {
 
 USAGE='Usage: %s check | pins | refs <path>[#anchor]... | index | closure <path>[#anchor]
        %s terms <changed-path>...|- | hits [--by-term] <term>...|- | anchors <path> <hunk-range>...
+       %s grep-scope [--by-term] <changed-path>...|-
        %s self <changed-path>...|- | terminology | term-uses <changed-path>...|- | volatile-ids <changed-path>...|-
        (- = read the list from stdin, one item per line)
 '
 
-# `terms` / `hits` / `self` list intake: a lone `-` argument reads the list from stdin,
+# `terms` / `hits` / `grep-scope` / `self` list intake: a lone `-` argument reads the list from stdin,
 # one item per line, so a path or term holding spaces arrives whole — no shell
 # word-splitting between producer and consumer. Pure bash `read` loop, no fork per
 # item. Blank lines are skipped and a trailing CR is dropped (a CRLF producer).
@@ -1398,6 +1639,15 @@ case "$MODE" in
         else
             do_hits "$@"
         fi ;;
+    grep-scope)
+        shift
+        if [ "${1:-}" = "--by-term" ]; then GREP_SCOPE_BY_TERM=1; shift; fi
+        if [ "$#" -eq 1 ] && [ "$1" = "-" ]; then
+            read_items
+            do_grep_scope ${ITEMS[@]+"${ITEMS[@]}"}
+        else
+            do_grep_scope "$@"
+        fi ;;
     self)
         shift
         if [ "$#" -eq 1 ] && [ "$1" = "-" ]; then
@@ -1429,6 +1679,6 @@ case "$MODE" in
         do_anchors "$@" ;;
     *)
         # shellcheck disable=SC2059
-        printf "$USAGE" "$0" "$0" "$0" >&2
+        printf "$USAGE" "$0" "$0" "$0" "$0" >&2
         exit 1 ;;
 esac

@@ -1405,6 +1405,203 @@ mkdir -p "$NODS/.claude"; printf '%s\n' '# nothing declared' '' > "$NODS/.claude
 got_empty="$(cd "$NODS" && bash "$LINKS" closure none.md)"
 check "doc-surface: comment-only file keeps the built-in surface exactly (got: $got_empty)" [ "$got_empty" = "$exp_builtin" ]
 
+echo "== doc-links: BUG-q2jy — grep-scope demotes an over-ceiling code-origin term and adds the diff's identifiers =="
+# The grep lane as one mode: head terms per path; a term from a path off the doc surface
+# that alone hits more than 8 docs matches as a hub stem (bare token in a code span) and,
+# where its path is a modified file, the symbol-shaped identifiers on the changed lines
+# join the term list. Nothing demoted → the output is `terms - | hits -` exactly.
+# Fixture: nine docs name every hub path in path shape, so each hub term counts 9.
+# The mode's two diff knobs are read from the environment: an inherited value would aim
+# every default-source case below at another repo's diff, so both start unset.
+unset DOCLINK_DIFF_REPO DOCLINK_DIFF_RANGE
+GS="$TMP/gs"
+mkdir -p "$GS/docs" "$GS/scripts" "$GS/levels"
+gs_i=1
+while [ "$gs_i" -le 9 ]; do
+  # shellcheck disable=SC2016
+  printf '# D%s\n\nSee `scripts/game.gd`, `scripts/fresh.gd`, `scripts/gone.gd`, `scripts/moved.gd`, `docs/guide.md` and `levels/Arena.tscn`.\n' \
+    "$gs_i" > "$GS/docs/d0$gs_i.md"
+  gs_i=$((gs_i + 1))
+done
+gs_doc() { printf '# %s\n\nNames `%s` here.\n' "$1" "$2" > "$GS/docs/$1.md"; }   # gs_doc <stem> <code-span text>
+gs_doc const PLAY_TS_BY_VIEW
+gs_doc keep KEEP_ME
+printf '# Guide\n\nStart.\n' > "$GS/docs/guide.md"
+printf 'const KEEP_ME := 1\nfunc tune_speed():\n\tvar old_knob = 2\n\tconst PLAY_TS_BY_VIEW := {"LV58": 1.0}\n' > "$GS/scripts/game.gd"
+printf 'const GONE_CONST = 1\n' > "$GS/scripts/gone.gd"
+printf 'const MOVED_CONST = 1\nvar filler_a = 1\nvar filler_b = 2\nvar filler_c = 3\nvar filler_d = 4\n' > "$GS/scripts/oldname.gd"
+printf '[node name="Root"]\n' > "$GS/levels/Arena.tscn"
+(cd "$GS" && git init -q && git add -A && git -c user.name=t -c user.email=t@t commit -qm base) >/dev/null 2>&1
+gs_nine="docs/d01.md
+docs/d02.md
+docs/d03.md
+docs/d04.md
+docs/d05.md
+docs/d06.md
+docs/d07.md
+docs/d08.md
+docs/d09.md"
+gs_scope() { (cd "$GS" && printf '%s\n' "$@" | bash "$LINKS" grep-scope - 2>&1); }             # gs_scope <path>...
+gs_byterm() { (cd "$GS" && printf '%s\n' "$@" | bash "$LINKS" grep-scope --by-term - 2>&1); }
+gs_head() { (cd "$GS" && printf '%s\n' "$@" | bash "$LINKS" terms - | bash "$LINKS" hits -); }
+gs_head_byterm() { (cd "$GS" && printf '%s\n' "$@" | bash "$LINKS" terms - | bash "$LINKS" hits --by-term -); }
+gs_eq() { # gs_eq <desc> <expected> <got>
+  if [ "$2" = "$3" ]; then ok "$1"; else
+    bad "$1"
+    printf 'expected:\n%s\ngot:\n%s\n' "$2" "$3" | sed 's/^/        /'
+  fi
+}
+gs_in()  { printf '%s\n' "$got_gs" | grep -qxF "docs/$1.md"; }
+gs_out() { ! gs_in "$1"; }
+
+# (a) value edit inside a hub code file: one changed line, under `func tune_speed():`.
+printf 'const KEEP_ME := 1\nfunc tune_speed():\n\tvar old_knob = 2\n\tconst PLAY_TS_BY_VIEW := {"LV58": 1.5}\n' > "$GS/scripts/game.gd"
+gs_eq "grep-scope fixture premise: \`terms | hits\` puts all nine path-mention docs in scope for scripts/game.gd" "$gs_nine" "$(gs_head scripts/game.gd)"
+gs_eq "grep-scope (a): hub code file over the ceiling, value edit -> only the doc naming the changed constant" "docs/const.md" "$(gs_scope scripts/game.gd)"
+gs_eq "grep-scope (a): the argument form prints the same scope as the stdin form" "docs/const.md" "$(cd "$GS" && bash "$LINKS" grep-scope scripts/game.gd 2>&1)"
+# (h) attribution: final term list, demoted term marked with its post-demotion count.
+gs_eq "grep-scope (h): --by-term lists the final terms and marks the demoted one (game, post-demotion count 0)" \
+  "$(printf 'PLAY_TS_BY_VIEW\t1\nLV58\t0\ngame\t0\tdemoted\ntune_speed\t0')" "$(gs_byterm scripts/game.gd)"
+# The hunk header's trailing context is a token source too.
+gs_doc ctx tune_speed
+gs_eq "grep-scope: an identifier on the hunk header's trailing context (tune_speed) joins the terms" \
+  "$(printf 'docs/const.md\ndocs/ctx.md')" "$(gs_scope scripts/game.gd)"
+# (g) the demoted stem as a bare token in a code span still counts; the nine path mentions do not.
+gs_doc bare game
+got_gs="$(gs_scope scripts/game.gd)"
+check "grep-scope (g): a bare-token code-span mention of the demoted stem (\`game\`) still counts" gs_in bare
+check "grep-scope (g): a path mention of the demoted stem (\`scripts/game.gd\` in d01) does not count" gs_out d01
+check "grep-scope (g): --by-term counts the bare mention on the demoted term (game 1 demoted)" \
+  grep -qxF "$(printf 'game\t1\tdemoted')" <<< "$(gs_byterm scripts/game.gd)"
+
+# (b) at the ceiling exactly (8 docs) nothing is demoted: byte-identical to `terms | hits`.
+rm -f "$GS/docs/d09.md" "$GS/docs/bare.md"
+got_gs="$(gs_scope scripts/game.gd)"
+gs_eq "grep-scope (b): term hits 8 docs (= ceiling) -> not demoted, output identical to \`terms | hits\`" "$(gs_head scripts/game.gd)" "$got_gs"
+check "grep-scope (b): the undemoted scope is the 8 path-mention docs (got $(printf '%s\n' "$got_gs" | grep -c .))" [ "$(printf '%s\n' "$got_gs" | grep -c .)" -eq 8 ]
+gs_eq "grep-scope (b): --by-term with nothing demoted is identical to \`terms | hits --by-term\`" "$(gs_head_byterm scripts/game.gd)" "$(gs_byterm scripts/game.gd)"
+git -C "$GS" checkout -q -- docs/d09.md
+
+# (f) token shape. One changed line carries every shape; one doc per token names the input.
+printf 'const KEEP_ME := 1\nfunc tune_speed():\n\tvar new_knob = plainword + X_1 + SKILL + 9lives_x + FOO_BAR + lv58x + camelCase\n\tconst PLAY_TS_BY_VIEW := {"LV58": 1.5}\n' > "$GS/scripts/game.gd"
+gs_doc tok-plain plainword
+gs_doc tok-short X_1
+gs_doc tok-generic SKILL
+# shellcheck disable=SC2016
+printf '# tok-digit\n\nNames `9lives_x` and `lives_x` here.\n' > "$GS/docs/tok-digit.md"
+gs_doc tok-upper FOO_BAR
+gs_doc tok-digitin lv58x
+gs_doc tok-camel camelCase
+gs_doc tok-removed old_knob
+got_gs="$(gs_scope scripts/game.gd)"
+check "grep-scope (f): a plain lowercase word (plainword) adds nothing" gs_out tok-plain
+check "grep-scope (f): a 3-char token (X_1) adds nothing" gs_out tok-short
+check "grep-scope (f): a term_generic word (SKILL) adds nothing" gs_out tok-generic
+check "grep-scope (f): a digit-leading run (9lives_x) adds nothing, whole or with the digits stripped" gs_out tok-digit
+check "grep-scope (f): FOO_BAR (underscore) is added" gs_in tok-upper
+check "grep-scope (f): lv58x (digit) is added" gs_in tok-digitin
+check "grep-scope (f): camelCase (inner uppercase) is added" gs_in tok-camel
+check "grep-scope (f): an identifier on a removed line (old_knob) is added" gs_in tok-removed
+check "grep-scope (f): an identifier on an unchanged line (KEEP_ME) adds nothing" gs_out keep
+gs_scope_f="$got_gs"
+
+# (c) only a modified file demotes. A term whose path the diff shows as added, deleted
+# or renamed — or does not show at all — stays undemoted over the ceiling: its nine
+# path-mention docs stay in scope and no identifier joins (the id-* docs stay out).
+gs_eq "grep-scope (c): an unchanged tracked path (no diff) is not demoted (scripts/gone.gd, 9 docs)" "$(printf 'gone\t9')" "$(gs_byterm scripts/gone.gd)"
+gs_eq "grep-scope (c): an unchanged tracked path's scope is \`terms | hits\` exactly — the nine path-mention docs" "$gs_nine" "$(gs_scope scripts/gone.gd)"
+printf 'const FRESH_CONST = 1\n' > "$GS/scripts/fresh.gd"
+gs_doc id-fresh FRESH_CONST
+gs_eq "grep-scope (c): an untracked (added) path is not demoted (scripts/fresh.gd, 9 docs)" "$(printf 'fresh\t9')" "$(gs_byterm scripts/fresh.gd)"
+gs_eq "grep-scope (c): an untracked (added) path's scope is \`terms | hits\` exactly — FRESH_CONST's doc stays out" "$(gs_head scripts/fresh.gd)" "$(gs_scope scripts/fresh.gd)"
+git -C "$GS" add scripts/fresh.gd >/dev/null 2>&1
+gs_eq "grep-scope (c): a staged new path is not demoted (scripts/fresh.gd, 9 docs)" "$(printf 'fresh\t9')" "$(gs_byterm scripts/fresh.gd)"
+gs_eq "grep-scope (c): a staged new path's scope is the nine path-mention docs" "$gs_nine" "$(gs_scope scripts/fresh.gd)"
+rm -f "$GS/scripts/gone.gd"
+gs_doc id-gone GONE_CONST
+gs_eq "grep-scope (c): a deleted path is not demoted (scripts/gone.gd, 9 docs)" "$(printf 'gone\t9')" "$(gs_byterm scripts/gone.gd)"
+gs_eq "grep-scope (c): a deleted path's scope is \`terms | hits\` exactly — the docs citing the deleted path stay in" "$(gs_head scripts/gone.gd)" "$(gs_scope scripts/gone.gd)"
+git -C "$GS" mv scripts/oldname.gd scripts/moved.gd
+printf 'const MOVED_CONST = 2\nvar filler_a = 1\nvar filler_b = 2\nvar filler_c = 3\nvar filler_d = 4\n' > "$GS/scripts/moved.gd"
+gs_doc id-moved MOVED_CONST
+gs_eq "grep-scope (c): a renamed-and-edited path is not demoted (scripts/moved.gd, 9 docs)" "$(printf 'moved\t9')" "$(gs_byterm scripts/moved.gd)"
+gs_eq "grep-scope (c): a renamed-and-edited path's scope is the nine path-mention docs" "$gs_nine" "$(gs_scope scripts/moved.gd)"
+
+# (d) a doc-origin term over the ceiling is not demoted, and its changed line adds nothing.
+# shellcheck disable=SC2016
+printf 'The `GUIDE_TOKEN` rule.\n' >> "$GS/docs/guide.md"
+gs_doc id-guide GUIDE_TOKEN
+gs_eq "grep-scope (d): a doc-origin term over the ceiling (docs/guide.md, 9 docs) is not demoted" "$(printf 'guide\t9')" "$(gs_byterm docs/guide.md)"
+gs_eq "grep-scope (d): its scope is \`terms | hits\` exactly" "$(gs_head docs/guide.md)" "$(gs_scope docs/guide.md)"
+
+# (e) a Godot asset term is never demoted.
+printf 'ARENA_NODE = 1\n' >> "$GS/levels/Arena.tscn"
+gs_doc id-arena ARENA_NODE
+gs_eq "grep-scope (e): a Godot asset term over the ceiling (levels/Arena.tscn, 9 docs) is never demoted" "$(printf 'Arena.tscn\t9')" "$(gs_byterm levels/Arena.tscn)"
+gs_eq "grep-scope (e): its scope is \`terms | hits\` exactly" "$(gs_head levels/Arena.tscn)" "$(gs_scope levels/Arena.tscn)"
+
+# A mixed list is the union: the doc term keeps its nine, the demoted code term adds its identifiers' docs.
+got_gs="$(gs_scope scripts/game.gd docs/guide.md)"
+gs_mixed() { gs_in d01 && gs_in const && gs_in tok-upper && gs_out id-guide && gs_out tok-plain; }
+check "grep-scope: a mixed list unions the undemoted doc term's docs with the demoted term's identifier docs" gs_mixed
+
+# One term, several paths: every path yielding it must be a modified code file. A
+# doc-surface path, or a second code path the diff does not show as modified, keeps
+# the term undemoted even though scripts/game.gd alone would demote it.
+printf '# Game\n\nStart.\n' > "$GS/docs/game.md"
+gs_eq "grep-scope: a term from a doc-surface path and a modified code path (docs/game.md + scripts/game.gd) is not demoted" \
+  "$(printf 'game\t9')" "$(gs_byterm scripts/game.gd docs/game.md)"
+gs_eq "grep-scope: that pair's scope is \`terms | hits\` exactly" "$(gs_head scripts/game.gd docs/game.md)" "$(gs_scope scripts/game.gd docs/game.md)"
+rm -f "$GS/docs/game.md"
+mkdir -p "$GS/tools"; printf 'const TOOL_CONST = 1\n' > "$GS/tools/game.gd"
+gs_eq "grep-scope: a term from a modified code path and an untracked one (scripts/game.gd + tools/game.gd) is not demoted" \
+  "$(printf 'game\t9')" "$(gs_byterm scripts/game.gd tools/game.gd)"
+gs_eq "grep-scope: that pair's scope is the nine path-mention docs" "$gs_nine" "$(gs_scope scripts/game.gd tools/game.gd)"
+rm -rf "$GS/tools"
+
+got_gs="$(cd "$GS" && bash "$LINKS" grep-scope 2>&1)"; rc=$?
+gs_silent() { [ "$rc" -eq 0 ] && [ -z "$got_gs" ]; }
+check "grep-scope with no paths prints nothing, exit 0 (rc=$rc, got: $got_gs)" gs_silent
+got_gs="$(cd "$GS" && printf 'tests/x.sh\n' | bash "$LINKS" grep-scope --by-term - 2>&1)"; rc=$?
+check "grep-scope --by-term over a list that yields no term prints nothing, exit 0 (rc=$rc, got: $got_gs)" gs_silent
+
+# Injectable diff source (the bench replays a historical commit without a worktree).
+(cd "$GS" && git add -A && git -c user.name=t -c user.email=t@t commit -qm change) >/dev/null 2>&1
+gs_eq "grep-scope: a clean tree has no diff against HEAD, so nothing is modified and the term is not demoted" "$(printf 'game\t9')" "$(gs_byterm scripts/game.gd)"
+gs_eq "grep-scope: DOCLINK_DIFF_RANGE='HEAD~1 HEAD' replays the commit's own diff" "$gs_scope_f" \
+  "$(cd "$GS" && DOCLINK_DIFF_RANGE='HEAD~1 HEAD' bash "$LINKS" grep-scope scripts/game.gd 2>&1)"
+mkdir -p "$TMP/gs-tree"; cp -r "$GS/docs" "$TMP/gs-tree/docs"
+gs_eq "grep-scope: DOCLINK_DIFF_REPO reads the diff from another repo than the cwd doc surface" "$gs_scope_f" \
+  "$(cd "$TMP/gs-tree" && DOCLINK_DIFF_REPO="$GS" DOCLINK_DIFF_RANGE='HEAD~1 HEAD' bash "$LINKS" grep-scope scripts/game.gd 2>&1)"
+# A failed status read shows no path as modified: nothing is demoted, the scope is
+# `terms | hits`, exit 0. Same range as the replay above, where the term does demote.
+gs_plain="$(gs_head scripts/game.gd)"
+got_gs="$(cd "$GS" && DOCLINK_DIFF_REPO="$TMP/gs-no-such-repo" DOCLINK_DIFF_RANGE='HEAD~1 HEAD' bash "$LINKS" grep-scope scripts/game.gd 2>&1)"; rc=$?
+gs_eq "grep-scope: git fails on DOCLINK_DIFF_REPO (no such directory) -> not demoted, output identical to \`terms | hits\`" "$gs_plain" "$got_gs"
+check "grep-scope: that failed status read still exits 0 (rc=$rc)" [ "$rc" -eq 0 ]
+gs_eq "grep-scope: the failed-read scope is the nine path-mention docs" "$gs_nine" "$got_gs"
+got_gs="$(cd "$GS" && DOCLINK_DIFF_RANGE='no-such-rev HEAD' bash "$LINKS" grep-scope scripts/game.gd 2>&1)"; rc=$?
+gs_eq "grep-scope: git fails on a bad DOCLINK_DIFF_RANGE -> not demoted, output identical to \`terms | hits\`" "$gs_plain" "$got_gs"
+check "grep-scope: the bad-range run exits 0 (rc=$rc)" [ "$rc" -eq 0 ]
+
+usage_out="$(cd "$TMP" && bash "$LINKS" nosuchmode 2>&1)"
+gs_usage() { printf '%s' "$usage_out" | grep -q 'grep-scope \[--by-term\]'; }
+gs_header() { grep -qE '^#   grep-scope ' "$LINKS" && grep -qE '^#.*DOCLINK_DIFF_RANGE' "$LINKS" && grep -qE '^#.*DOCLINK_DIFF_REPO' "$LINKS"; }
+check "usage string registers the grep-scope mode" gs_usage
+check "header comment registers the grep-scope mode and its two diff knobs" gs_header
+gs_ceiling="$(grep -cE '^GREP_SCOPE_CEILING=8([^0-9]|$)' "$LINKS" || true)"
+check "grep-scope: the ceiling is one named constant, 8 (got $gs_ceiling definitions)" [ "$gs_ceiling" -eq 1 ]
+# Ceiling pin: the script's constant and the commit door's §3 "Scope ceiling" bullet
+# state one number; a change to either side alone fails here.
+gs_skill_ceiling="$(grep -oE 'At or under \*\*[0-9]+\*\* docs' "$REPO/plugins/super-bootstrap/skills/commit/SKILL.md" | tr -cd '0-9\n')"
+gs_script_ceiling="$(sed -n 's/^GREP_SCOPE_CEILING=\([0-9][0-9]*\).*/\1/p' "$LINKS")"
+gs_ceiling_pin() { [ -n "$gs_skill_ceiling" ] && [ "$gs_skill_ceiling" = "$gs_script_ceiling" ]; }
+check "grep-scope: GREP_SCOPE_CEILING (got '$gs_script_ceiling') equals SKILL.md §3 'At or under **N** docs' (got '$gs_skill_ceiling')" gs_ceiling_pin
+# Locale pin: GREPSCOPE_TOKEN_AWK calls tolower() without the lead-byte probe, which the
+# dialect rule allows only on ASCII input under LC_ALL=C — so its one caller must set it.
+gs_lc_pin() { grep -qF '| LC_ALL=C awk -v GENERIC="$GENERIC_WORDS" "$GREPSCOPE_TOKEN_AWK"' "$LINKS"; }
+check "grep-scope: GREPSCOPE_TOKEN_AWK runs under LC_ALL=C (its tolower() takes no lead-byte probe)" gs_lc_pin
+
 echo "== doc-links: BUG-045 — whole-surface check under a generous wall-clock ceiling =="
 now_ns="$(date +%s%N 2>/dev/null || true)"
 case "$now_ns" in
