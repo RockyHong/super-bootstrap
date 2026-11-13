@@ -5,3 +5,11 @@
 **Area:** `plugins/super-bootstrap/agents/doc-sync-scan.md` (inputs, output contract); `plugins/super-bootstrap/skills/commit/SKILL.md` §4 cold dispatch
 **Prior:** Two parts — a `no-diff` return the gateway re-dispatches on, as `premise-closure` has; and whether the added intent line is a contract breach to stop or an input to admit.
 **Blast:** pkg
+
+## Progress — 2026-11-13
+
+Not started. Next: `/super-bootstrap:triage BUG-hw7q`, ahead of `DEBT-298j` — a `clean` returned without a diff is a false pass.
+
+Read set: `plugins/super-bootstrap/agents/doc-sync-scan.md` (inputs, output contract), `plugins/super-bootstrap/agents/premise-closure.md` for its `no-hunks` line, `plugins/super-bootstrap/skills/commit/SKILL.md` §4 cold dispatch.
+
+Watch-out: the fix edits a shipped agent and skill — RED first, cold audit after.
