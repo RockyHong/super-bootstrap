@@ -9,3 +9,8 @@
 
 - Retire candidate 2 — `AGENTS.md`: the author holds no Codex subscription, so the foreign-executor contract has never run and cannot be tested here. User lean: drop.
 - Direction to evaluate — move the shipped doctrine out of the consumer `CLAUDE.md` into plugin-shipped hooks, so it swaps with the plugin version and the sync re-run loses its main job. Facts: only `plugins/super-bootstrap/hooks/runway-version.sh` ships with the plugin today; the 2a-hooks (`commit-channel`, `consult-check-*`) are frozen copies placed in each repo, so they couple like `CLAUDE.md`. Claude Code docs (code.claude.com/docs/en/hooks): plugin `hooks/hooks.json` hooks merge with project hooks; `SessionStart` and `SubagentStart` both accept `additionalContext`, so a subagent can be given the doctrine too. Closed fork to hold against: `docs/decisions.md` row "Hook-based enforcement of the card-entry discipline (`entry-nudge`)" rejected a hook that re-pushed a pointer beside ambient `CLAUDE.md` — a redundancy finding, not a relocation finding.
+
+## Amendment — 2026-11-16 · user session
+
+- `docs/terminology.md` is off the retire list. It shipped 2026-10-29, so most scanned repos (13 on a v2.x runway) never received it — the empty count measured reach, not need — and it serves the doc-sync terminology lane.
+- Scope widened by the user: review the plugin's positioning from first principles. The `superpowers` pairing is retired and `resolve-plugins` thins or retires, so the name and the "bootstrap" framing no longer describe the product; working frame is project-management scaffolding — light harness + doc-sync + doc scaffolding. `setup` and `harness-bootstrap` were split as install vs sync; merge is a candidate.
