@@ -66,3 +66,11 @@ Settled by the gateway's climb on the author's delegation ("your lean, you know 
 - **Fork 2 — the foreign-executor bullet: A.** Delete the whole bullet from root `CLAUDE.md` § Dispatch and from `claude-md-skeleton.md`. Settling source: the author's ruling that the contract cannot be tested here covers the lane, not only the file.
 - **Fork 3 — recorded bench prompts: A.** Keep them as frozen records; repair `bench/assertion-liveness/make-fixture.sh` and the README link so the fixture still builds.
 - Closure: the Verdict's list, plus the `docs/decisions.md` runtime-neutral-core row note. The two foreign-owned copies of `harness-editing.md` go to the author via `/contribute`.
+
+## Progress — 2026-11-16
+
+Verdict and Design are settled; no Plan block yet and no build step has run. Next step: write the `## Plan`, then build — RED first for the `harness-bootstrap` skill prose ([`.claude/rules/skill-authoring.md`](../../.claude/rules/skill-authoring.md)), build dispatched, gateway commits.
+
+- The root `CLAUDE.md` § Dispatch edit is a harness edit: `load-harness-principles` before it, `audit-harness-edits` after it.
+- This card builds before DEBT-5q1w; one `/release` carries both.
+- The two foreign-owned `harness-editing.md` copies are the author's `/contribute`, not this repo's edit.

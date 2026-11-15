@@ -68,3 +68,11 @@ Settled by the gateway's climb on the author's delegation ("your lean, you know 
 - **Recommender pointer:** one README line; nothing in `setup`'s run output.
 - **Hero image:** alt text follows the retire in this card; whether the image itself changes is the author's eye — hand it over at build time (`### Taste needed` shape).
 - **Order:** DEBT-wf8f builds first, this card second — both edit `harness-bootstrap/SKILL.md`, the manifest descriptions and the receipt's `covered` list — and one `/release` carries both (a removed public command is a breaking change). Clearing `harness-meta` blocks in already-bootstrapped repos is DEBT-ymdg's `migrate`.
+
+## Progress — 2026-11-16
+
+Verdict and Design are settled; no Plan block yet and no build step has run. Next step: after DEBT-wf8f lands, write the `## Plan`, then build — RED first for the skill prose, build dispatched, gateway commits.
+
+- The static table's twelve names are in the Amendment above; re-read the marketplace tree at build time in case the list moved.
+- Hand the README hero image to the author at build time — only the alt text is settled.
+- The removed public command makes the shared `/release` a breaking one.

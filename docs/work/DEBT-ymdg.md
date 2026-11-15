@@ -90,3 +90,11 @@ Ruling: option A — split and sequence. The author re-opened the "version-drive
 - **`setup` + `harness-bootstrap` merge** into one init once the sync judgment is gone. **Rename last.** `docs/terminology.md` stays.
 - **PARK-knda is consumed by this card** and leaves `docs/parked.md`; its `GAP-naw8` thread restores from the parent of `4fce16c`. Its plugin `SessionStart` / `SubagentStart` probe is needed only if hook injection is taken up later.
 - Still open on this card: owner of `CLAUDE.md` § Rules summary and § Planning index (lean: project); the origin of the three unaccounted pins and the nine receipt-less repos (`inline read`); which doctrine lines are cuttable (ablation bench, after the split).
+
+## Progress — 2026-11-16
+
+Design is settled; the two retires live on DEBT-wf8f and DEBT-5q1w. Next step on this card: build the carrier-equivalence probe as a new `bench/` fixture — no reusable fixture exists for the earlier control-agent run; the nearest skeletons are `bench/consult-hook/` (headless arms) and `bench/spike-route/`. It creates new files only, so it can run beside the retire builds.
+
+- Probe terms stated to the author: carriers `CLAUDE.md` / owned rules file without `paths:` / `@path` import; contexts main session / general-purpose subagent / post-compact; 2 reps each, 18 headless runs, one round; pass = each new carrier within one miss of `CLAUDE.md`; after the round, stop and report — the author decides any further spend.
+- After the probe passes: ownership split → `migrate` + sunset → merge `setup` into `harness-bootstrap` → rename.
+- The Verdict's counts supersede the origin block's: 16 receipts, 10 on v2.x; repos still naming superpowers skills are DungeonCLI, ayva-stroker-lite, ok-claude.
