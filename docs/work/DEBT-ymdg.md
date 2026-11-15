@@ -78,3 +78,15 @@
   - doctrine carrier equivalence (owned rules file without `paths:`, or `@path` import, versus the same text in `CLAUDE.md`; main session, general-purpose subagent, post-compact) — `dispatched probe`, reusing the control-run shape behind the `entry-nudge` row.
   - plugin `SessionStart` / `SubagentStart` reach, PARK-knda's pending probe — `dispatched probe`; needed only if hook injection is taken up.
   - which doctrine lines are cuttable — `phased build` (ablation bench with fixtures).
+
+## Design — 2026-11-16
+
+Ruling: option A — split and sequence. The author re-opened the "version-driven update/merge engine" row of `docs/decisions.md` ("ok go", on the brief naming that row); the row takes its `Reopened` note in the commit that lands the migration.
+
+- **Retires leave this card.** `resolve-plugins` → DEBT-5q1w. `AGENTS.md` → DEBT-wf8f, dropped on the author's ground (no Codex subscription; the contract cannot run here).
+- **This card keeps the ownership split.** Doctrine moves to one file the plugin owns whole; `CLAUDE.md` keeps project content only; sync becomes a whole-file copy on the user's command, advisory keyed on content hash. Gate: the carrier-equivalence probe from the Verdict (owned rules file without `paths:` or `@path` import versus the same text in `CLAUDE.md`; main session, general-purpose subagent, post-compact) holds within the control-run margin.
+- **The three placed hooks stay placed** (`commit-channel`, `consult-check-*`). They are whole-file plugin-owned already, so the same copy step syncs them, and cloud sessions — which load no repo-declared plugin — keep them. Settled by the gateway's climb: the Verdict's cloud-reach finding.
+- **Migration and sunset follow the split**, as the third Amendment states them: state-detected `migrate` skill shipped for one major, its removal a `docs/parked.md` entry fired by the next major release, a permanent manual recipe, and a per-device scan for unmigrated repos. Ref-pin escape hatch confirmed — code.claude.com/docs/en/plugin-marketplaces: a git-based plugin source pins to a `ref` or `sha`.
+- **`setup` + `harness-bootstrap` merge** into one init once the sync judgment is gone. **Rename last.** `docs/terminology.md` stays.
+- **PARK-knda is consumed by this card** and leaves `docs/parked.md`; its `GAP-naw8` thread restores from the parent of `4fce16c`. Its plugin `SessionStart` / `SubagentStart` probe is needed only if hook injection is taken up later.
+- Still open on this card: owner of `CLAUDE.md` § Rules summary and § Planning index (lean: project); the origin of the three unaccounted pins and the nine receipt-less repos (`inline read`); which doctrine lines are cuttable (ablation bench, after the split).
