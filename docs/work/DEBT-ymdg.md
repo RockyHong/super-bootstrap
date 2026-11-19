@@ -202,3 +202,27 @@ What is left on the split:
 - Open spend for the author: a short `rules`-arm round of `bench/carrier-equivalence` on the shipped asset (2–6 runs, sonnet); `bench/spike-route` was re-pointed but not run.
 
 Then, in order: `migrate` + sunset → merge `setup` into `harness-bootstrap` → rename. **No `/release` until `migrate` lands** — every bootstrapped repo other than this one is in the legacy shape and its re-run now stops.
+
+## Design — 2026-11-19 · migration
+
+Ruling by the author, on two corrections in session: the migration is a brief the consumer's own Claude Code executes inside the `harness-bootstrap` re-run, bounded by mechanical checks. It takes over the migration and sunset bullet of `## Design — 2026-11-16`, the `## Plan — 2026-11-19 · ownership split` pick "legacy … → the run stops with zero writes", and that Plan's seams for a `migrate` skill.
+
+- **No separate `migrate` skill, no sunset, no layout number, no table of shipped-text hashes.** The brief is a section of `harness-bootstrap`, kept for good. The state is still read off the files present.
+- **Legacy state → run the migration brief**, in place of the stop. The consumer's Claude sees what a script cannot: which old shape the repo is in (heading names differ across majors), which differences are old plugin text and which are the repo's own rules or a fork, where the repo's own rules belong beside the doctrine, and what else in the repo — docs, rules, hooks — leans on the moved sections. It stops and asks on a case the brief does not cover.
+- **The judgment is the agent's; "done, nothing lost" is a check's.** The end state passes, mechanically: the placed `.claude/rules/harness.md` equals the shipped asset, CR aside; `CLAUDE.md` holds no doctrine heading; every non-blank line of the old `CLAUDE.md` is found in the new pair, link re-basing aside, or sits on a drop list the user saw; `doc-links.sh check` is clean. The user confirms the delta list before any write; the migration lands as one commit, undone by one `git revert`.
+- **The shape is the one this repo's own split took** (`e0ae718`): enumerate each difference against the asset per doctrine section; the repo's own lines move to a `CLAUDE.md` section of additions, each naming the doctrine line it adds to or takes over; text the repo lacked arrives with the placed file; links into the moved anchors are re-pointed; the receipt takes the whole-file row. That session's brief and its report are the draft to write the section from.
+- **The session-start advisory speaks on a legacy repo** — one line naming the re-run as the migration — where it is silent today.
+- **Checks to build**: the line-coverage check is new (a small script the brief runs); the other three exist (`runway-drift.sh`'s compare, `tests/harness-asset.test.sh`'s heading set, `doc-links.sh check`).
+- **Test before any push**: headless walks of the brief on fixtures built from historical tags — a 2.x runway, a 5.x one, a 6.x one, and one with hand-edited doctrine sections — each scored by the four checks plus "the repo's own lines survived". The author decides the spend; `bench/ownership-split`'s `legacy` walk is the starting fixture and its expected reading flips from "stops" to "migrates".
+- **The guard is "do not push", not "do not release".** `.claude-plugin/marketplace.json` sources the plugin from `./plugins/super-bootstrap` with no ref, so `main` may be what a consumer's plugin update reads; whether an unchanged `plugin.json` version holds an update back is unverified. The split's commits stay local until the brief has passed its walks.
+- **Stated limits**: a migration spends the consumer's tokens and is not reproducible run to run — the checks and the confirm are the floor. A repo updated on one device and re-run from another still on an older plugin gets the old per-section proposals back; the upgrade note says so. A consumer who updates the plugin and never re-runs keeps working: the other skills cite the doctrine in either location.
+- **Release shape**: a major version, an upgrade note in the README, both manifest descriptions through `/release`.
+
+## Progress — 2026-11-19 · session park
+
+The split's build steps are landed and this repo runs the split shape; the migration is re-ruled in `## Design — 2026-11-19 · migration`. Next step: write the migration brief into `harness-bootstrap` in place of the legacy stop, with the line-coverage check — test-first: flip the expected reading of `bench/ownership-split`'s `legacy` walk from "stops" to "migrates", then build the historical-tag fixtures.
+
+- First, in the fresh session: the two checks the step 6 Progress block names (`/memory` lists `.claude/rules/harness.md`; a harness-edit task routes through `load-harness-principles` and `audit-harness-edits`).
+- Nothing is pushed: every commit from `ecb02c4` on is local. Hold them until the brief has passed its walks.
+- Waiting on the author's spend: the migration walks; the `doc-sync-scan.md` RED; the `rules`-arm round on the shipped asset.
+- Waiting on the author's ruling: the history rows in `docs/specs/harness-architecture.md`.
