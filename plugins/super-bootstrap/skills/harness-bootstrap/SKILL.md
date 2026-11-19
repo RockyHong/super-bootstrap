@@ -221,7 +221,7 @@ Done when the fenced block and `$M/drop.txt` hold the same lines and the user an
 
    A kept line that stands beside no single doctrine line takes the label `**§ {doctrine section heading}** — added:`. Carry each kept line whole and unreworded under its label line — the line-coverage check looks for the old line itself.
 3. **Apply** step 4's re-pointed links and other edits.
-4. **Receipt** — when `.claude/super-bootstrap-runway.json` exists; an absent receipt stays absent, and the regular sync writes it. Where it holds `covered`: remove each `CLAUDE.md § {heading}` row whose heading the new `CLAUDE.md` lacks (a `rot:` row stays), remove the `declined` entry of each removed row, add the bare string `.claude/rules/harness.md` (a whole-file row's identity is its path). Set `placed[".claude/rules/harness.md"]` to the output hash of `tr -d '\r' < .claude/rules/harness.md | sha256sum`. Change no other key; keep the file LF-only (§ 2c Receipt write).
+4. **Receipt** — when `.claude/super-bootstrap-runway.json` exists; an absent receipt stays absent, and the regular sync writes it. Where it holds `covered`: remove each `CLAUDE.md § {heading}` row whose heading the new `CLAUDE.md` lacks (a `rot:` row stays), remove the `declined` entry of each removed row, add the bare string `.claude/rules/harness.md` (a whole-file row's identity is its path). In every receipt that exists — with `covered` or holding only `version` — set `placed[".claude/rules/harness.md"]` to the output hash of `tr -d '\r' < .claude/rules/harness.md | sha256sum`. Change no other key; keep the file LF-only (§ 2c Receipt write).
 
 Done when each item that applies is written and you hold the list of every path this step wrote.
 
