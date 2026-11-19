@@ -226,3 +226,16 @@ The split's build steps are landed and this repo runs the split shape; the migra
 - Nothing is pushed: every commit from `ecb02c4` on is local. Hold them until the brief has passed its walks.
 - Waiting on the author's spend: the migration walks; the `doc-sync-scan.md` RED; the `rules`-arm round on the shipped asset.
 - Waiting on the author's ruling: the history rows in `docs/specs/harness-architecture.md`.
+
+## Progress — 2026-11-19 · migration brief landed
+
+The migration is built and committed, local only: the line-coverage check (`7e10e60`, `3c459c0`), the bench's `legacy` walk flipped to "migrates" (`060b093`), and the brief with the legacy advisory and the doc sweep (`a63c542`). The brief is `harness-bootstrap/SKILL.md` § Doctrine migration. Next step: the headless walks — the author's spend.
+
+- Evidence so far: all twelve `tests/*.test.sh` pass; `bench/ownership-split`'s selftest holds 64 trees; one cold in-session dry-run of the section text on the bench's `legacy` fixture ran steps 1–6 and passed the four checks (104 old lines — 103 in the new pair, 1 on the drop list; the seeded own line kept). No `claude` process ran: the `legacy` control round and green round do not exist yet.
+- The `legacy` walk is two-phase: the first turn ends on the confirm with zero writes; `ANSWER=y` adds the turn that migrates. The control is one phase-1 run on the pre-`a63c542` skill text.
+- Departs from `## Design — 2026-11-19 · migration` in form: a kept line moves verbatim under a label line naming the doctrine line it adds to or takes over. Folding the attribution into the line, as this repo's own split did, leaves the old line absent — `e0ae718^:CLAUDE.md` against today's pair reads 14 of 122 lines uncovered.
+- The gateway's pick, open to the author: the migration is the whole run and commits alone; a second run does the regular sync. A sync write in the same commit would make the revert undo more than the migration.
+- `doc-links.sh check` does not read `CLAUDE.md`; the brief has the agent read those links itself. A link the old file already carried broken passes and is named in the closing message.
+- Open for the author, from the cold audit of `a63c542`: move the section (about 130 lines, read on every fresh and split run too) to an asset the `legacy` bullet points at, as `hooks-ensure-infra.md` is. Left in place because the Design rules it "a section of `harness-bootstrap`".
+- Still owed: the historical-tag fixtures (a 2.x runway, a 5.x one, a 6.x one, one with hand-edited doctrine sections) — the brief has met only the pre-split shape of the current text; `line-coverage.sh` under mawk and one-true-awk (ran under gawk only); the `Reopened` question on the "version-driven update/merge engine" row of `docs/decisions.md`, now that no `migrate` skill or layout number exists; the README upgrade note and both manifest descriptions, with `/release`.
+- Unchanged from the session park: nothing is pushed; the `doc-sync-scan.md` RED, the `rules`-arm round and the history rows in `docs/specs/harness-architecture.md` wait as before.
