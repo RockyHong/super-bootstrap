@@ -17,7 +17,7 @@ plugin or lists it at another path.
 | Walk | Fixture ([`make-fixture.sh`](make-fixture.sh)) | Pass ([`score.py`](score.py)) |
 |---|---|---|
 | `fresh` | code-present git repo, no `CLAUDE.md`, no `.claude/` | `.claude/rules/harness.md` exists and equals the shipped asset (CR-insensitive); `CLAUDE.md` exists and every `## ` heading is in the project set (`Tech Stack`, `Commands`, `Rules (auto-load on file match)`, `Planning`, a `Monorepo…` heading); the receipt's `covered` holds no `CLAUDE.md § <doctrine>` row and holds the `.claude/rules/harness.md` row |
-| `legacy` | bootstrapped pre-split: `CLAUDE.md` holds the doctrine sections ([`legacy/CLAUDE.md`](legacy/CLAUDE.md), frozen) plus one repo-own bullet `- Tag releases as vX.Y.Z from main only.` that `make-fixture.sh` appends to `## Git Notes`; no owned file | two phases. **Phase 1** (no answer): zero writes — `git status --porcelain --untracked-files=all` empty, `HEAD` unchanged — and a message whose final line is `Migrate CLAUDE.md onto .claude/rules/harness.md? (y / n)`. **Phase 2** (`ANSWER=y`): the owned file equals the shipped asset (CR aside); `CLAUDE.md` holds no `## ` line of the asset; every non-blank old `CLAUDE.md` line is in the new `CLAUDE.md`, the placed owned file or the drop list; no broken link the fixture did not start with; the own bullet is in the new `CLAUDE.md`; `HEAD` is exactly one commit ahead, tree clean; the receipt's `covered` holds the owned-file row and no `CLAUDE.md § <doctrine>` row. `ANSWER=n`: zero writes |
+| `legacy` | bootstrapped pre-split: `CLAUDE.md` holds the doctrine sections plus one repo-own bullet `- Tag releases as vX.Y.Z from main only.` that `make-fixture.sh` appends to `## Git Notes`; no owned file. Five starting `CLAUDE.md` variants: [§ Legacy variants](#legacy-variants) (default `current` = [`legacy/CLAUDE.md`](legacy/CLAUDE.md), frozen) | two phases. **Phase 1** (no answer): zero writes — `git status --porcelain --untracked-files=all` empty, `HEAD` unchanged — and a message whose final line is `Migrate CLAUDE.md onto .claude/rules/harness.md? (y / n)`. **Phase 2** (`ANSWER=y`): the owned file equals the shipped asset (CR aside); `CLAUDE.md` holds no `## ` line of the asset; every non-blank old `CLAUDE.md` line is in the new `CLAUDE.md`, the placed owned file or the drop list; no broken link the fixture did not start with; every line of `meta/own-lines.txt` is in the new `CLAUDE.md`; `HEAD` is exactly one commit ahead, tree clean; the receipt follows the migration section's rule (below). `ANSWER=n`: zero writes |
 | `stale` | split shape; the owned file equals an older asset version whose sha256 is the receipt's `placed` record; the shipped asset differs | the owned file equals the shipped asset; no approval prompt naming it in the transcript |
 | `fork` | split shape; the owned file carries a hand edit — equals neither the shipped asset nor the `placed` record | the transcript carries an overwrite-or-keep choice naming the file; the file is unchanged, unless a second turn answered `overwrite` (then it equals the shipped asset) |
 
@@ -57,6 +57,45 @@ cut.
 Limit: the rest of the runway (docs, rules, hooks) is whatever that builder places. It places no
 `docs/terminology.md` and neither doc-authoring rule, so a walk also sees those as missing and writes
 them without a prompt. The scorer keys on the owned file, `CLAUDE.md` and the receipt only.
+
+### Legacy variants
+
+The author's ruling for [`DEBT-ymdg`](../../docs/work/DEBT-ymdg.md) (`## Design — 2026-11-19 · migration`, "Test before any push"): walk the migration on fixtures built from historical tags, plus one with hand-edited doctrine sections. `LEGACY_VARIANT` selects the starting `CLAUDE.md` of the `legacy` walk (`make-fixture.sh`, `run.sh`; any other value is FATAL; `run.sh` writes `meta/variant.txt` and adds the variant to the directory label unless the label names it). Each variant ends in the same guards, printed: `CLAUDE.md` holds 2+ `## ` lines equal to the shipped asset's (the skill's legacy detection), no owned file, every line of `meta/own-lines.txt` present, `meta/CLAUDE.before.md`, `meta/receipt.before.json` and the doc-links baseline saved.
+
+| Variant | `CLAUDE.md` comes from | Starting receipt (shape that tag's skill wrote) |
+|---|---|---|
+| `current` (default) | [`legacy/CLAUDE.md`](legacy/CLAUDE.md), frozen | `covered` from [`legacy/covered.txt`](legacy/covered.txt), the placer's other keys |
+| `v2.22.0` | `git show v2.22.0:…/assets/claude-md-skeleton.md`, placeholders filled | `{ "version": "2.22.0" }`, no `covered` (that tag's § 2c Stamp write) |
+| `v5.10.6` | the same, at `v5.10.6` | `version` `5.10.6` + `covered` (as `current`) + `declined` + `placed` (that tag's § 2c Receipt write) |
+| `v6.0.1` | the same, at `v6.0.1` | `version` `6.0.1` + `covered` + `declined` + `placed` |
+| `edited` | the `v6.0.1` file plus five hand edits (below) | as `v6.0.1` |
+
+Tag files are read from git at fixture time (tags are immutable); nothing of them is frozen here. A tag skeleton's whole-line `{…}` placeholders are filled as a single-package Python repo's scaffold step fills them, with the `current` fixture's project name and facts:
+
+- `# {Project Name}` → `decimate`; `{detected one-line summary…}` → `Python 3 (stdlib only) + a framework-free assert test runner.`; `{detected from scripts…}` (Commands) → `python3 run_tests.py   # whole suite`.
+- Unbracketed (kept): `{## Coding Principles}` + its body (code present), `{- [docs/specs/]…}`, and at `v2.22.0` `{- [docs/backlog.md]…}` and `{**Backlog cleanup:**…}` (backlog always).
+- Dropped: the monorepo block (single package); the Rules examples (`{example scaffolding…}`, the `rules/<framework>.md` and `rules/mv3.md` bullets, and at `v2.22.0` `{seeded by sp-bootstrap…}` and `{If rule body…}` — that tag says "keep only the explanatory paragraph"); the `docs/parked.md`, `docs/test-queue.md`, `docs/outward/` lines (scale module not installed).
+- Any other whole-line placeholder is FATAL, so a tag with a new one cannot pass unnoticed.
+
+`edited` — hand edits on the `v6.0.1` file, anchors checked (FATAL when one is missing):
+
+1. the release bullet, as every variant;
+2. forked doctrine line: `- No PR self-review …` → `- Every change lands through a PR with one reviewer. Main + feature branches. No force push.`;
+3. own section `## Deploy` before `## Context Hygiene`: ``Deploys run from the `release` branch only.`` and `- Staging first; production after a green smoke run.`;
+4. own bullet at the end of `## Doc Sync (non-negotiable)`: ``- API docs under `docs/api/` regenerate from source; never hand-edit them.``;
+5. a doctrine line deleted: `## Context Hygiene` is one paragraph at `v6.0.1`, so its last sentence (the session-carry ledger sentence) goes.
+
+`meta/own-lines.txt` holds the lines whose survival the scorer checks, one per line: the release bullet; for `edited` also the forked line, both `## Deploy` body lines and the `docs/api/` bullet (not the `## Deploy` heading). Each line is compared as line coverage normalises (CR, trim, link targets masked). A tree with no `own-lines.txt` falls back to the release bullet.
+
+A heading left with no line under it is itself an old line to the coverage check: a migration that moves `## Deploy`'s lines into the additions section must list `## Deploy` on the drop list, or keep the section in place. Either passes.
+
+**Receipt rule** — [`harness-bootstrap` § Doctrine migration](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md) step 5 item 4, read off `meta/receipt.before.json` (the starting receipt; saved by `make-fixture.sh`):
+
+- it holds `covered` → no `CLAUDE.md § <doctrine>` row left, the owned-file row present;
+- it holds no `covered` (a version-only stamp) → `placed` records `.claude/rules/harness.md`, and no `covered` was added;
+- the file is absent while `meta/variant.txt` exists (no receipt at start) → no receipt exists after. A tree with neither file predates the variants and reads as `covered`.
+
+**Limits.** Only `CLAUDE.md` and the receipt are historical. The rest of the runway (docs, rules, hooks) is whatever `../assertion-liveness/make-fixture.sh` places today; the historical docs tree is not reproduced. A tag's `covered` list is not rebuilt either: `v5.10.6`, `v6.0.1` and `edited` carry `current`'s rows. No `claude` process has run any variant; the fixture builds (`DRY=1`) and the selftest are the evidence so far.
 
 ## Approval prompts in a headless run
 
@@ -109,6 +148,8 @@ bash make-fixture.sh <tmp>/fx stale          # one fixture, prints its guards
 DRY=1 bash run.sh <outdir> fork              # fixture + the exact command, no claude process
 bash run.sh <outdir> <walk> [label]          # one walk -> <outdir>/<walk>[-label]/  (ANSWER=overwrite|keep for fork, y|n for legacy)
 bash run-round.sh <outdir> [label]           # the four walks, then the score (FORK_ANSWER=…, LEGACY_ANSWER=… give each walk's second turn)
+DRY=1 bash run-legacy-variants.sh <outdir>   # the five legacy variants (§ Legacy variants), two-phase with ANSWER=y: prints how many claude processes the round starts (10), builds the fixtures, starts none
+bash run-legacy-variants.sh <outdir>         # the same for real, then the score (VARIANTS="v2.22.0 edited" narrows it; LEGACY_VARIANT=<v> ANSWER=y bash run.sh <outdir> legacy runs one)
 python3 score.py <outdir> [--asset FILE]     # score again
 ```
 
@@ -138,7 +179,7 @@ fail; its `pass` column reads `-`. A fail's reason joins every failed property w
   with no label line between a summary naming the file and an unrelated plain-paragraph prompt in
   the same labelled section still reads as a prompt for the file. Read the quoted snippet on the
   reason line before trusting a `stale` fail on this property alone.
-- `legacy` phase 2 reads the old file from `meta/CLAUDE.before.md` (the fixture's starting bytes, own bullet included). Line coverage normalises both sides: strip CR, trim, mask every link target (`](...)` → `]()`). The drop list is every line inside a fenced block of the assistant message that carries the confirm prompt (the first turn's text), same normalisation; no such message → the drop list is empty and the reason says so. The reason names the first uncovered old line and the count.
+- `legacy` phase 2 reads the old file from `meta/CLAUDE.before.md` (the fixture's starting bytes, own lines included); the own-line and receipt properties are § Legacy variants. Line coverage normalises both sides: strip CR, trim, mask every link target (`](...)` → `]()`). The drop list is every line inside a fenced block of the assistant message that carries the confirm prompt (the first turn's text), same normalisation; no such message → the drop list is empty and the reason says so. The reason names the first uncovered old line and the count.
 - Links: `make-fixture.sh legacy` saves `meta/doc-links.before.txt` and `run.sh` saves `meta/doc-links.after.txt`, both the stdout of `bash plugins/super-bootstrap/skills/commit/assets/doc-links.sh check` run with the fixture repo as cwd (the script reads the cwd's doc surface; findings go to stdout, the count to stderr). The scorer compares the findings with the line number dropped, because lines shift; a finding in the after set and not the before set fails. The placer's runway starts with findings (links into the absent owned file), so a correct migration ends with fewer.
 - `run.sh` records `meta/commits-ahead.txt` (`git rev-list --count start..HEAD`) for the one-commit property.
 - Limit: the control and green rounds for `legacy` have not been run — no `claude` process was started, and the skill text that migrates is not written. The selftest is the only evidence the scorer discriminates.

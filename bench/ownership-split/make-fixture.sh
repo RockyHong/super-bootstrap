@@ -19,6 +19,18 @@
 #   <fxdir>/meta/harness.before.md   stale / fork: the owned file as the run finds it
 #   <fxdir>/meta/CLAUDE.before.md    legacy: CLAUDE.md as the run finds it (own line included)
 #   <fxdir>/meta/doc-links.before.txt legacy: `doc-links.sh check` stdout on the fixture
+#   <fxdir>/meta/variant.txt         legacy: the LEGACY_VARIANT value
+#   <fxdir>/meta/own-lines.txt       legacy: the repo's own lines, one per line (the scorer's survival set)
+#   <fxdir>/meta/receipt.before.json legacy: the starting receipt (absent file = no receipt at start)
+#
+# Env LEGACY_VARIANT (legacy walk only; default `current`; anything else is FATAL):
+#   current   CLAUDE.md := legacy/CLAUDE.md (frozen) + the release bullet
+#   v2.22.0 | v5.10.6 | v6.0.1
+#             CLAUDE.md := that tag's assets/claude-md-skeleton.md (git show; tags are
+#             immutable, nothing frozen here) with its placeholders filled the way a
+#             single-package Python repo's scaffold step fills them, + the release bullet;
+#             receipt in the shape that tag's skill wrote (v2.22.0: version-only stamp)
+#   edited    the v6.0.1 variant + five hand edits to the doctrine sections (see README)
 #
 # Runway (legacy, stale, fork): CALLS ../assertion-liveness/make-fixture.sh and
 # layers on top — one placement logic. That builder follows the shipped
@@ -44,6 +56,9 @@ while [ $# -gt 0 ]; do
   esac
 done
 case "$WALK" in fresh|legacy|stale|fork) ;; *) echo "FATAL: unknown walk '$WALK'" >&2; exit 1 ;; esac
+VARIANT="${LEGACY_VARIANT:-current}"
+case "$VARIANT" in current|v2.22.0|v5.10.6|v6.0.1|edited) ;; *) echo "FATAL: unknown LEGACY_VARIANT '$VARIANT' (current|v2.22.0|v5.10.6|v6.0.1|edited)" >&2; exit 1 ;; esac
+[ "$VARIANT" = current ] || [ "$WALK" = legacy ] || { echo "FATAL: LEGACY_VARIANT=$VARIANT only applies to the legacy walk" >&2; exit 1; }
 
 SRC="$(cd "$(dirname "$0")" && pwd)"
 LIVE="$SRC/../assertion-liveness/make-fixture.sh"
@@ -89,10 +104,11 @@ JSON
 
 # --- force the walk's shape ---------------------------------------------------
 PYTHONIOENCODING=utf-8 python3 - "$WALK" "$(W "$REPO")" "$(W "$FX/meta")" "$(W "$SRC")" \
-    "$(W "$SHIPPED")" "${OLDER:+$(W "$OLDER")}" <<'PY'
-import hashlib, io, json, os, sys
+    "$(W "$SHIPPED")" "${OLDER:+$(W "$OLDER")}" "$VARIANT" "$(W "$SRC/../..")" <<'PY'
+import hashlib, io, json, os, re, subprocess, sys
 walk, repo, meta, src, shipped_path = sys.argv[1:6]
 older_path = sys.argv[6] if len(sys.argv) > 6 and sys.argv[6] else ""
+variant, repo_root = sys.argv[7], sys.argv[8]
 PROJECT = ("Tech Stack", "Commands", "Rules (auto-load on file match)", "Planning")
 OWNED = ".claude/rules/harness.md"
 OWN_LINE = "- Tag releases as vX.Y.Z from main only."
@@ -142,7 +158,93 @@ if walk == "fresh":
 receipt = json.load(io.open(receipt_path, encoding="utf-8"))
 
 if walk == "legacy":
-    old = rd(os.path.join(src, "legacy", "CLAUDE.md")).replace(b"\r", b"").decode("utf-8")
+    SKEL = "plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md"
+    PROJ_NAME = "decimate"
+    TECH = "Python 3 (stdlib only) + a framework-free assert test runner."
+    CMD = "python3 run_tests.py   # whole suite"
+    # whole-line `{...}` placeholders of a skeleton, by what a single-package Python
+    # repo's scaffold step does with them (each tag's SKILL.md § Placeholders):
+    DROP = ("{## Monorepo", "{Workspace repo", "{Run the workspace-aware",   # single-package: block dropped
+            "{example scaffolding", "{- **`rules/", "{  • ",              # no signal-seeded rule: examples dropped
+            "{seeded by sp-bootstrap", "{If rule body")                       # v2.22.0: "keep only the explanatory paragraph"
+    DROP_ANY = ("docs/parked.md", "docs/test-queue.md", "docs/outward/")     # scale module not installed
+    UNBRACKET = ("{## Coding Principles}", "{Before writing", "{**Backlog cleanup",   # code present / backlog always
+                 "{- [`docs/specs/`", "{- [`docs/backlog.md`")                     # specs: code present; backlog: always
+
+    def tag_skeleton(tag):
+        r = subprocess.run(["git", "-C", repo_root, "show", "%s:%s" % (tag, SKEL)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if r.returncode != 0:
+            sys.exit("FATAL: git show %s:%s failed: %s" % (tag, SKEL, r.stderr.decode("utf-8", "replace").strip()))
+        return r.stdout.replace(b"\r", b"").decode("utf-8")
+
+    def fill_skeleton(text):
+        out = []
+        for ln in text.split("\n"):
+            s_ = ln.rstrip()
+            if s_ == "# {Project Name}":
+                out.append("# " + PROJ_NAME)
+            elif s_.startswith("{") and s_.endswith("}"):
+                if s_.startswith(DROP) or any(k in s_ for k in DROP_ANY):
+                    continue
+                if s_.startswith("{detected one-line summary"):
+                    out.append(TECH)
+                elif s_.startswith("{detected from scripts"):
+                    out.append(CMD)
+                elif s_.startswith(UNBRACKET):
+                    out.append(s_[1:-1])
+                else:
+                    sys.exit("FATAL: unclassified placeholder line in the skeleton: %s" % s_[:100])
+            else:
+                out.append(ln)
+        t = re.sub(r"\n{3,}", "\n\n", "\n".join(out)).rstrip("\n") + "\n"
+        left = [l for l in t.split("\n") if l.startswith("{") or "{Project Name}" in l]
+        if left:
+            sys.exit("FATAL: placeholder left unfilled: %s" % left[0][:100])
+        return t
+
+    def sub_once(text, old, new, what):
+        if text.count(old) != 1:
+            sys.exit("FATAL: edited variant, %s: anchor found %d times at v6.0.1: %s" % (what, text.count(old), old[:80]))
+        return text.replace(old, new)
+
+    def hand_edit(text):
+        """The `edited` variant's five hand edits on the v6.0.1 CLAUDE.md -> (text, forked + own lines)."""
+        forked = "- Every change lands through a PR with one reviewer. Main + feature branches. No force push."
+        deploy = ["Deploys run from the `release` branch only.", "- Staging first; production after a green smoke run."]
+        api = "- API docs under `docs/api/` regenerate from source; never hand-edit them."
+        # 2 forked doctrine line
+        ls = text.split("\n")
+        hit = [i for i, l in enumerate(ls) if l.startswith("- No PR self-review")]
+        if len(hit) != 1:
+            sys.exit("FATAL: edited variant, item 2: `- No PR self-review` found %d times" % len(hit))
+        ls[hit[0]] = forked
+        text = "\n".join(ls)
+        # 3 own section between two doctrine sections
+        text = sub_once(text, "## Context Hygiene\n", "## Deploy\n\n" + "\n".join(deploy) + "\n\n## Context Hygiene\n", "item 3")
+        # 5 last sentence of the single-paragraph `## Context Hygiene` (v6.0.1 holds one paragraph there)
+        cut = (" Volatile state no card owns rides the session-carry ledger, owned by `/super-bootstrap:session-close` "
+               "(write/clear) and `/super-bootstrap:session-continue` (read/claim).")
+        text = sub_once(text, cut, "", "item 5")
+        # 4 own bullet at the end of `## Doc Sync (non-negotiable)` = before the next `## ` heading
+        ls = text.split("\n")
+        di = [i for i, l in enumerate(ls) if l == "## Doc Sync (non-negotiable)"]
+        if len(di) != 1:
+            sys.exit("FATAL: edited variant, item 4: `## Doc Sync (non-negotiable)` found %d times" % len(di))
+        nx = next(i for i in range(di[0] + 1, len(ls)) if ls[i].startswith("## "))
+        last = max(i for i in range(di[0], nx) if ls[i].strip())
+        ls[last + 1:last + 1] = ["", api]
+        return "\n".join(ls), [forked] + deploy + [api]
+
+    cov = [l.strip() for l in io.open(os.path.join(src, "legacy", "covered.txt"), encoding="utf-8") if l.strip()]
+    own_extra = []
+    if variant == "current":
+        old = rd(os.path.join(src, "legacy", "CLAUDE.md")).replace(b"\r", b"").decode("utf-8")
+    elif variant == "v2.22.0":
+        old = fill_skeleton(tag_skeleton("v2.22.0"))
+    else:
+        old = fill_skeleton(tag_skeleton("v6.0.1" if variant == "edited" else variant))
+        if variant == "edited":
+            old, own_extra = hand_edit(old)
     # the repo's own line: last bullet of the `## Git Notes` section (before the next `## `)
     lines = old.split("\n")
     gi = next(i for i, l in enumerate(lines) if l == "## Git Notes")
@@ -152,11 +254,21 @@ if walk == "legacy":
     old = "\n".join(lines)
     wr(claude_md, old.encode("utf-8"))
     wr(os.path.join(meta, "CLAUDE.before.md"), old.encode("utf-8"))
+    own_lines = own_extra + [OWN_LINE]
+    wr(os.path.join(meta, "own-lines.txt"), ("\n".join(own_lines) + "\n").encode("utf-8"))
+    io.open(os.path.join(meta, "variant.txt"), "w", encoding="utf-8", newline="\n").write(variant + "\n")
     if os.path.exists(owned):
         os.remove(owned)
-    cov = [l.strip() for l in io.open(os.path.join(src, "legacy", "covered.txt"), encoding="utf-8") if l.strip()]
-    receipt["covered"] = cov
-    receipt.get("placed", {}).pop(OWNED, None)
+    if variant == "v2.22.0":
+        # that tag's SKILL.md § 2c Stamp write: `{ "version": "{current plugin version}" }`, nothing else
+        receipt = {"version": "2.22.0"}
+    else:
+        # v5.10.6 / v6.0.1 § 2c Receipt write: version + covered + declined + placed
+        receipt["covered"] = cov
+        receipt["version"] = "6.0.1" if variant == "edited" else (variant[1:] if variant != "current" else receipt.get("version"))
+        receipt.get("placed", {}).pop(OWNED, None)
+    wr(os.path.join(meta, "receipt.before.json"),
+       (json.dumps(receipt, indent=2, ensure_ascii=False) + "\n").encode("utf-8"))
 else:
     # split shape: CLAUDE.md keeps its title + project sections, whatever the placer wrote
     title, secs = sections(rd(claude_md).decode("utf-8"))
@@ -262,9 +374,17 @@ if walk == "fresh":
 elif walk == "legacy":
     need(len(doctrine(heads(cm))) > 0, "CLAUDE.md holds doctrine sections: %s" % doctrine(heads(cm)))
     need(not os.path.exists(owned), "no %s" % OWNED)
-    need(OWN_LINE in rd(cm).decode("utf-8").split("\n"), "CLAUDE.md holds the repo-own line `%s`" % OWN_LINE)
+    sheads = set(heads(os.path.join(meta, "shipped.md")))
+    owned_n = [h for h in heads(cm) if h in sheads]
+    need(len(owned_n) >= 2, "CLAUDE.md holds %d `## ` line(s) equal to the shipped asset's (legacy detection needs 2+): %s" % (len(owned_n), owned_n))
+    own = [l for l in rd(os.path.join(meta, "own-lines.txt")).decode("utf-8").split("\n") if l]
+    cml = rd(cm).decode("utf-8").split("\n")
+    need(own and all(l in cml for l in own), "CLAUDE.md holds all %d own line(s) of meta/own-lines.txt" % len(own))
+    need(os.path.isfile(os.path.join(meta, "CLAUDE.before.md")), "meta/CLAUDE.before.md saved")
+    need(os.path.isfile(os.path.join(meta, "receipt.before.json")), "meta/receipt.before.json saved")
     r = json.load(io.open(rc, encoding="utf-8"))
-    need(OWNED not in r.get("placed", {}) and OWNED not in r["covered"], "receipt names no owned file")
+    need(OWNED not in r.get("placed", {}) and OWNED not in r.get("covered", []), "receipt names no owned file (starting shape: %s)" % ("covered list" if "covered" in r else "version-only stamp"))
+    need(True, "variant: %s" % rd(os.path.join(meta, "variant.txt")).decode("utf-8").strip())
 else:
     need(doctrine(heads(cm)) == [], "CLAUDE.md holds project sections only: %s" % heads(cm))
     r = json.load(io.open(rc, encoding="utf-8"))

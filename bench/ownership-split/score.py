@@ -18,6 +18,11 @@ Usage: python3 score.py <results-dir> [--asset FILE] [--machine]
                    meta/CLAUDE.before.md    legacy + answer y: the fixture's starting CLAUDE.md
                    meta/doc-links.before.txt, meta/doc-links.after.txt
                                             legacy + answer y: `doc-links.sh check` stdout before / after the walk
+                   meta/own-lines.txt       legacy + answer y: the repo's own lines, one per line (absent: the single
+                                            release bullet)
+                   meta/receipt.before.json, meta/variant.txt
+                                            legacy + answer y: the starting receipt (absent with variant.txt present =
+                                            no receipt at start; both absent = a pre-variant tree, read as `covered`)
                    meta/plugin-dir.txt      the --plugin-dir the run was given
   --asset FILE   the shipped owned-file asset to compare against. Default:
                  plugins/super-bootstrap/skills/harness-bootstrap/assets/harness.md;
@@ -56,7 +61,8 @@ ROW_PRE = u"CLAUDE.md § "
 # this literal, after markdown emphasis / backticks are dropped and whitespace
 # collapsed (so `CLAUDE.md` and **x** pass; other wording does not).
 CONFIRM_RE = re.compile(r"^Migrate CLAUDE\.md onto \.claude/rules/harness\.md\? \(y / n\)$")
-# legacy phase 2: the repo's own line, appended by make-fixture.sh to `## Git Notes`.
+# legacy phase 2: the repo's release bullet, appended by make-fixture.sh to `## Git Notes` —
+# the fallback own-lines set when a tree has no meta/own-lines.txt.
 OWN_LINE = u"- Tag releases as vX.Y.Z from main only."
 LINK_TARGET_RE = re.compile(r"\]\([^)]*\)")
 # an approval prompt, as the skill words them (SKILL.md § 2b Block 2, the
@@ -286,6 +292,45 @@ def receipt_fails(repo):
     return fails
 
 
+def start_receipt_shape(d):
+    """The receipt the legacy fixture started with -> 'covered' | 'stamp' | 'none'.
+
+    meta/receipt.before.json is make-fixture.sh's copy of the starting receipt. A tree
+    with that file absent AND no meta/variant.txt predates the variants and had a
+    covered list; with variant.txt present the absent file means no receipt at start."""
+    rb = read_text(os.path.join(d, "meta", "receipt.before.json"))
+    if rb is None:
+        return "none" if os.path.isfile(os.path.join(d, "meta", "variant.txt")) else "covered"
+    try:
+        return "covered" if isinstance(json.loads(rb).get("covered"), list) else "stamp"
+    except (ValueError, AttributeError):
+        return "stamp"
+
+
+def legacy_receipt_fails(d, repo):
+    """The migration section's receipt rule (SKILL.md § Doctrine migration, step 5 item 4):
+    a receipt with `covered` -> doctrine rows out, owned-file row in; a receipt without
+    `covered` -> `placed` records the owned file and no `covered` appears; no receipt -> none."""
+    shape = start_receipt_shape(d)
+    if shape == "covered":
+        return receipt_fails(repo)
+    rt = read_text(os.path.join(repo, RECEIPT))
+    if shape == "none":
+        return ["a receipt appeared: the fixture started with none, `%s` exists" % RECEIPT] if rt is not None else []
+    try:
+        r = json.loads(rt) if rt is not None else None
+    except ValueError:
+        r = None
+    if not isinstance(r, dict):
+        return ["receipt missing or unreadable (the fixture started with a version-only stamp)"]
+    fails = []
+    if "covered" in r:
+        fails.append("receipt gained a `covered` list: the fixture started with a version-only stamp")
+    if not isinstance(r.get("placed"), dict) or OWNED not in r["placed"]:
+        fails.append("receipt `placed` does not record %s" % OWNED)
+    return fails
+
+
 def check_fresh(d, asset, evs):
     fails = []
     repo = os.path.join(d, "repo")
@@ -395,9 +440,13 @@ def check_legacy(d, asset, evs):
     newf = sorted(link_findings(mt("doc-links.after.txt")) - link_findings(mt("doc-links.before.txt")))
     if newf:
         fails.append("%d new broken link(s), first `%s`" % (len(newf), newf[0][:120]))
-    # the repo's own line
-    if OWN_LINE not in norm_lines(cm):
-        fails.append("the repo's own line is lost from CLAUDE.md: `%s`" % OWN_LINE)
+    # the repo's own lines: meta/own-lines.txt, one per line; absent -> the single release bullet
+    own_txt = mt("own-lines.txt")
+    own = norm_lines(own_txt) if own_txt is not None else [OWN_LINE]
+    have_cm = set(norm_lines(cm))
+    for l in own:
+        if l not in have_cm:
+            fails.append("the repo's own line is lost from CLAUDE.md: `%s`" % l)
     # one commit, clean tree
     ahead = (mt("commits-ahead.txt") or "").strip()
     if ahead != "1":
@@ -405,7 +454,7 @@ def check_legacy(d, asset, evs):
     dirty = [l for l in mt("git-status.txt").splitlines() if l.strip()]
     if dirty:
         fails.append("working tree not clean: %d path(s), first `%s`" % (len(dirty), dirty[0].strip()))
-    fails += receipt_fails(repo)
+    fails += legacy_receipt_fails(d, repo)
     return fails
 
 

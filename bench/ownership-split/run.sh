@@ -14,6 +14,7 @@
 #   stream.t2.jsonl, meta/answer.txt   fork / legacy + ANSWER only: the second turn
 #   meta/doc-links.after.txt   legacy only: `doc-links.sh check` stdout after the walk
 #                           (make-fixture.sh saved the matching .before.txt)
+#   meta/variant.txt        legacy only: the LEGACY_VARIANT this run was built with
 # A walk whose stream.jsonl already exists is skipped.
 #
 # Env:
@@ -21,11 +22,18 @@
 #   PERM_MODE  default acceptEdits (see README § Approval prompts)
 #   ANSWER     fork: `overwrite` | `keep`; legacy: `y` | `n` — a second turn (`--continue`)
 #              gives that answer (legacy without ANSWER = phase 1 only, ends on the confirm prompt)
+#   LEGACY_VARIANT  legacy only: current (default) | v2.22.0 | v5.10.6 | v6.0.1 | edited — the
+#              starting CLAUDE.md (README § Legacy variants). Anything else is FATAL. A variant other
+#              than `current` is added to the directory label unless the label already names it.
 #   SHIPPED, OLDER   passed to make-fixture.sh as --shipped / --older
 #   DRY=1      build the fixture and print the command; start no claude process
 set -u
 OUT="${1:?usage: run.sh <outdir> <walk> [label]}"; WALK="${2:?usage: run.sh <outdir> <walk> [label]}"; LABEL="${3:-}"
 case "$WALK" in fresh|legacy|stale|fork) ;; *) echo "FATAL: unknown walk '$WALK'" >&2; exit 1 ;; esac
+VARIANT="${LEGACY_VARIANT:-current}"
+case "$VARIANT" in current|v2.22.0|v5.10.6|v6.0.1|edited) ;; *) echo "FATAL: unknown LEGACY_VARIANT '$VARIANT' (current|v2.22.0|v5.10.6|v6.0.1|edited)" >&2; exit 1 ;; esac
+[ "$VARIANT" = current ] || [ "$WALK" = legacy ] || { echo "FATAL: LEGACY_VARIANT=$VARIANT only applies to the legacy walk" >&2; exit 1; }
+case "$LABEL" in *"$VARIANT"*) ;; *) [ "$VARIANT" = current ] || LABEL="${LABEL:+$LABEL-}$VARIANT" ;; esac
 SRC="$(cd "$(dirname "$0")" && pwd)"
 # native programs (claude, python.exe) need Windows paths, not /d/... or /tmp/...
 W() { if command -v cygpath >/dev/null 2>&1; then cygpath -m "$1"; else printf '%s\n' "$1"; fi; }
@@ -43,6 +51,8 @@ NAME="$WALK${LABEL:+-$LABEL}"; WD="$OUT/$NAME"
 rm -rf "$WD"; mkdir -p "$WD"
 bash "$SRC/make-fixture.sh" "$WD" "$WALK" ${SHIPPED:+--shipped "$SHIPPED"} ${OLDER:+--older "$OLDER"} > "$WD/fixture.txt" 2>&1 \
   || { echo "fixture failed: $NAME (see $WD/fixture.txt)" >&2; exit 1; }
+
+[ "$WALK" != legacy ] || printf '%s\n' "$VARIANT" > "$WD/meta/variant.txt"
 
 # The skill under test is the in-repo dev copy, not the installed plugin cache.
 PLUGIN="$(W "$(cd "$SRC/../../plugins/super-bootstrap" && pwd)")"

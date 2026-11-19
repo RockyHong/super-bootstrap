@@ -267,6 +267,50 @@ ytree("legacy-y-receipt-doctrine-row", "1", "0", "receipt `covered` holds doctri
       yfiles(**{RECEIPT: receipt(COVERED_SPLIT + [u"CLAUDE.md § Doc Sync"])}))
 ytree("legacy-y-receipt-no-owned-row", "1", "0", "receipt `covered` lacks the .claude/rules/harness.md row",
       yfiles(**{RECEIPT: receipt(COVERED_SPLIT[:-1])}))
+# 7b receipt shapes follow the starting receipt (meta/receipt.before.json; with meta/variant.txt present,
+# an absent file = no receipt at start). A tree with neither file is a pre-variant tree: the cases above.
+STAMP = json.dumps({"version": "2.22.0"}) + "\n"
+STAMP_PLACED = json.dumps({"version": "2.22.0", "placed": {OWNED: "ab" * 32}}, indent=2) + "\n"
+STAMP_COVERED = json.dumps({"version": "2.22.0", "covered": [OWNED], "placed": {OWNED: "ab" * 32}}, indent=2) + "\n"
+STAMP_NO_PLACED = json.dumps({"version": "2.22.0"}, indent=2) + "\n"
+SM_STAMP = {"variant.txt": "v2.22.0\n", "receipt.before.json": STAMP}
+ytree("legacy-y-ok-stamp-receipt", "1", "1", "ok", yfiles(**{RECEIPT: STAMP_PLACED}), meta=ymeta(**SM_STAMP))
+ytree("legacy-y-stamp-gained-covered", "1", "0", "receipt gained a `covered` list",
+      yfiles(**{RECEIPT: STAMP_COVERED}), meta=ymeta(**SM_STAMP))
+ytree("legacy-y-stamp-no-placed", "1", "0", "receipt `placed` does not record .claude/rules/harness.md",
+      yfiles(**{RECEIPT: STAMP_NO_PLACED}), meta=ymeta(**SM_STAMP))
+SM_NONE = {"variant.txt": "v2.22.0\n", "receipt.before.json": None}
+ytree("legacy-y-ok-no-receipt", "1", "1", "ok", yfiles(**{RECEIPT: None}), meta=ymeta(**SM_NONE))
+ytree("legacy-y-no-receipt-then-one", "1", "0", "a receipt appeared",
+      yfiles(**{RECEIPT: STAMP_PLACED}), meta=ymeta(**SM_NONE))
+# 5b several own lines (the `edited` variant's shape): every line of meta/own-lines.txt must survive
+OWN_F = "- Every change lands through a PR with one reviewer. Main + feature branches. No force push."
+OWN_D1 = "Deploys run from the `release` branch only."
+OWN_D2 = "- Staging first; production after a green smoke run."
+OWN_API = "- API docs under `docs/api/` regenerate from source; never hand-edit them."
+OWN_MULTI = [OWN_F, OWN_D1, OWN_D2, OWN_API, OWN]
+OLD_MULTI = OLD_CLAUDE.replace(OWN + "\n\n## Planning", OWN_F + "\n" + OWN_API + "\n" + OWN + "\n\n## Deploy\n\n"
+                               + OWN_D1 + "\n" + OWN_D2 + "\n\n## Planning")
+ADD = "## Additions to the harness doctrine\n\n"
+# `## Deploy` stays where it is (a section the repo authored): a heading left with no line under it is an
+# uncovered old line unless the confirm's drop list names it (line-coverage.sh counts headings)
+NEW_MULTI = NEW_CLAUDE.replace(ADD + OWN + "\n\n", ADD + "\n".join([OWN_F, OWN_API, OWN]) + "\n\n").replace(
+    "## Planning", "## Deploy\n\n" + OWN_D1 + "\n" + OWN_D2 + "\n\n## Planning")
+MM = {"variant.txt": "edited\n", "own-lines.txt": "\n".join(OWN_MULTI) + "\n", "CLAUDE.before.md": OLD_MULTI,
+      "receipt.before.json": receipt(COVERED_SPLIT[:-1])}
+ytree("legacy-y-ok-multi-own", "1", "1", "ok", yfiles(**{"CLAUDE.md": NEW_MULTI}), meta=ymeta(**MM))
+ytree("legacy-y-multi-own-one-lost", "1", "0",
+      "the repo's own line is lost from CLAUDE.md: `- Staging first; production after a green smoke run.`",
+      yfiles(**{"CLAUDE.md": NEW_MULTI.replace(OWN_D2 + "\n", "")}), meta=ymeta(**MM))
+ytree("legacy-y-multi-own-forked-lost", "1", "0",
+      "the repo's own line is lost from CLAUDE.md: `- Every change lands through a PR with one reviewer.",
+      yfiles(**{"CLAUDE.md": NEW_MULTI.replace(OWN_F + "\n", "")}), meta=ymeta(**MM))
+# an own line listed on the drop list passes line coverage, never the own-line check
+ytree("legacy-y-multi-own-dropped-not-kept", "1", "0",
+      "the repo's own line is lost from CLAUDE.md: `- Staging first; production after a green smoke run.`",
+      yfiles(**{"CLAUDE.md": NEW_MULTI.replace(OWN_D2 + "\n", "")}),
+      texts=["Delta list:\n\n```\n- Obsolete old-plugin bullet.\n" + OWN_D2 + "\n```\n\n"
+             "Migrate `CLAUDE.md` onto `.claude/rules/harness.md`? (y / n)"], meta=ymeta(**MM))
 # answer n: the run stops, zero writes
 tree("legacy-n-ok", "1", "1", "ok", LFILES, [CONFIRM], lmeta(**{"answer.txt": "n\n"}), t2=["Left as it is."])
 tree("legacy-n-wrote", "1", "0", "working tree not clean", LFILES, [CONFIRM],
