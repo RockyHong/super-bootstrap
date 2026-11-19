@@ -164,3 +164,16 @@ Open, for the author after step 5: a short `rules`-arm round on the shipped asse
 Seams left for `migrate`: the legacy stop message and the hook's legacy branch; the owned-heading list needs retired heading names added; consumer `docs/` links into `CLAUDE.md#<owned anchor>` need rewriting or every commit's link check fails; receipt → layout number.
 
 Watch-outs: an older plugin version on another device reads a split repo as missing every doctrine section and proposes to insert them back; a consumer's edit to the owned file meets a fork prompt, and `keep` holds for one run only — the file's first line and the README say so; a cut at the wrong boundary loses doctrine silently, so step 2's diff and step 6's line-coverage check are the guard.
+
+## Progress — 2026-11-19 · split steps 1–3 landed
+
+Steps 1, 2 and 3 of the ownership-split Plan are committed: the RED surfaces (`8fbec0a`), the content-drift advisory hook (`1f3a0c9`), the placement contract (`33b26aa`). Next step: 4 (pointer rewrites in the other skills and agents) and 5 (bench rebuild), then 6 (dogfood split), then 7 (narrative sweep).
+
+- `bench/ownership-split`: the control round on the old skill text was red on all four walks. On the new text `fresh`, `legacy` and `fork` pass; `stale` re-copies the file silently (placed bytes equal the asset) and its scorer row fails on a `docs/techstack.md` prompt printed within the scorer's proximity window of the file's name — a scorer limit the bench README names, not a skill defect. Narrowing that window is owed with step 5.
+- Legacy detection needs two or more owned headings in `CLAUDE.md`, not one: generic headings (`Git Notes`, `Coding Principles`) would stop a hand-written repo. From the cold audit.
+- The moved doctrine carries six re-based link targets, not seventeen — the higher count read this repo's own `CLAUDE.md`.
+- `doc-links.sh check` resolves a `docs/` link into `.claude/rules/harness.md` by path and anchor, so a consumer repo missing the file fails every commit's link check — the `migrate` seam in the Plan is binding.
+- Step 6 also owes: the asset-lane dogfood copies (`CODING_STANDARDS.md`, `.claude/rules/index.md`, the `docs/decisions.md` scope header) refreshed to the new skeleton text; `docs/specs/harness-architecture.md` §5 and §8, which still narrate the per-section `CLAUDE.md` lane.
+- Left untouched, not part of the split: the 2c report example row `docs/techstack.md: Runtime ⚠ drifted → updated` disagrees with the seed-once rule for that section; `harness-bootstrap` reads "fresh / re-run" two ways (a bootstrap-shaped commit in 2b, the files present in Phase 1), which can differ on a repo with a hand-written `CLAUDE.md` and no harness file.
+- Sent to the storehouse as a note (`harness-audit-paths-after-ownership-split`): the audit gate fires on a consumer's whole-file sync of `.claude/rules/harness.md` and on `*/CLAUDE.md` bench fixtures; the measured post-compact reload facts; whether anything it serves reads a consumer's `CLAUDE.md` doctrine sections by name. This card waits on no answer.
+- **No `/release` until `migrate` lands.**
