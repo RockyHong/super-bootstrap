@@ -39,7 +39,7 @@ Deep-read the candidates in the chosen lens — past the origin, through the col
 {M} look done or premise-dead: {IDs} → offered for resolve at /super-bootstrap:session-close        (omit when none)
 ```
 
-Reply with an ID and the session is in pickup — framing line + route per `CLAUDE.md`, no re-scan.
+Reply with an ID and the session is in pickup — framing line + route per the harness doctrine (`.claude/rules/harness.md`; `CLAUDE.md` in a repo not yet split), no re-scan.
 
 ## Rules
 

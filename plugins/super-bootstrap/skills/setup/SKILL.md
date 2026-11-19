@@ -24,7 +24,7 @@ If the repo is not a git repo (`git rev-parse --git-dir` fails), run `git init` 
 
 ## Dispatch the runway (always)
 
-Invoke `/super-bootstrap:harness-bootstrap` via the Skill tool. The runway installs fresh or syncs drift — its own detection — scaffolding CLAUDE.md, CODING_STANDARDS.md, skeleton docs, path-scoped rules, the core plugin pin, the language-server pins the techstack names, and returns "runway installed/synced + committed." The entry dispatches it unconditionally, so a documented-but-stale repo still gets runway sync. Then run the code-present seed.
+Invoke `/super-bootstrap:harness-bootstrap` via the Skill tool. The runway installs fresh or syncs drift — its own detection — scaffolding `.claude/rules/harness.md` (plugin-owned workflow doctrine), CLAUDE.md, CODING_STANDARDS.md, skeleton docs, path-scoped rules, the core plugin pin, the language-server pins the techstack names, and returns "runway installed/synced + committed." The entry dispatches it unconditionally, so a documented-but-stale repo still gets runway sync. Then run the code-present seed.
 
 ## Code-present seed — seed first, work now (code present)
 
@@ -42,7 +42,7 @@ Both skipped → log "Code-present cards already seeded." A re-run seeds nothing
 
 **Seed and commit** — write each card the guard passed by the greenfield branch's hand-copy (below: the fenced body verbatim, `{ID}` + `{date}` only, GAP IDs from one generator call in the asset's order), then land the new card files through `/super-bootstrap:commit` (card-lifecycle — no doc-sync gate). Nothing written → nothing to commit.
 
-**Work now** — after the seed commit, pick up each open code-present card — a `docs/work/` card whose H1 summary matches `spec-seeding` or `marker-sweep` in the asset, seeded by this step or by the runway's legacy plan migration — whose `Problem:` precondition holds now, by its ID: the ordinary card pickup (framing + route; the routed phase resolves and deletes the card in its own commit) — no bootstrap-private path. A card whose precondition fails now (`spec-seeding` on an empty Module Index) stays open. Each pickup runs as its own phase, dispatched per the repo's `CLAUDE.md` like any card; one that stops at a user gate the user does not clear now leaves its card open, and the run moves on. An interrupted pickup leaves its card open too; `/super-bootstrap:needs-me`, triage, and autorun see it like any other card. Then continue to Detect — the greenfield branch still stops at its resolve gate.
+**Work now** — after the seed commit, pick up each open code-present card — a `docs/work/` card whose H1 summary matches `spec-seeding` or `marker-sweep` in the asset, seeded by this step or by the runway's legacy plan migration — whose `Problem:` precondition holds now, by its ID: the ordinary card pickup (framing + route; the routed phase resolves and deletes the card in its own commit) — no bootstrap-private path. A card whose precondition fails now (`spec-seeding` on an empty Module Index) stays open. Each pickup runs as its own phase, dispatched per the repo's harness doctrine (`.claude/rules/harness.md`; `CLAUDE.md` in a repo not yet split) like any card; one that stops at a user gate the user does not clear now leaves its card open, and the run moves on. An interrupted pickup leaves its card open too; `/super-bootstrap:needs-me`, triage, and autorun see it like any other card. Then continue to Detect — the greenfield branch still stops at its resolve gate.
 
 ## Detect — seed docs substantive?
 

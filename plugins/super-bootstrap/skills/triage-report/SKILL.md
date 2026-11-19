@@ -1,6 +1,6 @@
 ---
 name: triage-report
-description: 'Drain the `.review/` report queue. Resolves un-triaged scan/audit reports (producer-agnostic — check-docs-consistency and any other scanner), dispatches the `triage-report` subagent (Sonnet) one report at a time for per-finding dispositions (promote / patch / dup / needs-investigation / dismiss), then the gateway absorbs: promotes batch through /super-bootstrap:log, doc-mechanical patches land per CLAUDE.md § Dispatch, investigations route to /super-bootstrap:triage, report deleted at close-out once every finding holds a terminal verdict. Use when a report lands in `.review/` or the user asks to process review findings. Does NOT fix findings.'
+description: 'Drain the `.review/` report queue. Resolves un-triaged scan/audit reports (producer-agnostic — check-docs-consistency and any other scanner), dispatches the `triage-report` subagent (Sonnet) one report at a time for per-finding dispositions (promote / patch / dup / needs-investigation / dismiss), then the gateway absorbs: promotes batch through /super-bootstrap:log, doc-mechanical patches land per the harness doctrine''s § Dispatch, investigations route to /super-bootstrap:triage, report deleted at close-out once every finding holds a terminal verdict. Use when a report lands in `.review/` or the user asks to process review findings. Does NOT fix findings.'
 tags: [triage, review, report, pipeline]
 ---
 
@@ -24,7 +24,7 @@ Argument is an optional report path. Without one, resolve from the queue — the
 2. **Review the sheet** (gateway): coverage line must hold (findings = verdicts), and the `decisions.md § Closed Forks` source line must be present; a sheet failing either re-dispatches the agent on the same report. A `— unresolved: {cause}` source line surfaces to the user before absorb — the `docs/decisions.md` fix is theirs. Dismiss is the lossy verdict — a dismissal whose rationale doesn't beat the scanner's stated reasoning bounces back as `needs-investigation`.
 3. **Absorb:**
    - **promote** → one batched `/super-bootstrap:log` pass carrying the agent's draft claim blocks. Rows land raw; the pipeline rolls at normal pickup.
-   - **patch** → doc-mechanical edits only, landed per CLAUDE.md § Dispatch (gateway inline, or dispatched by closure). Anything wider re-verdicts as promote.
+   - **patch** → doc-mechanical edits only, landed per the harness doctrine's § Dispatch (`.claude/rules/harness.md`; `CLAUDE.md` in a repo not yet split) (gateway inline, or dispatched by closure). Anything wider re-verdicts as promote.
    - **dup** → fold any new-fact into the `/super-bootstrap:log` batch — rides the log door's amend path (dedup surfaces for the user's pick; the Amendment lands on the owning card).
    - **needs-investigation** → the single question rides `/super-bootstrap:triage` when it names a card; otherwise an investigate-only probe dispatch. Verdicts return to step 2.
 4. **Close out** — only after every finding holds a terminal verdict and every patch has landed: delete the report; the deletion + a dispositions summary ride the session's envelope commit (dismissal rationales survive in git log).

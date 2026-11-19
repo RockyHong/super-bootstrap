@@ -3,7 +3,7 @@
 #
 # Modes (all but `terms` and `anchors` scan the full doc surface: docs/**/*.md +
 #         README.md + plugins/*/README.md, plus every `*.md` glob the repo declares
-#         in .claude/doc-surface — see collect_declared_surface; CLAUDE.md § Doc Sync
+#         in .claude/doc-surface — see collect_declared_surface; the harness doctrine's § Doc Sync
 #         narrates the surface, this file and the declaration compute it):
 #   check              scan the doc surface for broken links; exit 1 if any — except
 #                      a card thread's link to an absent card ID (both endpoints

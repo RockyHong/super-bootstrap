@@ -53,7 +53,7 @@ No carries, or every one stale → report "no in-flight carry" and hand off to `
 
 ### 4. Surface + confirm
 
-After a resume pick, surface the reconstructed picture: where work stopped, the next step, the watch-outs — card first, carry delta beside it. Then **confirm the next step before executing** — this skill orients and hands back; it does not auto-dive. A confirmed card resumes as pickup — framing line + route per `CLAUDE.md`.
+After a resume pick, surface the reconstructed picture: where work stopped, the next step, the watch-outs — card first, carry delta beside it. Then **confirm the next step before executing** — this skill orients and hands back; it does not auto-dive. A confirmed card resumes as pickup — framing line + route per the harness doctrine (`.claude/rules/harness.md`; `CLAUDE.md` in a repo not yet split).
 
 ## Output
 

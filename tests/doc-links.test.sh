@@ -490,7 +490,7 @@ check "isword: read by more than one awk program (got $((isword_readers - 1)) ca
 
 # ---------------------------------------------------------------------------
 # BUG-046 — `closure <path>` enumerates the premise-closure set: the doc surface
-# CLAUDE.md § Doc Sync defines (docs/**/*.md + root README.md +
+# the harness doctrine's § Doc Sync defines (docs/**/*.md + root README.md +
 # plugins/*/README.md) minus consumables (docs/work/{BUG,DEBT}-*.md,
 # docs/work/TEMPLATE.md) minus the anchor itself. Registry/index docs
 # (decisions.md, parked.md, agents/*) are reachable by construction — the

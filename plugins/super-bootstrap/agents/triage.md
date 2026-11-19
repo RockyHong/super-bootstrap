@@ -103,7 +103,7 @@ Append the block at the end of `docs/work/{ID}.md`, after a blank line. The card
 - {the forked question — framed as a decision, not "what should I do"}
 - {options — before you write them, check each: mutually exclusive, premise-accurate, none smuggling a wrong premise}
 - recommendation: {your pick + one-line rationale}
-- settles by: {the decisions row / spec / measurement that decides it, or the authority it needs — business / risk / preference / private}. A measurement ships sized, the way the auto-fix `Execution:` tag sizes a fix: `inline read` (the gateway reads a file or runs a one-shot command) · `dispatched probe` (a cold subagent runs it) · `phased build` (fixtures, shims, bench scripts — a plan block, then dispatch). Never a bare "gateway-runnable" (gateway doesn't build — CLAUDE.md § Dispatch)
+- settles by: {the decisions row / spec / measurement that decides it, or the authority it needs — business / risk / preference / private}. A measurement ships sized, the way the auto-fix `Execution:` tag sizes a fix: `inline read` (the gateway reads a file or runs a one-shot command) · `dispatched probe` (a cold subagent runs it) · `phased build` (fixtures, shims, bench scripts — a plan block, then dispatch). Never a bare "gateway-runnable" (gateway doesn't build — the harness doctrine's § Dispatch (`.claude/rules/harness.md`; `CLAUDE.md` in a repo not yet split))
 ```
 
 When an artifact is the test (§ Verdict lead), `### Taste needed` takes the place of `### Decision needed`. It holds grounding only — no options, no recommendation, no `settles by:`. The author judges the artifact the gateway brings, so stop at what the repo holds:
