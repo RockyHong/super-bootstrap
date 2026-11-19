@@ -177,3 +177,13 @@ Steps 1, 2 and 3 of the ownership-split Plan are committed: the RED surfaces (`8
 - Left untouched, not part of the split: the 2c report example row `docs/techstack.md: Runtime ⚠ drifted → updated` disagrees with the seed-once rule for that section; `harness-bootstrap` reads "fresh / re-run" two ways (a bootstrap-shaped commit in 2b, the files present in Phase 1), which can differ on a repo with a hand-written `CLAUDE.md` and no harness file.
 - Sent to the storehouse as a note (`harness-audit-paths-after-ownership-split`): the audit gate fires on a consumer's whole-file sync of `.claude/rules/harness.md` and on `*/CLAUDE.md` bench fixtures; the measured post-compact reload facts; whether anything it serves reads a consumer's `CLAUDE.md` doctrine sections by name. This card waits on no answer.
 - **No `/release` until `migrate` lands.**
+
+## Progress — 2026-11-19 · split steps 4–5 landed
+
+Steps 4 (`e751e7d`) and 5 (`1ca8634`) are committed. Next step: the `agents/doc-sync-scan.md` pointer (RED on a split-shaped fixture, `bench/doc-sync-harness-cochange` now builds one), then step 6 (dogfood split), then step 7.
+
+- `bench/ownership-split`, post-change round, rescored with the block-scoped prompt check: all four walks pass (`fresh`, `legacy`, `stale`, `fork`).
+- The pointers in the other skills name both locations once per file (`.claude/rules/harness.md`; `CLAUDE.md` in a repo not yet split). The second half is transitional — remove it when `migrate` sunsets. Added to the seams.
+- The shipped doctrine's cluster 7 row differs from this repo's own (the asset names no `load-harness-principles` / `audit-harness-edits`). Step 6 keeps the placed file byte-identical to the asset, so this repo's row moves to a project-owned section of `CLAUDE.md`; check after the split that a harness-edit task still routes through both skills.
+- Step 6 also owes `bench/spike-route/run.sh`, whose arm slices `### The envelope` out of the root `CLAUDE.md`.
+- Not fixed, older than the split: `bench/assertion-liveness`'s placer does not place `docs/terminology.md` or the two doc rules, so the asset's `dimension-discipline.md` link is broken inside that fixture; its README's `SKILL.md` line numbers have drifted.
