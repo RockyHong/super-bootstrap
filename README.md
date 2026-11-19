@@ -1,8 +1,8 @@
 # super-bootstrap
 
-<img src=".github/assets/hero.webp" alt="super-bootstrap: one command writes CLAUDE.md, curates MCPs + skills, seeds work cards" width="720">
+<img src=".github/assets/hero.webp" alt="super-bootstrap: one command writes CLAUDE.md, seeds skeleton docs and work cards" width="720">
 
-Skip the per-project Claude setup grind. One command picks your skills, writes `CLAUDE.md`, pins your config, **and gives Claude a phase-gated workflow** — every session runs the pipeline, but only the phases the work actually needs. Workflow, not just a toolbelt. The harness [names disciplines, not skills](docs/specs/harness-architecture.md#6-decided-vs-open), so it does not marry you to any one process-harness plugin.
+Skip the per-project Claude setup grind. One command writes `CLAUDE.md`, seeds skeleton docs, pins your config, **and gives Claude a phase-gated workflow** — every session runs the pipeline, but only the phases the work actually needs. Workflow, not just a toolbelt. The harness [names disciplines, not skills](docs/specs/harness-architecture.md#6-decided-vs-open), so it does not marry you to any one process-harness plugin.
 
 ## Best for
 
@@ -43,21 +43,21 @@ One command per repo. Auto-routes:
 The runway installs or syncs first either way — [no product Q&A at any point](docs/overview.md#problem). What follows depends on whether the seed docs already carry product content:
 
 - **Code present** → first seeds two GAP cards (feature specs, code-marker sweep), commits them, and works what it can in the same run — an interrupted run leaves the cards for cold pickup.
-- **Seed docs substantive** → curates skills / MCPs / hooks against the stack those docs already declare.
-- **Seed docs unfilled (greenfield)** → seeds three GAP cards (overview, techstack, tech curation) and stops at the resolve gate; curation waits until the product is settled.
+- **Seed docs substantive** → offers [`release-init`](plugins/super-bootstrap/skills/release-init/SKILL.md) for repos that ship versioned releases.
+- **Seed docs unfilled (greenfield)** → seeds two GAP cards (overview, techstack) and stops at the resolve gate; the language-server pin waits until `docs/techstack.md` names the stack.
 
-Picks are matched to your stack and labeled by trust signal (Anthropic-vetted / popular / fresh / unaudited).
+The runway pins the language-server plugin your `docs/techstack.md` names (a static language → `*-lsp@claude-plugins-official` table) and prints the server binary's install command for each pin it inserts.
 
 ```mermaid
 flowchart TD
     entry(["/super-bootstrap:setup"])
-    entry --> runway["install / sync runway<br/>CLAUDE.md + skeleton docs + rules"]
+    entry --> runway["install / sync runway<br/>CLAUDE.md + skeleton docs + rules<br/>core pin + language-server pins"]
     runway --> code["code present: seed 2 GAP cards<br/>(specs, marker sweep), work now"]
     code --> gate{"seed docs<br/>substantive?"}
-    gate -->|yes| curate["curate skills / MCPs / hooks"]
-    gate -->|no| cards["seed 3 GAP cards"]
+    gate -->|yes| offer["offer release-init"]
+    gate -->|no| cards["seed 2 GAP cards"]
     cards --> hold["resolve gate — fill<br/>overview + techstack, re-run"]
-    curate --> done["harness live<br/>start building"]
+    offer --> done["harness live<br/>start building"]
 ```
 
 Re-run any time — incremental, never overwrites your edits; when the installed plugin has moved past the version your runway was last synced at, every session opens with a one-line advisory naming the re-run ([`runway-version`](plugins/super-bootstrap/hooks/runway-version.sh), a plugin-owned SessionStart hook — nothing placed in your repo). A re-run also retires consumer fork skills/agents the plugin now supersedes (per-deletion confirm) and backfills runway sections added since the last sync; stack facts (the `CLAUDE.md` Tech Stack line, `docs/techstack.md`'s Runtime / Framework / Key Dependencies / Build & Distribution) are seeded once — a re-run after code first arrives flags them stale for a hand refresh, never rewrites them. A workspace manifest (`pnpm-workspace.yaml`, `turbo.json`, …) switches on the monorepo tier — rules and build pre-flight fan out per package. Repos whose card set outgrows one flat list can opt into the scale module (`docs/parked.md` + `docs/test-queue.md` + `docs/outward/`) — offered only once earned, never by default.
@@ -67,7 +67,7 @@ Re-run any time — incremental, never overwrites your edits; when the installed
 | Path | Behavior |
 |---|---|
 | `CLAUDE.md` | **Layered** per-section — never overwritten. Diff shown before any write. |
-| `.claude/settings.json` | **Merged** — adds `enabledPlugins` + `extraKnownMarketplaces` for the [core self-pin](docs/techstack.md#key-dependencies); your other settings preserved. |
+| `.claude/settings.json` | **Merged** — adds `enabledPlugins` + `extraKnownMarketplaces` for the [core self-pin](docs/techstack.md#key-dependencies), plus the language-server pins your `docs/techstack.md` names (inserted when missing, never removed); your other settings preserved. |
 | `CODING_STANDARDS.md` | **Seeded** headings-only at the repo root when the repo has code — your repo's binding conventions, read at every code touch; a docs-only repo (no manifest, no source file) takes neither the file nor the CLAUDE.md § Coding Principles slot until code arrives. Preamble + section headings drift-checked on re-run; section content is yours, hand-recorded when a review or commit settles a convention (this file sits outside the doc-sync surface). |
 | `docs/`, `.claude/rules/` | **Seeded** with new files from detected stack, plus two always-placed doc-authoring rules (`ssot-doc-link`, `dimension-discipline`) whose shipped bodies are drift-checked on re-run. User-grown content never touched on re-run. |
 | `docs/extensions.md` | **Yours** — never seeded, never drift-checked ([project-owned](plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md#phase-2-scaffold--sync)). Create it to add fields to cards, parked entries, or outward threads; each container's contract points to it. |
@@ -106,20 +106,11 @@ Per-skill contract = that skill's `SKILL.md` frontmatter; one-line index in the 
 Not day-to-day — run when the moment calls:
 
 - `/super-bootstrap:check-docs-consistency` — whole-surface doc drift scan, timestamped report to `.review/`, report-only; the commit door's scoped scan covers the everyday case. User-only by design.
-- `/super-bootstrap:resolve-plugins` — standalone refresh of the curated skill / MCP / hook pins (the same curation `/super-bootstrap:setup` runs as tier 2). Reads your stack from `docs/techstack.md` and stops with a pointer to `/super-bootstrap:harness-bootstrap` when that file isn't there yet.
 - `/super-bootstrap:release-init` — one-shot scaffolder. Detects project type (unity / tauri / node / ios-native / android-native / generic) and generates a tailored `/release` skill at `.claude/skills/release/SKILL.md` (project-level skill, bare invocation since it lives in the user's repo, not under this plugin's namespace). Run only on repos that ship versioned releases.
 
-## Sources
+## Other tools
 
-| Tool | Role |
-|---|---|
-| [superpowers](https://github.com/obra/superpowers) | Process harness — an ordinary curation candidate, never pinned. The scaffolded CLAUDE.md names disciplines (root cause before fix, settle the design, write the sequence), so any harness slots in without the harness knowing its name. |
-| [claude-code-setup](https://claude.com/plugins/claude-code-setup) | Anthropic's plugin recommender — fast-path source if installed |
-| [Anthropic plugin marketplace](https://claude.com/plugins) | Anthropic-vetted skills, MCPs, hooks, subagents |
-| [modelcontextprotocol/registry](https://github.com/modelcontextprotocol/registry) | Official MCP discovery registry — indexes reference impls + community |
-| [everything-claude-code (ECC)](https://github.com/affaan-m/everything-claude-code) | Component bundle (skills + agents + rules + hooks). Language-specific rules preferred over local skeletons. |
-| [awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) | Curated category index, strong on workflow / external-tools picks |
-| [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) | Skills from official dev teams (Anthropic, Vercel, Stripe, Cloudflare) + community |
+A repo adds a process harness through Claude Code's own plugin install; no plugin door routes it. For stack-matched skill / MCP / hook recommendations, run `claude-code-setup:claude-automation-recommender`.
 
 ## License
 

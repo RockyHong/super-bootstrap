@@ -6,9 +6,8 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 
 > Index only — what exists, one line each. **Canonical per-skill contract = that skill's `SKILL.md` frontmatter `description:`.** Edit behavior there; this list follows.
 
-- `setup` — public entry, thin orchestrator; dispatches the runway, seeds and works code-present GAP cards, seeds greenfield GAP cards, gates tier-2 curation.
-- `harness-bootstrap` — installs/syncs the generic runway (CLAUDE.md, CODING_STANDARDS.md (headings-only), skeleton docs, rules, the core pin); monorepo tier fans rule globs + build pre-flight out per package; adopt mode retires a consumer's superseded fork skills/agents (runtime name-collision map, per-deletion confirm) and backfills skeleton sections added since bootstrap (approval-gated `⊕ new` insert); opt-in, earn-gated scale module adds `docs/parked.md` + `docs/test-queue.md` + `docs/outward/` containers and backlog fact fields for repos whose backlog has outgrown one flat list.
-- `resolve-plugins` — curates skill/MCP/hook picks against live sources, writes `.claude/settings.json`; requires `docs/techstack.md` (seeded by `/super-bootstrap:harness-bootstrap`) and fails loud without it; Phase 2.5 dispatches `agents/plugin-digest.md` (Haiku) for README→digest parse.
+- `setup` — public entry, thin orchestrator; dispatches the runway, seeds and works code-present GAP cards, seeds greenfield GAP cards, offers release-init on a documented repo.
+- `harness-bootstrap` — installs/syncs the generic runway (CLAUDE.md, CODING_STANDARDS.md (headings-only), skeleton docs, rules, the core pin, the language-server pins the techstack names); monorepo tier fans rule globs + build pre-flight out per package; adopt mode retires a consumer's superseded fork skills/agents (runtime name-collision map, per-deletion confirm) and backfills skeleton sections added since bootstrap (approval-gated `⊕ new` insert); opt-in, earn-gated scale module adds `docs/parked.md` + `docs/test-queue.md` + `docs/outward/` containers and backlog fact fields for repos whose backlog has outgrown one flat list.
 - `needs-me` — session opener for the work that needs the user: scans open cards / test queue / outward / parked at origin-block grain, cuts what is open into three or four live lenses for one `AskUserQuestion` (free focus slot), recommends ≤ 5 items in the chosen lens with why-you; a prose argument is the focus. Read-only, inline, no script, no agent.
 - `session-close` — session-boundary gate: a finite job this session launched that has not reported back (background agent, job shell, spawned executor) blocks the pick until waited out or stopped; standing items (cron, wakeup, Monitor) get a stop move; done-close clears this session's carry, park-close appends the card-anchored remainder as a `## Progress` block and writes only the rest to the root `SESSION-STATE/` ledger; every closeout move (commit through `/super-bootstrap:commit`, card resolve, prune, merge, log) and each of the commit door's returns runs through one confirm-pick, so the close asks nothing after it, a push among them where the repo has a remote; work the session took on and left undone (a card it logged and left open, a task it promised) asks in that same pick with finish now (the close pauses), park, or leave open. Owns the ledger convention.
 - `session-continue` — mirror of `session-close`: reads the carry ledger, claims the picked carry by rename, follows its pointer into the card's latest block of each type, confirms the next step; no carry → hands off to `needs-me`.
@@ -35,7 +34,7 @@ Plugin-level contributor doc for the `super-bootstrap` plugin. End-user docs liv
 | Shape | Skill name (bare) | Invocation form |
 |---|---|---|
 | Public entry | `setup` | `/super-bootstrap:setup` |
-| Lifecycle / one-shot | `harness-bootstrap`, `resolve-plugins`, `release-init`, `check-docs-consistency` | `/super-bootstrap:<name>` |
+| Lifecycle / one-shot | `harness-bootstrap`, `release-init`, `check-docs-consistency` | `/super-bootstrap:<name>` |
 | High-freq in-flight ops | `commit`, `needs-me`, `session-close`, `session-continue`, `merge`, `autorun`, `help`, `log`, `triage`, `triage-report` | `/super-bootstrap:<name>` |
 
 > The pre-rename entry `/super-bootstrap` no longer resolves — use `/super-bootstrap:setup`.
@@ -57,9 +56,8 @@ A single matching reason on either side decides.
 
 | Skill | Mode | Rationale |
 |---|---|---|
-| `setup` | inline | Orchestrator — owns the user thread + dispatch sequencing across runway / log / curation |
+| `setup` | inline | Orchestrator — owns the user thread + dispatch sequencing across runway / log |
 | `harness-bootstrap` | inline | Phased scaffolding with mid-flow user steering |
-| `resolve-plugins` | inline + dispatch (Haiku, Phase 2.5 only) | 6-pool live queries + user-interactive diff confirm stay inline (gateway owns the thread); Phase 2.5 README-parse→digest split to `agents/plugin-digest.md` — mechanical extraction, Haiku-safe because Phase 3's trust-tier scoring + earn-right gate already judge the digest downstream |
 | `commit` | inline + conditional dispatch (Sonnet — doc-sync scan past the scope ceiling, premise-closure on product-anchor hit) | Gateway holds the diff, session file list, change intent, and session reads → mechanics (classify, message-gen, stage, commit) and a doc-sync judgment at or under the scope ceiling run inline; the cold doc-sync scan dispatches when the enumerated scope is above the ceiling, the per-doc premise judge on its product-anchor gate. The door commits locally and never pushes — a push is `session-close`'s move, by repo shape. After its one-line commit report, control returns to the work in progress or the calling skill's next step |
 | `merge` | inline | Context-aware shape (session transcript decides absorption targets); lower freq doesn't pay for relay either |
 | `autorun` | inline | Gateway orchestrator — owns the user thread, the pick, the sheet. The per-card work IS the spawned `claude -p` sessions; admission and the wall dispositions are gateway judgment against `shared/user-wall.md`, not an Agent dispatch |
@@ -80,7 +78,6 @@ When adding a new skill: update this table. This table is the only home for inli
 
 When skills overlap in concern, one is canonical and others delegate:
 
-- **Plugin curation logic** (source pool list, trust tiers, dedupe, settings.json write) — lives ONLY in `resolve-plugins/SKILL.md`. `/super-bootstrap:setup` invokes it as gated tier-2 curation.
 - **Bootstrap card seeding** (the seed-card bodies, the seeded-once guard, greenfield resolve gate) — lives ONLY in `setup/SKILL.md` + `setup/assets/seed-cards.md`; `harness-bootstrap`'s legacy plan migration seeds from that asset by reference, never a copy. `harness-bootstrap` runs the runway on greenfield directly (no redirect); product content fills at GAP card pickup.
 - **Files-as-contract handoff** — skills communicate via committed docs (`docs/overview.md`, `docs/techstack.md`, `.claude/settings.json`), not in-memory state. Lets each skill run standalone.
 - **Cold-judge grounding discipline** (judge cold / claim-under-test / one-verdict-per-item / coverage line / write boundary) — lives ONLY in `shared/grounding-discipline.md`. The four grounding doors (`agents/triage.md`, `agents/triage-report.md`, `agents/review-intake.md`, `agents/premise-closure.md`) self-read it at dispatch via `${CLAUDE_PLUGIN_ROOT}`; each door MD carries door-native concerns only (entry surface, procedure, verdict vocabulary, output payload, tier).

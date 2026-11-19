@@ -1,6 +1,6 @@
 # Setup seed cards
 
-The GAP cards the entry seeds. The greenfield branch seeds the first three (overview, techstack, tech-curation) when the seed docs are not substantive; the code-present seed step seeds the last two (spec-seeding, marker-sweep) when the repo carries code — an undocumented repo with code takes all five. Each fenced body is written verbatim as `docs/work/{ID}.md`. Fills: `{ID}` — a GAP ID from the log skill's generator (`/super-bootstrap:setup` § Greenfield branch), used verbatim, `{date}` — today. Nothing else varies; the H1 summary after `{ID} — ` is the idempotency-guard key. Each `Problem:` line states the card's precondition, judged at pickup. The two code-present bodies also pin their method — the spec shape and the sweep cap are the pipeline's contract, not the pickup's to choose.
+The GAP cards the entry seeds. The greenfield branch seeds the first two (overview, techstack) when the seed docs are not substantive; the code-present seed step seeds the last two (spec-seeding, marker-sweep) when the repo carries code — an undocumented repo with code takes all four. Each fenced body is written verbatim as `docs/work/{ID}.md`. Fills: `{ID}` — a GAP ID from the log skill's generator (`/super-bootstrap:setup` § Greenfield branch), used verbatim, `{date}` — today. Nothing else varies; the H1 summary after `{ID} — ` is the idempotency-guard key. Each `Problem:` line states the card's precondition, judged at pickup. The two code-present bodies also pin their method — the spec shape and the sweep cap are the pipeline's contract, not the pickup's to choose.
 
 ## overview
 
@@ -20,16 +20,6 @@ The GAP cards the entry seeds. The greenfield branch seeds the first three (over
 **Logged:** {date} · **Source:** /super-bootstrap:setup bootstrap
 **Problem:** `docs/techstack.md` lacks product + architecture context (manifest facts auto-filled where a manifest exists). Blocked on the "Pin down product overview" card.
 **Area:** `docs/techstack.md`
-```
-
-## tech-curation
-
-```markdown
-# {ID} — Run tech curation
-
-**Logged:** {date} · **Source:** /super-bootstrap:setup bootstrap
-**Problem:** Stack-matched tech curation has not run. Re-run `/super-bootstrap:setup` once `docs/overview.md` + `docs/techstack.md` are filled. Blocked on the "Pin down product overview" and "Decide techstack" cards.
-**Area:** `docs/overview.md`, `docs/techstack.md`
 ```
 
 ## spec-seeding

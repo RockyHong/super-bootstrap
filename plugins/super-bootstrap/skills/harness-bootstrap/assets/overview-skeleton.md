@@ -1,10 +1,5 @@
 # Overview
 
-<!-- harness-meta: read by /super-bootstrap:resolve-plugins (tier-2 curation). Keep YAML shape; list values in [...].
-Default [github]; add any of: notion, linear, jira, slack, trello, clickup, other.
-external-tools: [github]
--->
-
 > Living doc. Skeleton sections (Problem / User / Current State) carry their placeholder body verbatim at scaffold and fill at GAP card pickup. Grown sections (Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync — every commit that adds, removes, or reshapes a module triggers a sync proposal, admitted per § Doc Sync. See [`CLAUDE.md` Doc Sync](../CLAUDE.md#doc-sync-non-negotiable).
 
 ## Problem

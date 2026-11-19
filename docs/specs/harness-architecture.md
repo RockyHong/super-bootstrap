@@ -84,7 +84,7 @@ inseparable from it.
 | Dispatch § SDD carve-out — the "chain's executor governs" clause | Dead. The clause is gone; the bullet's commit-door mechanics are harness-agnostic and stand. |
 | § The envelope ambient-laws line (4 skill names) | Referent dead, **discipline live**: three laws stated inline. `dispatching-parallel-agents` carried nothing § Dispatch does not already own. |
 | `docs/specs/superpowers-topology.md` | Dead. The file is gone. |
-| `harness-bootstrap` § Core plugin pin — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. superpowers is pinned by nothing, and neither is any other process harness — the slot is filled by whichever one a repo takes as an ordinary adaptive pick in `resolve-plugins`. |
+| `harness-bootstrap` § Core plugin pin — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. superpowers is pinned by nothing, and neither is any other process harness — the slot is filled by whichever one a repo adds through Claude Code's own plugin install. |
 | The temporal work folder | **Ours**, at `docs/work/`. No process harness owns that slot at a fixed path — artifact skills publish to whatever tracker a repo declares — so there was no slot to defer to. |
 | drain's stage machine (`raw→triage→plan→execute→review`) | **Dead, with its classification.** The stage chain, the intent axis, the venue map and the board renderer are gone; `autorun` (drain's successor) spawns one session per admitted card that runs the whole card to done, admission being the one judgment in `shared/user-wall.md`. |
 | **log / cards / commit / doc-sync / rules** | **Unaffected.** |
@@ -284,15 +284,13 @@ apparatus for.
 
 **Decided — the seeded runway names no harness.** The seeded `CLAUDE.md` and every
 scaffolded doc state disciplines, never skill entries; § The envelope carries no
-install pointer — the `resolve-plugins` skill description names the process-harness case, and
-the rationale lives here, not ambient. Bootstrap seeds the core self-pin and nothing
-else: no seeded prose stands on a foreign harness, which is why taking or dropping one
+install pointer — the rationale lives here, not ambient. Bootstrap pins the core plugin and
+the techstack's language server and seeds no process harness: no seeded prose stands on a foreign harness, which is why taking or dropping one
 costs no doc change.
 
 **Decided — no process harness is paired or pinned (change B, reversed).** super-bootstrap
-seeds one pin, its own. A process harness is an ordinary `/super-bootstrap:resolve-plugins`
-candidate a repo takes or leaves, on separate axes from sb's slots (§2), and no sb door
-routes one. The pairing this repo shipped and then removed on a zero-usage read-out is a
+pins no process harness. A repo adds one through Claude Code's own plugin install, on
+separate axes from sb's slots (§2); no plugin door routes it. The pairing this repo shipped and then removed on a zero-usage read-out is a
 closed fork in [`docs/decisions.md`](../decisions.md).
 
 **Resolved — autorun's anchor.** The unattended lane's ceiling is how many walls the

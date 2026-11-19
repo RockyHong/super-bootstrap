@@ -32,7 +32,6 @@ Bare-form migrations (when literal appears in pipeline-owned files):
 - `/triage` → `/super-bootstrap:triage`
 - `/triage-report` → `/super-bootstrap:triage-report`
 - `/harness-bootstrap` → `/super-bootstrap:harness-bootstrap`
-- `/resolve-plugins` → `/super-bootstrap:resolve-plugins`
 - `/release-init` → `/super-bootstrap:release-init`
 - `/check-docs-consistency` → `/super-bootstrap:check-docs-consistency`
 - `/super-bootstrap` → `/super-bootstrap:setup` — entry renamed; plugin-name == skill-name doubled in the menu
@@ -45,7 +44,6 @@ Legacy `sb-*` prefix migrations:
 - `/sb-help` → `/super-bootstrap:help`
 - `/sb-harness-bootstrap` → `/super-bootstrap:harness-bootstrap`
 - `/sb-super-bootstrap` → `/super-bootstrap:setup` — entry renamed to setup
-- `/sb-resolve-plugins` → `/super-bootstrap:resolve-plugins`
 - `/sb-release-init` → `/super-bootstrap:release-init`
 
 Pre-rename plugin-name migrations:

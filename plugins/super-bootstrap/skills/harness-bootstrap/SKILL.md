@@ -1,6 +1,6 @@
 ---
 name: harness-bootstrap
-description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, CODING_STANDARDS.md (headings-only), skeleton docs (overview, techstack, decisions, terminology, specs/, work/), path-scoped rules, and the core plugin pin; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap:setup; opt-in earn-gated scale module (parked + test-queue + outward containers, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks and backfills skeleton sections added since bootstrap on re-run. Solo dev workflow."
+description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, CODING_STANDARDS.md (headings-only), skeleton docs (overview, techstack, decisions, terminology, specs/, work/), path-scoped rules, the core plugin pin, and the language-server pins a filled techstack names; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; opt-in earn-gated scale module (parked + test-queue + outward containers, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks and backfills skeleton sections added since bootstrap on re-run. Solo dev workflow."
 tags: [harness, scaffold, setup, meta, docs]
 ---
 
@@ -163,7 +163,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 **Pipeline-owned** (subject to drift check):
 - CLAUDE.md sections: Development Workflow, Dispatch, Doc Sync, Coding Principles (code present only — Phase 1 § Code presence), Edit Discipline, Context Hygiene, Finding Triage, Rules, Git Notes, Planning, Monorepo (monorepo tier only — the conditional cross-package build block). Rules and Planning are index sections: drift-checked on their skeleton lines only — the shipped lines, the kept scale-module lines, and the § Rules bullets the runway filled for signal-seeded rule files; the consumer's index lines below them are project-owned (§ Project-owned)
 - `docs/techstack.md` skeleton sections: Runtime, Framework, Key Dependencies, Build & Distribution (**seed-once** — mechanics at § 2b; stale facts route to the Phase 3 advisory, § Fact-staleness signal), Edit Discipline (fixed prose — body drift-checked against the template), Staged-Tree Verify (the § header + its note drift-checked against the template; the command block below the note is consumer-declared, project-owned, never diffed), Packages (monorepo tier only — the § header + column shape; table rows are consumer-grown, project-owned)
-- `docs/overview.md` skeleton sections: Problem, User, Current State (**seed-once** — the body is filled at GAP card pickup, mechanics at § 2b); the `<!-- harness-meta -->` block — row identity `docs/overview.md harness-meta` (a marker block is not a heading — no `§`, the same spelling the fact-fields block takes) — compared **shape only**: marker comment present + `external-tools:` key present → `✓ current`, whatever the list holds (values are consumer-owned — § 2b asset table; the same rule the seed-once sections take at § 2b Per-doc handling)
+- `docs/overview.md` skeleton sections: Problem, User, Current State (**seed-once** — the body is filled at GAP card pickup, mechanics at § 2b)
 - `docs/decisions.md` scope header (the blockquote + `## Closed Forks` heading)
 - `docs/terminology.md` scope header (the H1 + blockquote + example-entry comment, drift-checked against `assets/terminology-skeleton.md`)
 - `CODING_STANDARDS.md` preamble + section headings (code present only; drift checked against `assets/coding-standards-skeleton.md`)
@@ -171,7 +171,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `.claude/rules/index.md` (rule-authoring guide)
 - `.claude/rules/ssot-doc-link.md`, `.claude/rules/dimension-discipline.md` (doc-authoring rules — always placed; drift-checked against `assets/rules-ssot-doc-link-skeleton.md` / `assets/rules-dimension-discipline-skeleton.md` on the whole shipped file minus its `paths:` tail — the skeleton's own `paths:` entries, the rest of the frontmatter and the body; `paths:` entries after the skeleton's last one are consumer-owned, § Project-owned)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
-- `.claude/settings.json` core plugin pin (`enabledPlugins`, `extraKnownMarketplaces`) — drift-checked for presence alone (§ 2a)
+- `.claude/settings.json` core plugin pin and language-server pins (`enabledPlugins`, `extraKnownMarketplaces`) — drift-checked for presence alone (§ 2a; language-server pins § 2b)
 - `.claude/super-bootstrap-runway.json` (runway coverage receipt — not diffed section-by-section; read at Phase 1 § Version-staleness signal, written at § 2c Receipt write; durable, no cleaner)
 - Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `docs/outward/README.md` + `docs/outward/TEMPLATE.md` (whole files, the way `docs/work/README.md` / `docs/work/TEMPLATE.md` are — a retired high-water line drifts to the skeleton's ID-shape text, above), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`)
 
@@ -235,7 +235,7 @@ Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no su
 
 `.claude/rules/` machinery is **always** scaffolded. `index.md` is seeded from `assets/rules-index-skeleton.md`. The two doc-authoring rules the doc-sync gate rests on are **always** placed — copy `assets/rules-ssot-doc-link-skeleton.md` to `.claude/rules/ssot-doc-link.md` and `assets/rules-dimension-discipline-skeleton.md` to `.claude/rules/dimension-discipline.md` if missing (no substitutions). Their `paths:` cover the built-in doc surface only; a repo's declared surface is the consumer's tail to add, checked at Phase 3 § Doc-rule coverage. Signal-seeded rule bodies fill in Phase 2b based on Phase 1 signal detection.
 
-**Core plugin pin (pre-resolve).** A core dep, not an adaptive pick: the skeleton routes every door through `/super-bootstrap:*` and the committed `commit-channel.sh` deny text routes workers to `/super-bootstrap:commit`, so both dangle unless the project pin alone resolves `super-bootstrap` wherever user-scope settings don't apply (fresh clone, second machine). A cloud session is the exception the pin cannot cover — it loads no repo-declared plugin. The pin lives outside the official marketplace, so its `extraKnownMarketplaces` entry is required. Pin first — tier-2 curation layers adaptive picks on top later.
+**Core plugin pin.** The skeleton routes every door through `/super-bootstrap:*` and the committed `commit-channel.sh` deny text routes workers to `/super-bootstrap:commit`, so both dangle unless the project pin alone resolves `super-bootstrap` wherever user-scope settings don't apply (fresh clone, second machine). A cloud session is the exception the pin cannot cover — it loads no repo-declared plugin. The pin lives outside the official marketplace, so its `extraKnownMarketplaces` entry is required.
 
 Ensure `.claude/settings.json` contains:
 
@@ -322,7 +322,7 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 |---|---|---|
 | `assets/claude-md-skeleton.md` | `CLAUDE.md` (project root) | Includes Rules summary section — fill bullets from seeded rule files |
 | `assets/techstack-skeleton.md` | `docs/techstack.md` | Grown sections absorb migrated CLAUDE.md state-dimension content (Architecture Rules: still-binding decisions; Coding Patterns: examples) |
-| `assets/overview-skeleton.md` | `docs/overview.md` | `<!-- harness-meta -->` block at top: seed `external-tools:` as a YAML list defaulting to `[github]`. Read by `/super-bootstrap:resolve-plugins` (tier-2 curation) as the external-tools source. |
+| `assets/overview-skeleton.md` | `docs/overview.md` | Always |
 | `assets/decisions-skeleton.md` | `docs/decisions.md` | Always |
 | `assets/terminology-skeleton.md` | `docs/terminology.md` | Always — term home (entry shape, `_Avoid_` alias list, admission) |
 | `assets/work-readme-skeleton.md` | `docs/work/README.md` | Always — categories, thread contract, ID shape |
@@ -344,6 +344,25 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 - **Exists, current** → mark `✓ current`. **Still show the per-section comparison briefly** (one-line per pipeline-owned section: `[Runtime] ✓ matches`, `[Framework] ✓ matches`, etc.) — asserting "current" without showing the comparison is a gap.
 - **Project-owned content** → never touched, even on drift.
 - **Legacy / unrecognized format** — if existing doc structure doesn't align with template sections (different headings, merged sections, doc was written by an older version of this skill or by hand) → surface as **legacy format detected**, propose: `(a) rewrite to current skeleton format (preserves grown sections), (b) leave as-is and accept template drift, (c) show full template-vs-current diff`. **Do not silently skip drift detection** because section names don't match — that hides real drift.
+
+**Language-server pins (techstack-derived).** Run this once `docs/techstack.md` holds this run's content — after the per-doc handling above has written or checked it. Read its § Runtime and § Framework, and § Packages where the file has one. A language is named when its name in the table's first column appears there as a whole word, case-sensitive (`Java` does not match `JavaScript`, `C` does not match `C#`, `go` is not `Go`), or when § Runtime names a runtime its row lists; a framework name alone names no language. Each named language takes its pin in `.claude/settings.json` `enabledPlugins`, by the core pin's rule (§ 2a): key absent → insert it as `true` (`⊕ new`, resolving `inserted`); key present → skip (`✓ pinned`), whatever its value. The run asks nothing for these pins and removes none; a language with no row takes no pin. A section still on its `{…}` placeholder names no language — a greenfield first run pins none, and the re-run after the techstack fills pins them. These plugins live in the official marketplace, so they add no `extraKnownMarketplaces` entry.
+
+| Language the techstack names | Pin | Language-server binary |
+|---|---|---|
+| C, C++ | `clangd-lsp@claude-plugins-official` | `brew install llvm` (macOS; then add `/opt/homebrew/opt/llvm/bin` to PATH; other platforms: the plugin's README) |
+| C# | `csharp-lsp@claude-plugins-official` | `dotnet tool install --global csharp-ls` |
+| Go | `gopls-lsp@claude-plugins-official` | `go install golang.org/x/tools/gopls@latest` |
+| Java | `jdtls-lsp@claude-plugins-official` | `brew install jdtls` (macOS; other platforms: the plugin's README) |
+| Kotlin | `kotlin-lsp@claude-plugins-official` | `brew install JetBrains/utils/kotlin-lsp` (macOS; other platforms: the plugin's README) |
+| Lua | `lua-lsp@claude-plugins-official` | `brew install lua-language-server` (macOS; other platforms: the plugin's README) |
+| PHP | `php-lsp@claude-plugins-official` | `npm install -g intelephense` |
+| Python | `pyright-lsp@claude-plugins-official` | `npm install -g pyright` |
+| Ruby | `ruby-lsp@claude-plugins-official` | `gem install ruby-lsp` |
+| Rust | `rust-analyzer-lsp@claude-plugins-official` | `rustup component add rust-analyzer` |
+| Swift | `swift-lsp@claude-plugins-official` | SourceKit-LSP ships with the Swift toolchain (Xcode on macOS, swift.org on Linux) — no separate install |
+| TypeScript, JavaScript (Node.js, Deno, Bun) | `typescript-lsp@claude-plugins-official` | `npm install -g typescript-language-server typescript` |
+
+Each pin this run inserts takes its line in the Phase 3 output (§ Phase 3). The pin alone is inert: the plugin must be installed on the machine (`claude plugin install {pin}` where it is not), and the `LSP` tool answers no-server-configured until the binary is on PATH.
 
 **Legacy CLAUDE.md migration (re-run on already-installed repos):**
 
@@ -577,7 +596,7 @@ Otherwise use `/super-bootstrap:commit` to stage:
 - `docs/overview.md` (new, skeleton-section drift or insert)
 - `docs/decisions.md` (new, scope-header drift, post-retirement migration from techstack, or closed-history rows from legacy CLAUDE.md migration)
 - `docs/terminology.md` (new, or scope-header drift)
-- `.claude/settings.json` (core pin seeded at 2a; harness hooks merged at 2a-hooks)
+- `.claude/settings.json` (core pin seeded at 2a; language-server pins at 2b; harness hooks merged at 2a-hooks)
 - `.claude/hooks/commit-channel.sh`, `.claude/hooks/consult-check-{sessionstart,check}.sh` (frozen hook scripts seeded at 2a-hooks — always, default-on)
 - `.gitignore` (when 2a-hooks appended its `.claude/.consult-catalog` line; skip if the line was already present)
 - `.claude/rules/index.md` (always — at minimum machinery seed)
@@ -607,16 +626,18 @@ After committing (or reporting no changes needed), present results based on repo
 **First-run (just scaffolded)** — render the block verbatim, no additions, before § 2c deletes the sync report; each `{If …}` line resolves to its quoted text or drops; the command literals stay untranslated:
 
 ```
-**Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. The core plugin pin (super-bootstrap) sits in `.claude/settings.json` — local sessions only; a cloud session loads no repo-declared plugin, so install it from the cloud environment's Setup script: https://github.com/RockyHong/super-bootstrap#cloud-sessions. Stack-matched skill / MCP / hook picks come when `/super-bootstrap:setup` runs gated tier-2 curation. Everything this run installed is in the scaffold commit — `git show --stat HEAD`.
+**Generic runway installed.** CLAUDE.md drives workflow. Skeleton `docs/techstack.md` and `docs/overview.md` carry detected facts (empty on greenfield) — grown sections fill via doc-sync as features land. The core plugin pin (super-bootstrap) sits in `.claude/settings.json` — local sessions only; a cloud session loads no repo-declared plugin, so install it from the cloud environment's Setup script: https://github.com/RockyHong/super-bootstrap#cloud-sessions. Everything this run installed is in the scaffold commit — `git show --stat HEAD`.
 
 {If product skeletons are empty (greenfield): "`docs/overview.md` / `docs/techstack.md` are empty skeletons — `/super-bootstrap:setup` seeds GAP cards for them and surfaces the resolve gate."}
 
 {If any rule files were seeded: "Path-scoped rules seeded in `.claude/rules/` ({list seeded rules}). They auto-load on file match — full ammo at the decision moment, summary mirrored in CLAUDE.md § Rules. Add more rule files when path-scoped patterns emerge."}
+
+{If this run inserted language-server pins, one line per pin: "`{pin}` pinned — install its language server: `{command}`."}
 ```
 
 **Re-run / sync pass** — assembled per run from the fragments below, not rendered verbatim:
 
-> **Pipeline synced.** {N items updated, M already current.}{If a commit landed: " Its full file list: `git show --stat HEAD`."}{If migration performed: " Migrated {sections moved} from CLAUDE.md to {destinations} — `CLAUDE.md` now {old line count} → {new line count} lines."}{If rule files added: " Rules: +K seeded, summary updated in CLAUDE.md § Rules."}
+> **Pipeline synced.** {N items updated, M already current.}{If a commit landed: " Its full file list: `git show --stat HEAD`."}{If migration performed: " Migrated {sections moved} from CLAUDE.md to {destinations} — `CLAUDE.md` now {old line count} → {new line count} lines."}{If rule files added: " Rules: +K seeded, summary updated in CLAUDE.md § Rules."}{If language-server pins inserted, per pin: " `{pin}` pinned — install its language server: `{command}`."}
 
 **Stale detected facts (re-run, when `.claude/bootstrap-sync-report.md` carries a `facts:` row — written at § 2b from § Fact-staleness signal):**
 
