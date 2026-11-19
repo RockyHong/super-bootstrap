@@ -2,7 +2,8 @@
 
 Test surface for the harness row of [`skills/commit/SKILL.md`](../../plugins/super-bootstrap/skills/commit/SKILL.md) §4,
 the `harness` output class of [`agents/doc-sync-scan.md`](../../plugins/super-bootstrap/agents/doc-sync-scan.md), and the
-§ Doc Sync Write boundary of [`claude-md-skeleton.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md).
+§ Doc Sync Write boundary of [`harness.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/harness.md)
+(the workflow doctrine, placed in a consumer at `.claude/rules/harness.md`; the rounds below ran while the section sat in `claude-md-skeleton.md`).
 A criterion change leaves this repo's own skill narrating the old criterion. The gateway lands that skill edit this round,
 through the audit the harness requires, in one list with the stale docs, and asks once. A served skill still routes to its
 owner. Behavior-shaping prose, so it ships behind the [`skill-authoring`](../../.claude/rules/skill-authoring.md) RED floor.
@@ -14,7 +15,9 @@ owner. Behavior-shaping prose, so it ships behind the [`skill-authoring`](../../
   own skill) and `.claude/skills/clip-cut/SKILL.md` (a `.served` marker in its directory) each restate 5 seconds.
 - `fixture/session/docs/criteria.md` — the session's edit: 10 seconds and a host names it aloud.
 - `make-fixture.sh <dir> <plugin-root>` — builds the repo with plumbing; the root's `claude-md-skeleton.md` becomes the
-  fixture's `CLAUDE.md`, so the consumer's Write boundary is the copy under test.
+  fixture's `CLAUDE.md` and its `harness.md` the fixture's `.claude/rules/harness.md`, so the consumer's Write boundary is
+  the copy under test. A root from before the ownership split ships no `harness.md` and holds § Doc Sync in the skeleton;
+  the builder stops unless exactly one of the two fixture files holds the section.
 - `prompt.txt` — the session record: the change, the file list, the session reads (both skills). The run is a dry stage that
   stops at the door's first doc-sync message.
 - `run.sh <control|arm> <dir>` — one headless walk, then `score.sh`.
@@ -27,7 +30,7 @@ Headless `claude -p --model sonnet --allowedTools Bash,Read,Grep,Glob --setting-
 fixture as cwd, prompt on stdin, the commit skill and the agent body embedded verbatim. Put fixture directories outside this
 repo. The copy under test is this repo's dev copy. The scope is 3 docs, so the door takes its warm lane.
 
-- **Control** — the three files at `5c5c165`, exported beside the fixture.
+- **Control** — the three files at `5c5c165`, exported beside the fixture (a pre-split root: § Doc Sync in `CLAUDE.md`).
 - **Arm** — the working-tree copies.
 
 Assertions:

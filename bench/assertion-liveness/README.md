@@ -1,8 +1,10 @@
 # bench/assertion-liveness — RED for an assertion-liveness clause in the shipped contract
 
-Test surface for the two lines of build contract the shipped skeleton carries —
-[`assets/claude-md-skeleton.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md)
-§ The envelope (Test-first · Verify before claiming). The asset sits under `plugins/*/skills/**`, so
+Test surface for the two lines of build contract the shipped workflow doctrine carries —
+[`assets/harness.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/harness.md)
+§ Development Workflow, The envelope (Test-first · Verify before claiming), placed in a consumer at
+`.claude/rules/harness.md`. The measured rounds in [`FINDINGS.md`](FINDINGS.md) ran while those lines
+sat in `assets/claude-md-skeleton.md`; the text moved whole. The asset sits under `plugins/*/skills/**`, so
 [`.claude/rules/skill-authoring.md`](../../.claude/rules/skill-authoring.md) makes behavior-shaping
 prose there RED-first: the clause `GAP-085` proposed was measured against a control before being
 authored, on the precedent of the `BUG-064` row in
@@ -37,7 +39,8 @@ manifest** (single-package tier), **scale module unarmed** (0 cards, no drain in
 
 | Placed | Source | Contract |
 |---|---|---|
-| `CLAUDE.md` | `assets/claude-md-skeleton.md`, **placeholders filled** | § 2b "Missing → fill placeholders, write" + § Placeholders |
+| `CLAUDE.md` | `assets/claude-md-skeleton.md` (project sections only), **placeholders filled** | § 2b "Missing → fill placeholders, write" + § Placeholders |
+| `.claude/rules/harness.md` | `assets/harness.md`, whole, no substitution | § 2a-hooks "Doctrine file" — the plugin-owned workflow doctrine ([`hooks-ensure-infra.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks-ensure-infra.md), fourth whole-file asset) |
 | `CODING_STANDARDS.md` | `assets/coding-standards-skeleton.md` | SKILL.md:233 — code present, no substitutions |
 | `docs/overview.md` | `assets/overview-skeleton.md` | SKILL.md:525 — Problem / User / Current State left unfilled at install |
 | `docs/techstack.md` | `assets/techstack-skeleton.md`, seed-once sections filled | SKILL.md:524 + § Pipeline-owned; § Framework dropped per the asset's own "drop the section if no framework" |
@@ -47,7 +50,7 @@ manifest** (single-package tier), **scale module unarmed** (0 cards, no drain in
 | `.claude/rules/index.md` | `assets/rules-index-skeleton.md` | SKILL.md:235 — always, machinery |
 | `.claude/hooks/*.sh` ×3 + their `settings.json` entries | `assets/hooks/` | § 2a-hooks — unconditional, frozen copies ([`hooks-ensure-infra.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/hooks-ensure-infra.md)) |
 | `.claude/settings.json` core plugin pin | — | § 2a "Core plugin pin" — core dep, not an adaptive pick |
-| `.claude/super-bootstrap-runway.json` | — | § 2c coverage receipt; durable, no cleaner |
+| `.claude/super-bootstrap-runway.json` | — | § 2c coverage receipt; durable, no cleaner. `covered` holds one whole-file row `.claude/rules/harness.md` and no `CLAUDE.md § …` row; `placed` holds that file's sha256 (bytes with CR removed) beside the three hook scripts' |
 
 **Not placed, and why.** No signal-seeded `.claude/rules/*.md`: the frontend / MV3 / migrations
 signals do not fire, and the tests-dir signal only "flags `rules/tests.md` for body-fill via
@@ -57,19 +60,22 @@ into the control. No `.claude/bootstrap.md` / `.claude/bootstrap-sync-report.md`
 the runway deletes the sync report at run end and converts a legacy plan to cards, so a consumer at
 ordinary work time does not hold them. No scale module, no drain worktree infra (gates above).
 
-**Brace classification.** The skeleton's `{…}` are three different things, and the fill pass treats
-them as three. **True placeholders** are substituted — `{Project Name}` → repo name (SKILL.md:522),
-the Tech Stack one-liner and the `## Commands` block → Phase 1 detection facts (:524).
-**Conditionals** fire or drop per detection — the `{## Coding Principles}` block unbrackets verbatim
-because code is present (:528); the `{## Monorepo …}` block drops on a single-package repo (:527);
-the `{scale module installed …}` label and its `venue-map.md` bullets drop with the module, as do
-the three `{- docs/parked.md …}` Planning lines (:526, :529); the `{example scaffolding …}` label
-and its example bullets drop together because no signal-seeded rule file landed (:529), leaving the
-explanatory paragraph and the unbracketed read-the-rule-file sentence, which are shipped prose.
-**Literal braces** in shipped prose survive — `docs/work/{ID}.md` in § Doc Sync and
-`/super-bootstrap:triage {ID}` in the cluster-routing table. The drop rule fires only on a line that
-is bracketed end to end, which is exactly the conditional/placeholder set; `make-fixture.sh` aborts
-if any such line survives into the placed `CLAUDE.md`.
+**Brace classification.** The `CLAUDE.md` skeleton's `{…}` are two different things, and the fill
+pass treats them as two. **True placeholders** are substituted — `{Project Name}` → repo name, the
+Tech Stack one-liner and the `## Commands` block → Phase 1 detection facts. **Conditionals** fire or
+drop per detection — the `{## Monorepo …}` block drops on a single-package repo; the three
+`{- docs/parked.md …}` Planning lines drop with the scale module; the `{example scaffolding …}` label
+and its example bullets drop together because no signal-seeded rule file landed, leaving the
+explanatory paragraph and the unbracketed read-the-rule-file sentence, which are shipped prose. The
+drop rule fires only on a line that is bracketed end to end. `.claude/rules/harness.md` takes no fill
+pass: it is copied whole, and its **literal braces** — `docs/work/{ID}.md` in § Doc Sync and
+`/super-bootstrap:triage {ID}` in the cluster-routing table — are shipped prose.
+
+**Placement guards.** `make-fixture.sh` aborts when a bracketed line survives into `CLAUDE.md` or
+`.claude/rules/harness.md`; when the placed doctrine file differs from the asset (CR aside); when
+`CLAUDE.md` holds a `## ` heading the asset owns; when the receipt's `covered` holds a `CLAUDE.md § …`
+row or lacks the whole-file row; when either build-contract clause is absent from the doctrine file
+or present in `CLAUDE.md`; and when the suite is not green.
 
 The repo carries a four-test, framework-free Python suite ([`fixture/`](fixture/)) over a block
 decimator. Three tests are scenery. The fourth is the one under test:
@@ -101,9 +107,10 @@ would contaminate the control.
 The arm is the instruction surface, not the settings file. `arm-control.json` is empty — `{}`, not
 `{"hooks": {}}`: the fixture's own `.claude/settings.json` now carries the three runway hooks, and a
 `hooks` key in the `--settings` source is a needless bet on how the two merge. A treatment arm `X`
-adds `arm-X.json` plus `arm-X-claude.md`, which `make-fixture.sh` appends to the
-placed `CLAUDE.md` **after** the placement guards run — the clause text is
-then the only byte that differs between arms, verified by `diff -rq` across two built fixtures.
+adds `arm-X.json` plus `arm-X-harness.md`, which `make-fixture.sh` appends to the
+placed `.claude/rules/harness.md` — the file that holds the contract under test — **after** the
+placement guards run. The clause text is then the only byte that differs between arms, verified by
+`diff -rq` across two built fixtures; the receipt's `placed` hash stays the shipped file's.
 
 ## Protocol
 

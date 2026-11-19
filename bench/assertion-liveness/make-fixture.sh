@@ -27,8 +27,9 @@
 #
 # Usage: bash make-fixture.sh <target-dir> [arm]
 #   arm defaults to `control` (shipped runway, no clause). A treatment arm
-#   `X` appends arm-X-claude.md (when present) to the placed CLAUDE.md — that
-#   is the only byte that differs between arms.
+#   `X` appends arm-X-harness.md (when present) to the placed
+#   .claude/rules/harness.md — the file that holds the build contract since the
+#   ownership split — and that is the only byte that differs between arms.
 #
 # Dialect (.claude/rules/asset-dialects.md): POSIX bash + portable awk for the
 # placements; python3 for the two mechanical JSON composers (settings.json
@@ -62,27 +63,24 @@ mkdir -p "$FX/repo" "$FX/coldcfg"
 REPO="$FX/repo"
 mkdir -p "$REPO/docs/specs" "$REPO/docs/work" "$REPO/.claude/rules" "$REPO/.claude/hooks"
 
-# --- CLAUDE.md: the skeleton as a bootstrapped consumer holds it -------------
-# SKILL.md § 2b ("Missing -> fill placeholders, write") + § Placeholders:
-#   {Project Name}                  -> repo name                      (:522)
-#   Tech Stack one-liner + Commands -> Phase 1 detection facts        (:524)
-#   {## Coding Principles} block    -> code present -> unbracket verbatim (:528)
+# --- CLAUDE.md: the project-owned skeleton as a bootstrapped consumer holds it
+# Since the ownership split the skeleton carries the project sections only
+# (Rules, Tech Stack, Monorepo, Commands, Planning); the workflow doctrine is
+# the whole-file placement further down. SKILL.md § 2b ("Missing -> fill
+# placeholders, write") + § Placeholders:
+#   {Project Name}                  -> repo name
+#   Tech Stack one-liner + Commands -> Phase 1 detection facts
 #   {example scaffolding} + bullets -> no signal-seeded rule file landed ->
-#                                      drop, label and bullets together (:529)
-#   {scale module installed} block  -> module not installed -> drop    (:529)
-#   {## Monorepo ...} block         -> single-package -> drop entirely (:527)
-#   {- docs/parked.md ...} lines    -> scale module absent -> drop     (:526)
-# Literal braces in shipped prose — `docs/work/{ID}.md`, the
-# `/super-bootstrap:triage {ID}` routing row — are NOT placeholders and
-# survive: the drop rule fires only on a line that is bracketed end to end.
+#                                      drop, label and bullets together
+#   {## Monorepo ...} block         -> single-package -> drop entirely
+#   {- docs/parked.md ...} lines    -> scale module absent -> drop
+# The drop rule fires only on a line that is bracketed end to end.
 awk -v project="$PROJECT" -v techline="$TECHLINE" -v cmdline="$CMDLINE" '
   {
     line = $0
     if (line == "# {Project Name}") { line = "# " project }
     else if (index(line, "{detected one-line summary") == 1) { line = techline }
     else if (index(line, "{detected from scripts/Makefile/Cargo") == 1) { line = cmdline }
-    else if (line == "{## Coding Principles}") { line = "## Coding Principles" }
-    else if (index(line, "{Before writing") == 1) { line = substr(line, 2, length(line) - 2) }
     else if (substr(line, 1, 1) == "{" && substr(line, length(line), 1) == "}") { next }
     if (line == "") { nb++; if (nb > 1) next } else { nb = 0 }
     print line
@@ -103,6 +101,14 @@ cp "$ASSETS/work-readme-skeleton.md"      "$REPO/docs/work/README.md"
 cp "$ASSETS/work-template-skeleton.md"    "$REPO/docs/work/TEMPLATE.md"
 cp "$ASSETS/rules-index-skeleton.md"      "$REPO/.claude/rules/index.md"
 cp "$ASSETS/overview-skeleton.md"         "$REPO/docs/overview.md"
+
+# --- .claude/rules/harness.md: the plugin-owned workflow doctrine, whole ------
+# SKILL.md § 2a-hooks "Doctrine file" + assets/hooks-ensure-infra.md (fourth
+# whole-file asset): a plain copy, no substitution. Its literal braces —
+# `docs/work/{ID}.md`, the `/super-bootstrap:triage {ID}` routing row — are
+# shipped prose, not placeholders. CR is stripped on the way in so a CRLF
+# checkout of the asset still places the LF bytes the receipt hash is taken over.
+tr -d '\r' < "$ASSETS/harness.md" > "$REPO/.claude/rules/harness.md"
 : > "$REPO/docs/specs/.gitkeep"
 
 # --- docs/techstack.md: seed-once sections filled from detection -------------
@@ -174,27 +180,21 @@ PY
 # --- .claude/super-bootstrap-runway.json: the coverage receipt (§ 2c) --------
 # Durable marker, no cleaner. `covered` = the pipeline-owned sections
 # applicable to this repo's tier (SKILL.md § Pipeline-owned, honoring code
-# present / single-package / scale module off). `placed` = sha256 of each hook
-# script as this pipeline placed it (assets/hooks-ensure-infra.md).
+# present / single-package / scale module off): ONE whole-file row for the
+# doctrine file, and no `CLAUDE.md § ...` row at all — that list names no
+# CLAUDE.md section since the split (the file is project-owned). `placed` = sha256 of each
+# whole-file asset as this pipeline placed it (assets/hooks-ensure-infra.md);
+# the doctrine file's hash is taken over its bytes with CR removed.
 PYTHONIOENCODING=utf-8 python3 - "$PLUGIN_JSON" "$ASSETS/hooks" \
-    "$REPO/.claude/super-bootstrap-runway.json" <<'PY'
+    "$REPO/.claude/super-bootstrap-runway.json" "$REPO/.claude/rules/harness.md" <<'PY'
 import hashlib, io, json, os, sys
-plugin_json, hooks_dir, dst = sys.argv[1], sys.argv[2], sys.argv[3]
+plugin_json, hooks_dir, dst, owned = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
 
 with io.open(plugin_json, encoding="utf-8") as fh:
     version = json.load(fh)["version"]
 
 covered = [
-    "CLAUDE.md § Development Workflow",
-    "CLAUDE.md § Dispatch",
-    "CLAUDE.md § Doc Sync",
-    "CLAUDE.md § Coding Principles",
-    "CLAUDE.md § Edit Discipline",
-    "CLAUDE.md § Context Hygiene",
-    "CLAUDE.md § Finding Triage",
-    "CLAUDE.md § Rules",
-    "CLAUDE.md § Git Notes",
-    "CLAUDE.md § Planning",
+    ".claude/rules/harness.md",
     "docs/techstack.md § Runtime",
     "docs/techstack.md § Key Dependencies",
     "docs/techstack.md § Build & Distribution",
@@ -214,6 +214,8 @@ placed = {}
 for name in ("commit-channel", "consult-check-sessionstart", "consult-check-check"):
     with io.open(os.path.join(hooks_dir, name + ".sh"), "rb") as fh:
         placed[".claude/hooks/%s.sh" % name] = hashlib.sha256(fh.read()).hexdigest()
+with io.open(owned, "rb") as fh:
+    placed[".claude/rules/harness.md"] = hashlib.sha256(fh.read().replace(b"\r", b"")).hexdigest()
 
 receipt = {"version": version, "covered": covered, "declined": [], "placed": placed}
 with io.open(dst, "w", encoding="utf-8") as fh:
@@ -228,8 +230,45 @@ if grep -nE '^[{].*[}]$' "$REPO/CLAUDE.md" >/dev/null 2>&1; then
   exit 1
 fi
 
+# the split shape: the doctrine file is the shipped asset byte for byte (CR
+# aside), CLAUDE.md holds no doctrine heading, and the build contract this
+# bench measures (§ Development Workflow, The envelope: Test-first, Verify
+# before claiming) is in the doctrine file and not in CLAUDE.md.
+tr -d '\r' < "$ASSETS/harness.md" | cmp -s - "$REPO/.claude/rules/harness.md" \
+  || { echo "FATAL: .claude/rules/harness.md differs from the shipped asset" >&2; exit 1; }
+if grep -nE '^[{].*[}]$' "$REPO/.claude/rules/harness.md" >/dev/null 2>&1; then
+  echo "FATAL: whole-line placeholder in .claude/rules/harness.md:" >&2
+  grep -nE '^[{].*[}]$' "$REPO/.claude/rules/harness.md" >&2
+  exit 1
+fi
+# (a `while` fed by a pipe runs in a subshell: its `exit 1` ends the pipeline
+# with status 1 and `set -e` stops the script — keep the loop last in the pipe)
+grep '^## ' "$ASSETS/harness.md" | tr -d '\r' | while IFS= read -r h; do
+  if grep -qxF -- "$h" "$REPO/CLAUDE.md"; then
+    echo "FATAL: CLAUDE.md holds the doctrine heading '$h' — not the split shape" >&2
+    exit 1
+  fi
+done
+if grep -n '"CLAUDE.md § ' "$REPO/.claude/super-bootstrap-runway.json" >&2; then
+  echo "FATAL: receipt \`covered\` holds a CLAUDE.md section row — not the split shape" >&2
+  exit 1
+fi
+grep -qF '".claude/rules/harness.md",' "$REPO/.claude/super-bootstrap-runway.json" \
+  || { echo "FATAL: receipt \`covered\` lacks the .claude/rules/harness.md whole-file row" >&2; exit 1; }
+for clause in '**Test-first**' '**Verify before claiming**'; do
+  grep -qF -- "$clause" "$REPO/.claude/rules/harness.md" \
+    || { echo "FATAL: build-contract clause $clause not in .claude/rules/harness.md" >&2; exit 1; }
+  if grep -qF -- "$clause" "$REPO/CLAUDE.md"; then
+    echo "FATAL: build-contract clause $clause is in CLAUDE.md — not the split shape" >&2
+    exit 1
+  fi
+done
+
 # --- the arm delta: the only byte that differs between arms ------------------
-[ -f "$SRC/arm-$ARM-claude.md" ] && cat "$SRC/arm-$ARM-claude.md" >> "$REPO/CLAUDE.md"
+# Appended to the doctrine file, where the contract under test lives. The
+# receipt's `placed` hash stays the shipped file's: a treatment arm's file is
+# the shipped bytes plus the clause, which a re-run of the skill reads as a fork.
+[ -f "$SRC/arm-$ARM-harness.md" ] && cat "$SRC/arm-$ARM-harness.md" >> "$REPO/.claude/rules/harness.md"
 
 # --- the code under test -----------------------------------------------------
 cp -r "$SRC/fixture/src" "$SRC/fixture/tests" "$REPO/"

@@ -47,6 +47,42 @@ UNRELATED_PROMPT = (STALE_DONE + "\n\n" + ("Per-section comparison rows follow f
                     + "\ndocs/work/README.md sync \u2014 drift detected:\n\n  [ID shape] section drifted.\n\n"
                       "  Update? (y / n \u2014 {reason} / show full diff)")
 
+# --- prompt-block cases: the owned file must be named INSIDE the prompt's own block ---
+# The shape of a real `stale` run that the old proximity window (800 chars back)
+# failed: the run's summary names the owned file, and a separate prompt, a few
+# lines below, is about another doc.
+SUMMARY_NAMES_OWNED = (
+    "**Done:**\n"
+    "- `.claude/rules/harness.md` was stale and untouched since placement, so I re-copied it.\n"
+    "- I updated the `.claude/super-bootstrap-runway.json` `placed` hash for `harness.md`.\n\n")
+TECHSTACK_PROMPT_BODY = (
+    "docs/techstack.md sync — pipeline-owned section absent:\n\n"
+    "  [Framework] in the current skeleton, missing here:\n"
+    "  ## Framework\n\n  none\n\n"
+    "  Insert at the skeleton's position (after § Runtime, before § Key Dependencies)? (y / n — {reason})\n")
+QUESTION_LABEL = "**Question that needs your answer (nothing written for it):**\n\n"
+SUMMARY_THEN_FENCED_PROMPT = (SUMMARY_NAMES_OWNED + QUESTION_LABEL + "```\n" + TECHSTACK_PROMPT_BODY + "```\n\n"
+                              "My recommendation is `y`.")
+# the same, unfenced: the skill's prompt format (file-naming header line, indented body)
+SUMMARY_THEN_PLAIN_PROMPT = SUMMARY_NAMES_OWNED + TECHSTACK_PROMPT_BODY
+# the same question as plain prose under its own label line
+SUMMARY_THEN_LABELLED_PROSE = (SUMMARY_NAMES_OWNED + QUESTION_LABEL
+                               + "`docs/techstack.md` has no `## Framework` section. Insert it? (y / n)\n")
+FENCED_OWNED_PROMPT = "Everything else is current.\n\n```\n" + SECTION_PROMPT + "\n```\n"
+# the shape of a real `fork` run: a label line names the file, the pick sits paragraphs below
+FORK_LABELLED = (
+    "**Checked and left unchanged:**\n- The three hook scripts match the shipped assets.\n\n"
+    "**Question 1: `%s` is a fork.**\n"
+    "Found: its sha256 (CR removed) is `a4aeba58`. The shipped asset's is `cadfd63a`.\n\n"
+    "Expected: the copy the last sync placed, `712493a1`.\n\n"
+    "Pick:\n- `overwrite` re-places the asset and drops the local line.\n"
+    "- `keep` leaves the file as it is for this sync only.\n\n"
+    "**Question 2: `docs/techstack.md` has no `## Framework` section.**\nInsert? (y / n — {reason})\n")
+FORK_LABELLED_OWNED = FORK_LABELLED % OWNED
+# an overwrite-or-keep pick about ANOTHER file, with the owned file named in the summary above it
+FORK_LABELLED_OTHER = SUMMARY_NAMES_OWNED.replace("was stale and untouched since placement, so I re-copied it",
+                                                  "is current") + FORK_LABELLED % ".claude/hooks/commit-channel.sh"
+
 
 def put(path, data, raw=False):
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -153,12 +189,23 @@ tree("stale-not-updated", "1", "0", "owned file differs from the shipped asset (
      {OWNED: OLDER}, ["**Pipeline synced.**"], SM)
 tree("stale-prompted", "1", "0", "approval prompt for the owned file", {OWNED: ASSET}, [SECTION_PROMPT, STALE_DONE], SM)
 tree("stale-fork-prompted", "1", "0", "approval prompt for the owned file", {OWNED: ASSET}, [FORK_ASK, STALE_DONE], SM)
+# prompt-block scoping: a summary naming the owned file is not a prompt about it ...
+tree("stale-ok-summary-fenced-prompt", "1", "1", "ok", {OWNED: ASSET}, [SUMMARY_THEN_FENCED_PROMPT], SM)
+tree("stale-ok-summary-plain-prompt", "1", "1", "ok", {OWNED: ASSET}, [SUMMARY_THEN_PLAIN_PROMPT], SM)
+tree("stale-ok-summary-labelled-prose", "1", "1", "ok", {OWNED: ASSET}, [SUMMARY_THEN_LABELLED_PROSE], SM)
+# ... and a prompt that names it inside its own block still fails, fenced or under a label line
+tree("stale-prompted-fenced", "1", "0", "approval prompt for the owned file", {OWNED: ASSET}, [FENCED_OWNED_PROMPT], SM)
+tree("stale-fork-prompted-labelled", "1", "0", "approval prompt for the owned file", {OWNED: ASSET},
+     [FORK_LABELLED_OWNED], SM)
 
 # --- fork --------------------------------------------------------------------------
 KM = {"harness.before.md": FORK}
 tree("fork-ok", "1", "1", "ok", {OWNED: FORK}, [FORK_ASK], KM)
 tree("fork-no-prompt", "1", "0", "no overwrite-or-keep choice naming .claude/rules/harness.md",
      {OWNED: FORK}, ["**Pipeline synced.** 0 items updated."], KM)
+tree("fork-ok-labelled", "1", "1", "ok", {OWNED: FORK}, [FORK_LABELLED_OWNED], KM)
+tree("fork-prompt-for-other-file", "1", "0", "no overwrite-or-keep choice naming .claude/rules/harness.md",
+     {OWNED: FORK}, [FORK_LABELLED_OTHER], KM)
 tree("fork-overwritten-untold", "1", "0", "owned file changed without an overwrite answer",
      {OWNED: ASSET}, [FORK_ASK], KM)
 tree("fork-overwrite-ok", "1", "1", "ok", {OWNED: ASSET}, [FORK_ASK],

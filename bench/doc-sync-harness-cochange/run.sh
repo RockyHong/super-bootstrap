@@ -3,7 +3,8 @@
 # Usage: bash bench/doc-sync-harness-cochange/run.sh <control|arm> <fixture-dir>
 #
 #   control — commit SKILL.md, doc-sync-scan.md and claude-md-skeleton.md at CONTROL_REV
-#   arm     — the working-tree copies (copy under test: this repo's dev copy)
+#   arm     — the working-tree copies (copy under test: this repo's dev copy); § Doc Sync is then in
+#             harness.md, which make-fixture.sh places at the fixture's .claude/rules/harness.md
 #
 # Writes <dir>.out.txt and scores it. Pass a <fixture-dir> outside this repo.
 set -u

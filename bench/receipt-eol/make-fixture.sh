@@ -21,8 +21,8 @@ cat > .claude/super-bootstrap-runway.json <<'EOF'
 {
   "version": "5.5.0",
   "covered": [
-    "CLAUDE.md § Doc Sync",
-    "CLAUDE.md § Dispatch",
+    "docs/techstack.md § Runtime",
+    "docs/techstack.md § Edit Discipline",
     ".claude/hooks/commit-channel.sh"
   ],
   "declined": [],

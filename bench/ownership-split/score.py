@@ -67,7 +67,12 @@ PROMPT_PATTERNS = [
     r"\(\s*y\s*/\s*n\b",
     OVERWRITE_KEEP,
 ]
-LOOKBACK, LOOKAHEAD = 800, 200   # chars around a prompt that must name the owned file
+# A prompt is about the owned file when the file is named inside the prompt's
+# own block (prompt_block below), not merely near it: a run's summary a few
+# lines above an unrelated prompt names the file too.
+FENCE_RE = re.compile(r"^\s*(```|~~~)")
+# a label line: a markdown heading, or a line that is one bold run (`**Question 1: ...**`)
+LABEL_RE = re.compile(r"^\s{0,3}(#{1,6}\s+\S|\*\*[^*\n].*\*\*[:.]?\s*$)")
 
 
 def strip_cr(b):
@@ -132,17 +137,83 @@ def asked_texts(evs):
     return out
 
 
+def prompt_block(t, a, b):
+    """The block of text `t` that holds the prompt match t[a:b] -> str.
+
+    Three shapes, read off the match's first line:
+      fenced    inside a ``` / ~~~ fence -> that fence, nothing outside it.
+      indented  the skill's own prompt format, unfenced: an unindented header
+                line (`<file> sync — drift detected:`) over an indented body ->
+                the header line and the indented/blank lines under it.
+      prose     an unindented paragraph -> the paragraph; and, when a label line
+                (heading or whole-line bold) stands above it, the labelled
+                section: that label line down to the next label line. A model
+                that words a multi-paragraph question names the file on the
+                label line (`**Question 1: `<file>` is a fork.**`) and puts the
+                pick paragraphs below it. No label above -> the paragraph alone.
+    A match that ends on a later line than it starts extends the block to that line.
+    """
+    lines = t.split("\n")
+    starts, pos = [], 0
+    for ln in lines:
+        starts.append(pos)
+        pos += len(ln) + 1
+    line_of = lambda off: max(i for i, s in enumerate(starts) if s <= off)
+    fence_of, cur, n_f = [], None, 0          # fence id per line; delimiter lines belong to their fence
+    for ln in lines:
+        if FENCE_RE.match(ln):
+            if cur is None:
+                n_f += 1
+                cur = n_f
+                fence_of.append(cur)
+            else:
+                fence_of.append(cur)
+                cur = None
+        else:
+            fence_of.append(cur)
+    i, j = line_of(a), line_of(max(a, b - 1))
+    blank = lambda k: not lines[k].strip()
+    indented = lambda k: lines[k][:1] in (" ", "\t")
+    last = len(lines) - 1
+    if fence_of[i] is not None:
+        lo = hi = i
+        while lo > 0 and fence_of[lo - 1] == fence_of[i]:
+            lo -= 1
+        while hi < last and fence_of[hi + 1] == fence_of[i]:
+            hi += 1
+    elif indented(i):
+        lo = i
+        while lo > 0 and fence_of[lo] is None and (blank(lo) or indented(lo)):
+            lo -= 1                               # stops ON the unindented header line
+        if fence_of[lo] is not None:              # ... or on a fence above: that is not a header
+            lo += 1
+        hi = i
+        while hi < last and fence_of[hi + 1] is None and (blank(hi + 1) or indented(hi + 1)):
+            hi += 1
+    else:
+        lo = hi = i
+        while lo > 0 and fence_of[lo - 1] is None and not blank(lo - 1):
+            lo -= 1
+        while hi < last and fence_of[hi + 1] is None and not blank(hi + 1):
+            hi += 1
+        is_label = lambda k: fence_of[k] is None and LABEL_RE.match(lines[k])
+        above = [k for k in range(lo, -1, -1) if is_label(k)]
+        if above:
+            lo = above[0]
+            below = [k for k in range(max(hi, lo) + 1, last + 1) if is_label(k)]
+            hi = (below[0] - 1) if below else last
+    hi = max(hi, j)
+    return "\n".join(lines[lo:hi + 1])
+
+
 def prompts_naming_owned(texts, patterns):
-    """Prompt matches whose surrounding text names the owned file -> [snippet]."""
+    """Prompt matches whose own block names the owned file -> [snippet]."""
     hits = []
     for t in texts:
-        prev_end = 0
         spans = sorted(m.span() for p in patterns for m in re.finditer(p, t, re.I | re.S))
         for a, b in spans:
-            ctx = t[max(prev_end, a - LOOKBACK):b + LOOKAHEAD]
-            if "harness.md" in ctx:
+            if "harness.md" in prompt_block(t, a, b):
                 hits.append(" ".join(t[a:b].split())[:60])
-            prev_end = max(prev_end, b)
     return hits
 
 

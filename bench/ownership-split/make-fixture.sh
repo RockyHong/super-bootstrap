@@ -20,8 +20,8 @@
 #
 # Runway (legacy, stale, fork): CALLS ../assertion-liveness/make-fixture.sh and
 # layers on top — one placement logic. That builder follows the shipped
-# skeleton, so its CLAUDE.md shape changes when the split lands; this script
-# therefore forces the shape each walk needs instead of trusting what it gets:
+# assets (the split shape, since the split's placement contract landed); this
+# script still forces the shape each walk needs instead of trusting what it gets:
 #   legacy      CLAUDE.md := legacy/CLAUDE.md (frozen pre-split copy), no owned file,
 #               receipt `covered` := legacy/covered.txt
 #   stale, fork CLAUDE.md := title + project sections only, owned file written here,

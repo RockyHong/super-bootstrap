@@ -128,11 +128,17 @@ One row per walk directory: `walk  valid  pass  reason`. `valid 0` (no stream, n
 errored run, no assistant text, a missing `meta/` file, dev plugin not loaded) is never a pass or a
 fail; its `pass` column reads `-`. A fail's reason joins every failed property with `; `.
 
-- Prompt detection is textual: a match of `PROMPT_PATTERNS` whose surrounding text (800 characters
-  back, 200 forward, not past the previous prompt) names `harness.md`. A report row naming the file
-  that far above an unrelated prompt does not count (`stale-ok-unrelated-prompt` in the selftest);
-  one closer than that would. Read the quoted snippet on the reason line before trusting a
-  `stale` fail on this property alone.
+- Prompt detection is textual: a match of `PROMPT_PATTERNS` whose own **prompt block** names
+  `harness.md` (`prompt_block` in `score.py`). The block is the fence, when the match sits in a
+  fenced block; the unindented header line plus its indented body, when it sits on an indented line
+  (the skill's prompt format, unfenced); otherwise its paragraph, widened to the labelled section —
+  a heading or whole-line-bold line above it, down to the next such line — when one stands above.
+  A summary that names the file a few lines above a prompt about another doc does not count
+  (`stale-ok-summary-fenced-prompt`, `-plain-prompt`, `-labelled-prose` in the selftest; the first is
+  the shape of the real run that the earlier 800-character proximity window failed). Limit: prose
+  with no label line between a summary naming the file and an unrelated plain-paragraph prompt in
+  the same labelled section still reads as a prompt for the file. Read the quoted snippet on the
+  reason line before trusting a `stale` fail on this property alone.
 - `LEGACY_SHAPE_PATTERNS` is a guess at a message not yet written; pin it to the fixed stop message
   when that text lands, and add its exact sentence to `selftest/make-trees.py`.
 

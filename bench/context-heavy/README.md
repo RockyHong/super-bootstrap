@@ -1,8 +1,9 @@
 # bench/context-heavy — RED for token count read as a stop or log trigger
 
-Test surface for the "context heavy" wording: `CLAUDE.md` and
-[`claude-md-skeleton.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md)
-§ Context Hygiene + § Finding Triage, and
+Test surface for the "context heavy" wording: `CLAUDE.md` and the shipped workflow doctrine
+[`harness.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/harness.md)
+§ Context Hygiene + § Finding Triage (the rounds below ran while the shipped copy sat in
+`claude-md-skeleton.md`), and
 [`session-close/SKILL.md`](../../plugins/super-bootstrap/skills/session-close/SKILL.md) § Two terminal shapes.
 Behavior-shaping prose, so a rewording ships behind the
 [`skill-authoring`](../../.claude/rules/skill-authoring.md) RED floor: the new wording is held against
@@ -17,7 +18,9 @@ the wording it replaces on the same fixture.
   bounded. Asks for `ROUTE:` + `WHY:`.
 - `run.sh <control|arm> <a|b|c|d> <fixture-dir> <out-file>` — builds the fixture, embeds the surfaces
   verbatim after the prompt, runs one headless arm, writes its output, prints the fixture's log + status
-  and the score. Exits 3 when `CLAUDE.md` and the skeleton differ in the two sections.
+  and the score. Exits 3 when this repo's root `CLAUDE.md` and the shipped copy differ in the two sections
+  — the shipped copy is `assets/harness.md` for `arm`, and `claude-md-skeleton.md` for `control`, whose
+  commit predates the ownership split — or when the shipped copy holds neither section.
 - `score.sh <a|b|c|d> <out-file>` — the assertion. Exit 0 PASS, 1 FAIL, 2 OTHER.
 
 ## Protocol

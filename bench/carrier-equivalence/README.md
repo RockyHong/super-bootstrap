@@ -1,26 +1,56 @@
 # bench/carrier-equivalence — does the doctrine act the same from any carrier?
 
-Probe for [`DEBT-ymdg`](../../docs/work/DEBT-ymdg.md) (its `## Plan — 2026-11-19`). The doctrine text
-in a consumer's `CLAUDE.md` is byte-identical across arms; only the file that carries it moves. The
-bench measures whether a headless Sonnet run still routes a card by the doctrine (names a cluster /
-the bug route) when the plugin-owned sections arrive via `.claude/rules/`, via an `@` import, or
-not at all.
+Probe for [`DEBT-ymdg`](../../docs/work/DEBT-ymdg.md) (its `## Plan — 2026-11-19`). The doctrine is
+the shipped asset
+[`assets/harness.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/harness.md); its
+text is the same in every arm, and only the file that carries it moves. The bench measures whether a
+headless Sonnet run still routes a card by the doctrine (names a cluster / the bug route) when the
+doctrine arrives via `.claude/rules/`, inside `CLAUDE.md`, via an `@` import, or not at all.
+
+The recorded round (20 runs, on the card's Progress) ran before the ownership split: its fixtures cut
+the doctrine sections out of the then-whole `CLAUDE.md` skeleton. The arms keep their meaning; their
+source is now the asset.
 
 ## Arms
 
 All arms start from the consumer-shaped runway that
 [`../assertion-liveness/make-fixture.sh`](../assertion-liveness/make-fixture.sh) places (called, not
-copied), plus a seeded `docs/work/BUG-k3x9.md` and `cart.py` (`cart_total([])` returns 1).
-"Plugin-owned" = every `## ` section of the placed `CLAUDE.md` except `Tech Stack`, `Commands`,
-`Rules (auto-load on file match)`, `Planning` (and the H1 title). `make-fixture.sh` prints the split
-it applied and asserts byte equality for `rules` / `import`.
+copied) — the split shape: `CLAUDE.md` with the H1, one pointer line naming
+`.claude/rules/harness.md`, and the project sections (`Rules (auto-load on file match)`,
+`Tech Stack`, `Commands`, `Planning`); the asset at `.claude/rules/harness.md` — plus a seeded
+`docs/work/BUG-k3x9.md` and `cart.py` (`cart_total([])` returns 1). The **doctrine body** is the
+asset from its first `## ` line to its end; the two lines above it (the H1 and the "plugin-owned,
+re-placed whole" line) describe the rules-file placement and travel only with the `rules` arm.
 
-| Arm | Where the plugin-owned sections sit |
-|---|---|
-| `claudemd` | the placed `CLAUDE.md`, whole |
-| `rules` | `.claude/rules/harness.md`, no frontmatter; `CLAUDE.md` keeps title + project sections |
-| `import` | `.claude/harness.md`, pulled in by an `@.claude/harness.md` line under the title |
-| `none` | removed, placed nowhere — the control proving the score can miss |
+| Arm | Where the doctrine sits | `CLAUDE.md` under its H1 |
+|---|---|---|
+| `rules` | `.claude/rules/harness.md` — the shipped placement, untouched; no frontmatter | the pointer line, as shipped |
+| `claudemd` | folded into `CLAUDE.md`: the doctrine body, then the project sections; no rules file | pointer line dropped |
+| `import` | `.claude/harness.md` holds the doctrine body; no rules file | pointer line replaced by an `@.claude/harness.md` line |
+| `none` | nowhere — no rules file, no import; the control proving the score can miss | pointer line dropped |
+
+**What differs between arms, exactly.** `make-fixture.sh` asserts each line below and writes the
+result to `<outdir>/split.txt`.
+
+- The carrier file: one of `.claude/rules/harness.md`, `CLAUDE.md`, `.claude/harness.md`, or none.
+- The asset's two preamble lines: present in `rules` only.
+- The line under the `CLAUDE.md` H1: the pointer line (`rules`), the import line (`import`), nothing
+  (`claudemd`, `none`).
+- Link targets inside the doctrine body. The asset writes its six relative link targets for
+  `.claude/rules/`; a moved body has each one re-based for its carrier's directory. `claudemd`:
+  `../../docs/…` → `docs/…` (five) and `dimension-discipline.md` →
+  `.claude/rules/dimension-discipline.md`. `import`: `../../docs/…` → `../docs/…` (five) and
+  `dimension-discipline.md` → `rules/dimension-discipline.md`. With the targets re-based back, the
+  moved body is byte-identical to the asset body.
+- Nothing else. The project sections of `CLAUDE.md` are byte-identical in all four arms. The rest of
+  the runway is constant too, and still names `.claude/rules/harness.md` in every arm: the receipt
+  (its `covered` row and `placed` hash) and the placed skeletons that name that file
+  (`CODING_STANDARDS.md`, `.claude/rules/index.md`, `docs/decisions.md`, `docs/overview.md`,
+  `docs/techstack.md`, `docs/work/README.md`). In
+  `claudemd`, `import` and `none` those names point at a file the arm does not hold.
+
+The `rules` arm is the shipped asset as a consumer gets it. It differs from the rules file the
+recorded round measured by the link re-base, the pointer line and the `Coding Principles` wording.
 
 ## Contexts
 
