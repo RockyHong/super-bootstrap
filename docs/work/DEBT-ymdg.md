@@ -253,3 +253,11 @@ One headless walk ran — the `v2.22.0` variant, two turns, sonnet — and the m
 ## Amendment — 2026-11-19 · gateway session, correcting the block above
 
 "The author ruled the rest of the walks unearned" is wrong as written. The author asked what the walks earn and delegated the call ("你context比我多，做到預期的形狀release publish"); skipping the control round, the other four variants, the `doc-sync-scan.md` RED and the `rules`-arm round was the gateway's pick under that delegation. The author ran the one walk by hand. The reasoning in that bullet is the gateway's.
+
+## Progress — 2026-11-19 · side cards closed, awk check partial
+
+The two findings this card's build left open are fixed and their cards resolved: the § 2c example row (`7b6507b`) and the fresh-install / re-run criterion, now Phase 1's state alone (`a9ef724`, RED in `bench/fresh-rerun-criterion/`). Next step is unchanged: the author migrates the fleet's repos.
+
+- `line-coverage.sh`: `tests/line-coverage.test.sh` passes 23 of 23 with `awk` shimmed to `gawk --posix` and to `gawk --traditional`. mawk and one-true-awk themselves are still unrun — this device holds gawk only, and its one WSL distro is `docker-desktop`; a container run needs Docker Desktop started, which is the author's call.
+- The transitional "`CLAUDE.md` in a repo not yet split" half of the skills' pointers waits on the fleet migration. Merging `setup` into `harness-bootstrap` waits on the same: the first v7 migrations run through that entry.
+- Still the author's: the rename; the spend for the cuttable-lines ablation bench.
