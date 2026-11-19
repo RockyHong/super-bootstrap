@@ -77,12 +77,13 @@ harness line already states stays on that line.
 **Taste-coupling layers.** Two authoring layers, opposite latitude on wiring the
 author's served `.claude/guidelines/`:
 
-- **Dogfood harness** — this repo's own harness (`.claude/rules/` here; root
+- **Dogfood harness** — this repo's own harness (`.claude/rules/` here, except `harness.md`; root
   `CLAUDE.md` via its always-on brief). MAY taste-couple: this repo's maintainer
   authors both the served guidelines upstream and this dogfood harness, so
   referencing them is sound.
 - **Shipped skeletons** — `plugins/*/skills/*/assets/**`, seeded into downstream
-  repos. MUST be self-contained: downstream ≠ author, so no wire to
+  repos, and the copy one places here whole (`.claude/rules/harness.md`, the
+  workflow doctrine). MUST be self-contained: downstream ≠ author, so no wire to
   `.claude/guidelines/` and no reference to a plugin-internal path a consumer
   repo lacks (e.g. `skills/needs-me`). Every skeleton line must satisfy the
   plugin-only-repo test § Finding lanes states above.
@@ -91,22 +92,27 @@ author's served `.claude/guidelines/`:
 lanes, opposite direction, one closure rule. A `harness-bootstrap` re-run verifies
 both lanes and catches up what a commit missed.
 
-- **Prose lane — dogfood ahead.** Harness prose authored here (`CLAUDE.md`
-  sections, the `docs/` surfaces in `paths:` above) seeds its shipped
-  skeleton (`plugins/*/skills/*/assets/**`, e.g.
-  `harness-bootstrap/assets/claude-md-skeleton.md`). Editing such a section pulls
-  the skeleton counterpart into the edit's propagation closure. Look it up live —
-  grep the skeleton for the same section heading; no static map. Counterpart
-  exists → propagate the change, stripped of dogfood-only references (per
+- **Prose lane — dogfood ahead.** Project prose authored here (the `docs/`
+  surfaces in `paths:` above; root `CLAUDE.md`'s project sections ↔
+  `harness-bootstrap/assets/claude-md-skeleton.md`) seeds its shipped skeleton
+  (`plugins/*/skills/*/assets/**`). Editing such a section pulls the skeleton
+  counterpart into the edit's propagation closure. Look it up live — grep the
+  skeleton for the same section heading; no static map. Counterpart exists →
+  propagate the change, stripped of dogfood-only references (per
   self-containment above); no counterpart, or the change is genuinely
-  dogfood-specific → state so and the skeleton stays.
-- **Asset lane — asset ahead.** A frozen asset (`assets/hooks/*` script +
-  `.hook.json` snippet, `coding-standards-skeleton.md` preamble, rule / scale
-  skeleton bodies, autorun templates) is authored in the plugin source; its
-  dogfood copy (`.claude/hooks/*`, the merged `.claude/settings.json` entry, root
-  `CODING_STANDARDS.md` shipped body, `.claude/templates/*`) is a placed
-  derivative. Editing the asset pulls that copy into the closure — refresh it
-  byte-identical (deep-equal for a snippet; a placed doc rule byte-identical
-  outside its consumer `paths:` tail) so the next re-run reads it `✓ current`.
-  Look it up live — grep the shipped assets for the matching destination; no
-  single static map.
+  dogfood-specific → state so and the skeleton stays. Root `CLAUDE.md` § This
+  repo's additions to the harness doctrine is this repo's own whole — it has no
+  shipped counterpart.
+- **Asset lane — asset ahead.** A frozen asset (the workflow doctrine
+  `harness-bootstrap/assets/harness.md`, `assets/hooks/*` script + `.hook.json`
+  snippet, `coding-standards-skeleton.md` preamble, rule / scale skeleton
+  bodies, autorun templates) is authored in the plugin source; its dogfood copy
+  (`.claude/rules/harness.md`, `.claude/hooks/*`, the merged
+  `.claude/settings.json` entry, root `CODING_STANDARDS.md` shipped body,
+  `.claude/templates/*`) is a placed derivative. Editing the asset pulls that
+  copy into the closure — refresh it byte-identical (the doctrine file whole;
+  deep-equal for a snippet; a placed doc rule byte-identical outside its
+  consumer `paths:` tail) so the next re-run reads it `✓ current`. A stale
+  doctrine line is fixed in the asset and re-placed; a line this repo alone
+  needs goes to root `CLAUDE.md`'s additions section. Look it up live — grep
+  the shipped assets for the matching destination; no single static map.

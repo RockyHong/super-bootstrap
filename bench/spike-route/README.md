@@ -1,6 +1,6 @@
 # bench/spike-route — RED for the spike route row
 
-Test surface for the Cluster routing row on iterative or spike work in [`CLAUDE.md`](../../CLAUDE.md#cluster-routing)
+Test surface for the Cluster routing row on iterative or spike work in [`.claude/rules/harness.md`](../../.claude/rules/harness.md#cluster-routing)
 and its shipped counterpart, [`claude-md-skeleton.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md):
 branch out, commit in flow, merge when settled. Does a request to try and tune variants by feel branch out
 before the first edit? Behavior-shaping prose, so it ships behind a micro-test.
@@ -19,7 +19,7 @@ Runs are headless, one fresh fixture per run, with the fixture as cwd and the pr
 The Bash tool's own description stays in both arms, so any tendency it carries sits in the control's reading too.
 
 - **Control** — `CLAUDE.md` § The envelope and § Cluster routing at `bb069c4`.
-- **Arm** — the same sections of the working-tree `CLAUDE.md`.
+- **Arm** — the same sections of the working-tree `.claude/rules/harness.md`.
 
 Assertions:
 

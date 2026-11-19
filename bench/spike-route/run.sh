@@ -15,7 +15,7 @@ repo="$(cd "$here/../.." && pwd)"
 CONTROL_REV=bb069c4
 case "$mode" in
   control) text="$(git -C "$repo" show "$CONTROL_REV:CLAUDE.md")" ;;
-  arm)     text="$(cat "$repo/CLAUDE.md")" ;;
+  arm)     text="$(cat "$repo/.claude/rules/harness.md")" ;;
   *) echo "unknown mode: $mode" >&2; exit 2 ;;
 esac
 excerpt="$(printf '%s\n' "$text" | tr -d '\r' | awk '/^### The envelope/{on=1} /^### Framing/{on=0} on')"

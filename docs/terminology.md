@@ -22,21 +22,21 @@ _Avoid_: run, scaled recipe
 **Card**: One open unit of work — a `BUG`, `DEBT` or `GAP` file at `docs/work/{ID}.md`, holding one append-only thread, deleted on resolve. It is the grounding artifact and the anchor of its change ([`docs/work/`](work/README.md)).
 _Avoid_: backlog row
 
-**Envelope**: The fixed sequence every card runs — ground → route → implement → verify → doc-sync → commit — with only the phases the card's shape needs ([CLAUDE.md § The envelope](../CLAUDE.md#the-envelope)).
+**Envelope**: The fixed sequence every card runs — ground → route → implement → verify → doc-sync → commit — with only the phases the card's shape needs ([.claude/rules/harness.md § The envelope](../.claude/rules/harness.md#the-envelope)).
 
-**Cluster**: One of the eight card shapes (bug, fuzzy feature, design-intact multi-step, refactor, config tweak, docs, harness edit, triage) that sets a card's route ([CLAUDE.md § Cluster routing](../CLAUDE.md#cluster-routing)).
+**Cluster**: One of the eight card shapes (bug, fuzzy feature, design-intact multi-step, refactor, config tweak, docs, harness edit, triage) that sets a card's route ([.claude/rules/harness.md § Cluster routing](../.claude/rules/harness.md#cluster-routing)).
 
 **Verdict**: The `## Verdict` block that triage appends to a card — `auto-fix` with fix-shape tags, or `surface` when the user is needed. It is the context scope implement runs on ([`triage`](../plugins/super-bootstrap/skills/triage/SKILL.md)).
 
-**Gateway**: The main session that owns the user thread. It routes, sequences and integrates dispatched work, and it holds only reads and bounded live tweaks itself ([CLAUDE.md § Dispatch](../CLAUDE.md#dispatch--who-holds-each-phase)).
+**Gateway**: The main session that owns the user thread. It routes, sequences and integrates dispatched work, and it holds only reads and bounded live tweaks itself ([.claude/rules/harness.md § Dispatch](../.claude/rules/harness.md#dispatch--who-holds-each-phase)).
 
 **Door**: A bundled skill or agent that is the one named entry for its move, such as the capture front door (`log`), the commit door or a grounding door. Work that needs the move passes through it.
 
 **Commit door**: `/super-bootstrap:commit` — the one route by which a session's changes land. It is session-isolated, judges doc-sync warm-inline at or under its scope ceiling and through the cold `doc-sync-scan` above it, and commits locally without pushing ([`commit`](../plugins/super-bootstrap/skills/commit/SKILL.md)).
 
-**Propagation closure**: An edit plus every truth it must keep in sync. Its size, not the diff size, decides whether work is dispatched or inlined ([CLAUDE.md § Dispatch](../CLAUDE.md#dispatch--who-holds-each-phase)).
+**Propagation closure**: An edit plus every truth it must keep in sync. Its size, not the diff size, decides whether work is dispatched or inlined ([.claude/rules/harness.md § Dispatch](../.claude/rules/harness.md#dispatch--who-holds-each-phase)).
 
-**Doc surface**: The set of narrative docs that doc-sync keeps true — `docs/`, the root README, plugin READMEs, any manifest description field the behavior changes, and the markdown files a repo declares in `.claude/doc-surface` ([CLAUDE.md § Doc Sync](../CLAUDE.md#doc-sync-non-negotiable)).
+**Doc surface**: The set of narrative docs that doc-sync keeps true — `docs/`, the root README, plugin READMEs, any manifest description field the behavior changes, and the markdown files a repo declares in `.claude/doc-surface` ([.claude/rules/harness.md § Doc Sync](../.claude/rules/harness.md#doc-sync-non-negotiable)).
 
 **Scan scope**: The docs that the commit door's mechanical lanes enumerate for one diff — citers, grep hits, link targets and the changed docs themselves — that the doc-sync judgment reads ([`commit`](../plugins/super-bootstrap/skills/commit/SKILL.md)).
 

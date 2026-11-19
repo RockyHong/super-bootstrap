@@ -95,7 +95,7 @@ sizing ceremony to shape, and that is harness-independent: clusters 5 and 6 say 
 ceremony", 7 routes harness edits, 8 routes triage to our own door, and 1–3 name the
 disciplines a process harness would otherwise supply. Deleting rows rather than restating
 them would have dropped verified-load-bearing prose — [`docs/decisions.md`](../decisions.md)
-records a pressure test where the [route line](../../CLAUDE.md#cluster-routing) alone sent a
+records a pressure test where the [route line](../../.claude/rules/harness.md#cluster-routing) alone sent a
 runtime-symptom bug to the triage lane in 2/2 control runs.
 
 ## 4. The seam: runtime-orthogonal by construction
@@ -189,11 +189,12 @@ process harness is swapped or removed.
 
 ### The fences stay ambient — the cut is a rename, not a relocation
 
-De-routing removes routing, not discipline. Four laws named in `CLAUDE.md` § The envelope
+De-routing removes routing, not discipline. Four laws named in § The envelope
 (`test-driven-development`, `verification-before-completion`, `receiving-code-review`,
 `dispatching-parallel-agents`) are superpowers skill names (the pre-cut state, superseded by
-the shipped [§ The envelope](../../CLAUDE.md#the-envelope), which binds and names three
-declared disciplines), and § Coding Principles carries a fifth fence — the coding standard.
+the shipped [§ The envelope](../../.claude/rules/harness.md#the-envelope) of the workflow
+doctrine file, which binds and names three declared disciplines), and the same file's
+§ Coding Principles carries a fifth fence — the coding standard.
 Where they land is settled by the rules layer's own firing mechanism, not by preference.
 
 **A path-scoped rule fires on file *read*, not on intent** — stated in the shipped
@@ -213,9 +214,16 @@ So **the path-scoped-rule premise is mechanically unavailable**: no `paths:` glo
 [`docs/decisions.md`](../decisions.md) — a path rule matches paths *under* a root, never a
 moment.
 
-**Ambient prose is this repo's proven carrier.** The retired-hook closure records it: the
-entry-discipline's home is `CLAUDE.md`, "present every turn incl. answer-from-memory + every
-dispatched subagent", and 10 control agents were shaped by it with no hook. A run of closed
+**Ambient prose is this repo's proven carrier.** The fences and the entry discipline load
+every turn from the workflow doctrine file,
+[`.claude/rules/harness.md`](../../.claude/rules/harness.md). That file carries no `paths:`
+frontmatter, so it is not a path-scoped rule: it loads eagerly at session start, reloads
+after compaction and reaches every dispatched subagent. The retired-hook closure records the
+carrier class on ambient `CLAUDE.md` prose — "present every turn incl. answer-from-memory +
+every dispatched subagent" — where 10 control agents were shaped by it with no hook. The
+[carrier-equivalence bench](../../bench/carrier-equivalence/README.md) measures the same
+doctrine text shaping a card pickup identically from `CLAUDE.md`, the eager rules file and an
+`@path` import, in the main session, a subagent and after compaction. A run of closed
 forks additionally rejects new rule files that duplicate ambient prose absent a failing
 pressure-test, and [`.claude/rules/skill-authoring.md`](../../.claude/rules/skill-authoring.md)
 requires RED-first for behavior-shaping prose. Shipping a rule here would be that rejected
@@ -224,7 +232,7 @@ shape with no failing test behind it.
 **Shipped shape.** The ambient-laws line carries three disciplines **the repo declares**, one
 line each, no foreign-harness referent — test-first, verify-before-claiming,
 review-received-not-absorbed. The fourth (`dispatching-parallel-agents`) is cut outright,
-because [§ Dispatch](../../CLAUDE.md#dispatch--who-holds-each-phase) is its single home (VII).
+because [§ Dispatch](../../.claude/rules/harness.md#dispatch--who-holds-each-phase) is its single home (VII).
 The rejected rules-layer direction is recorded in [`docs/decisions.md`](../decisions.md) so it
 is not re-proposed.
 
@@ -247,11 +255,12 @@ into `CODING_STANDARDS.md` never binds the file itself.
 
 **Shipped:** the ambient slot keeps its fire moment ("before writing, reviewing, or
 refactoring code") and names `CODING_STANDARDS.md` as the standard — no pinned default
-behind it. `harness-bootstrap` scaffolds the file headings-only, so a concern no section
-declares is left to default judgment. The ambient line is the guaranteed reader that
-carries the file to every code touch. On a docs-only repo — no manifest, no source file — neither
-the slot nor the file is scaffolded: a code touch that never comes needs no reader; both raise
-`⊕ new` when code arrives ([Phase 1 § Code presence](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md)).
+behind it. The line ships in the workflow doctrine file on every repo and reads
+`CODING_STANDARDS.md` where the repo holds one, so it is the guaranteed reader that carries
+the file to every code touch. `harness-bootstrap` scaffolds the file headings-only, so a
+concern no section declares is left to default judgment. Only the file waits for code: a
+docs-only repo — no manifest, no source file — takes none, and the file raises `⊕ new` when
+code arrives ([Phase 1 § Code presence](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md)).
 
 The slot routes three ways, so a convention has one home: binding with no clean file glob →
 `CODING_STANDARDS.md`, hand-recorded when a review or commit settles it (the file is outside
@@ -260,7 +269,7 @@ how the code is written, observed rather than mandated →
 [`docs/techstack.md` § Coding Patterns](../techstack.md#coding-patterns), reference read on
 demand, never a standard.
 
-Dispatch doctrine came through intact: of CLAUDE.md § Dispatch's bullets, only the
+Dispatch doctrine came through intact: of the doctrine's § Dispatch bullets, only the
 "build inside a superpowers chain → that chain's executor governs" clause was coupled, and
 it is cut. The rest — closure-judged inline-vs-dispatch, per-phase build dispatch,
 transcription is not a build, review findings gated through `review-intake`, parallel within
@@ -274,7 +283,7 @@ harness. This does not depend on which harness wins; it follows from §3's disso
 superpowers may stay installed — it simply stops being routed.
 
 *De-routing rests on the dissolve test alone, not on a measurement.* The de-routed state
-is not a bare run — CLAUDE.md minus its routing sections, ~1.6k tokens of skill
+is not a bare run — the workflow doctrine minus its routing sections, `CLAUDE.md`, ~1.6k tokens of skill
 descriptions, the path-scoped rules, and the log / card / doc-sync / commit doors all
 remain. Removing the routing layer gives a clean reading of **that layer's** cost and
 nothing wider; it does not test whether the harness as a whole helps or hurts. Most of
@@ -282,9 +291,11 @@ what such a test would report is static arithmetic anyway (ambient token count, 
 cost); the part that is not — omission rate — needs controlled runs this repo has no
 apparatus for.
 
-**Decided — the seeded runway names no harness.** The seeded `CLAUDE.md` and every
-scaffolded doc state disciplines, never skill entries; § The envelope carries no
-install pointer — the rationale lives here, not ambient. Bootstrap pins the core plugin and
+**Decided — the seeded runway names no harness.** The placed workflow doctrine
+([`assets/harness.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/harness.md),
+which carries the routing table into every bootstrapped repo), the seeded `CLAUDE.md` and
+every scaffolded doc state disciplines, never skill entries; the doctrine's § The envelope
+carries no install pointer — the rationale lives here, not ambient. Bootstrap pins the core plugin and
 the techstack's language server and seeds no process harness: no seeded prose stands on a foreign harness, which is why taking or dropping one
 costs no doc change.
 
@@ -363,20 +374,36 @@ references.
 
 ## 8. Downstream migration — what adopt mode does and does not cover
 
-`harness-bootstrap` § Phase 2 applies a per-artifact rule: missing → write; matches
-template → skip; **drifted → show diff, approve per change, write**; pipeline-owned
-section absent → `⊕ new`, approve, insert; project-owned → never touch; an artifact
-placed for the first time or deleted → a `registration:` row naming the consumer surfaces
-that enumerate it, edited in the same commit ([§ Registration rule](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md)). Its CLAUDE.md
-coverage is **keyed to a named section list** (Development
-Workflow, Dispatch, Doc Sync, Coding Principles, Edit Discipline, Context Hygiene,
-Finding Triage, Rules, Git Notes, Planning).
+`harness-bootstrap` reads a repo's shape off the files present — fresh, split or legacy,
+never off a version ([Phase 1 § Existing CLAUDE.md](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md)) —
+and syncs each artifact by its ownership class:
+
+- **The workflow doctrine is plugin-owned whole.** `.claude/rules/harness.md` is re-placed
+  from the shipped asset as one file: current → no write; stale (the placed bytes equal the
+  receipt's `placed` record and the asset differs) → silent copy; hand-edited → one
+  overwrite-or-keep prompt. Between re-runs a plugin-owned SessionStart hook
+  ([`runway-drift.sh`](../../plugins/super-bootstrap/hooks/runway-drift.sh)) advises when the
+  placed file, or a placed hook script, differs in content from the shipped asset.
+- **`CLAUDE.md` is project-owned whole.** It is seeded once from the skeleton and never
+  drift-diffed; a re-run only appends registration lines to its § Rules / § Planning.
+- **Mixed-ownership docs keep the per-section lane** — techstack, overview, decisions,
+  terminology, the work README and template, the doc rules. § Phase 2's per-artifact rule
+  applies: missing → write; matches template → skip; **drifted → show diff, approve per
+  change, write**; pipeline-owned section absent → `⊕ new`, approve, insert; project-owned →
+  never touch; an artifact placed for the first time or deleted → a `registration:` row
+  naming the consumer surfaces that enumerate it, edited in the same commit
+  ([§ Registration rule](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md)).
+  The drift check is produce-then-judge: one enumerated row per pipeline-owned section
+  before any verdict.
 
 | Migration shape | Covered? | Why |
 | --- | --- | --- |
-| Content removed **within** a retained section | **Yes** | Section stays on the owned list; drift check fires and diffs it |
-| A section **added** to the skeleton after a consumer bootstrapped | **Yes** | The walk is skeleton-driven — the new section gets a `⊕ new` row; Block 2 approval-gates the insert |
-| A whole section **dropped** from the skeleton | **No** | The walk is skeleton-driven — a section no longer on the owned list is never visited, so it orphans in consumer repos |
+| Doctrine change of any shape — content changed within a section, a section added, a section dropped — in a **split** repo | **Yes** | The doctrine file is re-placed whole, so no section list is walked and no dropped section orphans |
+| Doctrine change of any shape in a **legacy** repo (two or more doctrine headings still in `CLAUDE.md`, no `.claude/rules/harness.md`) | **No** | The run stops with zero writes and names the hand split; no door moves the sections out of `CLAUDE.md` |
+| A change to the `CLAUDE.md` skeleton | **Fresh bootstraps only** | The file is project-owned whole — seeded once, never diffed |
+| Content changed **within** a retained section of a mixed-ownership doc | **Yes** | Section stays on the owned list; drift check fires and diffs it |
+| A section **added** to a mixed-ownership skeleton after a consumer bootstrapped | **Yes** | The walk is skeleton-driven — the new section gets a `⊕ new` row; Block 2 approval-gates the insert |
+| A whole section **dropped** from a mixed-ownership skeleton | **No** | The walk is skeleton-driven — a section no longer on the owned list is never visited, so it orphans in consumer repos |
 | A scaffolded **folder** retired | **No** | Phase 2a states folders have only two states, missing or present ("create if missing, skip if present") — there is no removal path |
 
 **The skeleton cut landed inside covered shapes.** No section was dropped, so nothing

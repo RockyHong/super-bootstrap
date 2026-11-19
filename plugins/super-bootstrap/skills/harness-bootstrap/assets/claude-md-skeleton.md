@@ -4,7 +4,7 @@ Workflow doctrine — pipeline, dispatch, doc sync, git — loads from [`.claude
 
 ## Rules (auto-load on file match)
 
-`.claude/rules/*.md` files attach to file reads via `paths:` frontmatter — full-body rule fires at the decision moment, zero ambient cost when irrelevant.
+`.claude/rules/*.md` files attach to file reads via `paths:` frontmatter — full-body rule fires at the decision moment, zero ambient cost when irrelevant (`harness.md` aside: no frontmatter, loaded every session).
 
 - **`dimension-discipline.md`** — fires on `docs/**/*.md`, `/README.md` (root), `plugins/*/README.md` (plus any `paths:` entries the repo appends)
   • Before editing a prose doc, classify what it owns: state (overwrite in place) vs history (append-only, git's job).

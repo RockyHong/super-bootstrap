@@ -1,6 +1,6 @@
 # Tech Stack
 
-> Living doc — **state dimension only** (what the stack *is* now). Skeleton sections (Runtime / Framework / Key Dependencies / Build & Distribution — **seed-once**: seeded at scaffold from detected facts, hand-edited from then on; a `harness-bootstrap` re-run checks their shape only and never rewrites the facts. Edit Discipline, fixed prose. Staged-Tree Verify, heading + note fixed, its command consumer-declared). Grown sections (Architecture Rules / Coding Patterns) start empty and grow via doc-sync — every commit that touches a relevant area triggers a sync proposal, admitted per § Doc Sync. Rejected stack directions are history, not state → [`docs/decisions.md`](decisions.md), never a section here. See [`CLAUDE.md` Doc Sync](../CLAUDE.md#doc-sync-non-negotiable).
+> Living doc — **state dimension only** (what the stack *is* now). Skeleton sections (Runtime / Framework / Key Dependencies / Build & Distribution — **seed-once**: seeded at scaffold from detected facts, hand-edited from then on; a `harness-bootstrap` re-run checks their shape only and never rewrites the facts. Edit Discipline, fixed prose. Staged-Tree Verify, heading + note fixed, its command consumer-declared). Grown sections (Architecture Rules / Coding Patterns) start empty and grow via doc-sync — every commit that touches a relevant area triggers a sync proposal, admitted per § Doc Sync. Rejected stack directions are history, not state → [`docs/decisions.md`](decisions.md), never a section here. See [`.claude/rules/harness.md` Doc Sync](../.claude/rules/harness.md#doc-sync-non-negotiable).
 
 ## Runtime
 
@@ -40,11 +40,11 @@ None declared — no build or compile step to run.
 - **Frozen-asset versioning** — shipped assets are placed by mechanical copy/merge at release time and never regenerated, eliminating inter-repo drift. → [`ensure-infra.md`](../plugins/super-bootstrap/skills/autorun/assets/ensure-infra.md)
 - **Plugin-owned hook lane** — a hook whose input is the installed plugin itself (`plugins/super-bootstrap/hooks/`, commands anchored on `${CLAUDE_PLUGIN_ROOT}`) runs from the plugin tree and updates with it; never placed, so it carries no receipt row and no drift check. → [`overview.md` § Key Boundaries](overview.md#key-boundaries)
 - **Skeleton/dogfood sync direction** — two lanes by SSOT side — dogfood prose edits carry their shipped-skeleton counterpart in the edit's closure, frozen-asset edits carry the placed dogfood copy; skeletons must be self-contained (no dogfood-only wiring). → [`repo-boundary.md`](../.claude/rules/repo-boundary.md)
-- **Gateway-inline vs dispatched lanes** — closure-judged (not diff-size-judged): build phases dispatch to clean subagents; transcription applies inline; parallel within a phase only; writer run mode keyed on path overlap. → [`CLAUDE.md` § Dispatch](../CLAUDE.md#dispatch--who-holds-each-phase)
+- **Gateway-inline vs dispatched lanes** — closure-judged (not diff-size-judged): build phases dispatch to clean subagents; transcription applies inline; parallel within a phase only; writer run mode keyed on path overlap. → [`.claude/rules/harness.md` § Dispatch](../.claude/rules/harness.md#dispatch--who-holds-each-phase)
 
 ## Coding Patterns
 
-> Grows via [doc-sync](../CLAUDE.md#doc-sync-non-negotiable) as patterns crystallize — **descriptive reference**: how this code is actually written, read on demand, safe to be cold. Import style, class-vs-function bias, type usage, recurring idioms. A convention that binds — imperative, obeyed at every code touch — is recorded in [`CODING_STANDARDS.md`](../CODING_STANDARDS.md).
+> Grows via [doc-sync](../.claude/rules/harness.md#doc-sync-non-negotiable) as patterns crystallize — **descriptive reference**: how this code is actually written, read on demand, safe to be cold. Import style, class-vs-function bias, type usage, recurring idioms. A convention that binds — imperative, obeyed at every code touch — is recorded in [`CODING_STANDARDS.md`](../CODING_STANDARDS.md).
 
 ## Edit Discipline
 
