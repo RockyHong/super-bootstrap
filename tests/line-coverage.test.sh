@@ -94,6 +94,19 @@ w "$N" 'ok\n'
 run "$O" "$N" "$H"
 expect "duplicate old line with no match -> reported on each line number" 1 "$(printf 'uncovered: 1: dup\nuncovered: 3: dup\nline-coverage: 2 of 3 lines uncovered')"
 
+w "$O" 'dup\ndup\n'
+w "$N" 'dup\n'
+run "$O" "$N" "$H"
+expect "duplicate old line matched by one new line -> each occurrence counted" 0 "line-coverage: 2 lines — 2 in the new pair, 0 on the drop list"
+
+echo "== file names travel through ENVIRON =="
+# a name holding `=` would be read as an awk variable assignment if passed as an operand
+EQ="$TMP/a=b.md"
+w "$EQ" 'alpha\n'
+w "$N" 'alpha\n'
+run "$EQ" "$N" "$H"
+expect "old file named a=b.md is read as a file" 0 "line-coverage: 1 lines — 1 in the new pair, 0 on the drop list"
+
 echo "== literal comparison =="
 w "$O" 'open ](broken and *.md [x] a\\b | c & d\n'
 w "$N" 'open ](broken and *.md [x] a\\b | c & d\n'
