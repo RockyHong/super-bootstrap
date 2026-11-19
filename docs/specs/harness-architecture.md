@@ -370,7 +370,7 @@ references.
 | super-bootstrap plugin source | `plugins/super-bootstrap/` | A | 55 files / 319 KB; `harness-bootstrap` 93.8 KB, `drain` 53 KB (SKILL 12.6 KB + 10 assets) — `drain` since replaced by `autorun` (SKILL + 5 assets) and the board renderer deleted |
 | Ambient description weight | all 13 shipped `SKILL.md` frontmatter | A | 6,456 chars ≈ 1.6k tokens, present in every session |
 | Foreign-name coupling | `plugins/super-bootstrap/**` | A | 85 occurrences / 19 files; skeleton holds 15 |
-| Shipped CLAUDE.md skeleton | `plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md` | A | Carries the routing table into every bootstrapped repo |
+| Shipped workflow doctrine | `plugins/super-bootstrap/skills/harness-bootstrap/assets/harness.md` | A | Carries the routing table into every bootstrapped repo |
 
 ## 8. Downstream migration — what adopt mode does and does not cover
 
@@ -407,16 +407,12 @@ and syncs each artifact by its ownership class:
 | A whole section **dropped** from a mixed-ownership skeleton | **No** | The walk is skeleton-driven — a section no longer on the owned list is never visited, so it orphans in consumer repos |
 | A scaffolded **folder** retired | **No** | Phase 2a states folders have only two states, missing or present ("create if missing, skip if present") — there is no removal path |
 
-**The skeleton cut landed inside covered shapes.** No section was dropped, so nothing
-orphans — `§ Inside a route` was a `###` subsection under § Development Workflow, which stays
-on the owned list.
+**Two retired pins have no removal path.** `.claude/settings.json` pins are on the owned
+list, but § 2a treats a pin as missing or present, so a pin the plugin stops seeding stays
+in a repo bootstrapped before the cut.
 
-| Cut site (landed) | Shape | Covered? |
+| Retired pin | Shape | Covered? |
 | --- | --- | --- |
-| Routing rows restated, "inside a route" removed, SDD clause cut, ambient-laws line rewritten | content changed within § Development Workflow / § Dispatch (both on the owned list) | Yes |
-| Topology doc deleted | repo-local; the shipped skeleton never referenced it (zero grep hits) | N/A downstream |
-| § Coding Principles body replaced | section retained on the owned list | Yes |
-| triage lane's doctrine clause restated inline | `plugins/super-bootstrap/**` ships with the plugin, never scaffolded into a consumer repo | N/A downstream |
 | `mattpocock-skills` paired pin removed from § 2a | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** An already-bootstrapped consumer keeps the seeded key; it is inert once the plugin is uninstalled there, and clearing it is a hand-sweep |
 | `superpowers` core pin removed from § Core plugin pin | `.claude/settings.json` pins are on the owned list, but 2a treats pins as missing-or-present with no removal path | **Fresh bootstraps only.** 2a never strips the pin from an already-bootstrapped repo, so removal there is a hand-sweep — which §6 permits, its de-routing resting on the dissolve test rather than on uninstalling anything |
 
