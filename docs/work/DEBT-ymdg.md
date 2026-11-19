@@ -249,3 +249,7 @@ One headless walk ran — the `v2.22.0` variant, two turns, sonnet — and the m
 - The gateway's three picks stand: the migration is the whole run and commits alone; a kept line moves verbatim under a label line; the section stays in `SKILL.md`.
 - The doc tail is closed (`137fa83`): the judge's § Doc Sync pointer, the history rows of `docs/specs/harness-architecture.md`, the note on the version-driven engine row of `docs/decisions.md`.
 - Still open on this card: merge `setup` into `harness-bootstrap`; the rename; which doctrine lines are cuttable; `line-coverage.sh` under mawk and one-true-awk; the transitional "`CLAUDE.md` in a repo not yet split" half of the skills' pointers.
+
+## Amendment — 2026-11-19 · gateway session, correcting the block above
+
+"The author ruled the rest of the walks unearned" is wrong as written. The author asked what the walks earn and delegated the call ("你context比我多，做到預期的形狀release publish"); skipping the control round, the other four variants, the `doc-sync-scan.md` RED and the `rules`-arm round was the gateway's pick under that delegation. The author ran the one walk by hand. The reasoning in that bullet is the gateway's.
