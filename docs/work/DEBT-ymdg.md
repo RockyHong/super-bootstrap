@@ -239,3 +239,13 @@ The migration is built and committed, local only: the line-coverage check (`7e10
 - Open for the author, from the cold audit of `a63c542`: move the section (about 130 lines, read on every fresh and split run too) to an asset the `legacy` bullet points at, as `hooks-ensure-infra.md` is. Left in place because the Design rules it "a section of `harness-bootstrap`".
 - Still owed: the historical-tag fixtures (a 2.x runway, a 5.x one, a 6.x one, one with hand-edited doctrine sections) — the brief has met only the pre-split shape of the current text; `line-coverage.sh` under mawk and one-true-awk (ran under gawk only); the `Reopened` question on the "version-driven update/merge engine" row of `docs/decisions.md`, now that no `migrate` skill or layout number exists; the README upgrade note and both manifest descriptions, with `/release`.
 - Unchanged from the session park: nothing is pushed; the `doc-sync-scan.md` RED, the `rules`-arm round and the history rows in `docs/specs/harness-architecture.md` wait as before.
+
+## Progress — 2026-11-19 · walked, release prepared
+
+One headless walk ran — the `v2.22.0` variant, two turns, sonnet — and the migration went end to end through the loaded plugin, commit included. It failed one property: a version-only receipt kept no `placed` record; the receipt step now sets `placed` in every receipt that exists (`e993e9b`). The walk was not re-run after that fix. Next step: the author migrates the fleet's repos, one by one, after the v7.0.0 push.
+
+- The author ruled the rest of the walks unearned: each real migration carries its own confirm, four checks and one-commit revert, so a real repo is stronger evidence than a synthetic fixture. Not run: the control round, the other four variants, the `doc-sync-scan.md` RED, the `rules`-arm round. The fixtures stay (`7d22e09`) for a later regression.
+- Seen in the walk: the agent kept two lines of v2.22.0 plugin text (the `karpathy-guidelines` pointer under § Coding Principles) as the repo's own. The direction is safe — kept, shown in the delta list — and the README upgrade note tells the user to say so at the confirm.
+- The gateway's three picks stand: the migration is the whole run and commits alone; a kept line moves verbatim under a label line; the section stays in `SKILL.md`.
+- The doc tail is closed (`137fa83`): the judge's § Doc Sync pointer, the history rows of `docs/specs/harness-architecture.md`, the note on the version-driven engine row of `docs/decisions.md`.
+- Still open on this card: merge `setup` into `harness-bootstrap`; the rename; which doctrine lines are cuttable; `line-coverage.sh` under mawk and one-true-awk; the transitional "`CLAUDE.md` in a repo not yet split" half of the skills' pointers.

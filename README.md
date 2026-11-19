@@ -64,6 +64,18 @@ flowchart TD
 
 Re-run any time — incremental, never overwrites your edits; when a plugin-owned file placed in your repo (`.claude/rules/harness.md`, the three hook scripts) no longer matches the copy the installed plugin ships, every session opens with a one-line advisory naming the files and the re-run ([`runway-drift`](plugins/super-bootstrap/hooks/runway-drift.sh), a plugin-owned SessionStart hook — nothing placed in your repo); in a repo still in the pre-split shape, that hook's one line names the re-run as the migration. A re-run also retires consumer fork skills/agents the plugin now supersedes (per-deletion confirm) and backfills runway sections added since the last sync; stack facts (the `CLAUDE.md` Tech Stack line, `docs/techstack.md`'s Runtime / Framework / Key Dependencies / Build & Distribution) are seeded once — a re-run after code first arrives flags them stale for a hand refresh, never rewrites them. A workspace manifest (`pnpm-workspace.yaml`, `turbo.json`, …) switches on the monorepo tier — rules and build pre-flight fan out per package. Repos whose card set outgrows one flat list can opt into the scale module (`docs/parked.md` + `docs/test-queue.md` + `docs/outward/`) — offered only once earned, never by default.
 
+### Upgrading a repo whose `CLAUDE.md` holds the workflow sections
+
+Before v7 the workflow doctrine lived in your `CLAUDE.md`. It now lives in `.claude/rules/harness.md`, a file the plugin owns whole. Update the plugin, then in each repo:
+
+1. Run `/super-bootstrap:harness-bootstrap`. The run is the migration and nothing else. It sorts every line of the old `CLAUDE.md` — moved to the doctrine file, dropped as old plugin text, or kept as your own addition — and prints the list.
+2. Read the list and answer `y`. Nothing is written before that. A kept line that is really old plugin text, or the reverse: say so at this step and the list is rebuilt.
+3. Run `/super-bootstrap:harness-bootstrap` once more for the regular sync.
+
+The migration lands as one commit; `git revert <sha>` undoes it. Sorting the lines is the agent's judgment and differs run to run — your confirm and four checks the run makes before it commits (the placed file equals the shipped one, no workflow heading left in `CLAUDE.md`, every old line kept or on the drop list you saw, no new broken link) are the floor.
+
+A repo you never re-run keeps working: every skill reads the doctrine in either place. Update the plugin on each device before you re-run there — an older plugin reads a migrated repo as missing its workflow sections and proposes to insert them back.
+
 ## How files are handled
 
 | Path | Behavior |
