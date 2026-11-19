@@ -119,3 +119,13 @@ The bench is built (`bench/carrier-equivalence/`, scorer selftest green) and one
 - Unresolved contamination: the operator's `~/.claude/CLAUDE.md` loads in every run despite the cold config; it is constant across arms and both `none` runs missed, so the score discriminates against it.
 - The behavior regex was widened after a smoke run showed `**Cluster:** 1` scored as a miss; the `none` runs are the check that it did not become loose.
 - A subagent logs no `InstructionsLoaded` line of its own, so the `subagent` context has a behavior reading only.
+
+## Progress — 2026-11-19 · re-run
+
+The round re-ran with the outdir at `%TEMP%/ce-round2` (outside Claude Code's temp tree) and **passes**: 20 runs, sonnet, all valid, every carrier row `loaded 1`. Behavior misses — `claudemd` 0 of 6, `rules` 0 of 6, `import` 0 of 6, `none` 2 of 2. The carrier-equivalence gate of the Design block holds; the ownership split is open, on the author's go.
+
+- No run opened a carrier file (`CLAUDE.md`, `.claude/rules/harness.md`, `.claude/harness.md`) with Read, Grep or Glob, in the main session or a subagent — the confound that produced the invalid round's three hits is absent.
+- Post-compact re-injection, two observations each: `CLAUDE.md` and the `paths:`-less rules file reload with `load_reason` `compact`; the `@path`-imported file reloads with `include`.
+- Limits: two reps per cell, one model; the `subagent` context has a behavior reading only (its `loaded` value is the main session's); the operator's `~/.claude/CLAUDE.md` still loads in every run, and both `none` runs missed with it present.
+- Still unverified: why an outdir under `%TEMP%/claude/` suppresses project instruction files.
+- Next step: the ownership split — its carrier (rules file or `@path` import) is a free choice on this evidence; then `migrate` + sunset → merge `setup` into `harness-bootstrap` → rename.
