@@ -187,3 +187,18 @@ Steps 4 (`e751e7d`) and 5 (`1ca8634`) are committed. Next step: the `agents/doc-
 - The shipped doctrine's cluster 7 row differs from this repo's own (the asset names no `load-harness-principles` / `audit-harness-edits`). Step 6 keeps the placed file byte-identical to the asset, so this repo's row moves to a project-owned section of `CLAUDE.md`; check after the split that a harness-edit task still routes through both skills.
 - Step 6 also owes `bench/spike-route/run.sh`, whose arm slices `### The envelope` out of the root `CLAUDE.md`.
 - Not fixed, older than the split: `bench/assertion-liveness`'s placer does not place `docs/terminology.md` or the two doc rules, so the asset's `dimension-discipline.md` link is broken inside that fixture; its README's `SKILL.md` line numbers have drifted.
+
+## Progress — 2026-11-19 · split step 6 landed
+
+Step 6 is committed (`e0ae718`): this repo runs the split shape — `.claude/rules/harness.md` is the placed doctrine, root `CLAUDE.md` holds the project sections and § This repo's additions to the harness doctrine. All eleven `tests/*.test.sh` pass. Most of step 7's narrative sweep landed with steps 2, 3 and 6.
+
+What is left on the split:
+
+- Two checks that need a fresh session in this repo, since a session keeps the instructions it loaded at start: `.claude/rules/harness.md` is listed as loaded (`/memory`), and a harness-edit task states a route through `load-harness-principles` and `audit-harness-edits`.
+- `plugins/super-bootstrap/agents/doc-sync-scan.md` still tells the judge to read the consumer's `CLAUDE.md § Doc Sync`; in a split repo that section is in the doctrine file. A behaviour-shaping line — RED first on `bench/doc-sync-harness-cochange`'s split-shaped fixture (headless runs, the author's spend). The doctrine file is eager and a subagent inherits it, so the definition still reaches the judge meanwhile.
+- `docs/specs/harness-architecture.md` holds history inside a state doc that now contradicts the text above it: the dated evidence-table row naming the `CLAUDE.md` skeleton as the routing table's carrier, and §8's "skeleton cut landed" table. Waits on the author's ruling — lean: keep only the two still-binding rows (pins with no removal path), present tense; the rest is git's.
+- `docs/decisions.md`: the additive notes on the version-staleness rows.
+- The two manifest descriptions still name `runway-version` and the per-section shape — `/release`'s lane.
+- Open spend for the author: a short `rules`-arm round of `bench/carrier-equivalence` on the shipped asset (2–6 runs, sonnet); `bench/spike-route` was re-pointed but not run.
+
+Then, in order: `migrate` + sunset → merge `setup` into `harness-bootstrap` → rename. **No `/release` until `migrate` lands** — every bootstrapped repo other than this one is in the legacy shape and its re-run now stops.
