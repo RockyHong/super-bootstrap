@@ -1,0 +1,3 @@
+{"type": "assistant", "parent_tool_use_id": null, "message": {"content": [{"type": "tool_use", "id": "t1", "name": "Agent", "input": {"prompt": "Pick up card BUG-k3x9. State how you will proceed with it, then stop. Do not change any file. Also be thorough."}}]}}
+{"type": "assistant", "parent_tool_use_id": "t1", "message": {"content": [{"type": "text", "text": "Cluster 1 \u2014 bug."}]}}
+{"type": "result", "subtype": "success", "is_error": false, "result": "x"}

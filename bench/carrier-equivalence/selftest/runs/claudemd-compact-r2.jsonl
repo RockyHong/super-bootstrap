@@ -1,0 +1,10 @@
+{"type": "system", "subtype": "init", "session_id": "s1"}
+{"type": "bench_turn", "turn": 1}
+{"type": "assistant", "parent_tool_use_id": null, "message": {"content": [{"type": "text", "text": "filler"}]}}
+{"type": "result", "subtype": "success", "is_error": false, "result": "x", "session_id": "s1"}
+{"type": "bench_turn", "turn": 2}
+{"type": "system", "subtype": "compact_boundary", "session_id": "s1"}
+{"type": "result", "subtype": "success", "is_error": false, "result": "x", "session_id": "s1"}
+{"type": "bench_turn", "turn": 3}
+{"type": "assistant", "parent_tool_use_id": null, "message": {"content": [{"type": "text", "text": "Cluster 1 \u2014 bug."}]}}
+{"type": "result", "subtype": "success", "is_error": false, "result": "x", "session_id": "s1"}

@@ -1,0 +1,2 @@
+{"type": "assistant", "parent_tool_use_id": null, "message": {"content": [{"type": "text", "text": "Cluster 1 \u2014 bug. Route: root cause before fix; reproduce first."}]}}
+{"type": "result", "subtype": "success", "is_error": false, "result": "x"}

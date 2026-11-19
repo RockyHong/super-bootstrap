@@ -1,0 +1,1 @@
+Use the Agent tool to dispatch exactly one general-purpose subagent. Give it exactly the following prompt and nothing else — no added context, no instructions of your own: «Pick up card BUG-k3x9. State how you will proceed with it, then stop. Do not change any file.». When it returns, reply with its answer verbatim and nothing else.

@@ -98,3 +98,24 @@ Design is settled; the two retires live on DEBT-wf8f and DEBT-5q1w. Next step on
 - Probe terms stated to the author: carriers `CLAUDE.md` / owned rules file without `paths:` / `@path` import; contexts main session / general-purpose subagent / post-compact; 2 reps each, 18 headless runs, one round; pass = each new carrier within one miss of `CLAUDE.md`; after the round, stop and report — the author decides any further spend.
 - After the probe passes: ownership split → `migrate` + sunset → merge `setup` into `harness-bootstrap` → rename.
 - The Verdict's counts supersede the origin block's: 16 receipts, 10 on v2.x; repos still naming superpowers skills are DungeonCLI, ayva-stroker-lite, ok-claude.
+
+## Plan — 2026-11-19
+
+The carrier-equivalence probe, as a new `bench/carrier-equivalence/` fixture. DEBT-wf8f and DEBT-5q1w are resolved (`1a1c999`, `facbe99`); this is the card's next step.
+
+1. Fixture — reuse the `bench/assertion-liveness/` shape (consumer-shaped repo with the shipped runway placed, cold config dir), not `consult-hook` / `spike-route`: it already places the whole runway and isolates the operator's own configuration. One seeded BUG card and one small source file give the task something to pick up.
+2. Arms — the doctrine text is byte-identical across arms; only its carrier moves. `claudemd`: the shipped `CLAUDE.md` whole. `rules`: the plugin-owned sections cut into `.claude/rules/harness.md` with no frontmatter, `CLAUDE.md` keeps project content. `import`: the same sections in `.claude/harness.md`, pulled in by an `@.claude/harness.md` line. `none`: the sections removed and placed nowhere — the control that proves the score can miss.
+3. Contexts — `main`: one headless turn. `subagent`: the main turn dispatches one general-purpose subagent with the task verbatim; the subagent's own text is scored, and a run whose dispatch prompt is not the task verbatim is invalid. `compact`: a filler turn, then `/compact` on the resumed session, then the task; a run with no compaction marker is invalid, not a miss.
+4. Readings, two per run — load evidence: a fixture `InstructionsLoaded` hook logs each instruction file and its `load_reason`; behavior: the reply to "pick up the card, state how you will proceed, change no file" carries a route line naming a cluster.
+5. Round — 3 carriers x 3 contexts x 2 reps = 18 runs, plus `none` x `main` x 2 = 20, one model, one round. Pass = each new carrier within one miss of `claudemd`, both `none` runs miss, no invalid run left unexplained. After the round: stop and report; the author decides any further spend. The two control runs are over the 18 stated on this card's Progress — without them a clean 18 cannot tell a working carrier from a loose score.
+6. Open facts the round settles or flags: whether `/compact` runs through `claude -p --resume` (docs give only the Agent SDK form — smoke-tested before the round); whether an `@path` import is re-injected after compaction (docs do not say).
+
+## Progress — 2026-11-19
+
+The bench is built (`bench/carrier-equivalence/`, scorer selftest green) and one 20-run round ran. **The round is invalid — it measured no carrier.** Its outdir sat under Claude Code's temp tree (the session scratchpad), and there no run logged a project instruction file: all 20 `instructions.log` files hold only the operator's `~/.claude/CLAUDE.md`, where the smoke run under `%TEMP%/ce` logged the fixture's `CLAUDE.md` at `session_start`. The scored table (`claudemd` 3 hits of 6, `rules` 0 of 6, `import` 0 of 6, `none` 0 of 2) is therefore not a carrier verdict; the three `claudemd` hits came from runs that opened `CLAUDE.md` with the Read tool. Why that location suppresses project instructions is unverified. Next step: re-run the round with the outdir outside that tree — the author decides the spend (20 runs, sonnet).
+
+- Settled by the smoke runs, valid: `/compact` runs headless both through `claude -p --resume` and as a stream-json user turn in one process; after an in-process compaction `CLAUDE.md` reloads with `load_reason` `compact` and an `@path`-imported file reloads with `include` (one observation each).
+- The `compact` context is one process with three turns; a fresh `--resume` process reloads every instruction file at `session_start` and would measure resume, not compaction.
+- Unresolved contamination: the operator's `~/.claude/CLAUDE.md` loads in every run despite the cold config; it is constant across arms and both `none` runs missed, so the score discriminates against it.
+- The behavior regex was widened after a smoke run showed `**Cluster:** 1` scored as a miss; the `none` runs are the check that it did not become loose.
+- A subagent logs no `InstructionsLoaded` line of its own, so the `subagent` context has a behavior reading only.
