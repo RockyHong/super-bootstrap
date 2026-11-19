@@ -49,15 +49,11 @@ No workspace manifest → single-package repo; skip, everything stays root-scope
 
 ### Existing CLAUDE.md
 
-Read the repo's **state** off the files present, never off a version. The **owned headings** are the `## ` lines of `assets/harness.md`, read at run time. If `CLAUDE.md` exists, read it and match its headings against them.
+Read the repo's **state** off the files present, never off a version. The **owned headings** are the `## ` lines of `assets/harness.md`, read at run time. If `CLAUDE.md` exists, read it and match its `## ` lines against them — a line matches when the whole line equals an owned heading, CR aside.
 
 - **fresh** — no `.claude/rules/harness.md`, and `CLAUDE.md` is absent or holds fewer than two owned headings → Phase 2 places the doctrine file and seeds `CLAUDE.md` when the repo has none (a hand-written `CLAUDE.md` stays as it is).
 - **split** — `.claude/rules/harness.md` exists → Phase 2 runs the whole-file lane on it (current / stale / fork, per `assets/hooks-ensure-infra.md`).
-- **legacy** — no `.claude/rules/harness.md`, and `CLAUDE.md` holds two or more owned headings → stop the run here: write nothing, run no later Phase 1 lane and no later phase, print this message and nothing else:
-
-  ```
-  This repo is in the pre-split shape: CLAUDE.md still holds the plugin's workflow sections and .claude/rules/harness.md is absent. Nothing was written. Moving those sections is a migration this plugin version does not perform — stay on the plugin release this repo was last synced with, or split by hand: move every section whose heading appears in the shipped harness.md (${CLAUDE_PLUGIN_ROOT}/skills/harness-bootstrap/assets/harness.md) out of CLAUDE.md into .claude/rules/harness.md, then re-run.
-  ```
+- **legacy** — no `.claude/rules/harness.md`, and `CLAUDE.md` holds two or more owned headings → leave Phase 1 here and run § Doctrine migration, which is the whole of this run: no later Phase 1 lane, no Phase 2, no Phase 3.
 
 On fresh and split, with a `CLAUDE.md` present, **also note skeleton blocks** in it — content that belongs in a path-scoped rule, a `docs/techstack.md` grown section or `docs/decisions.md` (Coding Standards code-block walls, framework-specific pattern lists, closed design rationale, large Project Structure trees) — these become migration candidates, routed by § 2b Skeleton-block migration.
 
@@ -127,6 +123,144 @@ The runway scaffolds with no product Q&A. Drift on existing files is resolved in
 
 ---
 
+## Doctrine migration (legacy state only)
+
+Moves the plugin's workflow sections out of a legacy `CLAUDE.md` onto the placed doctrine file, as one commit. It writes no sync report and runs no other lane of this skill.
+
+Sorting the old lines (step 2) is your judgment and differs run to run. The confirm (step 4) and the four checks (step 6) are the floor: report the migration done only on their output.
+
+**Stop and ask on a case these steps do not cover.** Write nothing further and state three parts: what you observed, what this section expected, the options. Examples of such cases: `CLAUDE.md` pulls the workflow sections in through an `@path` import; the owned headings sit in a nested or second `CLAUDE.md`; a `harness.md` of the repo's own sits under another path; `CLAUDE.md` or a file step 3 names carries uncommitted changes; the repo has no commit.
+
+Run every command below with the Bash tool from the repo root. `$M` is the scratch directory step 1 prints: shell variables do not carry between tool calls, so set `M=<that path>` at the head of each later command.
+
+### 1. Baseline — before any write
+
+```bash
+M=$(mktemp -d) && echo "$M"
+git status --porcelain -- CLAUDE.md
+git show HEAD:CLAUDE.md > "$M/old.md"
+bash "${CLAUDE_PLUGIN_ROOT}/skills/commit/assets/doc-links.sh" check > "$M/links.before" 2>/dev/null; true
+```
+
+Done when `git status` printed nothing and `$M/old.md` holds the committed `CLAUDE.md`. `$M` sits outside the worktree; the repo is still unwritten.
+
+### 2. Sort every line of the old file
+
+Read `assets/harness.md` (the shipped doctrine) and `assets/claude-md-skeleton.md` (the project sections). Walk `$M/old.md` whole — the lines above its first `## ` heading, then every `## ` section — and put each non-blank line, headings included, in exactly one class:
+
+| Class | The line is | Outcome |
+|---|---|---|
+| shipped | equal to a line of `assets/harness.md`, leading and trailing whitespace and link targets aside | arrives with the placed file |
+| old plugin text | plugin wording the shipped file replaces: an earlier wording of a shipped line, or a line of a section or heading an earlier plugin version shipped and this one retired | the drop list |
+| the repo's own | a rule this repo added inside a workflow section, or its deliberate fork of a shipped line | kept — moves to the additions section (step 5) |
+| project | above the first `## ` heading, or in a section whose heading is in the skeleton's `## ` set, or in a section this repo authored under a heading of its own | stays where it is, as written — also where the skeleton words the same line differently |
+
+Between old plugin text and the repo's own, the content decides: a line stating a fact of this repo (its branches, release steps, tools, paths) is the repo's own; generic workflow wording on a subject a shipped line covers is old plugin text. `git log -S'<line>' --oneline -- CLAUDE.md` naming a bootstrap-shaped commit (§ 2b, every spelling) as the commit that introduced the line supports old plugin text; it does not settle it. A line you cannot place between those two classes is an **open question** in step 4.
+
+Done when the four class counts plus the open questions sum to the output of `grep -c '[^[:space:]]' "$M/old.md"`.
+
+### 3. Find what leans on the moved sections
+
+A **moved section** is a section of the old file that loses its heading in step 5. Run `git grep -n -I -F 'CLAUDE.md' -- . ':!CLAUDE.md'` and give every hit one outcome:
+
+- **Link into `CLAUDE.md#<anchor of a moved section>`** → re-point at `.claude/rules/harness.md#<anchor>`, the path written relative to the linking file. Re-point it wherever it sits — a link left behind breaks. The shipped file has no heading for that anchor → open question.
+- **Prose naming a moved section by heading** (`CLAUDE.md § Doc Sync`) in a doc, rule or hook → a proposed edit naming `.claude/rules/harness.md`. No edit where the regular sync or nobody owns the text: a pipeline-owned file or section (§ Pipeline-owned), or a file whose frontmatter declares `dimension: history`.
+- **The receipt** (`.claude/super-bootstrap-runway.json`) → no change here; step 5 item 4 writes it.
+- **Anything else** → no change.
+
+Then run `git status --porcelain -- .claude/super-bootstrap-runway.json {each file holding a re-point or a proposed edit}`. Any output is an uncommitted change step 6's restore would discard → stop and ask.
+
+Done when every hit carries one of: re-point, proposed edit, open question, no change, and that `git status` printed nothing.
+
+### 4. Confirm — one delta list, before any write
+
+Save the drop list — every old-plugin-text line, verbatim, one per line (an empty list → an empty file):
+
+```bash
+cat > "$M/drop.txt" <<'DROP_LIST_END'
+{old line}
+DROP_LIST_END
+```
+
+Then print one message holding, in order:
+
+1. **Kept as additions** — each kept line, with the doctrine section and the line it adds to or takes over: the shipped line it extends or replaces, or the section alone when it stands beside no single line.
+2. **Drop list** — the content of `$M/drop.txt` inside one fenced code block. It is the message's only fenced block; every other part is a plain list. An empty drop list prints `Drop list: none` and no fence.
+3. **Re-pointed links** — `file:line`, old target → new target.
+4. **Other edits** — `file:line` and the proposed text.
+5. **Open questions** — the line, the two classes it sits between, and what a bare `y` does with it: it is kept.
+
+A part with nothing in it prints `none`. The message's final line is exactly:
+
+`Migrate CLAUDE.md onto .claude/rules/harness.md? (y / n)`
+
+- `y` → step 5, open questions kept as additions.
+- `n`, or nobody can answer (an unattended run) → write nothing and end the run on that message.
+- An answer that moves a line between classes or changes an edit → rebuild `$M/drop.txt` and the lists, print the message again, ask again.
+
+Done when the fenced block and `$M/drop.txt` hold the same lines and the user answered `y` to that message.
+
+### 5. Write the split
+
+1. **Place the doctrine file** whole, no edit: `mkdir -p .claude/rules && cp "${CLAUDE_PLUGIN_ROOT}/skills/harness-bootstrap/assets/harness.md" .claude/rules/harness.md`.
+2. **Rewrite `CLAUDE.md`.** Remove every shipped, old-plugin-text and kept line, and each heading left with no line under it. Leave every project line as it is. Under the H1, add the skeleton's `Workflow doctrine — …` line (`assets/claude-md-skeleton.md`) when the file lacks it. When any line is kept, add this section below that line:
+
+   ```markdown
+   ## This repo's additions to the harness doctrine
+
+   These lines bind in this repo together with `.claude/rules/harness.md`; where one takes over a doctrine line, it wins here.
+
+   **§ {doctrine section heading}** — added to "{leading words of the doctrine line}":
+
+   {kept line or lines}
+
+   **§ {doctrine section heading}** — takes over "{leading words of the doctrine line}":
+
+   {kept line or lines}
+   ```
+
+   A kept line that stands beside no single doctrine line takes the label `**§ {doctrine section heading}** — added:`. Carry each kept line whole and unreworded under its label line — the line-coverage check looks for the old line itself.
+3. **Apply** step 4's re-pointed links and other edits.
+4. **Receipt** — when `.claude/super-bootstrap-runway.json` exists; an absent receipt stays absent, and the regular sync writes it. Where it holds `covered`: remove each `CLAUDE.md § {heading}` row whose heading the new `CLAUDE.md` lacks (a `rot:` row stays), remove the `declined` entry of each removed row, add the bare string `.claude/rules/harness.md` (a whole-file row's identity is its path). Set `placed[".claude/rules/harness.md"]` to the output hash of `tr -d '\r' < .claude/rules/harness.md | sha256sum`. Change no other key; keep the file LF-only (§ 2c Receipt write).
+
+Done when each item that applies is written and you hold the list of every path this step wrote.
+
+### 6. Check — four checks, each to its pass condition
+
+```bash
+A="${CLAUDE_PLUGIN_ROOT}/skills/harness-bootstrap/assets"
+# 1 — the placed file equals the shipped one, CR aside. Pass: prints `same`.
+cmp -s <(tr -d '\r' < .claude/rules/harness.md) <(tr -d '\r' < "$A/harness.md") && echo same
+# 2 — CLAUDE.md holds no owned heading. Pass: prints nothing.
+tr -d '\r' < "$A/harness.md" | grep '^## ' > "$M/owned"; tr -d '\r' < CLAUDE.md | grep -Fxf "$M/owned"
+# 3 — no old line lost. Pass: exit 0 and a `line-coverage: N lines — …` line.
+bash "$A/line-coverage.sh" "$M/old.md" CLAUDE.md .claude/rules/harness.md "$M/drop.txt"; echo "exit $?"
+# 4 — no new broken link in the doc surface. Pass: the last command prints nothing.
+bash "${CLAUDE_PLUGIN_ROOT}/skills/commit/assets/doc-links.sh" check > "$M/links.after" 2>/dev/null
+for f in before after; do sed 's/^\([^:]*\):[0-9]*:/\1:/' "$M/links.$f" | sort -u > "$M/links.$f.s"; done
+comm -13 "$M/links.before.s" "$M/links.after.s"
+```
+
+Check 4's script reads the doc surface (`docs/`, READMEs, declared globs), not `CLAUDE.md` and not files outside that surface. Read those links yourself: every markdown link in the new `CLAUDE.md`, and every link step 5 re-pointed in a file outside the doc surface. Each passes when its path exists relative to the linking file and its `#anchor`, where it has one, is a heading of the target. A link `$M/old.md` already carried with the same broken target is not this migration's: it passes here, and the closing message names it.
+
+A failing check → repair the file it names and run all four again. A check you cannot make pass → restore, then stop and state the check's output, its pass condition, and the options:
+
+```bash
+git checkout HEAD -- {each tracked path step 5 wrote}
+rm .claude/rules/harness.md
+git status --porcelain -- CLAUDE.md .claude/rules/harness.md {each path step 5 wrote}   # restored when this prints nothing
+```
+
+Done when the four commands and your own link read all pass on the same tree.
+
+### 7. Commit, then end the run
+
+Commit exactly the paths step 5 wrote through `/super-bootstrap:commit`, message `refactor: migrate CLAUDE.md onto .claude/rules/harness.md`. Nothing else rides in that commit, so one `git revert` undoes the migration and only the migration. Then print, with the commit's sha, and end the run:
+
+> **CLAUDE.md migrated.** The workflow doctrine now loads from `.claude/rules/harness.md` (plugin-owned, re-placed whole on re-run); `CLAUDE.md` holds this repo's own sections. Undo: `git revert {sha}`. This run wrote the migration only — run `/super-bootstrap:harness-bootstrap` again for the regular sync.
+
+---
+
 ## Phase 2: Scaffold / Sync
 
 Walk each pipeline artifact in order: folders → pipeline docs → sync report + commit. Same flow on fresh and re-run repos — fresh just sees "all new" at every step.
@@ -171,7 +305,7 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - Scale module — checked only when installed (detected by `docs/parked.md` presence): `docs/parked.md` + `docs/test-queue.md` header/shape sections, `docs/outward/README.md` + `docs/outward/TEMPLATE.md` (whole files, the way `docs/work/README.md` / `docs/work/TEMPLATE.md` are — a retired high-water line drifts to the skeleton's ID-shape text, above), the `docs/work/README.md` fact-fields marker block (`<!-- scale-module: fact fields -->` … `<!-- /scale-module -->`)
 
 **Project-owned** (never touched):
-- `CLAUDE.md` — the whole file: seeded once from `assets/claude-md-skeleton.md` when the run finds none (§ 2b; placeholders per § 2b Placeholders), consumer-edited from then on, never drift-diffed. The run's only later writes are registration lines in § Rules / § Planning (§ Registration rule)
+- `CLAUDE.md` — the whole file: seeded once from `assets/claude-md-skeleton.md` when the run finds none (§ 2b; placeholders per § 2b Placeholders), consumer-edited from then on, never drift-diffed. The run's only later writes are registration lines in § Rules / § Planning (§ Registration rule); a legacy-state file is rewritten once, on the user's confirm, by § Doctrine migration
 - `.claude/rules/ssot-doc-link.md`, `.claude/rules/dimension-discipline.md` `paths:` tail — the entries after the skeleton's last `paths:` entry (a consumer adds one to fire the rule on a folder its `.claude/doc-surface` declares — Phase 3 § Doc-rule coverage)
 - `docs/techstack.md` grown sections: Architecture Rules, Coding Patterns
 - `docs/overview.md` grown sections: Module Index, Data Flow, Key Boundaries

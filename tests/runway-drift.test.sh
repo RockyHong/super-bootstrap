@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # L1 unit tests for runway-drift.sh: the plugin-owned SessionStart advisory that
 # compares four placed runway files with the shipped assets by content (CR
-# ignored) and prints one line when any pair differs. No version is read.
+# ignored) and prints one line when any pair differs; on a legacy repo (placed
+# harness.md absent, CLAUDE.md holding >=2 of the asset's `## ` headings) it
+# prints the one-line migration advisory instead. No version is read.
 # Zero session dependency: inputs come from CLAUDE_PROJECT_DIR + CLAUDE_PLUGIN_ROOT,
 # so each case points them at fixture dirs written under a temp root.
 #
@@ -82,11 +84,60 @@ check "exactly one line" [ "$(lines)" = "1" ]
 check "names both, no other" only_names .claude/rules/harness.md .claude/hooks/commit-channel.sh
 check "exit 0, no decision" no_decision
 
-echo "== 5: legacy (no placed harness.md, CLAUDE.md doctrine) -> silent even with differing hooks =="
-mk_case c5; rm "$P/.claude/rules/harness.md"
-printf '# proj\n\n## Doc Sync (non-negotiable)\n\n## Dispatch\n' > "$P/CLAUDE.md"
+echo "== 5: legacy (no placed harness.md, CLAUDE.md holds >=2 owned headings) -> the migration line =="
+# Owned headings come out of the real shipped asset, so the cases track it.
+REAL_ASSET="$REPO/plugins/super-bootstrap/skills/harness-bootstrap/assets/harness.md"
+H1=""; H2=""; H3=""
+while IFS= read -r l; do
+  l="${l%$'\r'}"
+  case "$l" in
+    "## "*) if [ -z "$H1" ]; then H1="$l"; elif [ -z "$H2" ]; then H2="$l"; elif [ -z "$H3" ]; then H3="$l"; fi ;;
+  esac
+done < "$REAL_ASSET"
+LEGACY_MSG="CLAUDE.md holds the plugin's workflow sections in the pre-split shape — run /super-bootstrap:harness-bootstrap to migrate them into .claude/rules/harness.md"
+is_legacy_msg() { [ "$out" = "$LEGACY_MSG" ]; }
+# mk_legacy <name>: all pairs equal, placed harness.md removed, shipped harness.md = the real asset.
+mk_legacy() { mk_case "$1"; rm "$P/.claude/rules/harness.md"; cp "$REAL_ASSET" "$(asset harness.md)"; }
+
+check "fixture: asset yields 3 owned headings" [ -n "$H3" ]
+mk_legacy c5; printf '# proj\n\n%s\n\nbody\n\n%s\n' "$H1" "$H2" > "$P/CLAUDE.md"
 printf 'edited\n' >> "$P/.claude/hooks/commit-channel.sh"; run_hook
-check "gate: no output, exit 0" silent
+check "exit 0" [ "$rc" -eq 0 ]
+check "exactly one line" [ "$(lines)" = "1" ]
+check "line equals the migration literal" is_legacy_msg
+no_hook_named() { local p; for p in $HOOK_FILES; do ! names "$p" || return 1; done; }
+check "names no hook script" no_hook_named
+check "no JSON decision" no_decision
+
+echo "== 5b: CRLF CLAUDE.md with >=2 owned headings -> same line =="
+mk_legacy c5b; printf '# proj\r\n%s\r\n%s\r\n' "$H2" "$H3" > "$P/CLAUDE.md"; run_hook
+check "one migration line" is_legacy_msg
+
+echo "== 5c: exactly one owned heading -> silent =="
+mk_legacy c5c; printf '# proj\n\n%s\n\n## My Own Section\n' "$H1" > "$P/CLAUDE.md"; run_hook
+check "no output, exit 0" silent
+
+echo "== 5d: look-alike headings (not whole-line equal) -> silent =="
+mk_legacy c5d; printf '# proj\n\n## Doc Sync\n\n## Dispatch\n\n%s \n' "$H1" > "$P/CLAUDE.md"; run_hook
+check "no output, exit 0" silent
+
+echo "== 5e: no CLAUDE.md, harness.md absent -> silent =="
+mk_legacy c5e; run_hook
+check "no output, exit 0" silent
+
+echo "== 5f: legacy shape but CLAUDE_PLUGIN_ROOT unset -> silent =="
+mk_legacy c5f; printf '%s\n%s\n' "$H1" "$H2" > "$P/CLAUDE.md"; run_hook x -
+check "no output, exit 0" silent
+
+echo "== 5g: shipped harness.md missing -> silent =="
+mk_legacy c5g; printf '%s\n%s\n' "$H1" "$H2" > "$P/CLAUDE.md"; rm "$(asset harness.md)"; run_hook
+check "no output, exit 0" silent
+
+echo "== 5h: harness.md present + CLAUDE.md still holding owned headings -> no legacy line =="
+mk_legacy c5h; printf '%s\n%s\n' "$H1" "$H2" > "$P/CLAUDE.md"
+printf 'doctrine line 1\n' > "$P/.claude/rules/harness.md"; run_hook
+check "split-state rules: differing harness.md reported, not the legacy line" only_names .claude/rules/harness.md
+check "legacy line absent" [ "$out" != "$LEGACY_MSG" ]
 
 echo "== 6: CRLF-only difference -> silent =="
 mk_case c6

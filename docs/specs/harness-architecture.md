@@ -383,7 +383,8 @@ and syncs each artifact by its ownership class:
   receipt's `placed` record and the asset differs) → silent copy; hand-edited → one
   overwrite-or-keep prompt. Between re-runs a plugin-owned SessionStart hook
   ([`runway-drift.sh`](../../plugins/super-bootstrap/hooks/runway-drift.sh)) advises when the
-  placed file, or a placed hook script, differs in content from the shipped asset.
+  placed file, or a placed hook script, differs in content from the shipped asset; in a
+  legacy repo its one line names the re-run as the migration.
 - **`CLAUDE.md` is project-owned whole.** It is seeded once from the skeleton and never
   drift-diffed; a re-run only appends registration lines to its § Rules / § Planning.
 - **Mixed-ownership docs keep the per-section lane** — techstack, overview, decisions,
@@ -399,7 +400,7 @@ and syncs each artifact by its ownership class:
 | Migration shape | Covered? | Why |
 | --- | --- | --- |
 | Doctrine change of any shape — content changed within a section, a section added, a section dropped — in a **split** repo | **Yes** | The doctrine file is re-placed whole, so no section list is walked and no dropped section orphans |
-| Doctrine change of any shape in a **legacy** repo (two or more doctrine headings still in `CLAUDE.md`, no `.claude/rules/harness.md`) | **No** | The run stops with zero writes and names the hand split; no door moves the sections out of `CLAUDE.md` |
+| Doctrine change of any shape in a **legacy** repo (two or more doctrine headings still in `CLAUDE.md`, no `.claude/rules/harness.md`) | **Yes, on the user's confirm** | The run is the migration and nothing else ([§ Doctrine migration](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md)): the agent sorts every old `CLAUDE.md` line — shipped, old plugin text, the repo's own, project — and the user confirms the delta list before any write. Four mechanical checks gate the single commit: the placed file equals the asset, no doctrine heading is left in `CLAUDE.md`, every old line is kept or on the drop list the user saw, and no new broken link appears. The sorting is judgment and differs run to run; the confirm and the checks are the floor. A second run does the regular sync |
 | A change to the `CLAUDE.md` skeleton | **Fresh bootstraps only** | The file is project-owned whole — seeded once, never diffed |
 | Content changed **within** a retained section of a mixed-ownership doc | **Yes** | Section stays on the owned list; drift check fires and diffs it |
 | A section **added** to a mixed-ownership skeleton after a consumer bootstrapped | **Yes** | The walk is skeleton-driven — the new section gets a `⊕ new` row; Block 2 approval-gates the insert |
