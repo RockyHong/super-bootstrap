@@ -1,0 +1,1 @@
+/super-bootstrap:harness-bootstrap This is an unattended one-turn run: nobody can answer a question during it. Where the skill needs the user's answer before it may write something, print that question as the skill words it, write nothing that waits on the answer, and end the turn there. Where the skill needs no answer, carry on to the end of the skill.
