@@ -1,10 +1,8 @@
 # bench/assertion-liveness — RED for an assertion-liveness clause in the shipped contract
 
-Test surface for the four lines of build contract the two shipped skeletons carry —
+Test surface for the two lines of build contract the shipped skeleton carries —
 [`assets/claude-md-skeleton.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/claude-md-skeleton.md)
-§ The envelope (Test-first · Verify before claiming) and
-[`assets/agents-md-skeleton.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/agents-md-skeleton.md)
-§ While building (the same two, executor-voiced). Both assets sit under `plugins/*/skills/**`, so
+§ The envelope (Test-first · Verify before claiming). The asset sits under `plugins/*/skills/**`, so
 [`.claude/rules/skill-authoring.md`](../../.claude/rules/skill-authoring.md) makes behavior-shaping
 prose there RED-first: the clause `GAP-085` proposed was measured against a control before being
 authored, on the precedent of the `BUG-064` row in
@@ -40,7 +38,6 @@ manifest** (single-package tier), **scale module unarmed** (0 cards, no drain in
 | Placed | Source | Contract |
 |---|---|---|
 | `CLAUDE.md` | `assets/claude-md-skeleton.md`, **placeholders filled** | § 2b "Missing → fill placeholders, write" + § Placeholders |
-| `AGENTS.md` | `assets/agents-md-skeleton.md`, **byte-verbatim** | SKILL.md:231 "no substitutions" — `make-fixture.sh` asserts `diff -q` clean |
 | `CODING_STANDARDS.md` | `assets/coding-standards-skeleton.md` | SKILL.md:233 — code present, no substitutions |
 | `docs/overview.md` | `assets/overview-skeleton.md` | SKILL.md:525 — Problem / User / Current State left unfilled at install |
 | `docs/techstack.md` | `assets/techstack-skeleton.md`, seed-once sections filled | SKILL.md:524 + § Pipeline-owned; § Framework dropped per the asset's own "drop the section if no framework" |
@@ -104,8 +101,8 @@ would contaminate the control.
 The arm is the instruction surface, not the settings file. `arm-control.json` is empty — `{}`, not
 `{"hooks": {}}`: the fixture's own `.claude/settings.json` now carries the three runway hooks, and a
 `hooks` key in the `--settings` source is a needless bet on how the two merge. A treatment arm `X`
-adds `arm-X.json` plus `arm-X-claude.md` / `arm-X-agents.md`, which `make-fixture.sh` appends to the
-placed `CLAUDE.md` / `AGENTS.md` **after** the verbatim-placement guards run — the clause text is
+adds `arm-X.json` plus `arm-X-claude.md`, which `make-fixture.sh` appends to the
+placed `CLAUDE.md` **after** the placement guards run — the clause text is
 then the only byte that differs between arms, verified by `diff -rq` across two built fixtures.
 
 ## Protocol

@@ -17,7 +17,7 @@ _Avoid_: run, scaled recipe
 
 -->
 
-**Runway**: The generic harness that `harness-bootstrap` installs or syncs in a repo — CLAUDE.md, AGENTS.md, skeleton docs, path-scoped rules and hooks. It seeds disciplines and doors, not a framework to conform to ([`harness-bootstrap`](../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md)).
+**Runway**: The generic harness that `harness-bootstrap` installs or syncs in a repo — CLAUDE.md, skeleton docs, path-scoped rules and hooks. It seeds disciplines and doors, not a framework to conform to ([`harness-bootstrap`](../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md)).
 
 **Card**: One open unit of work — a `BUG`, `DEBT` or `GAP` file at `docs/work/{ID}.md`, holding one append-only thread, deleted on resolve. It is the grounding artifact and the anchor of its change ([`docs/work/`](work/README.md)).
 _Avoid_: backlog row

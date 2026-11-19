@@ -24,7 +24,7 @@ If the repo is not a git repo (`git rev-parse --git-dir` fails), run `git init` 
 
 ## Dispatch the runway (always)
 
-Invoke `/super-bootstrap:harness-bootstrap` via the Skill tool. The runway installs fresh or syncs drift — its own detection — scaffolding CLAUDE.md, AGENTS.md, CODING_STANDARDS.md, skeleton docs, path-scoped rules, the core plugin pin, and returns "runway installed/synced + committed." The entry dispatches it unconditionally, so a documented-but-stale repo still gets runway sync. Then run the code-present seed.
+Invoke `/super-bootstrap:harness-bootstrap` via the Skill tool. The runway installs fresh or syncs drift — its own detection — scaffolding CLAUDE.md, CODING_STANDARDS.md, skeleton docs, path-scoped rules, the core plugin pin, and returns "runway installed/synced + committed." The entry dispatches it unconditionally, so a documented-but-stale repo still gets runway sync. Then run the code-present seed.
 
 ## Code-present seed — seed first, work now (code present)
 

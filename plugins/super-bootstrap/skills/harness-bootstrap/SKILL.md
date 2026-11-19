@@ -1,6 +1,6 @@
 ---
 name: harness-bootstrap
-description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, AGENTS.md (foreign-executor contract), CODING_STANDARDS.md (headings-only), skeleton docs (overview, techstack, decisions, terminology, specs/, work/), path-scoped rules, and the core plugin pin; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap:setup; opt-in earn-gated scale module (parked + test-queue + outward containers, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks and backfills skeleton sections added since bootstrap on re-run. Solo dev workflow."
+description: "Install or sync the generic harness runway in any repo — greenfield or with code present. Scaffolds CLAUDE.md, CODING_STANDARDS.md (headings-only), skeleton docs (overview, techstack, decisions, terminology, specs/, work/), path-scoped rules, and the core plugin pin; bakes in doc-sync discipline. On greenfield it writes empty product skeletons; stack-matched skill/MCP/hook curation is gated tier-2, orchestrated by /super-bootstrap:setup; opt-in earn-gated scale module (parked + test-queue + outward containers, card fact fields). Monorepo tier fans path-scoped rules out per package; adopt mode retires superseded harness forks and backfills skeleton sections added since bootstrap on re-run. Solo dev workflow."
 tags: [harness, scaffold, setup, meta, docs]
 ---
 
@@ -168,7 +168,6 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `docs/terminology.md` scope header (the H1 + blockquote + example-entry comment, drift-checked against `assets/terminology-skeleton.md`)
 - `CODING_STANDARDS.md` preamble + section headings (code present only; drift checked against `assets/coding-standards-skeleton.md`)
 - `docs/work/README.md`, `docs/work/TEMPLATE.md` — whole files, drift-checked against their skeletons. A consumer's `**ID high-water mark:**` line (here, and in the scale module's `docs/outward/README.md` + `docs/parked.md`) is a retired counter — IDs come from `/super-bootstrap:log`'s generator — so it drifts against the skeleton: the drift row replaces it with the skeleton's ID-shape text at the same spot (`docs/work/README.md`'s `**ID shape:**` line; the outward README's `## ID convention` paragraph; `docs/parked.md`'s `**ID convention:**` line), never re-plants or resets the counter. Existing numeric IDs stay valid and are never renamed
-- `AGENTS.md` (foreign-executor contract — always placed; whole shipped body drift-checked against `assets/agents-md-skeleton.md`)
 - `.claude/rules/index.md` (rule-authoring guide)
 - `.claude/rules/ssot-doc-link.md`, `.claude/rules/dimension-discipline.md` (doc-authoring rules — always placed; drift-checked against `assets/rules-ssot-doc-link-skeleton.md` / `assets/rules-dimension-discipline-skeleton.md` on the whole shipped file minus its `paths:` tail — the skeleton's own `paths:` entries, the rest of the frontmatter and the body; `paths:` entries after the skeleton's last one are consumer-owned, § Project-owned)
 - `.claude/rules/<seeded>.md` skeleton bodies (drift checked against `assets/rules-*-skeleton.md`)
@@ -184,7 +183,6 @@ The row resolves `updated` once every named surface is edited, before § 2c runs
 - `docs/decisions.md` § Closed Forks table rows (consumer-filled history)
 - `docs/terminology.md` entries (`**Term**:` + `_Avoid_:` lines below the header — consumer-registered)
 - `CODING_STANDARDS.md` section content (consumer-authored by hand when a convention settles — the file sits outside the doc-sync surface)
-- `AGENTS.md` grown content (additions appended below the shipped sections)
 - `.claude/rules/<rule>.md` grown sections (additions the user/doc-sync added below the skeleton scaffold)
 - `.claude/rules/<rule>.md` files the user authored without a matching skeleton (treat as fully project-owned)
 - Scale-module container content — `docs/parked.md` `## Entries` + `## Sweep log` content, `docs/test-queue.md` `## Pending` / `## Failed (re-queued for fix)` rows, the `docs/outward/OUT-*.md` entry files (consumer-filled, like card content; only the skeleton headers/shape stay pipeline-owned)
@@ -232,8 +230,6 @@ CODING_STANDARDS.md ← repo binding conventions (headings-only scaffold; sectio
 `docs/terminology.md` is **always** scaffolded — copy `assets/terminology-skeleton.md` to `docs/terminology.md` if missing (no substitutions); a re-run on a repo that lacks it backfills it as `⊕ new`. Starts with no entries (header + a commented example entry); the project registers terms as they settle.
 
 Copy `assets/work-readme-skeleton.md` to `docs/work/README.md` if missing (no substitutions). Copy `assets/work-template-skeleton.md` to `docs/work/TEMPLATE.md` if missing (no substitutions).
-
-`AGENTS.md` is **always** scaffolded — copy `assets/agents-md-skeleton.md` to the repo root if missing (no substitutions). No code-presence gate: the build contract it carries binds a docs-only repo the same way.
 
 `CODING_STANDARDS.md` is scaffolded **when code is present** (Phase 1 § Code presence) — copy `assets/coding-standards-skeleton.md` to the repo root if missing (no substitutions); a docs-only repo takes no file, and a later re-run that finds code raises it as `⊕ new`. Starts headings-only; its preamble states the fill contract and the three-way routing (binding + ambient here, binding + path-scoped → `.claude/rules/<scope>.md`, descriptive → `docs/techstack.md` § Coding Patterns).
 
@@ -332,7 +328,6 @@ Walk each pipeline doc and apply the per-artifact rule. Sources:
 | `assets/work-readme-skeleton.md` | `docs/work/README.md` | Always — categories, thread contract, ID shape |
 | `assets/work-template-skeleton.md` | `docs/work/TEMPLATE.md` | Always — copy-to-create card template |
 | `assets/coding-standards-skeleton.md` | `CODING_STANDARDS.md` (project root) | Code present only (Phase 1 § Code presence) |
-| `assets/agents-md-skeleton.md` | `AGENTS.md` (project root) | Always — foreign-executor contract |
 | `assets/rules-index-skeleton.md` | `.claude/rules/index.md` | Always — machinery |
 | `assets/rules-ssot-doc-link-skeleton.md` | `.claude/rules/ssot-doc-link.md` | Always — doc-authoring rule (SSOT-home links); `paths:` tail consumer-owned |
 | `assets/rules-dimension-discipline-skeleton.md` | `.claude/rules/dimension-discipline.md` | Always — doc-authoring rule (state vs history); `paths:` tail consumer-owned |
@@ -578,7 +573,6 @@ Per-candidate handling:
 Otherwise use `/super-bootstrap:commit` to stage:
 - `CLAUDE.md` (new, modified, or post-migration)
 - `CODING_STANDARDS.md` (new, or approved preamble / heading drift fix)
-- `AGENTS.md` (new, or approved drift fix)
 - `docs/techstack.md` (new, skeleton-section drift or insert, or post-migration absorbed content)
 - `docs/overview.md` (new, skeleton-section drift or insert)
 - `docs/decisions.md` (new, scope-header drift, post-retirement migration from techstack, or closed-history rows from legacy CLAUDE.md migration)

@@ -27,8 +27,8 @@
 #
 # Usage: bash make-fixture.sh <target-dir> [arm]
 #   arm defaults to `control` (shipped runway, no clause). A treatment arm
-#   `X` appends arm-X-claude.md / arm-X-agents.md (when present) to the placed
-#   CLAUDE.md / AGENTS.md — that is the only byte that differs between arms.
+#   `X` appends arm-X-claude.md (when present) to the placed CLAUDE.md — that
+#   is the only byte that differs between arms.
 #
 # Dialect (.claude/rules/asset-dialects.md): POSIX bash + portable awk for the
 # placements; python3 for the two mechanical JSON composers (settings.json
@@ -90,7 +90,6 @@ awk -v project="$PROJECT" -v techline="$TECHLINE" -v cmdline="$CMDLINE" '
 ' "$ASSETS/claude-md-skeleton.md" > "$REPO/CLAUDE.md"
 
 # --- Copied with no substitutions (SKILL.md § 2a / § 2b asset table) ---------
-# AGENTS.md          :231 "always scaffolded ... if missing (no substitutions)"
 # CODING_STANDARDS.md:233 "code present ... (no substitutions)"
 # decisions.md       :227 "always scaffolded ... (no substitutions)"
 # work/README.md,
@@ -98,7 +97,6 @@ awk -v project="$PROJECT" -v techline="$TECHLINE" -v cmdline="$CMDLINE" '
 # rules/index.md     :235 "seeded from assets/rules-index-skeleton.md"
 # overview.md        :525 Problem / User / Current State "left empty at
 #                    install; filled at GAP-card pickup" -> unfilled skeleton
-cp "$ASSETS/agents-md-skeleton.md"        "$REPO/AGENTS.md"
 cp "$ASSETS/coding-standards-skeleton.md" "$REPO/CODING_STANDARDS.md"
 cp "$ASSETS/decisions-skeleton.md"        "$REPO/docs/decisions.md"
 cp "$ASSETS/work-readme-skeleton.md"      "$REPO/docs/work/README.md"
@@ -208,7 +206,6 @@ covered = [
     "CODING_STANDARDS.md preamble + headings",
     "docs/work/README.md",
     "docs/work/TEMPLATE.md",
-    "AGENTS.md",
     ".claude/rules/index.md",
     ".claude/settings.json core plugin pin",
 ]
@@ -224,13 +221,6 @@ with io.open(dst, "w", encoding="utf-8") as fh:
 PY
 
 # --- placement guards: the shipped surface, before any arm text is appended --
-# AGENTS.md is placed with no substitutions (SKILL.md:231) — assert it, so a
-# future edit to this script cannot quietly make the foreign-executor surface a
-# filled variant. Checked pre-append: a treatment arm's clause lands below the
-# shipped body, which is the arm delta, not a substitution.
-diff -q "$ASSETS/agents-md-skeleton.md" "$REPO/AGENTS.md" >/dev/null \
-  || { echo "FATAL: AGENTS.md is not byte-verbatim against the shipped asset" >&2; exit 1; }
-
 # no unfired conditional may survive into the consumer-shaped CLAUDE.md
 if grep -nE '^[{].*[}]$' "$REPO/CLAUDE.md" >/dev/null 2>&1; then
   echo "FATAL: unfilled skeleton braces left in CLAUDE.md:" >&2
@@ -240,7 +230,6 @@ fi
 
 # --- the arm delta: the only byte that differs between arms ------------------
 [ -f "$SRC/arm-$ARM-claude.md" ] && cat "$SRC/arm-$ARM-claude.md" >> "$REPO/CLAUDE.md"
-[ -f "$SRC/arm-$ARM-agents.md" ] && cat "$SRC/arm-$ARM-agents.md" >> "$REPO/AGENTS.md"
 
 # --- the code under test -----------------------------------------------------
 cp -r "$SRC/fixture/src" "$SRC/fixture/tests" "$REPO/"

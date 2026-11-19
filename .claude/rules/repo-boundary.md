@@ -8,7 +8,6 @@ paths:
   - ".claude/hooks/**"
   - ".claude/skills/**"
   - ".claude/agents/**"
-  - "AGENTS.md"
   - "CODING_STANDARDS.md"
   - "docs/overview.md"
   - "docs/techstack.md"
@@ -102,11 +101,10 @@ both lanes and catches up what a commit missed.
   self-containment above); no counterpart, or the change is genuinely
   dogfood-specific → state so and the skeleton stays.
 - **Asset lane — asset ahead.** A frozen asset (`assets/hooks/*` script +
-  `.hook.json` snippet, `agents-md-skeleton.md`, `coding-standards-skeleton.md`
-  preamble, rule / scale skeleton bodies, autorun templates) is authored in the
-  plugin source; its dogfood copy (`.claude/hooks/*`, the merged
-  `.claude/settings.json` entry, root `AGENTS.md` / `CODING_STANDARDS.md` shipped
-  body, `.claude/templates/*`) is a placed
+  `.hook.json` snippet, `coding-standards-skeleton.md` preamble, rule / scale
+  skeleton bodies, autorun templates) is authored in the plugin source; its
+  dogfood copy (`.claude/hooks/*`, the merged `.claude/settings.json` entry, root
+  `CODING_STANDARDS.md` shipped body, `.claude/templates/*`) is a placed
   derivative. Editing the asset pulls that copy into the closure — refresh it
   byte-identical (deep-equal for a snippet; a placed doc rule byte-identical
   outside its consumer `paths:` tail) so the next re-run reads it `✓ current`.
