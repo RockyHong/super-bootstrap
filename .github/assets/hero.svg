@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 620" width="1024" height="620" role="img" aria-labelledby="t d">
+  <title id="t">super-bootstrap</title>
+  <desc id="d">One command, /super-bootstrap:setup, installs CLAUDE.md, skeleton docs and work cards.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0f0d"/>
+      <stop offset="1" stop-color="#101613"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#19201c"/>
+      <stop offset="1" stop-color="#131915"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M2 2 L10 6 L2 10" fill="none" stroke="#8fe388" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#ffffff" opacity="0.035"/>
+    </pattern>
+  </defs>
+
+  <rect width="1024" height="620" rx="18" fill="url(#bg)"/>
+  <rect width="1024" height="620" rx="18" fill="url(#dots)"/>
+
+  <!-- command -->
+  <rect x="34" y="258" width="372" height="104" rx="14" fill="url(#card)" stroke="#33403a" stroke-width="1.5"/>
+  <text x="62" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="25" fill="#8fe388" font-weight="700">&gt;</text>
+  <text x="92" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="23" fill="#e9efe9">/super-bootstrap:setup</text>
+
+  <!-- connectors -->
+  <g fill="none" stroke="#8fe388" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+    <path d="M406 310 H470 Q486 310 486 294 V124 Q486 108 502 108 H548" marker-end="url(#arrow)"/>
+    <path d="M406 310 H548" marker-end="url(#arrow)"/>
+    <path d="M406 310 H470 Q486 310 486 326 V496 Q486 512 502 512 H548" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- card 1: CLAUDE.md -->
+  <rect x="560" y="28" width="430" height="160" rx="14" fill="url(#card)" stroke="#2c3731" stroke-width="1.5"/>
+  <g transform="translate(596 62)">
+    <path d="M0 6 Q0 0 6 0 H46 L66 20 V86 Q66 92 60 92 H6 Q0 92 0 86 Z" fill="#f1f3f0"/>
+    <path d="M46 0 V14 Q46 20 52 20 H66 Z" fill="#c9cfc8"/>
+    <text x="33" y="48" text-anchor="middle" font-family="ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="800" fill="#2f8f46">MD</text>
+    <rect x="13" y="60" width="40" height="4" rx="2" fill="#aab2a9"/>
+    <rect x="13" y="70" width="30" height="4" rx="2" fill="#aab2a9"/>
+  </g>
+  <text x="696" y="98" font-family="ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="29" font-weight="700" fill="#f3f6f2">CLAUDE.md</text>
+  <text x="696" y="130" font-family="ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" fill="#aeb8ae">Workflow and doc-sync rules</text>
+  <text x="696" y="155" font-family="ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" fill="#aeb8ae">every session loads</text>
+
+  <!-- card 2: skeleton docs -->
+  <rect x="560" y="230" width="430" height="160" rx="14" fill="url(#card)" stroke="#2c3731" stroke-width="1.5"/>
+  <g transform="translate(592 268)">
+    <rect x="12" y="0" width="56" height="70" rx="6" fill="#3d6fd6"/>
+    <rect x="6" y="8" width="56" height="70" rx="6" fill="#5b8cf0"/>
+    <rect x="0" y="16" width="56" height="70" rx="6" fill="#dfe8fb"/>
+    <rect x="10" y="30" width="36" height="5" rx="2.5" fill="#5b8cf0"/>
+    <rect x="10" y="42" width="30" height="4" rx="2" fill="#9db4e6"/>
+    <rect x="10" y="52" width="34" height="4" rx="2" fill="#9db4e6"/>
+    <rect x="10" y="62" width="22" height="4" rx="2" fill="#9db4e6"/>
+  </g>
+  <text x="696" y="300" font-family="ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="29" font-weight="700" fill="#f3f6f2">Skeleton docs</text>
+  <text x="696" y="332" font-family="ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" fill="#aeb8ae">Overview, techstack, specs,</text>
+  <text x="696" y="357" font-family="ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" fill="#aeb8ae">kept true at every commit</text>
+
+  <!-- card 3: work cards -->
+  <rect x="560" y="432" width="430" height="160" rx="14" fill="url(#card)" stroke="#2c3731" stroke-width="1.5"/>
+  <g transform="translate(590 468)">
+    <path d="M0 26 Q0 20 6 20 H30 L38 28 H74 Q80 28 80 34 V84 Q80 90 74 90 H6 Q0 90 0 84 Z" fill="#e0a12b"/>
+    <rect x="14" y="0" width="52" height="62" rx="5" fill="#f4f6f3"/>
+    <path d="M22 16 l4 4 l7 -8" fill="none" stroke="#2f8f46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="38" y="13" width="20" height="4" rx="2" fill="#aab2a9"/>
+    <path d="M22 32 l4 4 l7 -8" fill="none" stroke="#2f8f46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="38" y="29" width="20" height="4" rx="2" fill="#aab2a9"/>
+    <path d="M0 48 Q0 42 6 42 H74 Q80 42 80 48 V84 Q80 90 74 90 H6 Q0 90 0 84 Z" fill="#f2b844"/>
+  </g>
+  <text x="696" y="502" font-family="ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="29" font-weight="700" fill="#f3f6f2">Work cards</text>
+  <text x="696" y="534" font-family="ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" fill="#aeb8ae">One file per bug, debt or gap,</text>
+  <text x="696" y="559" font-family="ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" fill="#aeb8ae">the thread a change runs on</text>
+</svg>

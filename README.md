@@ -1,6 +1,6 @@
 # super-bootstrap
 
-<img src=".github/assets/hero.webp" alt="super-bootstrap: one command writes CLAUDE.md, seeds skeleton docs and work cards" width="720">
+<img src=".github/assets/hero.svg" alt="super-bootstrap: one command writes CLAUDE.md, seeds skeleton docs and work cards" width="720">
 
 Skip the per-project Claude setup grind. One command writes `CLAUDE.md`, seeds skeleton docs, pins your config, **and gives Claude a phase-gated workflow** — every session runs the pipeline, but only the phases the work actually needs. Workflow, not just a toolbelt. The harness [names disciplines, not skills](docs/specs/harness-architecture.md#6-decided-vs-open), so it does not marry you to any one process-harness plugin.
 
