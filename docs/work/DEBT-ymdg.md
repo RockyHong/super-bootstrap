@@ -129,3 +129,38 @@ The round re-ran with the outdir at `%TEMP%/ce-round2` (outside Claude Code's te
 - Limits: two reps per cell, one model; the `subagent` context has a behavior reading only (its `loaded` value is the main session's); the operator's `~/.claude/CLAUDE.md` still loads in every run, and both `none` runs missed with it present.
 - Still unverified: why an outdir under `%TEMP%/claude/` suppresses project instruction files.
 - Next step: the ownership split — its carrier (rules file or `@path` import) is a free choice on this evidence; then `migrate` + sunset → merge `setup` into `harness-bootstrap` → rename.
+
+## Plan — 2026-11-19 · ownership split
+
+The ownership split, sequenced from a read-only closure scan of the repo. The author delegated the open picks ("you lean"); each is stated here and stays revisable until its phase builds. Out of this plan: `migrate` + sunset, the `setup` merge, the rename, cutting doctrine lines.
+
+Picks:
+
+- Carrier: `.claude/rules/harness.md`, no frontmatter. Shipped asset `harness-bootstrap/assets/harness.md` (named outside the `rules-*-skeleton.md` glob, which marks per-section seeded rules).
+- Consumer `CLAUDE.md` keeps the H1, `Tech Stack`, `Commands`, `Rules (auto-load on file match)`, `Planning` — all project-owned, seed-once — plus the `Monorepo` block: it carries fill-in placeholders, and an owned file with per-repo content never matches the shipped bytes.
+- `Coding Principles` moves into the owned file unconditionally, reworded to carry its own condition (read `CODING_STANDARDS.md` when the repo root holds one). A doctrine wording change — micro-test against a control.
+- Links inside the moved text are re-based for `.claude/rules/` (17 repo-root-relative targets); the shipped doc skeletons' five anchors into `CLAUDE.md` doctrine sections re-point at the owned file.
+- Advisory: the plugin-owned SessionStart hook compares the placed file with the shipped asset byte for byte after stripping CR — no stored hash, no version read. It covers the owned file and the three placed hook scripts. The hook file is renamed off `runway-version`.
+- Receipt: file and four fields stay. `covered` drops the doctrine rows and gains one whole-file row; `placed` gains the owned file; `version` is still written and no comparison reads it. The layout number belongs to `migrate`.
+- State detection, never version: fresh (no owned file, no owned heading in `CLAUDE.md`) → place; split (owned file present) → current / stale (silent whole-file copy) / fork (overwrite-or-keep prompt); legacy (no owned file, `CLAUDE.md` holds an owned heading) → the run stops with zero writes and a fixed message, and the hook stays silent. The owned-heading list is read off the asset's own `## ` lines.
+- **No `/release` between this split and `migrate`** — a released split stops every existing consumer's re-run at the legacy state.
+- This repo's root `CLAUDE.md` is split by hand as the last build phase; the steps taken are the manual-recipe draft. The dogfood copy of the owned file is byte-identical to the asset, so this repo's additions to the doctrine move to a project-owned section of `CLAUDE.md`.
+- `CLAUDE.md` § Rules gets no bullet for the owned file; one pointer line under the skeleton's H1 names it as plugin-owned and synced whole. The rename-map rot scan keeps scanning `CLAUDE.md` and leaves the owned file out.
+- Template changes to the remaining mixed-ownership files carry no advisory once the version lane is gone; they are compared only on a re-run. Accepted.
+- `docs/decisions.md`: additive notes on the version-staleness rows in this split; the full `Reopened` note lands with `migrate`.
+
+Steps — one commit per phase:
+
+1. RED, new files only: `tests/harness-asset.test.sh` (asset exists, no frontmatter, no whole-line placeholder, every relative link resolves from `.claude/rules/`, the skeleton's heading set is the project set, no doc skeleton anchors into an owned `CLAUDE.md` section); the rewritten hook test (equal → silent; differs → one advisory line, exit 0; owned file absent → silent, legacy fixture included; CRLF-only difference → silent; no `CLAUDE_PLUGIN_ROOT` → silent; version behind with equal content → silent); `bench/ownership-split/` with four headless fixture walks — fresh, legacy, stale, fork — and a control on the current skill text.
+2. Placement contract: the new asset; `claude-md-skeleton.md` cut to the project sections; `hooks-ensure-infra.md` gains the fourth whole-file asset (keep the sentence `bench/receipt-eol` anchors on); the six doc and rule skeletons' pointers; `harness-bootstrap/SKILL.md` — the version-staleness signal and its enforcement line go, the three-state detection and the whole-file lane come in, the fact-staleness key reads `CODING_STANDARDS.md` alone; the asset-lane dogfood copies. Checks: step 1's asset test green; a one-time diff of the old plugin sections against the new asset showing only the picked differences; the four walks green; `receipt-eol` and `rule-paths-tail` still extract; a cold dry-run of the changed `hooks-ensure-infra.md` section; `audit-harness-edits`.
+3. Advisory hook, test-first, parallel with step 2: the script, `hooks.json`, POSIX bash without `jq`.
+4. Pointer rewrites in the other skills and agents to a location-neutral form (`triage`, `triage-report`, `autorun`, `needs-me`, `session-continue`, `setup`, the `triage` agent, `doc-links.sh` comment), parallel with steps 2–3. `agents/doc-sync-scan.md` — its instruction to read the consumer's `CLAUDE.md § Doc Sync` is the one functional read — takes a RED on a split-shaped fixture and so follows step 5. Read `check-docs-consistency`'s Step 1 glob first; add it here if `.claude/rules/*.md` is outside it.
+5. Bench rebuild, after step 2: `assertion-liveness/make-fixture.sh` (the runway placer the others call), `carrier-equivalence`, `doc-sync-harness-cochange`, `context-heavy`, `receipt-eol`'s sample rows. Each fixture builder passes its own guards; the carrier-equivalence selftest stays green.
+6. Dogfood split, after steps 2, 3, 5: root `CLAUDE.md`, the placed owned file, the receipt, `.claude/rules/repo-boundary.md` § Sync direction (the doctrine moves from the prose lane to the asset lane), the docs' anchors into the moved sections, `bench/spike-route`. Checks: the placed file equals the asset; the hook stays silent here; every line of the old `CLAUDE.md` is found in the new pair or on a stated drop list; no broken anchor; a fresh session logs the owned file as loaded; a harness-edit task still routes through `load-harness-principles` and `audit-harness-edits`.
+7. Narrative docs sweep: both READMEs, `docs/overview.md`, `docs/techstack.md`, `docs/terminology.md`, `docs/specs/harness-architecture.md` §5 and §8, `docs/test-queue.md`, `docs/decisions.md`. The two manifest descriptions wait for `/release`.
+
+Open, for the author after step 5: a short `rules`-arm round on the shipped asset — it differs from the measured file by the link re-base, the pointer line and the `Coding Principles` wording (2–6 runs, sonnet).
+
+Seams left for `migrate`: the legacy stop message and the hook's legacy branch; the owned-heading list needs retired heading names added; consumer `docs/` links into `CLAUDE.md#<owned anchor>` need rewriting or every commit's link check fails; receipt → layout number.
+
+Watch-outs: an older plugin version on another device reads a split repo as missing every doctrine section and proposes to insert them back; a consumer's edit to the owned file meets a fork prompt, and `keep` holds for one run only — the file's first line and the README say so; a cut at the wrong boundary loses doctrine silently, so step 2's diff and step 6's line-coverage check are the guard.
