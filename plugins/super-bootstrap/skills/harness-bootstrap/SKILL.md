@@ -685,7 +685,7 @@ Per-candidate handling:
 | Artifact                            | Status       | Action              |
 |-------------------------------------|--------------|---------------------|
 | .claude/rules/harness.md            | ✓ current    | —                   |
-| docs/techstack.md: Runtime          | ⚠ drifted    | updated (approved)  |
+| docs/techstack.md: Staged-Tree Verify | ⚠ drifted  | updated (approved)  |
 | docs/techstack.md: Edit Discipline  | ⚠ drifted    | declined (keeps the repo's own banned-terms wording) |
 | .claude/rules/mv3.md                | ⊕ new        | seeded (signal: MV3 manifest) |
 | registration: docs/outward/ → README.md docs list (illustrative — name what the greps hit) | ⊕ new | updated |
@@ -699,7 +699,7 @@ Per-candidate handling:
   "version": "{current plugin version}",
   "covered": [
     ".claude/rules/harness.md",
-    "docs/techstack.md § Runtime",
+    "docs/techstack.md § Staged-Tree Verify",
     "docs/techstack.md § Edit Discipline",
     ".claude/rules/mv3.md"
   ],
