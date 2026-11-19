@@ -10,13 +10,17 @@
 #   meta/git-status.txt     `git status --porcelain --untracked-files=all` after the run
 #   meta/plugin-dir.txt     the --plugin-dir passed
 #   meta/command.txt        the claude argv, one argument per line
-#   stream.t2.jsonl, meta/answer.txt   fork + ANSWER only: the second turn
+#   meta/commits-ahead.txt  commits HEAD is ahead of meta/start-head.txt
+#   stream.t2.jsonl, meta/answer.txt   fork / legacy + ANSWER only: the second turn
+#   meta/doc-links.after.txt   legacy only: `doc-links.sh check` stdout after the walk
+#                           (make-fixture.sh saved the matching .before.txt)
 # A walk whose stream.jsonl already exists is skipped.
 #
 # Env:
 #   MODEL      default sonnet
 #   PERM_MODE  default acceptEdits (see README § Approval prompts)
-#   ANSWER     fork only: `overwrite` | `keep` — a second turn (`--continue`) gives that answer
+#   ANSWER     fork: `overwrite` | `keep`; legacy: `y` | `n` — a second turn (`--continue`)
+#              gives that answer (legacy without ANSWER = phase 1 only, ends on the confirm prompt)
 #   SHIPPED, OLDER   passed to make-fixture.sh as --shipped / --older
 #   DRY=1      build the fixture and print the command; start no claude process
 set -u
@@ -84,6 +88,16 @@ if [ "$WALK" = fork ] && [ -n "${ANSWER:-}" ]; then
   printf '%s\n' "$ANSWER" > "$WD/meta/answer.txt"
   claude_turn "$WD/stream.t2.jsonl" --continue -- "$ANSWER"
 fi
+if [ "$WALK" = legacy ] && [ -n "${ANSWER:-}" ]; then
+  case "$ANSWER" in y|n) ;; *) echo "FATAL: ANSWER must be y or n" >&2; exit 1 ;; esac
+  printf '%s\n' "$ANSWER" > "$WD/meta/answer.txt"
+  claude_turn "$WD/stream.t2.jsonl" --continue -- "$ANSWER"
+fi
 ( cd "$WD/repo" && git rev-parse HEAD ) > "$WD/meta/end-head.txt" 2>/dev/null
 ( cd "$WD/repo" && git status --porcelain --untracked-files=all ) > "$WD/meta/git-status.txt" 2>/dev/null
+( cd "$WD/repo" && git rev-list --count "$(cat "$WD/meta/start-head.txt")..HEAD" ) > "$WD/meta/commits-ahead.txt" 2>/dev/null
+if [ "$WALK" = legacy ]; then
+  # same invocation as make-fixture.sh's baseline: cwd = the repo, stdout = findings
+  ( cd "$WD/repo" && bash "$SRC/../../plugins/super-bootstrap/skills/commit/assets/doc-links.sh" check 2>/dev/null ) > "$WD/meta/doc-links.after.txt" || true
+fi
 echo "  [$NAME] head $(cut -c1-8 "$WD/meta/start-head.txt") -> $(cut -c1-8 "$WD/meta/end-head.txt"), $(grep -c . "$WD/meta/git-status.txt") dirty path(s)"

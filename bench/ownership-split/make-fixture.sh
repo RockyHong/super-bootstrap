@@ -17,13 +17,16 @@
 #   <fxdir>/meta/start-head.txt      HEAD before any run
 #   <fxdir>/meta/shipped.md          the shipped bytes this fixture was built against
 #   <fxdir>/meta/harness.before.md   stale / fork: the owned file as the run finds it
+#   <fxdir>/meta/CLAUDE.before.md    legacy: CLAUDE.md as the run finds it (own line included)
+#   <fxdir>/meta/doc-links.before.txt legacy: `doc-links.sh check` stdout on the fixture
 #
 # Runway (legacy, stale, fork): CALLS ../assertion-liveness/make-fixture.sh and
 # layers on top — one placement logic. That builder follows the shipped
 # assets (the split shape, since the split's placement contract landed); this
 # script still forces the shape each walk needs instead of trusting what it gets:
-#   legacy      CLAUDE.md := legacy/CLAUDE.md (frozen pre-split copy), no owned file,
-#               receipt `covered` := legacy/covered.txt
+#   legacy      CLAUDE.md := legacy/CLAUDE.md (frozen pre-split copy) + one repo-own
+#               bullet at the end of `## Git Notes` (the frozen file stays untouched),
+#               no owned file, receipt `covered` := legacy/covered.txt
 #   stale, fork CLAUDE.md := title + project sections only, owned file written here,
 #               receipt `covered` / `placed` rewritten to the split shape
 #
@@ -92,6 +95,7 @@ walk, repo, meta, src, shipped_path = sys.argv[1:6]
 older_path = sys.argv[6] if len(sys.argv) > 6 and sys.argv[6] else ""
 PROJECT = ("Tech Stack", "Commands", "Rules (auto-load on file match)", "Planning")
 OWNED = ".claude/rules/harness.md"
+OWN_LINE = "- Tag releases as vX.Y.Z from main only."
 
 
 def rd(p):
@@ -138,7 +142,16 @@ if walk == "fresh":
 receipt = json.load(io.open(receipt_path, encoding="utf-8"))
 
 if walk == "legacy":
-    wr(claude_md, rd(os.path.join(src, "legacy", "CLAUDE.md")).replace(b"\r", b""))
+    old = rd(os.path.join(src, "legacy", "CLAUDE.md")).replace(b"\r", b"").decode("utf-8")
+    # the repo's own line: last bullet of the `## Git Notes` section (before the next `## `)
+    lines = old.split("\n")
+    gi = next(i for i, l in enumerate(lines) if l == "## Git Notes")
+    nxt = next((i for i in range(gi + 1, len(lines)) if lines[i].startswith("## ")), len(lines))
+    last = max(i for i in range(gi, nxt) if lines[i].strip())
+    lines.insert(last + 1, OWN_LINE)
+    old = "\n".join(lines)
+    wr(claude_md, old.encode("utf-8"))
+    wr(os.path.join(meta, "CLAUDE.before.md"), old.encode("utf-8"))
     if os.path.exists(owned):
         os.remove(owned)
     cov = [l.strip() for l in io.open(os.path.join(src, "legacy", "covered.txt"), encoding="utf-8") if l.strip()]
@@ -212,6 +225,7 @@ import hashlib, io, json, os, subprocess, sys
 walk, repo, meta = sys.argv[1:4]
 PROJECT = ("Tech Stack", "Commands", "Rules (auto-load on file match)", "Planning")
 OWNED = ".claude/rules/harness.md"
+OWN_LINE = "- Tag releases as vX.Y.Z from main only."
 
 
 def rd(p):
@@ -248,6 +262,7 @@ if walk == "fresh":
 elif walk == "legacy":
     need(len(doctrine(heads(cm))) > 0, "CLAUDE.md holds doctrine sections: %s" % doctrine(heads(cm)))
     need(not os.path.exists(owned), "no %s" % OWNED)
+    need(OWN_LINE in rd(cm).decode("utf-8").split("\n"), "CLAUDE.md holds the repo-own line `%s`" % OWN_LINE)
     r = json.load(io.open(rc, encoding="utf-8"))
     need(OWNED not in r.get("placed", {}) and OWNED not in r["covered"], "receipt names no owned file")
 else:
@@ -265,5 +280,13 @@ else:
     else:
         need(rec is not None and rec != got, "owned file sha (%s…) != receipt `placed` record (%s…)" % (got[:12], rec[:12]))
 PY
+
+# legacy: the broken-link baseline the scorer compares the walk's end state against.
+# doc-links.sh reads the doc surface of its cwd; findings go to stdout (the count line to stderr).
+if [ "$WALK" = legacy ]; then
+  DL="$SRC/../../plugins/super-bootstrap/skills/commit/assets/doc-links.sh"
+  ( cd "$REPO" && bash "$DL" check 2>/dev/null ) > "$FX/meta/doc-links.before.txt" || true
+  echo "GUARD ok: doc-links baseline saved ($(grep -c . "$FX/meta/doc-links.before.txt") finding(s))"
+fi
 
 echo "fixture ready: $REPO (walk=$WALK, shipped=$SHIPPED)"

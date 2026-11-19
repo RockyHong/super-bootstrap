@@ -32,6 +32,7 @@ CLAUDE_LEGACY = "# decimate\n\n## Development Workflow\n\nWork enters by a card.
 COVERED_SPLIT = [u"CLAUDE.md \u00a7 Rules", u"CLAUDE.md \u00a7 Planning", u"docs/overview.md \u00a7 Problem", OWNED]
 
 FRESH_DONE = "**Generic runway installed.** CLAUDE.md drives workflow."
+# the stop message of the pre-migration skill: zero writes, no confirm prompt (today's reading)
 LEGACY_STOP = ("Stopped, nothing written. This repo is in the pre-split shape: `CLAUDE.md` still holds "
                "plugin-owned sections and `.claude/rules/harness.md` is absent.")
 STALE_DONE = ("| .claude/rules/harness.md | \u26a0 drifted | updated (stale) |\n\n"
@@ -158,6 +159,9 @@ tree("fresh-control-shape", "1", "0", "owned file missing",
      [FRESH_DONE])
 
 # --- legacy ------------------------------------------------------------------------
+# Two phases. Phase 1 (no meta/answer.txt): zero writes + a confirm prompt as the
+# message's final line. Phase 2 (answer `y`): the migration's end state, seven properties.
+CONFIRM = "Migrate CLAUDE.md onto .claude/rules/harness.md? (y / n)"
 LM = {"start-head.txt": "aaaa1111\n", "end-head.txt": "aaaa1111\n", "git-status.txt": ""}
 
 
@@ -168,18 +172,110 @@ def lmeta(**over):
 
 
 LFILES = {"CLAUDE.md": CLAUDE_LEGACY}
-tree("legacy-ok", "1", "1", "ok", LFILES, ["Reading the repo.", LEGACY_STOP], lmeta())
-tree("legacy-dirty-tree", "1", "0", "working tree not clean", LFILES, [LEGACY_STOP],
-     lmeta(**{"git-status.txt": "?? .claude/bootstrap-sync-report.md\n M .claude/super-bootstrap-runway.json\n"}))
-tree("legacy-head-moved", "1", "0", "HEAD moved", LFILES, [LEGACY_STOP], lmeta(**{"end-head.txt": "bbbb2222\n"}))
-tree("legacy-no-file-name", "1", "0", "stop message does not name .claude/rules/harness.md", LFILES,
-     ["Stopped, nothing written: this repo is in the pre-split shape."], lmeta())
-tree("legacy-no-shape", "1", "0", "stop message does not state the pre-split shape", LFILES,
-     ["Stopped. `.claude/rules/harness.md` is absent."], lmeta())
-tree("legacy-did-not-stop", "1", "0", "stop message does not name", LFILES,
+# phase 1
+tree("legacy-ok", "1", "1", "ok", LFILES, ["Reading the repo.", "Delta list follows.\n\n" + CONFIRM], lmeta())
+tree("legacy-ok-emphasis", "1", "1", "ok", LFILES,
+     ["**Migrate `CLAUDE.md` onto `.claude/rules/harness.md`? (y / n)**"], lmeta())
+# TODAY's behaviour: zero writes, the old stop message, no confirm prompt
+tree("legacy-today-stop", "1", "0", "no confirm prompt", LFILES, ["Reading the repo.", LEGACY_STOP], lmeta())
+tree("legacy-did-not-stop", "1", "0", "no confirm prompt", LFILES,
      ["**Pipeline synced.** 0 items updated, 23 already current."], lmeta())
-tree("legacy-no-status-meta", "0", "-", "meta/git-status.txt missing", LFILES, [LEGACY_STOP],
+tree("legacy-other-wording", "1", "0", "no confirm prompt", LFILES,
+     ["Proceed with the migration? (y / n)"], lmeta())
+tree("legacy-prompt-not-final", "1", "0", "no confirm prompt", LFILES,
+     [CONFIRM + "\n\nI will wait for your answer."], lmeta())
+tree("legacy-dirty-tree", "1", "0", "working tree not clean", LFILES, [CONFIRM],
+     lmeta(**{"git-status.txt": "?? .claude/bootstrap-sync-report.md\n M .claude/super-bootstrap-runway.json\n"}))
+tree("legacy-head-moved", "1", "0", "HEAD moved", LFILES, [CONFIRM], lmeta(**{"end-head.txt": "bbbb2222\n"}))
+tree("legacy-no-status-meta", "0", "-", "meta/git-status.txt missing", LFILES, [CONFIRM],
      lmeta(**{"git-status.txt": None}))
+
+# phase 2 (answer y)
+OWN = "- Tag releases as vX.Y.Z from main only."
+OLD_CLAUDE = ("# decimate\n\n## Development Workflow\n\nWork enters by picking up a card.\n\n"
+              "## Rules (auto-load on file match)\n\nrules index\n\n## Tech Stack\n\nPython 3.\n\n"
+              "## Commands\n\nrun tests\n\n## Git Notes\n\n- Atomic commits.\n- Obsolete old-plugin bullet.\n"
+              + OWN + "\n\n## Planning\n\n- [docs](docs/overview.md)\n- See [spec](docs/specs/a.md#x)\n")
+NEW_CLAUDE = ("# decimate\n\n## Rules (auto-load on file match)\n\nrules index\n\n## Tech Stack\n\nPython 3.   \n\n"
+              "## Commands\n\nrun tests\n\n## Additions to the harness doctrine\n\n" + OWN + "\n\n"
+              "## Planning\n\n- [docs](docs/overview.md)\n- See [spec](docs/specs/b.md#x)\n")
+# the confirm message: the fenced block is the drop list the user saw
+CONFIRM_MSG = ("Delta list:\n\n```\n- Obsolete old-plugin bullet.\n```\n\n"
+               "Migrate `CLAUDE.md` onto `.claude/rules/harness.md`? (y / n)")
+CONFIRM_MSG_NO_FENCE = ("Delta list: the obsolete old-plugin bullet is dropped.\n\n" + CONFIRM)
+LINK_BEFORE = "docs/overview.md:3: .claude/rules/harness.md — path not found\n"
+NEW_BROKEN = "docs/guide.md:9: docs/gone.md — path not found\n"
+
+
+def ymeta(**over):
+    m = lmeta(**{"answer.txt": "y\n", "CLAUDE.before.md": OLD_CLAUDE, "doc-links.before.txt": LINK_BEFORE,
+                 "doc-links.after.txt": "", "commits-ahead.txt": "1\n"})
+    m.update(over)
+    return m
+
+
+def yfiles(**over):
+    f = {OWNED: ASSET, "CLAUDE.md": NEW_CLAUDE, RECEIPT: receipt(COVERED_SPLIT)}
+    f.update(over)
+    return {k: v for k, v in f.items() if v is not None}
+
+
+YT = [CONFIRM_MSG]
+T2 = ["Migrated in one commit."]
+
+
+def ytree(name, valid, pas, reason, files=None, texts=None, meta=None, t2=T2):
+    tree(name, valid, pas, reason, files if files is not None else yfiles(), YT if texts is None else texts,
+         meta if meta is not None else ymeta(), t2=t2)
+
+
+ytree("legacy-y-ok", "1", "1", "ok")
+# the old link line moved a few lines: the finding keys on doc + target, not line number
+ytree("legacy-y-ok-linkshift", "1", "1", "ok",
+      meta=ymeta(**{"doc-links.after.txt": "docs/overview.md:5: .claude/rules/harness.md — path not found\n"}))
+ytree("legacy-y-ok-crlf", "1", "1", "ok",
+      yfiles(**{"CLAUDE.md": NEW_CLAUDE.replace("\n", "\r\n").encode("utf-8"),
+                OWNED: ASSET.replace("\n", "\r\n").encode("utf-8")}))
+# 1 owned file
+ytree("legacy-y-no-owned-file", "1", "0", "owned file missing", yfiles(**{OWNED: None}))
+ytree("legacy-y-owned-differs", "1", "0", "owned file differs from the shipped asset",
+      yfiles(**{OWNED: ASSET.replace("Atomic", "atomic")}))
+# 2 no doctrine heading
+ytree("legacy-y-doctrine-heading", "1", "0", "CLAUDE.md holds doctrine heading(s): Development Workflow",
+      yfiles(**{"CLAUDE.md": NEW_CLAUDE + "\n## Development Workflow\n\nWork enters by picking up a card.\n"}))
+# 3 line coverage
+ytree("legacy-y-uncovered-line", "1", "0", "neither kept nor on the drop list, first `Python 3.`",
+      yfiles(**{"CLAUDE.md": NEW_CLAUDE.replace("Python 3.   \n\n", "")}))
+ytree("legacy-y-drop-not-fenced", "1", "0", "neither kept nor on the drop list, first `- Obsolete old-plugin bullet.`",
+      texts=[CONFIRM_MSG_NO_FENCE])
+ytree("legacy-y-no-confirm-prompt", "1", "0", "no confirm prompt in the first turn", texts=["Migrating now."])
+# 4 links
+ytree("legacy-y-new-broken-link", "1", "0", "1 new broken link(s), first `docs/guide.md: docs/gone.md",
+      meta=ymeta(**{"doc-links.after.txt": NEW_BROKEN}))
+# 5 own line
+ytree("legacy-y-own-line-lost", "1", "0", "the repo's own line is lost",
+      yfiles(**{"CLAUDE.md": NEW_CLAUDE.replace(OWN + "\n\n", "")}))
+# 6 one commit, clean tree
+ytree("legacy-y-two-commits", "1", "0", "2 commit(s) ahead of the start, want exactly 1",
+      meta=ymeta(**{"commits-ahead.txt": "2\n"}))
+ytree("legacy-y-no-commit", "1", "0", "0 commit(s) ahead of the start, want exactly 1",
+      meta=ymeta(**{"commits-ahead.txt": "0\n"}))
+ytree("legacy-y-dirty-tree", "1", "0", "working tree not clean",
+      meta=ymeta(**{"git-status.txt": " M CLAUDE.md\n"}))
+# 7 receipt
+ytree("legacy-y-receipt-doctrine-row", "1", "0", "receipt `covered` holds doctrine row(s)",
+      yfiles(**{RECEIPT: receipt(COVERED_SPLIT + [u"CLAUDE.md § Doc Sync"])}))
+ytree("legacy-y-receipt-no-owned-row", "1", "0", "receipt `covered` lacks the .claude/rules/harness.md row",
+      yfiles(**{RECEIPT: receipt(COVERED_SPLIT[:-1])}))
+# answer n: the run stops, zero writes
+tree("legacy-n-ok", "1", "1", "ok", LFILES, [CONFIRM], lmeta(**{"answer.txt": "n\n"}), t2=["Left as it is."])
+tree("legacy-n-wrote", "1", "0", "working tree not clean", LFILES, [CONFIRM],
+     lmeta(**{"answer.txt": "n\n", "git-status.txt": " M CLAUDE.md\n"}), t2=["Left as it is."])
+# invalid
+tree("legacy-y-no-before-meta", "0", "-", "meta/CLAUDE.before.md missing", yfiles(), YT,
+     ymeta(**{"CLAUDE.before.md": None}), t2=T2)
+tree("legacy-y-no-second-turn", "0", "-", "no stream.t2", yfiles(), YT, ymeta())
+tree("legacy-no-text", "0", "-", "no assistant text", LFILES, [], lmeta())
 
 # --- stale -------------------------------------------------------------------------
 SM = {"harness.before.md": OLDER}
@@ -220,7 +316,6 @@ tree("fork-keep-but-changed", "1", "0", "owned file changed without an overwrite
 # --- invalid: never a pass, never a fail ---------------------------------------------
 tree("fresh-errored", "0", "-", "run errored", fresh(), [FRESH_DONE], stream_kw={"error": True})
 tree("fresh-no-result", "0", "-", "no result event", fresh(), [FRESH_DONE], stream_kw={"result": False})
-tree("legacy-no-text", "0", "-", "no assistant text", LFILES, [], lmeta())
 tree("stale-no-stream", "0", "-", "no stream", {OWNED: ASSET}, None, SM, no_stream=True)
 tree("fresh-plugin-not-loaded", "0", "-", "dev plugin not loaded", fresh(), [FRESH_DONE], stream_kw={"plugins": "none"})
 tree("fresh-plugin-from-cache", "0", "-", "not the dev copy", fresh(), [FRESH_DONE], stream_kw={"plugins": "cache"})

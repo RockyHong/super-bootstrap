@@ -4,7 +4,7 @@ Test surface for [`DEBT-ymdg`](../../docs/work/DEBT-ymdg.md) (its `## Plan — 2
 split`, the "State detection" pick). The plugin-owned doctrine moves out of the consumer's
 `CLAUDE.md` into one whole file the plugin owns, `.claude/rules/harness.md`, and
 [`harness-bootstrap`](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md) decides what
-to do from the repo's state: fresh → place; split → current / stale / fork; legacy → stop. Four
+to do from the repo's state: fresh → place; split → current / stale / fork; legacy → migrate. Four
 headless walks, one per state, each read mechanically off the resulting tree and transcript.
 
 **Copy under test: the in-repo dev copy** (`plugins/super-bootstrap/`), loaded with
@@ -17,17 +17,16 @@ plugin or lists it at another path.
 | Walk | Fixture ([`make-fixture.sh`](make-fixture.sh)) | Pass ([`score.py`](score.py)) |
 |---|---|---|
 | `fresh` | code-present git repo, no `CLAUDE.md`, no `.claude/` | `.claude/rules/harness.md` exists and equals the shipped asset (CR-insensitive); `CLAUDE.md` exists and every `## ` heading is in the project set (`Tech Stack`, `Commands`, `Rules (auto-load on file match)`, `Planning`, a `Monorepo…` heading); the receipt's `covered` holds no `CLAUDE.md § <doctrine>` row and holds the `.claude/rules/harness.md` row |
-| `legacy` | bootstrapped pre-split: `CLAUDE.md` holds the doctrine sections ([`legacy/CLAUDE.md`](legacy/CLAUDE.md), frozen), no owned file | zero writes — `git status --porcelain --untracked-files=all` empty and `HEAD` unchanged; the final assistant text names `.claude/rules/harness.md` and states the pre-split shape (`LEGACY_SHAPE_PATTERNS`) |
+| `legacy` | bootstrapped pre-split: `CLAUDE.md` holds the doctrine sections ([`legacy/CLAUDE.md`](legacy/CLAUDE.md), frozen) plus one repo-own bullet `- Tag releases as vX.Y.Z from main only.` that `make-fixture.sh` appends to `## Git Notes`; no owned file | two phases. **Phase 1** (no answer): zero writes — `git status --porcelain --untracked-files=all` empty, `HEAD` unchanged — and a message whose final line is `Migrate CLAUDE.md onto .claude/rules/harness.md? (y / n)`. **Phase 2** (`ANSWER=y`): the owned file equals the shipped asset (CR aside); `CLAUDE.md` holds no `## ` line of the asset; every non-blank old `CLAUDE.md` line is in the new `CLAUDE.md`, the placed owned file or the drop list; no broken link the fixture did not start with; the own bullet is in the new `CLAUDE.md`; `HEAD` is exactly one commit ahead, tree clean; the receipt's `covered` holds the owned-file row and no `CLAUDE.md § <doctrine>` row. `ANSWER=n`: zero writes |
 | `stale` | split shape; the owned file equals an older asset version whose sha256 is the receipt's `placed` record; the shipped asset differs | the owned file equals the shipped asset; no approval prompt naming it in the transcript |
 | `fork` | split shape; the owned file carries a hand edit — equals neither the shipped asset nor the `placed` record | the transcript carries an overwrite-or-keep choice naming the file; the file is unchanged, unless a second turn answered `overwrite` (then it equals the shipped asset) |
 
 **Expected on today's skill text (the control): every walk fails.** `fresh` puts the doctrine
-sections in `CLAUDE.md` and places no owned file; `legacy` does not stop; `stale` and `fork` have no
+sections in `CLAUDE.md` and places no owned file; `legacy` stops without a confirm prompt; `stale` and `fork` have no
 whole-file lane for that path. The scorer reports each as `pass 0` with a reason line per failed
 property.
 
-`legacy`'s zero-writes property alone does not discriminate — a re-run that finds everything current
-also writes nothing. The stop-message marker carries that walk's RED.
+`legacy`'s phase-1 zero-writes property alone does not discriminate — a re-run that finds everything current also writes nothing. The confirm prompt carries phase 1's RED (a stop message with no prompt fails); the phase-2 properties carry the migration's RED.
 
 ### The shipped asset is a parameter
 
@@ -67,7 +66,7 @@ them without a prompt. The scorer keys on the owned file, `CLAUDE.md` and the re
 answered, write nothing that waits on it, and end the turn. Where each walk meets that:
 
 - `fresh` — a fresh install writes from templates and asks nothing; the turn runs to the commit.
-- `legacy` — the expected stop is the walk's answer.
+- `legacy` — two phases. The first turn ends on the confirm prompt (zero writes). `ANSWER=y` (or `n`) adds a second turn (`--continue`) that answers it; with `y` the migration lands as one commit. No `ANSWER` = phase 1 only.
 - `stale` — the whole-file copy is silent by contract; a prompt naming the owned file is the fail.
 - `fork` — the overwrite-or-keep question is the pass; the turn ends on it. `ANSWER=overwrite` (or
   `keep`) adds a second turn (`claude -p --continue`, same cwd and config dir) that gives the answer;
@@ -108,8 +107,8 @@ smoke test for each:
 bash selftest/selftest.sh [-v]               # scorer bite check, no claude process (exit 1 on a wrong verdict)
 bash make-fixture.sh <tmp>/fx stale          # one fixture, prints its guards
 DRY=1 bash run.sh <outdir> fork              # fixture + the exact command, no claude process
-bash run.sh <outdir> <walk> [label]          # one walk -> <outdir>/<walk>[-label]/
-bash run-round.sh <outdir> [label]           # the four walks, then the score
+bash run.sh <outdir> <walk> [label]          # one walk -> <outdir>/<walk>[-label]/  (ANSWER=overwrite|keep for fork, y|n for legacy)
+bash run-round.sh <outdir> [label]           # the four walks, then the score (FORK_ANSWER=…, LEGACY_ANSWER=… give each walk's second turn)
 python3 score.py <outdir> [--asset FILE]     # score again
 ```
 
@@ -139,8 +138,10 @@ fail; its `pass` column reads `-`. A fail's reason joins every failed property w
   with no label line between a summary naming the file and an unrelated plain-paragraph prompt in
   the same labelled section still reads as a prompt for the file. Read the quoted snippet on the
   reason line before trusting a `stale` fail on this property alone.
-- `LEGACY_SHAPE_PATTERNS` is a guess at a message not yet written; pin it to the fixed stop message
-  when that text lands, and add its exact sentence to `selftest/make-trees.py`.
+- `legacy` phase 2 reads the old file from `meta/CLAUDE.before.md` (the fixture's starting bytes, own bullet included). Line coverage normalises both sides: strip CR, trim, mask every link target (`](...)` → `]()`). The drop list is every line inside a fenced block of the assistant message that carries the confirm prompt (the first turn's text), same normalisation; no such message → the drop list is empty and the reason says so. The reason names the first uncovered old line and the count.
+- Links: `make-fixture.sh legacy` saves `meta/doc-links.before.txt` and `run.sh` saves `meta/doc-links.after.txt`, both the stdout of `bash plugins/super-bootstrap/skills/commit/assets/doc-links.sh check` run with the fixture repo as cwd (the script reads the cwd's doc surface; findings go to stdout, the count to stderr). The scorer compares the findings with the line number dropped, because lines shift; a finding in the after set and not the before set fails. The placer's runway starts with findings (links into the absent owned file), so a correct migration ends with fewer.
+- `run.sh` records `meta/commits-ahead.txt` (`git rev-list --count start..HEAD`) for the one-commit property.
+- Limit: the control and green rounds for `legacy` have not been run — no `claude` process was started, and the skill text that migrates is not written. The selftest is the only evidence the scorer discriminates.
 
 [`selftest/make-trees.py`](selftest/make-trees.py) builds the hand-made result trees at selftest time
 and holds each tree's expected verdict and the substring its reason must carry: per walk one

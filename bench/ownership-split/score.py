@@ -12,7 +12,12 @@ Usage: python3 score.py <results-dir> [--asset FILE] [--machine]
                    meta/end-head.txt        HEAD after the run
                    meta/git-status.txt      `git status --porcelain --untracked-files=all` after the run
                    meta/harness.before.md   stale / fork: the owned file before the run
-                   meta/answer.txt          fork only: `overwrite` | `keep` (the second turn's answer)
+                   meta/answer.txt          fork: `overwrite` | `keep`; legacy: `y` | `n` (the second turn's answer)
+                   stream.t2.jsonl          also legacy, when answer.txt exists
+                   meta/commits-ahead.txt   legacy + answer y: `git rev-list --count start..HEAD` after the run
+                   meta/CLAUDE.before.md    legacy + answer y: the fixture's starting CLAUDE.md
+                   meta/doc-links.before.txt, meta/doc-links.after.txt
+                                            legacy + answer y: `doc-links.sh check` stdout before / after the walk
                    meta/plugin-dir.txt      the --plugin-dir the run was given
   --asset FILE   the shipped owned-file asset to compare against. Default:
                  plugins/super-bootstrap/skills/harness-bootstrap/assets/harness.md;
@@ -47,16 +52,13 @@ PROJECT_ROW_PREFIXES = ("Tech Stack", "Commands", "Rules", "Planning", "Monorepo
 ROW_PRE = u"CLAUDE.md § "
 
 # --- markers (one place) --------------------------------------------------------
-# legacy stop message: names the owned file AND states the pre-split shape.
-# The fixed message is authored with the split's placement contract; pin this
-# list to its wording when it lands.
-LEGACY_SHAPE_PATTERNS = [
-    r"pre-split",
-    r"\blegacy\b",
-    r"\bnot (yet )?(been )?split\b",
-    r"\bbefore the (ownership )?split\b",
-    r"\bmigrat",
-]
+# legacy phase 1: the confirm prompt. The message's FINAL non-blank line must be
+# this literal, after markdown emphasis / backticks are dropped and whitespace
+# collapsed (so `CLAUDE.md` and **x** pass; other wording does not).
+CONFIRM_RE = re.compile(r"^Migrate CLAUDE\.md onto \.claude/rules/harness\.md\? \(y / n\)$")
+# legacy phase 2: the repo's own line, appended by make-fixture.sh to `## Git Notes`.
+OWN_LINE = u"- Tag releases as vX.Y.Z from main only."
+LINK_TARGET_RE = re.compile(r"\]\([^)]*\)")
 # an approval prompt, as the skill words them (SKILL.md § 2b Block 2, the
 # `⊕ new` expansion, legacy migration; hooks-ensure-infra.md § fork pick)
 OVERWRITE_KEEP = r"\boverwrite\b.{0,300}?\bkeep\b|\bkeep\b.{0,300}?\boverwrite\b"
@@ -264,21 +266,8 @@ def is_project_heading(h):
 
 
 # --- per-walk property checks: each returns a list of fail reasons ---------------
-def check_fresh(d, asset, evs):
+def receipt_fails(repo):
     fails = []
-    repo = os.path.join(d, "repo")
-    owned = read_bytes(os.path.join(repo, OWNED))
-    if owned is None:
-        fails.append("owned file missing: no %s" % OWNED)
-    elif strip_cr(owned) != strip_cr(asset):
-        fails.append("owned file differs from the shipped asset")
-    cm = read_text(os.path.join(repo, "CLAUDE.md"))
-    if cm is None:
-        fails.append("CLAUDE.md missing")
-    else:
-        extra = [h for h in headings(cm) if not is_project_heading(h)]
-        if extra:
-            fails.append("CLAUDE.md holds non-project heading(s): %s" % ", ".join(extra))
     rt = read_text(os.path.join(repo, RECEIPT))
     try:
         cov = json.loads(rt)["covered"] if rt is not None else None
@@ -297,21 +286,126 @@ def check_fresh(d, asset, evs):
     return fails
 
 
+def check_fresh(d, asset, evs):
+    fails = []
+    repo = os.path.join(d, "repo")
+    owned = read_bytes(os.path.join(repo, OWNED))
+    if owned is None:
+        fails.append("owned file missing: no %s" % OWNED)
+    elif strip_cr(owned) != strip_cr(asset):
+        fails.append("owned file differs from the shipped asset")
+    cm = read_text(os.path.join(repo, "CLAUDE.md"))
+    if cm is None:
+        fails.append("CLAUDE.md missing")
+    else:
+        extra = [h for h in headings(cm) if not is_project_heading(h)]
+        if extra:
+            fails.append("CLAUDE.md holds non-project heading(s): %s" % ", ".join(extra))
+    fails += receipt_fails(repo)
+    return fails
+
+
+def norm_line(l):
+    """Line-coverage normalisation: strip CR, trim, mask every link target `](...)` -> `]()`."""
+    return LINK_TARGET_RE.sub("]()", l.replace("\r", "").strip())
+
+
+def norm_lines(text):
+    return [n for n in (norm_line(l) for l in text.split("\n")) if n]
+
+
+def confirm_messages(texts):
+    """Assistant messages whose final non-blank line is the confirm prompt -> [text]."""
+    out = []
+    for t in texts:
+        ls = [l for l in t.split("\n") if l.strip()]
+        if not ls:
+            continue
+        last = " ".join(re.sub(r"[`*_]", "", ls[-1]).split())
+        if CONFIRM_RE.match(last):
+            out.append(t)
+    return out
+
+
+def fenced_lines(text):
+    """Normalised non-blank lines inside fenced blocks of `text` (delimiters excluded)."""
+    out, fence = [], False
+    for ln in text.replace("\r", "").split("\n"):
+        if FENCE_RE.match(ln):
+            fence = not fence
+            continue
+        if fence:
+            out.append(ln)
+    return norm_lines("\n".join(out))
+
+
+def link_findings(text):
+    """`doc-links.sh check` stdout -> set of findings, line number dropped (lines shift)."""
+    out = set()
+    for l in (text or "").replace("\r", "").split("\n"):
+        if l.strip():
+            out.add(re.sub(r"^([^:\n]+):\d+:", r"\1:", l.strip()))
+    return out
+
+
 def check_legacy(d, asset, evs):
     fails = []
-    status = read_text(os.path.join(d, "meta", "git-status.txt"))
-    dirty = [l for l in status.splitlines() if l.strip()]
+    mt = lambda n: read_text(os.path.join(d, "meta", n))
+    answer = (mt("answer.txt") or "").strip()
+    repo = os.path.join(d, "repo")
+    if answer != "y":
+        # phase 1 (no answer) and any answer but `y`: nothing is written
+        status = mt("git-status.txt")
+        dirty = [l for l in status.splitlines() if l.strip()]
+        if dirty:
+            fails.append("working tree not clean: %d path(s), first `%s`" % (len(dirty), dirty[0].strip()))
+        start, end = mt("start-head.txt").strip(), mt("end-head.txt").strip()
+        if start != end:
+            fails.append("HEAD moved (%s -> %s)" % (start[:8], end[:8]))
+        if not answer and not confirm_messages(main_texts(evs)):
+            fails.append("no confirm prompt: no message ends on `Migrate CLAUDE.md onto "
+                         ".claude/rules/harness.md? (y / n)`")
+        return fails
+    # phase 2: answer `y`
+    owned = read_bytes(os.path.join(repo, OWNED))
+    if owned is None:
+        fails.append("owned file missing: no %s" % OWNED)
+    elif strip_cr(owned) != strip_cr(asset):
+        fails.append("owned file differs from the shipped asset")
+    cm = read_text(os.path.join(repo, "CLAUDE.md"))
+    if cm is None:
+        fails.append("CLAUDE.md missing")
+        cm = ""
+    else:
+        asset_heads = set(headings(asset.decode("utf-8", errors="replace")))
+        extra = [h for h in headings(cm) if h in asset_heads]
+        if extra:
+            fails.append("CLAUDE.md holds doctrine heading(s): %s" % ", ".join(extra))
+    # line coverage: every old CLAUDE.md line is in the new pair or on the drop list
+    old = norm_lines(mt("CLAUDE.before.md"))
+    confirms = confirm_messages(main_texts(evs))
+    if not confirms:
+        fails.append("no confirm prompt in the first turn, so no drop list")
+    drop = set(l for t in confirms for l in fenced_lines(t))
+    have = set(norm_lines(cm)) | set(norm_lines((owned or b"").decode("utf-8", errors="replace"))) | drop
+    gone = [l for l in old if l not in have]
+    if gone:
+        fails.append("%d old CLAUDE.md line(s) neither kept nor on the drop list, first `%s`" % (len(gone), gone[0][:80]))
+    # links: no finding the fixture did not start with
+    newf = sorted(link_findings(mt("doc-links.after.txt")) - link_findings(mt("doc-links.before.txt")))
+    if newf:
+        fails.append("%d new broken link(s), first `%s`" % (len(newf), newf[0][:120]))
+    # the repo's own line
+    if OWN_LINE not in norm_lines(cm):
+        fails.append("the repo's own line is lost from CLAUDE.md: `%s`" % OWN_LINE)
+    # one commit, clean tree
+    ahead = (mt("commits-ahead.txt") or "").strip()
+    if ahead != "1":
+        fails.append("HEAD is %s commit(s) ahead of the start, want exactly 1" % (ahead or "?"))
+    dirty = [l for l in mt("git-status.txt").splitlines() if l.strip()]
     if dirty:
         fails.append("working tree not clean: %d path(s), first `%s`" % (len(dirty), dirty[0].strip()))
-    start = read_text(os.path.join(d, "meta", "start-head.txt")).strip()
-    end = read_text(os.path.join(d, "meta", "end-head.txt")).strip()
-    if start != end:
-        fails.append("HEAD moved (%s -> %s)" % (start[:8], end[:8]))
-    final = main_texts(evs)[-1]
-    if "harness.md" not in final or ".claude/rules" not in final:
-        fails.append("stop message does not name %s" % OWNED)
-    if not any(re.search(p, final, re.I) for p in LEGACY_SHAPE_PATTERNS):
-        fails.append("stop message does not state the pre-split shape")
+    fails += receipt_fails(repo)
     return fails
 
 
@@ -370,9 +464,14 @@ def score_walk(results, name, asset):
     for m in META_NEEDED[walk]:
         if not os.path.isfile(os.path.join(d, "meta", m)):
             invalid.append("meta/%s missing" % m)
-    # fork with an answer: the second turn must be readable too
-    if walk == "fork" and os.path.isfile(os.path.join(d, "meta", "answer.txt")):
+    # fork / legacy with an answer: the second turn must be readable too
+    ans = (read_text(os.path.join(d, "meta", "answer.txt")) or "").strip()
+    if walk in ("fork", "legacy") and os.path.isfile(os.path.join(d, "meta", "answer.txt")):
         invalid += stream_health(events(os.path.join(d, "stream.t2.jsonl")), "stream.t2")
+    if walk == "legacy" and ans == "y":
+        for m in ("CLAUDE.before.md", "doc-links.before.txt", "doc-links.after.txt", "commits-ahead.txt"):
+            if not os.path.isfile(os.path.join(d, "meta", m)):
+                invalid.append("meta/%s missing" % m)
     if invalid:
         return {"name": name, "valid": "0", "pass": "-", "reason": "; ".join(invalid)}
     fails = CHECKS[walk](d, asset, evs)
