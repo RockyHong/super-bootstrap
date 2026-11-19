@@ -121,8 +121,9 @@ hyphenated one.
 - **Historical** — `harness-bootstrap` must keep matching pre-rename spellings it reads out
   of an already-bootstrapped repo: the `chore: scaffold|sync superpowers pipeline` commit
   strings its bootstrap-shaped-commit match greps, and the `docs/superpowers/` folder its Phase 2a
-  migration moves to `docs/work/`. Dropping the first makes every existing consumer read as
-  never-bootstrapped; dropping the second strands its old tree on disk (§8).
+  migration moves to `docs/work/`. Dropping the first costs the doctrine migration its
+  provenance read on a `CLAUDE.md` line a pre-rename bootstrap wrote — fresh install versus re-run
+  is read off the files present, never off these strings; dropping the second strands its old tree on disk (§8).
 
 The `mattpocock|matt-pocock|ask-matt|grill-me|grill-with-docs|to-spec|to-tickets|wayfinder`
 alternates carry no sanctioned hit at all — they stay in the pattern as the standing

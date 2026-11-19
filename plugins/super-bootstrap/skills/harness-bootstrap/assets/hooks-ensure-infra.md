@@ -56,8 +56,8 @@ Five hooks are retired — delete them from any already-bootstrapped repo on re-
 - `docsync-stamp` (formerly a PostToolUse hook) — retired earlier when its
   token-write folded into `docsync-scan`.
 
-On any re-sync of an already-bootstrapped repo — one carrying a bootstrap-shaped
-commit, every spelling (`SKILL.md` § 2b); none → skip this loop:
+On a re-run — Phase 1 read the state split (`SKILL.md` § Existing CLAUDE.md);
+a fresh install skips this loop:
 
 1. For each of `entry-nudge.sh`, `harness-grounding.sh`, `docsync-gate.sh`, `docsync-scan.sh`, `docsync-stamp.sh` — if the
    file exists at `.claude/hooks/<name>.sh`, delete it.
