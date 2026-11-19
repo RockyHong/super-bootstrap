@@ -1,6 +1,6 @@
 # Hooks ensure-infra — content-aware default-on hook install
 
-harness-bootstrap ships three hook assets. Unlike autorun's worktree infra
+harness-bootstrap ships three hook assets and one rules file, `harness.md`. Unlike autorun's worktree infra
 (`../autorun/assets/ensure-infra.md`), install runs **unconditionally** — no opt-in
 confirm. All are safe-by-default: `commit-channel`'s hook process spawns on any `git`
 call on either command tool (its entry carries one hook element per tool, and each
@@ -31,13 +31,19 @@ manager (a prior device-level plant) is drift-checked by the same copy-on-drift
 mechanism below and lands in its fork prompt — the frozen asset here is the SSOT,
 and the swap is an explicit pick.
 
+**Fourth whole-file asset — the workflow rules file.** `harness.md` (beside this file)
+→ `.claude/rules/harness.md`: the plugin's workflow doctrine, placed by the same `cp`
+— whole, no substitution, no settings snippet, no `# FROZEN` marker. § Idempotency
+resolves it with the script predicates, states, prompt and report wording, read with
+this pair in place of `hooks/<name>.sh` → `.claude/hooks/<name>.sh`.
+
 ## Retired hooks — remove on re-sync
 
 Five hooks are retired — delete them from any already-bootstrapped repo on re-sync:
 
 - `entry-nudge` (formerly a UserPromptSubmit injector — one card-grounded-entry
   pointer per prompt) — retired as an unearned redundant push: the entry-discipline
-  lives in full in CLAUDE.md § Development Workflow (ambient, reaches every turn and
+  lives in full in `.claude/rules/harness.md` § Development Workflow (ambient, reaches every turn and
   every dispatched subagent); the every-prompt pointer added only anti-decay
   repetition.
 - `harness-grounding` (formerly a PreToolUse `Edit|Write` nudge on harness-path
@@ -94,6 +100,14 @@ scriptUntouched(name):
   #   file) → unknown, resolved as fork — installed file present only; an absent
   #   file never reaches this predicate
 
+rulesFileCurrent() / rulesFileUntouched():
+  scriptCurrent / scriptUntouched with
+    installed = .claude/rules/harness.md
+    asset     = harness.md
+    placed    = .claude/super-bootstrap-runway.json → placed[".claude/rules/harness.md"]
+  # the rules file's sha256 values — installed, asset, placed — are taken over the
+  #   bytes with CR removed (tr -d '\r' < <file> | sha256sum) — a CRLF checkout of an LF asset is current
+
 snippetCurrent(name):
   entry = the settings.json target-array entry whose command references <name>.sh
   exists(entry)   AND
@@ -103,6 +117,7 @@ snippetCurrent(name):
   #   differing: replace that one entry in place — surgical, touching no other entry
 
 hooksInfraPresent():
+  rulesFileCurrent()                         AND
   scriptCurrent(commit-channel)              AND
   scriptCurrent(consult-check-sessionstart)  AND
   scriptCurrent(consult-check-check)         AND
@@ -124,7 +139,8 @@ asset, silently; report `⊕ new → seeded`. Script drift resolves by which sid
   the installed file carries content this pipeline did not place. Stop and ask, three
   parts:
   1. **Found** — the installed path, its marker line (or `no FROZEN marker`) and its
-     sha256, beside the asset's marker line.
+     sha256, beside the asset's marker line. The rules file carries no marker: name
+     `.claude/rules/harness.md` and both sha256 values.
   2. **Expected** — that file exactly as the last sync placed it: the `placed` hash, or
      `no placed entry — this copy came from outside this pipeline`.
   3. **Pick** — `overwrite` re-places the asset verbatim (report `⚠ drifted → updated
@@ -155,6 +171,9 @@ non-zero → strip the file in place with `tr -d '\r'` and count again. A sha-eq
 is byte-identical to the asset whatever placed it, so recording it changes nothing today
 and lets the next asset bump resolve as stale instead of fork. Phase 2c's receipt write
 (`SKILL.md` § 2c) reads the file back and carries every `placed` entry forward.
+
+The rules file takes the same record under the same write contract —
+`placed[".claude/rules/harness.md"] = sha256(asset harness.md, CR removed)`.
 
 One migration this reaches by design: an installed `consult-check` pair predating
 the frozen assets — header line `# SessionStart hook — consult-check catalog

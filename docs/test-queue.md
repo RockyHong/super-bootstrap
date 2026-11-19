@@ -42,7 +42,7 @@ The only durable state here is a still-`pending` entry — `pass` discharges it,
   - [ ] log a card mid-session with `/super-bootstrap:log` and leave it open, promise a small task and leave it undone, then `/super-bootstrap:session-close` → the one pick holds each as a finish-now / park / leave-open question (or a drafted fix-now row), names no other open card, and a finish-now pick runs no move and pauses the close
   - [ ] launch a background subagent, then `/super-bootstrap:session-close` before it reports → no pick; the running item is listed with wait / stop as the only exits; after wait, detection re-runs and the pick includes the agent's writes
   - [ ] a close whose diff coins a project term and carries a stale doc line → `/super-bootstrap:session-close` shows a register row and a doc-update row in the one pick with their text drafted; after the pick the commits land and nothing further is asked. This case owns the Skill-tool loading order; [`bench/session-close-moves`](../bench/session-close-moves/README.md) walks the door's post-pick body headless
-  - [ ] `/super-bootstrap:harness-bootstrap` on a scratch repo → its CLAUDE.md § Context Hygiene names the session-carry ledger
+  - [ ] `/super-bootstrap:harness-bootstrap` on a scratch repo → its `.claude/rules/harness.md` § Context Hygiene names the session-carry ledger
 - **result:** pending
 - **source:** GAP-096
 - **on fail:** `/super-bootstrap:log` a bug + re-queue

@@ -1,6 +1,6 @@
 # Overview
 
-> Living doc. Skeleton sections (Problem / User / Current State) carry their placeholder body verbatim at scaffold and fill at GAP card pickup. Grown sections (Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync — every commit that adds, removes, or reshapes a module triggers a sync proposal, admitted per § Doc Sync. See [`CLAUDE.md` Doc Sync](../CLAUDE.md#doc-sync-non-negotiable).
+> Living doc. Skeleton sections (Problem / User / Current State) carry their placeholder body verbatim at scaffold and fill at GAP card pickup. Grown sections (Module Index / Data Flow / Key Boundaries) start empty and grow via doc-sync — every commit that adds, removes, or reshapes a module triggers a sync proposal, admitted per § Doc Sync. See [`.claude/rules/harness.md` Doc Sync](../.claude/rules/harness.md#doc-sync-non-negotiable).
 
 ## Problem
 

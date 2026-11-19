@@ -14,7 +14,7 @@ dimension: history
 > - A past decision that still **binds** current work → present-tense constraint in the state doc it governs (`docs/techstack.md`, `docs/overview.md`), stripped of when/why-decided.
 > - A closure obvious from current state → no entry.
 >
-> **Checked at triage** (`CLAUDE.md` § Development Workflow) before any route or design is proposed — a closed fork surfaces *before* it is re-walked. Routing rule in `CLAUDE.md` § Doc Sync.
+> **Checked at triage** (`.claude/rules/harness.md` § Development Workflow) before any route or design is proposed — a closed fork surfaces *before* it is re-walked. Routing rule in `.claude/rules/harness.md` § Doc Sync.
 
 ## Closed Forks
 
