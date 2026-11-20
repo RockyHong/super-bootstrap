@@ -32,5 +32,11 @@ Beside the entry doc, the prompt carries:
   `cd`, file bodies through `Write` / `Edit`, git from the worktree root. Fact
   (device-planted):
   `~/.claude/guidelines/claude-shape/worktree-isolation.md` § Worktree git guard.
+- **A secret-file exclude for a repo search** — a brief that sends the
+  receiver to search a repo tells it to keep `.env*` out of every recursive
+  search that reads dotfiles: `grep -r --exclude='.env*'`,
+  `rg --hidden -g '!.env*'` (plain `rg` skips dotfiles already),
+  `Get-ChildItem -Recurse -Exclude '.env*' | Select-String`; a script the
+  receiver writes skips `.env*` in its own file walk.
 
 Family catalog: [`index.md`](index.md).

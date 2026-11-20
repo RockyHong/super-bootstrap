@@ -108,7 +108,7 @@ One headless process per runner, started from a neutral directory outside the ca
 PROJECT_ROOT="$PWD"                     # the caller's project root — the gateway's cwd
 RUN="$(mktemp -d)"; RUN="$(cygpath -m "$RUN" 2>/dev/null || printf '%s' "$RUN")"   # OS temp root, native path form
 NARRATOR="$(sed '1,/^---$/d' "$PROJECT_ROOT/.claude/agents/walkthrough-narrator.md")"   # body only, frontmatter stripped
-[ -n "$NARRATOR" ] || { echo "narrator body missing — run /resolve-claude-config"; exit 1; }
+[ -n "$NARRATOR" ] || { echo "narrator body missing — run bash \"\$(cat ~/.claude/.repo-path)/serve.sh\" --sync . in this project"; exit 1; }
 ( cd "$RUN" && claude -p --model sonnet --system-prompt "$NARRATOR" \
     --setting-sources "" --strict-mcp-config --disable-slash-commands --no-session-persistence \
     --permission-mode acceptEdits --tools Write \
@@ -119,7 +119,7 @@ NARRATOR="$(sed '1,/^---$/d' "$PROJECT_ROOT/.claude/agents/walkthrough-narrator.
 - `--tools Write` is the whole toolkit; `acceptEdits` lets the write land in `$RUN` without a prompt. Read / Grep / Bash / WebSearch / WebFetch would leak lookup access and create lookup-thinking primes that distort behavior.
 - The `--` terminator keeps the template positional after the variadic flags; without it the prompt is swallowed and the process exits before any call.
 - N runners start as N such processes at once (`&` + `wait`) from the same `$RUN`, one output file each. After `wait`, move `$RUN/*.md` to `$PROJECT_ROOT/docs/walkthroughs/{batch}/` and remove `$RUN`.
-- The served agent file is read for its body only, from the project root: `.claude/agents/walkthrough-narrator.md`. The guard line stops the run when the body is empty (file absent, wrong cwd) — route the caller to `/resolve-claude-config`, never substitute a body from memory.
+- The served agent file is read for its body only, from the project root: `.claude/agents/walkthrough-narrator.md`. The guard line stops the run when the body is empty (file absent, wrong cwd) — route the caller to `bash "$(cat ~/.claude/.repo-path)/serve.sh" --sync .` run in this project, never substitute a body from memory.
 - Path boundary: `$RUN` is handed to a native process and substituted into the brief, so it is converted to the native form (`cygpath -m` under Git Bash; a no-op elsewhere). The runner's path therefore carries the OS account name under a Windows temp root.
 - Permission: the Bash call that starts the processes goes through the gateway session's normal permission flow — one grant on the wrapper command (name it to the caller in a mode that prompts). A session that cannot run `claude` (cloud, no PATH entry) has no runner; say so at the checkpoint.
 
