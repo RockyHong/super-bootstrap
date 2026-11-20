@@ -57,14 +57,14 @@ Spec-coupled items may replace **Watching for** / **Fires on** with a `surface-o
 ### PARK-e0pp — merge `setup` into `harness-bootstrap`
 
 **Logged:** 2026-11-20 · **Source:** `DEBT-ymdg`, closed on the user's ask to split the card by aim
-**Watching for:** the fleet's first v7 migrations, which run through `harness-bootstrap`'s re-run entry. With the per-section sync judgment gone, `setup` (install) and `harness-bootstrap` (sync) no longer need to be two doors.
-**Fires on:** the author's own fleet repos migrated to the split shape, or a migration that shows the two entries confuse a user.
+**Watching for:** a change to the install or sync entry. With the per-section sync judgment gone, `setup` (install) and `harness-bootstrap` (sync) no longer need to be two doors.
+**Fires on:** the next change that edits `setup`'s or `harness-bootstrap`'s entry flow, or a report that the two entries confuse a user.
 
 ### PARK-gqgf — drop the transitional "`CLAUDE.md` in a repo not yet split" pointers
 
 **Logged:** 2026-11-20 · **Source:** `DEBT-ymdg`, closed on the user's ask to split the card by aim
 **Watching for:** the skills and agents under `plugins/` that cite the doctrine in both locations (`.claude/rules/harness.md`; `CLAUDE.md` in a repo not yet split). The second half serves only repos still in the pre-split shape.
-**Fires on:** the author's fleet scan finds no pre-split repo left — then remove the second half in every file that names it.
+**Fires on:** the next major release — remove the second half in every file that names it, and state in the README's upgrade note that a pre-split repo installs the last release that carries it. This repo does not track which consumer repos are still pre-split.
 
 ### PARK-3bpp — ablation bench for cuttable doctrine lines
 
@@ -77,6 +77,12 @@ Spec-coupled items may replace **Watching for** / **Fires on** with a `surface-o
 **Logged:** 2026-11-20 · **Source:** `DEBT-ymdg`, closed on the user's ask to split the card by aim
 **Watching for:** `tests/line-coverage.test.sh` passes 23 of 23 under `gawk --posix` and `gawk --traditional`; mawk and one-true-awk themselves are unrun, since this device holds gawk only and a container run needs Docker Desktop.
 **Fires on:** Docker Desktop running here for another task, or a consumer reporting a migration's line-coverage check failing on a non-gawk awk.
+
+### PARK-8a7z — a v7 doctrine migration that fails in a consumer repo
+
+**Logged:** 2026-11-20 · **Source:** `DEBT-ymdg` close; the migration ran end to end once (a `v2.22.0` walk) and is otherwise unmeasured
+**Watching for:** a note or issue from a consumer repo naming one of the shapes the README's upgrade note asks users to report: an old `CLAUDE.md` line in neither new file nor on the drop list the user saw; old plugin text kept as the repo's own line (the walk kept the `karpathy-guidelines` pointer this way); one of the four checks failing, or the run stopping on a case the brief does not cover; the regular sync after it proposing section by section again (state detection read the repo wrong).
+**Fires on:** one such report → promote to a BUG card with that repo's old `CLAUDE.md` as the fixture.
 
 ## Sweep log
 

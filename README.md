@@ -74,6 +74,8 @@ Before v7 the workflow doctrine lived in your `CLAUDE.md`. It now lives in `.cla
 
 The migration lands as one commit; `git revert <sha>` undoes it. Sorting the lines is the agent's judgment and differs run to run — your confirm and four checks the run makes before it commits (the placed file equals the shipped one, no workflow heading left in `CLAUDE.md`, every old line kept or on the drop list you saw, no new broken link) are the floor.
 
+Report it as an issue on [the plugin's repo](https://github.com/rockyhong/super-bootstrap/issues) when a migration does any of these: an old line is in neither new file nor on the drop list you saw; old plugin text is kept as your own line; one of the four checks fails, or the run stops on a case it does not cover; the regular sync after it asks section by section again.
+
 A repo you never re-run keeps working: every skill reads the doctrine in either place. Update the plugin on each device before you re-run there — an older plugin reads a migrated repo as missing its workflow sections and proposes to insert them back.
 
 ## How files are handled
