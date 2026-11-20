@@ -4,7 +4,7 @@ Tracks pipeline-owned literal renames so Phase 2b can spot literals that
 per-section diff misses. When a slash command (or other inline literal)
 renames, the surrounding template may stay shaped the same — only the
 literal inside changed — and per-section diff returns `✓ matches`. This
-file is the bridge: grep each `old` form in pipeline-owned files; surface
+file is the bridge: scan each `old` form in pipeline-owned files; surface
 migration proposals.
 
 Format per entry: `` `old` `` → `` `new` `` — brief reason.
@@ -74,6 +74,7 @@ Placed files whose skeleton no longer ships — the rot scan proposes deletion (
 
 ## Scan guidance
 
-- Match the `old` form as a whole token (word boundaries) — avoid false hits inside URLs or unrelated identifiers.
-- **Confirm the referent before proposing a bare-form hit.** A bare name can belong to something else the consumer runs — Claude Code's built-in `/help`, or another installed plugin's command (a paired skill set can ship its own `/triage`). Read the hit's line: propose migration when the surrounding prose means the bundled skill, and leave the line when it means the other tool. The scan already reads each hit's line to render its rot row, so this costs no extra pass. `sb-` prefixed forms are unambiguous — propose those on match.
+- Match the `old` form as a whole token, never as part of a longer one — avoid false hits inside URLs, paths, namespaced commands or unrelated identifiers. [`rot-scan.sh`](rot-scan.sh) applies this rule; its header states the boundary characters.
+- Known limit: a path literal behind a prefix (`./.claude/…`, `../../.claude/rules/venue-map.md`) is not a hit, because `/` before it is a token character — check relative links to a retired file by reading them.
+- **Confirm the referent before proposing a bare-form hit.** A bare name can belong to something else the consumer runs — Claude Code's built-in `/help`, or another installed plugin's command (a paired skill set can ship its own `/triage`). Read the hit's line: propose migration when the surrounding prose means the bundled skill, and leave the line when it means the other tool. The scanner gives each hit's file and line; read that line to confirm the referent. `sb-` prefixed forms are unambiguous — propose those on match.
 - One repo can carry hits across multiple `old` forms in the same file (e.g. `sb-` literal AND bare-namespace literal). Surface each independently.
