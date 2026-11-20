@@ -32,7 +32,7 @@ Two passes: **detect** every open closeout move (steps 0–3b) — read-only, wi
 
 ### 0. Detect — still-running work (gate)
 
-List every finite job this session launched that has not reported back: a background agent or subagent with no completion notice, a backgrounded shell running a job, a spawned `claude -p` or foreign executor (`codex exec`, or equivalent) whose result has not returned. The evidence is this session's own launch records and completion notices in context. Blind spot: a launch record lost to compaction does not show — say so beside the list when the context was compacted.
+List every finite job this session launched that has not reported back: a background agent or subagent with no completion notice, a backgrounded shell running a job, a spawned `claude -p` or foreign executor (`codex exec`, or equivalent) whose result has not returned. The evidence is this session's own launch records and completion notices in context. Blind spot: a launch record lost to compaction does not show. The context was compacted when it holds the platform's continuation summary — a message that opens "This session is being continued from a previous conversation" and summarizes the earlier portion. Summary present → say so beside the list. No summary → no blind-spot line.
 
 Any job running → **no pick**. Surface the list — what each job is and what it writes — and the user picks one exit per job:
 
@@ -51,7 +51,7 @@ Then list every **undone item** — work inside this session's boundary that it 
 - each task this session's own replies told the user it would do and no later step did, other than the goal;
 - an undelivered goal the user expects finished this session.
 
-The boundary is this session's own context: its log output, its commits, its own text. An open card it never logged is outside it and is no item; step 3's sweep still resolves it when finished. A remainder the park move already carries is no item, and work left uncommitted is step 2's commit move, never an item. Blind spot: an item lost to compaction does not show — say so beside the items when the context was compacted. An item whose whole finish is an edit draftable exactly now → a **fix-now** move (step 3's rule), and a card item's fix-now row carries the card's resolve with it; every other item → its own question in step 4's pick.
+The boundary is this session's own context: its log output, its commits, its own text. An open card it never logged is outside it and is no item; step 3's sweep still resolves it when finished. A remainder the park move already carries is no item, and work left uncommitted is step 2's commit move, never an item. Blind spot: an item lost to compaction does not show — say so beside the items when step 0's continuation summary is present; absent, no line. An item whose whole finish is an edit draftable exactly now → a **fix-now** move (step 3's rule), and a card item's fix-now row carries the card's resolve with it; every other item → its own question in step 4's pick.
 
 ### 2. Detect — tree + commit
 

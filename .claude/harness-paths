@@ -1,2 +1,8 @@
 # Cross-agent doctrine — read by the todo and drain agents.
 plugins/*/shared/*
+# Plugin-owned hook scripts — same class as the gated scripts under skills/**/assets/hooks/.
+plugins/*/hooks/*
+# Frozen test fixtures — not authored harness.
+!bench/*
+# Placed doctrine copy — takes no direct edit; its asset stays gated under plugins/*/skills/*.
+!.claude/rules/harness.md
