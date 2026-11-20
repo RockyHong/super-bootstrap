@@ -54,6 +54,30 @@ Spec-coupled items may replace **Watching for** / **Fires on** with a `surface-o
 **Watching for:** a harness line that the same change made stale, found only after the commit landed, that the doc-sync scan did not report. The scan reports a harness co-change only when its judgment reads or greps that file; no mechanical lane lists harness paths. Candidate: widen the commit door's grep lane (`doc-links.sh hits`) to the consumer's own harness (`CLAUDE.md`, `.claude/{rules,skills,agents}/**`) for the diff's removed terms, leaving out served copies by their `.served` marker. Cost: a larger scan scope, so more cold dispatches above the ceiling of 8, and a `doc-links.sh` change with its bench.
 **Fires on:** one such post-commit harness drift observed.
 
+### PARK-e0pp — merge `setup` into `harness-bootstrap`
+
+**Logged:** 2026-11-20 · **Source:** `DEBT-ymdg`, closed on the user's ask to split the card by aim
+**Watching for:** the fleet's first v7 migrations, which run through `harness-bootstrap`'s re-run entry. With the per-section sync judgment gone, `setup` (install) and `harness-bootstrap` (sync) no longer need to be two doors.
+**Fires on:** the author's own fleet repos migrated to the split shape, or a migration that shows the two entries confuse a user.
+
+### PARK-gqgf — drop the transitional "`CLAUDE.md` in a repo not yet split" pointers
+
+**Logged:** 2026-11-20 · **Source:** `DEBT-ymdg`, closed on the user's ask to split the card by aim
+**Watching for:** the skills and agents under `plugins/` that cite the doctrine in both locations (`.claude/rules/harness.md`; `CLAUDE.md` in a repo not yet split). The second half serves only repos still in the pre-split shape.
+**Fires on:** the author's fleet scan finds no pre-split repo left — then remove the second half in every file that names it.
+
+### PARK-3bpp — ablation bench for cuttable doctrine lines
+
+**Logged:** 2026-11-20 · **Source:** `DEBT-ymdg`, closed on the user's ask to split the card by aim
+**Watching for:** a reason to shrink `assets/harness.md`. Which doctrine lines are cuttable is unmeasured; `docs/decisions.md` records the route line as load-bearing in 2/2 control runs, so a cut needs an ablation bench with fixtures, not judgment.
+**Fires on:** the author approves the spend for that bench.
+
+### PARK-zy7b — `line-coverage.sh` unrun under mawk and one-true-awk
+
+**Logged:** 2026-11-20 · **Source:** `DEBT-ymdg`, closed on the user's ask to split the card by aim
+**Watching for:** `tests/line-coverage.test.sh` passes 23 of 23 under `gawk --posix` and `gawk --traditional`; mawk and one-true-awk themselves are unrun, since this device holds gawk only and a container run needs Docker Desktop.
+**Fires on:** Docker Desktop running here for another task, or a consumer reporting a migration's line-coverage check failing on a non-gawk awk.
+
 ## Sweep log
 
 *(overwrite in place at each sweep — what was removed and why, no running chronicle)*
