@@ -387,7 +387,9 @@ and syncs each artifact by its ownership class:
   placed file, or a placed hook script, differs in content from the shipped asset; in a
   legacy repo its one line names the re-run as the migration.
 - **`CLAUDE.md` is project-owned whole.** It is seeded once from the skeleton and never
-  drift-diffed; a re-run only appends registration lines to its § Rules / § Planning.
+  drift-diffed. A re-run writes only the § Rules / § Planning line of an artifact a sync-report
+  row names: it appends, re-points or drops a registration line, and on an approved `paths:`
+  drift row of a placed doc rule it rewrites that rule's § Rules fires-on list.
 - **Mixed-ownership docs keep the per-section lane** — techstack, overview, decisions,
   terminology, the work README and template, the doc rules. § Phase 2's per-artifact rule
   applies: missing → write; matches template → skip; **drifted → show diff, approve per
