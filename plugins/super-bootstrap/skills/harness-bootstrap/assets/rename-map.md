@@ -64,9 +64,11 @@ Destinations a pipeline-owned file writes to or points at.
 
 ## Retired files
 
-Placed files whose skeleton no longer ships — the rot scan proposes deletion (`⊘ removed`) rather than a rename.
+Placed artifacts whose skeleton no longer ships, one row each with its kind. `SKILL.md` § 2b Retired artifacts walks these rows on a re-run and proposes each removal as a confirmed `⊘ removed` row; § 2a-scale removes `venue-map.md`. The rot scan only lists the lines that name a row's literal (new column `(retired)`) and forms no rot row from them.
 
-- `.claude/rules/venue-map.md` — the phase → venue map; `/super-bootstrap:autorun` admits by the one judgment in the plugin's `shared/user-wall.md` instead. Drop the CLAUDE.md § Rules bullet with it.
+- `.claude/rules/venue-map.md` — file; the phase → venue map; `/super-bootstrap:autorun` admits by the one judgment in the plugin's `shared/user-wall.md` instead. Drop the CLAUDE.md § Rules bullet with it.
+- `AGENTS.md` — file at the repo root; the foreign-executor build contract an earlier skeleton seeded, which no executor ran. Removed only when it holds no consumer-authored content.
+- `<!-- harness-meta` — marker block in `docs/overview.md`; config for the deleted `/super-bootstrap:resolve-plugins`.
 
 ## Skeleton headings / structure
 

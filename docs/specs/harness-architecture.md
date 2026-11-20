@@ -408,6 +408,7 @@ and syncs each artifact by its ownership class:
 | Content changed **within** a retained section of a mixed-ownership doc | **Yes** | Section stays on the owned list; drift check fires and diffs it |
 | A section **added** to a mixed-ownership skeleton after a consumer bootstrapped | **Yes** | The walk is skeleton-driven — the new section gets a `⊕ new` row; Block 2 approval-gates the insert |
 | A whole section **dropped** from a mixed-ownership skeleton | **No** | The walk is skeleton-driven — a section no longer on the owned list is never visited, so it orphans in consumer repos |
+| A placed artifact the plugin **retired** — a file (`AGENTS.md`) or a marker block (`<!-- harness-meta` in `docs/overview.md`) that [rename-map § Retired files](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/rename-map.md#retired-files) lists | **Yes, on the user's confirm** | A re-run walks the list ([§ 2b Retired artifacts](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md)) and proposes each removal as a `⊘ removed` row; a file is removed only when its content is the plugin's text alone — one holding consumer-authored content is kept and named in the sync line |
 | A scaffolded **folder** retired | **No** | Phase 2a states folders have only two states, missing or present ("create if missing, skip if present") — there is no removal path |
 
 **Two retired pins have no removal path.** `.claude/settings.json` pins are on the owned
