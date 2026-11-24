@@ -1,6 +1,6 @@
 # bench/ownership-split — does `harness-bootstrap` place by state?
 
-Test surface for [`DEBT-ymdg`](../../docs/work/DEBT-ymdg.md) (its `## Plan — 2026-11-19 · ownership
+Test surface for `DEBT-ymdg` (`git log --grep=DEBT-ymdg`) (its `## Plan — 2026-11-19 · ownership
 split`, the "State detection" pick). The plugin-owned doctrine moves out of the consumer's
 `CLAUDE.md` into one whole file the plugin owns, `.claude/rules/harness.md`, and
 [`harness-bootstrap`](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md) decides what
@@ -60,7 +60,7 @@ them without a prompt. The scorer keys on the owned file, `CLAUDE.md` and the re
 
 ### Legacy variants
 
-The author's ruling for [`DEBT-ymdg`](../../docs/work/DEBT-ymdg.md) (`## Design — 2026-11-19 · migration`, "Test before any push"): walk the migration on fixtures built from historical tags, plus one with hand-edited doctrine sections. `LEGACY_VARIANT` selects the starting `CLAUDE.md` of the `legacy` walk (`make-fixture.sh`, `run.sh`; any other value is FATAL; `run.sh` writes `meta/variant.txt` and adds the variant to the directory label unless the label names it). Each variant ends in the same guards, printed: `CLAUDE.md` holds 2+ `## ` lines equal to the shipped asset's (the skill's legacy detection), no owned file, every line of `meta/own-lines.txt` present, `meta/CLAUDE.before.md`, `meta/receipt.before.json` and the doc-links baseline saved.
+The author's ruling for `DEBT-ymdg` (`git log --grep=DEBT-ymdg`) (`## Design — 2026-11-19 · migration`, "Test before any push"): walk the migration on fixtures built from historical tags, plus one with hand-edited doctrine sections. `LEGACY_VARIANT` selects the starting `CLAUDE.md` of the `legacy` walk (`make-fixture.sh`, `run.sh`; any other value is FATAL; `run.sh` writes `meta/variant.txt` and adds the variant to the directory label unless the label names it). Each variant ends in the same guards, printed: `CLAUDE.md` holds 2+ `## ` lines equal to the shipped asset's (the skill's legacy detection), no owned file, every line of `meta/own-lines.txt` present, `meta/CLAUDE.before.md`, `meta/receipt.before.json` and the doc-links baseline saved.
 
 | Variant | `CLAUDE.md` comes from | Starting receipt (shape that tag's skill wrote) |
 |---|---|---|

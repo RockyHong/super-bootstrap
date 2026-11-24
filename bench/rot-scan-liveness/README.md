@@ -44,7 +44,7 @@ wording; the scenario body is byte-identical across arms, so the clause is the o
   [`excerpt-arm.md`](excerpt-arm.md), the paragraph that ships.
 
 **Pre-registration.** The expectation for Scenario A — control records a clean, arm records an
-instrument failure — was written into [`GAP-086`](../../docs/work/GAP-086.md)'s `Prior:` line and
+instrument failure — was written into `GAP-086` (`git log --grep=GAP-086`)'s `Prior:` line and
 committed (`0b8a6e4`) before the first trial fired. Scenario B was added after a cold audit found
 the § 2b clause had no consuming gate; its expectation was stated when the gate clause was written,
 before its trials ran. A later audit pass returned two wording residuals; both were applied and

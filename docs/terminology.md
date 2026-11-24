@@ -24,7 +24,7 @@ _Avoid_: backlog row
 
 **Envelope**: The fixed sequence every card runs — ground → route → implement → verify → doc-sync → commit — with only the phases the card's shape needs ([.claude/rules/harness.md § The envelope](../.claude/rules/harness.md#the-envelope)).
 
-**Cluster**: One of the eight card shapes (bug, fuzzy feature, design-intact multi-step, refactor, config tweak, docs, harness edit, triage) that sets a card's route ([.claude/rules/harness.md § Cluster routing](../.claude/rules/harness.md#cluster-routing)).
+**Cluster**: One of the nine card shapes (bug, fuzzy feature, design-intact multi-step, refactor, config tweak, docs, harness edit, triage, spike) that sets a card's route ([.claude/rules/harness.md § Cluster routing](../.claude/rules/harness.md#cluster-routing)).
 
 **Verdict**: The `## Verdict` block that triage appends to a card — `auto-fix` with fix-shape tags, or `surface` when the user is needed. It is the context scope implement runs on ([`triage`](../plugins/super-bootstrap/skills/triage/SKILL.md)).
 

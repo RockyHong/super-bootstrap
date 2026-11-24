@@ -1,6 +1,6 @@
 # bench/carrier-equivalence — does the doctrine act the same from any carrier?
 
-Probe for [`DEBT-ymdg`](../../docs/work/DEBT-ymdg.md) (its `## Plan — 2026-11-19`). The doctrine is
+Probe for `DEBT-ymdg` (`git log --grep=DEBT-ymdg`) (its `## Plan — 2026-11-19`). The doctrine is
 the shipped asset
 [`assets/harness.md`](../../plugins/super-bootstrap/skills/harness-bootstrap/assets/harness.md); its
 text is the same in every arm, and only the file that carries it moves. The bench measures whether a

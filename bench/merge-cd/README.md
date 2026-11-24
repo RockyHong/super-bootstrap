@@ -1,6 +1,6 @@
 # bench/merge-cd — does the merge skill need its `cd is unnecessary` line?
 
-Test surface for [`GAP-091`](../../docs/work/GAP-091.md) claim **L6**:
+Test surface for `GAP-091` (`git log --grep=GAP-091`) claim **L6**:
 [`skills/merge/SKILL.md`](../../plugins/super-bootstrap/skills/merge/SKILL.md) § Rules carries
 
 > `- Working directory is already correct; `cd` is unnecessary.`
