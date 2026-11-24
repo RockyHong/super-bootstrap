@@ -1,0 +1,35 @@
+The batch landing stopped at the doc-sync step, so `main` has not moved. Its tip is still `ce26924`.
+
+**Strategy:** batch landing (§ 5b). Every branch takes merge `--no-ff`, as the skill requires for a batch. You pre-confirmed this.
+
+**Steps run**
+- **Integration branch:** `integrate/main-20261124-151418`, cut from `main` at `ce26924`.
+- **Merges:** `g1` and then `g2`, both `--no-ff`, both clean. No conflicts and no derived-output regeneration. The skill's conflict doctrine did not trigger.
+- **Provisioning:** none needed. No manifest or lockfile changed, and no regenerate command is declared.
+- **Verify:** `sh tools/verify.sh` on the integrated tree printed `verify OK` and exited 0. It is green, so no red scan ran.
+- **Doc-sync:** the grep lane found one stale doc, `docs/usage.md`. Line 3 says `tools/greet.sh` prints `hello, world`. `g1` changed the script to print `hi there`. Link and model-pin checks passed.
+
+**Question for you (I cannot reply in this run)**
+
+Approve one doc edit on the integration branch? Change `docs/usage.md` line 3 from `hello, world` to `hi there`, then commit it as `docs: sync docs to the batch landing`.
+- My lean: approve. The doc is wrong after the batch lands.
+- If you approve, I still need the rest of the step. Re-run the verify, then fast-forward `main` to the integration branch.
+- If you decline or hold, `main` stays at `ce26924`. The integration branch stays for inspection.
+
+**Final state**
+- The working tree is clean. HEAD is on `integrate/main-20261124-151418`.
+- `g1` and `g2` are not deleted.
+- Nothing was pushed.
+
+```
+*   d9aeb78 (HEAD -> integrate/main-20261124-151418) merge: g2
+|\
+| * f6e4739 (g2) chore(notes): add a todo
+* |   fb06608 merge: g1
+|\ \
+| |/
+|/|
+| * 00260b5 (g1) feat(greet): greet with hi there
+|/
+* ce26924 (main) init
+```

@@ -1,0 +1,33 @@
+## Merge report: batch landing of g1 and g2 into `main`
+
+**Result: landed.** `main` fast-forwarded from `ad03a88` to `8f89aa5`. Verify was green on the integrated tree.
+
+**Strategy:** Merge --no-ff per branch, inside one batch. This follows § 5b, which requires Merge --no-ff for every batch branch. You pre-confirmed it.
+
+**Batch steps:**
+- **Integration branch:** `integrate/main-20261124-151001`, off `main` at `ad03a88`.
+- **g1:** merged cleanly (`merge: g1`, `e4329ff`). Changed `tools/greet.sh`.
+- **g2:** merged cleanly (`merge: g2`, `8f89aa5`). Added `notes/todo.txt`.
+- **Conflicts:** none. No surfaced branches.
+- **Derived output:** none declared in `docs/techstack.md` or `CLAUDE.md`. No regeneration ran.
+- **Provisioning:** none needed. No manifest or lockfile changed.
+- **Verify:** `sh tools/verify.sh` printed `verify OK` and exited 0. No red scan was needed.
+- **Fast-forward:** `main` moved once with `git merge --ff-only`. `integrate/...` was deleted with `git branch -d`.
+
+**Branches:** `g1` and `g2` are kept, per the skill's rule against deleting absorbed branches. Delete them after you test.
+
+**Final graph:**
+```
+*   8f89aa5 (HEAD -> main) merge: g2
+|\
+| * 3ecf100 (g2) chore(notes): add a todo
+* |   e4329ff merge: g1
+|\ \
+| |/
+|/|
+| * 7cd6af5 (g1) feat(greet): greet with hi there
+|/
+* ad03a88 init
+```
+
+Working tree is clean. Nothing was pushed.

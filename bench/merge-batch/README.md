@@ -62,3 +62,53 @@ and r2 first tried `git merge --continue --no-edit`, which git rejects. The ship
 
 Arm r3: "No tracked files changed, so no provisioning commit was needed"; the roster equals the regenerated one.
 The red path (§ 5b step 5's linear scan for the first red merge) and a non-derived conflict inside a batch have no model run.
+
+## Doc-sync case — a landed branch leaves a narrating doc stale
+
+Test surface for § 5b step 6: the commit door's `range` entry
+([`commit/SKILL.md` § Execution](../../plugins/super-bootstrap/skills/commit/SKILL.md#execution-gateway-inline)) run
+over `{base-tip}..integrate/…` before base moves.
+
+- [`make-fixture-docsync.sh`](make-fixture-docsync.sh) `<dir>` — `<dir>/repo` (base `main`, no remote).
+  `docs/usage.md` narrates "`tools/greet.sh` prints `hello, world`"; `g1` changes the script to print `hi there` and
+  leaves the doc; `g2` adds `notes/todo.txt`. No conflict, verify green on the integrated tree. The grep lane over
+  the range reaches `docs/usage.md` (term `greet`, path segment).
+- [`run-docsync.sh`](run-docsync.sh) `<dir> <tag> [model]` — snapshots the plugin's `skills/` + `agents/` into
+  `<dir>/plugin` (working tree, or `SKILL_REF=<rev>`), prompts "land `g1` `g2` with `--batch`", pre-confirms the
+  merge strategy only, says any other question is printed and the run stops there, names the plugin root so
+  `/super-bootstrap:<name>` resolves to its `SKILL.md`, then the merge SKILL.md whole. `--allowedTools Bash,Read,Edit`.
+- [`assert-docsync.sh`](assert-docsync.sh) `<repo> <result>` — PASS when the report names `docs/usage.md` and either
+  `main` is still at `init` with an `integrate/*` branch holding `g1`, or `main:docs/usage.md` no longer says
+  `hello, world`; FAIL names each failed leg. Its verdict is the last line of `<tag>.state.txt`.
+
+Bite check (hand-built landings on one fixture): integrate + fast-forward with no doc-sync and a silent report →
+`FAIL: report names no docs/usage.md; main moved past init with docs/usage.md still saying 'hello, world';`; the
+same landing with a report naming the doc → `FAIL: main moved past init with docs/usage.md still saying 'hello, world';`;
+`main` reset to `init` with no integration branch → `FAIL: main held at init but no integrate/* branch holds g1 (no landing ran);`.
+`main` held with the integration branch kept, and a doc-fix commit on the integration branch fast-forwarded, both PASS.
+
+### Findings
+
+Run 2026-11-24, haiku, one fresh fixture per run.
+
+| Run | text | landing | doc-sync | `main` | assert |
+|---|---|---|---|---|---|
+| Control r1-r2 | `SKILL_REF=HEAD` (§ 5b with no step 6, commit door with no `range` entry) | integration branch, `--no-ff` ×2, verify green | none; report never names `docs/usage.md` (2/2) | fast-forwarded with `hello, world` still in `docs/usage.md` (2/2) | FAIL (2/2) |
+| Arm r1-r2 | working tree, first `range` wording | same | grep lane hit `docs/usage.md`, scope 1, judged warm; link + pin checks run; one ask drafting the line-3 edit (update / acknowledge) (2/2) | held at `init`, integration branch kept, waiting on the ask (2/2) | PASS (2/2) |
+| Arm r3 | working tree, after the cold dry-run patches (`--no-renames`, per-call range prefix, one list with §3b rows, `held` / `declined` returns, integrity re-check before the commit) | same | same catch; the ask names the drafted commit subject and the hold option | held at `init`, integration branch kept | PASS |
+
+RED: the pre-change text lands the batch and fast-forwards base with the narrating doc stale and unnamed — the
+deferred mode's "doc-sync belongs to the merge boundary" has no receiver. GREEN: step 6 surfaces the stale doc with
+its drafted edit and holds the fast-forward on the user's answer.
+
+Lessons:
+
+- A headless run cannot answer the doc-sync ask, so the prompt must say how a question ends the run ("print it and
+  stop there"); the assertion then accepts either a held base or a base that moved only with the doc fixed. Without
+  that line a run that treats the strategy pre-confirmation as approval of doc edits is indistinguishable from one
+  that skipped the ask.
+- The entry runs on a clean checkout of the integration tip, so `git diff HEAD` is empty there: every added-line lane
+  needs the range. `doc-links.sh`'s `term-uses` and `volatile-ids` read `DOCLINK_DIFF_RANGE` for this
+  ([`tests/doc-links.test.sh`](../../tests/doc-links.test.sh) locks it); before that they printed nothing on a clean tip.
+- The pre-batch `run.sh` pastes the merge SKILL.md alone; a step that calls another skill needs that skill reachable,
+  so `run-docsync.sh` snapshots the plugin and names its root in the prompt.

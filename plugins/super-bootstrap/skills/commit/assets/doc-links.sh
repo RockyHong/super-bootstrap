@@ -83,8 +83,9 @@
 #                      bench): DOCLINK_DIFF_RANGE="<a> <b>" swaps
 #                      `HEAD` for those revision arguments (word-split), and
 #                      DOCLINK_DIFF_REPO=<dir> runs git in <dir> (`git -C`) while the
-#                      doc surface is still walked in the cwd. Both read by this mode
-#                      only.
+#                      doc surface is still walked in the cwd. DOCLINK_DIFF_REPO is
+#                      read by this mode only; DOCLINK_DIFF_RANGE by `term-uses` and
+#                      `volatile-ids` too.
 #   grep-scope --by-term <changed-path>...
 #                      attribution instead of the file list, as `hits --by-term`:
 #                      `term<TAB>count` over the final term list (head terms plus
@@ -103,7 +104,9 @@
 #                      HTML comments are not entries. Absent file → nothing. Exit 0.
 #   term-uses <path>...
 #                      print terminology candidates on the changed docs' added lines
-#                      (`git diff HEAD -U0`; a path git does not track reads every line
+#                      (`git diff HEAD -U0`, or `git diff <a> <b> -U0` under
+#                      DOCLINK_DIFF_RANGE="<a> <b>" — the commit door's `range` entry
+#                      on a clean tip; a path git does not track reads every line
 #                      as added): `doc<TAB>line<TAB>term|avoid<TAB>matched text<TAB>Term`
 #                      per line × registered item, for a case-insensitive (ASCII fold)
 #                      whole-word match outside fenced blocks. Skipped: a path off the
@@ -1267,8 +1270,10 @@ EOF
 }
 
 do_term_uses() {
-    local reg surface p diff all linked
+    local reg surface p diff all linked range
     [ "$#" -eq 0 ] && return 0
+    range=(HEAD)
+    [ -n "${DOCLINK_DIFF_RANGE:-}" ] && read -r -a range <<< "$DOCLINK_DIFF_RANGE"
     reg="$(do_terminology)"
     [ -z "$reg" ] && return 0
     surface="
@@ -1288,7 +1293,7 @@ $p
         is_history_doc "$p" && continue
         linked=0
         links_term_home "$p" && linked=1
-        diff="$(git diff HEAD -U0 -- "$p" 2>/dev/null)"
+        diff="$(git diff "${range[@]}" -U0 -- "$p" 2>/dev/null)"
         all=0
         if [ -z "$diff" ] && ! git ls-files --error-unmatch -- "$p" >/dev/null 2>&1; then
             all=1
@@ -1334,8 +1339,10 @@ volatile_ids_exempt() {
 }
 
 do_volatile_ids() {
-    local surface p diff all
+    local surface p diff all range
     [ "$#" -eq 0 ] && return 0
+    range=(HEAD)
+    [ -n "${DOCLINK_DIFF_RANGE:-}" ] && read -r -a range <<< "$DOCLINK_DIFF_RANGE"
     surface="
 $(collect_surface)
 "
@@ -1349,7 +1356,7 @@ $p
             *) continue ;;
         esac
         volatile_ids_exempt "$p" && continue
-        diff="$(git diff HEAD -U0 -- "$p" 2>/dev/null)"
+        diff="$(git diff "${range[@]}" -U0 -- "$p" 2>/dev/null)"
         all=0
         if [ -z "$diff" ] && ! git ls-files --error-unmatch -- "$p" >/dev/null 2>&1; then
             all=1

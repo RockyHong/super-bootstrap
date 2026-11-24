@@ -1,0 +1,30 @@
+Both branches landed on `main` in one batch. The verify passed, and `main` moved once by fast-forward.
+
+**Strategy:** Merge `--no-ff` for each branch, as the batch rule requires. You pre-confirmed this.
+
+**Batch landing:**
+- Integration branch: `integrate/main-20261124-150959`, off `main` at `ad03a88`.
+- `g1`: merged cleanly into the integration branch (`merge: g1`).
+- `g2`: merged cleanly into the integration branch (`merge: g2`).
+- Derived output: none declared in `docs/techstack.md` or `CLAUDE.md`, so no regeneration ran.
+- Provisioning: no manifest or lockfile changed, so no install ran.
+- Verify: `sh tools/verify.sh` on the integrated tree exited 0 and printed `verify OK`.
+- `main` fast-forwarded from `ad03a88` to `f51614d`. The integration branch was deleted with `git branch -d`, since `main` now holds it.
+
+**Conflicts:** none. Nothing was surfaced or skipped.
+
+**Branches:** `g1` and `g2` are kept, not deleted. Deleting them is your call after testing. Nothing was pushed.
+
+**Final graph:**
+```
+*   f51614d (HEAD -> main) merge: g2
+|\
+| * 3ecf100 (g2) chore(notes): add a todo
+* |   aed49e5 merge: g1
+|\ \
+| |/
+|/|
+| * 7cd6af5 (g1) feat(greet): greet with hi there
+|/
+* ad03a88 init
+```

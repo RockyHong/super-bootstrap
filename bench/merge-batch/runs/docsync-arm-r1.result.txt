@@ -1,0 +1,38 @@
+**Stopped at the doc-sync ask. `main` is not fast-forwarded.**
+
+**Question for you (I can't reply in this run):** Approve the doc fix so the batch can land?
+
+- **Recommended: update `docs/usage.md` line 3.** Change "prints `hello, world`" to "prints `hi there`". Reason: g1 changed `tools/greet.sh` from `hello, world` to `hi there` (batch diff `367e4bf..integrate/main-20261124-151124`), so the doc now states a false fact.
+- **Alternative: acknowledge as accurate, skip.** Then the batch fast-forwards with the stale line.
+
+Reply with the choice in a follow-up run. On "update", I commit the doc edit on the integration branch, re-run the verify, and fast-forward `main`.
+
+**Batch landing state**
+
+- **Strategy:** Merge `--no-ff` for every branch, per the batch rule (§ 5b).
+- **Integration branch:** `integrate/main-20261124-151124`, off `main` at `367e4bf`.
+- **g1:** merged cleanly (`merge: g1`, `ae2762f`).
+- **g2:** merged cleanly (`merge: g2`, `d4b716f`).
+- **Conflicts:** none. No derived output and no regenerate command declared.
+- **Verify:** green. `sh tools/verify.sh` exited 0 on the integrated tree. Provisioning skipped because no manifest or lockfile changed.
+- **Doc-sync mechanical checks:**
+  - Link check: pass.
+  - Model-pin check: pass.
+  - Terminology and volatile-ID lanes: empty.
+  - Grep lane: hit `docs/usage.md`, which is the stale line above. Scope is one doc, so I judged it inline.
+- **Fast-forward:** not done. `main` is still at `367e4bf`.
+- **Branches:** `g1` and `g2` are not deleted. The integration branch is kept for inspection.
+- **Working tree:** clean, on `integrate/main-20261124-151124`.
+
+```
+*   d4b716f (HEAD -> integrate/main-20261124-151124) merge: g2
+|\
+| * 493ee12 (g2) chore(notes): add a todo
+* |   ae2762f merge: g1
+|\ \
+| |/
+|/|
+| * 6f4510f (g1) feat(greet): greet with hi there
+|/
+* 367e4bf (main) init
+```

@@ -1347,6 +1347,31 @@ vi_header() { grep -qE '^#   volatile-ids ' "$LINKS"; }
 check "usage string registers the volatile-ids mode" vi_usage
 check "header comment registers the volatile-ids mode" vi_header
 
+echo "== doc-links: BUG-wnav — term-uses and volatile-ids read a committed range through DOCLINK_DIFF_RANGE =="
+# The commit door's `range` entry runs on a clean checkout of the integration tip, so
+# `git diff HEAD` is empty there: the added-line lanes must read `<base-tip> <tip>`.
+RG="$TMP/rg"
+mkdir -p "$RG/docs"
+cat > "$RG/docs/terminology.md" <<'EOF'
+# Terminology
+
+**Runway**: The generic harness a repo installs.
+EOF
+printf '# Plan\n\nThe runway was here before the landing.\n' > "$RG/docs/plan.md"
+(cd "$RG" && git init -q && git add -A && git -c user.name=t -c user.email=t@t commit -qm base)
+printf 'The RUNWAY landed with BUG-land1.\n' >> "$RG/docs/plan.md"
+(cd "$RG" && git add -A && git -c user.name=t -c user.email=t@t commit -qm landed)
+rg_tu_want="$(printf 'docs/plan.md\t4\tterm\tRUNWAY\tRunway')"
+rg_vi_want="$(printf 'docs/plan.md\t4\tBUG-land1')"
+got_rg_tu="$(cd "$RG" && DOCLINK_DIFF_RANGE='HEAD~1 HEAD' bash "$LINKS" term-uses docs/plan.md)"
+check "term-uses: DOCLINK_DIFF_RANGE reads the range's added lines on a clean tree (got: $got_rg_tu)" [ "$got_rg_tu" = "$rg_tu_want" ]
+got_rg_vi="$(cd "$RG" && DOCLINK_DIFF_RANGE='HEAD~1 HEAD' bash "$LINKS" volatile-ids docs/plan.md)"
+check "volatile-ids: DOCLINK_DIFF_RANGE reads the range's added lines on a clean tree (got: $got_rg_vi)" [ "$got_rg_vi" = "$rg_vi_want" ]
+got_rg_none="$(cd "$RG" && bash "$LINKS" term-uses docs/plan.md; bash "$LINKS" volatile-ids docs/plan.md)"
+check "term-uses / volatile-ids: no knob on a clean tree reads HEAD, so nothing (got: $got_rg_none)" [ -z "$got_rg_none" ]
+rg_header() { grep -qE '^#.*DOCLINK_DIFF_RANGE.*term-uses' "$LINKS" || grep -qE '^#.*term-uses.*DOCLINK_DIFF_RANGE' "$LINKS"; }
+check "header comment names DOCLINK_DIFF_RANGE for term-uses" rg_header
+
 echo "== doc-links: GAP-ha7m — .claude/doc-surface declares extra surface globs =="
 # A repo whose caller-facing prose lives outside docs/ declares it in .claude/doc-surface:
 # one glob per line, relative to repo root, `*` crossing `/`, only `*.md` entries

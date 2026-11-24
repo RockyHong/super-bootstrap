@@ -1,6 +1,6 @@
 ---
 name: merge
-description: 'Absorb one or more feature branches into the base branch. One branch: recommends merge vs rebase. Two or more (or `--batch` for any number): batch landing through one integration branch off base — a conflict on derived output only settles by the repo''s declared regenerate command, one verify on the integrated tree (red → a linear scan names the first red merge), base fast-forwards once. On any other conflict, aborts that branch + surfaces the file list. Resolution out of scope; routes to the harness-named conflict-resolution agent (stages the resolution and reports; the gateway concludes it) or the user.'
+description: 'Absorb one or more feature branches into the base branch. One branch: recommends merge vs rebase. Two or more (or `--batch` for any number): batch landing through one integration branch off base — a conflict on derived output only settles by the repo''s declared regenerate command, one verify on the integrated tree (red → a linear scan names the first red merge), one doc-sync over the integrated diff through the commit door, base fast-forwards once. On any other conflict, aborts that branch + surfaces the file list. Resolution out of scope; routes to the harness-named conflict-resolution agent (stages the resolution and reports; the gateway concludes it) or the user.'
 tags: [merge, git, branch]
 ---
 
@@ -106,7 +106,7 @@ git merge {branch} --no-ff
 
 ### 5b. Batch landing (two or more branches, or `--batch`)
 
-The branches merge in confirmed order into one integration branch off `{base}`; the verify runs once on the integrated tree; `{base}` moves once, by fast-forward. Run every git command in the current worktree (cwd); never run git inside another worktree.
+The branches merge in confirmed order into one integration branch off `{base}`; the verify and the doc-sync each run once on the integrated tree; `{base}` moves once, by fast-forward. Run every git command in the current worktree (cwd); never run git inside another worktree.
 
 **Derived output** — a path the repo's docs (`docs/techstack.md` or CLAUDE.md Commands) name, beside a regenerate command, as a path that command writes. A regenerate command declared without the paths it writes settles no conflict: the conflict takes the Conflict Doctrine, and § 7 reports the missing declaration.
 
@@ -126,7 +126,8 @@ The branches merge in confirmed order into one integration branch off `{base}`; 
    4. The declared verify. Non-zero → this commit is the first red: at `{base-tip}`, `{base}` itself is red; at a merge, report "first red at the merge of {branch}" (from its `merge: {branch}` subject, else the confirmed list by position — it may be an interaction with earlier branches), with the verify output; stop the scan. Every commit green → surface the red as not reproduced.
 
    Then `git checkout -- .`, `git clean -fd -- <declared derived paths>`, `git checkout integrate/…`. The step ends with HEAD on the integration branch, `git status --porcelain` empty, `{base}` at `{base-tip}`; the integration branch stays for inspection, no fast-forward.
-6. **Green → fast-forward once** — `git status --porcelain -- <declared derived paths>` non-empty → `git add -- <declared derived paths>`, `git commit -m "chore: regenerate derived output"`. Any other dirty path → surface it; no commit, no fast-forward. Then `git checkout {base}`, `git merge --ff-only integrate/…`, `git branch -d integrate/…`. A refused fast-forward (`{base}` moved during the batch) → surface git's error line and keep the integration branch.
+6. **Green → doc-sync the integrated diff** — a commit made in deferred mode (an autorun worktree) skipped doc-sync and its integrity checks; every batch runs them here, once, over the whole integrated diff. First settle the tree: `git status --porcelain -- <declared derived paths>` non-empty → `git add -- <declared derived paths>`, `git commit -m "chore: regenerate derived output"`. Any other dirty path → surface it; no doc-sync, no fast-forward. Then run `/super-bootstrap:commit range {base-tip} integrate/…` — the commit door's batch-landing entry, on this checkout of the integration branch: link and model-pin integrity on the integrated tree, the doc-sync lanes and judgment over `{base-tip}..integrate/…`, its one resolution ask put to the user here, and the approved edits committed on the integration branch. Wait for the user's answer; the fast-forward waits with it. The entry returns `held` → no fast-forward, keep the integration branch, § 7 reports why. That commit landed → re-run the declared verify (step 4's command, no provisioning; none declared → skip) on the new tip, then restore the tree as step 5 does (`git checkout -- .`, `git clean -fd -- <declared derived paths>`): red → surface it with its output, keep the integration branch, no fast-forward. `no doc edits` or `declined` → no commit landed, no re-verify, step 7. A row the user declines or acknowledges stands, and step 7 runs. The step ends with HEAD on the integration branch and `git status --porcelain` empty.
+7. **Fast-forward once** — `git checkout {base}`, `git merge --ff-only integrate/…`, `git branch -d integrate/…`. A refused fast-forward (`{base}` moved during the batch) → surface git's error line and keep the integration branch. After the fast-forward, on `{base}`, offer `/super-bootstrap:log` for each card row step 6's doc-sync entry returned, and list its other routed rows in § 7.
 
 ### 6. Per-branch post-absorption
 
@@ -140,14 +141,14 @@ For successfully absorbed branches:
 Report to user:
 
 - Branches absorbed cleanly (with strategy used per branch)
-- Batch landing: the integration branch, branches settled by regeneration (with the command run), any conflict that took the Conflict Doctrine because its regenerate command declares no written paths, the verify result (green; red with the first red merge, or a provisioning failure; or none declared), and whether `{base}` fast-forwarded
+- Batch landing: the integration branch, branches settled by regeneration (with the command run), any conflict that took the Conflict Doctrine because its regenerate command declares no written paths, the verify result (green; red with the first red merge, or a provisioning failure; or none declared), the doc-sync result (the doc-edit commit, none needed, or `held` with its finding; red after the doc-sync commit; any row or integrity break the user acknowledged), and whether `{base}` fast-forwarded
 - Branches that hit conflicts (with file lists — the conflict scope a resolver takes under § Resolver contract)
 - Branches skipped and why — a failed command that left no conflicting files appears here with git's error line verbatim
 - Final `git log --oneline --graph -10`
 
 ## Rules
 
-- Run inline — no subagent dispatch.
+- Run inline — no subagent dispatch of this skill's own; § 5b step 6's commit-door entry dispatches its judges by its own gates.
 - The door merges locally and never pushes — no push step, no push question; §7's report is the last output. A push is `/super-bootstrap:session-close`'s move, by repo shape.
 - Never resolve conflicts inline. Surface and stop. (See Conflict Doctrine above.) A conflict on derived output only settles by its declared regenerate command (§ 5b step 2).
 - Never force-merge.

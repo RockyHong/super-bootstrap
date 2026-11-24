@@ -1,0 +1,29 @@
+## git log --oneline --graph --all
+*   45a0b29 merge: g2
+|\  
+| * 493ee12 chore(notes): add a todo
+* |   6ef982f merge: g1
+|\ \  
+| |/  
+|/|   
+| * 6f4510f feat(greet): greet with hi there
+|/  
+* 367e4bf init
+## reflog main
+367e4bf main@{0}: commit (initial): init
+## integrate/* branches
+integrate/main-20261124-151228 45a0b29
+## g1 in main? no
+## g2 in main? no
+## main:docs/usage.md
+# Usage
+
+Run `tools/greet.sh`. It prints `hello, world` on one line and exits 0.
+
+## Verify
+
+`sh tools/verify.sh` checks that `tools/greet.sh` prints exactly one line.
+## status
+## integrate/main-20261124-151228
+## assert
+PASS: doc-sync surfaced before the fast-forward (main held at init)

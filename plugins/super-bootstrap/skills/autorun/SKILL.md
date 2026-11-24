@@ -76,7 +76,7 @@ Then one `AskUserQuestion` per WALL / BLOCKED row — three options, always:
 | **Park** *(default when the user has no time)* | Append `## Progress — {date} · autorun` to the card: the wall line + `branch: autorun/{id-lower}` + what landed. Tear the worktree down (§ Cleanup), keep the branch. A later session picks the card up cold from its thread. |
 | **Drop** | The card is not worth finishing: delete the card file, tear the worktree down, delete the branch — one commit naming why. |
 
-DONE and HARNESS rows wait for the user; they land together through the one `land:` line — `/super-bootstrap:merge`'s batch landing (§ 5b): one integration branch, one verify, base fast-forwards once.
+DONE and HARNESS rows wait for the user; they land together through the one `land:` line — `/super-bootstrap:merge`'s batch landing (§ 5b): one integration branch, one verify, one doc-sync over the integrated diff, base fast-forwards once.
 
 ## Harness pending
 
@@ -98,4 +98,4 @@ Runs on the base branch at the next invocation's Pre-flight (step 4), per card w
 - **State = file presence.** Worktree dir + `OWNED_BY` + card thread + branch. Every invocation re-reads; nothing is remembered across turns.
 - **Read-around, never Read-in.** `git show autorun/{id-lower}:<path>`, `cat` the status file, `Grep` / `Glob` markers — mechanically backed by the `PreToolUse(Read)` hook ensure-infra installs.
 - **Verification that depends on module resolution runs at the merge, on the integrated tree in the main checkout** — a nested worktree can resolve phantom deps from the parent (`assets/parallel-worktrees.md` § Nested-worktree false-greens). The landing changed the tree's sources, so provisioning runs first (`assets/parallel-worktrees.md` § Provisioning).
-- **The merge-gate verify is the batch landing's single verify** — `/super-bootstrap:merge` § 5b runs the provisioning commands, then the repo's declared Staged-Tree Verify command (no verify declared → skip both), once on the integration branch, before base moves. Red → a linear scan names the first red merge, base stays where it was, the output surfaces; every branch stays.
+- **The merge-gate verify is the batch landing's single verify** — `/super-bootstrap:merge` § 5b runs the provisioning commands, then the repo's declared Staged-Tree Verify command (no verify declared → skip both), once on the integration branch, before base moves (again after a doc-sync commit, § 5b step 6). Red → a linear scan names the first red merge, base stays where it was, the output surfaces; every branch stays.

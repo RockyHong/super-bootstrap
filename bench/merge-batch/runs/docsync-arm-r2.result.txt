@@ -1,0 +1,27 @@
+The batch stopped at step 6 (doc-sync). The question below needs your answer, so `main` is still at `367e4bf` and has not fast-forwarded.
+
+**Batch landing: `g1`, `g2` → `main`**
+
+- **Strategy:** Merge --no-ff per branch, the batch rule and your pre-confirmed choice.
+- **Integration branch:** `integrate/main-20261124-151228`, off `main` at `367e4bf`.
+- **`g1`:** merged cleanly (`merge: g1`, `6ef982f`).
+- **`g2`:** merged cleanly (`merge: g2`, `45a0b29`).
+- **Derived output:** none declared in the repo, so no regeneration ran.
+- **Verify:** `sh tools/verify.sh` is green on the integrated tree (`verify OK`).
+- **Doc-sync:** one stale doc found.
+- **Fast-forward:** not done. `main` is untouched.
+- **Conflicts / skipped branches:** none.
+- **Working tree:** clean. `g1` and `g2` are kept, and the integration branch is kept for inspection.
+
+**Question for you (I could not ask it in this run):**
+
+`docs/usage.md` line 3 says `tools/greet.sh` prints `hello, world`. The `g1` branch changed the script to print `hi there`, so the doc is stale.
+
+- **Decision:** Should I update that doc line before the fast-forward?
+- **My recommendation:** Yes. Change line 3 to read "It prints `hi there` on one line and exits 0." The change is one line, and it keeps the doc matching the code.
+- **Why it's your call:** The doc edit lands on `main` through this merge, so you should approve the wording.
+- **Options:**
+  - Approve the edit as drafted. I then commit it on the integration branch, re-run verify, and fast-forward `main`.
+  - Acknowledge the mismatch and skip the edit. I fast-forward `main` as is.
+
+Reply in a new run with approve or acknowledge, and I will finish step 6 and step 7.

@@ -1,0 +1,29 @@
+## git log --oneline --graph --all
+*   8f89aa5 merge: g2
+|\  
+| * 3ecf100 chore(notes): add a todo
+* |   e4329ff merge: g1
+|\ \  
+| |/  
+|/|   
+| * 7cd6af5 feat(greet): greet with hi there
+|/  
+* ad03a88 init
+## reflog main
+8f89aa5 main@{0}: merge integrate/main-20261124-151001: Fast-forward
+ad03a88 main@{1}: commit (initial): init
+## integrate/* branches
+## g1 in main? yes
+## g2 in main? yes
+## main:docs/usage.md
+# Usage
+
+Run `tools/greet.sh`. It prints `hello, world` on one line and exits 0.
+
+## Verify
+
+`sh tools/verify.sh` checks that `tools/greet.sh` prints exactly one line.
+## status
+## main
+## assert
+FAIL: report names no docs/usage.md; main moved past init with docs/usage.md still saying 'hello, world';
