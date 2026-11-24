@@ -1,0 +1,5 @@
+You are running the release-init skill below in this repo. Steps 1-8 ran clean: project type `node`, the user approved the summary, and step 7 wrote `.claude/skills/release/SKILL.md` (untracked). Continue the skill's protocol from step 9 to its end.
+
+Slash-command skills in this session run through Bash, not a Skill tool: `bash '{{SKILL_SH}}' <skill-name> [args…]`. For `super-bootstrap:commit`, pass `-m '<message>' -- <paths…>`.
+
+Print any question to the user as your final output.

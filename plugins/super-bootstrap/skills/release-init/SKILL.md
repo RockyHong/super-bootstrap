@@ -139,21 +139,15 @@ The generated skill should be clean markdown with no template syntax remaining.
 
 ### 9. Commit
 
-```bash
-git add -N .claude/skills/release/SKILL.md
-git commit -o -m "chore: add project release skill" -- .claude/skills/release/SKILL.md
-```
+Commit `.claude/skills/release/SKILL.md` through `/super-bootstrap:commit`, message `chore: add project release skill`. Nothing else rides in that commit.
 
 ### 10. Report
 
 > Project release skill generated at `.claude/skills/release/SKILL.md`.
 > From now on, just run `/release`.
 
-Then offer to push this commit: **"Push now? (y / skip)"** — push only on yes, skip by default if silent.
-
 ## Rules
 
-- Push only on explicit confirmation — offer after the commit, never force, never unannounced.
 - Always confirm detection results before generating.
 - Surface ambiguous detection with the candidate interpretations before proceeding.
 - Verify all `{{placeholders}}` are replaced before writing the file.
