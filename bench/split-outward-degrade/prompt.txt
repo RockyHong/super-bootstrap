@@ -1,0 +1,7 @@
+You are running the harness-bootstrap skill's Phase 2 sync in this repo (your cwd). Phase 1 ran: no doctrine migration is needed, and the scale module is installed (`docs/parked.md` is present). § 2a and § 2a-hooks are done and current. Continue with § 2a-scale, then § 2b's drift check for the scale-module members only (the rest of § 2b is out of scope for this session), then stop before § 2c. The user pre-approved every write the per-artifact rule asks approval for.
+
+This device has no Python interpreter installed anywhere: `python3` is absent, and no other interpreter exists under any name or path.
+
+`${CLAUDE_PLUGIN_ROOT}` is `{{PLUGIN_ROOT}}`.
+
+Print your report to the user, including anything you surface, as your final output.
