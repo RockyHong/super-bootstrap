@@ -1,0 +1,7 @@
+needs you:         GAP-22  A decision only the user owns: design fork with no ruling, and a `## Design` block with no approval line
+runs without you:  GAP-21
+runs without you:  GAP-23
+
+GAP-21: read origin block and latest block (`## Progress — 2026-10-06 · session`). Not read, outside § Scan: Verdict and Design blocks.
+GAP-22: read origin block and latest block (`## Design — 2026-10-10`).
+GAP-23: read origin block and latest block (`## Verdict — auto-fix · 2026-10-12`).

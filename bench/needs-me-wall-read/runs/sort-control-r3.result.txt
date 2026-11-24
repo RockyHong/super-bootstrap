@@ -1,0 +1,7 @@
+runs without you:  GAP-21
+needs you:         GAP-22  a `## Design` block with no approval line
+runs without you:  GAP-23
+
+GAP-21: read origin block and latest `## ` heading (`## Progress — 2026-10-06`). Not read, outside § Scan: `## Verdict` and `## Design`.
+GAP-22: read origin block and latest `## ` heading (`## Design — 2026-10-10`).
+GAP-23: read origin block and latest `## ` heading (`## Verdict — auto-fix · 2026-10-12`).

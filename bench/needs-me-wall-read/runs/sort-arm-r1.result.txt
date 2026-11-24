@@ -1,0 +1,7 @@
+needs you:         GAP-21  A party outside the repo: the Design ruling waits on Acme Billing's API team (JSON API v2, no date).
+needs you:         GAP-22  A decision only the user owns: the Verdict — surface (Decision needed: follow system preference or add in-page toggle) is unruled, and the Design is only a proposal pending the user's ruling.
+runs without you:  GAP-23
+
+GAP-21 read: origin block, Verdict — surface 2026-10-03, Design 2026-10-04 (including its approval line), Progress 2026-10-06.
+GAP-22 read: origin block, Verdict — surface 2026-10-09, Design 2026-10-10.
+GAP-23 read: origin block, Verdict — auto-fix 2026-10-12.

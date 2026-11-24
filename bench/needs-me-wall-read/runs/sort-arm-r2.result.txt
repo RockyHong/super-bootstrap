@@ -1,0 +1,7 @@
+needs you:         GAP-21  A party outside the repo: Design waits on Acme Billing's API team (JSON API v2, no date).
+needs you:         GAP-22  A decision only the user owns: design fork (system preference vs. toggle), no ruling.
+runs without you:  GAP-23
+
+GAP-21: read origin, latest Verdict (surface), Design, Progress.
+GAP-22: read origin, latest Verdict (surface), Design.
+GAP-23: read origin, latest Verdict (auto-fix).

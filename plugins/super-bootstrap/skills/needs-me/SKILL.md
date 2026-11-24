@@ -1,6 +1,6 @@
 ---
 name: needs-me
-description: "Session opener for the work that needs you. Scans what is open — cards, the test queue, outward threads, parked items when present — at origin-block grain, cuts it into three or four lenses that exist in this repo right now and asks which one (a free slot takes any focus in prose), then recommends up to five items in that lens with why they need you. A prose argument is the focus and skips the question. Items that need no one are counted, not listed — they belong to /super-bootstrap:autorun. Read-only."
+description: "Session opener for the work that needs you. Scans what is open — every card thread at the cold-reader read set, the test queue, outward threads, parked items when present — cuts it into three or four lenses that exist in this repo right now and asks which one (a free slot takes any focus in prose), then recommends up to five items in that lens with why they need you. A prose argument is the focus and skips the question. Items that need no one are counted, not listed — they belong to /super-bootstrap:autorun. Read-only."
 tags: [needs-me, pickup, attention, session-opener]
 ---
 
@@ -12,9 +12,9 @@ A recommender, not a board. The full list is the card folder itself; this door a
 
 `docs/work/` absent → "No runway installed. Run `/super-bootstrap:setup`." and stop.
 
-Otherwise read, inline, cheap:
+Otherwise read, inline:
 
-- every open card's origin block plus its latest `## ` heading (`docs/work/{BUG,DEBT,GAP}-*.md`) — Problem line + where the thread stopped;
+- each open card (`docs/work/{BUG,DEBT,GAP}-*.md`) at the cold-reader read set (`docs/work/README.md` § Thread contract) — the same read autorun's § Pick runs — the wall's evidence sits in block bodies (a `waiting on {party}` in a Design, an approval line, a surface Verdict's `###` sub-heading), never in a heading alone;
 - `docs/test-queue.md` § Pending entries, `docs/outward/OUT-*.md` origin + latest block, `docs/parked.md` entries — each only when the file exists;
 - `docs/overview.md` Problem / User — the product anchor the ranking leans on.
 
@@ -30,7 +30,7 @@ A prose argument (`/super-bootstrap:needs-me 只看 product`, `不碰 business`)
 
 ## Recommend
 
-Deep-read the candidates in the chosen lens — past the origin, through the cold-reader read set `docs/work/README.md` § Thread contract names. Print at most five lines, leverage first (what its resolution unblocks, then how close it sits to the product anchor):
+Rank the candidates in the chosen lens on what § Scan read. Print at most five lines, leverage first (what its resolution unblocks, then how close it sits to the product anchor):
 
 ```
 {ID}  {title}  — {why you, ≤ 8 words}

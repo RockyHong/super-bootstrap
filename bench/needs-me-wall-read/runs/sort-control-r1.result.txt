@@ -1,0 +1,7 @@
+runs without you:  GAP-21
+needs you:         GAP-22  A decision only the user owns: a `## Design` block with no approval line
+runs without you:  GAP-23
+
+GAP-21: read origin block (Logged, Source, Problem, Area) and latest `## ` heading, `## Progress — 2026-10-06 · session`, with its body. Verdict and Design blocks not read.
+GAP-22: read origin block (Logged, Source, Problem, Area) and latest `## ` heading, `## Design — 2026-10-10`, with its body.
+GAP-23: read origin block (Logged, Source, Problem, Area) and latest `## ` heading, `## Verdict — auto-fix · 2026-10-12`, with its body.
