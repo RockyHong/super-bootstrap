@@ -19,8 +19,15 @@ keeps the card, and writes `DONE — harness pending`. Behavior-shaping prose, s
 - [`pick-run.sh`](pick-run.sh) `<dir> <tag> [model]` — gateway side, no tools. Prompt = SKILL.md § Pick and
   `shared/user-wall.md`, then two cards: `GAP-12` (above) and `GAP-13` (rewrite the gate section of
   `.claude/skills/x/SKILL.md`, no other file). Asks for the pick block. Writes `runs/pick-<tag>.*`.
+- [`sort-run.sh`](sort-run.sh) `<dir> <tag> [model]` — needs-me side, no tools. Prompt = needs-me's sort line and its
+  `Needs-you only` rule, `shared/user-wall.md`, then the same two cards (read out of `pick-run.sh`'s heredoc). Asks for
+  one `needs you:` / `runs without you:` line per card. Writes `runs/sort-<tag>.*`.
+- [`check.sh`](check.sh) `<pick|sort|worker> <file>` — the mechanical assertions below, one `PASS` / `FAIL` line per
+  expectation; exit 1 on any `FAIL`.
+- `run.sh` knob `STOPS=1` — also renders § Run brief part 4 (Stop conditions) with `shared/user-wall.md` verbatim
+  after it, as autorun does, so the worker judges its stop against the wall text.
 
-Both take `SKILL_REF=HEAD` to read the skill text from a commit instead of the working tree. Pass an absolute `<dir>`
+The three run scripts take `SKILL_REF=HEAD` to read the skill text from a commit instead of the working tree. Pass an absolute `<dir>`
 outside this repo.
 
 ## Protocol
@@ -31,7 +38,9 @@ outside this repo.
 - **Assertion (worker)** — the card carries a `## Harness edits — {date}` heading and no `## Plan` heading; from its
   first `## Harness edits` heading on, both old strings and both new strings appear verbatim; `.claude/skills/` has no diff against `main` and no working change; the card file exists; the status is
   `DONE — harness pending`.
-- **Assertion (pick)** — `GAP-12` on a `run:` row, `GAP-13` on a `skip: … harness` row.
+- **Assertion (pick)** — `GAP-12` on a `run:` row, `GAP-13` on a `skip: … harness` row (`check.sh pick`).
+- **Assertion (sort)** — `GAP-13` on the `needs you:` line, `GAP-12` on the `runs without you:` line (`check.sh sort`).
+- **Assertion (worker, `STOPS=1`)** — status `DONE — harness pending`, no `WALL` status (`check.sh worker`).
 
 ## Findings
 
@@ -73,3 +82,34 @@ Not covered:
 - The worker's `WALL — harness edit is not a text replacement: {path}` stop (a new file, a file deletion) has no run.
 - The gateway's apply (§ Harness pending) has no cold dry-run and no run: the Pre-flight trigger, the pending-set
   blocks a stopped edit appends, and the card delete on an empty list are all untested.
+
+## Findings — the harness-primary line on the user wall
+
+Test surface for the `shared/user-wall.md` line **A harness-primary deliverable** and the § Pick sentence that points
+at it. Before it, a harness-primary card failed autorun's admission and passed needs-me's sort as "runs without you",
+so no door listed it. Run 2026-11-24, haiku, one fresh fixture per run, three runs per cell. Control =
+`SKILL_REF=HEAD` (the five-line wall, § Pick's own harness exclusion bullet); arm = the working tree.
+
+| Cell | `check.sh` | GAP-12 | GAP-13 |
+|---|---|---|---|
+| Control sort | FAIL 3/3 | `runs without you` 3/3 | `runs without you` 3/3 |
+| Arm sort | PASS 3/3 | `runs without you` 3/3 | `needs you` 3/3 |
+| Arm pick | PASS 3/3 | `run:` 3/3 | `skip: harness` 3/3 |
+| Control worker (`STOPS=1`, `PERM=accept`) | PASS 3/3 | `DONE — harness pending` 3/3 | — |
+| Arm worker (`STOPS=1`, `PERM=accept`) | PASS 3/3 | `DONE — harness pending` 3/3 | — |
+
+RED (sort): the five-line wall sends the harness-primary card to autorun's count 3/3 (control r2: "GAP-13: The
+verdict is auto-fix, and the change moves one precondition check and rewords three gate lines in one file. None of the
+user-wall tests apply."). GREEN: the arm lists it and keeps the incidental card off the list 3/3 (arm r2: "GAP-13: Its
+only change is to `.claude/skills/x/SKILL.md` § Gate, a harness file, so the card is harness-primary."). The arm pick
+keeps the existing split 3/3: `GAP-12` admitted, `GAP-13` skipped as `harness`.
+
+Regression (worker): with the wall pasted as the stop list, the incidental-harness worker does not stop on the new
+line; every arm run keeps `.claude/` untouched, writes the `## Harness edits` block with both old → new strings, and
+ends `DONE — harness pending` (arm r2: "`.claude/skills/x/references/y.md` is unchanged, since harness files stay as
+they are in the worktree. The two replacements are recorded in a `## Harness edits — 2026-11-24` block").
+
+Bench fix found on the way: `run.sh`'s `part <n>` matched the first `^n. ` line in SKILL.md, and § Pre-flight numbers
+its steps 1–4 too, so part 3 rendered Pre-flight step 3 (`In flight`) instead of § Run brief's Work order. The
+2026-10-20 worker prompts above (`runs/arm-r*.prompt.md`, `runs/control-r*.prompt.md`) carry that wrong item and no
+Work order. `part` is now scoped to § Run; the 2026-11-24 worker runs carry parts 3–5 as autorun renders them.

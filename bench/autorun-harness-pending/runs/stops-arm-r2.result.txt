@@ -1,0 +1,6 @@
+GAP-12 is done on `autorun/gap-12` in commit `f1420de`. The status is `DONE — harness pending`.
+
+- **Script:** `tools/report.sh` is new. It prints `name: count` for each `src/*.src` file, sorted by name. It counts lines with `grep -c ''`, so a final line without a newline still counts. `sh tools/verify.sh` prints `verify: ok`.
+- **Harness edit:** `.claude/skills/x/references/y.md` is unchanged, since harness files stay as they are in the worktree. The two replacements are recorded in a `## Harness edits — 2026-11-24` block on `docs/work/GAP-12.md`. Each old string occurs once in the file.
+- **Card:** it stays in place, because it carries the harness block. The gateway deletes it after applying the edits.
+- **Not run:** the repo names no install or regenerate commands, so there was no provisioning step.

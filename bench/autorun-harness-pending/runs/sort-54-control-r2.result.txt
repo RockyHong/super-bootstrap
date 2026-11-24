@@ -1,0 +1,5 @@
+runs without you: GAP-12
+runs without you: GAP-13
+
+GAP-12: The verdict is auto-fix, the change is one new script plus a reference update, and `tools/verify.sh` checks it. None of the user-wall tests apply.
+GAP-13: The verdict is auto-fix, and the change moves one precondition check and rewords three gate lines in one file. None of the user-wall tests apply.

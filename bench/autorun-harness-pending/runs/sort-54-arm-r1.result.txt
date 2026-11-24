@@ -1,0 +1,4 @@
+needs you:         GAP-13  harness-primary deliverable (`.claude/skills/x/SKILL.md`)
+runs without you:  GAP-12
+
+GAP-13's only change is to a harness file, so the deliverable is harness-primary. GAP-12's deliverable is `tools/report.sh`, which `tools/verify.sh` checks without the skill-reference edit. That edit is incidental and should ride the card as a `## Harness edits` block, which GAP-12 lacks.

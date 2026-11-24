@@ -23,9 +23,10 @@ Pick → run → sheet. The gateway orchestrates; each admitted card is one work
 Read every open card thread (`docs/work/{BUG,DEBT,GAP}-*.md` — the cold-reader read set, `docs/work/README.md` § Thread contract). Admit a card when its next step needs no user — the test is `${CLAUDE_PLUGIN_ROOT}/shared/user-wall.md`, read at pick time — and none of these hold:
 
 - claimed (an `autorun-{id}` worktree exists) or already on an unmerged branch (`git branch --no-merged {base}`);
-- the deliverable is a harness file (`CLAUDE.md`, `.claude/**`, plugin-source skills / agents / rules) — route to `/super-bootstrap:needs-me`. Test: the harness lines are incidental when the rest of the card's deliverable (a script, code) stands and verifies without them → admit, the harness edits riding the card as a `## Harness edits` block (§ Run, § Harness pending). A deliverable that needs the harness change to work, or whose only non-harness part is docs describing that change → skip;
 - held by an open `docs/outward/OUT-*.md` whose `Owning card:` names it;
 - carries a `## Harness edits` block whose latest one lists edits — Pre-flight step 4 owns it.
+
+Harness lines on a card are judged by `user-wall.md`'s harness-primary line: a card that meets it skips as `harness` (`/super-bootstrap:needs-me` lists it); a card whose harness edits are incidental is admitted, the edits riding the card as a `## Harness edits` block (§ Run, § Harness pending).
 
 A prose argument narrows the set (`/super-bootstrap:autorun 不碰 business`, `only DEBT`). Cards whose `Area:` / thread name overlapping files share one worktree and run in dependency order; the rest run in parallel.
 

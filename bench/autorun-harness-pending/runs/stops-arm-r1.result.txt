@@ -1,0 +1,7 @@
+GAP-12 is done and committed on `autorun/gap-12`. `sh tools/verify.sh` prints `verify: ok`.
+
+- **Script:** added `tools/report.sh`. It prints `name: count` for each `src/*.src` file, sorted by name. Output: `a.src: 2`, `b.src: 1`.
+- **Harness edits:** I did not touch `.claude/skills/x/references/y.md`. The card now carries a `## Harness edits — 2026-11-24` block with both old and new strings. I confirmed each old string occurs once in the file.
+- **Card:** `docs/work/GAP-12.md` stays because it carries the harness edits block. The gateway deletes it after applying them.
+- **Commit:** `bd8e61d`, which covers `tools/report.sh` and the card. The working tree is clean.
+- **Status:** `DONE — harness pending` is in `.autorun-status`, uncommitted.

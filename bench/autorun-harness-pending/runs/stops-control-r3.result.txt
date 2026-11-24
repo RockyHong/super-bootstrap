@@ -1,0 +1,6 @@
+GAP-12 is done on branch `autorun/gap-12`. `sh tools/verify.sh` passes.
+
+- **Script:** added `tools/report.sh`. It prints `name: count` for each `src/*.src` file, sorted by name (`a.src: 2`, `b.src: 1`).
+- **Card:** the card stays, because it carries a harness edit. I appended a `## Harness edits — 2026-11-24` block with the two replacements for `.claude/skills/x/references/y.md`. Each old string occurs once in that file.
+- **Commit:** `940ab43` holds `tools/report.sh` and the card. I did not touch the harness file; the gateway applies the edits after the merge.
+- **Status:** `.autorun-status` reads `DONE — harness pending`. It is uncommitted.

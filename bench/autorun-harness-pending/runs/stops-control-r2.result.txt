@@ -1,0 +1,6 @@
+GAP-12 is built, verified, and committed on `autorun/gap-12` as `98545a6`.
+
+- **Script:** `tools/report.sh` prints `name: count` for each `src/*.src` file, sorted by name. It gives `a.src: 2` and `b.src: 1`. `sh tools/verify.sh` passes.
+- **Harness edits:** `.claude/skills/x/references/y.md` is a harness file, so I left it unchanged. The two old-to-new replacements are recorded in a `## Harness edits — 2026-11-24` block on the card, and each old string occurs once in the file. The card stays because it carries those edits.
+- **Provisioning:** none needed. The repo documents no install or regenerate commands.
+- **Status:** `.autorun-status` reads `DONE — harness pending`. It is uncommitted, and the tree is clean apart from it.

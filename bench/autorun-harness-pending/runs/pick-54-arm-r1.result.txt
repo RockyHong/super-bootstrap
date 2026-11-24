@@ -1,0 +1,5 @@
+```
+autorun — 2 cards
+run:   GAP-12  add tools/report.sh: one "name: count" line per src/*.src file, sorted by name
+skip:  GAP-13  harness
+```

@@ -1,0 +1,5 @@
+```
+autorun — 2 cards
+run:   GAP-12  add tools/report.sh (name: count per src/*.src file); repoint skill x reference Counts/Output lines
+skip:  GAP-13  harness
+```

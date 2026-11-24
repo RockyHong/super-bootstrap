@@ -1,0 +1,5 @@
+runs without you:  GAP-12
+runs without you:  GAP-13
+
+GAP-12: the verdict sets the fix-shape, and its check is `sh tools/verify.sh`, which is tooling, not human eyes. No user decision, taste, outside party, or cost is involved.
+GAP-13: the verdict names the exact move (precondition check ahead of the write in `SKILL.md` § Gate). No user decision, taste, outside party, or cost is involved.

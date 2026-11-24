@@ -1,0 +1,5 @@
+needs you:         GAP-13  harness-primary deliverable
+runs without you:  GAP-12
+
+GAP-13: the only change is to `.claude/skills/x/SKILL.md` § Gate, a harness file, so the card's deliverable is harness-primary.
+GAP-12: the deliverable is `tools/report.sh`, which stands and verifies alone. The `.claude/skills/x/references/y.md` edit is incidental and rides the card as a `## Harness edits` block.

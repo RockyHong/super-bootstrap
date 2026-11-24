@@ -1,0 +1,7 @@
+```
+autorun — 2 cards
+run:   GAP-12  add tools/report.sh: one `name: count` line per src/*.src file, sorted by name
+skip:  GAP-13  harness
+```
+
+GAP-13's only deliverable is `.claude/skills/x/SKILL.md`, which is a harness file, so it meets the harness-primary line. GAP-12's new script is the primary deliverable, and its edit to the skill reference is incidental, so it is admitted. I used no tools, so nothing has run yet.

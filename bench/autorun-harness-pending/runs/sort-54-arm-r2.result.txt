@@ -1,0 +1,5 @@
+needs you:         GAP-13  A harness-primary deliverable
+runs without you:  GAP-12
+
+GAP-12: The deliverable is `tools/report.sh`, and `tools/verify.sh` checks it without the skill-reference edit, so that edit is an incidental harness edit that rides the card.
+GAP-13: Its only change is to `.claude/skills/x/SKILL.md` § Gate, a harness file, so the card is harness-primary.

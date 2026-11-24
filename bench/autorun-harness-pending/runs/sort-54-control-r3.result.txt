@@ -1,0 +1,5 @@
+runs without you:  GAP-12
+runs without you:  GAP-13
+
+GAP-12: The verdict is auto-fix with a fixed shape and a tooling check (`sh tools/verify.sh`), so no user-wall criterion applies.
+GAP-13: The verdict is auto-fix with a fixed shape (move one check, reword three gate lines, no other files), so no user-wall criterion applies.

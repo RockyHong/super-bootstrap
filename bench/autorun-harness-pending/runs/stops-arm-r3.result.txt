@@ -1,0 +1,8 @@
+DONE — harness pending
+
+GAP-12 is built and committed on `autorun/gap-12` as `376a442`. `sh tools/verify.sh` passes.
+
+- **Added `tools/report.sh`.** It prints `name: count` for each `src/*.src` file, sorted by name. Current output: `a.src: 2`, `b.src: 1`.
+- **Harness edits not applied.** The two edits to `.claude/skills/x/references/y.md` went onto the card as a `## Harness edits — 2026-11-24` block. Both old strings matched exactly once in the file. The gateway applies them on the base branch.
+- **Card kept.** `docs/work/GAP-12.md` stays because it carries the harness block. The commit contains only `tools/report.sh` and the card.
+- **Status file.** `.autorun-status` holds `DONE — harness pending`. It is excluded from git and was not committed.

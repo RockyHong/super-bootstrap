@@ -24,6 +24,11 @@
 #                        acceptEdits, --allowedTools "Skill,Agent,Bash" (Bash added
 #                        so the fixture's sh scripts run). Default: --allowedTools
 #                        Bash only, which denies the Write / Edit tools.
+#   STOPS=1              also render § Run brief part 4 (Stop conditions) with
+#                        shared/user-wall.md verbatim after it, as autorun does,
+#                        so the worker judges its stop against the wall text
+#                        (the BUG-54wd regression check: an incidental-harness
+#                        worker must not WALL on the harness criterion).
 #
 # Usage: bash run.sh <dir> <tag> [model]   (<dir> absolute, outside this repo)
 set -u
@@ -94,9 +99,11 @@ command -v cygpath >/dev/null 2>&1 && CFG="$(cygpath -m "$CFG")"
 
 # ---- prompt ---------------------------------------------------------------
 src() { if [ -n "${SKILL_REF:-}" ]; then git -C "$SRC" show "$SKILL_REF:$1"; else cat "$ROOT/$1"; fi; }
-part() { # part <n>: SKILL.md § Run brief item n, through the line before item n+1 or a blank line
+part() { # part <n>: SKILL.md § Run brief item n, through the line before item n+1 or a blank line.
+  # Scoped to § Run: § Pre-flight numbers its steps 1-4 too, and an unscoped match takes those.
   src "$AR/SKILL.md" | awk -v n="$1" '
-    $0 ~ "^"n"\\. " {on=1}
+    /^## /{inrun=($0 ~ /^## Run$/)}
+    inrun && $0 ~ "^"n"\\. " {on=1}
     on && $0 ~ "^"(n+1)"\\. " {exit}
     on && /^$/ {exit}
     on'
@@ -106,7 +113,20 @@ P="$SRC/runs/$TAG.prompt.md"
   printf 'You are a subprocess Claude dispatched by /super-bootstrap:autorun. Your brief:\n\n---\n'
   src "$AR/assets/worktree-boundary.md"
   printf -- '---\n\nCard: `docs/work/GAP-12.md` — read it whole.\n\n'
-  part 3; part 5
+  part 3
+  if [ "${STOPS:-}" = 1 ]; then
+    part 4
+    printf -- '
+`shared/user-wall.md` reads:
+
+---
+'
+    src "plugins/super-bootstrap/shared/user-wall.md"
+    printf -- '---
+
+'
+  fi
+  part 5
   printf -- '\nThe commit door is not installed in this repo: commit on this branch with plain git (stage the files, then commit). End with the status line.\n'
 } > "$P"
 
