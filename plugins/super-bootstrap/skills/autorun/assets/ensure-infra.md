@@ -72,7 +72,7 @@ Decline → the turn ends (autorun cannot run without isolation infra). Accept �
 
 ## Hook activation
 
-`settings.json` hook edits are picked up mid-session by the file-watcher (no restart — `hook-agent-type.md`), so the `PreToolUse(Read)` guard goes live shortly after the merge. Regardless of timing, the gateway's behavioral Read-discipline (`SKILL.md` § Rules — read-around paths, never `Read` inside a worktree) is the primary contract; the hook is the mechanical backstop.
+`settings.json` hook edits are picked up mid-session by the file-watcher (no restart), so the `PreToolUse(Read)` guard goes live shortly after the merge. Regardless of timing, the gateway's behavioral Read-discipline (`SKILL.md` § Rules — read-around paths, never `Read` inside a worktree) is the primary contract; the hook is the mechanical backstop.
 
 ## Roles
 

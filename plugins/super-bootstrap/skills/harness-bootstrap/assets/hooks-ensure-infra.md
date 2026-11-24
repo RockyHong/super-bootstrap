@@ -186,8 +186,7 @@ deliberately (their rows resolve two ways and cost most of the render budget), s
 
 ## Hook activation
 
-`settings.json` hook edits are picked up mid-session by the file-watcher (no restart
-— `hook-agent-type.md`), so the guards go live shortly after the merge.
+`settings.json` hook edits are picked up mid-session by the file-watcher (no restart), so the guards go live shortly after the merge.
 
 ## Roles
 

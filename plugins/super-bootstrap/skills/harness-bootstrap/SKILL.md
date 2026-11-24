@@ -425,7 +425,7 @@ Signals — any one arms the offer:
 
 None hold → skip the offer silently, place nothing. Already installed (`docs/parked.md` present) → no offer either; § 2b's drift check owns the members, a missing one resolving `Missing → write`.
 
-**Split before placing — `docs/outward.md` → `docs/outward/`.** Repos that took the scale module before the folder shape hold every outward item as an `### OUT-###` chunk in one flat file. Placing `docs/outward/` beside it strands those entries: `/super-bootstrap:log`'s dedup and the mover gate read the folder, and the board only carries the flat file on a legacy branch that draws a `# note:` every render. When `docs/outward.md` exists — keyed on that file alone, whatever the signals or install state — run the split first, then continue with this step's placements:
+**Split before placing — `docs/outward.md` → `docs/outward/`.** Repos that took the scale module before the folder shape hold every outward item as an `### OUT-###` chunk in one flat file. Placing `docs/outward/` beside it strands those entries: `/super-bootstrap:log`'s dedup and the mover gate read the folder, and `/super-bootstrap:needs-me` reads only the folder. When `docs/outward.md` exists — keyed on that file alone, whatever the signals or install state — run the split first, then continue with this step's placements:
 
 ```
 python3 ${CLAUDE_PLUGIN_ROOT}/skills/harness-bootstrap/assets/scale/split-outward.py <repo root> ${CLAUDE_PLUGIN_ROOT}/skills/harness-bootstrap/assets/scale/outward-readme-skeleton.md

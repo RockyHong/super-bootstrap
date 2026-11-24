@@ -73,7 +73,7 @@ Once both are filled, re-run /super-bootstrap:setup — the run pins the languag
 The runway returned, pinned the language server the techstack names, and the seed docs are substantive (a just-resolved greenfield, or an already-documented updater). Run in order:
 
 1. **`/super-bootstrap:release-init`** — offer once as an optional step to generate a project-level `/release` skill.
-2. **Clear an open "Run tech curation" card** — a `docs/work/GAP-*.md` card whose H1 summary is `Run tech curation`, or whose `**Source:**` names a `/super-bootstrap… bootstrap` seed run and whose `**Area:**` names both `docs/overview.md` and `docs/techstack.md`. Delete the card file and land the deletion through `/super-bootstrap:commit` (card-lifecycle — no doc-sync gate); this run is that card's resolution, so the tree is clean when § Disclosure renders.
+2. **Clear a legacy "Run tech curation" card** (seeded before `resolve-plugins` was removed; current seeds never produce it) — a `docs/work/GAP-*.md` card whose H1 summary is `Run tech curation`, or whose `**Source:**` names a `/super-bootstrap… bootstrap` seed run and whose `**Area:**` names both `docs/overview.md` and `docs/techstack.md`. Delete the card file and land the deletion through `/super-bootstrap:commit` (card-lifecycle — no doc-sync gate); this run is that card's resolution, so the tree is clean when § Disclosure renders.
 
 **Rules-seeding stays runway-owned.** Path-scoped rule seeding (frontend / MV3 / migrations / tests) fires at runway-time in [`/super-bootstrap:harness-bootstrap`](../harness-bootstrap/SKILL.md) Phase 1 — one home per signal, no double-seed.
 
