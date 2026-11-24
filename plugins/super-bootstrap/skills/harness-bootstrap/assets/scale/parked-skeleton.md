@@ -20,7 +20,7 @@ Spec-coupled items may replace **Watching for** / **Fires on** with a `surface-o
 
 **Extensions:** `docs/extensions.md`, when present, declares the fields this repo adds to a parked entry, each naming the hook, script, or skill that reads it — additive to this header, never overriding a line of it.
 
-**Consumer note:** Untagged entries are NOT surfaced every session — their trigger's observer fires them when work touches the same surface, not a standing watch. `surface-on:feature=X` entries surface when their feature's spec is written. `/super-bootstrap:needs-me` does not list either kind on its own.
+**Consumer note:** Untagged entries are NOT surfaced every session — their trigger's observer fires them when work touches the same surface, not a standing watch. `surface-on:feature=X` entries surface when their feature's spec is written. `/super-bootstrap:needs-me` reads every entry when it runs and lists one only when its next step needs the user.
 
 ## Entries
 
