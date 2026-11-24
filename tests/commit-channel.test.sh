@@ -142,6 +142,21 @@ check "accepted residual: GIT_EDITOR=\"vim -f\" git merge --continue -> allowed 
 out=$(run_channel "env GIT_EDITOR=true git $M --continue" "some-worker")
 check "accepted residual: env GIT_EDITOR=true git merge --continue -> allowed (env form, not walked)" allowed "$out"
 
+# Accepted residual, locked so a later widening is a deliberate change: a
+# keyword or wrapper before `git` (`then`, `bash -c "…"`) and a suffixed binary
+# (`git.exe`) are not command position — silent pass. No run has produced them;
+# `bash -c` and `git.exe` also miss the `if: "Bash(git *)"` pre-filter, so a
+# regex edit alone would not reach them. Reopen bar: docs/decisions.md
+# commit-channel row.
+out=$(run_channel "if true; then git $C -m x; fi" "some-worker")
+check "accepted residual: if …; then git commit -> allowed (keyword before git, not walked)" allowed "$out"
+
+out=$(run_channel "bash -c \"git $C -m x\"" "some-worker")
+check "accepted residual: bash -c \"git commit\" -> allowed (shell wrapper, not walked)" allowed "$out"
+
+out=$(run_channel "git.exe $C -m x" "some-worker")
+check "accepted residual: git.exe commit -> allowed (suffixed binary name)" allowed "$out"
+
 out=$(run_channel "echo \"next: git $M --continue\"" "some-worker")
 check "quoted git merge --continue mention on one line -> allowed (not an invocation)" allowed "$out"
 
