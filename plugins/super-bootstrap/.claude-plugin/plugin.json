@@ -1,7 +1,7 @@
 {
   "name": "super-bootstrap",
   "description": "Bootstrap or sync the development pipeline in any repo. /super-bootstrap:setup is a thin orchestrator: it installs/syncs the generic harness runway (the plugin-owned workflow doctrine at .claude/rules/harness.md, re-placed whole on re-run; a project-owned CLAUDE.md; skeleton docs, path-scoped rules, the core plugin pin, the language-server pins the techstack names, default-on harness hooks (commit-channel routing raw commits to the gateway-inline commit door; consult-check pair injecting prompt-time doc recall); a plugin-owned runway-drift SessionStart hook advising when a placed plugin-owned file differs from the shipped copy, or when CLAUDE.md still holds the workflow sections, and routing to the re-run; a CLAUDE.md in that pre-split shape migrated onto the doctrine file on the user's confirm, as one commit; monorepo tier per-package fan-out; adopt mode retiring a consumer's superseded fork skills/agents and backfilling skeleton sections added since bootstrap; opt-in earn-gated scale module: parked + test-queue + outward), seeds product GAP cards on greenfield, and offers release-init once the seed docs are substantive. Bundles commit, needs-me, session-close, session-continue, log, triage, triage-report, help, merge, autorun, check-docs-consistency, and optional release-init — every bundled skill, entry included, is namespaced under super-bootstrap:. Per-skill contracts live in each SKILL.md frontmatter (canonical catalog); plugin README carries the index. Solo dev workflow.",
-  "version": "7.1.0",
+  "version": "7.1.1",
   "author": {
     "name": "Rocky Hong",
     "email": "contact@rockyhong.com"
