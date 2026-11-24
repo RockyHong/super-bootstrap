@@ -50,7 +50,7 @@ If rule body needs more context than its summary provides during planning, read 
 {- [`docs/test-queue.md`](docs/test-queue.md) — manual-verification queue}
 {- [`docs/outward/`](docs/outward/README.md) — outward threads: next move + waiting-on party, one file per item}
 - [`docs/terminology.md`](docs/terminology.md) — the project's term home: one canonical word per concept, `_Avoid_` aliases; a doc's first substantive use of a term links this file.
-- [`docs/decisions.md`](docs/decisions.md) — closed forks / rejected directions, all domains (history dimension). See its scope header for admission criteria; checked at triage.
+- [`docs/decisions.md`](docs/decisions.md) — closed forks, all domains (history dimension). See its scope header for admission criteria; checked at triage.
 - `.claude/rules/` — path-scoped rules, full-body fires on file match (see Rules section above)
 
 > `docs/specs/` = permanent source of truth; working design and plan live as blocks on the owning card's thread.

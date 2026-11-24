@@ -14,7 +14,7 @@ Batch list of open manual-verification obligations — plans whose verification 
   - [ ] {step → observable result}
   - [ ] {step → observable result}
 - **result:** pending
-- **source:** {BUG|DEBT|GAP}-xxxx   ← optional; the only backlog link — omit when no row exists
+- **source:** {BUG|DEBT|GAP}-xxxx   ← optional; the only card link — omit when no card exists
 - **on fail:** `/super-bootstrap:log` a bug + re-queue
 ```
 

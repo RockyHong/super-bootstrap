@@ -13,7 +13,7 @@ Items not in the active pipeline — actionable, but waiting on a named trigger.
 
 **Logged:** {date} · **Source:** {where this surfaced}
 **Watching for:** {the observer — the signal that says the wait is over}
-**Fires on:** {the trigger — the concrete event that promotes this to a backlog row}
+**Fires on:** {the trigger — the concrete event that promotes this to a card}
 ```
 
 Spec-coupled items may replace **Watching for** / **Fires on** with a `surface-on:feature=X` tag — the item carries rationale that must surface when a spec for feature X is written, and the tag is the grep target.

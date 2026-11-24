@@ -337,7 +337,7 @@ destination — report those paths rather than resolving them.
 **Always created (fixed macro):**
 ```
 docs/
-  decisions.md   ← closed forks / rejected directions (history dimension — always scaffolded, starts empty)
+  decisions.md   ← closed forks (history dimension — always scaffolded, starts empty)
   terminology.md ← the project's term home: one canonical word per concept (always scaffolded, starts with no entries)
   specs/         ← feature specs, one .md per feature, no index file (empty + .gitkeep; files land at the spec-seeding card's pickup — `/super-bootstrap:setup` seeds it on a code-present repo)
   work/

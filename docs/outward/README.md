@@ -8,7 +8,7 @@ One item = one file = one append-only thread. Everything here dies with its item
 
 New entries enter via `/super-bootstrap:log` (mover gate + dedup + ID assignment), in `TEMPLATE.md`'s shape.
 
-**Admission:** Outward = the next step is the author's hands or an outside party's **and** it names a repo tail. Every entry MUST name the tail — the doc, card, or preset that changes when the result lands — else it drops: an outward item with no repo tail is the author's personal todo, not repo state. An item the repo moves next stays a card in `docs/work/`; a mixed item splits at capture — the repo's remainder stays a card, the author-or-outside step is an entry here, carrying `Owning card:` when the card waits on it.
+**Admission:** Outward = the next step is the author's hands or an outside party's **and** it names a repo tail. Every entry MUST name the tail — the doc, card, or preset that changes when the result lands — else it drops: an outward thread with no repo tail is the author's personal todo, not repo state. An item the repo moves next stays a card in `docs/work/`; a mixed item splits at capture — the repo's remainder stays a card, the author-or-outside step is an entry here, carrying `Owning card:` when the card waits on it.
 
 **Pointer, not restatement:** an entry points at the doc that holds the status (a business doc, a spec, a card) — it never restates it.
 
