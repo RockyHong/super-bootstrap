@@ -1,9 +1,8 @@
 # Harness Architecture — What super-bootstrap Owns, and Where the Seam Falls
 
 **Scope.** This doc owns the concern map: which slots super-bootstrap occupies, which
-it delegates, and the mechanism at the boundary. It is the grounding artifact for the
-de-routing work — a cold reader should be able to act on the cards without
-reconstructing the analysis.
+it delegates, and the mechanism at the boundary — why super-bootstrap routes no external
+process harness, and what holds that seam in place.
 
 Companion docs: [`docs/overview.md`](../overview.md) (product context),
 [`docs/techstack.md`](../techstack.md) (stack + architecture rules),
@@ -68,35 +67,33 @@ premise written where it reads.
 
 ## 3. The routing layer is coupling cost, not capability
 
-super-bootstrap's routing layer exists because superpowers ships entry points without
-an entry rule. Filling another container's missing boundary made super-bootstrap
-inseparable from it.
+superpowers ships entry points without an entry rule. A harness that routes into it fills
+another container's missing boundary, and that makes the router inseparable from it.
 
-**Dissolve test — remove superpowers, and these lose their referent:**
+**Dissolve test — remove superpowers, and hold each component against what it still stands on:**
 
-| Component | Verdict — and what stands now |
+| Component | What stands |
 | --- | --- |
 | Cluster routing table — rows 1 / 2 / 3 (`systematic-debugging` / `brainstorming` / `writing-plans`) | Referent dead, **discipline live**: the rows state the disciplines themselves — root cause before fix · settle the design · write the sequence — and name no harness. |
 | Cluster routing table — rows 5 / 6 / 7 / 8 (inline tweak · docs · harness edit · triage lane) | **Live**, harness-neutral already; row 8 routes to our own `/super-bootstrap:triage`. |
 | Cluster routing table — row 4 (refactor) | **Live** — its "multi-step → cluster 3" pointer targets a discipline, not a skill. |
 | Cluster routing table — row 9 (spike / iterative) | **Live** — routes to our own `/super-bootstrap:merge`. |
-| "Inside a route — run it whole" | Dead. The section is gone. |
-| Dispatch § SDD carve-out — the "chain's executor governs" clause | Dead. The clause is gone; the bullet's commit-door mechanics are harness-agnostic and stand. |
-| § The envelope ambient-laws line (4 skill names) | Referent dead, **discipline live**: three laws stated inline. `dispatching-parallel-agents` carried nothing § Dispatch does not already own. |
-| `docs/specs/superpowers-topology.md` | Dead. The file is gone. |
-| `harness-bootstrap` § Core plugin pin — `superpowers` as a **locked** core dep | Dead *as core* — the pin's own justification was name-backing ("if CLAUDE.md names a skill that isn't installed, the trigger rule misfires silently"), and the names are gone. superpowers is pinned by nothing, and neither is any other process harness — the slot is filled by whichever one a repo adds through Claude Code's own plugin install. |
-| The temporal work folder | **Ours**, at `docs/work/`. No process harness owns that slot at a fixed path — artifact skills publish to whatever tracker a repo declares — so there was no slot to defer to. |
-| drain's stage machine (`raw→triage→plan→execute→review`) | **Dead, with its classification.** The stage chain, the intent axis, the venue map and the board renderer are gone; `autorun` (drain's successor) spawns one session per admitted card that runs the whole card to done, admission being the one judgment in `shared/user-wall.md`. |
+| § The envelope ambient-laws line | **Discipline live**: four laws stated inline, naming no skill. Container choice — the concern of superpowers' `dispatching-parallel-agents` — belongs to § Dispatch. |
+| § Dispatch | **Live** — every bullet is harness-agnostic, the subagent-commit door included (§5). |
+| `harness-bootstrap` § Core plugin pin | **Live, harness-free** — no seeded prose names a foreign skill, so nothing needs one installed to resolve. No process harness is pinned; a repo adds one through Claude Code's own plugin install. |
+| The temporal work folder | **Ours**, at `docs/work/`. No process harness owns that slot at a fixed path — artifact skills publish to whatever tracker a repo declares — so there is no slot to defer to. |
+| The unattended lane (`autorun`) | **Ours, stage-free**: `autorun` spawns one session per admitted card that runs the whole card to done; admission is the one judgment in `shared/user-wall.md`. No stage chain, intent axis or venue map sits between them. |
 | **log / cards / commit / doc-sync / rules** | **Unaffected.** |
-| `skills/triage/SKILL.md` + `agents/triage.md` — investigation doctrine | Referent dead, **discipline live**: the clause is stated inline, naming no harness. The pointer never resolved even where superpowers is installed — the agent's tool list carries no `Skill`. |
+| `skills/triage/SKILL.md` + `agents/triage.md` — investigation doctrine | Referent dead, **discipline live**: the clause is stated inline, naming no harness. A skill pointer could not resolve there anyway — the agent's tool list carries no `Skill`. |
 
 **The cluster routing table survives the dissolve whole** — rows 1–3 restated as inline disciplines, the rest already harness-neutral. Its real function is
 sizing ceremony to shape, and that is harness-independent: clusters 5 and 6 say "no
 ceremony", 7 routes harness edits, 8 routes triage to our own door, and 1–3 name the
-disciplines a process harness would otherwise supply. Deleting rows rather than restating
-them would have dropped verified-load-bearing prose — [`docs/decisions.md`](../decisions.md)
-records a pressure test where the [route line](../../.claude/rules/harness.md#cluster-routing) alone sent a
-runtime-symptom bug to the triage lane in 2/2 control runs.
+disciplines a process harness would otherwise supply. Rows 1–3 stay as restated disciplines
+rather than deleted rows because the prose is verified load-bearing —
+[`docs/decisions.md`](../decisions.md) records a pressure test where the
+[route line](../../.claude/rules/harness.md#cluster-routing) alone sent a runtime-symptom bug
+to the triage lane in 2/2 control runs.
 
 ## 4. The seam: runtime-orthogonal by construction
 
@@ -111,8 +108,7 @@ rg 'superpowers|systematic-debugging|brainstorm|writing-plans|write-plan|execute
 Every hit falls in the one sanctioned class below. The pattern carries
 `brainstorm` **unstemmed** and both hyphenated command spellings deliberately: a
 `brainstorming|writing-plans` pattern is blind to `/brainstorm`, `/write-plan`, and
-`/execute-plan` — the form a live dispatch actually takes, and the form that survived the
-skeleton cut unseen. `mattpocock` and `matt-pocock` are separate alternates for the same
+`/execute-plan` — the form a live dispatch actually takes. `mattpocock` and `matt-pocock` are separate alternates for the same
 reason: neither spelling matches the other, and mattpocock's setup command uses the
 hyphenated one.
 
@@ -127,15 +123,17 @@ hyphenated one.
 
 The `mattpocock|matt-pocock|ask-matt|grill-me|grill-with-docs|to-spec|to-tickets|wayfinder`
 alternates carry no sanctioned hit at all — they stay in the pattern as the standing
-regression guard for a pairing this repo once shipped and has since removed.
+regression guard against pairing that skill set, a closed fork in
+[`docs/decisions.md`](../decisions.md).
 
 A hit outside that class is a regression — the pattern catches a live command
 referent whether it dispatches (a subprocess phase prompt) or only reads as prose, and
 prose that seeds through the capture funnel carries the referent into every consumer repo's
-own card set, where it outlives the cut.
+own card set, where it outlives any fix here.
 
-The folder shape is gone: `docs/superpowers/` is now `docs/work/`. Phase 2a scaffolds
-`README.md` + `TEMPLATE.md`; cards land flat beside them as work is logged. The
+The work folder is `docs/work/`; Phase 2a migrates a pre-rename `docs/superpowers/` tree
+into it (§8), scaffolds `README.md` + `TEMPLATE.md`, and cards land flat beside them as
+work is logged. The
 naming rides the same path — skill `description:`, the runway intro, the emitted commit
 strings, and the pipeline-family `tags:` keyword are all harness-neutral, so a consumer
 re-bootstrapping migrates in one run.
@@ -188,15 +186,16 @@ Docs existing ≠ the agent attending to them. The two systems solve this differ
 skill names**, so this slot is orthogonal by construction — it needs no change when the
 process harness is swapped or removed.
 
-### The fences stay ambient — the cut is a rename, not a relocation
+### The fences stay ambient, not path-scoped
 
-De-routing removes routing, not discipline. Four laws named in § The envelope
-(`test-driven-development`, `verification-before-completion`, `receiving-code-review`,
-`dispatching-parallel-agents`) are superpowers skill names (the pre-cut state, superseded by
-the shipped [§ The envelope](../../.claude/rules/harness.md#the-envelope) of the workflow
-doctrine file, which binds and names three declared disciplines), and the same file's
-§ Coding Principles carries a fifth fence — the coding standard.
-Where they land is settled by the rules layer's own firing mechanism, not by preference.
+De-routing removes routing, not discipline. [§ The envelope](../../.claude/rules/harness.md#the-envelope)
+of the workflow doctrine file states four ambient laws the repo declares, each inline and
+naming no skill: test-first, verify before claiming, closure before a criterion edit, and
+review received, not absorbed. Three of them carry the discipline of superpowers skills
+(`test-driven-development`, `verification-before-completion`, `receiving-code-review`); the
+superpowers skill `dispatching-parallel-agents` maps to § Dispatch instead. The same file's
+§ Coding Principles carries one more fence — the coding standard.
+Where the fences land is settled by the rules layer's own firing mechanism, not by preference.
 
 **A path-scoped rule fires on file *read*, not on intent** — stated in the shipped
 rule-authoring guide (`rules-index-skeleton.md`: "a rule fires on file *read*, not on
@@ -230,20 +229,23 @@ pressure-test, and [`.claude/rules/skill-authoring.md`](../../.claude/rules/skil
 requires RED-first for behavior-shaping prose. Shipping a rule here would be that rejected
 shape with no failing test behind it.
 
-**Shipped shape.** The ambient-laws line carries three disciplines **the repo declares**, one
+**Shipped shape.** The ambient-laws line carries four disciplines **the repo declares**, one
 line each, no foreign-harness referent — test-first, verify-before-claiming,
-review-received-not-absorbed. The fourth (`dispatching-parallel-agents`) is cut outright,
-because [§ Dispatch](../../.claude/rules/harness.md#dispatch--who-holds-each-phase) is its single home (VII).
+closure-before-a-criterion-edit, review-received-not-absorbed. Closure before a criterion
+edit is the repo's own law, not a restated superpowers fence. `dispatching-parallel-agents`
+takes no ambient-laws line, because
+[§ Dispatch](../../.claude/rules/harness.md#dispatch--who-holds-each-phase) is its single home (VII).
 The rejected rules-layer direction is recorded in [`docs/decisions.md`](../decisions.md) so it
 is not re-proposed.
 
-**What the compression costs — answered for the review law.** Each named skill carried a full
-body that loaded at its fire moment; a one-liner does not. `Verify before claiming` plausibly
-compresses without loss; `Review received, not absorbed` did not — the repo authors its own
-discipline body for it: the `review-intake` agent, with § Dispatch routing judgment-grade
-findings through it before any implementer. The answer was never a rule glob (closed above).
+**What the compression costs — answered for the review law.** A one-line law carries less
+than a full skill body loaded at its fire moment. `Verify before claiming` plausibly
+compresses without loss; `Review received, not absorbed` does not, so the repo authors its
+own discipline body for it: the `review-intake` agent, with § Dispatch routing
+judgment-grade findings through it before any implementer. A rule glob cannot carry it
+(closed above).
 
-### § Coding Principles is a different concern, riding Wave 1 by name-adjacency
+### § Coding Principles is a standards concern, not a process harness
 
 §3's dissolve test does not list this slot. A coding standard is a **standards** concern,
 not a process harness, so de-routing does not touch it. Its own problem stands separately:
@@ -270,18 +272,16 @@ how the code is written, observed rather than mandated →
 [`docs/techstack.md` § Coding Patterns](../techstack.md#coding-patterns), reference read on
 demand, never a standard.
 
-Dispatch doctrine came through intact: of the doctrine's § Dispatch bullets, only the
-"build inside a superpowers chain → that chain's executor governs" clause was coupled, and
-it is cut. The rest — closure-judged inline-vs-dispatch, per-phase build dispatch,
-transcription is not a build, review findings gated through `review-intake`, parallel within
-a phase not across, writer run mode keyed on path overlap — are harness-agnostic, and the cut
-bullet's own commit-door mechanics survive under a harness-neutral heading.
+§ Dispatch names no harness: closure-judged inline-vs-dispatch, per-phase build dispatch,
+transcription is not a build, review findings gated through `review-intake`, subagent
+commits routed through the commit door, parallel within a phase not across, and writer run
+mode keyed on path overlap are all harness-agnostic.
 
 ## 6. Decided vs open
 
-**Decided — de-routing (change A).** super-bootstrap stops routing any external process
-harness. This does not depend on which harness wins; it follows from §3's dissolve test.
-superpowers may stay installed — it simply stops being routed.
+**Decided — de-routing.** super-bootstrap routes no external process harness. This does
+not depend on which harness wins; it follows from §3's dissolve test. superpowers may be
+installed in a repo; no door routes it.
 
 *De-routing rests on the dissolve test alone, not on a measurement.* The de-routed state
 is not a bare run — the workflow doctrine minus its routing sections, `CLAUDE.md`, ~1.6k tokens of skill
@@ -300,19 +300,18 @@ carries no install pointer — the rationale lives here, not ambient. Bootstrap 
 the techstack's language server and seeds no process harness: no seeded prose stands on a foreign harness, which is why taking or dropping one
 costs no doc change.
 
-**Decided — no process harness is paired or pinned (change B, reversed).** super-bootstrap
-pins no process harness. A repo adds one through Claude Code's own plugin install, on
-separate axes from sb's slots (§2); no plugin door routes it. The pairing this repo shipped and then removed on a zero-usage read-out is a
-closed fork in [`docs/decisions.md`](../decisions.md).
+**Decided — no process harness is paired or pinned.** super-bootstrap pins no process
+harness. A repo adds one through Claude Code's own plugin install, on separate axes from
+sb's slots (§2); no plugin door routes it. Pairing one is a closed fork in
+[`docs/decisions.md`](../decisions.md).
 
 **Resolved — autorun's anchor.** The unattended lane's ceiling is how many walls the
 user can resolve, not machine throughput. The classification below settles the shape
 question without measurement: dependency-ordered elicitation never enters `autorun` —
 admission is the one judgment in `shared/user-wall.md`, and a card whose next step needs
 the user is `needs-me`'s to recommend — and every wall autorun produces is a one-shot
-framed decision the user answers, parks, or drops from one sheet. The earlier
-`intent == Cloud` gate and the venue map were proxies for that judgment; the model now
-makes it directly. The wall-vs-progress *ratio* stays unmeasured — cheap to instrument
+framed decision the user answers, parks, or drops from one sheet. The model makes that
+admission judgment directly; no derived gate or venue map stands in for it. The wall-vs-progress *ratio* stays unmeasured — cheap to instrument
 if the sheet grows.
 
 *The classification.* Human gates split by whether the human's answer changes the next
@@ -328,28 +327,26 @@ where it fans out elicitation-shaped work, because each wall then costs a design
 conversation the human cannot hold N of concurrently. Design settling walls out at
 admission (`needs-me` owns it) or as a one-line WALL the sheet parks by default.
 
-### Change A is complete
+### No external process harness is routed
 
 super-bootstrap routes no external process harness. The §4 grep returns only the one
-sanctioned class, and the shape check holds beside it — zero name-hits was never
-sufficient on its own, since a stage chain renamed to harness-neutral words would still
-carry the foreign decomposition. The per-slot audit confirmed that risk was real:
-the staging ceremony (Design/Plan as default gates) was distillation residue — the [thread
-contract](../work/README.md#thread-contract) now carries them as conditional context-scope
-sections, and the unattended lane reads no stage at all. The seeded runway
-names no harness (§6 above).
+sanctioned class, and the shape check holds beside it — zero name-hits is not sufficient on
+its own, since a stage chain renamed to harness-neutral words would still carry the foreign
+decomposition. So no stage gates a card: the [thread
+contract](../work/README.md#thread-contract) carries Design and Plan as conditional
+context-scope sections, not default gates, and the unattended lane reads no stage at all.
+The seeded runway names no harness (§6 above).
 
-Two constraints outlive the change:
+Two constraints bind future work:
 
-- `autorun`'s admission is the one judgment in `shared/user-wall.md`; the cloud-safe
-  derivation and the venue map that once stood in for it are gone, so a change to what
-  counts as needing the user lands there and nowhere else.
+- `autorun`'s admission is the one judgment in `shared/user-wall.md`, with no derived proxy
+  beside it, so a change to what counts as needing the user lands there and nowhere else.
 - A hit outside §4's one sanctioned class is a regression, whether it dispatches or only
   reads as prose.
 
 **Vacating means naming the discipline and shipping nothing.** A card whose fix reads
 "point at X instead" is mis-shaped whatever X is — re-pointing a routing line from one
-foreign harness to another rebuilds the coupling change A paid to remove.
+foreign harness to another rebuilds the coupling de-routing removes.
 
 ## 7. Evidence index
 
@@ -426,5 +423,5 @@ would otherwise strand every already-bootstrapped repo's specs and plans: the sc
 the new path only, so the old tree stays on disk and goes invisible. Phase 2a therefore
 migrates before it creates — `git mv docs/superpowers docs/work` when the old tree is
 present, contents moved directory by directory when both exist, collisions reported
-rather than resolved. This is the one cut where adopt mode gained a removal path instead
-of documenting an orphan.
+rather than resolved. It is the one retired shape where adopt mode carries a removal path
+rather than an orphan.

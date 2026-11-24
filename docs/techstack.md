@@ -4,11 +4,11 @@
 
 ## Runtime
 
-No build step, no runtime dependency. The product is markdown: skills are `SKILL.md` files with YAML frontmatter, agents and shared fragments are markdown, loaded directly by [Claude Code's plugin loader](overview.md#key-boundaries). Python 3 is an optional runtime one skill asset invokes for zero-dispatch mechanical extraction (`help`'s menu); it degrades to a manual scan when `python3` is absent.
+No build step, no runtime dependency. The product is markdown: skills are `SKILL.md` files with YAML frontmatter, agents and shared fragments are markdown, loaded directly by [Claude Code's plugin loader](overview.md#key-boundaries). Python 3 is an optional runtime two skill assets invoke for zero-dispatch mechanical work. `help`'s menu ([`help/assets/render-menu.py`](../plugins/super-bootstrap/skills/help/assets/render-menu.py)) degrades to a manual scan when `python3` is absent. `harness-bootstrap`'s scale-module split of a flat `docs/outward.md` into `docs/outward/` ([`harness-bootstrap/assets/scale/split-outward.py`](../plugins/super-bootstrap/skills/harness-bootstrap/assets/scale/split-outward.py)) has no fallback: it needs `python3`, and runs only in a repo that still holds `docs/outward.md`.
 
 ## Framework
 
-Claude Code plugin architecture. A root `.claude-plugin/marketplace.json` declares the self-hosted marketplace; `plugins/super-bootstrap/.claude-plugin/plugin.json` declares the plugin. Layout: `plugins/super-bootstrap/{skills,agents,shared}`. `plugin.json` declares **no** `skills` array, so the loader discovers `skills/*/` itself and every folder ships — an explicit array is an allowlist, and any folder left out of it never loads, with no error. The `source` field in `marketplace.json` (`./plugins/super-bootstrap`) is the [install boundary](overview.md#key-boundaries) — only that subtree ships to installers; repo-root files (this doc, CLAUDE.md, the `docs/work/` cards) are dev-workspace-only and never reach a user's project.
+Claude Code plugin architecture. A root `.claude-plugin/marketplace.json` declares the self-hosted marketplace; `plugins/super-bootstrap/.claude-plugin/plugin.json` declares the plugin. Layout: `plugins/super-bootstrap/{skills,agents,shared,hooks}`. `plugin.json` declares **no** `skills` array, so the loader discovers `skills/*/` itself and every folder ships — an explicit array is an allowlist, and any folder left out of it never loads, with no error. The `source` field in `marketplace.json` (`./plugins/super-bootstrap`) is the [install boundary](overview.md#key-boundaries) — only that subtree ships to installers; repo-root files (this doc, CLAUDE.md, the `docs/work/` cards) are dev-workspace-only and never reach a user's project.
 
 ## Key Dependencies
 
