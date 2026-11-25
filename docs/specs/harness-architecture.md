@@ -173,6 +173,16 @@ repo's is logged here, not contributed out — provenance alone would send it aw
 item would round-trip, each hop re-grounding cold on a test that cannot answer the
 question being asked.
 
+**The runway receipt is a cross-repo read contract.** The storehouse's device audit hook
+reads the runway receipt `.claude/super-bootstrap-runway.json`: its `placed` map,
+`{path: sha256}`, written by
+[`harness-bootstrap` § 2c](../../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md#2c-sync-report--commit).
+A path whose CR-stripped sha256 equals its entry leaves the hook's audit predicate, so the
+placed doctrine `.claude/rules/harness.md` raises no audit nudge. The receipt path, the
+`placed` key, its shape and the CR-stripped hash on `.claude/rules/harness.md` therefore
+bind both repos. A change to any of them owes claude-config-manager a hand-over
+(`/send-note`) in the same change; the reader landed in claude-config-manager `1975191`.
+
 ## 5. Awareness wiring is the strongest uncontested position
 
 Docs existing ≠ the agent attending to them. The two systems solve this differently:
