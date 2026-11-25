@@ -1,0 +1,10 @@
+DOC: state
+STATUS: history — a progress log
+--- SECTION ---
+## Status
+
+- Payments provider migration to Stripe: in progress
+- 2026-11-25: Stripe migration done; was on the old provider before
+- Search index: Elasticsearch 8
+- Mobile push: not started
+--- END ---

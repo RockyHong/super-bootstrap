@@ -1,0 +1,8 @@
+DOC: history
+STATUS: state
+--- SECTION ---
+## Status
+
+- Payments provider: Stripe (previously the old provider)
+- Mobile push: not started
+--- END ---

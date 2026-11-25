@@ -1,0 +1,13 @@
+FILE: .claude/rules/migrations.md
+---
+paths:
+  - "db/migrations/**"
+description: "Merged migrations are immutable"
+---
+
+# Migrations
+Never edit a merged migration under `db/migrations/`; write a new migration instead.
+
+FILE: CLAUDE.md
+- **`migrations.md`** — fires on `db/migrations/**`
+  • Never edit a merged migration; add a new one.

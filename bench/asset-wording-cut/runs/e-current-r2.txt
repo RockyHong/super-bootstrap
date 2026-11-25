@@ -1,0 +1,8 @@
+FILE: CLAUDE.md
+--- TEXT ---
+## This repo's additions to the harness doctrine
+
+**§ Git Notes** — takes over "No PR self-review — commit directly. Main + feature branches.":
+
+- Every change lands on main through a pull request: work on a feature branch, push it, open a PR against main, and merge only after one approving review. Never commit or push directly to main.
+--- END ---

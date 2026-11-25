@@ -1,0 +1,11 @@
+FILE: CLAUDE.md
+--- TEXT ---
+## This repo's additions to the harness doctrine
+
+**§ Git Notes** — takes over "No PR self-review — commit directly. Main + feature branches.":
+
+- Every change lands on `main` through a pull request with one approving review. No direct commits or pushes to `main`.
+- Work happens on a feature branch. `/super-bootstrap:commit` commits there, then the branch is pushed and a PR is opened against `main`.
+- The PR merges only after one approving review from someone other than its author. Opening a PR is outward-facing, so confirm with the user before pushing or opening one.
+- No force push still holds, including on PR branches under review.
+--- END ---

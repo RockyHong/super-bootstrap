@@ -1,6 +1,6 @@
 # {Project Name}
 
-Workflow doctrine — pipeline, dispatch, doc sync, git — loads from [`.claude/rules/harness.md`](.claude/rules/harness.md): plugin-owned, re-placed whole by `/super-bootstrap:harness-bootstrap`. This file holds the project's own sections.
+Workflow doctrine — pipeline, dispatch, doc sync, git — loads from [`.claude/rules/harness.md`](.claude/rules/harness.md). This file holds the project's own sections.
 
 ## Rules (auto-load on file match)
 

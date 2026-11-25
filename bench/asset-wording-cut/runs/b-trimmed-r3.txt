@@ -1,0 +1,41 @@
+FILE: .claude/rules/migration-immutability.md
+```markdown
+---
+paths:
+  - "db/migrations/**"
+description: "Merged migrations are immutable: loads whenever a file under db/migrations/ is read, so the rule is present before any migration edit"
+---
+
+# Migration Immutability: Never Edit a Merged Migration
+
+Once a migration under `db/migrations/` is merged, it is frozen. Every environment that has already run it recorded it as applied. Editing it changes nothing in those databases, but it does change what fresh databases get. Schemas drift silently, and checksum-validating tools fail.
+
+## Before touching any file in `db/migrations/`
+
+1. **Determine whether the migration is merged.** Treat it as merged if any of these is true:
+   - it exists on the main or default branch
+   - it appears in a released tag
+   - you cannot confirm it is local to the current unmerged branch
+
+   When unsure, assume it is merged.
+2. **If it is merged, do not modify, rename, reorder, renumber, or delete it.** This includes "harmless" changes: whitespace, comments, formatting, and fixing typos in SQL.
+3. **Write a new migration instead.**
+   - Give it the next timestamp or sequence number, following the existing naming convention in `db/migrations/`.
+   - Make it do the forward change: alter, add, drop, backfill, or fix the earlier mistake.
+   - If the project uses down or rollback migrations, include the reverse step in the new migration.
+4. **If the migration is not yet merged** (it was created on the current branch and has never been on the default branch), you may edit it in place.
+
+## When asked to edit a merged migration
+
+Do not comply silently. Tell the user the migration is already merged and propose the equivalent new migration. Only edit the merged file if the user explicitly overrides this rule for that specific file, after hearing why it is unsafe.
+
+## Corrective migrations
+
+- Reference the migration being corrected by filename in a comment at the top of the new migration.
+- Keep corrective migrations idempotent where the database supports it, for example `IF EXISTS` and `IF NOT EXISTS`. This covers environments where the original migration partially applied.
+```
+
+FILE: CLAUDE.md
+```markdown
+- **Migration immutability** (`.claude/rules/migration-immutability.md`): never edit, rename, or delete a merged migration under `db/migrations/`. Write a new migration with the next sequence number instead. Unmerged migrations on the current branch may be edited.
+```

@@ -1,0 +1,5 @@
+--- SECTION ---
+## Export
+Nightly CSV export of all ledgers, written to `s3://acme-exports/`. Driven by `src/export/worker.ts`.
+On 2026-10-02 the export worker took down the primary database (INC-42); in the retro we decided the job stays single-threaded until Postgres 16.
+--- END ---

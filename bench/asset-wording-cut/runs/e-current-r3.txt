@@ -1,0 +1,11 @@
+FILE: CLAUDE.md
+--- TEXT ---
+## This repo's additions to the harness doctrine
+
+**§ Git Notes** — takes over "No PR self-review — commit directly. Main + feature branches.":
+
+- Every change lands on `main` through a pull request with one approving review. Commit to a feature branch, never directly to `main`, and never push to `main`.
+- Open the PR from the feature branch once the card's commit lands. The approving review comes from someone other than the author, so a PR is never self-approved. Merge only after that approval.
+- This also covers a cluster-9 spike: when the user settles it, the branch goes up as a PR, not a local `/super-bootstrap:merge` into `main`.
+- "No force push" and "Merge conflict → stop and ask" still apply.
+--- END ---

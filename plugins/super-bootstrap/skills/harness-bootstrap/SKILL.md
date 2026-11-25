@@ -210,7 +210,7 @@ Done when the fenced block and `$M/drop.txt` hold the same lines and the user an
    ```markdown
    ## This repo's additions to the harness doctrine
 
-   These lines bind in this repo together with `.claude/rules/harness.md`; where one takes over a doctrine line, it wins here.
+   These lines bind in this repo together with `.claude/rules/harness.md`; a line labelled *takes over* wins over the doctrine line it names.
 
    **§ {doctrine section heading}** — added to "{leading words of the doctrine line}":
 

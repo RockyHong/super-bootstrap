@@ -1,0 +1,8 @@
+FILE: CLAUDE.md
+--- TEXT ---
+## This repo's additions to the harness doctrine
+
+**§ Git Notes** — takes over "No PR self-review":
+
+- Every change lands on main through a pull request with one approving review.
+--- END ---

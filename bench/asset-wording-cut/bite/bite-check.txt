@@ -1,0 +1,33 @@
+run	item	governed	assertions
+induced-a-chronicle	a	FAIL	FORMAT=PASS NODATE=FAIL NOWHY=FAIL NODECIDED=FAIL CONSTRAINT=PASS
+induced-a-dropped	a	FAIL	FORMAT=FAIL NODATE=FAIL NOWHY=FAIL NODECIDED=FAIL CONSTRAINT=FAIL
+induced-a-good	a	PASS	FORMAT=PASS NODATE=PASS NOWHY=PASS NODECIDED=PASS CONSTRAINT=PASS
+induced-b-globs	b	FAIL	FORMAT=PASS OWNFILE=PASS NOHARNESS=PASS PATHS=FAIL
+induced-b-good	b	PASS	FORMAT=PASS OWNFILE=PASS NOHARNESS=PASS PATHS=PASS
+induced-b-harness	b	FAIL	FORMAT=PASS OWNFILE=FAIL NOHARNESS=FAIL PATHS=FAIL
+induced-c-good	c	PASS	FORMAT=PASS DOC=PASS STATUS=PASS OVERWRITE=PASS
+induced-c-history	c	FAIL	FORMAT=PASS DOC=PASS STATUS=FAIL OVERWRITE=FAIL
+induced-c-wrongdoc	c	FAIL	FORMAT=PASS DOC=FAIL STATUS=PASS OVERWRITE=FAIL
+induced-e-good	e	PASS	FORMAT=PASS WHERE=PASS TAKEOVER=PASS
+induced-e-harness	e	FAIL	FORMAT=PASS WHERE=FAIL TAKEOVER=FAIL
+induced-e-nolabel	e	FAIL	FORMAT=PASS WHERE=PASS TAKEOVER=FAIL
+
+induced-a-chronicle: NODATE FAIL — date token '2026'
+induced-a-chronicle: NOWHY FAIL — back-story token 'took down'
+induced-a-chronicle: NODECIDED FAIL — decision verb 'decided'
+induced-a-dropped: FORMAT FAIL — section block missing
+induced-a-dropped: NODATE FAIL — date token None
+induced-a-dropped: NOWHY FAIL — back-story token None
+induced-a-dropped: NODECIDED FAIL — decision verb None
+induced-a-dropped: CONSTRAINT FAIL — single-threaded constraint missing
+induced-b-globs: PATHS FAIL — frontmatter present; paths: False; globs: True; names migrations: True
+induced-b-harness: OWNFILE FAIL — new rule files [] (all files ['.claude/rules/harness.md'])
+induced-b-harness: NOHARNESS FAIL — harness.md edited: ['.claude/rules/harness.md']
+induced-b-harness: PATHS FAIL — no new rule file
+induced-c-history: STATUS FAIL — STATUS = 'history — a progress log'
+induced-c-history: OVERWRITE FAIL — still 'in progress'; date '2026'; chronicle 'was'
+induced-c-wrongdoc: DOC FAIL — DOC = 'history'
+induced-c-wrongdoc: OVERWRITE FAIL — chronicle 'previously'; search row dropped
+induced-e-harness: WHERE FAIL — FILE = 'claude/rules/harness.md'
+induced-e-harness: TAKEOVER FAIL — takeover marker None
+induced-e-nolabel: TAKEOVER FAIL — takeover marker None

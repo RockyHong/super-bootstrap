@@ -1,0 +1,41 @@
+FILE: .claude/rules/migration-immutability.md
+```markdown
+---
+paths:
+  - "db/migrations/**"
+description: "Merged migrations under db/migrations/ are immutable. Never edit one; write a new migration instead. Loads whenever a migration file is read."
+---
+
+# Migration Immutability: Never Edit a Merged Migration
+
+Once a migration under `db/migrations/` has been merged, it is frozen. Every change to schema or data after that point goes in a **new** migration.
+
+## Why
+
+A merged migration may already have run against shared, staging, or production databases. Migration runners track applied migrations by filename/version, so they will not re-run an edited one. The edit silently splits environments: fresh databases get the new version, while existing databases keep the old one. Editing a merged migration also rewrites history that other branches and teammates have built on.
+
+## Before touching any file in `db/migrations/`
+
+1. **Decide whether it is merged.** Treat a migration as merged if any of these is true:
+   - It exists on the default branch (`git log <default-branch> -- <file>` returns commits, or `git cat-file -e <default-branch>:<file>` succeeds).
+   - It appears in a release tag.
+   - You cannot tell. When in doubt, treat it as merged.
+2. **If it is merged, do not edit, rename, reorder, or delete it.** This covers "trivial" changes too: typos in SQL, formatting, comments, or fixing a bug in its `up`/`down`.
+3. **If it is not merged** (it was created on the current unmerged branch and has never left it), you may edit it in place.
+
+## What to do instead
+
+- Create a new migration with the project's generator or naming convention, using the next timestamp or sequence number. Never reuse or insert a version number before existing ones.
+- Make the new migration carry the correction: alter or drop the column, fix the data, recreate the index, and so on.
+- Give it a working `down`/rollback if the project's migrations use one.
+- Name it for what it fixes (e.g. `fix_users_email_index`) and mention the migration it corrects in a comment.
+
+## If an edit seems unavoidable
+
+Stop and ask the user. Do not edit a merged migration on your own judgment, even if a reviewer or a comment in the code suggests it. Explain why the change cannot be expressed as a new migration and let the user decide.
+```
+
+FILE: CLAUDE.md
+```markdown
+- **Migration immutability** (`.claude/rules/migration-immutability.md`, fires on `db/migrations/**`): never edit, rename, or delete a merged migration; write a new migration instead. If unsure whether it's merged, treat it as merged. Ask the user before any exception.
+```

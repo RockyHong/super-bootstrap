@@ -1,0 +1,5 @@
+FILE: .claude/rules/harness.md
+--- TEXT ---
+## Git Notes
+- Every change lands on main through a pull request with one approving review.
+--- END ---

@@ -1,0 +1,44 @@
+You are working in a software repo. You just read a file under `.claude/rules/`, so the rule file below loaded into your context:
+
+--- .claude/rules/index.md ---
+---
+paths:
+  - ".claude/rules/**"
+description: "Rule-authoring guide — loads when any file under .claude/rules/ is read"
+---
+
+# Rules — Authoring Guide
+
+> Active rules are catalogued in `CLAUDE.md` § Rules (the always-on discovery surface). This file is the authoring guide — it loads whenever a file under `.claude/rules/` is read.
+>
+> **Cold-load caveat:** a rule fires on file *read*, not on intent. Mirror each rule's summary into `CLAUDE.md` § Rules so the orchestrator knows it exists during planning.
+>
+> Frontmatter:
+>
+> - Use `paths:` — not `globs:` (Cursor key, unrecognized by Claude Code; the rule silently loads always-on and the path filter is ignored).
+> - A rule with no frontmatter at all takes the same eager lane.
+> - Patterns match gitignore-style — a bare filename fires at any depth, a leading `/` pins root.
+
+## Adding a new rule
+
+1. New file `<topic>.md` with frontmatter:
+   ```yaml
+   ---
+   paths:
+     - "path/to/scope/**"
+   description: "When this rule applies and why"
+   ---
+   ```
+2. Body is imperative and full-detail — a rule loads with full ammo at its decision moment, so don't compress it to a summary. Sibling rule files beside this index, when present, are the shape reference.
+3. Add a one-line summary bullet to `CLAUDE.md` § Rules.
+--- END .claude/rules/index.md ---
+
+`.claude/rules/` currently holds these files (first heading shown):
+- `index.md` — `# Rules — Authoring Guide`
+- `harness.md` — `# Harness — workflow doctrine` (no frontmatter)
+- `dimension-discipline.md` — `# Dimension Discipline — Classify Before You Propagate`
+- `ssot-doc-link.md` — `# SSOT Doc-Link — Emit at Authoring`
+
+The user says: "Add a workflow rule: once a migration under `db/migrations/` is merged, never edit it — write a new migration instead. I want it in front of you whenever you touch a migration."
+
+Do it. Answer with the file edits you make and nothing else. For each file you create or change, write a line `FILE: <path>`, then the file's full content if you create it, or only the lines you add if it already exists.

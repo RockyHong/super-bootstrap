@@ -1,0 +1,9 @@
+DOC: state — `docs/architecture.md` owns the current-architecture dimension
+STATUS: state — `## Status` owns what is true now; overwrite in place
+--- SECTION ---
+## Status
+
+- Payments provider: Stripe
+- Search index: Elasticsearch 8
+- Mobile push: not started
+--- END ---

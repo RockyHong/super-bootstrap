@@ -25,7 +25,7 @@ A concept used in doc A is a link-candidate to doc B when **all four** hold:
    Where prose catalogs many concepts in one breath (an overview or guardrail
    roster), link only the concepts A goes on to build on, not every name.
 3. **A is not a catalog/index** — an index doc enumerates many concepts by
-   design and need not link every entry. Frozen tracker/backlog rows count as
+   design and need not link every entry. Frozen tracker rows count as
    registries, not candidate prose.
 4. **A is not ephemeral** — a temporal doc (a spec or plan in a
    delete-after-merge location) dies on merge; skip it, as for a catalog.
@@ -58,7 +58,7 @@ the first asserting use carries it.
 
 ## Scope
 
-Applies to authored prose docs (overview, architecture, specs, backlog, READMEs).
+Applies to authored prose docs (overview, techstack, specs, READMEs).
 Harness files (skills, agents, rules) carry their own discipline. To audit for
 links already missing, run the predicate above over the doc surface
 (`/super-bootstrap:check-docs-consistency`).

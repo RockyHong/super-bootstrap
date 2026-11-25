@@ -1,0 +1,178 @@
+You are working in a software repo. You just read `docs/architecture.md`, so the two rule files below loaded into your context:
+
+--- .claude/rules/dimension-discipline.md ---
+---
+paths:
+  - "docs/**/*.md"
+  - "/README.md"
+  - "plugins/*/README.md"
+description: "Fires on read of a prose doc. Classify its dimension (state vs history) and author to it before propagating — classify, route, dimension: history declaration, mixed-doc tripwire and mixed-dimension shapes."
+---
+
+# Dimension Discipline — Classify Before You Propagate
+
+Before editing a prose doc, classify its dimension — **state** (true now) or
+**history** (a dated chronicle) — and author to that dimension. A doc or section
+owns one dimension, never both.
+
+## Classify
+
+- **State** — what is true *now*. Kept current by overwriting stale facts in
+  place. Overview, techstack, specs, status fields.
+- **History** — a timeline or decision chronicle: what was decided when, why,
+  prior values. Append-only. Git (log + commit messages) is its default home.
+
+Classified history → declare it in the doc's leading YAML frontmatter:
+
+```yaml
+---
+dimension: history
+---
+```
+
+The commit door's doc-sync scan keys on this field: it leaves the doc's rows out
+of the stale-doc scope and still checks its links.
+
+## Route
+
+1. **State → overwrite in place.** Replace the stale fact; add no "was X, now Y"
+   note.
+2. **History → git.** A hand-maintained "what happened when" chronicle restates
+   git — drop it. Where a rationale is expensive to reconstruct from diffs, a
+   one-line pointer to the commit beats re-prosing it. A history doc the repo
+   keeps carries `dimension: history` (above).
+3. **Binding past decision → present-tense constraint.** A past decision that
+   still binds future work is a live constraint. State it present-tense in the
+   state doc it governs, stripped of when/why-decided: "Refinement is deferred
+   behind the port" — not "on <date> we decided to defer refinement because…".
+4. **When-checked → git.** A "last checked on <date>" stamp belongs in git commit
+   metadata; keep the date out of the body. A version-bound pin ("valid as of
+   vX.Y") is substantive state — it bounds the fact's validity — and stays.
+5. **Volatile items → the item cites the doc.** A card, outward thread or parked
+   entry is temporal, live or closed. Its ID (`BUG-##`, `DEBT-##`, `OUT-##`,
+   `PARK-##`, any tracker prefix) and any pointer to it, by path or by its folder,
+   stay out of a durable doc. The doc states the behavior, policy or limitation
+   present-tense; the volatile item cites the doc.
+   - **On resolve:** a behavior or limitation the item leaves true lands in its
+     owning doc, present-tense — unless a line of that doc already states it, and
+     then the deleting commit's message names that doc:line.
+   - **Provenance:** surviving provenance in a state doc points at a commit sha.
+     Ticket refs and `git log --grep=<ID>` pointers belong in history-dimension
+     docs (decision logs) and temporal work-tracking files (cards, handoffs,
+     outward threads, parked entries — their provenance fields).
+
+## Tripwire — the artifact is the trap
+
+If the doc you are about to edit ALREADY mixes dimensions, do not follow its
+pattern. STOP and surface:
+
+- **what** — the mixed section + which dimension leaked
+- **expected** — the clean single-dimension shape
+- **options** — overwrite to state-now · extract chronicle to git · keep (with reason)
+
+Mixed-dimension shapes:
+
+1. **Chronicle crawl-in** — timestamps, "was X, now Y", ticket-ID refs ("per
+   `DEBT-###` …") or decision-dated prose accumulating in a state doc.
+2. **Stale workspace doc** — a status doc gone out of date against the reality it
+   claims to track.
+3. **State leak into history** — a history or decision-timeline doc carrying
+   current knowledge that belongs in a state doc.
+
+## Scope
+
+Applies to authored prose docs (overview, techstack, specs, READMEs). Harness files (skills, agents, rules) carry their own discipline.
+Whole-surface audit for these shapes: `/super-bootstrap:check-docs-consistency`.
+--- END .claude/rules/dimension-discipline.md ---
+
+--- .claude/rules/ssot-doc-link.md ---
+---
+paths:
+  - "docs/**/*.md"
+  - "/README.md"
+  - "plugins/*/README.md"
+description: "Fires on read of a prose doc. Link each concept to its SSOT home as you write — link-candidate predicate, home-selection edges and placement on the asserting line."
+---
+
+# SSOT Doc-Link — Emit at Authoring
+
+When authoring or editing a prose doc, link each concept to its SSOT home as you
+write — born-linked, not back-filled. A link points at the concept's one home;
+copying the definition into the using doc forks the truth instead.
+
+## Link-candidate predicate
+
+A concept used in doc A is a link-candidate to doc B when **all four** hold:
+
+1. **Real home** — B *defines* the concept (B is its SSOT home), not merely
+   mentions it. Point the link at the definition, never at another passing use.
+   Several docs define it → the home is the doc dedicated to the concept; a
+   one-line gloss elsewhere (an overview summary) is itself a use, not a home.
+2. **Substantive use** — A leans on the concept (builds on it, assumes it,
+   sends the reader to it), not a passing token that happens to match a name.
+   Where prose catalogs many concepts in one breath (an overview or guardrail
+   roster), link only the concepts A goes on to build on, not every name.
+3. **A is not a catalog/index** — an index doc enumerates many concepts by
+   design and need not link every entry. Frozen tracker rows count as
+   registries, not candidate prose.
+4. **A is not ephemeral** — a temporal doc (a spec or plan in a
+   delete-after-merge location) dies on merge; skip it, as for a catalog.
+
+Fail any one → not a candidate.
+
+## Home selection
+
+- **Registered term.** `docs/terminology.md` is the home of every term it
+  registers (a `**Term**:` entry line), even where a dedicated concept doc exists:
+  this overrides predicate 1. A doc's first substantive use of a registered term
+  links `docs/terminology.md`.
+- **Two homes (concept vs surface).** A concept defined as an idea in one doc and
+  as a surface (endpoint, storage, schema) in another → link the
+  **concept-definition** home.
+- **Contradicting home — mandatory.** A home that contradicts the using line must
+  be linked as a declared supersession: the using line names which side binds and
+  cites the other (`supersedes [the earlier bound](path.md#anchor)` /
+  `superseded by [...]`). Log the contradiction (`/super-bootstrap:log`) for the
+  docs' owner to resolve.
+  Where the using line cannot name the binding side, cite the other as contested
+  and leave the binding call to the owner.
+
+## Placement
+
+Put the link on the **asserting line** — the sentence that leans on the concept —
+not on the paragraph or section head above it. A citation on a heading leaves
+every later assertion reading as self-standing. One link per concept per doc —
+the first asserting use carries it.
+
+## Scope
+
+Applies to authored prose docs (overview, techstack, specs, READMEs).
+Harness files (skills, agents, rules) carry their own discipline. To audit for
+links already missing, run the predicate above over the doc surface
+(`/super-bootstrap:check-docs-consistency`).
+--- END .claude/rules/ssot-doc-link.md ---
+
+`docs/architecture.md` reads:
+
+# Architecture
+
+Three services sit behind one gateway: `api` (Go, REST), `worker` (Go, queue consumer) and `web` (Next.js). Postgres 15 is the only store; `worker` reads jobs from a Postgres-backed queue.
+
+## Data flow
+
+`web` calls `api`; `api` writes rows and enqueues jobs; `worker` drains the queue and calls the payment provider.
+
+## Status
+
+- Payments provider migration to Stripe: in progress
+- Search index: Elasticsearch 8
+- Mobile push: not started
+
+The user says: "The Stripe migration finished today and the old provider code is deleted. Update the doc."
+
+Answer in exactly this shape and nothing else:
+DOC: <state or history> — the dimension `docs/architecture.md` owns
+STATUS: <state or history> — the dimension its `## Status` section owns
+--- SECTION ---
+<the new `## Status` section in full>
+--- END ---

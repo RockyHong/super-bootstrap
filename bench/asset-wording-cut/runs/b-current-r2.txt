@@ -1,0 +1,28 @@
+FILE: .claude/rules/migration-immutability.md
+```markdown
+---
+paths:
+  - "db/migrations/**"
+description: "Merged migrations under db/migrations/ are immutable — loads when any migration file is read, so the check happens before an edit is proposed"
+---
+
+# Migration Immutability — Never Edit a Merged Migration
+
+Once a migration under `db/migrations/` has been merged, treat it as frozen history. Environments that already ran it will not re-run it, so editing it makes schemas diverge silently between those environments and fresh ones.
+
+## Before modifying any file under `db/migrations/`
+
+1. **Determine whether it is merged.** Check whether the file exists on the default branch, for example with `git log <default-branch> -- <path>` or `git merge-base --is-ancestor`. If it was added only on the current unmerged branch, you may edit it freely.
+2. **If it is merged, do not edit, rename, reorder, or delete it.** This applies to whitespace, comments, and "harmless" fixes too, because checksum-validating tools reject any change.
+3. **Write a new migration instead.** Use the project's normal naming and timestamp convention so it sorts after the existing ones. The new migration should express the change as a forward step, such as an `ALTER`, a data fix, or a reversal of the earlier change.
+4. **If you can't tell whether it is merged,** for example because there is no git history or the default branch is unclear, assume it is merged. Ask the user before touching it.
+
+## When the user asks you to edit a merged migration
+
+Don't silently comply. Explain that the migration is merged and propose the equivalent new migration. Only edit the original if the user explicitly confirms after you have warned them, for example for a migration that was never deployed anywhere.
+```
+
+FILE: CLAUDE.md
+```markdown
+- **Migration immutability** (`.claude/rules/migration-immutability.md`, fires on `db/migrations/**`): never edit, rename, or delete a merged migration; write a new forward migration instead. If merge status is unclear, treat the migration as merged.
+```

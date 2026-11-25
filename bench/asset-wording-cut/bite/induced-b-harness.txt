@@ -1,0 +1,3 @@
+FILE: .claude/rules/harness.md
+## Migrations
+- Never edit a merged migration under `db/migrations/`; write a new migration instead.

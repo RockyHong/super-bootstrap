@@ -1,0 +1,8 @@
+FILE: .claude/rules/migrations.md
+---
+globs:
+  - "db/migrations/**"
+---
+
+# Migrations
+Never edit a merged migration.

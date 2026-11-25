@@ -1,0 +1,33 @@
+FILE: .claude/rules/migration-immutability.md
+```markdown
+---
+paths:
+  - "db/migrations/**"
+description: "Merged migrations are immutable: loads when any file under db/migrations/ is read; never edit a merged migration, write a new one instead"
+---
+
+# Migration Immutability: Never Edit a Merged Migration
+
+Once a migration under `db/migrations/` has been merged, treat it as frozen history. Environments that already applied it will not re-run it, so editing it splits the schema between databases that ran the old version and databases that run the new one.
+
+## Before touching any migration file
+
+1. **Check whether it is merged.** A migration is merged if it exists on the default branch (e.g. `git log origin/main -- <file>` returns commits, or `git merge-base --is-ancestor` confirms the introducing commit is on main). If you can't tell, treat it as merged.
+2. **If it is merged, do not modify it.** That includes "harmless" edits: typo fixes in SQL, reformatting, renaming, reordering statements, changing defaults, adding `IF NOT EXISTS`, or deleting the file.
+3. **If it is not merged** (it exists only on the current unmerged branch), you may edit it freely.
+
+## What to do instead
+
+- Create a **new** migration that moves the schema forward from the merged state. Follow the existing naming/numbering convention in `db/migrations/`, using the next timestamp or sequence number.
+- To undo a merged change, write a forward migration that reverses it. Do not delete or rewrite the original.
+- If the new migration needs a down/rollback step and the project uses them, write one for it.
+
+## If an edit seems unavoidable
+
+Stop and ask the user before changing a merged migration, for example for a security fix or when the migration is broken on fresh databases. Explain why a forward migration won't work. Proceed only on explicit approval, and call out that already-migrated environments will need manual reconciliation.
+```
+
+FILE: CLAUDE.md
+```markdown
+- **Migration immutability** (`.claude/rules/migration-immutability.md`, fires on `db/migrations/**`): never edit a migration once it's merged; write a new forward migration instead. Ask the user before any exception.
+```

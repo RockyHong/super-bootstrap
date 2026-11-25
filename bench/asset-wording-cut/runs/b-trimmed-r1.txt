@@ -1,0 +1,37 @@
+FILE: .claude/rules/migration-immutability.md
+```markdown
+---
+paths:
+  - "db/migrations/**"
+description: "Merged migrations are immutable — loads when any file under db/migrations/ is read; write a new migration instead of editing a merged one"
+---
+
+# Migration Immutability — Never Edit a Merged Migration
+
+Once a migration under `db/migrations/` is merged, it is frozen. Its contents may already have run against shared, staging, or production databases. Editing it splits history: environments that already applied it keep the old version, and fresh environments get the new one. Most migration runners never re-run an applied migration, so the edit silently does nothing where it matters.
+
+## Before touching any file in `db/migrations/`
+
+1. **Determine whether the migration is merged.** Treat it as merged if it exists on the default branch:
+   ```sh
+   git fetch origin
+   git log --oneline origin/main -- db/migrations/<file>
+   ```
+   Any output means it is merged. Substitute the repo's actual default branch if it is not `main`.
+2. **If it is merged, do not modify, rename, reorder, renumber, or delete it.** This includes "harmless" changes like whitespace, comments, formatting, or fixing a typo in a column name.
+3. **Write a new migration instead.** Create it with the project's migration generator or naming convention so it sorts after every existing migration. The new migration makes the correction: add, alter, or drop the column, fix the constraint, backfill the data, or reverse the earlier change.
+4. **If you are unsure whether it is merged, treat it as merged** and write a new migration.
+
+## What you may edit
+
+- Migrations that exist only on the current, unmerged branch and that you or the user authored in this change set. Even then, if the branch has been deployed to a shared environment, ask the user before editing.
+
+## If the user asks you to edit a merged migration
+
+Stop. Explain that the migration is merged and why editing it is unsafe. Propose the equivalent new migration. Proceed with an in-place edit only if the user explicitly confirms after hearing that explanation.
+```
+
+FILE: CLAUDE.md
+```markdown
+- **Migration immutability** (`.claude/rules/migration-immutability.md`, fires on `db/migrations/**`): never edit a merged migration. Write a new migration instead. Check merge status with `git log origin/main -- <file>`, and if unsure, treat the migration as merged.
+```

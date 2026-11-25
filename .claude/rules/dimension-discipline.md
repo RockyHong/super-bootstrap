@@ -15,7 +15,7 @@ owns one dimension, never both.
 ## Classify
 
 - **State** — what is true *now*. Kept current by overwriting stale facts in
-  place. Overview, techstack, architecture, backlog rows, status fields.
+  place. Overview, techstack, specs, status fields.
 - **History** — a timeline or decision chronicle: what was decided when, why,
   prior values. Append-only. Git (log + commit messages) is its default home.
 
@@ -78,6 +78,6 @@ Mixed-dimension shapes:
 
 ## Scope
 
-Applies to authored prose docs (overview, techstack, architecture, backlog,
-READMEs). Harness files (skills, agents, rules) carry their own discipline.
+Applies to authored prose docs (overview, techstack, specs, READMEs). Harness
+files (skills, agents, rules) carry their own discipline.
 Whole-surface audit for these shapes: `/super-bootstrap:check-docs-consistency`.

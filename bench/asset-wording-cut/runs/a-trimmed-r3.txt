@@ -1,0 +1,6 @@
+--- SECTION ---
+## Export
+Nightly CSV export of all ledgers, written to `s3://acme-exports/`. Driven by `src/export/worker.ts`, which reads ledgers in batches on a single thread.
+
+**Constraint:** the export job runs single-threaded, because concurrent export load can overwhelm the primary database. Batching is allowed; parallel workers are not. This holds until the storage layer moves to Postgres 16.
+--- END ---

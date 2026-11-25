@@ -1,0 +1,9 @@
+DOC: state — `docs/architecture.md` owns the state dimension
+STATUS: state — its `## Status` section owns the state dimension
+--- SECTION ---
+## Status
+
+- Payments provider: Stripe
+- Search index: Elasticsearch 8
+- Mobile push: not started
+--- END ---

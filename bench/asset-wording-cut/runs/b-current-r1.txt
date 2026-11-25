@@ -1,0 +1,39 @@
+FILE: .claude/rules/migration-immutability.md
+```markdown
+---
+paths:
+  - "db/migrations/**"
+description: "Merged migrations are immutable — loads when any file under db/migrations/ is read; fix schema by writing a new migration, never by editing a merged one"
+---
+
+# Migration Immutability — Never Edit a Merged Migration
+
+Once a migration under `db/migrations/` has been merged, treat it as frozen. Environments that already applied it will never re-run it, so an edit silently forks their schema from fresh installs.
+
+## Before touching any migration file
+
+1. Determine whether it is merged. Check whether the file exists on the default branch, for example `git log <default-branch> -- <path>` or `git merge-base --is-ancestor <commit-that-added-it> <default-branch>`. If the file exists there, it is merged.
+2. If merged, **do not edit, rename, reorder, or delete it.** This covers content, filename or timestamp prefix, and checksums.
+3. If you cannot tell whether it is merged, treat it as merged and ask the user.
+
+## What to do instead
+
+- Write a **new** migration that moves the schema from its current state to the desired state. Examples include altering or dropping a column, fixing a constraint, backfilling data, or reverting a bad change.
+- Name it with the next sequence number or timestamp, following the repo's existing convention.
+- Include a down/rollback step if the repo's migrations use them.
+
+## When editing is allowed
+
+- The migration exists only on your unmerged working branch, so no shared environment has applied it. You may amend it freely until it merges.
+- The user explicitly instructs you to edit a specific merged migration. Even then, first state the risk to environments that already applied it.
+
+## Never
+
+- Edit a merged migration to "fix a typo" or "clean up". Typos in applied SQL are history.
+- Edit a merged migration's checksum or a migration-tracking table to make an edit pass validation.
+```
+
+FILE: CLAUDE.md
+```markdown
+- **Migration immutability** (`.claude/rules/migration-immutability.md`, fires on `db/migrations/**`): never edit, rename, or delete a merged migration. Write a new migration instead. Unmerged branch-only migrations may be amended.
+```
