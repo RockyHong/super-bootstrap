@@ -1,0 +1,4 @@
+autorun — 3 cards
+run:   GAP-31  tune window
+skip:  GAP-32  not before 2026-11-01
+skip:  GAP-33  decision

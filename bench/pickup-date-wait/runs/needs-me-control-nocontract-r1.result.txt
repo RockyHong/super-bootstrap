@@ -1,0 +1,9 @@
+3 carries in flight → /super-bootstrap:session-continue
+
+GAP-31 → runs without you (in the count line, never a row) — the next step, running `hit-stats.sh` from 2026-12-10 and keeping the better window, meets no user-wall condition; the skill has no separate bucket for date-gated work.
+
+GAP-32 → runs without you (in the count line, never a row) — the deletion is mechanical and covered by `tests/rotate.bats`, and its 2026-11-01 "not before" date has passed.
+
+GAP-33 → runs without you (in the count line, never a row) — the retry fix is mechanical, and a stubbed test covers it.
+
+3 items run without you → /super-bootstrap:autorun

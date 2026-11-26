@@ -1,0 +1,6 @@
+```
+autorun — 3 cards
+run:   GAP-32  Delete log archive files older than 30 days in jobs/rotate.sh
+run:   GAP-33  Add a three-try retry with backoff to the upload in jobs/sync.sh
+skip:  GAP-31  waiting on a full week of traffic data (hit-stats comparison not before 2026-12-10)
+```

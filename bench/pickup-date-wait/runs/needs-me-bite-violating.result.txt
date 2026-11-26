@@ -1,0 +1,4 @@
+3 carries in flight → /super-bootstrap:session-continue
+GAP-31 → runs without you — mechanical
+GAP-32 → not yet due (2026-11-01) — dated
+GAP-33 → needs you — taste

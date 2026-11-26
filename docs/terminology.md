@@ -50,7 +50,7 @@ _Avoid_: outward item
 
 **Scale module**: The opt-in, earn-gated runway addition that adds the `docs/parked.md`, `docs/test-queue.md` and `docs/outward/` containers beside the cards ([`harness-bootstrap` § 2a-scale](../plugins/super-bootstrap/skills/harness-bootstrap/SKILL.md#2a-scale-scale-module-opt-in-earn-gated)).
 
-**Session-carry ledger**: The root `SESSION-STATE/` folder — one file per session — holding volatile in-flight state that no card owns, between session-close and session-continue ([`session-close` § Ledger convention](../plugins/super-bootstrap/skills/session-close/SKILL.md#ledger-convention)).
+**Session-carry ledger**: The root `SESSION-STATE/` folder — one file per session — holding volatile in-flight state that no card owns, between session-close and session-continue, which retires a dead carry only on the user's pick ([`session-close` § Ledger convention](../plugins/super-bootstrap/skills/session-close/SKILL.md#ledger-convention)).
 
 **Shipped skeleton**: A frozen asset under `plugins/*/skills/*/assets/` that `harness-bootstrap` renders into a consumer repo. It must be self-contained, because downstream is not the author ([`repo-boundary`](../.claude/rules/repo-boundary.md)).
 

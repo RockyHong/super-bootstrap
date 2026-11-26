@@ -20,8 +20,8 @@ Step 1 routes by fulfillment; on ambiguity the user's framing wins — only they
 This section is the convention's SSOT; `/super-bootstrap:session-continue` reads it from here.
 
 - **Path** — `SESSION-STATE/<label>-<id>.md` at the repo root, one file per session. `<label>` = short anchor-derived slug (the card ID when card-anchored); `<id>` = first 8 chars of `$CLAUDE_CODE_SESSION_ID` (absent → `date +%H%M%S`).
-- **Slots** — Anchor / Read first / State / Next step / Watch-outs.
-- **Park** = whole-file rewrite of the own file (git holds history). **Done** = delete the own file. A file present = that session's carry is in flight.
+- **Slots** — Anchor / Read first / State / Next step / Watch-outs. A Next step that cannot run before a date names it `not before YYYY-MM-DD`, lowercase — the card Thread contract's shape (`docs/work/README.md` § Thread contract).
+- **Park** = whole-file rewrite of the own file (git holds history). **Done** = delete the own file. A file present = that session's carry is in flight. **Retire** = `/super-bootstrap:session-continue` deletes another session's dead carry, only on the user's pick.
 - **Conflict** (merge markers from a cross-branch carry) → keep either side or regenerate from current state; never hand-merge.
 
 ## Protocol
@@ -47,7 +47,7 @@ Is this session's goal delivered whole, with nothing left in motion? Whole → *
 
 Then list every **undone item** — work inside this session's boundary that it left unfinished:
 
-- each card this session logged — an ID its own `/super-bootstrap:log` call printed, or a commit it made that adds `docs/work/{ID}.md` — still in `docs/work/` with no finished-card signal (step 3);
+- each card this session logged — an ID its own `/super-bootstrap:log` call printed, or a commit it made that adds `docs/work/{ID}.md` — still in `docs/work/` with no finished-card signal (a)–(d) (step 3);
 - each task this session's own replies told the user it would do and no later step did, other than the goal;
 - an undelivered goal the user expects finished this session.
 
@@ -59,13 +59,17 @@ Commits land in flow, so this step catches leaks. Inspect for uncommitted sessio
 
 ### 3. Detect — cards + integration + ledger
 
-- **Finished cards — sweep every open card**, not only this session's (`docs/work/{BUG,DEBT,GAP}-*.md`). A card is finished when any signal holds:
+- **Finished cards — sweep every open card**, not only this session's (`docs/work/{BUG,DEBT,GAP}-*.md`). A card is finished when any of (a)–(d) holds:
   - (a) its latest Progress reports every step of its latest Plan done;
   - (b) its aim moved — an Amendment or link hands it to a card ID now absent from `docs/work/`, or resolved in this close;
   - (c) main-line commits other than its own card-thread writes (log, amend, Plan, Progress) name its ID (`git log --grep`) — this session's merges included — and the named Plan steps / Problem line together cover every step of the latest Plan, or the whole Problem (a commit also touching code counts);
   - (d) this session's work landed it whole, or this session's own text calls it done, superseded, or closed.
 
-  A card this session logged that no signal finishes is step 1's undone item. (a)–(c) start as greps over card text and `git log`; deep-read only the cards they hit. Each finished card → a **resolve** move whose row carries its evidence (the signal, quoting the block line or commit) and its outcome — the behavior or limitation the card leaves true: the exact edit drafted into the doc that owns it, or the doc:line that already states it, which the deleting commit's message names. The outcome edit stays on this row, never split into a doc-update row, so picking the resolve picks its outcome. The move lands that edit and deletes the card file per `docs/work/README.md` § Thread contract (Resolve). A signal that fires with the card's remaining aim unclear → a **triage** move (`/super-bootstrap:triage {ID}`) instead.
+  One more signal, triage-only, catches a card whose next step another thread finished without naming its ID:
+
+  - (e) a main-line commit subject, or another card's block, dated since the card's latest block, reports that block's next step done — the step's own action on its own object, not a shared topic word alone.
+
+  A card this session logged that no signal (a)–(d) finishes is step 1's undone item. (a)–(c) and (e) start as greps over card text and `git log` — (e) greps the next step's topic words; deep-read only the cards they hit. Each finished card → a **resolve** move whose row carries its evidence (the signal, quoting the block line or commit) and its outcome — the behavior or limitation the card leaves true: the exact edit drafted into the doc that owns it, or the doc:line that already states it, which the deleting commit's message names. The outcome edit stays on this row, never split into a doc-update row, so picking the resolve picks its outcome. The move lands that edit and deletes the card file per `docs/work/README.md` § Thread contract (Resolve). A signal that fires with the card's remaining aim unclear, and an (e) hit on a card (a)–(d) leave open → a **triage** move (`/super-bootstrap:triage {ID}`) instead, its row quoting the hit.
 - **Merged local branches** — branches already merged into the main line (main-line name from ambient; exclude main + current). An empty result is the clean case — guard the exclusion greps so a no-match exits 0. Each is a **prune** move via `git branch -d` (merged-guard refuses unmerged — recoverable). A recurring non-empty result is a producer miss — surface it as a **log** move.
 - **A complete feature branch ready to integrate** → an opt-in **merge** move via `/super-bootstrap:merge` — never auto-merged.
 - **Inflight findings** surfaced this session but not yet carded → finish what this close can finish. Each takes one move. A finding on a harness path takes the **owner check** first: `ls -a` the path's skill directory for a `.served` marker and its own directory for a `<file>.served` sidecar, and apply any other provenance the repo's harness declares for its served classes, a folder declared served whole included. A hit, or a path in another repo, makes it a served or foreign copy, never this repo's, whatever this session read or drafted for it:

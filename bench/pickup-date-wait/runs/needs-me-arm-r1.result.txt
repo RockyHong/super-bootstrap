@@ -1,0 +1,7 @@
+3 carries (1 stale) → /super-bootstrap:session-continue
+
+- GAP-31 → not yet due (the card contract's wording; `SKILL.md` has no output slot for it): the latest Progress says `not before 2026-12-10`, so it gets no row and isn't in the autorun count.
+- GAP-32 → `items run without you → /super-bootstrap:autorun`: its `not before 2026-11-01` date has passed, and the next step is a mechanical deletion covered by a test.
+- GAP-33 → `items run without you → /super-bootstrap:autorun`: the next step is a mechanical retry change, tested with a stubbed timeout, and nothing in it needs you.
+
+2 items run without you → /super-bootstrap:autorun

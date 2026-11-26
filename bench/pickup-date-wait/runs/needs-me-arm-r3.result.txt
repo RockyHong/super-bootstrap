@@ -1,0 +1,7 @@
+3 carries (1 stale) → /super-bootstrap:session-continue
+
+- GAP-31 → listed as **not yet due** (the Thread contract's wording; `SKILL.md` names no output slot for it). It is not a recommendation row or part of the run-without-you count. Its latest Progress says the next step is `not before 2026-12-10`, which is after today (2026-11-26), so autorun leaves it alone.
+- GAP-32 → counted in **"{N} items run without you"**. The `not before 2026-11-01` date has passed, and the next step is a mechanical deletion that `tests/rotate.bats` covers, with nothing that meets the user wall.
+- GAP-33 → counted in **"{N} items run without you"**. It is a mechanical retry change that a stubbed test in `tests/sync.bats` covers, with nothing that meets the user wall.
+
+2 items run without you → /super-bootstrap:autorun

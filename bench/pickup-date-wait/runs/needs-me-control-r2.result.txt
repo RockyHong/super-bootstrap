@@ -1,0 +1,7 @@
+3 carries in flight → /super-bootstrap:session-continue
+
+- GAP-31 → listed as "not yet due", with no recommendation row and not in the "run without you" count. Its latest Progress says `not before 2026-12-10`, which is after today (2026-11-26). The "not yet due" wording comes from the README § Thread contract. `SKILL.md` defines no output line for this state.
+- GAP-32 → counted in "items run without you". Its `not before 2026-11-01` date has passed, and the next step, the deletion in `jobs/rotate.sh`, meets none of the user-wall conditions.
+- GAP-33 → counted in "items run without you". Its auto-fix retry change has a stubbed test in `tests/sync.bats` and meets none of the user-wall conditions.
+
+2 items run without you → /super-bootstrap:autorun

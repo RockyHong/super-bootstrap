@@ -1,0 +1,7 @@
+3 carries (1 stale) → /super-bootstrap:session-continue
+
+- GAP-31 → "not yet due, named with its date" (**not before 2026-12-10**), "never a recommendation" — the latest Progress block holds the hit-stats comparison until a full week of data has landed, and that date is after today (2026-11-26).
+- GAP-32 → "runs without you", counted, not listed — its "not before 2026-11-01" date has passed, and the next step, writing the deletion in `jobs/rotate.sh`, meets none of the user-wall conditions.
+- GAP-33 → "runs without you", counted, not listed — the fix is a mechanical retry that `tests/sync.bats` covers with a stubbed timeout, and it meets none of the user-wall conditions.
+
+2 items run without you → /super-bootstrap:autorun

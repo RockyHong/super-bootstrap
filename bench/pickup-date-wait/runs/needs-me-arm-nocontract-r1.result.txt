@@ -1,0 +1,7 @@
+3 carries (1 stale) → /super-bootstrap:session-continue
+
+GAP-31 → not yet due, named with its date (2026-12-10), never a recommendation — its latest Progress says "not before 2026-12-10", which is after today (2026-11-26). I left it out of the run-without-you count because it isn't due yet.
+GAP-32 → runs without you, counted and not listed — its "not before 2026-11-01" date has passed. The remaining work is to write the deletion logic, which `tests/rotate.bats` covers, and nothing in the parts read puts it behind the user wall.
+GAP-33 → runs without you, counted and not listed — it is a mechanical retry fix covered by a stubbed test in `tests/sync.bats`, and nothing in the parts read puts it behind the user wall.
+
+2 items run without you → /super-bootstrap:autorun

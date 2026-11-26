@@ -14,11 +14,11 @@ A recommender, not a board. The full list is the card folder itself; this door a
 
 Otherwise read, inline:
 
-- each open card (`docs/work/{BUG,DEBT,GAP}-*.md`) at the cold-reader read set (`docs/work/README.md` § Thread contract) — the same read autorun's § Pick runs — the wall's evidence sits in block bodies (a `waiting on {party}` in a Design, an approval line, a surface Verdict's `###` sub-heading), never in a heading alone;
+- each open card (`docs/work/{BUG,DEBT,GAP}-*.md`) at the cold-reader read set (`docs/work/README.md` § Thread contract) — the same read autorun's § Pick runs — the wall's evidence sits in block bodies (a `waiting on {party}` in a Design, a `not before YYYY-MM-DD` later than today in the latest Progress or Design — the card is not yet due, named with its date, never a recommendation —, an approval line, a surface Verdict's `###` sub-heading), never in a heading alone;
 - `docs/test-queue.md` § Pending entries, `docs/outward/OUT-*.md` origin + latest block, `docs/parked.md` entries — each only when the file exists;
 - `docs/overview.md` Problem / User — the product anchor the ranking leans on.
 
-Root `SESSION-STATE/` holds carry files → print `{N} carries in flight → /super-bootstrap:session-continue` before the lens question; the carries themselves stay unread. The pointer line prints whether or not the lens question runs.
+Root `SESSION-STATE/` holds carry files → print `{N} carries ({M} stale) → /super-bootstrap:session-continue` before the lens question, `({M} stale)` dropped when none. A carry is stale when its load-bearing pointer is gone — the card ID or doc path its **Read first** slot names no longer resolves (a deleted card = resolved), the **stale** row of `/super-bootstrap:session-continue` § 2's sort, alone. Read only that slot per carry and resolve a card ID against the `docs/work/` listing this scan already holds and a doc path by an existence check; the rest of each carry stays unread. The pointer line prints whether or not the lens question runs.
 
 Sort every item by the test in `${CLAUDE_PLUGIN_ROOT}/shared/user-wall.md`: **needs you** or **runs without you**. Only the first set goes further.
 

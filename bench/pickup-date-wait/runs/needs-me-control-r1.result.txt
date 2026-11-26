@@ -1,0 +1,7 @@
+3 carries in flight → /super-bootstrap:session-continue
+
+GAP-31 → not yet due (the Thread contract's wording; `SKILL.md` has no output line for this), so it is not a row and not in the autorun count. Its latest Progress says `not before 2026-12-10`, which is after today (2026-11-26), and autorun leaves it alone until then.
+GAP-32 → counted in "items run without you", not a row. Its `not before 2026-11-01` date has passed, and the next step, writing the deletion with test coverage in `tests/rotate.bats`, meets no user-wall line.
+GAP-33 → counted in "items run without you", not a row. The next step, a mechanical retry wrapper tested with a stubbed timeout, meets no user-wall line.
+
+2 items run without you → /super-bootstrap:autorun

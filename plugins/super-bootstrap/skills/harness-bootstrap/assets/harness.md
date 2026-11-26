@@ -108,7 +108,7 @@ Banned-terms list + pre-flight checklist + recovery protocol + stale-state predi
 
 ## Context Hygiene
 
-Subagent-first is the default container for build phases (§ Dispatch); a task's expected read or output volume is an additional dispatch trigger. A session boundary keys on a topic shift or a finished unit of work, never on token count: compact at a finished unit, clear on topic shift. Park mid-implementation state to the card's `## Progress` block before `/clear`. Volatile state no card owns rides the session-carry ledger, owned by `/super-bootstrap:session-close` (write/clear) and `/super-bootstrap:session-continue` (read/claim).
+Subagent-first is the default container for build phases (§ Dispatch); a task's expected read or output volume is an additional dispatch trigger. A session boundary keys on a topic shift or a finished unit of work, never on token count: compact at a finished unit, clear on topic shift. Park mid-implementation state to the card's `## Progress` block before `/clear`. Volatile state no card owns rides the session-carry ledger, owned by `/super-bootstrap:session-close` (write/clear) and `/super-bootstrap:session-continue` (read/claim, and retire on the user's pick).
 
 ## Finding Triage — Log vs Fix Now
 
