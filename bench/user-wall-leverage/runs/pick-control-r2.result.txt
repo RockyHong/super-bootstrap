@@ -1,0 +1,6 @@
+```
+autorun — 3 cards
+run:   GAP-22  add --json flag to tools/report.sh
+run:   GAP-23  add tools/thumbs.sh to generate JPEG thumbnails for assets/
+skip:  GAP-21  decision
+```

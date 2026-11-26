@@ -1,0 +1,7 @@
+needs you:         GAP-21  A decision only the user owns: design fork with no ruling on the card or in docs/decisions.md
+runs without you:  GAP-22
+runs without you:  GAP-23
+
+GAP-21: The card offers two unevaluated routes, a third-party PDF library or a hand-written bash parser, and neither the card nor docs/decisions.md rules on dependencies, so the choice is the user's.
+GAP-22: The fix-shape is fully specified (a `--json` flag built with `jq`, which is already in the stack), so it runs without the user.
+GAP-23: The card names no fork and needs no paid service, so it runs without the user. If the implementation needs an image binary outside bash and `jq`, that becomes a dependency fork and this card moves to needs you. The request named "both" cards, but three were listed, so I sorted all three.

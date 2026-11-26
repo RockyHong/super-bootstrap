@@ -1,0 +1,6 @@
+needs you:         GAP-21  A material leverage call
+runs without you:  GAP-22
+needs you:         GAP-23  A material leverage call
+GAP-21: Extraction needs PDF tooling that `docs/techstack.md` (bash and jq only) does not provide, and no ruling settles a third-party library or a hand-written parser.
+GAP-22: `jq` is already in `docs/techstack.md`, so the `--json` flag adds no dependency and the next step runs without a user call.
+GAP-23: JPEG thumbnails need an image tool that bash and jq cannot supply, and no ruling in `docs/techstack.md` or `docs/decisions.md` settles the choice.

@@ -1,0 +1,7 @@
+needs you:         GAP-21  A material leverage call
+needs you:         GAP-23  A material leverage call
+runs without you:  GAP-22
+
+GAP-21: the repo has no PDF tooling, and bash and jq cannot parse PDFs without a new third-party library or a hand-written parser, which is a dependency call that `docs/techstack.md` does not settle.
+GAP-22: `jq` is already in `docs/techstack.md`, and the card's fix is a flag on an existing script, so the next step needs no new dependency.
+GAP-23: JPEG thumbnail generation needs an image tool that bash and jq cannot provide, and no source in the repo settles which one to add.

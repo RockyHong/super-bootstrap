@@ -1,0 +1,8 @@
+```
+autorun — 1 cards
+run:   GAP-22  add --json flag to tools/report.sh, rows printed as a jq JSON array
+skip:  GAP-21  decision
+skip:  GAP-23  decision
+```
+
+GAP-21 and GAP-23 both need a new dependency: a PDF library or parser for GAP-21, an image tool for GAP-23. `docs/techstack.md` allows only bash and jq, and `docs/decisions.md` has no dependency ruling, so the choice is the user's. GAP-22 uses only jq, so it passes.

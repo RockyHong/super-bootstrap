@@ -1,0 +1,6 @@
+```
+autorun — 1 card
+run:   GAP-22  add --json flag to tools/report.sh; rows as a jq JSON array, plain output unchanged
+skip:  GAP-21  needs you: decision — no PDF tooling in the stack; library vs hand-written parser is an unruled leverage call
+skip:  GAP-23  needs you: decision — no image tooling in the stack; thumbnail generation needs a dependency, unruled
+```

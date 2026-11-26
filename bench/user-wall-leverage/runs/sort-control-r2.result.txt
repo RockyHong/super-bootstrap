@@ -1,0 +1,7 @@
+needs you:         GAP-21  design fork: third-party PDF library or hand-written bash parser, with no ruling on the card or in docs/decisions.md
+runs without you:  GAP-22
+runs without you:  GAP-23
+
+GAP-21: The verdict lists two routes and rules on neither. Its candidate library is unevaluated (license, maintenance, install footprint unknown), and docs/techstack.md names only bash and jq, so the choice is yours.
+GAP-22: The verdict fixes the shape (a `--json` flag that builds rows with jq, with the default output unchanged). jq is already in the stack, and no step needs the user.
+GAP-23: The verdict sets the next step (implement `tools/thumbs.sh`, verify with `tools/verify-thumbs.sh`). If thumbnailing needs an image tool beyond bash and jq, that becomes a dependency fork to surface then.

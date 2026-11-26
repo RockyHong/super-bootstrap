@@ -1,0 +1,8 @@
+```
+autorun — 1 card
+run:   GAP-22  add --json flag to tools/report.sh, rows built with jq
+skip:  GAP-21  decision
+skip:  GAP-23  decision
+```
+
+GAP-21 and GAP-23 each need a dependency the repo does not use: a PDF parser for GAP-21, and image-processing tooling for GAP-23. `docs/techstack.md` allows only POSIX bash and jq, and no decision or techstack entry settles it. GAP-22 needs only jq, which the stack already names.

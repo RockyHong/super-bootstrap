@@ -1,0 +1,7 @@
+needs you:         GAP-21  A decision only the user owns (dependency fork, no ruling in the card or docs/decisions.md)
+runs without you:  GAP-22
+runs without you:  GAP-23
+
+GAP-21: The card offers a third-party PDF library or a hand-written bash parser, and no dependency ruling exists; techstack allows only bash and jq.
+GAP-22: The card gives the full fix shape (a `--json` flag built with jq, output unchanged without it) and names no fork, so it runs.
+GAP-23: The next step is to implement `tools/thumbs.sh` and check it with `tools/verify-thumbs.sh`, with no paid or human step; if thumbnailing needs an image tool, that dependency question will reach the user then.

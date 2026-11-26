@@ -1,0 +1,7 @@
+needs you:         GAP-21  A material leverage call (build-vs-buy: third-party PDF library or hand-written parser)
+needs you:         GAP-23  A material leverage call (JPEG encoding needs an image tool; the bash + jq stack cannot build it)
+runs without you:  GAP-22
+
+GAP-21: The next step is PDF extraction, and the card gives two routes, a new library or a hand-written parser, with no ruling in `docs/decisions.md` or `docs/techstack.md`.
+GAP-22: `jq` is already in `docs/techstack.md`, so adding `--json` uses no new dependency and the card runs without you.
+GAP-23: JPEG thumbnails need an image tool that the bash + jq stack does not provide, and no ruling settles the choice.
