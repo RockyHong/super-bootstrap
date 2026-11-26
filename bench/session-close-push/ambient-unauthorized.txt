@@ -1,0 +1,4 @@
+This session's ambient instructions, loaded at session start from the user-level `~/.claude/CLAUDE.md`:
+
+> ## Commits
+> Conventional commit subjects (`feat:`, `fix:`, `docs:`). One logical change per commit. Force-push stays the user's own.

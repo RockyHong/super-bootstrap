@@ -1,0 +1,4 @@
+This session's ambient instructions, loaded at session start from the user-level `~/.claude/CLAUDE.md`:
+
+> ## Closeout push
+> A push at session close is the session's own closeout move, with no ask: when the closeout skill's mechanical push check prints a push, take that push after the close's other moves, and report it. Force-push stays the user's own.

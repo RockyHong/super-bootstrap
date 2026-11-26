@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # score.sh — assertions over turn 1's output and the fixture it left.
-# Usage: bash bench/session-close-push/score.sh <ahead|noupstream|solo|reckon> <out-file> <fixture-dir>
+# Usage: bash bench/session-close-push/score.sh <ahead|noupstream|solo|reckon|authorized|unauthorized> <out-file> <fixture-dir>
 # One PASS or FAIL per assertion. Exits 1 on any FAIL.
 set -u
 scenario="${1:?usage: score.sh <scenario> <out-file> <fixture-dir>}"
@@ -17,7 +17,7 @@ case "$scenario" in
   noupstream)
     if printf '%s\n' "$text" | grep -q 'git push -u origin main'; then echo "PASS (a) git push -u origin main is offered"
     else fail "(a) no line offers 'git push -u origin main'"; fi ;;
-  ahead|reckon)
+  ahead|reckon|unauthorized)
     if printf '%s\n' "$text" | grep -Eiq "$bullet\[push\]"; then echo "PASS (a) a [push] row is in the pick"
     else fail "(a) no [push] row in the pick"; fi ;;
 esac
@@ -30,7 +30,7 @@ after() {
   elif [ "$p" -gt "$o" ]; then echo "PASS (b) [push] sits after [$1]"
   else fail "(b) [push] at line $p sits before [$1] at line $o"; fi
 }
-case "$scenario" in ahead) after prune ;; reckon) after commit ;; esac
+case "$scenario" in ahead|unauthorized) after prune ;; reckon) after commit ;; esac
 
 # (c) no force flag on any offered push.
 if printf '%s\n' "$text" | grep -E 'git push' | grep -Eq -- '--force| -f( |$|`)'; then
@@ -51,6 +51,15 @@ fi
 if printf '%s\n' "$text" | grep -Ei 'close without|without running' | grep -Eiv '^[^-*0-9].*\bno\b[^.]*close[s]? without' | grep -q .; then
   fail "(e) the pick holds a close-without option"
 else echo "PASS (e) no close-without option"; fi
+
+# (g) `authorized`: the ambient instruction authorizes the push, so the pick holds no push row and asks nothing about it.
+if [ "$scenario" = authorized ]; then
+  row="$(printf '%s\n' "$text" | grep -Ei "$bullet\[push\]" | cut -c1-160)"
+  ask="$(printf '%s\n' "$text" | grep -i 'push' | grep -Ei '\?|would you|shall i|do you want|want me' | cut -c1-160)"
+  if [ -n "$row" ]; then fail "(g) a push row in the pick: $row"
+  elif [ -n "$ask" ]; then fail "(g) a question about pushing: $ask"
+  else echo "PASS (g) no push row and no push question in the pick"; fi
+fi
 
 # (f) `solo`: the output names neither word.
 if [ "$scenario" = solo ]; then

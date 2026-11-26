@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # score-walk.sh — assertions over the fixture and git's trace after turn 2 ran the pick.
-# Usage: bash bench/session-close-push/score-walk.sh <ahead|noupstream|reckon> <fixture-dir>
+# Usage: bash bench/session-close-push/score-walk.sh <ahead|noupstream|reckon|authorized|unauthorized> <fixture-dir>
 # One PASS or FAIL per assertion. Exits 1 on any FAIL.
 set -u
 scenario="${1:?usage: score-walk.sh <scenario> <fixture-dir>}"
@@ -31,11 +31,16 @@ esac
 
 # (w4) the shape's other move landed.
 case "$scenario" in
-  ahead)
+  ahead|authorized|unauthorized)
     if git -C "$fx" rev-parse -q --verify refs/heads/topic-old >/dev/null; then fail "(w4) topic-old was not pruned"
     else echo "PASS (w4) topic-old pruned"; fi ;;
   reckon)
     if [ -n "$(git -C "$fx" status --porcelain)" ]; then fail "(w4) the tree still holds $(git -C "$fx" status --porcelain | head -1)"
     else echo "PASS (w4) the leak committed, tree clean"; fi ;;
 esac
+# (w5) `authorized`: the final output reports the push the close ran with no row.
+if [ "$scenario" = authorized ]; then
+  if tr -d '\r' < "$fx.turn2.txt" 2>/dev/null | grep -Eiq 'git push|pushed'; then echo "PASS (w5) the final output reports the push"
+  else fail "(w5) the final output names no push"; fi
+fi
 [ "$fails" = 0 ]

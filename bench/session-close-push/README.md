@@ -11,7 +11,8 @@ RED floor. The commit and merge doors keep their own no-push stance:
 - `make-fixture.sh <scenario> <dir>` — builds on `bench/commit-push/make-fixture.sh` (a local bare repo
   `<dir>.remote.git` as `origin`). Scenarios: `ahead` (1 ahead, clean, a merged branch `topic-old`, so two
   moves), `noupstream` (a remote, no upstream, clean, a lone move), `solo` (no remote, clean), `reckon` (0 ahead,
-  `a.md` uncommitted, so only the close's own commit makes it ahead). Writes `<dir>.snap`. Pass an absolute `<dir>`
+  `a.md` uncommitted, so only the close's own commit makes it ahead), `authorized` and `unauthorized` (the `ahead` shape; `run.sh`
+  embeds `ambient-<scenario>.txt`). Writes `<dir>.snap`. Pass an absolute `<dir>`
   whose path holds neither "push" nor "remote".
 - `prompt.txt`, `prompt-reckon.txt`, `prompt-turn2.txt` — the session records and the user's yes. Neither record
   names push or a remote.
@@ -148,3 +149,29 @@ Field-list round, arm, one wording, three runs per scenario, sonnet, one fresh f
 `push-state.sh move` printed nothing."; "...no ledger file to clear, and nothing to push." Each run also prints a line for the
 empty `state` result: "`push-state.sh state` printed nothing." The output now follows the field list, and the checked steps ride
 inside the moves field. No run asks about or offers a push. Run 3's trace holds a `git remote -v`.
+
+### Ambient-authorization round (DEBT-5hm3)
+
+Design under test: the push row stays in the pick by default, and drops when the repo's or the user's ambient instructions
+authorize a closeout push without a confirm; the push then runs after the pick and § Output reports it. Two scenarios on the
+`ahead` shape: `authorized` embeds `ambient-authorized.txt` (a user-level rule: the closeout push runs with no ask) and
+`unauthorized` embeds `ambient-unauthorized.txt` (a user-level rule that names no push). The run stays isolated as above; the
+ambient instruction reaches the run only through the prompt.
+
+- **(a)**, **(b)** `unauthorized`: as `ahead`.
+- **(g)** `authorized`: no `[push]` row in the pick, and no question about pushing.
+- **(w5)** `authorized`, after the user's yes: the final output names the push (`git push` or "pushed"). (w1)–(w4) as `ahead`.
+
+Pass condition, named before any run: arm (a), (g), (w1)–(w5) on 3 of 3. RED: control fails (g) on `authorized`. Control at
+`ae609f3` (HEAD), two runs per scenario, sonnet, one fresh fixture per run; control's `authorized` turn 2 run by hand.
+
+| Assertion | Control |
+|---|---|
+| (a), (b) `unauthorized` | 2 of 2 |
+| (g) `authorized` | 2 of 2 |
+| (w1)–(w5) `authorized` | 2 of 2 |
+| (e) `authorized` | 0 of 2 — the lone prune move's skip option ("**Skip:** keep `topic-old` and close without this move."), the exempt single-select shape (e) does not model |
+
+No RED: the control already meets the design. Verbatim, control `authorized` run 1: "**Push:** the push check printed `git push`.
+Your `~/.claude/CLAUDE.md` says to push at session close without asking, so it isn't part of this choice." Its final output: "**Push:**
+I ran `git push` after the prune, as your `~/.claude/CLAUDE.md` instructs." No skill wording ships for this design.

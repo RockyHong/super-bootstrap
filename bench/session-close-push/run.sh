@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # run.sh — one headless walk of session-close's push row: turn 1 stops at the pick, turn 2 runs it.
-# Usage: bash bench/session-close-push/run.sh <control|arm> <ahead|noupstream|solo|reckon> <fixture-dir>
+# Usage: bash bench/session-close-push/run.sh <control|arm> <ahead|noupstream|solo|reckon|authorized|unauthorized> <fixture-dir>
 #
-#   control — session-close, commit and doc-sync-scan at CONTROL_REV, exported beside the fixture
+#   control — session-close, commit and doc-sync-scan at CONTROL_REV (env, default bb069c4), exported beside the fixture
 #   arm     — the working-tree copies (copy under test: this repo's dev copy)
 #
 # Isolated from the device: no settings source, no MCP, a stub system prompt, so a push ask comes from the
-# embedded skill text and not from a user-level instruction file. Control and `solo` stop after turn 1:
+# embedded skill text and not from a user-level instruction file. `authorized` and `unauthorized` embed a
+# stated ambient instruction instead (ambient-<scenario>.txt). Control and `solo` stop after turn 1:
 # neither holds a row to run. Writes <dir>.turn1.txt, <dir>.turn2.txt and <dir>.trace.
 set -u
 mode="${1:?usage: run.sh <control|arm> <scenario> <fixture-dir>}"
@@ -14,7 +15,7 @@ scenario="${2:?scenario}"
 fx="${3:?fixture dir}"
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../.." && pwd)"
-CONTROL_REV=bb069c4
+CONTROL_REV="${CONTROL_REV:-bb069c4}"
 close_rel=plugins/super-bootstrap/skills/session-close/SKILL.md
 commit_rel=plugins/super-bootstrap/skills/commit/SKILL.md
 agent_rel=plugins/super-bootstrap/agents/doc-sync-scan.md
@@ -49,7 +50,11 @@ $root/plugins/super-bootstrap/skills/session-close
 ----- <skill-base> of the commit skill -----
 $root/plugins/super-bootstrap/skills/commit"
 else
+  ambient=""
+  case "$scenario" in authorized|unauthorized) ambient="$(cat "$here/ambient-$scenario.txt")" ;; esac
   prompt="$(cat "$here/prompt.txt")
+
+$ambient
 
 ----- SKILL.md (session-close) -----
 $(cat "$root/$close_rel")
