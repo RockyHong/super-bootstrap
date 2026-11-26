@@ -1,17 +1,9 @@
-# Parallel Fork Write Set — Name What Each Member May Write
+# Parallel Fork — Commits, Shared Output and Returns
 
-A prohibition is not a scope. A fan-out member told only that it must not
-write still holds every writing tool and a goal its own reading of the brief
-can stretch to justify, and it has nothing to check a proposed write against;
-a named set of paths gives it that check. Members sharing one output file
-compound the gap: each writes that file whole from its own partial view, the
-last one to finish is the one that survives, and the surviving file reads
-complete — so the loss raises no signal downstream.
+Work split across several dispatches on one tree keeps three guards: each
+logical change to a file lands as its own commit, one assembler writes any
+shared output, and what a member returns is re-derived before it is used.
 
-- **Name the write set in every parallel dispatch** — the paths that member
-  may create or edit, given as paths, with everything outside them read-only.
-  Keep the sets disjoint across members: a path sitting in two write sets is a
-  collision the brief has already authored.
 - **Give separate logical changes to one file one commit each, in turn** — the
   next change starts once the previous one has committed, whether the changes
   run as fan-out members, sequential dispatches or sequential cards. Git groups
@@ -21,9 +13,10 @@ complete — so the loss raises no signal downstream.
   whose members do not commit places the commit between the dispatches, and
   holds the next change while that commit cannot land yet.
 - **The dispatcher assembles the shared output** — a combined report, a merged
-  table, a ranked list — from the messages the members return. Shared output
-  belongs to no member's write set, which is what keeps the sets disjoint when
-  the goal is one artifact and the work is split many ways.
+  table, a ranked list — from the messages the members return. When members
+  each write one shared file whole from their own partial view, the last
+  writer's view is the one that survives, and that file still reads complete,
+  so the loss raises no signal downstream.
 - **Re-derive what a member concluded, not only re-read what it touched** — a
   return is a message, so the paths it names are re-read before integration and
   the reasoning it drew from them is re-run against the source. Measurements

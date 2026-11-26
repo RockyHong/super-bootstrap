@@ -1,14 +1,8 @@
-# Dispatch Brief Shape — One Artifact per Authoring Dispatch
+# Dispatch Brief Shape — What a Brief Pins, Re-sends and Re-shapes
 
-A wide-read → wide-author brief ("read all N sources, then author all M outputs")
-puts the whole plan in flight at the read→write boundary; the agent's turn
-reliably closes on narration of the plan ("Now I'll author…") with zero writes,
-and a resume repeats the stall. The stall correlates with brief *shape*, not
-size — narrow briefs complete arbitrarily long tool-call runs.
+How a dispatch brief is shaped for the round it sends: the decisions it pins,
+how much of the frame it re-sends, and when the dispatch itself changes shape.
 
-- **Scope one authoring dispatch to one artifact** (or one tightly-coupled
-  pair) plus its minimal read set. Fan the artifact list out across dispatches,
-  not inside one brief.
 - **Pass shared decisions as literals in the brief** — vocabulary maps, enums,
   design verdicts. Parallel agents re-deriving a shared decision diverge; a
   literal costs nothing and pins them.
@@ -23,8 +17,9 @@ size — narrow briefs complete arbitrarily long tool-call runs.
   full read set turns the continuation into a cold rebuild at a new dispatch's
   cost. A fresh round's brief is compact: the goal, the task's progress record, and
   the directions already rejected.
-- **Two stalls on one brief = re-shape the dispatch** — split the brief, or
-  author inline when the dispatcher already holds the full frame. A third
-  resume re-buys the same stall.
+- **Two stalls on one brief = re-shape the dispatch** — a stall is a turn that
+  closes on narration of the plan with zero writes. After two, split the
+  brief, or author inline when the dispatcher already holds the full frame. A
+  third resume re-buys the same stall.
 
 Family catalog: [`index.md`](index.md).

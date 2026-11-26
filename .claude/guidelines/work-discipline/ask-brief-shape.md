@@ -56,8 +56,8 @@ routed to a dispatcher who must unblock the work. The agent-facing
 counterparts are
 [`dispatch-brief-shape.md`](dispatch-brief-shape.md) and
 [`dispatch-brief-demands.md`](dispatch-brief-demands.md) — a different
-reader, a different firing moment, and a brief that answers to a container's
-write set rather than to a person's attention. Why ordering by the reader
+reader, a different firing moment, and a brief that answers to the receiving
+container's work rather than to a person's attention. Why ordering by the reader
 beats ordering by the argument is
 [`attention-efficiency.md`](attention-efficiency.md).
 
