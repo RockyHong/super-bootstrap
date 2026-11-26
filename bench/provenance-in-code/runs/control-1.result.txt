@@ -1,0 +1,23 @@
+I made the fix and added the tests, but **I couldn't run the tests, so I'm not reporting this as done.** The sandbox denied `python -m pytest -q` because it needed approval and this session has no way to give it. I haven't seen the new tests fail before the fix or pass after it. I expect them to pass from reading the code, but that isn't a test result.
+
+To finish checking it, run this from the repo root:
+
+```
+python -m pytest -q
+```
+
+It passes if there are no failures. There should be 11 test cases: 9 new and 2 that were already there.
+
+**Changes (not committed):**
+- **Fix, in `src/ratelimit/window.py`:** following the card's design:
+  - Units now work in either case, so `5M` is the same as `5m`.
+  - A value of zero or below raises `ValueError`.
+  - An unknown unit raises `ValueError` and names the unit.
+- **Tests, in `tests/test_window.py`:** the new cases cover zero and negative values, uppercase units (plus lowercase `2h`) and unknown units.
+- **Spec, in `docs/specs/window.md`:** I added the either-case units and the two error cases.
+
+I left the card, `docs/work/BUG-r4k8.md`, in place. The repo's rules say the commit that fixes a bug deletes its card, so remove it when you commit.
+
+The sandbox also denied my first command, which changed directory and listed the files tracked by git. I used the file tools instead, so I haven't looked at `git diff` or `git status`.
+
+One related problem remains, which I didn't change because the card doesn't cover it: an empty or blank string still raises `IndexError` instead of `ValueError`.

@@ -1,0 +1,5 @@
+# Paths that hold tracker IDs or dates as data: the commit door's volatile-ids and dates lanes skip them.
+bench/*
+tests/doc-links.test.sh
+tests/new-id.test.sh
+tests/closed-forks.test.sh

@@ -1,0 +1,5 @@
+done
+
+- **Tests:** `python -m pytest -q` shows 12 passed. Before the fix, the 9 new bug tests failed and 3 tests passed.
+- **Changes:** I updated `src/ratelimit/window.py`, `tests/test_window.py` and `docs/specs/window.md`, following the card's design. I left the card in place and committed nothing.
+- **Blocked command:** my first try at writing the test file used a shell redirect (`cat > tests/test_window.py`, followed by the test run). It was denied because it needed approval, so none of it ran. I made the edits with the file editing tool instead, which was allowed.

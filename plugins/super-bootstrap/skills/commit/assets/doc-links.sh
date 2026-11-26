@@ -84,8 +84,8 @@
 #                      `HEAD` for those revision arguments (word-split), and
 #                      DOCLINK_DIFF_REPO=<dir> runs git in <dir> (`git -C`) while the
 #                      doc surface is still walked in the cwd. DOCLINK_DIFF_REPO is
-#                      read by this mode only; DOCLINK_DIFF_RANGE by `term-uses` and
-#                      `volatile-ids` too.
+#                      read by this mode only; DOCLINK_DIFF_RANGE by `term-uses`,
+#                      `volatile-ids` and `dates` too.
 #   grep-scope --by-term <changed-path>...
 #                      attribution instead of the file list, as `hits --by-term`:
 #                      `term<TAB>count` over the final term list (head terms plus
@@ -116,15 +116,26 @@
 #                      is wrong whatever the doc links. Empty registry → nothing. Mechanical only — whether a use is
 #                      substantive is the commit door's judgment. Exit 0.
 #   volatile-ids <path>...
-#                      print tracker IDs on the changed docs' added lines (same added-line
-#                      read as `term-uses`): `doc<TAB>line<TAB>id` per line × distinct ID
-#                      matching `\b(BUG|DEBT|GAP|OUT|PARK)-[0-9a-z]+\b` outside fenced
-#                      blocks. The literal `xxxx` suffix is a placeholder, skipped; `card`
-#                      is a legal suffix, so `GAP-card` hits. Skipped: a path off the doc
-#                      surface, docs/work/, docs/outward/ (and the retired flat form),
-#                      docs/parked.md, docs/test-queue.md, a `dimension: history` doc.
+#                      print tracker IDs on the changed paths' added lines (same added-line
+#                      read as `term-uses`): `path<TAB>line<TAB>id` per line x distinct ID
+#                      matching `\b(BUG|DEBT|GAP|OUT|PARK)-[0-9a-z]+\b`. Every changed path
+#                      is read, any file type; fenced blocks are skipped in markdown only
+#                      (code has no fences). The literal `xxxx` suffix is a placeholder,
+#                      skipped; `card` is a legal suffix, so a `-card` ID hits. Skipped:
+#                      docs/work/, docs/outward/ (and the retired flat form),
+#                      docs/parked.md, docs/test-queue.md, SESSION-STATE/, a
+#                      `dimension: history` doc, and every path matching a glob in
+#                      `.claude/provenance-exempt` (one glob per line, `#` and blank lines
+#                      skipped, `*` crosses `/` — the `.claude/doc-surface` syntax).
 #                      Advisory: always exit 0.
-#   terms - | hits [--by-term] - | grep-scope [--by-term] - | self - | term-uses - | volatile-ids -
+#   dates <path>...    print ISO dates (`20YY-MM-DD`) on the changed paths' added lines,
+#                      same input, read and exemptions as `volatile-ids`:
+#                      `path<TAB>line<TAB>date` per line x distinct date. Scope: a
+#                      markdown line outside fences, or a non-markdown line whose trimmed
+#                      text leads with a comment marker (`#` but not a `#!` shebang, `//`,
+#                      `/*`, `*`, `--`, `;`, `<!--`) — a date elsewhere in code is data.
+#                      Advisory: always exit 0.
+#   terms - | hits [--by-term] - | grep-scope [--by-term] - | self - | term-uses - | volatile-ids - | dates -
 #                      a lone `-` reads the list from stdin instead, one item per
 #                      line (blank lines skipped, a trailing CR dropped) — the
 #                      shell-split-proof form for a path or term holding spaces:
@@ -196,18 +207,36 @@ collect_builtin_surface() {
 # in find order after the built-in set. Absent file or no `.md` entry → no find, no
 # output. One read and one find per call; the per-path loop is pure bash.
 DOC_SURFACE_FILE=".claude/doc-surface"
-collect_declared_surface() {
-    local builtin="
-$1
-" line p pat
-    local -a pats
-    pats=()
-    [ -f "$DOC_SURFACE_FILE" ] || return 0
+PROVENANCE_EXEMPT_FILE=".claude/provenance-exempt"
+
+# One glob list per file, the syntax `.claude/doc-surface` and `.claude/provenance-exempt`
+# share: <file> [<suffix>] -> array GLOBS. With a <suffix>, entries not ending in it are
+# dropped (doc-surface passes `.md`). `#` lines and blank lines are skipped; surrounding
+# whitespace, a trailing CR and a leading `./` are dropped. Absent file -> empty GLOBS.
+# The caller matches an entry as an unquoted `case` pattern, where `*` crosses `/`.
+# Quirk: an empty-array expansion under `set -u` is an error on bash 3.2, so callers copy
+# it through the `${GLOBS[@]+"${GLOBS[@]}"}` form.
+GLOBS=()
+read_glob_file() {
+    local file="$1" suffix="${2:-}" line
+    GLOBS=()
+    [ -f "$file" ] || return 0
     while IFS= read -r line || [ -n "$line" ]; do
         line="${line%$'\r'}"
         trim "$line"; line="${TRIM#./}"
-        case "$line" in ''|'#'*) continue ;; *.md) pats+=("$line") ;; esac
-    done < "$DOC_SURFACE_FILE"
+        case "$line" in ''|'#'*) continue ;; esac
+        case "$line" in *"$suffix") GLOBS+=("$line") ;; esac
+    done < "$file"
+    return 0
+}
+
+collect_declared_surface() {
+    local builtin="
+$1
+" p pat
+    local -a pats
+    read_glob_file "$DOC_SURFACE_FILE" .md
+    pats=(${GLOBS[@]+"${GLOBS[@]}"})
     [ "${#pats[@]}" -gt 0 ] || return 0
     while IFS= read -r p; do
         p="${p#./}"
@@ -1311,7 +1340,7 @@ VOLID_AWK='
 function idword(c) { return (c != "" && c ~ /[A-Za-z0-9_]/) }
 BEGIN { in_fence = 0; fence_char = ""; fence_len = 0 }
 {
-    if (fence_skip($0)) next
+    if (MD == 1 && fence_skip($0)) next
     if (ALL != 1 && !(FNR in added)) next
     line = $0; off = 0; seen = " "
     while (match(substr(line, off + 1), /(BUG|DEBT|GAP|OUT|PARK)-[0-9a-z]+/)) {
@@ -1328,43 +1357,88 @@ BEGIN { in_fence = 0; fence_char = ""; fence_len = 0 }
 }
 '
 
-# Off this lane: the tracker's own files, and whatever records history by declaration.
-# Wider than is_frozen_provenance_path — a folder's standing README documents the ID shape.
-volatile_ids_exempt() {
+# ISO dates on added lines: same inputs as VOLID_AWK. A date is `20YY-MM-DD` with no digit
+# on either side (`12026-03-04` and `2026-03-045` are no date). Markdown: every added line
+# outside fences. Anything else: only a line whose trimmed text leads with a comment marker
+# — a date in a code line is data. `#!` is a shebang, not a comment.
+DATE_AWK='
+function dword(c) { return (c != "" && c ~ /[0-9]/) }
+function is_comment(s,   t) {
+    t = s; sub(/^[ \t]+/, "", t)
+    if (substr(t, 1, 2) == "#!") return 0
+    return (substr(t, 1, 1) == "#" || substr(t, 1, 2) == "//" || substr(t, 1, 2) == "/*" ||
+            substr(t, 1, 1) == "*" || substr(t, 1, 2) == "--" || substr(t, 1, 1) == ";" ||
+            substr(t, 1, 4) == "<!--")
+}
+BEGIN { in_fence = 0; fence_char = ""; fence_len = 0 }
+{
+    if (MD == 1 && fence_skip($0)) next
+    if (ALL != 1 && !(FNR in added)) next
+    if (MD != 1 && !is_comment($0)) next
+    line = $0; off = 0; seen = " "
+    while (match(substr(line, off + 1), /20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/)) {
+        a = off + RSTART; b = a + RLENGTH
+        d = substr(line, a, RLENGTH)
+        pre = (a > 1) ? substr(line, a - 1, 1) : ""
+        if (!dword(pre) && !dword(substr(line, b, 1)) && index(seen, " " d " ") == 0) {
+            print DOC "\t" FNR "\t" d
+            seen = seen d " "
+        }
+        off = b - 1
+    }
+}
+'
+
+# Off the provenance lanes: the tracker's own files, whatever records history by
+# declaration, session ledgers, and every glob `.claude/provenance-exempt` declares
+# (loaded once per run into PROV_PATS). Wider than is_frozen_provenance_path — a folder's
+# standing README documents the ID shape.
+PROV_PATS=()
+provenance_exempt() {
+    local pat
     case "$1" in
         docs/work/*|docs/outward/*|docs/parked.md|docs/test-queue.md) return 0 ;;
+        SESSION-STATE/*|*/SESSION-STATE/*) return 0 ;;
     esac
+    for pat in ${PROV_PATS[@]+"${PROV_PATS[@]}"}; do
+        # Unquoted on purpose: the entry is the glob.
+        # shellcheck disable=SC2254
+        case "$1" in $pat) return 0 ;; esac
+    done
     is_frozen_provenance_path "$1" && return 0
     is_history_doc "$1"
 }
 
-do_volatile_ids() {
-    local surface p diff all range
+# Shared walk of the two provenance lanes: <awk-program> <path>... — every changed path,
+# any file type; exempt, absent and non-file paths print nothing. MD=1 marks a markdown
+# path (fence-aware); code has no fences, and a bare backtick line there is not one.
+do_provenance() {
+    local prog="$1" p diff all md range
+    shift
     [ "$#" -eq 0 ] && return 0
     range=(HEAD)
     [ -n "${DOCLINK_DIFF_RANGE:-}" ] && read -r -a range <<< "$DOCLINK_DIFF_RANGE"
-    surface="
-$(collect_surface)
-"
+    read_glob_file "$PROVENANCE_EXEMPT_FILE"
+    PROV_PATS=(${GLOBS[@]+"${GLOBS[@]}"})
     for p in "$@"; do
         normalize_path "$p"; p="$NORM"
         [ -z "$p" ] && continue
-        case "$surface" in
-            *"
-$p
-"*) ;;
-            *) continue ;;
-        esac
-        volatile_ids_exempt "$p" && continue
+        [ -f "$p" ] || continue
+        provenance_exempt "$p" && continue
+        md=0
+        case "$p" in *.md|*.markdown) md=1 ;; esac
         diff="$(git diff "${range[@]}" -U0 -- "$p" 2>/dev/null)"
         all=0
         if [ -z "$diff" ] && ! git ls-files --error-unmatch -- "$p" >/dev/null 2>&1; then
             all=1
         fi
-        printf '%s\n' "$diff" | awk -v DOC="$p" -v ALL="$all" "$FENCE_AWK$HUNK_AWK$VOLID_AWK" - "$p"
+        printf '%s\n' "$diff" | awk -v DOC="$p" -v ALL="$all" -v MD="$md" "$FENCE_AWK$HUNK_AWK$prog" - "$p"
     done
     return 0
 }
+
+do_volatile_ids() { do_provenance "$VOLID_AWK" "$@"; }
+do_dates() { do_provenance "$DATE_AWK" "$@"; }
 
 # Hunk range → section grain. Headings come out of the shared slug transform in file
 # order. A range that covers the doc's first heading is whole-file grain — `(top)` —
@@ -1599,7 +1673,7 @@ do_pins() {
 USAGE='Usage: %s check | pins | refs <path>[#anchor]... | index | closure <path>[#anchor]
        %s terms <changed-path>...|- | hits [--by-term] <term>...|- | anchors <path> <hunk-range>...
        %s grep-scope [--by-term] <changed-path>...|-
-       %s self <changed-path>...|- | terminology | term-uses <changed-path>...|- | volatile-ids <changed-path>...|-
+       %s self <changed-path>...|- | terminology | term-uses <changed-path>...|- | volatile-ids <changed-path>...|- | dates <changed-path>...|-
        (- = read the list from stdin, one item per line)
 '
 
@@ -1679,6 +1753,14 @@ case "$MODE" in
             do_volatile_ids ${ITEMS[@]+"${ITEMS[@]}"}
         else
             do_volatile_ids "$@"
+        fi ;;
+    dates)
+        shift
+        if [ "$#" -eq 1 ] && [ "$1" = "-" ]; then
+            read_items
+            do_dates ${ITEMS[@]+"${ITEMS[@]}"}
+        else
+            do_dates "$@"
         fi ;;
     anchors)
         shift

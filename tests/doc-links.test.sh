@@ -1334,9 +1334,9 @@ check "volatile-ids: docs/parked.md is exempt" vi_noid BUG-prk1
 check "volatile-ids: docs/test-queue.md is exempt" vi_noid BUG-tq1
 check "volatile-ids: a dimension: history doc is exempt" vi_noid BUG-hist1
 check "volatile-ids: an untracked new doc reads every line as added" vi_has docs/new.md 3 BUG-new1
-check "volatile-ids: a path off the doc surface stays out" vi_noid BUG-off1
+check "volatile-ids: a markdown path off the doc surface reports too" vi_has src/x.md 1 BUG-off1
 vi_count="$(printf '%s\n' "$got_vi" | grep -c . || true)"
-check "volatile-ids: exactly the twelve expected hits (got $vi_count)" [ "$vi_count" -eq 12 ]
+check "volatile-ids: exactly the thirteen expected hits (got $vi_count)" [ "$vi_count" -eq 13 ]
 got_vi_argv="$(cd "$VI" && bash "$LINKS" volatile-ids docs/new.md)"
 check "volatile-ids: the argv form takes a path (got: $got_vi_argv)" [ "$got_vi_argv" = "$(printf 'docs/new.md\t3\tBUG-new1')" ]
 got_vi_none="$(cd "$VI" && bash "$LINKS" volatile-ids 2>&1)"; rc=$?
@@ -1346,6 +1346,115 @@ vi_usage() { printf '%s' "$usage_out" | grep -q 'volatile-ids'; }
 vi_header() { grep -qE '^#   volatile-ids ' "$LINKS"; }
 check "usage string registers the volatile-ids mode" vi_usage
 check "header comment registers the volatile-ids mode" vi_header
+
+echo "== doc-links: provenance lanes — volatile-ids reads every changed path, dates reads markdown and comment lines =="
+# Both lanes share one exemption set: tracker paths, SESSION-STATE/, a dimension: history
+# doc, and every glob in .claude/provenance-exempt (the .claude/doc-surface syntax).
+VP="$TMP/vp"
+mkdir -p "$VP/docs/specs" "$VP/src" "$VP/tests" "$VP/bench/sub" "$VP/SESSION-STATE" "$VP/.claude" "$VP/docs/work"
+printf '# Plan\n\nOld day 2026-01-01 stays.\n' > "$VP/docs/plan.md"
+printf 'echo ok # old BUG-old2 2026-02-02\n' > "$VP/src/a.sh"
+printf -- '---\ndimension: history\n---\n# Log\n' > "$VP/docs/specs/log.md"
+printf '# Work\n' > "$VP/docs/work/README.md"
+printf '# bench\n' > "$VP/bench/f.txt"
+printf '# deep\n' > "$VP/bench/sub/deep.txt"
+printf '# ses\n' > "$VP/SESSION-STATE/s.md"
+printf '# Tooling comment\n# on two lines\n\n  \n bench/*\r\ntests/fixture.test.sh\n' > "$VP/.claude/provenance-exempt"
+printf '# fixture\n' > "$VP/tests/fixture.test.sh"
+(cd "$VP" && git init -q && git add -A && git -c user.name=t -c user.email=t@t commit -qm base)
+cat >> "$VP/docs/plan.md" <<'EOF'
+Shipped 2026-11-27 and 2026-11-28 here.
+```
+Fence date 2026-12-01 stays out.
+```
+Not a date: 12026-03-04 or 2026-03-045 or 1999-01-01.
+EOF
+cat >> "$VP/src/a.sh" <<'EOF'
+# Fixed on 2026-03-03 because BUG-sh01 broke it.
+  # indented comment with DEBT-sh02
+echo "2026-04-04 BUG-sh03"
+```
+# fence marks mean nothing in code, GAP-sh04 2026-04-05
+```
+#!/usr/bin/env bash 2026-05-05
+EOF
+printf 'x = 1  # DEBT-py01 2026-06-06\n// 2026-07-07 note\n/* 2026-08-08 */\n * 2026-09-09 star\n-- 2026-10-10 sql\n; 2026-11-11 ini\n<!-- 2026-12-12 -->\n' > "$VP/src/b.js"
+printf 'check "BUG-lbl1 asserts" true\n' > "$VP/tests/t.test.sh"
+printf '# Cites BUG-bnc1 2026-01-02.\n' >> "$VP/bench/f.txt"
+printf '# Cites BUG-bnc2 2026-01-03.\n' >> "$VP/bench/sub/deep.txt"
+printf 'Cites BUG-ses1 2026-01-04.\n' >> "$VP/SESSION-STATE/s.md"
+printf '# Cites BUG-fix1 2026-01-05.\n' >> "$VP/tests/fixture.test.sh"
+printf 'Cites BUG-hist2 2026-01-06.\n' >> "$VP/docs/specs/log.md"
+printf 'Cites BUG-wrk3 2026-01-07.\n' >> "$VP/docs/work/README.md"
+vp_paths='docs/plan.md
+src/a.sh
+src/b.js
+tests/t.test.sh
+bench/f.txt
+bench/sub/deep.txt
+SESSION-STATE/s.md
+tests/fixture.test.sh
+docs/specs/log.md
+docs/work/README.md'
+got_vp="$(cd "$VP" && printf '%s\n' "$vp_paths" | bash "$LINKS" volatile-ids -)"; rc=$?
+check "volatile-ids: exits 0 with hits on code paths (rc=$rc)" [ "$rc" -eq 0 ]
+vp_has_id() { printf '%s\n' "$got_vp" | grep -qxF "$(printf '%s\t%s\t%s' "$1" "$2" "$3")"; }
+vp_noid() { ! printf '%s\n' "$got_vp" | grep -qF "$1"; }
+check "volatile-ids: an ID in a .sh comment line reports" vp_has_id src/a.sh 2 BUG-sh01
+check "volatile-ids: an ID in an indented .sh comment reports" vp_has_id src/a.sh 3 DEBT-sh02
+check "volatile-ids: an ID in a .sh string reports" vp_has_id src/a.sh 4 BUG-sh03
+check "volatile-ids: backtick lines in code are no fence" vp_has_id src/a.sh 6 GAP-sh04
+check "volatile-ids: an ID in a .js trailing comment reports" vp_has_id src/b.js 1 DEBT-py01
+check "volatile-ids: a test label string reports" vp_has_id tests/t.test.sh 1 BUG-lbl1
+check "volatile-ids: an unchanged code line stays out" vp_noid BUG-old2
+check "volatile-ids: a provenance-exempt glob path stays out (CRLF entry)" vp_noid BUG-bnc1
+check "volatile-ids: a glob's * crosses / (bench/sub/deep.txt)" vp_noid BUG-bnc2
+check "volatile-ids: an exact-path glob entry stays out" vp_noid BUG-fix1
+check "volatile-ids: SESSION-STATE/ stays out" vp_noid BUG-ses1
+check "volatile-ids: a history doc stays out" vp_noid BUG-hist2
+check "volatile-ids: docs/work/ stays out" vp_noid BUG-wrk3
+vp_count="$(printf '%s\n' "$got_vp" | grep -c . || true)"
+check "volatile-ids: exactly the six expected hits (got $vp_count)" [ "$vp_count" -eq 6 ]
+
+got_dt="$(cd "$VP" && printf '%s\n' "$vp_paths" | bash "$LINKS" dates -)"; rc=$?
+check "dates: exits 0 with hits (advisory, rc=$rc)" [ "$rc" -eq 0 ]
+dt_has() { printf '%s\n' "$got_dt" | grep -qxF "$(printf '%s\t%s\t%s' "$1" "$2" "$3")"; }
+dt_no() { ! printf '%s\n' "$got_dt" | grep -qF "$1"; }
+check "dates: a markdown added line reports, one row per distinct date" dt_has docs/plan.md 4 2026-11-27
+check "dates: a second date on one markdown line reports" dt_has docs/plan.md 4 2026-11-28
+check "dates: a date in a markdown fence stays out" dt_no 2026-12-01
+check "dates: a digit neighbour is no date" dt_no 2026-03-04
+check "dates: a non-20xx year is no date" dt_no 1999-01-01
+check "dates: an unchanged markdown date stays out" dt_no 2026-01-01
+check "dates: a leading # comment in code reports" dt_has src/a.sh 2 2026-03-03
+check "dates: a date in a non-comment code line is data" dt_no 2026-04-04
+check "dates: a date after code on a line is data (trailing comment)" dt_no 2026-06-06
+check "dates: backtick lines in code are no fence" dt_has src/a.sh 6 2026-04-05
+check "dates: a shebang line is no comment" dt_no 2026-05-05
+check "dates: an unchanged code date stays out" dt_no 2026-02-02
+check "dates: a // comment reports" dt_has src/b.js 2 2026-07-07
+check "dates: a /* comment reports" dt_has src/b.js 3 2026-08-08
+check "dates: a * comment continuation reports" dt_has src/b.js 4 2026-09-09
+check "dates: a -- comment reports" dt_has src/b.js 5 2026-10-10
+check "dates: a ; comment reports" dt_has src/b.js 6 2026-11-11
+check "dates: a <!-- comment reports" dt_has src/b.js 7 2026-12-12
+check "dates: a provenance-exempt path stays out" dt_no 2026-01-02
+check "dates: a glob's * crosses / (bench/sub/deep.txt)" dt_no 2026-01-03
+check "dates: SESSION-STATE/ stays out" dt_no 2026-01-04
+check "dates: an exact-path glob entry stays out" dt_no 2026-01-05
+check "dates: a history doc stays out" dt_no 2026-01-06
+check "dates: docs/work/ stays out" dt_no 2026-01-07
+dt_count="$(printf '%s\n' "$got_dt" | grep -c . || true)"
+check "dates: exactly the ten expected hits (got $dt_count)" [ "$dt_count" -eq 10 ]
+printf 'Untracked 2026-02-03.\n' > "$VP/docs/new.md"
+check "dates: an untracked new doc reads every line as added" [ "$(cd "$VP" && bash "$LINKS" dates docs/new.md)" = "$(printf 'docs/new.md\t1\t2026-02-03')" ]
+got_dt_none="$(cd "$VP" && bash "$LINKS" dates 2>&1)"; rc=$?
+check "dates: no path prints nothing, exit 0 (rc=$rc, got: $got_dt_none)" [ -z "$got_dt_none" -a "$rc" -eq 0 ]
+usage_out="$(cd "$TMP" && bash "$LINKS" nosuchmode 2>&1)"
+dt_usage() { printf '%s' "$usage_out" | grep -q '| dates '; }
+dt_header() { grep -qE '^#   dates ' "$LINKS"; }
+check "dates: usage string registers the mode" dt_usage
+check "dates: header comment registers the mode" dt_header
 
 echo "== doc-links: BUG-wnav — term-uses and volatile-ids read a committed range through DOCLINK_DIFF_RANGE =="
 # The commit door's `range` entry runs on a clean checkout of the integration tip, so

@@ -89,7 +89,7 @@ With a commit move in hand, run the door's read-only entry — `/super-bootstrap
 - **Register item** → a **register** row: the word, doc:line, the entry verbatim, the edit to the using line.
 - **Terminology miss** → a **terminology** row: doc:line and the line's edit.
 - **Restatement** → a **restatement** row: the edit linking each unlinked copy to the home. No home, or a closure past a drafted edit → a **log** move stating that reason.
-- **Volatile-ID hit** → a **volatile-ID** row: doc:line and the line's edit, the outcome stated present-tense or a commit sha cited.
+- **Volatile-ID or date hit** → a **volatile-ID or date** row: path:line and the line's edit, the outcome stated present-tense or a commit sha cited.
 - **Harness row** → step 3's owner check first, then `co-change`:
   - Either hit → foreign-owned, whatever `co-change` says, routed by the repo's own finding lanes, concern first and provenance second: this repo's concern → a **log** move, the copy untouched; the owner's concern → a row naming the path and its owner's route, which writes nothing. The row states which route it took, and the copy's path stays off the commit row.
   - No hit, `co-change: yes` → a **harness-edit** row: path, the outdated line, the exact edit. Its ritual is a fix-now edit's: the pre-edit load runs in this detect pass, where the edit is drafted; it lands with the door-judgment rows and states the post-edit audit it owes, which runs after the pick (step 4).

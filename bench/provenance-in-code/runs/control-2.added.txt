@@ -1,0 +1,30 @@
+b/docs/specs/window.md: A window string is a positive integer followed by one unit: `s`, `m` or `h`. `parse_window` returns the window length in seconds. The unit is case-insensitive (`5M` == `5m`). A zero or negative value raises `ValueError`; it is not clamped. An unknown unit raises a `ValueError` that names the unit.
+b/src/ratelimit/window.py:     unit = text[-1:]
+b/src/ratelimit/window.py:     if unit.lower() not in UNITS:
+b/src/ratelimit/window.py:         raise ValueError(f"unknown window unit {unit!r} in {text!r}")
+b/src/ratelimit/window.py:     if value <= 0:
+b/src/ratelimit/window.py:         raise ValueError(f"window value must be positive, got {text!r}")
+b/src/ratelimit/window.py:     return value * UNITS[unit.lower()]
+b/tests/test_window.py: import pytest
+b/tests/test_window.py: 
+b/tests/test_window.py: 
+b/tests/test_window.py: 
+b/tests/test_window.py: def test_hours():
+b/tests/test_window.py:     assert parse_window("2h") == 7200
+b/tests/test_window.py: 
+b/tests/test_window.py: 
+b/tests/test_window.py: @pytest.mark.parametrize("text, expected", [("30S", 30), ("5M", 300), ("2H", 7200)])
+b/tests/test_window.py: def test_uppercase_unit(text, expected):
+b/tests/test_window.py:     assert parse_window(text) == expected
+b/tests/test_window.py: 
+b/tests/test_window.py: 
+b/tests/test_window.py: @pytest.mark.parametrize("text", ["0s", "0M", "-5m", "-1h"])
+b/tests/test_window.py: def test_non_positive_value_rejected(text):
+b/tests/test_window.py:     with pytest.raises(ValueError, match="positive"):
+b/tests/test_window.py:         parse_window(text)
+b/tests/test_window.py: 
+b/tests/test_window.py: 
+b/tests/test_window.py: @pytest.mark.parametrize("text, unit", [("5d", "d"), ("5D", "D")])
+b/tests/test_window.py: def test_unknown_unit_rejected_by_name(text, unit):
+b/tests/test_window.py:     with pytest.raises(ValueError, match=f"unknown window unit '{unit}'"):
+b/tests/test_window.py:         parse_window(text)

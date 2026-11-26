@@ -1,0 +1,7 @@
+done
+
+- **Tests:** `python -m pytest -q` passed all 13. Before the fix, 10 of the new cases failed as expected.
+- **Diff to review:** I changed `src/ratelimit/window.py` and `tests/test_window.py`. I also updated `docs/specs/window.md` to describe the new unit and error behaviour. Nothing is committed, and the card is still in place.
+- **Blocked read:** my first command tried to read `~/.claude/local.md`, which is outside the repo. It was denied, so the whole command didn't run. I didn't try to read that file again, so any references it lists weren't checked. I searched the repo with other tools.
+- **Not fixed:** an empty string still raises `IndexError` rather than `ValueError`. The card doesn't cover this case.
+- **Untracked files:** `git status` also shows `__pycache__/` folders from the test run. Leave them out when you commit.

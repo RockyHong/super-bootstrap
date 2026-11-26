@@ -1,0 +1,7 @@
+tag=control-3 ref=HEAD model=sonnet
+added-lines: 29
+files: b/docs/specs/window.md b/src/ratelimit/window.py b/tests/test_window.py 
+id-hits: 0
+date-hits: 0
+precedent-hits: 0
+card-path-hits: 0
