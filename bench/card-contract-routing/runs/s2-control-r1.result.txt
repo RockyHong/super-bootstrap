@@ -1,0 +1,8 @@
+=== WRITE docs/work/DEBT-41.md ===
+
+## Progress — 2026-11-26
+
+- **Done:** The tenant prefix is restored in the eviction key in `src/cache/store.py`, and the fix is committed. The effect on the hit rate is not yet verified.
+- **State:** The fix ships with the weekly deploy on 2026-12-03. The hit rate can be re-measured only on production traffic after that deploy.
+- **Next:** Do not run this step before 2026-12-03. Confirm that the deploy shipped with the fix, then re-measure the hit rate on production traffic. If it is back above 90%, resolve the card as the thread contract in `docs/work/README.md` describes. A date alone does not show that the deploy happened.
+=== END ===

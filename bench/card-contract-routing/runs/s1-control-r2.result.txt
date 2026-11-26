@@ -1,0 +1,14 @@
+=== WRITE docs/specs/cli.md ===
+## Subcommand naming
+
+Every subcommand name is a single plain verb, with no hyphens and no noun prefix. This applies to every new subcommand.
+=== END ===
+
+=== WRITE docs/work/GAP-31.md ===
+
+## Design — 2026-11-26
+
+The subcommand is `tool export`. This settles the naming fork in the 2026-11-11 Verdict. The user's ruling also covers GAP-32, GAP-33 and every later subcommand. That standing rule lives in [`docs/specs/cli.md`](../specs/cli.md#subcommand-naming).
+
+Approved: user ruling, 2026-11-26.
+=== END ===

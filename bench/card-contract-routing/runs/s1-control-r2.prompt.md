@@ -1,0 +1,73 @@
+Do not use any tools. Answer from the text below only.
+
+You are a Claude Code session working in a repo that runs the super-bootstrap harness. Its workflow doctrine says, in part:
+
+---
+Settled design and step sequence land as `## Design` / `## Plan` blocks on the card's own thread ([`docs/work/`](../../docs/work/README.md)).
+---
+
+`docs/work/README.md` reads, in part:
+
+---
+## Thread contract
+
+**Origin block** (H1 + field lines) — frozen at capture; the breadcrumb at the top of the thread.
+
+**Extensions:** `docs/extensions.md`, when present, declares the fields this repo adds to a card's origin block, each naming the hook, script, or skill that reads it — additive to this contract, never overriding a line of it.
+
+**Six block types**, each appended at end of file, dated + sourced — context-scope sections assembled on need, never stages a card must pass:
+
+- `## Amendment — {date} · {source}` — reframe, premise supersession, new fact, NEEDS_CONTEXT answer.
+- `## Verdict — auto-fix|surface · {date}` — triage output; the kind says who is needed — `auto-fix` no one, `surface` the user, for an open fork (`### Decision needed`) or the author's eye (`### Taste needed`).
+- `## Design — {date}` — settled-aim section; lands when [a genuine fork](../../.claude/rules/harness.md#framing--route--state-dont-gate) put the aim to the user — at route time (taste gate), or as a `## Verdict — surface` the user then rules — the chosen option, settled; approval = one appended line. Revision = new Design block that takes over; old stays in the chain. A `surface` fork the gateway's climb settles (`/super-bootstrap:triage` step 3) lands the same block naming the settling source instead of a ruling. A ruling whose settled aim is to wait names the awaited party — `waiting on {party}` — so `/super-bootstrap:needs-me` reads the card as waiting on that party and `/super-bootstrap:autorun` leaves it alone.
+- `## Plan — {date}` — step-order section; lands only when a cold executor runs the work (autorun worktree, cross-session handoff, scope past the session-carry ledger); step sequence only — no checkboxes, no status marks. Revision = new Plan block that takes over; old stays in the chain.
+- `## Harness edits — {date}` — harness edits an autorun worker leaves for the gateway, which applies them on base after the merge; per edit: file path, exact old string, new string. The latest one leads and lists the edits still pending; not a step list, and it does not make a card in-flight.
+- `## Progress — {date}` — durable milestone or interruption state; the cross-session handoff surface.
+
+**Mutation authority:** any session or agent appends (end-of-file only, dated + sourced); a changed understanding appends a new block that takes over its type's lead. Existing content is never edited.
+
+**Read contract:** the latest block of each type leads that type — Verdict → grounded scope, Design → aim, Plan → steps, Progress → state; an Amendment applies to the blocks above it; origin stays as grounding. A brief that sends a cold reader to a card names this read set: the origin, the latest Verdict, Design, Plan and Progress the card holds, and every Amendment after the earliest of those — a card holding none of them reads every Amendment after the origin. Top-to-bottom = the evolution path, read whole when the task is tracing how the card evolved.
+
+**Live tracking:** in-session execution state belongs to the platform's native task list; durable progress lands as a Progress block.
+
+**Resolve:** the resolving session deletes the card file — work completed and direction dropped both resolve; the deleting commit's message carries the why. Before the delete, a behavior or limitation the card leaves true lands in its owning doc — unless a line of that doc already states it, and then the deleting commit's message names that doc:line ([`.claude/rules/dimension-discipline.md`](../../.claude/rules/dimension-discipline.md) item 5). Git history is the archive.
+
+**Aim switch:** a thread cuts by aim, not by phase. Same aim, changed understanding → append (the new block takes over its type's lead). The problem itself superseded → resolve this card with the counter-diagnosis and open a successor card whose origin cites the predecessor ID — the breadcrumb survives in the pointer + git.
+
+**Conflict:** keep either side whole or regenerate from its blocks; never hand-merge block content.
+---
+
+The repo's files (paths only, except the two shown whole below): `README.md`, `docs/overview.md`, `docs/specs/cli.md`, `docs/work/README.md`, `docs/work/TEMPLATE.md`, `docs/work/GAP-31.md`, `docs/work/GAP-32.md`, `docs/work/GAP-33.md`, `src/cli/main.py`, `src/cli/export.py`.
+
+=== docs/specs/cli.md ===
+# CLI
+
+The `tool` binary dispatches subcommands from `src/cli/main.py`; each subcommand is one module under `src/cli/`.
+
+## Subcommands
+
+- `tool sync` — pull remote state into the local cache.
+- `tool status` — print cache freshness.
+
+=== docs/work/GAP-31.md ===
+# GAP-31 — Add an export subcommand
+
+**Logged:** 2026-11-10 · **Source:** user request
+**Problem:** There is no way to dump the cache to a file; users copy it by hand.
+**Area:** `src/cli/`
+
+## Verdict — surface · 2026-11-11
+
+### Decision needed
+Name the new subcommand `export`, `dump`, or `cache-export`. GAP-32 (`tool prune`) and GAP-33 (`tool doctor`) add subcommands next and will face the same naming question.
+
+=== task ===
+The user just ruled on GAP-31's open fork: "Every subcommand name is a single plain verb, no hyphens, no noun prefix — this one is `tool export`, and GAP-32, GAP-33 and every later subcommand follow the same rule." Record this ruling, following the card contract above.
+
+Print every file write you would make, and nothing else, each in this shape:
+
+=== WRITE {repo-relative path} ===
+{the exact text you append or the full new section, as it would land in the file}
+=== END ===
+
+Print one such block per file you touch. Touch only the files the task needs.

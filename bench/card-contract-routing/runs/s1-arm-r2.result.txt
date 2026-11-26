@@ -1,0 +1,16 @@
+=== WRITE docs/specs/cli.md ===
+## Subcommand naming
+
+Every subcommand name is a single plain verb, with no hyphens and no noun prefix. This rule applies to every new subcommand.
+=== END ===
+
+=== WRITE docs/work/GAP-31.md ===
+
+## Design — 2026-11-26
+
+**Source:** user ruling on the `### Decision needed` fork of the 2026-11-11 Verdict.
+
+The new subcommand is `tool export`. The name follows [Subcommand naming](../specs/cli.md#subcommand-naming), which owns the rule for all subcommands.
+
+Approved: user, 2026-11-26.
+=== END ===

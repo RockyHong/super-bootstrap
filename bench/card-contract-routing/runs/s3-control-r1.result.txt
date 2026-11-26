@@ -1,0 +1,9 @@
+=== WRITE docs/work/BUG-51.md ===
+
+## Progress — 2026-11-26 · session on `fix/bug-51`
+
+- **State:** stopped mid-fix. The `src/export/csv.py` edit is uncommitted in the working tree on branch `fix/bug-51`.
+- **Found:** replacing the hand-rolled writer with Python's `csv.writer` using `QUOTE_MINIMAL` fixes the embedded-newline case.
+- **Failing:** with that change, `tests/test_csv.py::test_header` fails. The old writer emitted a trailing comma, and the test pins it.
+- **Open:** not yet decided whether to update the test or keep the trailing comma.
+=== END ===

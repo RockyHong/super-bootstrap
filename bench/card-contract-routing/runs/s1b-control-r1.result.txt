@@ -1,0 +1,16 @@
+=== WRITE docs/work/GAP-31.md ===
+
+## Design — 2026-11-26
+
+**Source:** user ruling on the naming fork in the 2026-11-11 Verdict.
+
+The new subcommand is `tool export`. It follows the CLI-wide naming rule in [`docs/specs/cli.md`](../specs/cli.md#naming), which also covers GAP-32, GAP-33 and every later subcommand.
+
+Approved: user, 2026-11-26.
+=== END ===
+
+=== WRITE docs/specs/cli.md ===
+## Naming
+
+Every subcommand name is a single plain verb, with no hyphens and no noun prefix. This rule applies to every new subcommand.
+=== END ===

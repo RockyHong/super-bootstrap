@@ -1,0 +1,16 @@
+=== WRITE docs/work/BUG-51.md ===
+
+## Progress — 2026-11-26
+
+**Source:** Claude Code session, stopped mid-fix at end of day.
+
+**State:** The fix is in progress. The edit to `src/export/csv.py` is **uncommitted** on branch `fix/bug-51`.
+
+**Findings:**
+- Replacing the hand-rolled writer with Python's `csv.writer` (`QUOTE_MINIMAL`) fixes the embedded-newline case.
+- With this change, `tests/test_csv.py::test_header` fails. The old writer emitted a trailing comma, and the test pins that comma.
+
+**Open:** Should we update `test_header`, or keep the trailing comma? This is not decided yet.
+
+**Next:** Decide on the trailing comma. Then make `test_header` pass in line with that decision. The Verdict also calls for an embedded-newline case in `tests/test_csv.py`. Confirm that this case exists, and add it if it does not.
+=== END ===
